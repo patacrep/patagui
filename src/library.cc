@@ -214,8 +214,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       QPixmap pixmap;
       if (!imgFile.isEmpty() && !QPixmapCache::find(imgFile, &pixmap))
 	{
-	  pixmap.load(imgFile);
-	  pixmap = pixmap.scaledToWidth(24);
+	  pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
 	  QPixmapCache::insert(imgFile, pixmap);
 	}
 
