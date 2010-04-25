@@ -6,6 +6,7 @@ python
 texlive
 texlive-lang-french
 python
+libqt4-sql-sqlite
 
 RECOMMENDED PACKAGES
 lilypond
