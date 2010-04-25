@@ -74,6 +74,7 @@ private slots:
   void connectDb();
   void synchroniseWithLocalSongs();
   void filterRegExpChanged();
+  void browseHeaderPicture();
   
   void dockWidgets();
   void preferences();
@@ -147,6 +148,7 @@ private:
   QLineEdit* m_author;
   QLineEdit* m_version;
   QLineEdit* m_mail;
+  QLineEdit* m_picture;
   QLineEdit* m_copyright;
 
   //Logs

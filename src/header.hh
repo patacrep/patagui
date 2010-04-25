@@ -31,6 +31,7 @@ public:
   QString author();
   QString version();
   QString mail();
+  QString picture();
   QString copyright();
   
   void setTitle(const QString &);
@@ -38,6 +39,7 @@ public:
   void setAuthor(const QString &);
   void setVersion(const QString &);
   void setMail(const QString &);
+  void setPicture(const QString &);
   void setCopyright(const QString &);
 
 private:
@@ -48,6 +50,7 @@ private:
   QString m_author;
   QString m_version;
   QString m_mail;
+  QString m_picture;
   QString m_copyright;
   QString m_workingPath;
 

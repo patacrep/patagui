@@ -18,6 +18,7 @@
 #include "header.hh"
 #include <QRegExp>
 #include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <iostream>
 //------------------------------------------------------------------------------
@@ -82,6 +83,22 @@ void CHeader::setMail(const QString & AMail)
 {
   m_mail = AMail;
   updateFile("\\\\mail\\{([^}]+)", AMail);
+}
+//------------------------------------------------------------------------------
+QString CHeader::picture()
+{
+  return m_picture;
+}
+//------------------------------------------------------------------------------
+void CHeader::setPicture(const QString & APicture)
+{
+  m_picture = APicture;
+  //copy the picture in img/ directory so it can be included by latex
+  QFile file(APicture);
+  QFileInfo fi(APicture);
+  file.copy(QString("%1/img/%2").arg(m_workingPath).arg(fi.fileName()));
+  QString basename = fi.baseName();
+  updateFile("\\\\picture\\{([^}]+)", basename);
 }
 //------------------------------------------------------------------------------
 QString CHeader::copyright()

@@ -375,45 +375,56 @@ void CMainWindow::dockWidgets()
   //Book Info widget
   m_bookInfo = new QDockWidget( tr("My songbook"), this );
   m_bookInfo->setMinimumWidth(250);
-  m_bookInfo->setMinimumHeight(250);
-  m_bookInfo->setMaximumHeight(250);
+  m_bookInfo->setMinimumHeight(300);
+  m_bookInfo->setMaximumHeight(300);
   QWidget * bookInfoWidget = new QWidget();
 
   CHeader* header = new CHeader(workingPath());
   QLabel* ltitle     = new QLabel(tr("Title:"));
-  QLabel* lsubtitle     = new QLabel(tr("Subtitle:"));
+  QLabel* lsubtitle  = new QLabel(tr("Subtitle:"));
   QLabel* lauthor    = new QLabel(tr("Author:"));
   QLabel* lversion   = new QLabel(tr("Version:"));
   QLabel* lmail      = new QLabel(tr("Mail:"));
+  QLabel* lpicture   = new QLabel(tr("Picture:"));
   QLabel* lcopyright = new QLabel(tr("Copyright:"));
 
-  //Todo: use CHeader getters to initialize
+  //Todo: use CHeader getters to initialize except for picture
+  //since we want the path and not the basename that is in .tex file
   m_title = new QLineEdit("Patacrep Songbook");
   m_subtitle = new QLineEdit("Tome 1");
   m_author = new QLineEdit("Crep, Lohrun");
   m_version = new QLineEdit("0.1");
   m_mail = new QLineEdit("crep@team-on-fire.com");
+  m_picture =new QLineEdit(QString("%1/img/feel-the-music.jpg").arg(workingPath()));
   m_copyright = new QLineEdit("©deviantart");
+  m_picture->setReadOnly(true);
 
+  QToolButton *browsePictureButton = new QToolButton;
+  browsePictureButton->setIcon(QIcon(":/icons/document-load.png"));
   QPushButton *apply = new QPushButton(tr("Apply"));
   
   QGridLayout *bookInfoLayout = new QGridLayout();
   bookInfoLayout->addWidget(ltitle,0,0,1,1);
-  bookInfoLayout->addWidget(m_title,0,1,1,1);
+  bookInfoLayout->addWidget(m_title,0,1,1,3);
   bookInfoLayout->addWidget(lsubtitle,1,0,1,1);
-  bookInfoLayout->addWidget(m_subtitle,1,1,1,1);
+  bookInfoLayout->addWidget(m_subtitle,1,1,1,3);
   bookInfoLayout->addWidget(lauthor,2,0,1,1);
-  bookInfoLayout->addWidget(m_author,2,1,1,1);
+  bookInfoLayout->addWidget(m_author,2,1,1,3);
   bookInfoLayout->addWidget(lversion,3,0,1,1);
-  bookInfoLayout->addWidget(m_version,3,1,1,1);
+  bookInfoLayout->addWidget(m_version,3,1,1,3);
   bookInfoLayout->addWidget(lmail,4,0,1,1);
-  bookInfoLayout->addWidget(m_mail,4,1,1,1);
-  bookInfoLayout->addWidget(lcopyright,5,0,1,1);
-  bookInfoLayout->addWidget(m_copyright,5,1,1,1);
-  bookInfoLayout->addWidget(apply,6,1,1,1);
+  bookInfoLayout->addWidget(m_mail,4,1,1,3);
+  bookInfoLayout->addWidget(lpicture,5,0,1,1);
+  bookInfoLayout->addWidget(m_picture,5,1,1,2);
+  bookInfoLayout->addWidget(browsePictureButton,5,3,1,1);
+  bookInfoLayout->addWidget(lcopyright,6,0,1,1);
+  bookInfoLayout->addWidget(m_copyright,6,1,1,3);
+  bookInfoLayout->addWidget(apply,7,2,1,2);
 
   connect(apply, SIGNAL(clicked()),
 	  this, SLOT(updateHeader()) );
+  connect(browsePictureButton, SIGNAL(clicked()),
+	  this, SLOT(browseHeaderPicture()) );
 
   bookInfoWidget->setLayout(bookInfoLayout);
   m_bookInfo->setWidget(bookInfoWidget);
@@ -484,7 +495,17 @@ void CMainWindow::updateHeader()
   header.setAuthor(m_author->text());
   header.setVersion(m_version->text());
   header.setMail(m_mail->text());
+  header.setPicture(m_picture->text());
   header.setCopyright(m_copyright->text());
+}
+//------------------------------------------------------------------------------
+void CMainWindow::browseHeaderPicture()
+{
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open Image File"),
+						  "/home",
+						  tr("Images (*.png *.jpg)"));
+  if (!filename.isEmpty())
+    m_picture->setText(filename);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::preferences()
