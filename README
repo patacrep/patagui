@@ -1,0 +1,29 @@
+REQUIRED PACKAGES
+qt4-qmake
+qt4-dev-tools
+cmake
+python
+texlive
+texlive-lang-french
+python
+
+RECOMMENDED PACKAGES
+lilypond
+
+INSTALL & RUN
+cd my-path-to-songbook-client
+make release
+./release/songbook
+
+note: do not run cmake manually ! this action is performed by the makefile itself
+
+CONFIGURATION
+- in the preferences, indicate the location of the patacrep songbook available at: git://git.lohrun.net/songbook.git
+for example: /home/toto/songbook
+- click file/synchronise to generate the database from local files
+
+CONTACT
+www.patacrep.com
+crep@team-on-fire.com
+
+
