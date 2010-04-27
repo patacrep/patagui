@@ -379,7 +379,6 @@ void CMainWindow::dockWidgets()
   m_bookInfo->setMaximumHeight(300);
   QWidget * bookInfoWidget = new QWidget();
 
-  CHeader* header = new CHeader(workingPath());
   QLabel* ltitle     = new QLabel(tr("Title:"));
   QLabel* lsubtitle  = new QLabel(tr("Subtitle:"));
   QLabel* lauthor    = new QLabel(tr("Author:"));
@@ -472,7 +471,6 @@ void CMainWindow::dockWidgets()
 
   // Debugger Info widget
   m_logInfo = new QDockWidget( tr("Logs"), this );
-  QWidget * logWidget = new QWidget();
   m_log = new QTextEdit;
   m_log->setReadOnly(true);
   m_logInfo->setWidget(m_log);
@@ -623,7 +621,7 @@ void CMainWindow::buildError(QProcess::ProcessError error)
   msgBox.setText(tr("Sorry: an error occured during the songbook generation."));
   msgBox.setStandardButtons(QMessageBox::Cancel);
   msgBox.setDefaultButton(QMessageBox::Cancel);
-  int ret = msgBox.exec();
+  msgBox.exec();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
