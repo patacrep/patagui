@@ -98,10 +98,11 @@ private:
   /// Modify mybook.tex according to the selected options
   void applyBookType();
 
-private:
+public:
   // Widgets
   QProgressBar* m_progressBar;
 
+private:
   // Song library and view
   CLibrary *library;
   QTableView *view;
@@ -177,6 +178,8 @@ private:
   QAction *adjustColumnsAct;
   QAction *connectDbAct;
   QAction *rebuildDbAct;
+  QAction *resizeCoversAct;
+  QAction *checkerAct;
 };
 
 #endif  // __MAIN_WINDOW_HH__

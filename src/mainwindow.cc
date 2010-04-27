@@ -21,6 +21,7 @@
 #include "songbook.hh"
 #include "header.hh"
 #include "database.hh"
+#include "tools.hh"
 
 #include <QtGui>
 #include <QtSql>
@@ -277,6 +278,17 @@ void CMainWindow::createActions()
 			     tr("Synchronise"), this);
   rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
   connect(rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
+
+  CTools* tools = new CTools(workingPath(), this);
+  resizeCoversAct = new QAction( tr("Resize covers"), this);
+  resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory."));
+  connect(resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
+
+  checkerAct = new QAction( tr("Global check"), this);
+  checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)."));
+  connect(checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
+
+
 }
 //------------------------------------------------------------------------------
 void CMainWindow::connectDb()
@@ -364,6 +376,10 @@ void CMainWindow::createMenus()
   viewMenu->addAction(displayBookInfoAct);
   viewMenu->addAction(displayLogInfoAct);
   viewMenu->addAction(adjustColumnsAct);
+
+  viewMenu = menuBar()->addMenu(tr("&Tools"));
+  viewMenu->addAction(resizeCoversAct);
+  viewMenu->addAction(checkerAct);
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(aboutAct);
