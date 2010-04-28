@@ -26,9 +26,12 @@
 
 static bool createConnection()
 {
+  if (QFile::exists("patacrep"))
+    return false;
+  
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName("patacrep");
-  if (!db.open()) 
+  if (!db.open())
     {
       QMessageBox::critical(0, qApp->tr("Cannot open database"),
 			    qApp->tr("Unable to establish a database connection.\n"

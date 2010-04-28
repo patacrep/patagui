@@ -318,7 +318,6 @@ void CMainWindow::connectDb()
   
   dockWidgets();
   applyDisplayColumn();
-  synchroniseWithLocalSongs();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::synchroniseWithLocalSongs()
@@ -785,6 +784,7 @@ const QString CMainWindow::workingPath()
 void CMainWindow::setWorkingPath( QString dirname )
 {
   m_workingPath = dirname;
+  synchroniseWithLocalSongs();
 }
 //------------------------------------------------------------------------------
 //todo: works but ...
