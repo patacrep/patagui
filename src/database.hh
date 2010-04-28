@@ -26,11 +26,13 @@
 
 static bool createConnection()
 {
-  if (QFile::exists("patacrep"))
-    return false;
+  bool exist = (QFile::exists("patacrep"))?true:false;
   
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName("patacrep");
+
+  if(exist) return false;
+  
   if (!db.open())
     {
       QMessageBox::critical(0, qApp->tr("Cannot open database"),

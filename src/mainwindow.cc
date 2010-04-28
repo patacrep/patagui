@@ -294,7 +294,7 @@ void CMainWindow::createActions()
 void CMainWindow::connectDb()
 {
   //Connect to database
-  createConnection();
+  bool newdb = createConnection();
 
   // Initialize the song library
   library = new CLibrary();
@@ -318,6 +318,8 @@ void CMainWindow::connectDb()
   
   dockWidgets();
   applyDisplayColumn();
+  if(newdb)
+    synchroniseWithLocalSongs();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::synchroniseWithLocalSongs()
@@ -784,7 +786,6 @@ const QString CMainWindow::workingPath()
 void CMainWindow::setWorkingPath( QString dirname )
 {
   m_workingPath = dirname;
-  synchroniseWithLocalSongs();
 }
 //------------------------------------------------------------------------------
 //todo: works but ...

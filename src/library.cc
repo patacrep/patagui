@@ -38,6 +38,7 @@ CLibrary::CLibrary()
 {
   setTable("songs");
   setEditStrategy(QSqlTableModel::OnManualSubmit);
+  select();
   setHeaderData(0, Qt::Horizontal, tr("Artist"));
   setHeaderData(1, Qt::Horizontal, tr("Title"));
   setHeaderData(2, Qt::Horizontal, tr("Lilypond"));
