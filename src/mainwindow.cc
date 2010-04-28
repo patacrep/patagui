@@ -790,11 +790,14 @@ void CMainWindow::setWorkingPath( QString dirname )
 //------------------------------------------------------------------------------
 bool CMainWindow::createDbConnection()
 {
-  bool exist = (QFile::exists("patacrep"))?true:false;
+  QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path()); 
+  QDir dbdir; dbdir.mkdir( path );
+  QString dbpath = QString("%1/patacrep.db").arg(path);
+
+  bool exist = (QFile::exists(dbpath))?true:false;
   
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName("patacrep");
-
+  db.setDatabaseName(dbpath);
   if (!db.open())
     {
       QMessageBox::critical(this, tr("Cannot open database"),
@@ -804,7 +807,6 @@ bool CMainWindow::createDbConnection()
       return false;
     }
   if(exist) return false;
-
   QSqlQuery query;
   query.exec("create table songs ( artist char(80), "
 	     "title char(80), "
