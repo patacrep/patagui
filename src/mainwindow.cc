@@ -20,7 +20,6 @@
 #include "library.hh"
 #include "songbook.hh"
 #include "header.hh"
-#include "database.hh"
 #include "tools.hh"
 
 #include <QtGui>
@@ -294,7 +293,7 @@ void CMainWindow::createActions()
 void CMainWindow::connectDb()
 {
   //Connect to database
-  bool newdb = createConnection();
+  bool newdb = createDbConnection();
 
   // Initialize the song library
   library = new CLibrary();
@@ -327,7 +326,7 @@ void CMainWindow::synchroniseWithLocalSongs()
   //Drop table songs and recreate
   QSqlQuery query;
   query.exec("delete from songs");
-
+    
   // Retrieve all songs from .sg files in working dir
   library->setPathToSongs(workingPath());
   library->retrieveSongs();
@@ -788,40 +787,29 @@ void CMainWindow::setWorkingPath( QString dirname )
   m_workingPath = dirname;
 }
 //------------------------------------------------------------------------------
-//todo: works but ...
-// void CMainWindow::playSong()
-// {
-  /*
-  // Use info of clicked line
-  CSongbook* sb = new CSongbook;
-  CSong* song = sb->retrieveSongFromPath(m_table->item(m_table->currentRow(),4)->text());
+bool CMainWindow::createDbConnection()
+{
+  bool exist = (QFile::exists("patacrep"))?true:false;
   
-  QFile file(QString("%1/deezer").arg(m_workingPath));
-  QString fileStr;
-  
-  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {     
-      QTextStream stream (&file);
-      fileStr = stream.readAll();
-      QString name = song->path();
-      name.replace(QString("%1songs/").arg(workingPath()), QString());
-      
-      std::cout<<"name = "<<name.toStdString()<<std::endl;
-      std::cout<<"file = "<<fileStr.toStdString()<<std::endl;
-      
-      QRegExp rx(QString("%1:([^;]+)").arg(name));
-      rx.indexIn(fileStr);
-      std::cout<<"url = "<<rx.cap(1).toStdString()<<std::endl;
+  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+  db.setDatabaseName("patacrep");
 
-      QDesktopServices::openUrl(QUrl(QString("%1").arg(rx.cap(1))));
-      file.close();
-    }
-  else
+  if (!db.open())
     {
-      std::cerr<<"warning: unable to open file in read mode"<<std::endl;
+      QMessageBox::critical(this, tr("Cannot open database"),
+			    tr("Unable to establish a database connection.\n"
+			       "This application needs SQLite support. "
+			       "Click Cancel to exit."), QMessageBox::Cancel);
+      return false;
     }
-  delete song;
-  delete sb;
-  */
-// }
+  if(exist) return false;
 
+  QSqlQuery query;
+  query.exec("create table songs ( artist char(80), "
+	     "title char(80), "
+	     "lilypond bool, "
+	     "path char(80), "
+	     "album char(80), "
+	     "cover char(80))");
+  return true;
+}

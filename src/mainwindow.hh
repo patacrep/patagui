@@ -89,6 +89,7 @@ private:
   void createMenus();
 
   QString packageOptions();
+  bool createDbConnection();
 
   const QString workingPath();
   void setWorkingPath(QString dirname);

@@ -18,6 +18,7 @@
 #include <iostream>
 #include <QApplication>
 #include <QTextCodec>
+#include <QtSql>
 #include "mainwindow.hh"
 using namespace std;
 //******************************************************************************
@@ -33,11 +34,15 @@ int main( int argc, char * argv[] )
   QApplication app(argc, argv);
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
 
-  //if (!createConnection())
-  //  return 1;
-
   CMainWindow mainWindow;
   mainWindow.show();
-  return app.exec();
+  int res = app.exec();
+
+  //close db connection
+  QSqlDatabase db = QSqlDatabase::database();
+  db.close();
+  QSqlDatabase::removeDatabase(db.connectionName());
+  
+  return res;
 }
 //******************************************************************************
