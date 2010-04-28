@@ -487,6 +487,7 @@ void CMainWindow::dockWidgets()
 
   // Debugger Info widget
   m_logInfo = new QDockWidget( tr("Logs"), this );
+  m_logInfo->setMinimumWidth(250);
   m_log = new QTextEdit;
   m_log->setReadOnly(true);
   m_logInfo->setWidget(m_log);
