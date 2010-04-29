@@ -684,7 +684,7 @@ void CMainWindow::clean()
   QProcess clean;
   clean.setWorkingDirectory(workingPath());  
   statusBar()->showMessage(tr("Cleaning ..."));
-  clean.start("make", QStringList() << "cleanall");
+  clean.start("make", QStringList() << "clean");
   if (!clean.waitForFinished()) return;
 }
 //------------------------------------------------------------------------------
@@ -702,8 +702,12 @@ void CMainWindow::makeLilypondSheets()
 	  QProcess *lilyProcess;
 	  QStringList sheets;
 	  QString path = library->record(proxyModel->mapToSource(index).row()).field("path").value().toString(); 
-	  QFile file(path);
+	  QString artist = library->record(proxyModel->mapToSource(index).row()).field("artist").value().toString(); 
+	  QString title = library->record(proxyModel->mapToSource(index).row()).field("title").value().toString(); 
+	  QCoreApplication::processEvents();
+	  statusBar()->showMessage(QString(tr("Building lilypond for: %1 - %2").arg(artist).arg(title)));
 
+	  QFile file(path);
 	  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
 	    {
 	      QTextStream stream (&file);
@@ -717,8 +721,6 @@ void CMainWindow::makeLilypondSheets()
 	      int pos = 0;
 	      while ((pos = rx.indexIn(path, pos)) != -1)
 		{
-		  QCoreApplication::processEvents();
-		  statusBar()->showMessage(QString(tr("Lilypond generation in progress ...")));
 		  lilyProcess = new QProcess;
 		  lilyProcess->setWorkingDirectory(QString("%1/lilypond/").arg(workingPath()));
 		  lilyProcess->start("lilypond", QStringList() << QString("%1.ly").arg(rx.cap(1)));
