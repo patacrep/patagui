@@ -28,7 +28,7 @@ set (IHM_RCS
   application.qrc
   )
 
-set(LANGUAGES fr)
+set(LANGUAGES fr en)
 
 set(LANGUAGE_TS_FILES)
 foreach(LANGUAGE ${LANGUAGES})

@@ -30,8 +30,9 @@ int main( int argc, char * argv[] )
   QCoreApplication::setOrganizationDomain("patacrep.com");
   QCoreApplication::setApplicationName("songbook");
 
-  //Localization
   QApplication app(argc, argv);
+
+  //Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
   QString locale = QLocale::system().name().section('_', 0, 0);
   QTranslator translator;
