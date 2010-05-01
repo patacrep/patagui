@@ -30,10 +30,14 @@ int main( int argc, char * argv[] )
   QCoreApplication::setOrganizationDomain("patacrep.com");
   QCoreApplication::setApplicationName("songbook");
 
-  // On lance l'application.
+  //Localization
   QApplication app(argc, argv);
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
-
+  QString locale = QLocale::system().name().section('_', 0, 0);
+  QTranslator translator;
+  translator.load(QString("songbook_%1").arg(locale), "./translations");
+  app.installTranslator(&translator);
+  
   CMainWindow mainWindow;
   mainWindow.show();
   int res = app.exec();
