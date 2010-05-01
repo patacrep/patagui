@@ -14,12 +14,14 @@ set (IHM_SRCS
   library.cc
   songbook.cc
   header.cc
+  tools.cc
   )
 
 set (NEED_MOCS 
   mainwindow.hh
   preferences.hh
   library.hh
+  tools.hh
   )
 
 set (IHM_RCS
