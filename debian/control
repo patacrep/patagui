@@ -1,0 +1,15 @@
+Source: songbook-client
+Section: text
+Priority: optional
+Maintainer: Romain Goffe <romain.goffe@gmail.com>
+Build-Depends: debhelper (>= 7), cmake, libqt4-dev, libqt4-sql-sqlite, qt4-qmake
+Standards-Version: 3.8.3
+Homepage: http://www.patacrep.com
+
+Package: songbook-client
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Client for patacrep songbooks
+ The songbook-client is an interface to build
+ customized PDF songbooks with lyrics, guitar 
+ chords and lilypond sheets form patacrep songbook.
