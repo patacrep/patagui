@@ -189,19 +189,26 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	return QString();
       
       QPixmap pixmap;
+#if QT_VERSION >= 0x040600
       if (lily && !QPixmapCache::find(":/icons/emblem-music.png", &pixmap))
 	{
 	  pixmap.load(":/icons/emblem-music.png");
 	  QPixmapCache::insert(":/icons/emblem-music.png", pixmap);
 	}
-      
+#else
+      if (lily && !QPixmapCache::find(":/icons/emblem-music.png", pixmap))
+	{
+	  pixmap.load(":/icons/emblem-music.png");
+	  QPixmapCache::insert(":/icons/emblem-music.png", pixmap);
+	}
+#endif
       if ( role == Qt::DecorationRole )
 	return pixmap;
       
       if(role == Qt::SizeHintRole)
 	return pixmap.size();
     }
-
+  
   //Draws the cover
   if ( index.column() == 5 )
     {
@@ -210,15 +217,22 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	return QString();
       
       if ( !QFile::exists( imgFile ) )
-      imgFile = ":/icons/unavailable.png";
+	imgFile = ":/icons/unavailable.png";
       
       QPixmap pixmap;
+#if QT_VERSION >= 0x040600
       if (!imgFile.isEmpty() && !QPixmapCache::find(imgFile, &pixmap))
 	{
 	  pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
 	  QPixmapCache::insert(imgFile, pixmap);
 	}
-
+#else
+      if (!imgFile.isEmpty() && !QPixmapCache::find(imgFile, pixmap))
+	{
+	  pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
+	  QPixmapCache::insert(imgFile, pixmap);
+	}
+#endif
       if ( role == Qt::DecorationRole )
 	return pixmap;
       
