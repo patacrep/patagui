@@ -1,13 +1,16 @@
 #-------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.6.2)
-project (songbook)
-find_package(Qt4 REQUIRED)
-
-set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "-DINLINE_FLAG -O2 -finline-functions -DNDEBUG -march=native")
-
+cmake_minimum_required(VERSION 2.6)
 #-------------------------------------------------------------------------------
-set (IHM_SRCS 
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+#-------------------------------------------------------------------------------
+find_package(Qt4 REQUIRED)
+set(QT_USE_QTSQL true)
+#-------------------------------------------------------------------------------
+include(${QT_USE_FILE})
+#-------------------------------------------------------------------------------
+# sources
+set(SONGBOOK_CLIENT_SOURCES
   main.cc
   mainwindow.cc
   preferences.cc
@@ -16,39 +19,47 @@ set (IHM_SRCS
   header.cc
   tools.cc
   )
-
-set (NEED_MOCS 
+#-------------------------------------------------------------------------------
+# header (moc)
+set(SONGBOOK_CLIENT_QT_HEADER
   mainwindow.hh
   preferences.hh
   library.hh
   tools.hh
   )
-
-set (IHM_RCS
+#-------------------------------------------------------------------------------
+# ressources
+set(SONGBOOK_CLIENT_RCS
   application.qrc
   )
-
-set(LANGUAGES fr en)
-
-set(LANGUAGE_TS_FILES)
-foreach(LANGUAGE ${LANGUAGES})
- set(TS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/langs/songbook_${LANGUAGE}.ts")
- set(LANGUAGE_TS_FILES ${LANGUAGE_TS_FILES} ${TS_FILE})
- set_source_files_properties(${TS_FILE} PROPERTIES OUTPUT_LOCATION
-   "${CMAKE_CURRENT_SOURCE_DIR}/../translations")
-endforeach(LANGUAGE ${LANGUAGES})
-if(LANGUAGE_TS_FILES)
- qt4_create_translation(qm_files ${IHM_SRCS} ${LANGUAGE_TS_FILES})
-endif(LANGUAGE_TS_FILES)
-
-
 #-------------------------------------------------------------------------------
-include(${QT_USE_FILE})
-include_directories( ${QT_QTSQL_INCLUDE_DIR})
-qt4_wrap_cpp(MOC_SRCS ${NEED_MOCS})
-qt4_add_resources( IHM_RC_RCS ${IHM_RCS} )
+# process Qt special files
+qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
+qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
 #-------------------------------------------------------------------------------
-add_executable(./songbook ${IHM_SRCS} ${MOC_SRCS} ${IHM_RC_RCS} ${qm_files})
-target_link_libraries(./songbook ${QT_LIBRARIES})
-target_link_libraries(./songbook ${QT_QTSQL_LIBRARY})
+# internationalization
+#set(LANGUAGES fr en)
+#
+#set(LANGUAGE_TS_FILES)
+#foreach(LANGUAGE ${LANGUAGES})
+#  set(TS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/langs/songbook_${LANGUAGE}.ts")
+#  set(LANGUAGE_TS_FILES ${LANGUAGE_TS_FILES} ${TS_FILE})
+#  set_source_files_properties(${TS_FILE} PROPERTIES OUTPUT_LOCATION
+#    "${CMAKE_CURRENT_SOURCE_DIR}/../translations")
+#endforeach(LANGUAGE ${LANGUAGES})
+#if(LANGUAGE_TS_FILES)
+#  qt4_create_translation(qm_files ${IHM_SRCS} ${LANGUAGE_TS_FILES})
+#endif(LANGUAGE_TS_FILES)
+#-------------------------------------------------------------------------------
+# generating executable
+add_executable(songbook-client
+  ${SONGBOOK_CLIENT_SOURCES} 
+  ${SONGBOOK_CLIENT_MOCS} 
+  ${SONGBOOK_CLIENT_RESSOURCES} 
+  ${SONGBOOK_CLIENT_TRANSLATIONS}
+)
+target_link_libraries(songbook-client ${QT_LIBRARIES})
+#-------------------------------------------------------------------------------
+# install instructions
+install(TARGETS songbook-client RUNTIME DESTINATION bin)
 #-------------------------------------------------------------------------------
