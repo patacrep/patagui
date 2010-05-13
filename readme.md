@@ -7,13 +7,13 @@ This is a Qt4/C++ client that allows to pick up songs from the patacrep songbook
 # Songbook
 Since the songbook-client is only a viewer, you should retrieve songs first:
 
-* required packages: python, texlive, texlive-lang-french
+* required packages: python, texlive-base, texlive-lang-french
 * install:
 
 >     git clone git://git.lohrun.net/songbook.git
 
 # Songbook-client
-* required packages: cmake, liqt4-dev, libqt4-sql-sqlite
+* required packages: cmake, libqt4-dev, libqt4-sql-sqlite
 * build and run:
 
 >     git clone git://github.com/crep4ever/songbook-client.git
