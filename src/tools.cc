@@ -82,7 +82,7 @@ void CTools::globalCheck()
   QString msg(tr("Applying typo rules ..."));
   m_parent->statusBar()->showMessage(msg);
   m_parent->m_progressBar->show();
-  m_process->start("./utils/checker.sh");
+  m_process->start("./utils/latex-preprocessing.py");
   
   if (!m_process->waitForFinished()) 
     delete m_process;
