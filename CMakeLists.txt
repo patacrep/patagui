@@ -86,8 +86,6 @@ target_link_libraries(songbook-client ${QT_LIBRARIES})
 #-------------------------------------------------------------------------------
 # install instructions
 install(TARGETS songbook-client RUNTIME DESTINATION bin)
-
-
-
-
-
+install(FILES songbook-client.desktop DESTINATION share/applications)
+install(FILES icons/patacrep.png DESTINATION share/icons)
+install(FILES ${COMPILED_TRANSLATIONS} DESTINATION share/songbook-client/translations)
