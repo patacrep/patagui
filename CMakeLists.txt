@@ -19,7 +19,7 @@ if(NOT DEFINED VERSION)
 		OUTPUT_STRIP_TRAILING_WHITESPACE
 		)
 	if(NOT VERSION)
-		set(VERSION 0.0.1)
+		set(VERSION 0.1)
 	endif()
 	message (STATUS "Current version: ${VERSION}")
 endif()

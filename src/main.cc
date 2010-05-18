@@ -24,7 +24,7 @@ using namespace std;
 //******************************************************************************
 int main( int argc, char * argv[] )
 {
-  Q_INIT_RESOURCE(application);
+  Q_INIT_RESOURCE(songbook);
 
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");
@@ -36,7 +36,7 @@ int main( int argc, char * argv[] )
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
   QString locale = QLocale::system().name().section('_', 0, 0);
   QTranslator translator;
-  translator.load(QString("songbook_%1").arg(locale), "./translations");
+  translator.load(QString("songbook_%1").arg(locale), "./lang");
   app.installTranslator(&translator);
   
   CMainWindow mainWindow;
