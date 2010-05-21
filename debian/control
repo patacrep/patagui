@@ -12,4 +12,4 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Client for patacrep songbooks
  The songbook-client is an interface to build
  customized PDF songbooks with lyrics, guitar 
- chords and lilypond sheets form patacrep songbook.
+ chords and lilypond sheets from patacrep songbook.
