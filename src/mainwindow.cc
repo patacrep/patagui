@@ -21,6 +21,7 @@
 #include "songbook.hh"
 #include "header.hh"
 #include "tools.hh"
+#include "download.hh"
 
 #include <QtGui>
 #include <QtSql>
@@ -278,6 +279,10 @@ void CMainWindow::createActions()
   rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
   connect(rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
+  downloadDbAct = new QAction("Download",this);
+  downloadDbAct->setStatusTip(tr("Download songs from Patacrep!"));
+  connect(downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
+
   CTools* tools = new CTools(workingPath(), this);
   resizeCoversAct = new QAction( tr("Resize covers"), this);
   resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory."));
@@ -286,8 +291,6 @@ void CMainWindow::createActions()
   checkerAct = new QAction( tr("Global check"), this);
   checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)."));
   connect(checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
-
-
 }
 //------------------------------------------------------------------------------
 void CMainWindow::connectDb()
@@ -359,7 +362,6 @@ void CMainWindow::createMenus()
   fileMenu->addAction(saveAct);
   fileMenu->addSeparator();
   fileMenu->addAction(buildAct);
-  fileMenu->addAction(rebuildDbAct);
   fileMenu->addAction(cleanAct);
   fileMenu->addSeparator();
   fileMenu->addAction(exitAct);
@@ -370,6 +372,10 @@ void CMainWindow::createMenus()
   editMenu->addAction(invertSelectionAct);
   editMenu->addSeparator();
   editMenu->addAction(preferencesAct);
+
+  dbMenu = menuBar()->addMenu(tr("&Database"));
+  dbMenu->addAction(downloadDbAct);
+  dbMenu->addAction(rebuildDbAct);
 
   viewMenu = menuBar()->addMenu(tr("&View"));
   viewMenu->addAction(displaySongInfoAct);
@@ -817,4 +823,18 @@ bool CMainWindow::createDbConnection()
 	     "album char(80), "
 	     "cover char(80))");
   return true;
+}
+//------------------------------------------------------------------------------
+void CMainWindow::downloadDialog()
+{
+  CDownloadDialog* dialog = new CDownloadDialog(this);
+  
+  
+  //if(dialog->m_updateWorkingDir)
+  //  setWorkingPath(dialog->downloadPath());
+  //
+  //if(dialog->m_requireSynchro)
+  //  synchroniseWithLocalSongs();    
+  //
+  //delete dialog;
 }

@@ -37,6 +37,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/songbook.cc
   src/header.cc
   src/tools.cc
+  src/download.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -45,6 +46,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/preferences.hh
   src/library.hh
   src/tools.hh
+  src/download.hh
   )
 #-------------------------------------------------------------------------------
 # ressources
@@ -75,7 +77,7 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 #-------------------------------------------------------------------------------
 # generating executable
-add_definitions(-DNAMEVER="${NAMEVER}" -DPREFIX="${CMAKE_INSTALL_PREFIX}" -DVERSION="${VERSION}")
+add_definitions(-g -DNAMEVER="${NAMEVER}" -DPREFIX="${CMAKE_INSTALL_PREFIX}" -DVERSION="${VERSION}")
 add_executable(songbook-client
   ${SONGBOOK_CLIENT_SOURCES} 
   ${SONGBOOK_CLIENT_MOCS} 

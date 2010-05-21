@@ -54,7 +54,8 @@ public slots:
   void updateCover(const QModelIndex & index);
   void updateHeader();
   void readProcessOut();
-  
+  void downloadDialog();
+  void synchroniseWithLocalSongs();  
   // void playSong();
 
 private slots:
@@ -72,7 +73,6 @@ private slots:
   void setDisplayLogInfo(bool value);
   void applyDisplayColumn();
   void connectDb();
-  void synchroniseWithLocalSongs();
   void filterRegExpChanged();
   void browseHeaderPicture();
   
@@ -92,12 +92,14 @@ private:
   bool createDbConnection();
 
   const QString workingPath();
-  void setWorkingPath(QString dirname);
 
   QStringList getSelectedSongs();
 
   /// Modify mybook.tex according to the selected options
   void applyBookType();
+
+public:
+  void setWorkingPath(QString dirname);
 
 public:
   // Widgets
@@ -159,6 +161,7 @@ private:
   // Menus
   QMenu *fileMenu;
   QMenu *editMenu;
+  QMenu *dbMenu;
   QMenu *viewMenu;
   QMenu *helpMenu;
 
@@ -178,6 +181,7 @@ private:
   QAction *displayLogInfoAct;
   QAction *adjustColumnsAct;
   QAction *connectDbAct;
+  QAction *downloadDbAct;
   QAction *rebuildDbAct;
   QAction *resizeCoversAct;
   QAction *checkerAct;
