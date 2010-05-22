@@ -39,11 +39,17 @@ public:
   void setAuthor(const QString &);
   void setVersion(const QString &);
   void setMail(const QString &);
-  void setPicture(const QString &);
+  //@param ABool: 
+  // - true if APicture is the absolute path to an image file
+  // - false if APicture is a basename
+  void setPicture(const QString & APicture, bool isPath=true);
   void setCopyright(const QString &);
+
+  void retrieveFields();
 
 private:
   void updateFile(const QString & ARegExp, const QString & AOption);
+  QString retrieveField(const QString & ARegExp);
 
   QString m_title;
   QString m_subtitle;

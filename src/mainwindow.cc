@@ -409,15 +409,15 @@ void CMainWindow::dockWidgets()
   QLabel* lpicture   = new QLabel(tr("Picture:"));
   QLabel* lcopyright = new QLabel(tr("Copyright:"));
 
-  //Todo: use CHeader getters to initialize except for picture
-  //since we want the path and not the basename that is in .tex file
-  m_title = new QLineEdit("Patacrep Songbook");
-  m_subtitle = new QLineEdit("Tome 1");
-  m_author = new QLineEdit("Crep, Lohrun");
-  m_version = new QLineEdit("0.1");
-  m_mail = new QLineEdit("crep@team-on-fire.com");
-  m_picture =new QLineEdit(QString("%1/img/feel-the-music.jpg").arg(workingPath()));
-  m_copyright = new QLineEdit("©deviantart");
+  CHeader header(workingPath());
+  header.retrieveFields();
+  m_title = new QLineEdit(header.title());
+  m_subtitle = new QLineEdit(header.subtitle());
+  m_author = new QLineEdit(header.author());
+  m_version = new QLineEdit(header.version());
+  m_mail = new QLineEdit(header.mail());
+  m_picture =new QLineEdit(QString("%1/img/%2.jpg").arg(workingPath()).arg(header.picture()));
+  m_copyright = new QLineEdit(header.copyright());
   m_picture->setReadOnly(true);
 
   QToolButton *browsePictureButton = new QToolButton;
@@ -522,9 +522,12 @@ void CMainWindow::updateHeader()
 //------------------------------------------------------------------------------
 void CMainWindow::browseHeaderPicture()
 {
+  //todo: right now, only .jpg is supported since it's hardcoded in dockWidgets
+  //problem is that in mybook.tex, there's just the basename so its extension 
+  //should be guessed from somewhere else.
   QString filename = QFileDialog::getOpenFileName(this, tr("Open Image File"),
 						  "/home",
-						  tr("Images (*.png *.jpg)"));
+						  tr("Images (*.jpg)"));
   if (!filename.isEmpty())
     m_picture->setText(filename);
 }
@@ -828,13 +831,4 @@ bool CMainWindow::createDbConnection()
 void CMainWindow::downloadDialog()
 {
   CDownloadDialog* dialog = new CDownloadDialog(this);
-  
-  
-  //if(dialog->m_updateWorkingDir)
-  //  setWorkingPath(dialog->downloadPath());
-  //
-  //if(dialog->m_requireSynchro)
-  //  synchroniseWithLocalSongs();    
-  //
-  //delete dialog;
 }

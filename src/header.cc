@@ -43,7 +43,7 @@ void CHeader::setTitle(const QString & ATitle)
 //------------------------------------------------------------------------------
 QString CHeader::subtitle()
 {
-  return m_title;
+  return m_subtitle;
 }
 //------------------------------------------------------------------------------
 void CHeader::setSubtitle(const QString & ASubtitle)
@@ -90,15 +90,22 @@ QString CHeader::picture()
   return m_picture;
 }
 //------------------------------------------------------------------------------
-void CHeader::setPicture(const QString & APicture)
+void CHeader::setPicture(const QString & APicture, bool isPath)
 {
   m_picture = APicture;
-  //copy the picture in img/ directory so it can be included by latex
-  QFile file(APicture);
-  QFileInfo fi(APicture);
-  file.copy(QString("%1/img/%2").arg(m_workingPath).arg(fi.fileName()));
-  QString basename = fi.baseName();
-  updateFile("\\\\picture\\{([^}]+)", basename);
+
+  if(isPath)
+    {
+      //copy the picture in img/ directory so it can be included by latex
+      QFile file(APicture);
+      QFileInfo fi(APicture);
+      QString target = QString("%1/img/%2").arg(m_workingPath).arg(fi.fileName());
+      file.copy(target);
+      QString basename = fi.baseName();
+      updateFile("\\\\picture\\{([^}]+)", basename);
+    }
+  else
+    updateFile("\\\\picture\\{([^}]+)", APicture);
 }
 //------------------------------------------------------------------------------
 QString CHeader::copyright()
@@ -137,4 +144,48 @@ void CHeader::updateFile(const QString & ARegExp, const QString & AOption)
     {
       std::cerr << "CHeader warning: unable to open file in read mode" << std::endl;
     }
+}
+//------------------------------------------------------------------------------
+void CHeader::retrieveFields()
+{
+  //title
+  setTitle( retrieveField("\\\\title\\{([^}]+)") );
+    
+  //subtitle
+  setSubtitle( retrieveField("\\\\subtitle\\{([^}]+)") );
+
+  //author
+  setAuthor( retrieveField("\\\\author\\{([^}]+)") );
+  
+  //version
+  setVersion( retrieveField("\\\\version\\{([^}]+)") );
+
+  //mail
+  setMail( retrieveField("\\\\mail\\{([^}]+)") );
+
+  //picture
+  setPicture( retrieveField("\\\\picture\\{([^}]+)"), false );
+
+  //picture copyright
+  setCopyright( retrieveField("\\\\picturecopyright\\{([^}]+)") );
+}
+//------------------------------------------------------------------------------
+QString CHeader::retrieveField(const QString & ARegExp)
+{
+  QString result, fileStr;
+  QFile file(QString("%1/mybook.tex").arg(m_workingPath));
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {      
+      QTextStream stream (&file);
+      fileStr = stream.readAll();
+      file.close();
+      QRegExp rx(ARegExp);
+      rx.indexIn(fileStr);
+      result = rx.cap(1);
+    }
+  else
+    {
+      std::cerr << "CHeader warning: unable to open file in read mode" << std::endl;
+    }
+  return result;
 }
