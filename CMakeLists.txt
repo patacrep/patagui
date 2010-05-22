@@ -11,20 +11,6 @@ endif()
 find_package(Qt4 COMPONENTS QtCore QtGui QtSql REQUIRED)
 set(QT_USE_QTSQL true)
 #-------------------------------------------------------------------------------
-# version
-if(NOT DEFINED VERSION)
-	find_program (GIT_CMD git)
-	execute_process (COMMAND "${GIT_CMD}" describe
-		OUTPUT_VARIABLE VERSION
-		OUTPUT_STRIP_TRAILING_WHITESPACE
-		)
-	if(NOT VERSION)
-		set(VERSION 0.1)
-	endif()
-	message (STATUS "Current version: ${VERSION}")
-endif()
-set(NAMEVER "Songbook Client ${VERSION}")
-#-------------------------------------------------------------------------------
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 #-------------------------------------------------------------------------------
@@ -77,7 +63,6 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 #-------------------------------------------------------------------------------
 # generating executable
-add_definitions(-g -DNAMEVER="${NAMEVER}" -DPREFIX="${CMAKE_INSTALL_PREFIX}" -DVERSION="${VERSION}")
 add_executable(songbook-client
   ${SONGBOOK_CLIENT_SOURCES} 
   ${SONGBOOK_CLIENT_MOCS} 
