@@ -222,9 +222,12 @@ void OptionsPage::browse()
                                                         tr("Find Files"), 
                                                         workingPath->text());
   
-  //Last char proof !
+  //Last char proof ! -> useless/to remove
   while(directory.endsWith("/"))
-    directory.remove(directory.lastIndexOf("/"),1);
+    {
+      std::cout<<"OptionsPage warning"<<std::endl;
+      directory.remove(directory.lastIndexOf("/"),1);
+    }
   
   if (!directory.isEmpty())
     workingPath->setText(directory);
