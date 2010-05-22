@@ -589,19 +589,32 @@ QStringList CMainWindow::getSelectedSongs()
 //------------------------------------------------------------------------------
 void CMainWindow::build()
 {
+  QStringList songlist = getSelectedSongs();
+  if( songlist.isEmpty() )
+    {
+      if(QMessageBox::question(this, this->windowTitle(), 
+			       QString(tr("You did not select any song. \n Do you want to build the songbook with all songs ?")), 
+			       QMessageBox::Yes, 
+			       QMessageBox::No, 
+			       QMessageBox::NoButton) == QMessageBox::No)
+	return;
+      else
+	{
+	  selectAll();
+	  songlist = getSelectedSongs();
+	}
+    }
   clean(); //else songbook indexes are likely to be wrong
   QString filename = QString("%1/mybook.sgl").arg(workingPath());
-  QStringList songlist = getSelectedSongs();
-  if(songlist.isEmpty()) return;
-
+  
   QString path = QString("%1/").arg(workingPath());
   songlist.replaceInStrings(path, QString());
   CSongbook songbook;
   songbook.setSongs(songlist);
   songbook.save(filename);
-
+  
   applyBookType();
-
+  
   if( m_bookTypeChordbook && m_optionLilypond )
     makeLilypondSheets();
   
@@ -614,12 +627,11 @@ void CMainWindow::build()
   connect(m_buildProcess, SIGNAL(readyReadStandardOutput()), 
 	  this, SLOT(readProcessOut()));
   m_log->clear();
-
+  
   QString msg(tr("The songbook generation is now in progress, please wait ..."));
   statusBar()->showMessage(msg);
   m_progressBar->show();
   m_buildProcess->start("make", QStringList() << "mybook.pdf");
-
 }
 //------------------------------------------------------------------------------
 void CMainWindow::readProcessOut()
