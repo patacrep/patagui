@@ -36,7 +36,20 @@ int main( int argc, char * argv[] )
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
   QString locale = QLocale::system().name().section('_', 0, 0);
   QTranslator translator;
-  translator.load(QString("songbook_%1").arg(locale), "./lang");
+  QString filename = QString("songbook_%1").arg(locale) + ".qm";
+  QString dir;
+  
+  const QDir systemDir("/usr/share/songbook-client/translations", "*.qm");
+  const QDir userDir("/usr/local/share/songbook-client/translations", "*.qm");
+  
+  if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
+      dir = systemDir.absolutePath();
+  else if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
+      dir = userDir.absolutePath();
+  else
+      dir = "./lang";
+    
+  translator.load(QString("songbook_%1").arg(locale), dir);
   app.installTranslator(&translator);
   
   CMainWindow mainWindow;
