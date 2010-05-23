@@ -27,6 +27,7 @@ class QStackedWidget;
 class QLineEdit;
 class QCheckBox;
 class QRadioButton;
+class QLabel;
 
 class ConfigDialog : public QDialog
 {
@@ -85,12 +86,19 @@ protected:
 
 private slots:
   void browse();
+  void browseHeaderPicture();
+  void pickColor();
+  void resetColor();
+  void checkWorkingPath(const QString&);
 
 private:
   void readSettings();
   void writeSettings();
+  void updateHeader();
+  void updateCustom();
 
   QLineEdit * workingPath;
+  QLabel* m_workingPathValid;
 
   QRadioButton *chordbookRadioButton;
   QRadioButton *lyricbookRadioButton;
@@ -98,6 +106,21 @@ private:
   QCheckBox *diagramCheckBox;
   QCheckBox *lilypondCheckBox;
   QCheckBox *tablatureCheckBox;
+
+  //Header
+  QLineEdit* m_title;
+  QLineEdit* m_subtitle;
+  QLineEdit* m_author;
+  QLineEdit* m_version;
+  QLineEdit* m_mail;
+  QLineEdit* m_picture;
+  QLineEdit* m_copyright;
+
+  //Custom
+  QColor* m_color;
+  QLabel* m_colorLabel;
+  
+  bool isValid;
 };
 
 #endif // __CONFIGDIALOG_H__

@@ -52,7 +52,6 @@ public slots:
   void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
   void buildError(QProcess::ProcessError error);
   void updateCover(const QModelIndex & index);
-  void updateHeader();
   void readProcessOut();
   void downloadDialog();
   void synchroniseWithLocalSongs();  
@@ -69,12 +68,10 @@ private slots:
   void unselectAll();
   void invertSelection();
   void setDisplaySongInfo(bool value);
-  void setDisplayBookInfo(bool value);
   void setDisplayLogInfo(bool value);
   void applyDisplayColumn();
   void connectDb();
   void filterRegExpChanged();
-  void browseHeaderPicture();
   
   void dockWidgets();
   void preferences();
@@ -133,7 +130,6 @@ private:
   QMdiArea* m_area;
   QScrollArea* m_scrollArea;
   QDockWidget* m_songInfo;
-  QDockWidget* m_bookInfo;
   QDockWidget* m_logInfo;
   QPixmap* m_cover;
   QLabel   m_coverLabel;
@@ -177,7 +173,6 @@ private:
   QAction *unselectAllAct;
   QAction *invertSelectionAct;
   QAction *displaySongInfoAct;
-  QAction *displayBookInfoAct;
   QAction *displayLogInfoAct;
   QAction *adjustColumnsAct;
   QAction *connectDbAct;

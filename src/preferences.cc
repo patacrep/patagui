@@ -17,9 +17,10 @@
 //******************************************************************************
 
 #include "preferences.hh"
+#include "header.hh"
+#include "custom.hh"
 
 #include <QtGui>
-
 #include <iostream>
 
 ConfigDialog::ConfigDialog()
@@ -169,14 +170,18 @@ OptionsPage::OptionsPage(QWidget *parent)
   : QWidget(parent)
 {
   QSettings settings;
+  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
 
   QGroupBox *workingPathGroupBox = new QGroupBox(tr("Directory for Patacrep Songbook"));
 
   QPushButton *browseWorkingPathButton = new QPushButton(tr("Browse"));
   connect(browseWorkingPathButton, SIGNAL(clicked()), this, SLOT(browse()));
   workingPath = new QLineEdit(QString());
+  connect(workingPath, SIGNAL(textChanged(const QString&)), this, SLOT(checkWorkingPath(const QString&)));
+  m_workingPathValid = new QLabel;
+  checkWorkingPath(workingDir);
 
-  QGroupBox *bookTypeGroupBox = new QGroupBox(tr("Book Type"));
+  QGroupBox *songbookOptionsGroupBox = new QGroupBox(tr("Main options"));
 
   QButtonGroup *bookTypeGroup = new QButtonGroup();
   chordbookRadioButton = new QRadioButton(tr("Chordbook"));
@@ -184,32 +189,95 @@ OptionsPage::OptionsPage(QWidget *parent)
   lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
   bookTypeGroup->addButton(lyricbookRadioButton);
   
-  QGroupBox *chordbookOptionsGroupBox = new QGroupBox(tr("Chordbook Options"));
-  
   diagramCheckBox = new QCheckBox(tr("Chord Diagram"));
   lilypondCheckBox = new QCheckBox(tr("Lilypond"));
   tablatureCheckBox = new QCheckBox(tr("Tablature"));
 
-  QHBoxLayout *workingPathLayout = new QHBoxLayout;
-  workingPathLayout->addWidget(workingPath,50);
-  workingPathLayout->addWidget(browseWorkingPathButton);
+  QGroupBox* frontPageOptionsGroupBox = new QGroupBox(tr("Front Page Options"));
+  QLabel* ltitle     = new QLabel(tr("Title:"));
+  QLabel* lsubtitle  = new QLabel(tr("Subtitle:"));
+  QLabel* lauthor    = new QLabel(tr("Author:"));
+  QLabel* lversion   = new QLabel(tr("Version:"));
+  QLabel* lmail      = new QLabel(tr("Mail:"));
+  QLabel* lpicture   = new QLabel(tr("Picture:"));
+  QLabel* lcopyright = new QLabel(tr("Copyright:"));
+
+  CHeader header(workingDir);
+  header.retrieveFields();
+  m_title = new QLineEdit(header.title());
+  m_subtitle = new QLineEdit(header.subtitle());
+  m_author = new QLineEdit(header.author());
+  m_version = new QLineEdit(header.version());
+  m_mail = new QLineEdit(header.mail());
+  m_picture =new QLineEdit(QString("%1/img/%2.jpg").arg(workingDir).arg(header.picture()));
+  m_copyright = new QLineEdit(header.copyright());
+  m_picture->setReadOnly(true);
+    
+  QToolButton *browsePictureButton = new QToolButton;
+  browsePictureButton->setIcon(QIcon(":/icons/document-load.png"));
+  connect(browsePictureButton, SIGNAL(clicked()),
+	  this, SLOT(browseHeaderPicture()) );
+  
+  QGroupBox* customOptionsGroupBox = new QGroupBox(tr("Custom options"));
+  QLabel* lboxColor = new QLabel(tr("Boxes color:"));
+  m_colorLabel = new QLabel;
+  m_color = new QColor(209,228,174);
+  m_colorLabel->setText(m_color->name());
+  m_colorLabel->setPalette(QPalette(*m_color));
+  m_colorLabel->setAutoFillBackground(true);
+
+  QPushButton *pickColorButton = new QPushButton(tr("Change"));
+  connect(pickColorButton, SIGNAL(clicked()), this, SLOT(pickColor()));
+
+  QToolButton *resetColorButton = new QToolButton;
+  resetColorButton->setIcon(QIcon(":/icons/edit-clear.png"));
+  connect(resetColorButton, SIGNAL(clicked()),
+	  this, SLOT(resetColor()) );
+
+  QGridLayout *workingPathLayout = new QGridLayout;
+  workingPathLayout->addWidget(workingPath,0,0,1,1);
+  workingPathLayout->addWidget(browseWorkingPathButton,0,1,1,1);
+  workingPathLayout->addWidget(m_workingPathValid,1,0,2,1);
   workingPathGroupBox->setLayout(workingPathLayout);
 
-  QVBoxLayout *bookTypeLayout = new QVBoxLayout;
-  bookTypeLayout->addWidget(chordbookRadioButton);
-  bookTypeLayout->addWidget(lyricbookRadioButton);
-  bookTypeGroupBox->setLayout(bookTypeLayout);
+  QGridLayout *songbookOptionsLayout = new QGridLayout;
+  songbookOptionsLayout->addWidget(chordbookRadioButton,0,0,1,1);
+  songbookOptionsLayout->addWidget(lyricbookRadioButton,1,0,1,1);
+  songbookOptionsLayout->addWidget(diagramCheckBox,0,1,1,1);
+  songbookOptionsLayout->addWidget(lilypondCheckBox,1,1,1,1);
+  songbookOptionsLayout->addWidget(tablatureCheckBox,2,1,1,1);
+  songbookOptionsGroupBox->setLayout(songbookOptionsLayout);
 
-  QVBoxLayout *chordbookOptionsLayout = new QVBoxLayout;
-  chordbookOptionsLayout->addWidget(diagramCheckBox);
-  chordbookOptionsLayout->addWidget(lilypondCheckBox);
-  chordbookOptionsLayout->addWidget(tablatureCheckBox);
-  chordbookOptionsGroupBox->setLayout(chordbookOptionsLayout);
+  QGridLayout *frontPageLayout = new QGridLayout();
+  frontPageLayout->addWidget(ltitle,0,0,1,1);
+  frontPageLayout->addWidget(m_title,0,1,1,3);
+  frontPageLayout->addWidget(lsubtitle,1,0,1,1);
+  frontPageLayout->addWidget(m_subtitle,1,1,1,3);
+  frontPageLayout->addWidget(lauthor,2,0,1,1);
+  frontPageLayout->addWidget(m_author,2,1,1,3);
+  frontPageLayout->addWidget(lversion,3,0,1,1);
+  frontPageLayout->addWidget(m_version,3,1,1,3);
+  frontPageLayout->addWidget(lmail,4,0,1,1);
+  frontPageLayout->addWidget(m_mail,4,1,1,3);
+  frontPageLayout->addWidget(lpicture,5,0,1,1);
+  frontPageLayout->addWidget(m_picture,5,1,1,2);
+  frontPageLayout->addWidget(browsePictureButton,5,3,1,1);
+  frontPageLayout->addWidget(lcopyright,6,0,1,1);
+  frontPageLayout->addWidget(m_copyright,6,1,1,3);
+  frontPageOptionsGroupBox->setLayout(frontPageLayout);
+
+  QGridLayout *customOptionsLayout = new QGridLayout();
+  customOptionsLayout->addWidget(lboxColor,0,0,1,1);
+  customOptionsLayout->addWidget(m_colorLabel,0,1,1,1);
+  customOptionsLayout->addWidget(pickColorButton,0,2,1,1);
+  customOptionsLayout->addWidget(resetColorButton,0,3,1,1);
+  customOptionsGroupBox->setLayout(customOptionsLayout);
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
-  mainLayout->addWidget(bookTypeGroupBox);
-  mainLayout->addWidget(chordbookOptionsGroupBox);
+  mainLayout->addWidget(songbookOptionsGroupBox);
+  mainLayout->addWidget(frontPageOptionsGroupBox);
+  mainLayout->addWidget(customOptionsGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 
@@ -222,15 +290,44 @@ void OptionsPage::browse()
                                                         tr("Find Files"), 
                                                         workingPath->text());
   
-  //Last char proof ! -> useless/to remove
-  while(directory.endsWith("/"))
-    {
-      std::cout<<"OptionsPage warning"<<std::endl;
-      directory.remove(directory.lastIndexOf("/"),1);
-    }
-  
   if (!directory.isEmpty())
-    workingPath->setText(directory);
+    {
+      workingPath->setText(directory);
+      checkWorkingPath(directory);
+    }
+}
+
+void OptionsPage::pickColor()
+{
+  m_color = new QColor(QColorDialog::getColor(QColor(209,228,174), this));
+  if (m_color->isValid())
+    {
+      m_colorLabel->setText(m_color->name());
+      m_colorLabel->setPalette(QPalette(*m_color));
+      m_colorLabel->setAutoFillBackground(true);
+    }
+}
+
+void OptionsPage::resetColor()
+{
+  if(m_color) delete m_color;
+  m_color = new QColor(209,228,174);
+  m_colorLabel->setText(m_color->name());
+  m_colorLabel->setPalette(QPalette(*m_color));
+  m_colorLabel->setAutoFillBackground(true);
+  
+}
+
+void OptionsPage::browseHeaderPicture()
+{
+  //todo: right now, only .jpg is supported since it's hardcoded in dockWidgets
+  //problem is that in mybook.tex, there's just the basename so its extension 
+  //should be guessed from somewhere else.
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open Image File"),
+						  "/home",
+						  tr("Images (*.jpg)"));
+  if (!filename.isEmpty())
+    m_picture->setText(filename);
 }
 
 void OptionsPage::readSettings()
@@ -244,7 +341,16 @@ void OptionsPage::readSettings()
   diagramCheckBox->setChecked(settings.value("chordDiagram", true).toBool());
   lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   tablatureCheckBox->setChecked(settings.value("tablature", true).toBool());
+  m_color = new QColor(settings.value("color").value<QColor>());
   settings.endGroup();
+
+  //todo: put somewhere else
+  if(m_color)
+    {
+      m_colorLabel->setText(m_color->name());
+      m_colorLabel->setPalette(QPalette(*m_color));
+      m_colorLabel->setAutoFillBackground(true);
+    }
 }
 
 void OptionsPage::writeSettings()
@@ -258,11 +364,97 @@ void OptionsPage::writeSettings()
   settings.setValue("chordDiagram", diagramCheckBox->isChecked());
   settings.setValue("lilypond", lilypondCheckBox->isChecked());
   settings.setValue("tablature", tablatureCheckBox->isChecked());
-  settings.endGroup();  
+  settings.setValue("color", *m_color);
+  settings.endGroup();
 }
 
 void OptionsPage::closeEvent(QCloseEvent *event)
 {
   writeSettings();
+  if(isValid)
+    {
+      updateHeader(); //modify mybook.tex with front page settings
+      updateCustom(); //modify crepbook.tex with custom settings
+    }
   event->accept();
+}
+
+//------------------------------------------------------------------------------
+void OptionsPage::updateHeader()
+{
+  QSettings settings;
+  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();  
+  CHeader header(workingDir);
+  header.setTitle(m_title->text());
+  header.setSubtitle(m_subtitle->text());
+  header.setAuthor(m_author->text());
+  header.setVersion(m_version->text());
+  header.setMail(m_mail->text());
+  header.setPicture(m_picture->text());
+  header.setCopyright(m_copyright->text());
+}
+//------------------------------------------------------------------------------
+void OptionsPage::updateCustom()
+{
+  QSettings settings;
+  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();  
+  CCustom custom(workingDir);
+  custom.setColorBox(m_colorLabel->text());
+}
+//------------------------------------------------------------------------------
+void OptionsPage::checkWorkingPath(const QString & path)
+{
+  isValid = false;
+  QDir directory(path);
+  if(!directory.exists())
+    {
+      m_workingPathValid->setText("<font color=red>Invalid songbook directory: directory does not exist.</font>");
+      return;
+    }
+
+  if(!directory.entryList(QDir::Files | QDir::Readable).contains("makefile"))
+    {
+      m_workingPathValid->setText("<font color=red>Invalid songbook directory: makefile not found.</font>");
+      return;
+    }
+
+  if(!directory.entryList(QDir::Files | QDir::Readable).contains("mybook.tex"))
+    {
+      m_workingPathValid->setText("<font color=red>Invalid songbook directory: mybook.tex not found.</font>");
+      return;
+    }
+
+  // subdirectories
+  QDir songs( QString("%1/songs").arg(path) );
+  QDir utils( QString("%1/utils").arg(path) );
+  QDir lilypond( QString("%1/lilypond").arg(path) );
+  QDir img( QString("%1/img").arg(path) );
+
+  if(!songs.exists())
+    {
+      m_workingPathValid->setText("<font color=red>Invalid songbook directory: subdirectory songs/ not found.</font>");
+      return;
+    }
+
+  if(!img.exists())
+    {
+      m_workingPathValid->setText("<font color=red>Invalid songbook directory: subdirectory img/ not found.</font>");
+      return;
+    }
+
+  isValid = true;
+
+  if(!lilypond.exists())
+    {
+      m_workingPathValid->setText("<font color=orange>Warning: subdirectory lilypond/ not found.</font>");
+      return;
+    }
+
+  if(!utils.exists())
+    {
+      m_workingPathValid->setText("<font color=orange>Warning: subdirectory utils/ not found.</font>");
+      return;
+    }
+
+  m_workingPathValid->setText("<font color=green>The songbook directory is valid.</font>");
 }

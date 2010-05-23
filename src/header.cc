@@ -24,7 +24,12 @@
 //------------------------------------------------------------------------------
 CHeader::CHeader(const QString & ADir)
 {
-  m_workingPath = ADir;
+  //Last char proof
+  QString tmp = ADir;
+  while(tmp.endsWith("/"))
+    tmp.remove(tmp.lastIndexOf("/"),1);
+
+  m_workingPath = tmp;
 }
 //------------------------------------------------------------------------------
 CHeader::~CHeader()
@@ -37,8 +42,11 @@ QString CHeader::title()
 //------------------------------------------------------------------------------
 void CHeader::setTitle(const QString & ATitle)
 {
-  m_title = ATitle;
-  updateFile("\\\\title\\{([^}]+)", ATitle);
+  if(!ATitle.isEmpty())
+    {
+      m_title = ATitle;
+      updateFile("\\\\title\\{([^}]+)", ATitle);
+    }
 }
 //------------------------------------------------------------------------------
 QString CHeader::subtitle()
@@ -48,8 +56,11 @@ QString CHeader::subtitle()
 //------------------------------------------------------------------------------
 void CHeader::setSubtitle(const QString & ASubtitle)
 {
-  m_subtitle = ASubtitle;
-  updateFile("\\\\subtitle\\{([^}]+)", ASubtitle);
+  if(!ASubtitle.isEmpty())
+    {
+      m_subtitle = ASubtitle;
+      updateFile("\\\\subtitle\\{([^}]+)", ASubtitle);
+    }
 }
 //------------------------------------------------------------------------------
 QString CHeader::author()
@@ -59,8 +70,11 @@ QString CHeader::author()
 //------------------------------------------------------------------------------
 void CHeader::setAuthor(const QString & AAuthor)
 {
-  m_author = AAuthor;
-  updateFile("\\\\author\\{([^}]+)", AAuthor);
+  if(!AAuthor.isEmpty())
+    {
+      m_author = AAuthor;
+      updateFile("\\\\author\\{([^}]+)", AAuthor);
+    }
 }
 //------------------------------------------------------------------------------
 QString CHeader::version()
@@ -70,8 +84,11 @@ QString CHeader::version()
 //------------------------------------------------------------------------------
 void CHeader::setVersion(const QString & AVersion)
 {
-  m_version = AVersion;
-  updateFile("\\\\version\\{([^}]+)", AVersion);
+  if(!AVersion.isEmpty())
+    {
+      m_version = AVersion;
+      updateFile("\\\\version\\{([^}]+)", AVersion);
+    }
 }
 //------------------------------------------------------------------------------
 QString CHeader::mail()
@@ -81,8 +98,11 @@ QString CHeader::mail()
 //------------------------------------------------------------------------------
 void CHeader::setMail(const QString & AMail)
 {
-  m_mail = AMail;
-  updateFile("\\\\mail\\{([^}]+)", AMail);
+  if(!AMail.isEmpty())
+    {
+      m_mail = AMail;
+      updateFile("\\\\mail\\{([^}]+)", AMail);
+    }
 }
 //------------------------------------------------------------------------------
 QString CHeader::picture()
@@ -92,20 +112,26 @@ QString CHeader::picture()
 //------------------------------------------------------------------------------
 void CHeader::setPicture(const QString & APicture, bool isPath)
 {
-  m_picture = APicture;
-
-  if(isPath)
-    {
-      //copy the picture in img/ directory so it can be included by latex
-      QFile file(APicture);
-      QFileInfo fi(APicture);
-      QString target = QString("%1/img/%2").arg(m_workingPath).arg(fi.fileName());
-      file.copy(target);
-      QString basename = fi.baseName();
-      updateFile("\\\\picture\\{([^}]+)", basename);
-    }
-  else
-    updateFile("\\\\picture\\{([^}]+)", APicture);
+  if(!APicture.isEmpty())
+    if(isPath)
+      {
+	//copy the picture in img/ directory so it can be included by latex
+	QFile file(APicture);
+	QFileInfo fi(APicture);
+	QString target = QString("%1/img/%2").arg(m_workingPath).arg(fi.fileName());
+	file.copy(target);
+	QString basename = fi.baseName();
+	if(!basename.isEmpty())
+	  {
+	    m_picture = APicture;
+	    updateFile("\\\\picture\\{([^}]+)", basename);
+	  }
+      }
+    else
+      {
+	m_picture = APicture;
+	updateFile("\\\\picture\\{([^}]+)", APicture);
+      }
 }
 //------------------------------------------------------------------------------
 QString CHeader::copyright()
@@ -115,8 +141,11 @@ QString CHeader::copyright()
 //------------------------------------------------------------------------------
 void CHeader::setCopyright(const QString & ACopyright)
 {
-  m_copyright = ACopyright;
-  updateFile("\\\\picturecopyright\\{([^}]+)", ACopyright);
+  if(!ACopyright.isEmpty())
+    {
+      m_copyright = ACopyright;
+      updateFile("\\\\picturecopyright\\{([^}]+)", ACopyright);
+    }
 }
 //------------------------------------------------------------------------------
 void CHeader::updateFile(const QString & ARegExp, const QString & AOption)
@@ -149,25 +178,25 @@ void CHeader::updateFile(const QString & ARegExp, const QString & AOption)
 void CHeader::retrieveFields()
 {
   //title
-  setTitle( retrieveField("\\\\title\\{([^}]+)") );
+  m_title = retrieveField("\\\\title\\{([^}]+)");
     
   //subtitle
-  setSubtitle( retrieveField("\\\\subtitle\\{([^}]+)") );
+  m_subtitle = retrieveField("\\\\subtitle\\{([^}]+)");
 
   //author
-  setAuthor( retrieveField("\\\\author\\{([^}]+)") );
+  m_author = retrieveField("\\\\author\\{([^}]+)");
   
   //version
-  setVersion( retrieveField("\\\\version\\{([^}]+)") );
+  m_version = retrieveField("\\\\version\\{([^}]+)");
 
   //mail
-  setMail( retrieveField("\\\\mail\\{([^}]+)") );
+  m_mail = retrieveField("\\\\mail\\{([^}]+)");
 
   //picture
   setPicture( retrieveField("\\\\picture\\{([^}]+)"), false );
-
+ 
   //picture copyright
-  setCopyright( retrieveField("\\\\picturecopyright\\{([^}]+)") );
+  m_copyright =  retrieveField("\\\\picturecopyright\\{([^}]+)");
 }
 //------------------------------------------------------------------------------
 QString CHeader::retrieveField(const QString & ARegExp)
@@ -183,9 +212,11 @@ QString CHeader::retrieveField(const QString & ARegExp)
       rx.indexIn(fileStr);
       result = rx.cap(1);
     }
-  else
-    {
-      std::cerr << "CHeader warning: unable to open file in read mode" << std::endl;
-    }
+  //  else
+  //    {
+  //      std::cerr << "CHeader warning: unable to open "
+  //		<< QString("%1/mybook.tex").arg(m_workingPath).toStdString() 
+  //		<< " in read mode" << std::endl;
+  //    }
   return result;
 }
