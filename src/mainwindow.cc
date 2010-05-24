@@ -392,6 +392,8 @@ void CMainWindow::dockWidgets()
   QLabel *artistLabel = new QLabel();
   QLabel *titleLabel = new QLabel();
   QLabel *albumLabel = new QLabel();
+  //m_cover = new QPixmap(":/icons/unavailable");
+  //m_coverLabel.setPixmap(*m_cover);
 
   QGridLayout *songInfoLayout = new QGridLayout();
   songInfoLayout->addWidget(&m_coverLabel,0,0,1,2);
@@ -433,7 +435,13 @@ void CMainWindow::dockWidgets()
 void CMainWindow::updateCover(const QModelIndex & index)
 {
   if(m_cover) delete m_cover;
-  m_cover = new QPixmap( library->record(proxyModel->mapToSource(index).row()).field("cover").value().toString() );
+  QString coverpath = library->record(proxyModel->mapToSource(index).row()).field("cover").value().toString();
+  if(!QFileInfo(coverpath).baseName().isEmpty())
+    m_cover = new QPixmap(coverpath);
+  else if(selectionModel->hasSelection())
+    m_cover = new QPixmap(":/icons/unavailable-large");
+  else
+    return;
   m_coverLabel.setPixmap(*m_cover);
 }
 //------------------------------------------------------------------------------
