@@ -20,6 +20,7 @@
 
 #include <QDialog>
 #include <QWidget>
+#include <QProcess>
 
 class QListWidget;
 class QListWidgetItem;
@@ -90,6 +91,9 @@ private slots:
   void pickColor();
   void resetColor();
   void checkWorkingPath(const QString&);
+  void checkLilypondVersion(int);
+  void processError(QProcess::ProcessError error);
+  void readProcessOut();
 
 private:
   void readSettings();
@@ -107,6 +111,11 @@ private:
   QCheckBox *lilypondCheckBox;
   QCheckBox *tablatureCheckBox;
 
+  //check lilypond version
+  QLabel* m_lilypondLabel;
+  QProcess* m_lilypondCheck;
+  QProcess* m_grep;
+  
   //Header
   QLineEdit* m_title;
   QLineEdit* m_subtitle;

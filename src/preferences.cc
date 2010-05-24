@@ -192,6 +192,8 @@ OptionsPage::OptionsPage(QWidget *parent)
   diagramCheckBox = new QCheckBox(tr("Chord Diagram"));
   lilypondCheckBox = new QCheckBox(tr("Lilypond"));
   tablatureCheckBox = new QCheckBox(tr("Tablature"));
+  m_lilypondLabel = new QLabel;
+  connect(lilypondCheckBox, SIGNAL(stateChanged(int)),this,SLOT(checkLilypondVersion(int)));
 
   QGroupBox* frontPageOptionsGroupBox = new QGroupBox(tr("Front Page Options"));
   QLabel* ltitle     = new QLabel(tr("Title:"));
@@ -246,6 +248,7 @@ OptionsPage::OptionsPage(QWidget *parent)
   songbookOptionsLayout->addWidget(diagramCheckBox,0,1,1,1);
   songbookOptionsLayout->addWidget(lilypondCheckBox,1,1,1,1);
   songbookOptionsLayout->addWidget(tablatureCheckBox,2,1,1,1);
+  songbookOptionsLayout->addWidget(m_lilypondLabel,3,0,2,1);
   songbookOptionsGroupBox->setLayout(songbookOptionsLayout);
 
   QGridLayout *frontPageLayout = new QGridLayout();
@@ -457,4 +460,42 @@ void OptionsPage::checkWorkingPath(const QString & path)
     }
 
   m_workingPathValid->setText("<font color=green>The songbook directory is valid.</font>");
+}
+//------------------------------------------------------------------------------
+void OptionsPage::checkLilypondVersion(int AState)
+{
+  if(AState==Qt::Checked)
+    {
+      m_lilypondCheck = new QProcess(this);
+      m_grep = new QProcess(this);
+
+      connect(m_lilypondCheck, SIGNAL(error(QProcess::ProcessError)), 
+	      this, SLOT(processError(QProcess::ProcessError)));
+      connect(m_grep, SIGNAL(readyReadStandardOutput()), 
+	      this, SLOT(readProcessOut()));
+      
+      QStringList argsLily;
+      argsLily << "--version";
+      QStringList argsGrep;
+      argsGrep << "-E"<<"3";
+
+      m_lilypondCheck->setStandardOutputProcess(m_grep);
+      m_lilypondCheck->start("lilypond", argsLily);
+      m_grep->start("grep", argsGrep);
+    }
+  else
+    {
+      m_lilypondLabel->setText("");
+    }
+}
+//------------------------------------------------------------------------------
+void OptionsPage::processError(QProcess::ProcessError error)
+{
+  m_lilypondLabel->setText(tr("<font color=orange>Warning: <a href=\"http://lilypond.org\">Lilypond</a> not found</font>"));
+}
+//------------------------------------------------------------------------------
+void OptionsPage::readProcessOut()
+{
+  QString res = m_grep->readAllStandardOutput().data();
+  m_lilypondLabel->setText(QString("<font color=green>Found: %1</font>").arg(res));
 }
