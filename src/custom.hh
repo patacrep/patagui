@@ -27,8 +27,10 @@ public:
   virtual ~CCustom();
   
   QString colorBox();
+  QString fontSize();
   
   void setColorBox(QString);
+  void setFontSize(int);
 
   void retrieveFields();
 
@@ -40,5 +42,6 @@ private:
 
   //Custom Fields of crepbook.cls
   QString m_colorBox;
+  QString m_fontSize;
 };
 #endif

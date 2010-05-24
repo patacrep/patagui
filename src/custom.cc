@@ -50,6 +50,39 @@ void CCustom::setColorBox(QString AColor)
     }
 }
 //------------------------------------------------------------------------------
+QString CCustom::fontSize()
+{
+  return m_fontSize;
+}
+//------------------------------------------------------------------------------
+void CCustom::setFontSize(int ASize)
+{
+  QString latexsize;
+  switch(ASize)
+    {
+    case 0:
+      latexsize = "footnotesize";
+      break;
+    case 1:
+      latexsize = "small";
+      break;
+    case 2:
+      latexsize = "normalsize";
+      break;
+    case 3:
+      latexsize = "large";
+      break;
+    case 4:
+      latexsize = "Large";
+      break;
+    default:
+      latexsize = "normalsize";
+    }
+
+  m_fontSize = latexsize;
+  updateFile("\\\\renewcommand\\{\\\\lyricfont\\}\\{\\\\normalfont\\\\([^}]+)", latexsize);
+}
+//------------------------------------------------------------------------------
 void CCustom::updateFile(const QString & ARegExp, const QString & AOption)
 {
   QFile file(QString("%1/crepbook.cls").arg(m_workingPath));
@@ -81,6 +114,9 @@ void CCustom::retrieveFields()
 {
   //boxes color
   m_colorBox = retrieveField("\\\\definecolor\\{SongbookShade\\}\\{HTML\\}\\{([^}]+)");
+
+  //font size
+  m_fontSize = retrieveField("\\\\renewcommand\\{\\\\lyricfont\\}\\{\\\\normalfont\\\\([^}]+)");
 }
 //------------------------------------------------------------------------------
 QString CCustom::retrieveField(const QString & ARegExp)

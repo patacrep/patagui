@@ -227,7 +227,16 @@ OptionsPage::OptionsPage(QWidget *parent)
   m_colorLabel->setText(m_color->name());
   m_colorLabel->setPalette(QPalette(*m_color));
   m_colorLabel->setAutoFillBackground(true);
-
+  QLabel* lfontSize = new QLabel(tr("Font size:"));
+  m_sliderFontSize = new QSlider(Qt::Horizontal);
+  m_sliderFontSize->setRange(0,4);
+  m_sliderFontSize->setPageStep(1);
+  m_sliderFontSize->setSingleStep(1);
+  m_sliderFontSize->setTickPosition(QSlider::TicksBelow);
+  m_sliderFontSize->setValue(2);
+  QLabel* lsmall = new QLabel(tr("small"));
+  QLabel* llarge = new QLabel(tr("large"));
+  
   QPushButton *pickColorButton = new QPushButton(tr("Change"));
   connect(pickColorButton, SIGNAL(clicked()), this, SLOT(pickColor()));
 
@@ -271,9 +280,13 @@ OptionsPage::OptionsPage(QWidget *parent)
 
   QGridLayout *customOptionsLayout = new QGridLayout();
   customOptionsLayout->addWidget(lboxColor,0,0,1,1);
-  customOptionsLayout->addWidget(m_colorLabel,0,1,1,1);
-  customOptionsLayout->addWidget(pickColorButton,0,2,1,1);
-  customOptionsLayout->addWidget(resetColorButton,0,3,1,1);
+  customOptionsLayout->addWidget(m_colorLabel,0,1,1,3);
+  customOptionsLayout->addWidget(pickColorButton,0,4,1,1);
+  customOptionsLayout->addWidget(resetColorButton,0,5,1,1);
+  customOptionsLayout->addWidget(lfontSize,1,0,1,1);
+  customOptionsLayout->addWidget(lsmall,1,1,1,1);
+  customOptionsLayout->addWidget(m_sliderFontSize,1,2,1,1);
+  customOptionsLayout->addWidget(llarge,1,3,1,1);
   customOptionsGroupBox->setLayout(customOptionsLayout);
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -345,6 +358,7 @@ void OptionsPage::readSettings()
   lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   tablatureCheckBox->setChecked(settings.value("tablature", true).toBool());
   m_color = new QColor(settings.value("color").value<QColor>());
+  m_sliderFontSize->setValue(settings.value("fontsize").toInt());
   settings.endGroup();
 
   //todo: put somewhere else
@@ -368,6 +382,7 @@ void OptionsPage::writeSettings()
   settings.setValue("lilypond", lilypondCheckBox->isChecked());
   settings.setValue("tablature", tablatureCheckBox->isChecked());
   settings.setValue("color", *m_color);
+  settings.setValue("fontsize", m_sliderFontSize->value());
   settings.endGroup();
 }
 
@@ -403,6 +418,7 @@ void OptionsPage::updateCustom()
   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();  
   CCustom custom(workingDir);
   custom.setColorBox(m_colorLabel->text());
+  custom.setFontSize(m_sliderFontSize->sliderPosition());
 }
 //------------------------------------------------------------------------------
 void OptionsPage::checkWorkingPath(const QString & path)

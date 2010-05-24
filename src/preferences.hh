@@ -29,6 +29,7 @@ class QLineEdit;
 class QCheckBox;
 class QRadioButton;
 class QLabel;
+class QSlider;
 
 class ConfigDialog : public QDialog
 {
@@ -128,6 +129,7 @@ private:
   //Custom
   QColor* m_color;
   QLabel* m_colorLabel;
+  QSlider* m_sliderFontSize;
   
   bool isValid;
 };
