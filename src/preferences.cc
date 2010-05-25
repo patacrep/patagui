@@ -493,7 +493,7 @@ void OptionsPage::checkLilypondVersion(int AState)
       QStringList argsLily;
       argsLily << "--version";
       QStringList argsGrep;
-      argsGrep << "-E"<<"3";
+      argsGrep << "GNU LilyPond";
 
       m_lilypondCheck->setStandardOutputProcess(m_grep);
       m_lilypondCheck->start("lilypond", argsLily);
