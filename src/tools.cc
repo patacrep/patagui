@@ -35,7 +35,7 @@ void CTools::toolProcessExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
   if(exitStatus == QProcess::NormalExit && exitCode==0)
     {
-      m_parent->m_progressBar->hide();
+      m_parent->progressBar()->hide();
       m_parent->statusBar()->showMessage(tr("Success!"));
     }
 }
@@ -62,7 +62,7 @@ void CTools::resizeCovers()
   
   QString msg(tr("Checking for covers to resize ..."));
   m_parent->statusBar()->showMessage(msg);
-  m_parent->m_progressBar->show();
+  m_parent->progressBar()->show();
   m_process->start("./utils/resize-cover.sh");
   
   if (!m_process->waitForFinished()) 
@@ -81,7 +81,7 @@ void CTools::globalCheck()
  
   QString msg(tr("Applying typo rules ..."));
   m_parent->statusBar()->showMessage(msg);
-  m_parent->m_progressBar->show();
+  m_parent->progressBar()->show();
   m_process->start("./utils/latex-preprocessing.py");
   
   if (!m_process->waitForFinished()) 

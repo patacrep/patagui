@@ -43,9 +43,7 @@ public:
   CMainWindow();
   ~CMainWindow();
 
-protected:
-  void closeEvent(QCloseEvent *event);
-  void contextMenuEvent(QContextMenuEvent *event);
+  QProgressBar * progressBar();
 
 public slots:
   void buildFinished(int exitCode, QProcess::ExitStatus exitStatus);
@@ -56,6 +54,12 @@ public slots:
   void downloadDialog();
   void synchroniseWithLocalSongs();  
   // void playSong();
+
+  void setWorkingPath(QString dirname);
+
+protected:
+  void closeEvent(QCloseEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
   void open();
@@ -71,7 +75,7 @@ private slots:
   void setDisplayLogInfo(bool value);
   void applyDisplayColumn();
   void connectDb();
-  void filterRegExpChanged();
+  void filterChanged();
   
   void dockWidgets();
   void preferences();
@@ -95,19 +99,15 @@ private:
   /// Modify mybook.tex according to the selected options
   void applyBookType();
 
-public:
-  void setWorkingPath(QString dirname);
+  QItemSelectionModel * selectionModel();
 
-public:
-  // Widgets
-  QProgressBar* m_progressBar;
-
-private:
   // Song library and view
   CLibrary *m_library;
-  QTableView *m_view;
-  QItemSelectionModel *m_selectionModel;
   QSortFilterProxyModel *m_proxyModel;
+
+  // Widgets
+  QTableView *m_view;
+  QProgressBar* m_progressBar;
 
   // Global
   QString m_workingPath;
@@ -131,16 +131,9 @@ private:
   QScrollArea* m_scrollArea;
   QDockWidget* m_songInfo;
   QDockWidget* m_logInfo;
-  QPixmap* m_cover;
-  QLabel   m_coverLabel;
+  QPixmap *m_cover;
+  QLabel m_coverLabel;
   uint m_dbType;
-
-  //Filtering
-  QLineEdit* m_filterPatternLineEdit;
-  QLabel* m_filterPatternLabel;
-  QComboBox* m_filterSyntaxComboBox;
-  QLabel* m_filterSyntaxLabel;
-  QGroupBox* m_proxyGroupBox;
 
   //Header
   QLineEdit* m_title;

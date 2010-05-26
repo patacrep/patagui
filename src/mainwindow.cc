@@ -31,10 +31,10 @@
 CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
-  , m_view()
-  , m_selectionModel()
-  , m_proxyModel()
-  , m_cover()
+  , m_proxyModel(new QSortFilterProxyModel)
+  , m_view(new QTableView)
+  , m_progressBar(new QProgressBar)
+  , m_cover(new QPixmap)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
@@ -43,83 +43,82 @@ CMainWindow::CMainWindow()
   createActions();
   createMenus();
 
-  m_progressBar = new QProgressBar(statusBar());
-  m_progressBar->setTextVisible(false);
-  m_progressBar->setRange(0, 0);
-  m_progressBar->hide();
-  statusBar()->addPermanentWidget(m_progressBar);
-
-  // Create the action button
-  QDialogButtonBox * buttonBox = new QDialogButtonBox;
-
-  QPushButton * buttonBuild = new QPushButton(tr("Build PDF"));
-  buttonBuild->setDefault(true);
-  connect(buttonBuild, SIGNAL(clicked()), this, SLOT(build()));
-
-  QPushButton * buttonQuit = new QPushButton(QIcon(":/icons/application-exit.png"),tr("Quit"));
-  connect(buttonQuit, SIGNAL(clicked()), this, SLOT(close()));
-
-  buttonBox->addButton(buttonBuild, QDialogButtonBox::ActionRole);
-  buttonBox->addButton(buttonQuit, QDialogButtonBox::DestructiveRole);
-
-
-  //filtering
-  m_proxyModel = new QSortFilterProxyModel;
+  // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
-  
-  m_filterPatternLineEdit = new QLineEdit;
-  m_filterPatternLabel = new QLabel(tr("&Filter:"));
-  m_filterPatternLabel->setBuddy(m_filterPatternLineEdit);
-  
-  m_filterSyntaxComboBox = new QComboBox;
-  m_filterSyntaxComboBox->addItem(tr("All"), -1);
-  m_filterSyntaxComboBox->addItem(tr("Artist"), 0);
-  m_filterSyntaxComboBox->addItem(tr("Title"), 1);
-  m_filterSyntaxComboBox->addItem(tr("Album"), 4);
-  
-  connect(m_filterPatternLineEdit, SIGNAL(textChanged(QString)),
-	  this, SLOT(filterRegExpChanged()));
-  connect(m_filterSyntaxComboBox, SIGNAL(currentIndexChanged(int)),
-	  this, SLOT(filterRegExpChanged()));
 
-  m_proxyGroupBox = new QGroupBox;
-  QHBoxLayout *proxyLayout = new QHBoxLayout;
-  proxyLayout->addWidget(m_filterPatternLabel);
-  proxyLayout->addWidget(m_filterPatternLineEdit);
-  proxyLayout->addWidget(m_filterSyntaxComboBox);
-  m_proxyGroupBox->setLayout(proxyLayout);
+  // filtering related widgets
+  QLineEdit *filterLineEdit = new QLineEdit;
+  QLabel *filterLabel = new QLabel(tr("&Filter:"));
+  filterLabel->setBuddy(filterLineEdit);
+  QComboBox *filterComboBox = new QComboBox;
+  filterComboBox->addItem(tr("All"), -1);
+  filterComboBox->addItem(tr("Artist"), 0);
+  filterComboBox->addItem(tr("Title"), 1);
+  filterComboBox->addItem(tr("Album"), 4);
+  
+  connect(filterLineEdit, SIGNAL(textChanged(QString)),
+	  this, SLOT(filterChanged()));
+  connect(filterComboBox, SIGNAL(currentIndexChanged(int)),
+	  this, SLOT(filterChanged()));
 
-  // Place the elements into the main window
+  QBoxLayout *filterLayout = new QHBoxLayout;
+  filterLayout->addWidget(filterLabel);
+  filterLayout->addWidget(filterLineEdit);
+  filterLayout->addWidget(filterComboBox);
+
+  // toolbar (for the build button)
+  QToolBar *toolbar = new QToolBar;
+  toolbar->setMovable(false);
+  toolbar->addAction(m_buildAct);
+
+  // organize the toolbar and the filter into an horizontal layout
+  QBoxLayout *horizontalLayout = new QHBoxLayout;
+  horizontalLayout->addWidget(toolbar);
+  horizontalLayout->addStretch();
+  horizontalLayout->addLayout(filterLayout);
+
+  // place elements into the main window
   QWidget * main = new QWidget;
-
-  m_view = new QTableView();
-  QVBoxLayout * mainLayout = new QVBoxLayout;
+  QBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addLayout(horizontalLayout);
   mainLayout->addWidget(m_view);
-  mainLayout->addWidget(m_proxyGroupBox);
-  mainLayout->addWidget(buttonBox);
   main->setLayout(mainLayout);
-
   setCentralWidget(main);
 
   //Connection to database
   connectDb();
 
-  // display welcome message
+  // status bar with an embedded progress bar on the right
+  m_progressBar->setTextVisible(false);
+  m_progressBar->setRange(0, 0);
+  m_progressBar->hide();
+  statusBar()->addPermanentWidget(m_progressBar);
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
 }
 //------------------------------------------------------------------------------
-void CMainWindow::filterRegExpChanged()
+void CMainWindow::filterChanged()
 {
-  QRegExp regExp(m_filterPatternLineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
-  m_proxyModel->setFilterRegExp(regExp);
-  m_proxyModel->setFilterKeyColumn
-    (m_filterSyntaxComboBox->itemData(m_filterSyntaxComboBox->currentIndex()).toInt());
+  QObject *object = QObject::sender();
+  
+  if (QLineEdit *lineEdit = qobject_cast< QLineEdit* >(object))
+    {
+      QRegExp expression = QRegExp(lineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
+      m_proxyModel->setFilterRegExp(expression);
+    }
+  else if (QComboBox *comboBox = qobject_cast< QComboBox* >(object))
+    {
+      int column = comboBox->itemData(comboBox->currentIndex()).toInt();
+      m_proxyModel->setFilterKeyColumn(column);
+    }
+  else
+    {
+      qWarning() << "Unknown caller to filterChanged.";
+    }
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
 {
-  if (m_library)
-    delete m_library;
+  delete m_library;
 
   {  // close db connection
     QSqlDatabase db = QSqlDatabase::database();
@@ -311,7 +310,6 @@ void CMainWindow::connectDb()
   m_view->resizeColumnsToContents();
   m_view->setModel(m_proxyModel);
   m_view->show();
-  m_selectionModel = m_view->selectionModel();
   
   dockWidgets();
   applyDisplayColumn();
@@ -331,17 +329,16 @@ void CMainWindow::synchroniseWithLocalSongs()
   m_view->sortByColumn(1, Qt::AscendingOrder);
   m_view->sortByColumn(0, Qt::AscendingOrder);
   m_view->show();
-  m_selectionModel = m_view->selectionModel();
   applyDisplayColumn();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
-  QMenu menu(this);
-  menu.addAction(m_selectAllAct);
-  menu.addAction(m_unselectAllAct);
-  menu.addAction(m_invertSelectionAct);
-  menu.exec(event->globalPos());
+  QMenu *menu = new QMenu();
+  menu->addAction(m_selectAllAct);
+  menu->addAction(m_unselectAllAct);
+  menu->addAction(m_invertSelectionAct);
+  menu->exec(event->globalPos());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent *event)
@@ -393,28 +390,25 @@ void CMainWindow::dockWidgets()
   m_songInfo->setMaximumHeight(250);
   QWidget * songInfoWidget = new QWidget();
 
-  QLabel* lartist  = new QLabel(tr("Artist:"));
-  QLabel* lsong    = new QLabel(tr("Song:"));
-  QLabel* lalbum   = new QLabel(tr("Album:"));
   QLabel *artistLabel = new QLabel();
   QLabel *titleLabel = new QLabel();
   QLabel *albumLabel = new QLabel();
-  //m_cover = new QPixmap(":/icons/unavailable");
-  //m_coverLabel.setPixmap(*m_cover);
 
   QGridLayout *songInfoLayout = new QGridLayout();
-  songInfoLayout->addWidget(&m_coverLabel,0,0,1,2);
-  songInfoLayout->addWidget(lartist,1,0,1,1);
+  songInfoLayout->addWidget(&m_coverLabel,0,0,1,2,Qt::AlignCenter);
+  songInfoLayout->addWidget(new QLabel(tr("Artist:")),1,0,1,1,Qt::AlignRight);
   songInfoLayout->addWidget(artistLabel,1,1,1,1);
-  songInfoLayout->addWidget(lsong,2,0,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("Song:")),2,0,1,1,Qt::AlignRight);
   songInfoLayout->addWidget(titleLabel,2,1,1,1);
-  songInfoLayout->addWidget(lalbum,3,0,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("Album:")),3,0,1,1,Qt::AlignRight);
   songInfoLayout->addWidget(albumLabel,3,1,1,1);
-
-  songInfoWidget->setLayout(songInfoLayout);
+  songInfoLayout->setColumnStretch(2,1);
+  QBoxLayout *layout = new QVBoxLayout;
+  layout->addLayout(songInfoLayout);
+  layout->addStretch();
+  songInfoWidget->setLayout(layout);
   m_songInfo->setWidget(songInfoWidget);
   addDockWidget( Qt::LeftDockWidgetArea, m_songInfo );
-
 
   //Data mapper
   QDataWidgetMapper *mapper = new QDataWidgetMapper();
@@ -422,7 +416,7 @@ void CMainWindow::dockWidgets()
   mapper->addMapping(artistLabel, 0, QByteArray("text"));
   mapper->addMapping(titleLabel, 1, QByteArray("text"));
   mapper->addMapping(albumLabel, 4, QByteArray("text"));
-  mapper->toFirst();
+  updateCover(QModelIndex());
 
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
@@ -441,14 +435,15 @@ void CMainWindow::dockWidgets()
 //------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
 {
-  if(m_cover) delete m_cover;
   QString coverpath = m_library->record(m_proxyModel->mapToSource(index).row()).field("cover").value().toString();
-  if(!QFileInfo(coverpath).baseName().isEmpty())
-    m_cover = new QPixmap(coverpath);
-  else if(m_selectionModel->hasSelection())
-    m_cover = new QPixmap(":/icons/unavailable-large");
+  if (QFile::exists(coverpath))
+    {
+      m_cover->load(coverpath);
+    } 
   else
-    return;
+    {
+      m_cover->load(":/icons/unavailable-large");
+    }
   m_coverLabel.setPixmap(*m_cover);
 }
 //------------------------------------------------------------------------------
@@ -483,20 +478,20 @@ void CMainWindow::unselectAll()
 //------------------------------------------------------------------------------
 void CMainWindow::invertSelection()
 {
-  QModelIndexList indexes = m_selectionModel->selectedRows();
+  QModelIndexList indexes = selectionModel()->selectedRows();
   QModelIndex index;
 
   m_view->selectAll();
 
   foreach(index, indexes) {
-    m_selectionModel->select(index,QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
+    selectionModel()->select(index,QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
   }
 }
 //------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
 {
   QStringList songsPath;
-  QModelIndexList indexes = m_selectionModel->selectedRows();
+  QModelIndexList indexes = selectionModel()->selectedRows();
   QModelIndex index;
   
   qSort(indexes.begin(), indexes.end());
@@ -550,7 +545,7 @@ void CMainWindow::build()
   
   QString msg(tr("The songbook generation is now in progress, please wait ..."));
   statusBar()->showMessage(msg);
-  m_progressBar->show();
+  progressBar()->show();
   m_buildProcess->start("make", QStringList() << "mybook.pdf");
 }
 //------------------------------------------------------------------------------
@@ -631,7 +626,7 @@ void CMainWindow::clean()
 //------------------------------------------------------------------------------
 void CMainWindow::makeLilypondSheets()
 {
-  QModelIndexList indexes = m_selectionModel->selectedRows();
+  QModelIndexList indexes = selectionModel()->selectedRows();
   qSort(indexes.begin(), indexes.end());
   QModelIndex index;
   foreach(index, indexes)
@@ -700,7 +695,7 @@ void CMainWindow::open()
     {
       indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
       if(!indexes.isEmpty())
-	m_selectionModel->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
+	selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
 }
 //------------------------------------------------------------------------------
@@ -764,3 +759,14 @@ void CMainWindow::downloadDialog()
 {
   CDownloadDialog* dialog = new CDownloadDialog(this);
 }
+//------------------------------------------------------------------------------
+QProgressBar * CMainWindow::progressBar()
+{
+  return m_progressBar;
+}
+//------------------------------------------------------------------------------
+QItemSelectionModel * CMainWindow::selectionModel()
+{
+  return m_view->selectionModel();
+}
+//------------------------------------------------------------------------------
