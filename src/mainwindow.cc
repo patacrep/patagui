@@ -15,36 +15,33 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
+#include <QtGui>
+#include <QtSql>
+#include <QtAlgorithms>
+
+#include <iostream>
+
 #include "mainwindow.hh"
 #include "preferences.hh"
 #include "library.hh"
 #include "songbook.hh"
 #include "tools.hh"
 #include "download.hh"
-
-#include <QtGui>
-#include <QtSql>
-#include <QtAlgorithms>
-#include <iostream>
 //******************************************************************************
 CMainWindow::CMainWindow()
-  : QMainWindow(),
-    library(NULL),
-    view(NULL),
-    selectionModel(NULL),
-    proxyModel(NULL),
-    m_cover(NULL)
+  : QMainWindow()
+  , library()
+  , view()
+  , selectionModel()
+  , proxyModel()
+  , m_cover()
 {
-  setObjectName("songbook");
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
   readSettings();
 
   createActions();
   createMenus();
-
-  QString message = tr("A context menu is available by right-clicking");
-  statusBar()->showMessage(message);
 
   m_progressBar = new QProgressBar(statusBar());
   m_progressBar->setTextVisible(false);
@@ -80,7 +77,6 @@ CMainWindow::CMainWindow()
   m_filterSyntaxComboBox->addItem(tr("Title"), 1);
   m_filterSyntaxComboBox->addItem(tr("Album"), 4);
   
-  
   connect(m_filterPatternLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterRegExpChanged()));
   connect(m_filterSyntaxComboBox, SIGNAL(currentIndexChanged(int)),
@@ -108,6 +104,8 @@ CMainWindow::CMainWindow()
   //Connection to database
   connectDb();
 
+  // display welcome message
+  statusBar()->showMessage(tr("A context menu is available by right-clicking"));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterRegExpChanged()
@@ -119,7 +117,16 @@ void CMainWindow::filterRegExpChanged()
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
-{}
+{
+  if (library)
+    delete library;
+
+  {  // close db connection
+    QSqlDatabase db = QSqlDatabase::database();
+    db.close();
+  }
+  QSqlDatabase::removeDatabase(QString());
+}
 //------------------------------------------------------------------------------
 void CMainWindow::readSettings()
 {
@@ -730,7 +737,7 @@ bool CMainWindow::createDbConnection()
   QDir dbdir; dbdir.mkdir( path );
   QString dbpath = QString("%1/patacrep.db").arg(path);
 
-  bool exist = (QFile::exists(dbpath))?true:false;
+  bool exist = QFile::exists(dbpath);
   
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(dbpath);

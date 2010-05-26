@@ -15,12 +15,9 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#include <iostream>
 #include <QApplication>
 #include <QTextCodec>
-#include <QtSql>
 #include "mainwindow.hh"
-using namespace std;
 //******************************************************************************
 int main( int argc, char * argv[] )
 {
@@ -30,12 +27,9 @@ int main( int argc, char * argv[] )
   QCoreApplication::setOrganizationDomain("patacrep.com");
   QCoreApplication::setApplicationName("songbook");
 
-  QApplication app(argc, argv);
-
-  //Localization
+  // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
   QString locale = QLocale::system().name().section('_', 0, 0);
-  QTranslator translator;
   QString filename = QString("songbook_%1").arg(locale) + ".qm";
   QString dir;
   
@@ -43,24 +37,21 @@ int main( int argc, char * argv[] )
   const QDir userDir("/usr/local/share/songbook-client/translations", "*.qm");
   
   if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
-      dir = systemDir.absolutePath();
+    dir = systemDir.absolutePath();
   else if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
-      dir = userDir.absolutePath();
+    dir = userDir.absolutePath();
   else
-      dir = "./lang";
-    
+    dir = "./lang";
+
+  QTranslator translator;
   translator.load(QString("songbook_%1").arg(locale), dir);
-  app.installTranslator(&translator);
   
+  // Main application
+  QApplication app(argc, argv);
+  app.installTranslator(&translator);
+
   CMainWindow mainWindow;
   mainWindow.show();
-  int res = app.exec();
-
-  //close db connection
-  QSqlDatabase db = QSqlDatabase::database();
-  db.close();
-  QSqlDatabase::removeDatabase(db.connectionName());
-  
-  return res;
+  return app.exec();  
 }
 //******************************************************************************
