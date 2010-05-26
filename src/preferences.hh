@@ -88,9 +88,6 @@ protected:
 
 private slots:
   void browse();
-  void browseHeaderPicture();
-  void pickColor();
-  void resetColor();
   void checkWorkingPath(const QString&);
   void checkLilypondVersion(int);
   void processError(QProcess::ProcessError error);
@@ -116,7 +113,32 @@ private:
   QLabel* m_lilypondLabel;
   QProcess* m_lilypondCheck;
   QProcess* m_grep;
-  
+
+  bool isValid;
+};
+
+class SongbookAppearancePage : public QWidget
+{
+  Q_OBJECT
+
+public:
+  SongbookAppearancePage(QWidget *parent = 0);
+
+protected:
+  void closeEvent(QCloseEvent *event);
+
+private slots:
+  void checkWorkingPath(const QString&);
+  void browseHeaderPicture();
+  void pickColor();
+  void resetColor();
+
+private:
+  void readSettings();
+  void writeSettings();
+  void updateHeader();
+  void updateCustom();
+
   //Header
   QLineEdit* m_title;
   QLineEdit* m_subtitle;
