@@ -104,10 +104,10 @@ public:
 
 private:
   // Song library and view
-  CLibrary *library;
-  QTableView *view;
-  QItemSelectionModel *selectionModel;
-  QSortFilterProxyModel *proxyModel;
+  CLibrary *m_library;
+  QTableView *m_view;
+  QItemSelectionModel *m_selectionModel;
+  QSortFilterProxyModel *m_proxyModel;
 
   // Global
   QString m_workingPath;
@@ -155,31 +155,31 @@ private:
   QTextEdit* m_log;
 
   // Menus
-  QMenu *fileMenu;
-  QMenu *editMenu;
-  QMenu *dbMenu;
-  QMenu *viewMenu;
-  QMenu *helpMenu;
+  QMenu *m_fileMenu;
+  QMenu *m_editMenu;
+  QMenu *m_dbMenu;
+  QMenu *m_viewMenu;
+  QMenu *m_helpMenu;
 
   // Actions
-  QAction *exitAct;
-  QAction *openAct;
-  QAction *saveAct;
-  QAction *buildAct;
-  QAction *cleanAct;
-  QAction *preferencesAct;
-  QAction *aboutAct;
-  QAction *selectAllAct;
-  QAction *unselectAllAct;
-  QAction *invertSelectionAct;
-  QAction *displaySongInfoAct;
-  QAction *displayLogInfoAct;
-  QAction *adjustColumnsAct;
-  QAction *connectDbAct;
-  QAction *downloadDbAct;
-  QAction *rebuildDbAct;
-  QAction *resizeCoversAct;
-  QAction *checkerAct;
+  QAction *m_exitAct;
+  QAction *m_openAct;
+  QAction *m_saveAct;
+  QAction *m_buildAct;
+  QAction *m_cleanAct;
+  QAction *m_preferencesAct;
+  QAction *m_aboutAct;
+  QAction *m_selectAllAct;
+  QAction *m_unselectAllAct;
+  QAction *m_invertSelectionAct;
+  QAction *m_displaySongInfoAct;
+  QAction *m_displayLogInfoAct;
+  QAction *m_adjustColumnsAct;
+  QAction *m_connectDbAct;
+  QAction *m_downloadDbAct;
+  QAction *m_rebuildDbAct;
+  QAction *m_resizeCoversAct;
+  QAction *m_checkerAct;
 };
 
 #endif  // __MAIN_WINDOW_HH__

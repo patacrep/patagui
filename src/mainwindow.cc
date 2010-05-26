@@ -19,21 +19,21 @@
 #include <QtSql>
 #include <QtAlgorithms>
 
-#include <iostream>
-
 #include "mainwindow.hh"
 #include "preferences.hh"
 #include "library.hh"
 #include "songbook.hh"
 #include "tools.hh"
 #include "download.hh"
+
+#include <QDebug>
 //******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
-  , library()
-  , view()
-  , selectionModel()
-  , proxyModel()
+  , m_library()
+  , m_view()
+  , m_selectionModel()
+  , m_proxyModel()
   , m_cover()
 {
   setWindowTitle("Patacrep Songbook Client");
@@ -64,8 +64,8 @@ CMainWindow::CMainWindow()
 
 
   //filtering
-  proxyModel = new QSortFilterProxyModel;
-  proxyModel->setDynamicSortFilter(true);
+  m_proxyModel = new QSortFilterProxyModel;
+  m_proxyModel->setDynamicSortFilter(true);
   
   m_filterPatternLineEdit = new QLineEdit;
   m_filterPatternLabel = new QLabel(tr("&Filter:"));
@@ -92,9 +92,9 @@ CMainWindow::CMainWindow()
   // Place the elements into the main window
   QWidget * main = new QWidget;
 
-  view = new QTableView();
+  m_view = new QTableView();
   QVBoxLayout * mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(view);
+  mainLayout->addWidget(m_view);
   mainLayout->addWidget(m_proxyGroupBox);
   mainLayout->addWidget(buttonBox);
   main->setLayout(mainLayout);
@@ -111,15 +111,15 @@ CMainWindow::CMainWindow()
 void CMainWindow::filterRegExpChanged()
 {
   QRegExp regExp(m_filterPatternLineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
-  proxyModel->setFilterRegExp(regExp);
-  proxyModel->setFilterKeyColumn
+  m_proxyModel->setFilterRegExp(regExp);
+  m_proxyModel->setFilterKeyColumn
     (m_filterSyntaxComboBox->itemData(m_filterSyntaxComboBox->currentIndex()).toInt());
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
 {
-  if (library)
-    delete library;
+  if (m_library)
+    delete m_library;
 
   {  // close db connection
     QSqlDatabase db = QSqlDatabase::database();
@@ -163,13 +163,13 @@ void CMainWindow::writeSettings()
 //------------------------------------------------------------------------------
 void CMainWindow::applyDisplayColumn()
 {
-  view->setColumnHidden(0,!m_displayColumnArtist);
-  view->setColumnHidden(1,!m_displayColumnTitle);
-  view->setColumnHidden(3,!m_displayColumnPath);
-  view->setColumnHidden(4,!m_displayColumnAlbum);
-  view->setColumnHidden(2,!m_displayColumnLilypond);
-  view->setColumnHidden(5,!m_displayColumnCover);
-  view->resizeColumnsToContents();
+  m_view->setColumnHidden(0,!m_displayColumnArtist);
+  m_view->setColumnHidden(1,!m_displayColumnTitle);
+  m_view->setColumnHidden(3,!m_displayColumnPath);
+  m_view->setColumnHidden(4,!m_displayColumnAlbum);
+  m_view->setColumnHidden(2,!m_displayColumnLilypond);
+  m_view->setColumnHidden(5,!m_displayColumnCover);
+  m_view->resizeColumnsToContents();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::setDisplaySongInfo(bool value)
@@ -204,88 +204,88 @@ QString CMainWindow::packageOptions()
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
 {
-  exitAct = new QAction(tr("Exit"), this);
-  exitAct->setShortcut(tr("Ctrl+Q"));
-  exitAct->setStatusTip(tr("Exit the application"));
-  connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+  m_exitAct = new QAction(tr("Exit"), this);
+  m_exitAct->setShortcut(tr("Ctrl+Q"));
+  m_exitAct->setStatusTip(tr("Exit the application"));
+  connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-  openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Load Songs List"), this);
-  openAct->setShortcut(tr("Ctrl+O"));
-  openAct->setStatusTip(tr("Open a list of songs (.sgl) previously saved."));
-  connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+  m_openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Load Songs List"), this);
+  m_openAct->setShortcut(tr("Ctrl+O"));
+  m_openAct->setStatusTip(tr("Open a list of songs (.sgl) previously saved."));
+  connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-  saveAct = new QAction(QIcon(":/icons/document-save.png"), tr("Save Songs List"), this);
-  saveAct->setShortcut(tr("Ctrl+S"));
-  saveAct->setStatusTip(tr("Save the list of currently selected songs."));
-  connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+  m_saveAct = new QAction(QIcon(":/icons/document-save.png"), tr("Save Songs List"), this);
+  m_saveAct->setShortcut(tr("Ctrl+S"));
+  m_saveAct->setStatusTip(tr("Save the list of currently selected songs."));
+  connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
-  buildAct = new QAction(tr("Build PDF"), this);
-  buildAct->setShortcut(tr("Ctrl+B"));
-  buildAct->setStatusTip(tr("Generate pdf from selected songs."));
-  connect(buildAct, SIGNAL(triggered()), this, SLOT(build()));
+  m_buildAct = new QAction(tr("Build PDF"), this);
+  m_buildAct->setShortcut(tr("Ctrl+B"));
+  m_buildAct->setStatusTip(tr("Generate pdf from selected songs."));
+  connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  cleanAct = new QAction(QIcon(":/icons/edit-clear.png"), tr("Clean"), this);
-  cleanAct->setStatusTip(tr("Clean"));
-  connect(cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
+  m_cleanAct = new QAction(QIcon(":/icons/edit-clear.png"), tr("Clean"), this);
+  m_cleanAct->setStatusTip(tr("Clean"));
+  connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
 
-  preferencesAct = new QAction(tr("&Preferences"), this);
-  preferencesAct->setStatusTip(tr("Select your preferences."));
-  connect(preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
+  m_preferencesAct = new QAction(tr("&Preferences"), this);
+  m_preferencesAct->setStatusTip(tr("Select your preferences."));
+  connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
-  aboutAct = new QAction(tr("&About"), this);
-  aboutAct->setStatusTip(tr("Show the application's About box"));
-  connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+  m_aboutAct = new QAction(tr("&About"), this);
+  m_aboutAct->setStatusTip(tr("Show the application's About box"));
+  connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
-  selectAllAct = new QAction(tr("Select all"), this);
-  selectAllAct->setStatusTip(tr("Select all displayed songs."));
-  connect(selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
+  m_selectAllAct = new QAction(tr("Select all"), this);
+  m_selectAllAct->setStatusTip(tr("Select all displayed songs."));
+  connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
-  unselectAllAct = new QAction(tr("Unselect all"), this);
-  unselectAllAct->setStatusTip(tr("Unselect all displayed songs."));
-  connect(unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
+  m_unselectAllAct = new QAction(tr("Unselect all"), this);
+  m_unselectAllAct->setStatusTip(tr("Unselect all displayed songs."));
+  connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
-  invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  invertSelectionAct->setStatusTip(tr("Invert currently selected songs."));
-  connect(invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
+  m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
+  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs."));
+  connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
-  displaySongInfoAct = new QAction(tr("Display Song Info"), this);
-  displaySongInfoAct->setStatusTip(tr("Display information about the last selected song."));
-  displaySongInfoAct->setCheckable(true);
-  displaySongInfoAct->setChecked(true);
-  connect(displaySongInfoAct, SIGNAL(toggled(bool)), SLOT(setDisplaySongInfo(bool)));
+  m_displaySongInfoAct = new QAction(tr("Display Song Info"), this);
+  m_displaySongInfoAct->setStatusTip(tr("Display information about the last selected song."));
+  m_displaySongInfoAct->setCheckable(true);
+  m_displaySongInfoAct->setChecked(true);
+  connect(m_displaySongInfoAct, SIGNAL(toggled(bool)), SLOT(setDisplaySongInfo(bool)));
 
-  displayLogInfoAct = new QAction(tr("Display Log Info"), this);
-  displayLogInfoAct->setStatusTip(tr("Output out the LaTeX compilation process."));
-  displayLogInfoAct->setCheckable(true);
-  displayLogInfoAct->setChecked(false);
-  connect(displayLogInfoAct, SIGNAL(toggled(bool)), SLOT(setDisplayLogInfo(bool)));
+  m_displayLogInfoAct = new QAction(tr("Display Log Info"), this);
+  m_displayLogInfoAct->setStatusTip(tr("Output out the LaTeX compilation process."));
+  m_displayLogInfoAct->setCheckable(true);
+  m_displayLogInfoAct->setChecked(false);
+  connect(m_displayLogInfoAct, SIGNAL(toggled(bool)), SLOT(setDisplayLogInfo(bool)));
 
-  adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
-  adjustColumnsAct->setStatusTip(tr("Adjust columns to contents."));
-  connect(adjustColumnsAct, SIGNAL(triggered()), SLOT(applyDisplayColumn()));
+  m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
+  m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents."));
+  connect(m_adjustColumnsAct, SIGNAL(triggered()), SLOT(applyDisplayColumn()));
 
-  connectDbAct = new QAction(QIcon(":/icons/network-server.png"), 
-			     tr("Connection to local database"), this);
-  connectDbAct->setStatusTip(tr("Connection to local database."));
-  connect(connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
+  m_connectDbAct = new QAction(QIcon(":/icons/network-server.png"), 
+			       tr("Connection to local database"), this);
+  m_connectDbAct->setStatusTip(tr("Connection to local database."));
+  connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
 
-  rebuildDbAct = new QAction(QIcon(":/icons/view-refresh.png"), 
-			     tr("Synchronise"), this);
-  rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
-  connect(rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
+  m_rebuildDbAct = new QAction(QIcon(":/icons/view-refresh.png"), 
+			       tr("Synchronise"), this);
+  m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
+  connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
-  downloadDbAct = new QAction("Download",this);
-  downloadDbAct->setStatusTip(tr("Download songs from Patacrep!"));
-  connect(downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
+  m_downloadDbAct = new QAction("Download",this);
+  m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep!"));
+  connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 
   CTools* tools = new CTools(workingPath(), this);
-  resizeCoversAct = new QAction( tr("Resize covers"), this);
-  resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory."));
-  connect(resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
+  m_resizeCoversAct = new QAction( tr("Resize covers"), this);
+  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory."));
+  connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
 
-  checkerAct = new QAction( tr("Global check"), this);
-  checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)."));
-  connect(checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
+  m_checkerAct = new QAction( tr("Global check"), this);
+  m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)."));
+  connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::connectDb()
@@ -294,24 +294,24 @@ void CMainWindow::connectDb()
   bool newdb = createDbConnection();
 
   // Initialize the song library
-  library = new CLibrary();
-  library->setPathToSongs(workingPath());
+  m_library = new CLibrary();
+  m_library->setPathToSongs(workingPath());
 
   // Display the song list
-  proxyModel->setSourceModel(library);
-  view->setModel(library);
-  view->setShowGrid( false );
-  view->setAlternatingRowColors(true);
-  view->setSortingEnabled(true);
-  view->setSelectionMode(QAbstractItemView::MultiSelection);
-  view->setSelectionBehavior(QAbstractItemView::SelectRows);
-  view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  view->sortByColumn(1, Qt::AscendingOrder);
-  view->sortByColumn(0, Qt::AscendingOrder);
-  view->resizeColumnsToContents();
-  view->setModel(proxyModel);
-  view->show();
-  selectionModel = view->selectionModel();
+  m_proxyModel->setSourceModel(m_library);
+  m_view->setModel(m_library);
+  m_view->setShowGrid( false );
+  m_view->setAlternatingRowColors(true);
+  m_view->setSortingEnabled(true);
+  m_view->setSelectionMode(QAbstractItemView::MultiSelection);
+  m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  m_view->sortByColumn(1, Qt::AscendingOrder);
+  m_view->sortByColumn(0, Qt::AscendingOrder);
+  m_view->resizeColumnsToContents();
+  m_view->setModel(m_proxyModel);
+  m_view->show();
+  m_selectionModel = m_view->selectionModel();
   
   dockWidgets();
   applyDisplayColumn();
@@ -326,21 +326,21 @@ void CMainWindow::synchroniseWithLocalSongs()
   query.exec("delete from songs");
     
   // Retrieve all songs from .sg files in working dir
-  library->setPathToSongs(workingPath());
-  library->retrieveSongs();
-  view->sortByColumn(1, Qt::AscendingOrder);
-  view->sortByColumn(0, Qt::AscendingOrder);
-  view->show();
-  selectionModel = view->selectionModel();
+  m_library->setPathToSongs(workingPath());
+  m_library->retrieveSongs();
+  m_view->sortByColumn(1, Qt::AscendingOrder);
+  m_view->sortByColumn(0, Qt::AscendingOrder);
+  m_view->show();
+  m_selectionModel = m_view->selectionModel();
   applyDisplayColumn();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
   QMenu menu(this);
-  menu.addAction(selectAllAct);
-  menu.addAction(unselectAllAct);
-  menu.addAction(invertSelectionAct);
+  menu.addAction(m_selectAllAct);
+  menu.addAction(m_unselectAllAct);
+  menu.addAction(m_invertSelectionAct);
   menu.exec(event->globalPos());
 }
 //------------------------------------------------------------------------------
@@ -352,37 +352,37 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 //------------------------------------------------------------------------------
 void CMainWindow::createMenus()
 {
-  fileMenu = menuBar()->addMenu(tr("&File"));
-  fileMenu->addAction(openAct);
-  fileMenu->addAction(saveAct);
-  fileMenu->addSeparator();
-  fileMenu->addAction(buildAct);
-  fileMenu->addAction(cleanAct);
-  fileMenu->addSeparator();
-  fileMenu->addAction(exitAct);
+  m_fileMenu = menuBar()->addMenu(tr("&File"));
+  m_fileMenu->addAction(m_openAct);
+  m_fileMenu->addAction(m_saveAct);
+  m_fileMenu->addSeparator();
+  m_fileMenu->addAction(m_buildAct);
+  m_fileMenu->addAction(m_cleanAct);
+  m_fileMenu->addSeparator();
+  m_fileMenu->addAction(m_exitAct);
 
-  editMenu = menuBar()->addMenu(tr("&Edit"));
-  editMenu->addAction(selectAllAct);
-  editMenu->addAction(unselectAllAct);
-  editMenu->addAction(invertSelectionAct);
-  editMenu->addSeparator();
-  editMenu->addAction(preferencesAct);
+  m_editMenu = menuBar()->addMenu(tr("&Edit"));
+  m_editMenu->addAction(m_selectAllAct);
+  m_editMenu->addAction(m_unselectAllAct);
+  m_editMenu->addAction(m_invertSelectionAct);
+  m_editMenu->addSeparator();
+  m_editMenu->addAction(m_preferencesAct);
 
-  dbMenu = menuBar()->addMenu(tr("&Database"));
-  dbMenu->addAction(downloadDbAct);
-  dbMenu->addAction(rebuildDbAct);
+  m_dbMenu = menuBar()->addMenu(tr("&Database"));
+  m_dbMenu->addAction(m_downloadDbAct);
+  m_dbMenu->addAction(m_rebuildDbAct);
 
-  viewMenu = menuBar()->addMenu(tr("&View"));
-  viewMenu->addAction(displaySongInfoAct);
-  viewMenu->addAction(displayLogInfoAct);
-  viewMenu->addAction(adjustColumnsAct);
+  m_viewMenu = menuBar()->addMenu(tr("&View"));
+  m_viewMenu->addAction(m_displaySongInfoAct);
+  m_viewMenu->addAction(m_displayLogInfoAct);
+  m_viewMenu->addAction(m_adjustColumnsAct);
 
-  viewMenu = menuBar()->addMenu(tr("&Tools"));
-  viewMenu->addAction(resizeCoversAct);
-  viewMenu->addAction(checkerAct);
+  m_viewMenu = menuBar()->addMenu(tr("&Tools"));
+  m_viewMenu->addAction(m_resizeCoversAct);
+  m_viewMenu->addAction(m_checkerAct);
 
-  helpMenu = menuBar()->addMenu(tr("&Help"));
-  helpMenu->addAction(aboutAct);
+  m_helpMenu = menuBar()->addMenu(tr("&Help"));
+  m_helpMenu->addAction(m_aboutAct);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::dockWidgets()
@@ -418,15 +418,15 @@ void CMainWindow::dockWidgets()
 
   //Data mapper
   QDataWidgetMapper *mapper = new QDataWidgetMapper();
-  mapper->setModel(proxyModel);
+  mapper->setModel(m_proxyModel);
   mapper->addMapping(artistLabel, 0, QByteArray("text"));
   mapper->addMapping(titleLabel, 1, QByteArray("text"));
   mapper->addMapping(albumLabel, 4, QByteArray("text"));
   mapper->toFirst();
 
-  connect(view, SIGNAL(clicked(const QModelIndex &)),
+  connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
-  connect(view, SIGNAL(clicked(const QModelIndex &)),
+  connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           SLOT(updateCover(const QModelIndex &)));
 
   // Debugger Info widget
@@ -442,10 +442,10 @@ void CMainWindow::dockWidgets()
 void CMainWindow::updateCover(const QModelIndex & index)
 {
   if(m_cover) delete m_cover;
-  QString coverpath = library->record(proxyModel->mapToSource(index).row()).field("cover").value().toString();
+  QString coverpath = m_library->record(m_proxyModel->mapToSource(index).row()).field("cover").value().toString();
   if(!QFileInfo(coverpath).baseName().isEmpty())
     m_cover = new QPixmap(coverpath);
-  else if(selectionModel->hasSelection())
+  else if(m_selectionModel->hasSelection())
     m_cover = new QPixmap(":/icons/unavailable-large");
   else
     return;
@@ -473,36 +473,36 @@ void CMainWindow::about()
 //------------------------------------------------------------------------------
 void CMainWindow::selectAll()
 {
-  view->selectAll();
+  m_view->selectAll();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::unselectAll()
 {
-  view->clearSelection();
+  m_view->clearSelection();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::invertSelection()
 {
-  QModelIndexList indexes = selectionModel->selectedRows();
+  QModelIndexList indexes = m_selectionModel->selectedRows();
   QModelIndex index;
 
-  view->selectAll();
+  m_view->selectAll();
 
   foreach(index, indexes) {
-    selectionModel->select(index,QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
+    m_selectionModel->select(index,QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
   }
 }
 //------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
 {
   QStringList songsPath;
-  QModelIndexList indexes = selectionModel->selectedRows();
+  QModelIndexList indexes = m_selectionModel->selectedRows();
   QModelIndex index;
   
   qSort(indexes.begin(), indexes.end());
 
   foreach(index, indexes)
-    songsPath << library->record(proxyModel->mapToSource(index).row()).field("path").value().toString();
+    songsPath << m_library->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString();
 
   return songsPath;
 }
@@ -616,7 +616,7 @@ void CMainWindow::applyBookType()
     }
   else
     {
-      std::cerr << "Mainwindow::applyBookType warning: unable to open file in read mode" << std::endl;
+      qWarning() << "Mainwindow::applyBookType warning: unable to open file in read mode";
     }
 }
 //------------------------------------------------------------------------------
@@ -631,20 +631,20 @@ void CMainWindow::clean()
 //------------------------------------------------------------------------------
 void CMainWindow::makeLilypondSheets()
 {
-  QModelIndexList indexes = selectionModel->selectedRows();
+  QModelIndexList indexes = m_selectionModel->selectedRows();
   qSort(indexes.begin(), indexes.end());
   QModelIndex index;
   foreach(index, indexes)
     {
       
-      if( library->record(proxyModel->mapToSource(index).row()).field("lilypond").value().toBool() )
+      if( m_library->record(m_proxyModel->mapToSource(index).row()).field("lilypond").value().toBool() )
 	{
 
 	  QProcess *lilyProcess;
 	  QStringList sheets;
-	  QString path = library->record(proxyModel->mapToSource(index).row()).field("path").value().toString(); 
-	  QString artist = library->record(proxyModel->mapToSource(index).row()).field("artist").value().toString(); 
-	  QString title = library->record(proxyModel->mapToSource(index).row()).field("title").value().toString(); 
+	  QString path = m_library->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString(); 
+	  QString artist = m_library->record(m_proxyModel->mapToSource(index).row()).field("artist").value().toString(); 
+	  QString title = m_library->record(m_proxyModel->mapToSource(index).row()).field("title").value().toString(); 
 	  QCoreApplication::processEvents();
 	  statusBar()->showMessage(QString(tr("Building lilypond for: %1 - %2").arg(artist).arg(title)));
 
@@ -692,15 +692,15 @@ void CMainWindow::open()
   QString path = QString("%1/").arg(workingPath());
   songlist.replaceInStrings(QRegExp("^"),path);
 
-  view->clearSelection();
+  m_view->clearSelection();
   
   QList<QModelIndex> indexes;
   QString str;
   foreach(str, songlist)
     {
-      indexes = library->match( proxyModel->index(0,3), Qt::MatchExactly, str );
+      indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
       if(!indexes.isEmpty())
-	selectionModel->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
+	m_selectionModel->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
 }
 //------------------------------------------------------------------------------
