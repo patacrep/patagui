@@ -683,7 +683,7 @@ void CMainWindow::open()
                                                   tr("Songbook File (*.sgl)"));
   CSongbook songbook;
   songbook.load( filename );
-  QStringList songlist = songbook.getSongs();
+  QStringList songlist = songbook.songs();
   QString path = QString("%1/").arg(workingPath());
   songlist.replaceInStrings(QRegExp("^"),path);
 
