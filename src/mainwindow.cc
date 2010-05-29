@@ -38,6 +38,9 @@ CMainWindow::CMainWindow()
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
+  //setTabsClosable(true);
+  //setMovable(true);
+
   readSettings();
 
   createActions();
@@ -386,36 +389,43 @@ void CMainWindow::dockWidgets()
 {
   // Song Info widget
   m_songInfo = new QDockWidget( tr("Current song"), this );
-  m_songInfo->setMinimumWidth(200);
-  m_songInfo->setMaximumHeight(250);
+  m_songInfo->setMaximumSize(300, 300);
   QWidget * songInfoWidget = new QWidget();
 
-  QLabel *artistLabel = new QLabel();
-  QLabel *titleLabel = new QLabel();
-  QLabel *albumLabel = new QLabel();
+  m_artistLabel = new QLabel();
+  m_titleLabel = new QLabel();
+  m_albumLabel = new QLabel();
 
+  QGroupBox* currentSongTagsBox = new QGroupBox;
   QGridLayout *songInfoLayout = new QGridLayout();
-  songInfoLayout->addWidget(&m_coverLabel,0,0,1,2,Qt::AlignCenter);
-  songInfoLayout->addWidget(new QLabel(tr("Artist:")),1,0,1,1,Qt::AlignRight);
-  songInfoLayout->addWidget(artistLabel,1,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("Song:")),2,0,1,1,Qt::AlignRight);
-  songInfoLayout->addWidget(titleLabel,2,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("Album:")),3,0,1,1,Qt::AlignRight);
-  songInfoLayout->addWidget(albumLabel,3,1,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("<b>Song:</b>")),0,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(m_titleLabel,0,1,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("<b>Artist:</b>")),1,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(m_artistLabel,1,1,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("<b>Album:</b>")),2,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(m_albumLabel,2,1,1,1);
   songInfoLayout->setColumnStretch(2,1);
-  QBoxLayout *layout = new QVBoxLayout;
-  layout->addLayout(songInfoLayout);
-  layout->addStretch();
-  songInfoWidget->setLayout(layout);
+  songInfoLayout->setRowStretch(3,10);
+  currentSongTagsBox->setLayout(songInfoLayout);
+  
+  m_currentSongWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, songInfoWidget);
+  m_currentSongWidgetLayout->addWidget(&m_coverLabel);
+  m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
+  m_currentSongWidgetLayout->addStretch();
   m_songInfo->setWidget(songInfoWidget);
   addDockWidget( Qt::LeftDockWidgetArea, m_songInfo );
+
+  m_coverLabel.setAlignment(Qt::AlignTop);
+      
+  connect(m_songInfo, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
+          SLOT(dockWidgetDirectionChanged(Qt::DockWidgetArea)));
 
   //Data mapper
   QDataWidgetMapper *mapper = new QDataWidgetMapper();
   mapper->setModel(m_proxyModel);
-  mapper->addMapping(artistLabel, 0, QByteArray("text"));
-  mapper->addMapping(titleLabel, 1, QByteArray("text"));
-  mapper->addMapping(albumLabel, 4, QByteArray("text"));
+  mapper->addMapping(m_artistLabel, 0, QByteArray("text"));
+  mapper->addMapping(m_titleLabel, 1, QByteArray("text"));
+  mapper->addMapping(m_albumLabel, 4, QByteArray("text"));
   updateCover(QModelIndex());
 
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
@@ -433,18 +443,49 @@ void CMainWindow::dockWidgets()
   m_logInfo->setVisible(false);
 }
 //------------------------------------------------------------------------------
+void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
+{
+  if(area==Qt::LeftDockWidgetArea || area==Qt::RightDockWidgetArea)
+    {
+      m_currentSongWidgetLayout->setDirection(QBoxLayout::TopToBottom);
+      m_songInfo->setMaximumSize(300, 300);
+    }
+  else
+    {
+      m_currentSongWidgetLayout->setDirection(QBoxLayout::LeftToRight);
+      m_songInfo->setMaximumSize(450, 170);
+    }
+
+}
+//------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
 {
   QString coverpath = m_library->record(m_proxyModel->mapToSource(index).row()).field("cover").value().toString();
   if (QFile::exists(coverpath))
-    {
-      m_cover->load(coverpath);
-    } 
+    m_cover->load(coverpath);
   else
-    {
-      m_cover->load(":/icons/unavailable-large");
-    }
+    m_cover->load(":/icons/unavailable-large");
   m_coverLabel.setPixmap(*m_cover);
+  //truncate labels if too long
+  QString string = m_titleLabel->text();
+  if(string.size() > 30)
+    {
+      string.truncate(27);
+      m_titleLabel->setText(string+"...");
+    }
+  string = m_artistLabel->text();
+  if(string.size() > 30)
+    {
+      string.truncate(27);
+      m_artistLabel->setText(string+"...");
+    }
+  string = m_albumLabel->text();
+  if(string.size() > 30)
+    {
+      string.truncate(27);
+      m_albumLabel->setText(string+"...");
+    }
+
 }
 //------------------------------------------------------------------------------
 void CMainWindow::preferences()

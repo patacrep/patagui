@@ -80,6 +80,8 @@ private slots:
   void dockWidgets();
   void preferences();
 
+  void dockWidgetDirectionChanged(Qt::DockWidgetArea area);
+
   void about(); 
 
 private:
@@ -134,15 +136,12 @@ private:
   QPixmap *m_cover;
   QLabel m_coverLabel;
   uint m_dbType;
+  QBoxLayout* m_currentSongWidgetLayout;
 
-  //Header
-  QLineEdit* m_title;
-  QLineEdit* m_subtitle;
-  QLineEdit* m_author;
-  QLineEdit* m_version;
-  QLineEdit* m_mail;
-  QLineEdit* m_picture;
-  QLineEdit* m_copyright;
+  //Labels
+  QLabel* m_titleLabel;
+  QLabel* m_artistLabel;
+  QLabel* m_albumLabel;
 
   //Logs
   QTextEdit* m_log;
