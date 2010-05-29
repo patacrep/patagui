@@ -25,6 +25,7 @@
 #include "songbook.hh"
 #include "tools.hh"
 #include "download.hh"
+#include "song-editor.hh"
 
 #include <QDebug>
 //******************************************************************************
@@ -38,8 +39,6 @@ CMainWindow::CMainWindow()
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
-  //setTabsClosable(true);
-  //setMovable(true);
 
   readSettings();
 
@@ -81,12 +80,20 @@ CMainWindow::CMainWindow()
   horizontalLayout->addLayout(filterLayout);
 
   // place elements into the main window
-  QWidget * main = new QWidget;
-  QBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addLayout(horizontalLayout);
-  mainLayout->addWidget(m_view);
-  main->setLayout(mainLayout);
-  setCentralWidget(main);
+  m_mainWidget = new QTabWidget;
+  m_mainWidget->setTabsClosable(true);
+  m_mainWidget->setMovable(true);
+  connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
+	   this, SLOT(closeTab(int)) );
+  setCentralWidget(m_mainWidget);
+
+  QWidget* libraryTab = new QWidget;
+  QBoxLayout *libraryLayout = new QVBoxLayout;
+  libraryLayout->addLayout(horizontalLayout);
+  libraryLayout->addWidget(m_view);
+  libraryTab->setLayout(libraryLayout);
+  m_mainWidget->addTab(libraryTab, tr("Library"));
+
 
   //Connection to database
   connectDb();
@@ -408,15 +415,19 @@ void CMainWindow::dockWidgets()
   songInfoLayout->setRowStretch(3,10);
   currentSongTagsBox->setLayout(songInfoLayout);
   
+  QPushButton* editButton = new QPushButton(tr("Edit"));
+
   m_currentSongWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, songInfoWidget);
+  m_coverLabel.setAlignment(Qt::AlignTop);
   m_currentSongWidgetLayout->addWidget(&m_coverLabel);
   m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
-  m_currentSongWidgetLayout->addStretch();
+  m_currentSongWidgetLayout->addWidget(editButton);
+  m_currentSongWidgetLayout->addStretch(1);
   m_songInfo->setWidget(songInfoWidget);
   addDockWidget( Qt::LeftDockWidgetArea, m_songInfo );
+     
+  connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
 
-  m_coverLabel.setAlignment(Qt::AlignTop);
-      
   connect(m_songInfo, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
           SLOT(dockWidgetDirectionChanged(Qt::DockWidgetArea)));
 
@@ -811,3 +822,14 @@ QItemSelectionModel * CMainWindow::selectionModel()
   return m_view->selectionModel();
 }
 //------------------------------------------------------------------------------
+void CMainWindow::songEditor()
+{
+  QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+  CSongEditor* editor = new CSongEditor(path);
+  m_mainWidget->addTab(editor, m_titleLabel->text());
+}
+//------------------------------------------------------------------------------
+void CMainWindow::closeTab(int index)
+{
+  m_mainWidget->removeTab(index);  
+}

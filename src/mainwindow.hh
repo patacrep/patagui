@@ -82,6 +82,9 @@ private slots:
 
   void dockWidgetDirectionChanged(Qt::DockWidgetArea area);
 
+  void songEditor();
+  void closeTab(int);
+
   void about(); 
 
 private:
@@ -108,6 +111,7 @@ private:
   QSortFilterProxyModel *m_proxyModel;
 
   // Widgets
+  QTabWidget* m_mainWidget;
   QTableView *m_view;
   QProgressBar* m_progressBar;
 
@@ -172,6 +176,7 @@ private:
   QAction *m_rebuildDbAct;
   QAction *m_resizeCoversAct;
   QAction *m_checkerAct;
+
 };
 
 #endif  // __MAIN_WINDOW_HH__

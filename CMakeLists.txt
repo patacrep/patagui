@@ -25,6 +25,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/tools.cc
   src/download.cc
   src/custom.cc
+  src/song-editor.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -34,7 +35,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/library.hh
   src/tools.hh
   src/download.hh
-  src/custom.hh
+  src/song-editor.hh
   )
 #-------------------------------------------------------------------------------
 # ressources
