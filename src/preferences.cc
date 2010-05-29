@@ -78,7 +78,7 @@ void ConfigDialog::createIcons()
 
   QListWidgetItem *songbookAppearanceButton = new QListWidgetItem(contentsWidget);
   songbookAppearanceButton->setIcon(QIcon(":/icons/preferences-system.png"));
-  songbookAppearanceButton->setText(tr("Songbook Appearance"));
+  songbookAppearanceButton->setText(tr("Songbook\nAppearance"));
   songbookAppearanceButton->setTextAlignment(Qt::AlignHCenter);
   songbookAppearanceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
