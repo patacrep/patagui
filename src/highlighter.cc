@@ -25,22 +25,49 @@ Highlighter::Highlighter(QTextDocument *parent)
 {
   HighlightingRule rule;
 
+  // Keywords1 (orange)
   keywordFormat.setForeground(QColor(206,92,0));
   keywordFormat.setFontWeight(QFont::Bold);
   QStringList keywordPatterns;
   keywordPatterns << "\\bgtab\\b" << "\\becho\\b" 
 		  << "\\brep\\b" << "\\blilypond\\b"
 		  << "\\bimage\\b" << "\\bsongcolumns\\b"
-		  << "\\bcover\\b" << "\\bcapo\\b" ;
-  foreach (const QString &pattern, keywordPatterns) {
-    rule.pattern = QRegExp(pattern);
-    rule.format = keywordFormat;
-    highlightingRules.append(rule);
-  }
+		  << "\\bcover\\b" << "\\bcapo\\b" 
+		  << "\\bnolyrics\\b" << "\\bmusicnote\\b" 
+		  << "\\btextnote\\b" << "\\bdots\\b" 
+		  << "\\bsingle\\b"  ;
+
+  foreach (const QString &pattern, keywordPatterns) 
+    {
+      rule.pattern = QRegExp(pattern);
+      rule.format = keywordFormat;
+      highlightingRules.append(rule);
+    }
+
+  // Keywords2 (red)
+  keyword2Format.setForeground(QColor(164,0,0));
+  keyword2Format.setFontWeight(QFont::Bold);
+  QStringList keyword2Patterns;
+  keyword2Patterns << "\\bbar\\b" ;
+
+  foreach (const QString &pattern, keyword2Patterns) 
+    {
+      rule.pattern = QRegExp(pattern);
+      rule.format = keyword2Format;
+      highlightingRules.append(rule);
+    }
 
   //Environments (bold, green)
   environmentFormat.setFontWeight(QFont::Bold);
   environmentFormat.setForeground(QColor(78,154,6));
+
+  rule.pattern = QRegExp("\\bbegin\\b");
+  rule.format = environmentFormat;
+  highlightingRules.append(rule);
+
+  rule.pattern = QRegExp("\\bend\\b");
+  rule.format = environmentFormat;
+  highlightingRules.append(rule);
 
   rule.pattern = QRegExp("\\bbeginverse\\b");
   rule.format = environmentFormat;
