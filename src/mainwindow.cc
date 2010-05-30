@@ -810,7 +810,7 @@ bool CMainWindow::createDbConnection()
 //------------------------------------------------------------------------------
 void CMainWindow::downloadDialog()
 {
-  CDownloadDialog* dialog = new CDownloadDialog(this);
+  new CDownloadDialog(this);
 }
 //------------------------------------------------------------------------------
 QProgressBar * CMainWindow::progressBar()

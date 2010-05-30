@@ -18,7 +18,6 @@
 
 #include "download.hh"
 #include "mainwindow.hh"
-#include <iostream>
 #include <QStatusBar>
 #include <QLayout>
 #include <QStatusTipEvent>
@@ -271,7 +270,6 @@ bool CDownloadDialog::applyDialogOptions()
 			       QMessageBox::NoButton) == QMessageBox::No)
 	return false;
 
-      std::cout<<" remove dir "<<std::endl;
       //strange to use a qprocess but 
       //can't find recursive remove  qt method
       QStringList args;
@@ -295,7 +293,6 @@ bool CDownloadDialog::applyDialogOptions()
       msgBox.exec();
       return false;
     }
-  std::cout<<" apply options success"<<std::endl;
   return true;
 }
 //------------------------------------------------------------------------------
