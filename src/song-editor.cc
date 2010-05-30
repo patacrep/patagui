@@ -41,8 +41,10 @@ CSongEditor::CSongEditor(const QString & APath)
   connect(action, SIGNAL(triggered()), this, SLOT(save()));
   toolbar->addAction(action);
 
+
   //retrieve song text
   m_textEdit = new QTextEdit;
+  m_textEdit->setUndoRedoEnabled(true);
   QFile file(APath);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {      
@@ -58,6 +60,18 @@ CSongEditor::CSongEditor(const QString & APath)
     }
 
   connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
+
+  //undo redo
+  action = new QAction(tr("Undo"), this);
+  action->setShortcut(tr("Ctrl+Z"));
+  action->setStatusTip(tr("Undo modifications"));
+  connect(action, SIGNAL(triggered()), m_textEdit, SLOT(undo()));
+  toolbar->addAction(action);
+
+  action = new QAction(tr("Redo"), this);
+  action->setStatusTip(tr("Redo modifications"));
+  connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
+  toolbar->addAction(action);
  
   QBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(toolbar);
