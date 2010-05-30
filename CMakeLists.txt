@@ -26,6 +26,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/download.cc
   src/custom.cc
   src/song-editor.cc
+  src/highlighter.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -36,6 +37,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/tools.hh
   src/download.hh
   src/song-editor.hh
+  src/highlighter.hh
   )
 #-------------------------------------------------------------------------------
 # ressources
@@ -69,6 +71,7 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 #qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
 #-------------------------------------------------------------------------------
 # generating executable
+ADD_DEFINITIONS("-g -Wall")
 add_executable(songbook-client
   ${SONGBOOK_CLIENT_SOURCES} 
   ${SONGBOOK_CLIENT_MOCS} 
