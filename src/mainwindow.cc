@@ -81,11 +81,11 @@ CMainWindow::CMainWindow()
   horizontalLayout->addLayout(filterLayout);
 
   // place elements into the main window
-  m_mainWidget = new QTabWidget;
+  m_mainWidget = new CTabWidget;
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
   connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
-	   this, SLOT(closeTab(int)) );
+	   m_mainWidget, SLOT(closeTab(int)) );
   setCentralWidget(m_mainWidget);
 
   QWidget* libraryTab = new QWidget;
@@ -94,7 +94,6 @@ CMainWindow::CMainWindow()
   libraryLayout->addWidget(m_view);
   libraryTab->setLayout(libraryLayout);
   m_mainWidget->addTab(libraryTab, tr("Library"));
-
 
   //Connection to database
   connectDb();
@@ -828,9 +827,42 @@ void CMainWindow::songEditor()
   QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
   CSongEditor* editor = new CSongEditor(path);
   m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, m_titleLabel->text()));
+  editor->setTabIndex(m_mainWidget->currentIndex());
+  editor->setLabel(m_titleLabel->text());
+  connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
 }
 //------------------------------------------------------------------------------
-void CMainWindow::closeTab(int index)
+void CMainWindow::changeTabLabel()
 {
-  m_mainWidget->removeTab(index);  
+  QObject *object = QObject::sender();
+  if (CSongEditor* editor = qobject_cast< CSongEditor* >(object))
+      m_mainWidget->setTabText(editor->tabIndex(), editor->label() );  
 }
+//******************************************************************************
+//******************************************************************************
+CTabWidget::CTabWidget():QTabWidget()
+{
+  tabBar()->hide();
+}
+//------------------------------------------------------------------------------
+CTabWidget::~CTabWidget()
+{}
+//------------------------------------------------------------------------------
+void CTabWidget::closeTab(int index)
+{
+  removeTab(index);
+  if (count() == 1)
+    tabBar()->hide();
+}
+//------------------------------------------------------------------------------
+int CTabWidget::addTab(QWidget* widget, const QString & label)
+{
+  int res = QTabWidget::addTab(widget, label);
+  if (count() == 1)
+    tabBar()->hide();
+  else
+    tabBar()->show();
+  return res;
+}
+//******************************************************************************
+//******************************************************************************

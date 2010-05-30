@@ -50,14 +50,15 @@ CSongEditor::CSongEditor(const QString & APath)
       QString text = stream.readAll();
       file.close();
       m_textEdit->setText(text);
-      Highlighter* lighter = new Highlighter(m_textEdit->document()); 
-
+      new Highlighter(m_textEdit->document()); 
     }
   else
     {
       qWarning() << "CSongEditor warning: unable to open file in read mode";
     }
-  
+
+  connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
+ 
   QBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(toolbar);
   layout->addWidget(m_textEdit);
@@ -80,6 +81,27 @@ void CSongEditor::setFilePath(const QString & APath)
     qWarning() << "CSongEditor::setFilePath Error: the file " << APath << " does not exist " ; 
 }
 //------------------------------------------------------------------------------
+int CSongEditor::tabIndex()
+{
+  return m_tabIndex;
+}
+//------------------------------------------------------------------------------
+void CSongEditor::setTabIndex(int AIndex)
+{
+  m_tabIndex = AIndex;
+}
+//------------------------------------------------------------------------------
+QString CSongEditor::label()
+{
+  return m_label;
+}
+//------------------------------------------------------------------------------
+void CSongEditor::setLabel(const QString & ALabel)
+{
+  m_label = ALabel;
+  emit( labelChanged() );
+}
+//------------------------------------------------------------------------------
 void CSongEditor::save()
 {
   // retrieve text to save
@@ -93,7 +115,14 @@ void CSongEditor::save()
       QTextStream stream (&file);
       stream << text;
       file.close();
+      setLabel( label().remove(" *") );
     }
   else
     qWarning() << "Mainwindow::songEditorSave warning: unable to open file in write mode";
+}
+//------------------------------------------------------------------------------
+void CSongEditor::documentWasModified()
+{
+  if( !label().contains(" *"))
+    setLabel(label() + " *");
 }

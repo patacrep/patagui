@@ -34,16 +34,30 @@ public:
   QString filePath();
   void setFilePath(const QString & APath);
 
+  int tabIndex();
+  void setTabIndex(int AIndex);
+
+  QString label();
+  void setLabel(const QString & ALabel);
+
 private:
   QString syntaxicColoration(const QString &);
 
 private slots:
+  //write modifications of the textEdit into sg file.
   void save();
+  void documentWasModified();
+
+signals:
+  void labelChanged();
+
+public:
+  QTextEdit* m_textEdit;
 
 private:
-
-  QTextEdit* m_textEdit;
   QString m_filePath;
+  QString m_label; //tab title
+  int m_tabIndex;  //tab index
 };
 
 #endif //SONG_EDITOR_HH

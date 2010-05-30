@@ -30,6 +30,7 @@
 
 class CSongbook;
 class CLibrary;
+class CTabWidget;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -83,8 +84,8 @@ private slots:
   void dockWidgetDirectionChanged(Qt::DockWidgetArea area);
 
   void songEditor();
-  void closeTab(int);
-
+  void changeTabLabel();
+  
   void about(); 
 
 private:
@@ -111,7 +112,7 @@ private:
   QSortFilterProxyModel *m_proxyModel;
 
   // Widgets
-  QTabWidget* m_mainWidget;
+  CTabWidget* m_mainWidget;
   QTableView *m_view;
   QProgressBar* m_progressBar;
 
@@ -176,6 +177,21 @@ private:
   QAction *m_rebuildDbAct;
   QAction *m_resizeCoversAct;
   QAction *m_checkerAct;
+
+};
+
+class CTabWidget : public QTabWidget
+{
+  Q_OBJECT
+
+public:
+  CTabWidget();
+  virtual ~CTabWidget();
+
+  int addTab(QWidget* widget, const QString & label);
+
+private slots:
+  void closeTab(int);
 
 };
 
