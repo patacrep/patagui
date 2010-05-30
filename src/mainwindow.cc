@@ -57,7 +57,8 @@ CMainWindow::CMainWindow()
   filterComboBox->addItem(tr("Artist"), 0);
   filterComboBox->addItem(tr("Title"), 1);
   filterComboBox->addItem(tr("Album"), 4);
-  
+  m_proxyModel->setFilterKeyColumn(-1);
+   
   connect(filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
   connect(filterComboBox, SIGNAL(currentIndexChanged(int)),
@@ -109,7 +110,7 @@ CMainWindow::CMainWindow()
 void CMainWindow::filterChanged()
 {
   QObject *object = QObject::sender();
-  
+
   if (QLineEdit *lineEdit = qobject_cast< QLineEdit* >(object))
     {
       QRegExp expression = QRegExp(lineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
