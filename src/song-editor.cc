@@ -20,6 +20,7 @@
 #include <QToolBar>
 #include <QAction>
 #include <QTextEdit>
+#include <QTextDocumentFragment>
 #include <QLayout>
 #include <QFile>
 #include <QTextStream>
@@ -71,6 +72,16 @@ CSongEditor::CSongEditor(const QString & APath)
   action = new QAction(tr("Redo"), this);
   action->setStatusTip(tr("Redo modifications"));
   connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
+  toolbar->addAction(action);
+
+  action = new QAction(tr("Verse"), this);
+  action->setStatusTip(tr("New verse environment"));
+  connect(action, SIGNAL(triggered()), this, SLOT(insertVerse()));
+  toolbar->addAction(action);
+
+  action = new QAction(tr("Chorus"), this);
+  action->setStatusTip(tr("New chorus environment"));
+  connect(action, SIGNAL(triggered()), this, SLOT(insertChorus()));
   toolbar->addAction(action);
  
   QBoxLayout* layout = new QVBoxLayout;
@@ -139,4 +150,16 @@ void CSongEditor::documentWasModified()
 {
   if( !label().contains(" *"))
     setLabel(label() + " *");
+}
+//------------------------------------------------------------------------------
+void CSongEditor::insertVerse()
+{
+  QString selection = m_textEdit->textCursor().selectedText();
+  m_textEdit->insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
+}
+//------------------------------------------------------------------------------
+void CSongEditor::insertChorus()
+{
+  QString selection = m_textEdit->textCursor().selectedText();
+  m_textEdit->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }

@@ -47,6 +47,8 @@ private slots:
   //write modifications of the textEdit into sg file.
   void save();
   void documentWasModified();
+  void insertVerse();
+  void insertChorus();
 
 signals:
   void labelChanged();
