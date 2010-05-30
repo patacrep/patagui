@@ -827,7 +827,7 @@ void CMainWindow::songEditor()
 {
   QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
   CSongEditor* editor = new CSongEditor(path);
-  m_mainWidget->addTab(editor, m_titleLabel->text());
+  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, m_titleLabel->text()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeTab(int index)
