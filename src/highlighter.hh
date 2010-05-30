@@ -15,35 +15,46 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef SONG_EDITOR_HH
-#define SONG_EDITOR_HH
+#ifndef HIGHLIGHTER_HH
+#define HIGHLIGHTER_HH
 
-#include <QWidget>
-#include <QString>
+#include <QSyntaxHighlighter>
 
-class QTextEdit;
+#include <QHash>
+#include <QTextCharFormat>
 
-class CSongEditor : public QWidget
+class QTextDocument;
+
+class Highlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
 
-public:
-  CSongEditor(const QString & APath);
-  virtual ~CSongEditor();
-  
-  QString filePath();
-  void setFilePath(const QString & APath);
+  public:
+  Highlighter(QTextDocument *parent = 0);
+
+protected:
+  void highlightBlock(const QString &text);
 
 private:
-  QString syntaxicColoration(const QString &);
+  struct HighlightingRule
+  {
+    QRegExp pattern;
+    QTextCharFormat format;
+  };
+  QVector<HighlightingRule> highlightingRules;
 
-private slots:
-  void save();
+  QRegExp commentStartExpression;
+  QRegExp commentEndExpression;
 
-private:
+  QTextCharFormat keywordFormat;
+  QTextCharFormat environmentFormat;
+  QTextCharFormat singleLineCommentFormat;
+  QTextCharFormat chordFormat;
+  QTextCharFormat quotationFormat;
+  QTextCharFormat argumentFormat;
+  QTextCharFormat optionFormat;
 
-  QTextEdit* m_textEdit;
-  QString m_filePath;
+  QTextCharFormat multiLineCommentFormat;
 };
 
-#endif //SONG_EDITOR_HH
+#endif

@@ -16,6 +16,7 @@
 // MA  02110-1301, USA.
 //******************************************************************************
 #include "song-editor.hh"
+#include "highlighter.hh"
 #include <QToolBar>
 #include <QAction>
 #include <QTextEdit>
@@ -49,6 +50,8 @@ CSongEditor::CSongEditor(const QString & APath)
       QString text = stream.readAll();
       file.close();
       m_textEdit->setText(text);
+      Highlighter* lighter = new Highlighter(m_textEdit->document()); 
+
     }
   else
     {
@@ -62,9 +65,7 @@ CSongEditor::CSongEditor(const QString & APath)
 }
 //------------------------------------------------------------------------------
 CSongEditor::~CSongEditor()
-{
-  
-}
+{}
 //------------------------------------------------------------------------------
 QString CSongEditor::filePath()
 {
