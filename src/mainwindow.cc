@@ -26,6 +26,7 @@
 #include "tools.hh"
 #include "download.hh"
 #include "song-editor.hh"
+#include "dialog-new-song.hh"
 
 #include <QDebug>
 //******************************************************************************
@@ -218,6 +219,11 @@ void CMainWindow::createActions()
   m_exitAct->setStatusTip(tr("Exit the application"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
+  m_newSongAct = new QAction(QIcon(":/icons/document-load.png"), tr("New Song"), this);
+  m_newSongAct->setShortcut(tr("Ctrl+N"));
+  m_newSongAct->setStatusTip(tr("Write a new song."));
+  connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
+
   m_openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Load Songs List"), this);
   m_openAct->setShortcut(tr("Ctrl+O"));
   m_openAct->setStatusTip(tr("Open a list of songs (.sgl) previously saved."));
@@ -360,6 +366,7 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 void CMainWindow::createMenus()
 {
   m_fileMenu = menuBar()->addMenu(tr("&File"));
+  m_fileMenu->addAction(m_newSongAct);
   m_fileMenu->addAction(m_openAct);
   m_fileMenu->addAction(m_saveAct);
   m_fileMenu->addSeparator();
@@ -837,6 +844,71 @@ void CMainWindow::changeTabLabel()
   QObject *object = QObject::sender();
   if (CSongEditor* editor = qobject_cast< CSongEditor* >(object))
       m_mainWidget->setTabText(editor->tabIndex(), editor->label() );  
+}
+//------------------------------------------------------------------------------
+void CMainWindow::newSong()
+{
+  //pop up new song dialog
+  CDialogNewSong* dialog = new CDialogNewSong(this);
+  connect( dialog, SIGNAL(accepted()), this, SLOT(songTemplate()) );
+}
+//------------------------------------------------------------------------------
+void CMainWindow::songTemplate()
+{
+  QObject *object = QObject::sender();
+  if (CDialogNewSong* dialog = qobject_cast< CDialogNewSong* >(object))
+    {
+      //retrieve user input fields
+      QString title = dialog->title() ;
+      QString artist = dialog->artist() ;
+      uint nbColumns = (uint) dialog->nbColumns();
+      uint capo = (uint) dialog->capo();
+      
+      //remove dialog
+      delete dialog;
+
+      //make template
+      QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(latexFilenameConvention(artist));
+      QString filepath = QString("%1/%2.sg").arg(dirpath).arg(latexFilenameConvention(title));
+      QDir dir(dirpath);
+      if(!dir.exists()) dir.mkpath(dirpath);
+
+      QFile file(filepath);
+      QString songTemplate;
+      if(nbColumns>0) songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
+      songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
+      if(capo>0) songTemplate.append(QString("\\capo{%1}\n").arg(capo));
+      songTemplate.append(QString("\n\\endsong"));
+      
+      if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+	  QTextStream stream (&file);
+	  stream << songTemplate;
+	  file.close();
+	}
+      else
+      	qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode " ;
+      
+      //todo: do not synchronise (=rebuild all database) but insert new song !
+      //synchronise database
+      synchroniseWithLocalSongs();
+
+      //position index of new song in the library and launch song editor
+      //todo: reuse code from songEditor
+      CSongEditor* editor = new CSongEditor(filepath);
+      m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
+      editor->setTabIndex(m_mainWidget->currentIndex());
+      editor->setLabel(title);
+      connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
+    }
+
+}
+//------------------------------------------------------------------------------
+QString CMainWindow::latexFilenameConvention(const QString & str)
+{
+  QString result = str;
+  result.replace(" ","_");
+  return result;
 }
 //******************************************************************************
 //******************************************************************************

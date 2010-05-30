@@ -27,6 +27,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/custom.cc
   src/song-editor.cc
   src/highlighter.cc
+  src/dialog-new-song.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -38,6 +39,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/download.hh
   src/song-editor.hh
   src/highlighter.hh
+  src/dialog-new-song.hh
   )
 #-------------------------------------------------------------------------------
 # ressources

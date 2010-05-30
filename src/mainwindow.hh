@@ -63,6 +63,8 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
+  void newSong();
+  void songTemplate();
   void open();
   void save();
   void build();
@@ -101,6 +103,8 @@ private:
   const QString workingPath();
 
   QStringList getSelectedSongs();
+  
+  QString latexFilenameConvention(const QString &);
 
   /// Modify mybook.tex according to the selected options
   void applyBookType();
@@ -160,6 +164,7 @@ private:
 
   // Actions
   QAction *m_exitAct;
+  QAction *m_newSongAct;
   QAction *m_openAct;
   QAction *m_saveAct;
   QAction *m_buildAct;
