@@ -33,7 +33,7 @@ public:
 public slots:
   void retrieveSongs();
 
-private:
+public:
   void addSongFromFile(const QString path);
   
   QString m_pathToSongs;

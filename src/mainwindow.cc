@@ -889,12 +889,13 @@ void CMainWindow::songTemplate()
       else
       	qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode " ;
       
-      //todo: do not synchronise (=rebuild all database) but insert new song !
-      //synchronise database
-      synchroniseWithLocalSongs();
-
+      //Insert the song in the library
+      m_library->addSongFromFile(filepath);
+      m_library->submitAll();
+      m_view->sortByColumn(1, Qt::AscendingOrder);
+      m_view->sortByColumn(0, Qt::AscendingOrder);
+  
       //position index of new song in the library and launch song editor
-      //todo: reuse code from songEditor
       CSongEditor* editor = new CSongEditor(filepath);
       m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
       editor->setTabIndex(m_mainWidget->currentIndex());
