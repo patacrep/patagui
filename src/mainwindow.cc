@@ -479,7 +479,6 @@ void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
       m_currentSongWidgetLayout->setDirection(QBoxLayout::LeftToRight);
       m_songInfo->setMaximumSize(450, 170);
     }
-
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
@@ -490,6 +489,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
   else
     m_cover->load(":/icons/unavailable-large");
   m_coverLabel.setPixmap(*m_cover);
+  //todo: is there a way to do it automatically and dynamically ?
   //truncate labels if too long
   QString string = m_titleLabel->text();
   if(string.size() > 30)
