@@ -113,25 +113,27 @@ QString CHeader::picture()
 void CHeader::setPicture(const QString & APicture, bool isPath)
 {
   if(!APicture.isEmpty())
-    if(isPath)
-      {
-	//copy the picture in img/ directory so it can be included by latex
-	QFile file(APicture);
-	QFileInfo fi(APicture);
-	QString target = QString("%1/img/%2").arg(m_workingPath).arg(fi.fileName());
-	file.copy(target);
-	QString basename = fi.baseName();
-	if(!basename.isEmpty())
-	  {
-	    m_picture = APicture;
-	    updateFile("\\\\picture\\{([^}]+)", basename);
-	  }
-      }
-    else
-      {
-	m_picture = APicture;
-	updateFile("\\\\picture\\{([^}]+)", APicture);
-      }
+    {
+      if(isPath)
+	{
+	  //copy the picture in img/ directory so it can be included by latex
+	  QFile file(APicture);
+	  QFileInfo fi(APicture);
+	  QString target = QString("%1/img/%2").arg(m_workingPath).arg(fi.fileName());
+	  file.copy(target);
+	  QString basename = fi.baseName();
+	  if(!basename.isEmpty())
+	    {
+	      m_picture = APicture;
+	      updateFile("\\\\picture\\{([^}]+)", basename);
+	    }
+	}
+      else
+	{
+	  m_picture = APicture;
+	  updateFile("\\\\picture\\{([^}]+)", APicture);
+	}
+    }
 }
 //------------------------------------------------------------------------------
 QString CHeader::copyright()
