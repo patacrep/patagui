@@ -148,7 +148,9 @@ void CSongEditor::save()
 //------------------------------------------------------------------------------
 void CSongEditor::documentWasModified()
 {
-  if( !label().contains(" *"))
+  //add isModified also it seems strange to avoid document marked as
+  //modified the first time it is opened
+  if( !label().contains(" *") &&   m_textEdit->document()->isModified() )
     setLabel(label() + " *");
 }
 //------------------------------------------------------------------------------
