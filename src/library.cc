@@ -30,7 +30,7 @@
 #include <QSqlTableModel>
 #include <QSqlField>
 #include <QPixmapCache>
-#include <iostream>
+#include <QDebug>
 //------------------------------------------------------------------------------
 CLibrary::CLibrary()
   : QSqlTableModel()
@@ -142,6 +142,21 @@ void CLibrary::addSongFromFile(const QString path)
       
       insertRecord(-1,song);
     }
+}
+//------------------------------------------------------------------------------
+void CLibrary::removeSongFromFile(const QString  path)
+{
+  //todo: debug
+  qDebug() << "path = "<< path ;
+  QModelIndexList list = match(index(0,3), Qt::MatchExactly, path);
+  QModelIndex index;
+  foreach(index, list)
+    {
+      int pos = index.row();
+      qDebug() << "remove pos = "<< pos ;
+      removeRow(pos);
+    }
+  submitAll();
 }
 //------------------------------------------------------------------------------
 QString CLibrary::latexToUtf8(const QString str)

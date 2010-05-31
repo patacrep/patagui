@@ -87,7 +87,8 @@ private slots:
 
   void songEditor();
   void changeTabLabel();
-  
+  void deleteSong();
+
   void about(); 
 
 private:

@@ -422,19 +422,25 @@ void CMainWindow::dockWidgets()
   songInfoLayout->setRowStretch(3,10);
   currentSongTagsBox->setLayout(songInfoLayout);
   
+  QDialogButtonBox * buttonBox = new QDialogButtonBox;
   QPushButton* editButton = new QPushButton(tr("Edit"));
+  QPushButton * deleteButton = new QPushButton(tr("Delete"));
+  editButton->setDefault(true);
+  buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);
 
+  connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
+  connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
+  
   m_currentSongWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, songInfoWidget);
   m_coverLabel.setAlignment(Qt::AlignTop);
   m_currentSongWidgetLayout->addWidget(&m_coverLabel);
   m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
-  m_currentSongWidgetLayout->addWidget(editButton);
+  m_currentSongWidgetLayout->addWidget(buttonBox);
   m_currentSongWidgetLayout->addStretch(1);
   m_songInfo->setWidget(songInfoWidget);
   addDockWidget( Qt::LeftDockWidgetArea, m_songInfo );
      
-  connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
-
   connect(m_songInfo, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
           SLOT(dockWidgetDirectionChanged(Qt::DockWidgetArea)));
 
@@ -910,6 +916,27 @@ QString CMainWindow::latexFilenameConvention(const QString & str)
   QString result = str;
   result.replace(" ","_");
   return result;
+}
+//------------------------------------------------------------------------------
+void CMainWindow::deleteSong()
+{
+  QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+  
+  if(QMessageBox::question
+     (this, this->windowTitle(), 
+      QString(tr("This will remove the file %1 ?")).arg(path), 
+      QMessageBox::Yes, 
+      QMessageBox::No, 
+      QMessageBox::NoButton) == QMessageBox::Yes)
+    {
+      //todo: debug
+      //remove entry in database
+      m_library->removeSongFromFile(path);
+      //removal on disk
+      QFile file(path);
+      file.remove();
+      //todo: also remove dir if empty
+    }
 }
 //******************************************************************************
 //******************************************************************************

@@ -25,6 +25,11 @@ CDialogNewSong::CDialogNewSong(CMainWindow* parent)
   : QDialog()
 {
   m_parent = parent;
+  m_title = "";
+  m_artist =  "";
+  m_nbColumns = 0;
+  m_capo = 0;
+  
   setModal(true);
 
   QLineEdit* titleEdit = new QLineEdit;
