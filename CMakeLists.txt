@@ -44,7 +44,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
 #-------------------------------------------------------------------------------
 # ressources
 set(SONGBOOK_CLIENT_RCS
-  songbook-client.qrc
+  songbook.qrc
   )
 #-------------------------------------------------------------------------------
 # process Qt special files

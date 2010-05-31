@@ -21,7 +21,7 @@
 //******************************************************************************
 int main( int argc, char * argv[] )
 {
-  Q_INIT_RESOURCE(songbook-client);
+  Q_INIT_RESOURCE(songbook);
 
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");
