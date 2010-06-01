@@ -102,6 +102,11 @@ CMainWindow::CMainWindow()
   else
     applyDisplayColumn();
 
+  //Display database through the view
+  m_view->sortByColumn(1, Qt::AscendingOrder);
+  m_view->sortByColumn(0, Qt::AscendingOrder);
+  m_view->show();
+
   //Dock Widgets
   dockWidgets();
 
@@ -320,17 +325,13 @@ bool CMainWindow::connectDb()
 
   // Display the song list
   m_proxyModel->setSourceModel(m_library);
-  m_view->setModel(m_library);
   m_view->setShowGrid( false );
   m_view->setAlternatingRowColors(true);
   m_view->setSortingEnabled(true);
   m_view->setSelectionMode(QAbstractItemView::MultiSelection);
   m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
   m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  m_view->sortByColumn(1, Qt::AscendingOrder);
-  m_view->sortByColumn(0, Qt::AscendingOrder);
   m_view->setModel(m_proxyModel);
-  m_view->show();
   
   return newdb;
 }
@@ -344,9 +345,6 @@ void CMainWindow::synchroniseWithLocalSongs()
   // Retrieve all songs from .sg files in working dir
   m_library->setPathToSongs(workingPath());
   m_library->retrieveSongs();
-  m_view->sortByColumn(1, Qt::AscendingOrder);
-  m_view->sortByColumn(0, Qt::AscendingOrder);
-  m_view->show();
   applyDisplayColumn();
 }
 //------------------------------------------------------------------------------
@@ -586,7 +584,8 @@ void CMainWindow::build()
 	  songlist = getSelectedSongs();
 	}
     }
-  clean(); //else songbook indexes are likely to be wrong
+  // todo: if(songbookIndexHasChanged()) then ..
+  clean(); //else songbook indexes are likely to be wrong, 
   QString filename = QString("%1/mybook.sgl").arg(workingPath());
   
   QString path = QString("%1/").arg(workingPath());
