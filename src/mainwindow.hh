@@ -77,7 +77,7 @@ private slots:
   void setDisplaySongInfo(bool value);
   void setDisplayLogInfo(bool value);
   void applyDisplayColumn();
-  void connectDb();
+  bool connectDb();
   void filterChanged();
   
   void dockWidgets();

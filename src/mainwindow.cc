@@ -97,7 +97,13 @@ CMainWindow::CMainWindow()
   m_mainWidget->addTab(libraryTab, tr("Library"));
 
   //Connection to database
-  connectDb();
+  if(connectDb())
+    synchroniseWithLocalSongs();
+  else
+    applyDisplayColumn();
+
+  //Dock Widgets
+  dockWidgets();
 
   // status bar with an embedded progress bar on the right
   m_progressBar->setTextVisible(false);
@@ -303,7 +309,7 @@ void CMainWindow::createActions()
   connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
 }
 //------------------------------------------------------------------------------
-void CMainWindow::connectDb()
+bool CMainWindow::connectDb()
 {
   //Connect to database
   bool newdb = createDbConnection();
@@ -326,11 +332,7 @@ void CMainWindow::connectDb()
   m_view->setModel(m_proxyModel);
   m_view->show();
   
-  dockWidgets();
-  if(newdb)
-    synchroniseWithLocalSongs();
-  else
-    applyDisplayColumn();
+  return newdb;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::synchroniseWithLocalSongs()
