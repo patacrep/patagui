@@ -931,11 +931,14 @@ void CMainWindow::deleteSong()
     {
       //todo: debug
       //remove entry in database
-      m_library->removeSongFromFile(path);
+      //m_library->removeSongFromFile(path);
       //removal on disk
       QFile file(path);
+      QFileInfo fileinfo(file);
+      QString tmp = fileinfo.canonicalPath();
       file.remove();
-      //todo: also remove dir if empty
+      QDir dir; 
+      dir.rmdir(tmp); //remove dir if empty
     }
 }
 //******************************************************************************
