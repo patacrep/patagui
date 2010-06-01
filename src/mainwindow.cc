@@ -323,14 +323,14 @@ void CMainWindow::connectDb()
   m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
   m_view->sortByColumn(1, Qt::AscendingOrder);
   m_view->sortByColumn(0, Qt::AscendingOrder);
-  m_view->resizeColumnsToContents();
   m_view->setModel(m_proxyModel);
   m_view->show();
   
   dockWidgets();
-  applyDisplayColumn();
   if(newdb)
     synchroniseWithLocalSongs();
+  else
+    applyDisplayColumn();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::synchroniseWithLocalSongs()
