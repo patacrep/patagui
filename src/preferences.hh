@@ -112,7 +112,6 @@ private:
   //check lilypond version
   QLabel* m_lilypondLabel;
   QProcess* m_lilypondCheck;
-  QProcess* m_grep;
 
   bool isValid;
 };

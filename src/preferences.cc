@@ -335,21 +335,16 @@ void OptionsPage::checkLilypondVersion(int AState)
   if(AState==Qt::Checked)
     {
       m_lilypondCheck = new QProcess(this);
-      m_grep = new QProcess(this);
-
       connect(m_lilypondCheck, SIGNAL(error(QProcess::ProcessError)), 
 	      this, SLOT(processError(QProcess::ProcessError)));
-      connect(m_grep, SIGNAL(readyReadStandardOutput()), 
-	      this, SLOT(readProcessOut()));
       
       QStringList argsLily;
       argsLily << "--version";
-      QStringList argsGrep;
-      argsGrep << "GNU LilyPond";
-
-      m_lilypondCheck->setStandardOutputProcess(m_grep);
       m_lilypondCheck->start("lilypond", argsLily);
-      m_grep->start("grep", argsGrep);
+      m_lilypondCheck->waitForFinished();
+      QRegExp rx("GNU([^\n]+)");
+      rx.indexIn(m_lilypondCheck->readAllStandardOutput().data(););
+      m_lilypondLabel->setText(QString("<font color=green>Found:%1</font>").arg(rx.cap(1)));
     }
   else
     {
@@ -361,13 +356,6 @@ void OptionsPage::processError(QProcess::ProcessError error)
 {
   m_lilypondLabel->setText(tr("<font color=orange>Warning: <a href=\"http://lilypond.org\">Lilypond</a> not found</font>"));
 }
-
-void OptionsPage::readProcessOut()
-{
-  QString res = m_grep->readAllStandardOutput().data();
-  m_lilypondLabel->setText(QString("<font color=green>Found: %1</font>").arg(res));
-}
-
 
 
 
