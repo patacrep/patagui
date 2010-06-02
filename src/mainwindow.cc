@@ -459,10 +459,6 @@ void CMainWindow::dockWidgets()
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           SLOT(updateCover(const QModelIndex &)));
 
-  //update selection when a song is removed
-  //  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &,const QItemSelection &)),
-  //       SLOT(updateCover(const QModelIndex &)));
-
   // Debugger Info widget
   m_logInfo = new QDockWidget( tr("Logs"), this );
   m_logInfo->setMinimumWidth(250);
@@ -489,20 +485,22 @@ void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
 //------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
 {
+  if(!selectionModel()->hasSelection())
+    {
+      m_cover->load(":/icons/unavailable-large");
+      m_coverLabel.setPixmap(*m_cover);
+      m_titleLabel->setText("");
+      m_artistLabel->setText("");
+      m_albumLabel->setText("");
+      return;
+    }
+
   QString coverpath = m_library->record(m_proxyModel->mapToSource(index).row()).field("cover").value().toString();
   if (QFile::exists(coverpath))
     m_cover->load(coverpath);
   else
     m_cover->load(":/icons/unavailable-large");
   m_coverLabel.setPixmap(*m_cover);
-
-  if(!selectionModel()->hasSelection())
-    {
-      m_titleLabel->setText("");
-      m_artistLabel->setText("");
-      m_albumLabel->setText("");
-      return;
-    }
 
   //todo: is there a way to do it automatically and dynamically ?
   //truncate labels if too long
@@ -852,6 +850,17 @@ QItemSelectionModel * CMainWindow::selectionModel()
 //------------------------------------------------------------------------------
 void CMainWindow::songEditor()
 {
+  if(!selectionModel()->hasSelection())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please select a song to edit."));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
+      return;
+    }
+  
   QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
   CSongEditor* editor = new CSongEditor(path);
   m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, m_titleLabel->text()));
@@ -955,13 +964,15 @@ void CMainWindow::deleteSong()
       QFile file(path);
       QFileInfo fileinfo(file);
       QString tmp = fileinfo.canonicalPath();
-      file.remove();
-      QDir dir; 
-      dir.rmdir(tmp); //remove dir if empty
-      synchroniseWithLocalSongs(); //temporary hack
-      //once deleted move selection in the model
-      updateCover(selectionModel()->currentIndex());
-      m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
+      if(file.remove())
+	{
+	  QDir dir; 
+	  dir.rmdir(tmp); //remove dir if empty
+	  synchroniseWithLocalSongs(); //temporary hack
+	  //once deleted move selection in the model
+	  updateCover(selectionModel()->currentIndex());
+	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
+	}
     }
 }
 //******************************************************************************
