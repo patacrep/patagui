@@ -144,21 +144,6 @@ void CLibrary::addSongFromFile(const QString path)
     }
 }
 //------------------------------------------------------------------------------
-void CLibrary::removeSongFromFile(const QString  path)
-{
-  //todo: debug
-  qDebug() << "path = "<< path ;
-  QModelIndexList list = match(index(0,3), Qt::MatchExactly, path);
-  QModelIndex index;
-  foreach(index, list)
-    {
-      int pos = index.row();
-      qDebug() << "remove pos = "<< pos ;
-      removeRow(pos);
-    }
-  submitAll();
-}
-//------------------------------------------------------------------------------
 QString CLibrary::latexToUtf8(const QString str)
 {
   QString AString(str);

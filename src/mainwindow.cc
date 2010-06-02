@@ -933,7 +933,11 @@ void CMainWindow::deleteSong()
     {
       //todo: debug
       //remove entry in database
-      //m_library->removeSongFromFile(path);
+      //QModelIndexList list = m_library->match(m_proxyModel->index(0,3), Qt::MatchExactly, path);
+      //QModelIndex index;
+      //foreach(index, list)
+      //	removeRow(index.row());
+      //submitAll();
       //removal on disk
       QFile file(path);
       QFileInfo fileinfo(file);
@@ -941,6 +945,7 @@ void CMainWindow::deleteSong()
       file.remove();
       QDir dir; 
       dir.rmdir(tmp); //remove dir if empty
+      synchroniseWithLocalSongs(); //temporary hack
     }
 }
 //******************************************************************************

@@ -35,7 +35,6 @@ public slots:
 
 public:
   void addSongFromFile(const QString path);
-  void removeSongFromFile(const QString path);
   
   QString m_pathToSongs;
   QString imgFile;
