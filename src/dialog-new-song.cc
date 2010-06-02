@@ -38,7 +38,9 @@ CDialogNewSong::CDialogNewSong(CMainWindow* parent)
   QLabel* artistLabel = new QLabel(tr("Artist: "));
 
   QSpinBox* nbColumnsEdit = new QSpinBox;
+  nbColumnsEdit->setRange(0,20);
   QSpinBox* capoEdit      = new QSpinBox;
+  capoEdit->setRange(0,20);
   QLabel* nbColumnsLabel = new QLabel(tr("Number of columns: "));
   QLabel* capoLabel = new QLabel(tr("Capo: "));
   
