@@ -502,8 +502,9 @@ void SongbookAppearancePage::readSettings()
 {
   QSettings settings;
   settings.beginGroup("options");
-  m_color = new QColor(settings.value("color").value<QColor>());
-  m_sliderFontSize->setValue(settings.value("fontsize").toInt());
+  QColor color(209,228,174);
+  m_color = new QColor(settings.value("color", color).value<QColor>());
+  m_sliderFontSize->setValue(settings.value("fontsize", 2).toInt());
   settings.endGroup();
 
   //todo: put somewhere else
