@@ -55,6 +55,7 @@ signals:
 
 public:
   QTextEdit* m_textEdit;
+  bool isOk;
 
 private:
   QString m_filePath;

@@ -24,6 +24,7 @@
 #include <QLayout>
 #include <QFile>
 #include <QTextStream>
+#include <QMessageBox>
 #include <QDebug>
 
 //------------------------------------------------------------------------------
@@ -54,40 +55,47 @@ CSongEditor::CSongEditor(const QString & APath)
       file.close();
       m_textEdit->setText(text);
       new Highlighter(m_textEdit->document()); 
+
+      connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
+
+      //undo redo
+      action = new QAction(tr("Undo"), this);
+      action->setShortcut(tr("Ctrl+Z"));
+      action->setStatusTip(tr("Undo modifications"));
+      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(undo()));
+      toolbar->addAction(action);
+
+      action = new QAction(tr("Redo"), this);
+      action->setStatusTip(tr("Redo modifications"));
+      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
+      toolbar->addAction(action);
+
+      action = new QAction(tr("Verse"), this);
+      action->setStatusTip(tr("New verse environment"));
+      connect(action, SIGNAL(triggered()), this, SLOT(insertVerse()));
+      toolbar->addAction(action);
+
+      action = new QAction(tr("Chorus"), this);
+      action->setStatusTip(tr("New chorus environment"));
+      connect(action, SIGNAL(triggered()), this, SLOT(insertChorus()));
+      toolbar->addAction(action);
+ 
+      QBoxLayout* layout = new QVBoxLayout;
+      layout->addWidget(toolbar);
+      layout->addWidget(m_textEdit);
+      setLayout(layout);
+      isOk = true;
     }
   else
     {
-      qWarning() << "CSongEditor warning: unable to open file in read mode";
+      isOk = false;
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.setText(QString(tr("Unable to open file:\n%1")).arg(APath));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
     }
-
-  connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
-
-  //undo redo
-  action = new QAction(tr("Undo"), this);
-  action->setShortcut(tr("Ctrl+Z"));
-  action->setStatusTip(tr("Undo modifications"));
-  connect(action, SIGNAL(triggered()), m_textEdit, SLOT(undo()));
-  toolbar->addAction(action);
-
-  action = new QAction(tr("Redo"), this);
-  action->setStatusTip(tr("Redo modifications"));
-  connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
-  toolbar->addAction(action);
-
-  action = new QAction(tr("Verse"), this);
-  action->setStatusTip(tr("New verse environment"));
-  connect(action, SIGNAL(triggered()), this, SLOT(insertVerse()));
-  toolbar->addAction(action);
-
-  action = new QAction(tr("Chorus"), this);
-  action->setStatusTip(tr("New chorus environment"));
-  connect(action, SIGNAL(triggered()), this, SLOT(insertChorus()));
-  toolbar->addAction(action);
- 
-  QBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(toolbar);
-  layout->addWidget(m_textEdit);
-  setLayout(layout);
 }
 //------------------------------------------------------------------------------
 CSongEditor::~CSongEditor()
