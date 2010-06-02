@@ -343,7 +343,7 @@ void OptionsPage::checkLilypondVersion(int AState)
       m_lilypondCheck->start("lilypond", argsLily);
       m_lilypondCheck->waitForFinished();
       QRegExp rx("GNU([^\n]+)");
-      rx.indexIn(m_lilypondCheck->readAllStandardOutput().data();
+      rx.indexIn(m_lilypondCheck->readAllStandardOutput().data());
       m_lilypondLabel->setText(QString("<font color=green>Found:%1</font>").arg(rx.cap(1)));
     }
   else

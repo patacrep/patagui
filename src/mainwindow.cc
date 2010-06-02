@@ -337,6 +337,7 @@ bool CMainWindow::connectDb()
 //------------------------------------------------------------------------------
 void CMainWindow::synchroniseWithLocalSongs()
 {
+  qDebug() << " synchronise with local songs " ;
   //Drop table songs and recreate
   QSqlQuery query;
   query.exec("delete from songs");
@@ -955,6 +956,17 @@ QString CMainWindow::latexFilenameConvention(const QString & str)
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong()
 {
+  if(!selectionModel()->hasSelection())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please select a song to remove."));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
+      return;
+    }
+
   QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
   
   if(QMessageBox::question
