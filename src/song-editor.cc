@@ -36,14 +36,6 @@ CSongEditor::CSongEditor(const QString & APath)
   QToolBar* toolbar = new QToolBar;
   toolbar->setMovable(false);
 
-  // actions
-  QAction* action = new QAction(tr("Save"), this);
-  action->setShortcut(tr("Ctrl+S"));
-  action->setStatusTip(tr("Save modifications"));
-  connect(action, SIGNAL(triggered()), this, SLOT(save()));
-  toolbar->addAction(action);
-
-
   //retrieve song text
   m_textEdit = new QTextEdit;
   m_textEdit->setUndoRedoEnabled(true);
@@ -57,6 +49,13 @@ CSongEditor::CSongEditor(const QString & APath)
       new Highlighter(m_textEdit->document()); 
 
       connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
+
+      // actions
+      QAction* action = new QAction(tr("Save"), this);
+      action->setShortcut(tr("Ctrl+S"));
+      action->setStatusTip(tr("Save modifications"));
+      connect(action, SIGNAL(triggered()), this, SLOT(save()));
+      toolbar->addAction(action);
 
       //undo redo
       action = new QAction(tr("Undo"), this);

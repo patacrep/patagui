@@ -495,7 +495,12 @@ void CMainWindow::updateCover(const QModelIndex & index)
       return;
     }
 
-  QString coverpath = m_library->record(m_proxyModel->mapToSource(index).row()).field("cover").value().toString();
+  // do not retrieve last clicked item but last selected item
+  QModelIndex lastIndex = selectionModel()->selectedRows().last();
+  selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::NoUpdate);
+  if(lastIndex != index) m_mapper->setCurrentModelIndex(lastIndex);
+
+  QString coverpath = m_library->record(m_proxyModel->mapToSource(lastIndex).row()).field("cover").value().toString();
   if (QFile::exists(coverpath))
     m_cover->load(coverpath);
   else
