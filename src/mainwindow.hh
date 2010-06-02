@@ -91,6 +91,9 @@ private slots:
 
   void about(); 
 
+  //signals:
+  //void songDeleted(const QModelIndex & index);
+
 private:
   void readSettings();
   void writeSettings();
@@ -111,7 +114,7 @@ private:
   void applyBookType();
 
   QItemSelectionModel * selectionModel();
-
+  QDataWidgetMapper* m_mapper;
   // Song library and view
   CLibrary *m_library;
   QSortFilterProxyModel *m_proxyModel;

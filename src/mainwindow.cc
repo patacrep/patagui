@@ -447,17 +447,21 @@ void CMainWindow::dockWidgets()
           SLOT(dockWidgetDirectionChanged(Qt::DockWidgetArea)));
 
   //Data mapper
-  QDataWidgetMapper *mapper = new QDataWidgetMapper();
-  mapper->setModel(m_proxyModel);
-  mapper->addMapping(m_artistLabel, 0, QByteArray("text"));
-  mapper->addMapping(m_titleLabel, 1, QByteArray("text"));
-  mapper->addMapping(m_albumLabel, 4, QByteArray("text"));
+  m_mapper = new QDataWidgetMapper();
+  m_mapper->setModel(m_proxyModel);
+  m_mapper->addMapping(m_artistLabel, 0, QByteArray("text"));
+  m_mapper->addMapping(m_titleLabel, 1, QByteArray("text"));
+  m_mapper->addMapping(m_albumLabel, 4, QByteArray("text"));
   updateCover(QModelIndex());
 
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
-          mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
+          m_mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           SLOT(updateCover(const QModelIndex &)));
+
+  //update selection when a song is removed
+  //  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &,const QItemSelection &)),
+  //       SLOT(updateCover(const QModelIndex &)));
 
   // Debugger Info widget
   m_logInfo = new QDockWidget( tr("Logs"), this );
@@ -491,6 +495,15 @@ void CMainWindow::updateCover(const QModelIndex & index)
   else
     m_cover->load(":/icons/unavailable-large");
   m_coverLabel.setPixmap(*m_cover);
+
+  if(!selectionModel()->hasSelection())
+    {
+      m_titleLabel->setText("");
+      m_artistLabel->setText("");
+      m_albumLabel->setText("");
+      return;
+    }
+
   //todo: is there a way to do it automatically and dynamically ?
   //truncate labels if too long
   QString string = m_titleLabel->text();
@@ -946,6 +959,9 @@ void CMainWindow::deleteSong()
       QDir dir; 
       dir.rmdir(tmp); //remove dir if empty
       synchroniseWithLocalSongs(); //temporary hack
+      //once deleted move selection in the model
+      updateCover(selectionModel()->currentIndex());
+      m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
     }
 }
 //******************************************************************************
