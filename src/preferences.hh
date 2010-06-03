@@ -68,12 +68,12 @@ private:
   void readSettings();
   void writeSettings();
 
-  QCheckBox *artistCheckBox;
-  QCheckBox *titleCheckBox;
-  QCheckBox *pathCheckBox;
-  QCheckBox *albumCheckBox;
-  QCheckBox *lilypondCheckBox;
-  QCheckBox *coverCheckBox;
+  QCheckBox *m_artistCheckBox;
+  QCheckBox *m_titleCheckBox;
+  QCheckBox *m_pathCheckBox;
+  QCheckBox *m_albumCheckBox;
+  QCheckBox *m_lilypondCheckBox;
+  QCheckBox *m_coverCheckBox;
 };
 
 class OptionsPage : public QWidget
