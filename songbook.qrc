@@ -16,5 +16,7 @@
      <file>icons/network-server.png</file>
      <file>icons/view-refresh.png</file>
      <file>icons/patacrep.png</file>
+     <file>icons/edit-undo.png</file>
+     <file>icons/edit-redo.png</file>
  </qresource>
  </RCC>
