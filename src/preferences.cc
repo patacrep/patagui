@@ -183,38 +183,38 @@ OptionsPage::OptionsPage(QWidget *parent)
 
   QPushButton *browseWorkingPathButton = new QPushButton(tr("Browse"));
   connect(browseWorkingPathButton, SIGNAL(clicked()), this, SLOT(browse()));
-  workingPath = new QLineEdit(QString());
-  connect(workingPath, SIGNAL(textChanged(const QString&)), this, SLOT(checkWorkingPath(const QString&)));
+  m_workingPath = new QLineEdit(QString());
+  connect(m_workingPath, SIGNAL(textChanged(const QString&)), this, SLOT(checkWorkingPath(const QString&)));
   m_workingPathValid = new QLabel;
   checkWorkingPath(workingDir);
 
   QGroupBox *songbookOptionsGroupBox = new QGroupBox(tr("Main options"));
 
   QButtonGroup *bookTypeGroup = new QButtonGroup();
-  chordbookRadioButton = new QRadioButton(tr("Chordbook"));
-  bookTypeGroup->addButton(chordbookRadioButton);
-  lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
-  bookTypeGroup->addButton(lyricbookRadioButton);
-  connect(lyricbookRadioButton, SIGNAL(toggled(bool)),this,SLOT(lyricBookMode(bool)));
+  m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
+  bookTypeGroup->addButton(m_chordbookRadioButton);
+  m_lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
+  bookTypeGroup->addButton(m_lyricbookRadioButton);
+  connect(m_lyricbookRadioButton, SIGNAL(toggled(bool)),this,SLOT(lyricBookMode(bool)));
 
-  diagramCheckBox = new QCheckBox(tr("Chord Diagram"));
-  lilypondCheckBox = new QCheckBox(tr("Lilypond"));
-  tablatureCheckBox = new QCheckBox(tr("Tablature"));
+  m_diagramCheckBox = new QCheckBox(tr("Chord Diagram"));
+  m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
+  m_tablatureCheckBox = new QCheckBox(tr("Tablature"));
   m_lilypondLabel = new QLabel;
-  connect(lilypondCheckBox, SIGNAL(stateChanged(int)),this,SLOT(checkLilypondVersion(int)));
+  connect(m_lilypondCheckBox, SIGNAL(stateChanged(int)),this,SLOT(checkLilypondVersion(int)));
 
   QGridLayout *workingPathLayout = new QGridLayout;
-  workingPathLayout->addWidget(workingPath,0,0,1,1);
+  workingPathLayout->addWidget(m_workingPath,0,0,1,1);
   workingPathLayout->addWidget(browseWorkingPathButton,0,1,1,1);
   workingPathLayout->addWidget(m_workingPathValid,1,0,2,1);
   workingPathGroupBox->setLayout(workingPathLayout);
 
   QGridLayout *songbookOptionsLayout = new QGridLayout;
-  songbookOptionsLayout->addWidget(chordbookRadioButton,0,0,1,1);
-  songbookOptionsLayout->addWidget(lyricbookRadioButton,1,0,1,1);
-  songbookOptionsLayout->addWidget(diagramCheckBox,0,1,1,1);
-  songbookOptionsLayout->addWidget(lilypondCheckBox,1,1,1,1);
-  songbookOptionsLayout->addWidget(tablatureCheckBox,2,1,1,1);
+  songbookOptionsLayout->addWidget(m_chordbookRadioButton,0,0,1,1);
+  songbookOptionsLayout->addWidget(m_lyricbookRadioButton,1,0,1,1);
+  songbookOptionsLayout->addWidget(m_diagramCheckBox,0,1,1,1);
+  songbookOptionsLayout->addWidget(m_lilypondCheckBox,1,1,1,1);
+  songbookOptionsLayout->addWidget(m_tablatureCheckBox,2,1,1,1);
   songbookOptionsLayout->addWidget(m_lilypondLabel,3,0,2,1);
   songbookOptionsGroupBox->setLayout(songbookOptionsLayout);
 
@@ -231,11 +231,11 @@ void OptionsPage::browse()
 {
   QString directory = QFileDialog::getExistingDirectory(this,
                                                         tr("Find Files"), 
-                                                        workingPath->text());
+                                                        m_workingPath->text());
   
   if (!directory.isEmpty())
     {
-      workingPath->setText(directory);
+      m_workingPath->setText(directory);
       checkWorkingPath(directory);
     }
 }
@@ -243,28 +243,28 @@ void OptionsPage::browse()
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  workingPath->setText(settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString());
+  m_workingPath->setText(settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString());
 
   settings.beginGroup("options");
-  chordbookRadioButton->setChecked(settings.value("chordbook", true).toBool());
-  lyricbookRadioButton->setChecked(settings.value("lyricbook", false).toBool());
-  diagramCheckBox->setChecked(settings.value("chordDiagram", true).toBool());
-  lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
-  tablatureCheckBox->setChecked(settings.value("tablature", true).toBool());
+  m_chordbookRadioButton->setChecked(settings.value("chordbook", true).toBool());
+  m_lyricbookRadioButton->setChecked(settings.value("lyricbook", false).toBool());
+  m_diagramCheckBox->setChecked(settings.value("chordDiagram", true).toBool());
+  m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
+  m_tablatureCheckBox->setChecked(settings.value("tablature", true).toBool());
   settings.endGroup();
 }
 
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.setValue("workingPath", workingPath->text());
+  settings.setValue("workingPath", m_workingPath->text());
 
   settings.beginGroup("options");
-  settings.setValue("chordbook", chordbookRadioButton->isChecked());
-  settings.setValue("lyricbook", lyricbookRadioButton->isChecked());
-  settings.setValue("chordDiagram", diagramCheckBox->isChecked());
-  settings.setValue("lilypond", lilypondCheckBox->isChecked());
-  settings.setValue("tablature", tablatureCheckBox->isChecked());
+  settings.setValue("chordbook", m_chordbookRadioButton->isChecked());
+  settings.setValue("lyricbook", m_lyricbookRadioButton->isChecked());
+  settings.setValue("chordDiagram", m_diagramCheckBox->isChecked());
+  settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
+  settings.setValue("tablature", m_tablatureCheckBox->isChecked());
   settings.endGroup();
 }
 
@@ -276,7 +276,7 @@ void OptionsPage::closeEvent(QCloseEvent *event)
 
 void OptionsPage::checkWorkingPath(const QString & path)
 {
-  isValid = false;
+  m_isValid = false;
   QDir directory(path);
   if(!directory.exists())
     {
@@ -314,7 +314,7 @@ void OptionsPage::checkWorkingPath(const QString & path)
       return;
     }
 
-  isValid = true;
+  m_isValid = true;
 
   if(!lilypond.exists())
     {
@@ -363,9 +363,9 @@ void OptionsPage::lyricBookMode(bool tmp)
   QObject *object = QObject::sender();
   if (QRadioButton* lyricBook = qobject_cast< QRadioButton* >(object))
     {
-      diagramCheckBox->setEnabled(!lyricBook->isChecked());
-      lilypondCheckBox->setEnabled(!lyricBook->isChecked());
-      tablatureCheckBox->setEnabled(!lyricBook->isChecked());
+      m_diagramCheckBox->setEnabled(!lyricBook->isChecked());
+      m_lilypondCheckBox->setEnabled(!lyricBook->isChecked());
+      m_tablatureCheckBox->setEnabled(!lyricBook->isChecked());
     }
 }
 
@@ -531,7 +531,7 @@ void SongbookAppearancePage::closeEvent(QCloseEvent *event)
   QSettings settings;
   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
   checkWorkingPath(workingDir);
-  if(isValid)
+  if(m_isValid)
     {
       updateHeader(); //modify mybook.tex with front page settings
       updateCustom(); //modify crepbook.tex with custom settings
@@ -564,23 +564,17 @@ void SongbookAppearancePage::updateCustom()
 
 void SongbookAppearancePage::checkWorkingPath(const QString & path)
 {
-  isValid = false;
+  m_isValid = false;
   QDir directory(path);
   if(!directory.exists())
-    {
-      return;
-    }
-
+    return;
+  
   if(!directory.entryList(QDir::Files | QDir::Readable).contains("makefile"))
-    {
-      return;
-    }
-
+    return;
+  
   if(!directory.entryList(QDir::Files | QDir::Readable).contains("mybook.tex"))
-    {
-      return;
-    }
-
+    return;
+  
   // subdirectories
   QDir songs( QString("%1/songs").arg(path) );
   QDir utils( QString("%1/utils").arg(path) );
@@ -588,14 +582,10 @@ void SongbookAppearancePage::checkWorkingPath(const QString & path)
   QDir img( QString("%1/img").arg(path) );
 
   if(!songs.exists())
-    {
-      return;
-    }
-
+    return;
+  
   if(!img.exists())
-    {
-      return;
-    }
+    return;
 
-  isValid = true;
+  m_isValid = true;
 }

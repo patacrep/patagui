@@ -99,21 +99,21 @@ private:
   void updateHeader();
   void updateCustom();
 
-  QLineEdit * workingPath;
+  QLineEdit * m_workingPath;
   QLabel* m_workingPathValid;
 
-  QRadioButton *chordbookRadioButton;
-  QRadioButton *lyricbookRadioButton;
+  QRadioButton *m_chordbookRadioButton;
+  QRadioButton *m_lyricbookRadioButton;
 
-  QCheckBox *diagramCheckBox;
-  QCheckBox *lilypondCheckBox;
-  QCheckBox *tablatureCheckBox;
+  QCheckBox *m_diagramCheckBox;
+  QCheckBox *m_lilypondCheckBox;
+  QCheckBox *m_tablatureCheckBox;
 
   //check lilypond version
   QLabel* m_lilypondLabel;
   QProcess* m_lilypondCheck;
 
-  bool isValid;
+  bool m_isValid;
 };
 
 class SongbookAppearancePage : public QWidget
@@ -152,7 +152,7 @@ private:
   QLabel* m_colorLabel;
   QSlider* m_sliderFontSize;
   
-  bool isValid;
+  bool m_isValid;
 };
 
 #endif // __CONFIGDIALOG_H__
