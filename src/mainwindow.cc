@@ -906,6 +906,20 @@ void CMainWindow::songTemplate()
       uint nbColumns = (uint) dialog->nbColumns();
       uint capo = (uint) dialog->capo();
       
+      //todo: better (do not close dialog+highlight missing fields)
+      //check required fields
+      if(title.isEmpty() || artist.isEmpty())
+	{
+	  delete dialog;
+	  QMessageBox msgBox;
+	  msgBox.setIcon(QMessageBox::Warning);
+	  msgBox.setText(tr("Please fill all required fields."));
+	  msgBox.setStandardButtons(QMessageBox::Cancel);
+	  msgBox.setDefaultButton(QMessageBox::Cancel);
+	  msgBox.exec();
+	  return;
+	}
+
       //remove dialog
       delete dialog;
 
