@@ -417,6 +417,11 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
         <translation>Supprimer</translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.cc" line="543"/>
+        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 June 4th, 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
+        <translation>&lt;br&gt;Cette application permet de créer des recueils de chansons en LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil peut afficher les paroles, tablatures ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 du 4 Juin 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cc" line="861"/>
         <source>Please select a song to edit.</source>
         <translation>Veuillez sélectionner une chanson à éditer.</translation>
@@ -611,9 +616,8 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
         <translation>À propos du Songbook Client Patacrep</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="543"/>
         <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 April 25th, 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation>&lt;br&gt;Cette application est une interface pour construire des recueils de chansons pdf avec LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil de chansons peut intégrer les paroles, accords de guitare et/ou des partitionspour les chansons disponibles sur&lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Pour récupérer ces chansons, il faut dupliquer le dépôt git disponible sur &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 25 avril 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+        <translation type="obsolete">&lt;br&gt;Cette application est une interface pour construire des recueils de chansons pdf avec LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil de chansons peut intégrer les paroles, accords de guitare et/ou des partitionspour les chansons disponibles sur&lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Pour récupérer ces chansons, il faut dupliquer le dépôt git disponible sur &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 25 avril 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cc" line="593"/>
