@@ -108,7 +108,7 @@ private:
 
   QStringList getSelectedSongs();
   
-  QString latexFilenameConvention(const QString &);
+  QString filenameConvention(const QString &, const QString & sep);
 
   /// Modify mybook.tex according to the selected options
   void applyBookType();

@@ -337,10 +337,8 @@ bool CMainWindow::connectDb()
 //------------------------------------------------------------------------------
 void CMainWindow::synchroniseWithLocalSongs()
 {
-  qDebug() << " synchronise with local songs " ;
   //Drop table songs and recreate
-  QSqlQuery query;
-  query.exec("delete from songs");
+  QSqlQuery query("delete from songs");
     
   // Retrieve all songs from .sg files in working dir
   m_library->setPathToSongs(workingPath());
@@ -891,7 +889,7 @@ void CMainWindow::changeTabLabel()
 void CMainWindow::newSong()
 {
   //pop up new song dialog
-  CDialogNewSong* dialog = new CDialogNewSong(this);
+  CDialogNewSong* dialog = new CDialogNewSong();
   connect( dialog, SIGNAL(accepted()), this, SLOT(songTemplate()) );
 }
 //------------------------------------------------------------------------------
@@ -905,12 +903,16 @@ void CMainWindow::songTemplate()
       QString artist = dialog->artist() ;
       uint nbColumns = (uint) dialog->nbColumns();
       uint capo = (uint) dialog->capo();
-      
+      QString album = dialog->album() ;
+      QString cover = dialog->cover() ;
+	    
+      //remove dialog
+      delete dialog;
+
       //todo: better (do not close dialog+highlight missing fields)
       //check required fields
       if(title.isEmpty() || artist.isEmpty())
 	{
-	  delete dialog;
 	  QMessageBox msgBox;
 	  msgBox.setIcon(QMessageBox::Warning);
 	  msgBox.setText(tr("Please fill all required fields."));
@@ -920,19 +922,41 @@ void CMainWindow::songTemplate()
 	  return;
 	}
 
-      //remove dialog
-      delete dialog;
-
-      //make template
-      QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(latexFilenameConvention(artist));
-      QString filepath = QString("%1/%2.sg").arg(dirpath).arg(latexFilenameConvention(title));
+      //make new dir
+      QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
+      QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
       QDir dir(dirpath);
       if(!dir.exists()) dir.mkpath(dirpath);
 
+      //handle album and cover
+      bool img = false;
+      QFile coverFile(cover);
+      if(coverFile.exists())
+	{
+	  //copy in artist directory and resize
+	  QFileInfo fi(cover);
+	  QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
+	  qDebug() << "new file copy " << cover << "in "<< target;
+	  img = coverFile.copy(target);
+	  QFile copyCover(target);
+	  
+	  //if album is specified, rename cover accordingly
+	  if( !album.isEmpty() && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
+						    .arg(workingPath())
+						    .arg(filenameConvention(artist,"_"))
+						    .arg(filenameConvention(album,"-"))) )
+	    copyCover.remove(); //remove copy if file already exists
+	}
+      
+      //make template
       QFile file(filepath);
       QString songTemplate;
       if(nbColumns>0) songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
-      songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
+      if(!img)
+	songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
+      else
+	songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
+	
       if(capo>0) songTemplate.append(QString("\\capo{%1}\n").arg(capo));
       songTemplate.append(QString("\n\\endsong"));
       
@@ -961,10 +985,27 @@ void CMainWindow::songTemplate()
 
 }
 //------------------------------------------------------------------------------
-QString CMainWindow::latexFilenameConvention(const QString & str)
+QString CMainWindow::filenameConvention(const QString & str, const QString & sep)
 {
   QString result = str;
-  result.replace(" ","_");
+  QString tmp;
+  QStringList list;
+  list <<"é"<<"è"<<"ê"<<"ë";
+  foreach(tmp, list)
+    result.replace(tmp, QString("e"));
+  
+  list = QStringList();
+  list <<" "<<"&"<<"'"<<"`"<<"("<<")"<<"["<<"]"<<"{"<<"}"<<"_"<<"~"<<","<<"?"<<"!"<<":"<<";"<<"."<<"%";
+  foreach(tmp, list)
+    result.replace(tmp, sep);
+
+  result.replace(QString("à"), QString("a"));
+  result.replace(QString("â"), QString("a"));
+  result.replace(QString("ï"), QString("i"));
+  result.replace(QString("î"), QString("i"));
+  result.replace(QString("ô"), QString("o"));
+  result.replace(QString("ù"), QString("u"));
+
   return result;
 }
 //------------------------------------------------------------------------------

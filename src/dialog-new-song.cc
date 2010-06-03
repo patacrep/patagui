@@ -17,14 +17,10 @@
 //******************************************************************************
 
 #include "dialog-new-song.hh"
-#include "mainwindow.hh"
-#include <QLayout>
-#include <QSpinBox>
 
-CDialogNewSong::CDialogNewSong(CMainWindow* parent)
+CDialogNewSong::CDialogNewSong()
   : QDialog()
 {
-  m_parent = parent;
   m_title = "";
   m_artist =  "";
   m_nbColumns = 0;
@@ -32,17 +28,34 @@ CDialogNewSong::CDialogNewSong(CMainWindow* parent)
   
   setModal(true);
 
-  QLineEdit* titleEdit = new QLineEdit;
-  QLineEdit* artistEdit = new QLineEdit;
+  //Required fields
+  //title
   QLabel* titleLabel = new QLabel(tr("Title: "));
-  QLabel* artistLabel = new QLabel(tr("Artist: "));
+  QLineEdit* titleEdit = new QLineEdit;
 
+  //artist
+  QLabel* artistLabel = new QLabel(tr("Artist: "));
+  QLineEdit* artistEdit = new QLineEdit;
+  
+  //Optional fields
+  //album
+  QLabel* albumLabel = new QLabel(tr("Album: "));
+  QLineEdit* albumEdit = new QLineEdit;
+
+  //cover
+  QLabel* coverLabel = new QLabel(tr("Cover: "));
+  m_coverEdit = new QLineEdit(QString());
+  QPushButton *browseCoverButton = new QPushButton(tr("Browse"));
+
+  //nb columns
+  QLabel* nbColumnsLabel = new QLabel(tr("Number of columns: "));
   QSpinBox* nbColumnsEdit = new QSpinBox;
   nbColumnsEdit->setRange(0,20);
+
+  //capo
+  QLabel* capoLabel = new QLabel(tr("Capo: "));
   QSpinBox* capoEdit      = new QSpinBox;
   capoEdit->setRange(0,20);
-  QLabel* nbColumnsLabel = new QLabel(tr("Number of columns: "));
-  QLabel* capoLabel = new QLabel(tr("Capo: "));
   
   // Action buttons
   QDialogButtonBox * buttonBox = new QDialogButtonBox;
@@ -65,10 +78,15 @@ CDialogNewSong::CDialogNewSong(CMainWindow* parent)
 
   QGroupBox* optionalFieldsBox = new QGroupBox(tr("Optional fields"));
   QGridLayout* optionalLayout = new QGridLayout;
-  optionalLayout->addWidget(nbColumnsLabel,   0,0,1,1);
-  optionalLayout->addWidget(nbColumnsEdit,  0,1,1,1);
-  optionalLayout->addWidget(capoLabel,  1,0,1,1);
-  optionalLayout->addWidget(capoEdit, 1,1,1,1);
+  optionalLayout->addWidget(albumLabel,   0,0,1,1);
+  optionalLayout->addWidget(albumEdit,  0,1,1,3);
+  optionalLayout->addWidget(coverLabel,   1,0,1,1);
+  optionalLayout->addWidget(m_coverEdit,  1,1,1,2);
+  optionalLayout->addWidget(browseCoverButton,  1,3,1,1);
+  optionalLayout->addWidget(nbColumnsLabel,   2,0,1,1);
+  optionalLayout->addWidget(nbColumnsEdit,  2,1,1,1);
+  optionalLayout->addWidget(capoLabel,  2,2,1,1);
+  optionalLayout->addWidget(capoEdit, 2,3,1,1);
   optionalFieldsBox->setLayout(optionalLayout);
   
   QBoxLayout* layout = new QVBoxLayout;
@@ -83,6 +101,9 @@ CDialogNewSong::CDialogNewSong(CMainWindow* parent)
   connect(artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)) );
   connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)) );
   connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)) );
+  connect(albumEdit, SIGNAL(textChanged(QString)), this, SLOT(setAlbum(QString)) );
+  connect(browseCoverButton, SIGNAL(clicked()), this, SLOT(browseCover()) );
+  connect(m_coverEdit, SIGNAL(textChanged(QString)), this, SLOT(setCover(QString)) );
 
   setWindowTitle(tr("New song"));
   setMinimumWidth(450);
@@ -128,4 +149,34 @@ int CDialogNewSong::capo() const
 void CDialogNewSong::setCapo(int ACapo)
 {
   m_capo = ACapo;
+}
+//------------------------------------------------------------------------------
+QString CDialogNewSong::album() const
+{
+  return m_album;
+}
+//------------------------------------------------------------------------------
+void CDialogNewSong::setAlbum(QString AAlbum )
+{
+  m_album = AAlbum;
+}
+//------------------------------------------------------------------------------
+QString CDialogNewSong::cover() const
+{
+  return m_cover;
+}
+//------------------------------------------------------------------------------
+void CDialogNewSong::setCover(QString ACover )
+{
+  m_cover = ACover;
+}
+//------------------------------------------------------------------------------
+void CDialogNewSong::browseCover()
+{
+  QString directory = QFileDialog::getOpenFileName(this, tr("Select cover image"),
+						  "/home",
+						  tr("Images (*.jpg)"));
+ 
+  if (!directory.isEmpty())
+      m_coverEdit->setText(directory);
 }

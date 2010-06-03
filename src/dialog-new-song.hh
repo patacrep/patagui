@@ -19,18 +19,13 @@
 #define DIALOG_NEW_SONG_HH
 
 #include <QtGui>
-#include <QString>
-
-class QProcess;
-class QStatusBar;
-class CMainWindow;
 
 class CDialogNewSong : public QDialog
 {
   Q_OBJECT
   
 public:
-  CDialogNewSong(CMainWindow* AParent);
+  CDialogNewSong();
 
 public slots:
   QString title() const;
@@ -45,17 +40,26 @@ public slots:
   int capo() const;
   void setCapo(int);
 
+  QString album() const;
+  void setAlbum(QString);
+
+  QString cover() const;
+  void setCover(QString);
+
+private slots:
+  void browseCover();
+
 private:
   //required fields
   QString m_title;
   QString m_artist;
 
   //optional fields
+  QString m_album;
+  QString m_cover;
+  QLineEdit* m_coverEdit;
   uint m_nbColumns;
   uint m_capo;
-  
-  // mainwindow
-  CMainWindow* m_parent;
 };
 
 #endif // DIALOG_NEW_SONG_HH
