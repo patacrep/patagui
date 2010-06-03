@@ -195,7 +195,8 @@ OptionsPage::OptionsPage(QWidget *parent)
   bookTypeGroup->addButton(chordbookRadioButton);
   lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
   bookTypeGroup->addButton(lyricbookRadioButton);
-  
+  connect(lyricbookRadioButton, SIGNAL(toggled(bool)),this,SLOT(lyricBookMode(bool)));
+
   diagramCheckBox = new QCheckBox(tr("Chord Diagram"));
   lilypondCheckBox = new QCheckBox(tr("Lilypond"));
   tablatureCheckBox = new QCheckBox(tr("Tablature"));
@@ -357,6 +358,16 @@ void OptionsPage::processError(QProcess::ProcessError error)
   m_lilypondLabel->setText(tr("<font color=orange>Warning: <a href=\"http://lilypond.org\">Lilypond</a> not found</font>"));
 }
 
+void OptionsPage::lyricBookMode(bool tmp)
+{
+  QObject *object = QObject::sender();
+  if (QRadioButton* lyricBook = qobject_cast< QRadioButton* >(object))
+    {
+      diagramCheckBox->setEnabled(!lyricBook->isChecked());
+      lilypondCheckBox->setEnabled(!lyricBook->isChecked());
+      tablatureCheckBox->setEnabled(!lyricBook->isChecked());
+    }
+}
 
 
 SongbookAppearancePage::SongbookAppearancePage(QWidget *parent)

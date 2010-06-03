@@ -91,6 +91,7 @@ private slots:
   void checkWorkingPath(const QString&);
   void checkLilypondVersion(int);
   void processError(QProcess::ProcessError error);
+  void lyricBookMode(bool);
 
 private:
   void readSettings();
