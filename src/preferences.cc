@@ -17,11 +17,8 @@
 //******************************************************************************
 
 #include "preferences.hh"
-#include "header.hh"
-#include "custom.hh"
 
 #include <QtGui>
-#include <iostream>
 
 ConfigDialog::ConfigDialog()
   : QDialog()
@@ -35,7 +32,7 @@ ConfigDialog::ConfigDialog()
   
   pagesWidget = new QStackedWidget;
   pagesWidget->addWidget(new OptionsPage);
-  pagesWidget->addWidget(new SongbookAppearancePage);
+  // pagesWidget->addWidget(new SongbookAppearancePage);
   pagesWidget->addWidget(new DisplayPage);
   
   QPushButton *closeButton = new QPushButton(tr("Close"));
@@ -76,11 +73,11 @@ void ConfigDialog::createIcons()
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-  QListWidgetItem *songbookAppearanceButton = new QListWidgetItem(contentsWidget);
-  songbookAppearanceButton->setIcon(QIcon(":/icons/preferences-system.png"));
-  songbookAppearanceButton->setText(tr("Songbook Appearance"));
-  songbookAppearanceButton->setTextAlignment(Qt::AlignHCenter);
-  songbookAppearanceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+  // QListWidgetItem *songbookAppearanceButton = new QListWidgetItem(contentsWidget);
+  // songbookAppearanceButton->setIcon(QIcon(":/icons/preferences-system.png"));
+  // songbookAppearanceButton->setText(tr("Songbook Appearance"));
+  // songbookAppearanceButton->setTextAlignment(Qt::AlignHCenter);
+  // songbookAppearanceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(contentsWidget);
   displayButton->setIcon(QIcon(":/icons/preferences-columns.png"));
@@ -371,231 +368,231 @@ void OptionsPage::readProcessOut()
 
 
 
-SongbookAppearancePage::SongbookAppearancePage(QWidget *parent)
-  : QWidget(parent)
-{
-  QSettings settings;
+// SongbookAppearancePage::SongbookAppearancePage(QWidget *parent)
+//   : QWidget(parent)
+// {
+//   QSettings settings;
 
-  QGroupBox* frontPageOptionsGroupBox = new QGroupBox(tr("Front Page Options"));
-  QLabel* ltitle     = new QLabel(tr("Title:"));
-  QLabel* lsubtitle  = new QLabel(tr("Subtitle:"));
-  QLabel* lauthor    = new QLabel(tr("Author:"));
-  QLabel* lversion   = new QLabel(tr("Version:"));
-  QLabel* lmail      = new QLabel(tr("Mail:"));
-  QLabel* lpicture   = new QLabel(tr("Picture:"));
-  QLabel* lcopyright = new QLabel(tr("Copyright:"));
+//   QGroupBox* frontPageOptionsGroupBox = new QGroupBox(tr("Front Page Options"));
+//   QLabel* ltitle     = new QLabel(tr("Title:"));
+//   QLabel* lsubtitle  = new QLabel(tr("Subtitle:"));
+//   QLabel* lauthor    = new QLabel(tr("Author:"));
+//   QLabel* lversion   = new QLabel(tr("Version:"));
+//   QLabel* lmail      = new QLabel(tr("Mail:"));
+//   QLabel* lpicture   = new QLabel(tr("Picture:"));
+//   QLabel* lcopyright = new QLabel(tr("Copyright:"));
 
-  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();  
-  CHeader header(workingDir);
-  header.retrieveFields();
-  m_title = new QLineEdit(header.title());
-  m_subtitle = new QLineEdit(header.subtitle());
-  m_author = new QLineEdit(header.author());
-  m_version = new QLineEdit(header.version());
-  m_mail = new QLineEdit(header.mail());
-  m_picture =new QLineEdit(QString("%1/img/%2.jpg").arg(workingDir).arg(header.picture()));
-  m_copyright = new QLineEdit(header.copyright());
-  m_picture->setReadOnly(true);
+//   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();  
+//   CHeader header(workingDir);
+//   header.retrieveFields();
+//   m_title = new QLineEdit(header.title());
+//   m_subtitle = new QLineEdit(header.subtitle());
+//   m_author = new QLineEdit(header.author());
+//   m_version = new QLineEdit(header.version());
+//   m_mail = new QLineEdit(header.mail());
+//   m_picture =new QLineEdit(QString("%1/img/%2.jpg").arg(workingDir).arg(header.picture()));
+//   m_copyright = new QLineEdit(header.copyright());
+//   m_picture->setReadOnly(true);
     
-  QToolButton *browsePictureButton = new QToolButton;
-  browsePictureButton->setIcon(QIcon(":/icons/document-load.png"));
-  connect(browsePictureButton, SIGNAL(clicked()),
-	  this, SLOT(browseHeaderPicture()) );
+//   QToolButton *browsePictureButton = new QToolButton;
+//   browsePictureButton->setIcon(QIcon(":/icons/document-load.png"));
+//   connect(browsePictureButton, SIGNAL(clicked()),
+// 	  this, SLOT(browseHeaderPicture()) );
   
-  QGroupBox* customOptionsGroupBox = new QGroupBox(tr("Custom options"));
-  QLabel* lboxColor = new QLabel(tr("Boxes color:"));
-  m_colorLabel = new QLabel;
-  m_color = new QColor(209,228,174);
-  m_colorLabel->setText(m_color->name());
-  m_colorLabel->setPalette(QPalette(*m_color));
-  m_colorLabel->setAutoFillBackground(true);
-  QLabel* lfontSize = new QLabel(tr("Font size:"));
-  m_sliderFontSize = new QSlider(Qt::Horizontal);
-  m_sliderFontSize->setRange(0,4);
-  m_sliderFontSize->setPageStep(1);
-  m_sliderFontSize->setSingleStep(1);
-  m_sliderFontSize->setTickPosition(QSlider::TicksBelow);
-  m_sliderFontSize->setValue(2);
-  QLabel* lsmall = new QLabel(tr("small"));
-  QLabel* llarge = new QLabel(tr("large"));
+//   QGroupBox* customOptionsGroupBox = new QGroupBox(tr("Custom options"));
+//   QLabel* lboxColor = new QLabel(tr("Boxes color:"));
+//   m_colorLabel = new QLabel;
+//   m_color = new QColor(209,228,174);
+//   m_colorLabel->setText(m_color->name());
+//   m_colorLabel->setPalette(QPalette(*m_color));
+//   m_colorLabel->setAutoFillBackground(true);
+//   QLabel* lfontSize = new QLabel(tr("Font size:"));
+//   m_sliderFontSize = new QSlider(Qt::Horizontal);
+//   m_sliderFontSize->setRange(0,4);
+//   m_sliderFontSize->setPageStep(1);
+//   m_sliderFontSize->setSingleStep(1);
+//   m_sliderFontSize->setTickPosition(QSlider::TicksBelow);
+//   m_sliderFontSize->setValue(2);
+//   QLabel* lsmall = new QLabel(tr("small"));
+//   QLabel* llarge = new QLabel(tr("large"));
   
-  QPushButton *pickColorButton = new QPushButton(tr("Change"));
-  connect(pickColorButton, SIGNAL(clicked()), this, SLOT(pickColor()));
+//   QPushButton *pickColorButton = new QPushButton(tr("Change"));
+//   connect(pickColorButton, SIGNAL(clicked()), this, SLOT(pickColor()));
 
-  QToolButton *resetColorButton = new QToolButton;
-  resetColorButton->setIcon(QIcon(":/icons/edit-clear.png"));
-  connect(resetColorButton, SIGNAL(clicked()),
-	  this, SLOT(resetColor()) );
+//   QToolButton *resetColorButton = new QToolButton;
+//   resetColorButton->setIcon(QIcon(":/icons/edit-clear.png"));
+//   connect(resetColorButton, SIGNAL(clicked()),
+// 	  this, SLOT(resetColor()) );
 
-  QGridLayout *frontPageLayout = new QGridLayout();
-  frontPageLayout->addWidget(ltitle,0,0,1,1);
-  frontPageLayout->addWidget(m_title,0,1,1,3);
-  frontPageLayout->addWidget(lsubtitle,1,0,1,1);
-  frontPageLayout->addWidget(m_subtitle,1,1,1,3);
-  frontPageLayout->addWidget(lauthor,2,0,1,1);
-  frontPageLayout->addWidget(m_author,2,1,1,3);
-  frontPageLayout->addWidget(lversion,3,0,1,1);
-  frontPageLayout->addWidget(m_version,3,1,1,3);
-  frontPageLayout->addWidget(lmail,4,0,1,1);
-  frontPageLayout->addWidget(m_mail,4,1,1,3);
-  frontPageLayout->addWidget(lpicture,5,0,1,1);
-  frontPageLayout->addWidget(m_picture,5,1,1,2);
-  frontPageLayout->addWidget(browsePictureButton,5,3,1,1);
-  frontPageLayout->addWidget(lcopyright,6,0,1,1);
-  frontPageLayout->addWidget(m_copyright,6,1,1,3);
-  frontPageOptionsGroupBox->setLayout(frontPageLayout);
+//   QGridLayout *frontPageLayout = new QGridLayout();
+//   frontPageLayout->addWidget(ltitle,0,0,1,1);
+//   frontPageLayout->addWidget(m_title,0,1,1,3);
+//   frontPageLayout->addWidget(lsubtitle,1,0,1,1);
+//   frontPageLayout->addWidget(m_subtitle,1,1,1,3);
+//   frontPageLayout->addWidget(lauthor,2,0,1,1);
+//   frontPageLayout->addWidget(m_author,2,1,1,3);
+//   frontPageLayout->addWidget(lversion,3,0,1,1);
+//   frontPageLayout->addWidget(m_version,3,1,1,3);
+//   frontPageLayout->addWidget(lmail,4,0,1,1);
+//   frontPageLayout->addWidget(m_mail,4,1,1,3);
+//   frontPageLayout->addWidget(lpicture,5,0,1,1);
+//   frontPageLayout->addWidget(m_picture,5,1,1,2);
+//   frontPageLayout->addWidget(browsePictureButton,5,3,1,1);
+//   frontPageLayout->addWidget(lcopyright,6,0,1,1);
+//   frontPageLayout->addWidget(m_copyright,6,1,1,3);
+//   frontPageOptionsGroupBox->setLayout(frontPageLayout);
 
-  QGridLayout *customOptionsLayout = new QGridLayout();
-  customOptionsLayout->addWidget(lboxColor,0,0,1,1);
-  customOptionsLayout->addWidget(m_colorLabel,0,1,1,3);
-  customOptionsLayout->addWidget(pickColorButton,0,4,1,1);
-  customOptionsLayout->addWidget(resetColorButton,0,5,1,1);
-  customOptionsLayout->addWidget(lfontSize,1,0,1,1);
-  customOptionsLayout->addWidget(lsmall,1,1,1,1);
-  customOptionsLayout->addWidget(m_sliderFontSize,1,2,1,1);
-  customOptionsLayout->addWidget(llarge,1,3,1,1);
-  customOptionsGroupBox->setLayout(customOptionsLayout);
+//   QGridLayout *customOptionsLayout = new QGridLayout();
+//   customOptionsLayout->addWidget(lboxColor,0,0,1,1);
+//   customOptionsLayout->addWidget(m_colorLabel,0,1,1,3);
+//   customOptionsLayout->addWidget(pickColorButton,0,4,1,1);
+//   customOptionsLayout->addWidget(resetColorButton,0,5,1,1);
+//   customOptionsLayout->addWidget(lfontSize,1,0,1,1);
+//   customOptionsLayout->addWidget(lsmall,1,1,1,1);
+//   customOptionsLayout->addWidget(m_sliderFontSize,1,2,1,1);
+//   customOptionsLayout->addWidget(llarge,1,3,1,1);
+//   customOptionsGroupBox->setLayout(customOptionsLayout);
 
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(frontPageOptionsGroupBox);
-  mainLayout->addWidget(customOptionsGroupBox);
-  mainLayout->addStretch(1);
-  setLayout(mainLayout);
+//   QVBoxLayout *mainLayout = new QVBoxLayout;
+//   mainLayout->addWidget(frontPageOptionsGroupBox);
+//   mainLayout->addWidget(customOptionsGroupBox);
+//   mainLayout->addStretch(1);
+//   setLayout(mainLayout);
 
-  readSettings();
-}
+//   readSettings();
+// }
 
-void SongbookAppearancePage::pickColor()
-{
-  m_color = new QColor(QColorDialog::getColor(QColor(209,228,174), this));
-  if (m_color->isValid())
-    {
-      m_colorLabel->setText(m_color->name());
-      m_colorLabel->setPalette(QPalette(*m_color));
-      m_colorLabel->setAutoFillBackground(true);
-    }
-}
+// void SongbookAppearancePage::pickColor()
+// {
+//   m_color = new QColor(QColorDialog::getColor(QColor(209,228,174), this));
+//   if (m_color->isValid())
+//     {
+//       m_colorLabel->setText(m_color->name());
+//       m_colorLabel->setPalette(QPalette(*m_color));
+//       m_colorLabel->setAutoFillBackground(true);
+//     }
+// }
 
-void SongbookAppearancePage::resetColor()
-{
-  if(m_color) delete m_color;
-  m_color = new QColor(209,228,174);
-  m_colorLabel->setText(m_color->name());
-  m_colorLabel->setPalette(QPalette(*m_color));
-  m_colorLabel->setAutoFillBackground(true);
+// void SongbookAppearancePage::resetColor()
+// {
+//   if(m_color) delete m_color;
+//   m_color = new QColor(209,228,174);
+//   m_colorLabel->setText(m_color->name());
+//   m_colorLabel->setPalette(QPalette(*m_color));
+//   m_colorLabel->setAutoFillBackground(true);
   
-}
+// }
 
-void SongbookAppearancePage::browseHeaderPicture()
-{
-  //todo: right now, only .jpg is supported since it's hardcoded in dockWidgets
-  //problem is that in mybook.tex, there's just the basename so its extension 
-  //should be guessed from somewhere else.
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Image File"),
-						  "/home",
-						  tr("Images (*.jpg)"));
-  if (!filename.isEmpty())
-    m_picture->setText(filename);
-}
+// void SongbookAppearancePage::browseHeaderPicture()
+// {
+//   //todo: right now, only .jpg is supported since it's hardcoded in dockWidgets
+//   //problem is that in mybook.tex, there's just the basename so its extension 
+//   //should be guessed from somewhere else.
+//   QString filename = QFileDialog::getOpenFileName(this, tr("Open Image File"),
+// 						  "/home",
+// 						  tr("Images (*.jpg)"));
+//   if (!filename.isEmpty())
+//     m_picture->setText(filename);
+// }
 
-void SongbookAppearancePage::readSettings()
-{
-  QSettings settings;
-  settings.beginGroup("options");
-  m_color = new QColor(settings.value("color").value<QColor>());
-  m_sliderFontSize->setValue(settings.value("fontsize").toInt());
-  settings.endGroup();
+// void SongbookAppearancePage::readSettings()
+// {
+//   QSettings settings;
+//   settings.beginGroup("options");
+//   m_color = new QColor(settings.value("color").value<QColor>());
+//   m_sliderFontSize->setValue(settings.value("fontsize").toInt());
+//   settings.endGroup();
 
-  //todo: put somewhere else
-  if(m_color)
-    {
-      m_colorLabel->setText(m_color->name());
-      m_colorLabel->setPalette(QPalette(*m_color));
-      m_colorLabel->setAutoFillBackground(true);
-    }
-}
+//   //todo: put somewhere else
+//   if(m_color)
+//     {
+//       m_colorLabel->setText(m_color->name());
+//       m_colorLabel->setPalette(QPalette(*m_color));
+//       m_colorLabel->setAutoFillBackground(true);
+//     }
+// }
 
-void SongbookAppearancePage::writeSettings()
-{
-  QSettings settings;
+// void SongbookAppearancePage::writeSettings()
+// {
+//   QSettings settings;
 
-  settings.beginGroup("options");
-  settings.setValue("color", *m_color);
-  settings.setValue("fontsize", m_sliderFontSize->value());
-  settings.endGroup();
-}
+//   settings.beginGroup("options");
+//   settings.setValue("color", *m_color);
+//   settings.setValue("fontsize", m_sliderFontSize->value());
+//   settings.endGroup();
+// }
 
-void SongbookAppearancePage::closeEvent(QCloseEvent *event)
-{
-  writeSettings();
-  QSettings settings;
-  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
-  checkWorkingPath(workingDir);
-  if(isValid)
-    {
-      updateHeader(); //modify mybook.tex with front page settings
-      updateCustom(); //modify crepbook.tex with custom settings
-    }
-  event->accept();
-}
+// void SongbookAppearancePage::closeEvent(QCloseEvent *event)
+// {
+//   writeSettings();
+//   QSettings settings;
+//   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
+//   checkWorkingPath(workingDir);
+//   if(isValid)
+//     {
+//       updateHeader(); //modify mybook.tex with front page settings
+//       updateCustom(); //modify crepbook.tex with custom settings
+//     }
+//   event->accept();
+// }
 
-void SongbookAppearancePage::updateHeader()
-{
-  QSettings settings;
-  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
-  CHeader header(workingDir);
-  header.setTitle(m_title->text());
-  header.setSubtitle(m_subtitle->text());
-  header.setAuthor(m_author->text());
-  header.setVersion(m_version->text());
-  header.setMail(m_mail->text());
-  header.setPicture(m_picture->text());
-  header.setCopyright(m_copyright->text());
-}
+// void SongbookAppearancePage::updateHeader()
+// {
+//   QSettings settings;
+//   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
+//   CHeader header(workingDir);
+//   header.setTitle(m_title->text());
+//   header.setSubtitle(m_subtitle->text());
+//   header.setAuthor(m_author->text());
+//   header.setVersion(m_version->text());
+//   header.setMail(m_mail->text());
+//   header.setPicture(m_picture->text());
+//   header.setCopyright(m_copyright->text());
+// }
 
-void SongbookAppearancePage::updateCustom()
-{
-  QSettings settings;
-  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();  
-  CCustom custom(workingDir);
-  custom.setColorBox(m_colorLabel->text());
-  custom.setFontSize(m_sliderFontSize->sliderPosition());
-}
+// void SongbookAppearancePage::updateCustom()
+// {
+//   QSettings settings;
+//   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();  
+//   CCustom custom(workingDir);
+//   custom.setColorBox(m_colorLabel->text());
+//   custom.setFontSize(m_sliderFontSize->sliderPosition());
+// }
 
-void SongbookAppearancePage::checkWorkingPath(const QString & path)
-{
-  isValid = false;
-  QDir directory(path);
-  if(!directory.exists())
-    {
-      return;
-    }
+// void SongbookAppearancePage::checkWorkingPath(const QString & path)
+// {
+//   isValid = false;
+//   QDir directory(path);
+//   if(!directory.exists())
+//     {
+//       return;
+//     }
 
-  if(!directory.entryList(QDir::Files | QDir::Readable).contains("makefile"))
-    {
-      return;
-    }
+//   if(!directory.entryList(QDir::Files | QDir::Readable).contains("makefile"))
+//     {
+//       return;
+//     }
 
-  if(!directory.entryList(QDir::Files | QDir::Readable).contains("mybook.tex"))
-    {
-      return;
-    }
+//   if(!directory.entryList(QDir::Files | QDir::Readable).contains("mybook.tex"))
+//     {
+//       return;
+//     }
 
-  // subdirectories
-  QDir songs( QString("%1/songs").arg(path) );
-  QDir utils( QString("%1/utils").arg(path) );
-  QDir lilypond( QString("%1/lilypond").arg(path) );
-  QDir img( QString("%1/img").arg(path) );
+//   // subdirectories
+//   QDir songs( QString("%1/songs").arg(path) );
+//   QDir utils( QString("%1/utils").arg(path) );
+//   QDir lilypond( QString("%1/lilypond").arg(path) );
+//   QDir img( QString("%1/img").arg(path) );
 
-  if(!songs.exists())
-    {
-      return;
-    }
+//   if(!songs.exists())
+//     {
+//       return;
+//     }
 
-  if(!img.exists())
-    {
-      return;
-    }
+//   if(!img.exists())
+//     {
+//       return;
+//     }
 
-  isValid = true;
-}
+//   isValid = true;
+// }

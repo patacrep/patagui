@@ -20,6 +20,18 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <QWidget>
+#include <QGridLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QSlider>
+#include <QPushButton>
+#include <QToolButton>
+#include <QColor>
+#include <QColorDialog>
+#include <QFileDialog>
+#include <QDir>
+
 #include <QDebug>
 
 CSongbook::CSongbook()
@@ -34,10 +46,14 @@ CSongbook::CSongbook()
   , m_shadeColor()
   , m_fontSize()
   , m_songs()
+  , m_panel()
 {}
 
 CSongbook::~CSongbook()
-{}
+{
+  if (m_panel)
+    delete m_panel;
+}
 
 QString CSongbook::title()
 {
@@ -168,4 +184,90 @@ void CSongbook::load(QString & filename)
     {
       qWarning() << "unable to open file in read mode";
     } 
+}
+
+QWidget * CSongbook::panel()
+{
+  if (!m_panel)
+    {
+      m_panel = new QWidget;
+
+      m_titleEdit = new QLineEdit(title());
+      m_subtitleEdit = new QLineEdit(subtitle());
+      m_authorEdit = new QLineEdit(author());
+      m_versionEdit = new QLineEdit(version());
+      m_mailEdit = new QLineEdit(mail());
+      m_pictureEdit =new QLineEdit(QString("%1").arg(picture()));
+      m_pictureCopyrightEdit = new QLineEdit(pictureCopyright());
+      m_pictureEdit->setReadOnly(true);
+    
+      QToolButton *browsePictureButton = new QToolButton;
+      browsePictureButton->setIcon(QIcon(":/icons/document-load.png"));
+      connect(browsePictureButton, SIGNAL(clicked()),
+	      this, SLOT(browsePicture()));
+  
+      m_shadeColorLabel = new QLabel;
+      QColor shade(QString("#%1").arg(shadeColor()));
+      m_shadeColorLabel->setText(shade.name());
+      m_shadeColorLabel->setPalette(QPalette(shade));
+      m_shadeColorLabel->setAutoFillBackground(true);
+      
+      QPushButton *pickShadeColorButton = new QPushButton(tr("Change"));
+      connect(pickShadeColorButton, SIGNAL(clicked()),
+	      this, SLOT(pickShadeColor()));  
+      
+      m_fontSizeSlider = new QSlider(Qt::Horizontal);
+      m_fontSizeSlider->setRange(0,4);
+      m_fontSizeSlider->setPageStep(1);
+      m_fontSizeSlider->setSingleStep(1);
+      m_fontSizeSlider->setTickPosition(QSlider::TicksBelow);
+      m_fontSizeSlider->setValue(2);
+      
+      QGridLayout *layout = new QGridLayout;
+      // title page
+      layout->addWidget(new QLabel(tr("Title:")),0,0,1,1);
+      layout->addWidget(m_titleEdit,0,1,1,3);
+      layout->addWidget(new QLabel(tr("Subtitle:")),1,0,1,1);
+      layout->addWidget(m_subtitleEdit,1,1,1,3);
+      layout->addWidget(new QLabel(tr("Author:")),2,0,1,1);
+      layout->addWidget(m_authorEdit,2,1,1,3);
+      layout->addWidget(new QLabel(tr("Version:")),3,0,1,1);
+      layout->addWidget(m_versionEdit,3,1,1,3);
+      layout->addWidget(new QLabel(tr("Mail:")),4,0,1,1);
+      layout->addWidget(m_mailEdit,4,1,1,3);
+      layout->addWidget(new QLabel(tr("Picture:")),5,0,1,1);
+      layout->addWidget(m_pictureEdit,5,1,1,2);
+      layout->addWidget(browsePictureButton,5,3,1,1);
+      layout->addWidget(new QLabel(tr("Copyright:")),6,0,1,1);
+      layout->addWidget(m_pictureCopyrightEdit,6,1,1,3);
+      // custom options
+      layout->addWidget(new QLabel(tr("Shade Color:")),7,0,1,1);
+      layout->addWidget(m_shadeColorLabel,7,1,1,2);
+      layout->addWidget(pickShadeColorButton,7,3,1,1);
+      layout->addWidget(new QLabel(tr("Shade Color:")),8,0,1,1);
+      layout->addWidget(new QLabel(tr("small")),8,1,1,1);
+      layout->addWidget(m_fontSizeSlider,8,2,1,1);
+      layout->addWidget(new QLabel(tr("large")),8,3,1,1);
+      m_panel->setLayout(layout);
+    }
+  return m_panel;
+}
+
+void CSongbook::pickShadeColor()
+{
+  QColor color = QColorDialog::getColor(QColor(), m_panel);
+  m_shadeColorLabel->setText(color.name());
+  m_shadeColorLabel->setPalette(QPalette(color));
+}
+
+void CSongbook::browsePicture()
+{
+  //todo: right now, only .jpg is supported since it's hardcoded in dockWidgets
+  //problem is that in mybook.tex, there's just the basename so its extension 
+  //should be guessed from somewhere else.
+  QString filename = QFileDialog::getOpenFileName(m_panel, tr("Open Image File"),
+						  QDir::home().path(),
+						  tr("Images (*.jpg)"));
+  if (!filename.isEmpty())
+    m_pictureEdit->setText(filename);
 }

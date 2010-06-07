@@ -32,6 +32,7 @@ CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
   , m_proxyModel(new QSortFilterProxyModel)
+  , m_songbook(new CSongbook)
   , m_view(new QTableView)
   , m_progressBar(new QProgressBar)
   , m_cover(new QPixmap)
@@ -384,8 +385,15 @@ void CMainWindow::createMenus()
 //------------------------------------------------------------------------------
 void CMainWindow::dockWidgets()
 {
+  // Songbook property widget
+  m_songbookInfo = new QDockWidget(tr("Songbook"));
+  m_songbookInfo->setMinimumWidth(200);
+  m_songbookInfo->setMaximumHeight(250);
+  m_songbookInfo->setWidget(m_songbook->panel());
+  addDockWidget( Qt::LeftDockWidgetArea, m_songbookInfo );
+
   // Song Info widget
-  m_songInfo = new QDockWidget( tr("Current song"), this );
+  m_songInfo = new QDockWidget( tr("Song"));
   m_songInfo->setMinimumWidth(200);
   m_songInfo->setMaximumHeight(250);
   QWidget * songInfoWidget = new QWidget();
@@ -704,7 +712,7 @@ void CMainWindow::save()
   QString filename = QFileDialog::getSaveFileName(this,
                                                   tr("Save the list of selected songs"),
                                                   workingPath(),
-                                                  tr("Songbook File (*.sgl)"));
+                                                  tr("Songbook File (*.sb)"));
   QStringList songlist = getSelectedSongs();
   QString path = QString("%1/").arg(workingPath());
   songlist.replaceInStrings(path, QString());

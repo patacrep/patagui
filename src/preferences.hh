@@ -96,8 +96,6 @@ private slots:
 private:
   void readSettings();
   void writeSettings();
-  void updateHeader();
-  void updateCustom();
 
   QLineEdit * workingPath;
   QLabel* m_workingPathValid;
@@ -117,43 +115,43 @@ private:
   bool isValid;
 };
 
-class SongbookAppearancePage : public QWidget
-{
-  Q_OBJECT
+// class SongbookAppearancePage : public QWidget
+// {
+//   Q_OBJECT
 
-public:
-  SongbookAppearancePage(QWidget *parent = 0);
+// public:
+//   SongbookAppearancePage(QWidget *parent = 0);
 
-protected:
-  void closeEvent(QCloseEvent *event);
+// protected:
+//   void closeEvent(QCloseEvent *event);
 
-private slots:
-  void checkWorkingPath(const QString&);
-  void browseHeaderPicture();
-  void pickColor();
-  void resetColor();
+// private slots:
+//   void checkWorkingPath(const QString&);
+//   void browseHeaderPicture();
+//   void pickColor();
+//   void resetColor();
 
-private:
-  void readSettings();
-  void writeSettings();
-  void updateHeader();
-  void updateCustom();
+// private:
+//   void readSettings();
+//   void writeSettings();
+//   void updateHeader();
+//   void updateCustom();
 
-  //Header
-  QLineEdit* m_title;
-  QLineEdit* m_subtitle;
-  QLineEdit* m_author;
-  QLineEdit* m_version;
-  QLineEdit* m_mail;
-  QLineEdit* m_picture;
-  QLineEdit* m_copyright;
+//   //Header
+//   QLineEdit* m_title;
+//   QLineEdit* m_subtitle;
+//   QLineEdit* m_author;
+//   QLineEdit* m_version;
+//   QLineEdit* m_mail;
+//   QLineEdit* m_picture;
+//   QLineEdit* m_copyright;
 
-  //Custom
-  QColor* m_color;
-  QLabel* m_colorLabel;
-  QSlider* m_sliderFontSize;
+//   //Custom
+//   QColor* m_color;
+//   QLabel* m_colorLabel;
+//   QSlider* m_sliderFontSize;
   
-  bool isValid;
-};
+//   bool isValid;
+// };
 
 #endif // __CONFIGDIALOG_H__

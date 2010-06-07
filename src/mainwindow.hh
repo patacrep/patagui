@@ -76,7 +76,7 @@ private slots:
   void applyDisplayColumn();
   void connectDb();
   void filterChanged();
-  
+
   void dockWidgets();
   void preferences();
 
@@ -104,6 +104,9 @@ private:
   // Song library and view
   CLibrary *m_library;
   QSortFilterProxyModel *m_proxyModel;
+
+  // Songbook
+  CSongbook *m_songbook;
 
   // Widgets
   QTableView *m_view;
@@ -135,14 +138,7 @@ private:
   QLabel m_coverLabel;
   uint m_dbType;
 
-  //Header
-  QLineEdit* m_title;
-  QLineEdit* m_subtitle;
-  QLineEdit* m_author;
-  QLineEdit* m_version;
-  QLineEdit* m_mail;
-  QLineEdit* m_picture;
-  QLineEdit* m_copyright;
+  QDockWidget* m_songbookInfo;
 
   //Logs
   QTextEdit* m_log;

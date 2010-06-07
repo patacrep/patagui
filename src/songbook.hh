@@ -22,8 +22,15 @@
 #include <QString>
 #include <QStringList>
 
+class QWidget;
+class QLabel;
+class QLineEdit;
+class QSlider;
+
 class CSongbook : public QObject
 {
+  Q_OBJECT
+
 public:
   CSongbook();
   ~CSongbook();
@@ -61,6 +68,12 @@ public:
   void save(QString &filename);
   void load(QString &filename);
 
+  QWidget *panel();
+
+private slots:
+  void pickShadeColor();
+  void browsePicture();
+
 private:
   QString m_title;
   QString m_subtitle;
@@ -73,6 +86,18 @@ private:
   QString m_fontSize;
 
   QStringList m_songs;
+
+  // panel widgets
+  QWidget *m_panel;
+  QLineEdit *m_titleEdit;
+  QLineEdit *m_subtitleEdit;
+  QLineEdit *m_authorEdit;
+  QLineEdit *m_versionEdit;
+  QLineEdit *m_mailEdit;
+  QLineEdit *m_pictureEdit;
+  QLineEdit *m_pictureCopyrightEdit;
+  QLabel *m_shadeColorLabel;
+  QSlider *m_fontSizeSlider;
 };
 
 #endif // __SONGBOOK_HH__
