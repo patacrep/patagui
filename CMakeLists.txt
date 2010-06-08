@@ -10,6 +10,7 @@ endif()
 #-------------------------------------------------------------------------------
 find_package(Qt4 COMPONENTS QtCore QtGui QtSql REQUIRED)
 set(QT_USE_QTSQL true)
+set(QT_USE_QTSCRIPT true)
 #-------------------------------------------------------------------------------
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
