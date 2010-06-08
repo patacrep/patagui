@@ -32,6 +32,8 @@
 #include <QFileDialog>
 #include <QDir>
 
+#include <QScriptEngine>
+
 #include <QDebug>
 
 CSongbook::CSongbook()
@@ -43,8 +45,12 @@ CSongbook::CSongbook()
   , m_mail()
   , m_picture()
   , m_pictureCopyright()
+  , m_footer()
+  , m_licence()
   , m_shadeColor()
   , m_fontSize()
+  , m_tmpl()
+  , m_bookType()
   , m_songs()
   , m_panel()
 {}
@@ -118,6 +124,24 @@ void CSongbook::setPictureCopyright(const QString &pictureCopyright)
   m_pictureCopyright = pictureCopyright;
 }
 
+QString CSongbook::footer()
+{
+  return m_footer;
+}
+void CSongbook::setFooter(const QString &footer)
+{
+  m_footer = footer;
+}
+
+QString CSongbook::licence()
+{
+  return m_licence;
+}
+void CSongbook::setLicence(const QString &licence)
+{
+  m_licence = licence;
+}
+
 QString CSongbook::shadeColor()
 {
   return m_shadeColor;
@@ -131,11 +155,28 @@ QString CSongbook::fontSize()
 {
   return m_fontSize;
 }
-void CSongbook::setFontSize(QString &fontSize)
+void CSongbook::setFontSize(const QString &fontSize)
 {
   m_fontSize = fontSize;
 }
 
+QString CSongbook::tmpl()
+{
+  return m_tmpl;
+}
+void CSongbook::setTmpl(const QString &tmpl)
+{
+  m_tmpl = tmpl;
+}
+
+QStringList CSongbook::bookType()
+{
+  return m_bookType;
+}
+void CSongbook::setBookType(QStringList bookType)
+{
+  m_bookType = bookType;
+}
 
 QStringList CSongbook::songs()
 {
@@ -147,22 +188,35 @@ void CSongbook::setSongs(QStringList songs)
   m_songs = songs;
 }
 
-void CSongbook::save(QString & filename)
+void CSongbook::save(const QString & filename)
 {
   QFile file(filename);
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream out(&file);
-      out << "\\title{" << title() << "}\n";
-      out << "\\subtitle{" << subtitle() << "}\n";
-      out << "\\author{" << author() << "}\n";
-      out << "\\version{" << version() << "}\n";
-      out << "\\mail{" << mail() << "}\n";
-      out << "\\picture{" << picture() << "}\n";
-      out << "\\picturecopyright{" << pictureCopyright() << "}\n";
-      out << "\\definecolor{SongbookShade}{HTML}{" << shadeColor() << "}\n";
-      out << "\\renewcommand{\\lyricfont}{\\normalfont" << fontSize() << "}\n";
-      out << "\\songlist{\n" <<(m_songs.join("\n")) << "\n}\n";
+      out << "{\n";
+
+      if (!tmpl().isEmpty())
+        out << "\"template\" : \"" << tmpl() << "\",\n";
+
+      QStringList properties;
+      QString property;
+      QString value;
+      properties << "title" << "author" << "subtitle" << "mail" 
+                 << "version" << "picture" << "footer" << "licence"
+                 << "pictureCopyright" << "shadeColor" << "fontSize";
+      foreach (property, properties)
+        {
+          value = QObject::property(property.toStdString().c_str()).toString();
+          if (!value.isEmpty())
+            {
+              out << "\"" << property.toLower() 
+                  << "\" : \"" 
+                  << value << "\",\n";
+            }
+        }
+
+      out << "\"songs\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
       file.close();
     }
   else
@@ -171,14 +225,81 @@ void CSongbook::save(QString & filename)
     }
 }
 
-void CSongbook::load(QString & filename)
+void CSongbook::load(const QString & filename)
 {
   QFile file(filename);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       QTextStream in(&file);
-      setSongs(in.readAll().split("\n", QString::SkipEmptyParts));
+      QString json = QString("(%1)").arg(in.readAll());
       file.close();
+
+      // Load json encoded songbook data
+      QScriptValue object;
+      QScriptEngine engine;
+
+      // check syntax
+      QScriptSyntaxCheckResult res = QScriptEngine::checkSyntax(json);
+      if (res.state() != QScriptSyntaxCheckResult::Valid)
+        {
+          qDebug() << "Error line "<< res.errorLineNumber()
+                   << " column " << res.errorColumnNumber()
+                   << ":" << res.errorMessage();
+        }
+      // evaluate the json data
+      object = engine.evaluate(json);
+
+      // load data into this object
+      if (object.isObject())
+        {
+          QScriptValue sv;
+          // template property
+          sv = object.property("template");
+          if (sv.isValid())
+            setTmpl(sv.toString());
+
+          // default property
+          QStringList properties;
+          QString property;
+          QVariant variant;
+          properties << "title" << "author" << "subtitle" << "mail" 
+                     << "version" << "picture" << "footer" << "licence"
+                     << "pictureCopyright" << "shadeColor" << "fontSize";
+          foreach (property, properties)
+            {
+              sv = object.property(property.toLower());
+              if (sv.isValid())
+                {
+                  variant = sv.toVariant();
+                  setProperty(property.toStdString().c_str(), variant);
+                }
+            }
+          
+          // booktype property (always an array)
+          sv = object.property("bookType");
+          if (sv.isValid() && sv.isArray())
+            {
+              QStringList items;
+              qScriptValueToSequence(sv, items); 
+              setBookType(items);
+            }
+
+          // songs property (if not an array, the value can be "all")
+          sv = object.property("songs");
+          if (sv.isValid())
+            {
+              QStringList items;
+              if (!sv.isArray())
+                {
+                  qDebug() << "not implemented yet";
+                }
+              else
+                {
+                  qScriptValueToSequence(sv, items); 
+                }
+              setSongs(items);
+            }
+        }
     }
   else
     {

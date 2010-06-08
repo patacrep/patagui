@@ -30,6 +30,20 @@ class QSlider;
 class CSongbook : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(QString title READ title WRITE setTitle)
+  Q_PROPERTY(QString author READ author WRITE setAuthor)
+  Q_PROPERTY(QString subtitle READ subtitle WRITE setSubtitle)
+  Q_PROPERTY(QString version READ version WRITE setVersion)
+  Q_PROPERTY(QString mail READ mail WRITE setMail)
+  Q_PROPERTY(QString picture READ picture WRITE setPicture)
+  Q_PROPERTY(QString pictureCopyright READ pictureCopyright WRITE setPictureCopyright)
+  Q_PROPERTY(QString footer READ footer WRITE setFooter)
+  Q_PROPERTY(QString licence READ licence WRITE setLicence)
+  Q_PROPERTY(QString shadeColor READ shadeColor WRITE setShadeColor)
+  Q_PROPERTY(QString fontSize READ fontSize WRITE setFontSize)
+  Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
+  Q_PROPERTY(QStringList bookType READ bookType WRITE setBookType)
+  Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
 
 public:
   CSongbook();
@@ -60,13 +74,26 @@ public:
   void setShadeColor(const QString &shadeColor);
 
   QString fontSize();
-  void setFontSize(QString &fontSize);
+  void setFontSize(const QString &fontSize);
+
+  QString footer();
+  void setFooter(const QString &footer);
+
+  QString licence();
+  void setLicence(const QString &licence);
+
+  QString tmpl();
+  void setTmpl(const QString &tmpl);
+
+  QStringList bookType();
+  void setBookType(QStringList bookType);
 
   QStringList songs();
   void setSongs(QStringList songs);
 
-  void save(QString &filename);
-  void load(QString &filename);
+  void save(const QString &filename);
+
+  void load(const QString &filename);
 
   QWidget *panel();
 
@@ -82,9 +109,13 @@ private:
   QString m_mail;
   QString m_picture;
   QString m_pictureCopyright;
+  QString m_footer;
+  QString m_licence;
   QString m_shadeColor;
   QString m_fontSize;
+  QString m_tmpl;
 
+  QStringList m_bookType;
   QStringList m_songs;
 
   // panel widgets
