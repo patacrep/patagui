@@ -300,11 +300,12 @@ void CSongbook::load(const QString & filename)
               setSongs(items);
             }
         }
+      update();
     }
   else
     {
       qWarning() << "unable to open file in read mode";
-    } 
+    }
 }
 
 QWidget * CSongbook::panel()
@@ -318,9 +319,11 @@ QWidget * CSongbook::panel()
       m_authorEdit = new QLineEdit(author());
       m_versionEdit = new QLineEdit(version());
       m_mailEdit = new QLineEdit(mail());
-      m_pictureEdit =new QLineEdit(QString("%1").arg(picture()));
+      m_pictureEdit = new QLineEdit(picture());
       m_pictureCopyrightEdit = new QLineEdit(pictureCopyright());
       m_pictureEdit->setReadOnly(true);
+      m_footerEdit = new QLineEdit(footer());
+      m_licenceEdit = new QLineEdit(licence());
     
       QToolButton *browsePictureButton = new QToolButton;
       browsePictureButton->setIcon(QIcon(":/icons/document-load.png"));
@@ -343,6 +346,22 @@ QWidget * CSongbook::panel()
       m_fontSizeSlider->setSingleStep(1);
       m_fontSizeSlider->setTickPosition(QSlider::TicksBelow);
       m_fontSizeSlider->setValue(2);
+
+      // connect modification signal
+      connect(m_titleEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setTitle(QString)));
+      connect(m_subtitleEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setSubtitle(QString)));
+      connect(m_authorEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setAuthor(QString)));
+      connect(m_versionEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setVersion(QString)));
+      connect(m_mailEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setMail(QString)));
+      connect(m_pictureEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setPicture(QString)));
+      connect(m_pictureCopyrightEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setPictureCopyright(QString)));
       
       QGridLayout *layout = new QGridLayout;
       // title page
@@ -361,17 +380,34 @@ QWidget * CSongbook::panel()
       layout->addWidget(browsePictureButton,5,3,1,1);
       layout->addWidget(new QLabel(tr("Copyright:")),6,0,1,1);
       layout->addWidget(m_pictureCopyrightEdit,6,1,1,3);
+      layout->addWidget(new QLabel(tr("Footer:")),7,0,1,1);
+      layout->addWidget(m_footerEdit,7,1,1,3);
+      layout->addWidget(new QLabel(tr("Licence:")),8,0,1,1);
+      layout->addWidget(m_licenceEdit,8,1,1,3);
       // custom options
-      layout->addWidget(new QLabel(tr("Shade Color:")),7,0,1,1);
-      layout->addWidget(m_shadeColorLabel,7,1,1,2);
-      layout->addWidget(pickShadeColorButton,7,3,1,1);
-      layout->addWidget(new QLabel(tr("Shade Color:")),8,0,1,1);
-      layout->addWidget(new QLabel(tr("small")),8,1,1,1);
-      layout->addWidget(m_fontSizeSlider,8,2,1,1);
-      layout->addWidget(new QLabel(tr("large")),8,3,1,1);
+      layout->addWidget(new QLabel(tr("Shade Color:")),9,0,1,1);
+      layout->addWidget(m_shadeColorLabel,9,1,1,2);
+      layout->addWidget(pickShadeColorButton,9,3,1,1);
+      layout->addWidget(new QLabel(tr("Shade Color:")),10,0,1,1);
+      layout->addWidget(new QLabel(tr("small")),10,1,1,1);
+      layout->addWidget(m_fontSizeSlider,10,2,1,1);
+      layout->addWidget(new QLabel(tr("large")),10,3,1,1);
       m_panel->setLayout(layout);
     }
   return m_panel;
+}
+
+void CSongbook::update()
+{
+  m_titleEdit->setText(title());
+  m_subtitleEdit->setText(subtitle());
+  m_authorEdit->setText(author());
+  m_versionEdit->setText(version());
+  m_mailEdit->setText(mail());
+  m_pictureEdit->setText(picture());
+  m_pictureCopyrightEdit->setText(pictureCopyright());
+  m_licenceEdit->setText(licence());
+  m_footerEdit->setText(footer());
 }
 
 void CSongbook::pickShadeColor()

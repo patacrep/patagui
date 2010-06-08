@@ -233,7 +233,7 @@ void CMainWindow::createActions()
 
   m_openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Load Songs List"), this);
   m_openAct->setShortcut(tr("Ctrl+O"));
-  m_openAct->setStatusTip(tr("Open a list of songs (.sgl) previously saved."));
+  m_openAct->setStatusTip(tr("Open a list of songs (.sg) previously saved."));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   m_saveAct = new QAction(QIcon(":/icons/document-save.png"), tr("Save Songs List"), this);
@@ -771,23 +771,22 @@ void CMainWindow::open()
   QString filename = QFileDialog::getOpenFileName(this,
                                                   tr("Load a list of songs"),
                                                   workingPath(),
-                                                  tr("Songbook File (*.sgl)"));
-  CSongbook songbook;
-  songbook.load( filename );
-  QStringList songlist = songbook.songs();
-  QString path = QString("%1/").arg(workingPath());
-  songlist.replaceInStrings(QRegExp("^"),path);
+                                                  tr("Songbook File (*.sb)"));
+  m_songbook->load( filename );
+  // QStringList songlist = songbook.songs();
+  // QString path = QString("%1/").arg(workingPath());
+  // songlist.replaceInStrings(QRegExp("^"),path);
 
-  m_view->clearSelection();
+  // m_view->clearSelection();
   
-  QList<QModelIndex> indexes;
-  QString str;
-  foreach(str, songlist)
-    {
-      indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
-      if(!indexes.isEmpty())
-	selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
-    }
+  // QList<QModelIndex> indexes;
+  // QString str;
+  // foreach(str, songlist)
+  //   {
+  //     indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
+  //     if(!indexes.isEmpty())
+  //       selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
+  //   }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::save()

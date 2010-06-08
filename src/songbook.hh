@@ -45,61 +45,52 @@ class CSongbook : public QObject
   Q_PROPERTY(QStringList bookType READ bookType WRITE setBookType)
   Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
 
+public slots:
+  void setTitle(const QString &title);
+  void setSubtitle(const QString &subtitle);
+  void setAuthor(const QString &author);
+  void setVersion(const QString &version);
+  void setMail(const QString &mail);  
+  void setPicture(const QString &picture);
+  void setPictureCopyright(const QString &pictureCopyright);
+  void setShadeColor(const QString &shadeColor);
+  void setFontSize(const QString &fontSize);
+  void setFooter(const QString &footer);
+  void setLicence(const QString &licence);
+  void setTmpl(const QString &tmpl);
+  void setBookType(QStringList bookType);
+  void setSongs(QStringList songs);
+
+  void save(const QString &filename);
+  void load(const QString &filename);
+
 public:
   CSongbook();
   ~CSongbook();
 
   QString title();
-  void setTitle(const QString &title);
-
   QString subtitle();
-  void setSubtitle(const QString &subtitle);
-
   QString author();
-  void setAuthor(const QString &author);
-
   QString version();
-  void setVersion(const QString &version);
-
   QString mail();
-  void setMail(const QString &mail);  
-
   QString picture();
-  void setPicture(const QString &picture);
-
   QString pictureCopyright();
-  void setPictureCopyright(const QString &pictureCopyright);
-
   QString shadeColor();
-  void setShadeColor(const QString &shadeColor);
-
   QString fontSize();
-  void setFontSize(const QString &fontSize);
-
   QString footer();
-  void setFooter(const QString &footer);
-
   QString licence();
-  void setLicence(const QString &licence);
-
   QString tmpl();
-  void setTmpl(const QString &tmpl);
 
   QStringList bookType();
-  void setBookType(QStringList bookType);
-
   QStringList songs();
-  void setSongs(QStringList songs);
-
-  void save(const QString &filename);
-
-  void load(const QString &filename);
 
   QWidget *panel();
 
 private slots:
   void pickShadeColor();
   void browsePicture();
+
+  void update();
 
 private:
   QString m_title;
@@ -127,6 +118,8 @@ private:
   QLineEdit *m_mailEdit;
   QLineEdit *m_pictureEdit;
   QLineEdit *m_pictureCopyrightEdit;
+  QLineEdit *m_footerEdit;
+  QLineEdit *m_licenceEdit;
   QLabel *m_shadeColorLabel;
   QSlider *m_fontSizeSlider;
 };
