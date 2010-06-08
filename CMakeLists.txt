@@ -23,6 +23,9 @@ set(SONGBOOK_CLIENT_SOURCES
   src/songbook.cc
   src/tools.cc
   src/download.cc
+  src/song-editor.cc
+  src/highlighter.cc
+  src/dialog-new-song.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -33,6 +36,9 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/tools.hh
   src/download.hh
   src/songbook.hh
+  src/song-editor.hh
+  src/highlighter.hh
+  src/dialog-new-song.hh
   )
 #-------------------------------------------------------------------------------
 # ressources
@@ -47,22 +53,26 @@ qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
 include_directories (${CMAKE_CURRENT_BINARY_DIR} src)
 #-------------------------------------------------------------------------------
 #internationalization
-SET (TRANSLATIONS
+set (TRANSLATIONS
 lang/songbook_en.ts
 lang/songbook_fr.ts)
 
-SET (COMPILED_TRANSLATIONS
+set (COMPILED_TRANSLATIONS
 lang/songbook_fr.qm
 lang/songbook_en.qm)
 
-ADD_CUSTOM_COMMAND (OUTPUT
+add_custom_command (OUTPUT
 ${COMPILED_TRANSLATIONS}
 COMMAND "${QT_LRELEASE_EXECUTABLE}" ${TRANSLATIONS}
 DEPENDS ${TRANSLATIONS}
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+#uncomment and run make to update translations ts files from sources
+#warning, if uncommented, running make clean will remove ts files
+#qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
 #-------------------------------------------------------------------------------
 # generating executable
+ADD_DEFINITIONS("-g -Wall")
 add_executable(songbook-client
   ${SONGBOOK_CLIENT_SOURCES} 
   ${SONGBOOK_CLIENT_MOCS} 

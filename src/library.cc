@@ -30,7 +30,7 @@
 #include <QSqlTableModel>
 #include <QSqlField>
 #include <QPixmapCache>
-#include <iostream>
+#include <QDebug>
 //------------------------------------------------------------------------------
 CLibrary::CLibrary()
   : QSqlTableModel()

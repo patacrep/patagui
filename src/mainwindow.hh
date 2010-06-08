@@ -30,6 +30,7 @@
 
 class CSongbook;
 class CLibrary;
+class CTabWidget;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -62,6 +63,8 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
+  void newSong();
+  void songTemplate();
   void open();
   void save();
   void build();
@@ -74,13 +77,22 @@ private slots:
   void setDisplaySongInfo(bool value);
   void setDisplayLogInfo(bool value);
   void applyDisplayColumn();
-  void connectDb();
+  bool connectDb();
   void filterChanged();
 
   void dockWidgets();
   void preferences();
 
+  void dockWidgetDirectionChanged(Qt::DockWidgetArea area);
+
+  void songEditor();
+  void changeTabLabel();
+  void deleteSong();
+
   void about(); 
+
+  //signals:
+  //void songDeleted(const QModelIndex & index);
 
 private:
   void readSettings();
@@ -95,12 +107,14 @@ private:
   const QString workingPath();
 
   QStringList getSelectedSongs();
+  
+  QString filenameConvention(const QString &, const QString & sep);
 
   /// Modify mybook.tex according to the selected options
   void applyBookType();
 
   QItemSelectionModel * selectionModel();
-
+  QDataWidgetMapper* m_mapper;
   // Song library and view
   CLibrary *m_library;
   QSortFilterProxyModel *m_proxyModel;
@@ -109,6 +123,7 @@ private:
   CSongbook *m_songbook;
 
   // Widgets
+  CTabWidget* m_mainWidget;
   QTableView *m_view;
   QProgressBar* m_progressBar;
 
@@ -137,8 +152,14 @@ private:
   QPixmap *m_cover;
   QLabel m_coverLabel;
   uint m_dbType;
+  QBoxLayout* m_currentSongWidgetLayout;
 
   QDockWidget* m_songbookInfo;
+
+  //Labels
+  QLabel *m_titleLabel;
+  QLabel *m_artistLabel;
+  QLabel *m_albumLabel;
 
   //Logs
   QTextEdit* m_log;
@@ -152,6 +173,7 @@ private:
 
   // Actions
   QAction *m_exitAct;
+  QAction *m_newSongAct;
   QAction *m_openAct;
   QAction *m_saveAct;
   QAction *m_buildAct;
@@ -169,6 +191,22 @@ private:
   QAction *m_rebuildDbAct;
   QAction *m_resizeCoversAct;
   QAction *m_checkerAct;
+
+};
+
+class CTabWidget : public QTabWidget
+{
+  Q_OBJECT
+
+public:
+  CTabWidget();
+  virtual ~CTabWidget();
+
+  int addTab(QWidget* widget, const QString & label);
+
+private slots:
+  void closeTab(int);
+
 };
 
 #endif  // __MAIN_WINDOW_HH__

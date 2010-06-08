@@ -25,6 +25,8 @@
 #include "songbook.hh"
 #include "tools.hh"
 #include "download.hh"
+#include "song-editor.hh"
+#include "dialog-new-song.hh"
 
 #include <QDebug>
 //******************************************************************************
@@ -39,6 +41,7 @@ CMainWindow::CMainWindow()
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
+
   readSettings();
 
   createActions();
@@ -56,7 +59,8 @@ CMainWindow::CMainWindow()
   filterComboBox->addItem(tr("Artist"), 0);
   filterComboBox->addItem(tr("Title"), 1);
   filterComboBox->addItem(tr("Album"), 4);
-  
+  m_proxyModel->setFilterKeyColumn(-1);
+   
   connect(filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
   connect(filterComboBox, SIGNAL(currentIndexChanged(int)),
@@ -79,15 +83,28 @@ CMainWindow::CMainWindow()
   horizontalLayout->addLayout(filterLayout);
 
   // place elements into the main window
-  QWidget * main = new QWidget;
-  QBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addLayout(horizontalLayout);
-  mainLayout->addWidget(m_view);
-  main->setLayout(mainLayout);
-  setCentralWidget(main);
+  m_mainWidget = new CTabWidget;
+  m_mainWidget->setTabsClosable(true);
+  m_mainWidget->setMovable(true);
+  connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
+	   m_mainWidget, SLOT(closeTab(int)) );
+  setCentralWidget(m_mainWidget);
+
+  QWidget* libraryTab = new QWidget;
+  QBoxLayout *libraryLayout = new QVBoxLayout;
+  libraryLayout->addLayout(horizontalLayout);
+  libraryLayout->addWidget(m_view);
+  libraryTab->setLayout(libraryLayout);
+  m_mainWidget->addTab(libraryTab, tr("Library"));
 
   //Connection to database
-  connectDb();
+  if(connectDb())
+    synchroniseWithLocalSongs();
+  else
+    applyDisplayColumn();
+
+  //Dock Widgets
+  dockWidgets();
 
   // status bar with an embedded progress bar on the right
   m_progressBar->setTextVisible(false);
@@ -100,7 +117,7 @@ CMainWindow::CMainWindow()
 void CMainWindow::filterChanged()
 {
   QObject *object = QObject::sender();
-  
+
   if (QLineEdit *lineEdit = qobject_cast< QLineEdit* >(object))
     {
       QRegExp expression = QRegExp(lineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
@@ -209,6 +226,11 @@ void CMainWindow::createActions()
   m_exitAct->setStatusTip(tr("Exit the application"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
+  m_newSongAct = new QAction(QIcon(":/icons/document-load.png"), tr("New Song"), this);
+  m_newSongAct->setShortcut(tr("Ctrl+N"));
+  m_newSongAct->setStatusTip(tr("Write a new song."));
+  connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
+
   m_openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Load Songs List"), this);
   m_openAct->setShortcut(tr("Ctrl+O"));
   m_openAct->setStatusTip(tr("Open a list of songs (.sgl) previously saved."));
@@ -288,7 +310,7 @@ void CMainWindow::createActions()
   connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
 }
 //------------------------------------------------------------------------------
-void CMainWindow::connectDb()
+bool CMainWindow::connectDb()
 {
   //Connect to database
   bool newdb = createDbConnection();
@@ -308,21 +330,16 @@ void CMainWindow::connectDb()
   m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
   m_view->sortByColumn(1, Qt::AscendingOrder);
   m_view->sortByColumn(0, Qt::AscendingOrder);
-  m_view->resizeColumnsToContents();
   m_view->setModel(m_proxyModel);
   m_view->show();
   
-  dockWidgets();
-  applyDisplayColumn();
-  if(newdb)
-    synchroniseWithLocalSongs();
+  return newdb;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::synchroniseWithLocalSongs()
 {
   //Drop table songs and recreate
-  QSqlQuery query;
-  query.exec("delete from songs");
+  QSqlQuery query("delete from songs");
     
   // Retrieve all songs from .sg files in working dir
   m_library->setPathToSongs(workingPath());
@@ -351,6 +368,7 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 void CMainWindow::createMenus()
 {
   m_fileMenu = menuBar()->addMenu(tr("&File"));
+  m_fileMenu->addAction(m_newSongAct);
   m_fileMenu->addAction(m_openAct);
   m_fileMenu->addAction(m_saveAct);
   m_fileMenu->addSeparator();
@@ -394,40 +412,58 @@ void CMainWindow::dockWidgets()
 
   // Song Info widget
   m_songInfo = new QDockWidget( tr("Song"));
-  m_songInfo->setMinimumWidth(200);
-  m_songInfo->setMaximumHeight(250);
+  m_songInfo->setMaximumSize(300, 300);
+
   QWidget * songInfoWidget = new QWidget();
 
-  QLabel *artistLabel = new QLabel();
-  QLabel *titleLabel = new QLabel();
-  QLabel *albumLabel = new QLabel();
+  m_artistLabel = new QLabel();
+  m_titleLabel = new QLabel();
+  m_albumLabel = new QLabel();
 
+  QGroupBox* currentSongTagsBox = new QGroupBox;
   QGridLayout *songInfoLayout = new QGridLayout();
-  songInfoLayout->addWidget(&m_coverLabel,0,0,1,2,Qt::AlignCenter);
-  songInfoLayout->addWidget(new QLabel(tr("Artist:")),1,0,1,1,Qt::AlignRight);
-  songInfoLayout->addWidget(artistLabel,1,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("Song:")),2,0,1,1,Qt::AlignRight);
-  songInfoLayout->addWidget(titleLabel,2,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("Album:")),3,0,1,1,Qt::AlignRight);
-  songInfoLayout->addWidget(albumLabel,3,1,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("<b>Song:</b>")),0,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(m_titleLabel,0,1,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("<b>Artist:</b>")),1,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(m_artistLabel,1,1,1,1);
+  songInfoLayout->addWidget(new QLabel(tr("<b>Album:</b>")),2,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(m_albumLabel,2,1,1,1);
   songInfoLayout->setColumnStretch(2,1);
-  QBoxLayout *layout = new QVBoxLayout;
-  layout->addLayout(songInfoLayout);
-  layout->addStretch();
-  songInfoWidget->setLayout(layout);
+  songInfoLayout->setRowStretch(3,10);
+  currentSongTagsBox->setLayout(songInfoLayout);
+  
+  QDialogButtonBox * buttonBox = new QDialogButtonBox;
+  QPushButton* editButton = new QPushButton(tr("Edit"));
+  QPushButton * deleteButton = new QPushButton(tr("Delete"));
+  editButton->setDefault(true);
+  buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);
+
+  connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
+  connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
+  
+  m_currentSongWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, songInfoWidget);
+  m_coverLabel.setAlignment(Qt::AlignTop);
+  m_currentSongWidgetLayout->addWidget(&m_coverLabel);
+  m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
+  m_currentSongWidgetLayout->addWidget(buttonBox);
+  m_currentSongWidgetLayout->addStretch(1);
   m_songInfo->setWidget(songInfoWidget);
   addDockWidget( Qt::LeftDockWidgetArea, m_songInfo );
+     
+  connect(m_songInfo, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
+          SLOT(dockWidgetDirectionChanged(Qt::DockWidgetArea)));
 
   //Data mapper
-  QDataWidgetMapper *mapper = new QDataWidgetMapper();
-  mapper->setModel(m_proxyModel);
-  mapper->addMapping(artistLabel, 0, QByteArray("text"));
-  mapper->addMapping(titleLabel, 1, QByteArray("text"));
-  mapper->addMapping(albumLabel, 4, QByteArray("text"));
+  m_mapper = new QDataWidgetMapper();
+  m_mapper->setModel(m_proxyModel);
+  m_mapper->addMapping(m_artistLabel, 0, QByteArray("text"));
+  m_mapper->addMapping(m_titleLabel, 1, QByteArray("text"));
+  m_mapper->addMapping(m_albumLabel, 4, QByteArray("text"));
   updateCover(QModelIndex());
 
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
-          mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
+          m_mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           SLOT(updateCover(const QModelIndex &)));
 
@@ -441,18 +477,65 @@ void CMainWindow::dockWidgets()
   m_logInfo->setVisible(false);
 }
 //------------------------------------------------------------------------------
-void CMainWindow::updateCover(const QModelIndex & index)
+void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
 {
-  QString coverpath = m_library->record(m_proxyModel->mapToSource(index).row()).field("cover").value().toString();
-  if (QFile::exists(coverpath))
+  if(area==Qt::LeftDockWidgetArea || area==Qt::RightDockWidgetArea)
     {
-      m_cover->load(coverpath);
-    } 
+      m_currentSongWidgetLayout->setDirection(QBoxLayout::TopToBottom);
+      m_songInfo->setMaximumSize(300, 300);
+    }
   else
     {
-      m_cover->load(":/icons/unavailable-large");
+      m_currentSongWidgetLayout->setDirection(QBoxLayout::LeftToRight);
+      m_songInfo->setMaximumSize(450, 170);
     }
+}
+//------------------------------------------------------------------------------
+void CMainWindow::updateCover(const QModelIndex & index)
+{
+  if(!selectionModel()->hasSelection())
+    {
+      m_cover->load(":/icons/unavailable-large");
+      m_coverLabel.setPixmap(*m_cover);
+      m_titleLabel->setText("");
+      m_artistLabel->setText("");
+      m_albumLabel->setText("");
+      return;
+    }
+
+  // do not retrieve last clicked item but last selected item
+  QModelIndex lastIndex = selectionModel()->selectedRows().last();
+  selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::NoUpdate);
+  if(lastIndex != index) m_mapper->setCurrentModelIndex(lastIndex);
+
+  QString coverpath = m_library->record(m_proxyModel->mapToSource(lastIndex).row()).field("cover").value().toString();
+  if (QFile::exists(coverpath))
+    m_cover->load(coverpath);
+  else
+    m_cover->load(":/icons/unavailable-large");
   m_coverLabel.setPixmap(*m_cover);
+
+  //todo: is there a way to do it automatically and dynamically ?
+  //truncate labels if too long
+  QString string = m_titleLabel->text();
+  if(string.size() > 30)
+    {
+      string.truncate(27);
+      m_titleLabel->setText(string+"...");
+    }
+  string = m_artistLabel->text();
+  if(string.size() > 30)
+    {
+      string.truncate(27);
+      m_artistLabel->setText(string+"...");
+    }
+  string = m_albumLabel->text();
+  if(string.size() > 30)
+    {
+      string.truncate(27);
+      m_albumLabel->setText(string+"...");
+    }
+
 }
 //------------------------------------------------------------------------------
 void CMainWindow::preferences()
@@ -765,7 +848,7 @@ bool CMainWindow::createDbConnection()
 //------------------------------------------------------------------------------
 void CMainWindow::downloadDialog()
 {
-  CDownloadDialog* dialog = new CDownloadDialog(this);
+  new CDownloadDialog(this);
 }
 //------------------------------------------------------------------------------
 QProgressBar * CMainWindow::progressBar()
@@ -778,3 +861,232 @@ QItemSelectionModel * CMainWindow::selectionModel()
   return m_view->selectionModel();
 }
 //------------------------------------------------------------------------------
+void CMainWindow::songEditor()
+{
+  if(!selectionModel()->hasSelection())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please select a song to edit."));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
+      return;
+    }
+
+  QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+  
+  CSongEditor* editor = new CSongEditor(path);
+  if(!editor->isOk)
+    {
+      delete editor;
+      return;
+    }
+  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, m_titleLabel->text()));
+  editor->setTabIndex(m_mainWidget->currentIndex());
+  editor->setLabel(m_titleLabel->text());
+  connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
+}
+//------------------------------------------------------------------------------
+void CMainWindow::changeTabLabel()
+{
+  QObject *object = QObject::sender();
+  if (CSongEditor* editor = qobject_cast< CSongEditor* >(object))
+      m_mainWidget->setTabText(editor->tabIndex(), editor->label() );  
+}
+//------------------------------------------------------------------------------
+void CMainWindow::newSong()
+{
+  //pop up new song dialog
+  CDialogNewSong* dialog = new CDialogNewSong();
+  connect( dialog, SIGNAL(accepted()), this, SLOT(songTemplate()) );
+}
+//------------------------------------------------------------------------------
+void CMainWindow::songTemplate()
+{
+  QObject *object = QObject::sender();
+  if (CDialogNewSong* dialog = qobject_cast< CDialogNewSong* >(object))
+    {
+      //retrieve user input fields
+      QString title = dialog->title() ;
+      QString artist = dialog->artist() ;
+      uint nbColumns = (uint) dialog->nbColumns();
+      uint capo = (uint) dialog->capo();
+      QString album = dialog->album() ;
+      QString cover = dialog->cover() ;
+	    
+      //remove dialog
+      delete dialog;
+
+      //todo: better (do not close dialog+highlight missing fields)
+      //check required fields
+      if(title.isEmpty() || artist.isEmpty())
+	{
+	  QMessageBox msgBox;
+	  msgBox.setIcon(QMessageBox::Warning);
+	  msgBox.setText(tr("Please fill all required fields."));
+	  msgBox.setStandardButtons(QMessageBox::Cancel);
+	  msgBox.setDefaultButton(QMessageBox::Cancel);
+	  msgBox.exec();
+	  return;
+	}
+
+      //make new dir
+      QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
+      QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
+      QDir dir(dirpath);
+      if(!dir.exists()) dir.mkpath(dirpath);
+
+      //handle album and cover
+      bool img = false;
+      QFile coverFile(cover);
+      if(coverFile.exists())
+	{
+	  //copy in artist directory and resize
+	  QFileInfo fi(cover);
+	  QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
+	  qDebug() << "new file copy " << cover << "in "<< target;
+	  img = coverFile.copy(target);
+	  QFile copyCover(target);
+	  
+	  //if album is specified, rename cover accordingly
+	  if( !album.isEmpty() && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
+						    .arg(workingPath())
+						    .arg(filenameConvention(artist,"_"))
+						    .arg(filenameConvention(album,"-"))) )
+	    copyCover.remove(); //remove copy if file already exists
+	}
+      
+      //make template
+      QFile file(filepath);
+      QString songTemplate;
+      if(nbColumns>0) songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
+      if(!img)
+	songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
+      else
+	songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
+	
+      if(capo>0) songTemplate.append(QString("\\capo{%1}\n").arg(capo));
+      songTemplate.append(QString("\n\\endsong"));
+      
+      if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+	  QTextStream stream (&file);
+	  stream << songTemplate;
+	  file.close();
+	}
+      else
+      	qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode " ;
+      
+      //Insert the song in the library
+      m_library->addSongFromFile(filepath);
+      m_library->submitAll();
+      m_view->sortByColumn(1, Qt::AscendingOrder);
+      m_view->sortByColumn(0, Qt::AscendingOrder);
+  
+      //position index of new song in the library and launch song editor
+      CSongEditor* editor = new CSongEditor(filepath);
+      m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
+      editor->setTabIndex(m_mainWidget->currentIndex());
+      editor->setLabel(title);
+      connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
+    }
+
+}
+//------------------------------------------------------------------------------
+QString CMainWindow::filenameConvention(const QString & str, const QString & sep)
+{
+  QString result = str;
+  QString tmp;
+  QStringList list;
+  list <<"é"<<"è"<<"ê"<<"ë";
+  foreach(tmp, list)
+    result.replace(tmp, QString("e"));
+  
+  list = QStringList();
+  list <<" "<<"&"<<"'"<<"`"<<"("<<")"<<"["<<"]"<<"{"<<"}"<<"_"<<"~"<<","<<"?"<<"!"<<":"<<";"<<"."<<"%";
+  foreach(tmp, list)
+    result.replace(tmp, sep);
+
+  result.replace(QString("à"), QString("a"));
+  result.replace(QString("â"), QString("a"));
+  result.replace(QString("ï"), QString("i"));
+  result.replace(QString("î"), QString("i"));
+  result.replace(QString("ô"), QString("o"));
+  result.replace(QString("ù"), QString("u"));
+
+  return result;
+}
+//------------------------------------------------------------------------------
+void CMainWindow::deleteSong()
+{
+  if(!selectionModel()->hasSelection())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please select a song to remove."));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
+      return;
+    }
+
+  QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+  
+  if(QMessageBox::question
+     (this, this->windowTitle(), 
+      QString(tr("This will remove the file %1 ?")).arg(path), 
+      QMessageBox::Yes, 
+      QMessageBox::No, 
+      QMessageBox::NoButton) == QMessageBox::Yes)
+    {
+      //todo: debug
+      //remove entry in database
+      //QModelIndexList list = m_library->match(m_proxyModel->index(0,3), Qt::MatchExactly, path);
+      //QModelIndex index;
+      //foreach(index, list)
+      //	removeRow(index.row());
+      //submitAll();
+      //removal on disk
+      QFile file(path);
+      QFileInfo fileinfo(file);
+      QString tmp = fileinfo.canonicalPath();
+      if(file.remove())
+	{
+	  QDir dir; 
+	  dir.rmdir(tmp); //remove dir if empty
+	  synchroniseWithLocalSongs(); //temporary hack
+	  //once deleted move selection in the model
+	  updateCover(selectionModel()->currentIndex());
+	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
+	}
+    }
+}
+//******************************************************************************
+//******************************************************************************
+CTabWidget::CTabWidget():QTabWidget()
+{
+  tabBar()->hide();
+}
+//------------------------------------------------------------------------------
+CTabWidget::~CTabWidget()
+{}
+//------------------------------------------------------------------------------
+void CTabWidget::closeTab(int index)
+{
+  removeTab(index);
+  if (count() == 1)
+    tabBar()->hide();
+}
+//------------------------------------------------------------------------------
+int CTabWidget::addTab(QWidget* widget, const QString & label)
+{
+  int res = QTabWidget::addTab(widget, label);
+  if (count() == 1)
+    tabBar()->hide();
+  else
+    tabBar()->show();
+  return res;
+}
+//******************************************************************************
+//******************************************************************************

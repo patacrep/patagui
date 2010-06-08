@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009,2010 Romain Goffe, Alexandre Dupas
 //
 // Songbook Creator is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,32 +15,51 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#include <QStandardItemModel>
-#include <QString>
-#include <QSqlTableModel>
-class QTableView;
-class CLibrary : public QSqlTableModel
+#ifndef DIALOG_NEW_SONG_HH
+#define DIALOG_NEW_SONG_HH
+
+#include <QtGui>
+
+class CDialogNewSong : public QDialog
 {
   Q_OBJECT
-
-public:
-  CLibrary();
-  ~CLibrary();
   
-  QString pathToSongs();
-  void setPathToSongs(const QString path);
+public:
+  CDialogNewSong();
 
 public slots:
-  void retrieveSongs();
+  QString title() const;
+  void setTitle(QString);
 
-public:
-  void addSongFromFile(const QString path);
-  
-  QString m_pathToSongs;
-  QString imgFile;
+  QString artist() const;
+  void setArtist(QString);
 
-public:
-  static QString latexToUtf8(const QString str);  
-  static QString processString(const QString str);
-  QVariant data(const QModelIndex &index, int role) const;
+  int nbColumns() const;
+  void setNbColumns(int);
+
+  int capo() const;
+  void setCapo(int);
+
+  QString album() const;
+  void setAlbum(QString);
+
+  QString cover() const;
+  void setCover(QString);
+
+private slots:
+  void browseCover();
+
+private:
+  //required fields
+  QString m_title;
+  QString m_artist;
+
+  //optional fields
+  QString m_album;
+  QString m_cover;
+  QLineEdit* m_coverEdit;
+  uint m_nbColumns;
+  uint m_capo;
 };
+
+#endif // DIALOG_NEW_SONG_HH

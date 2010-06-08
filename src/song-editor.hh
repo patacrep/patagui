@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2010 Romain Goffe, Alexandre Dupas
 //
 // Songbook Creator is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,32 +15,52 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#include <QStandardItemModel>
+#ifndef SONG_EDITOR_HH
+#define SONG_EDITOR_HH
+
+#include <QWidget>
 #include <QString>
-#include <QSqlTableModel>
-class QTableView;
-class CLibrary : public QSqlTableModel
+
+class QTextEdit;
+
+class CSongEditor : public QWidget
 {
   Q_OBJECT
 
 public:
-  CLibrary();
-  ~CLibrary();
+  CSongEditor(const QString & APath);
+  virtual ~CSongEditor();
   
-  QString pathToSongs();
-  void setPathToSongs(const QString path);
+  QString filePath();
+  void setFilePath(const QString & APath);
 
-public slots:
-  void retrieveSongs();
+  int tabIndex();
+  void setTabIndex(int AIndex);
+
+  QString label();
+  void setLabel(const QString & ALabel);
+
+private:
+  QString syntaxicColoration(const QString &);
+
+private slots:
+  //write modifications of the textEdit into sg file.
+  void save();
+  void documentWasModified();
+  void insertVerse();
+  void insertChorus();
+
+signals:
+  void labelChanged();
 
 public:
-  void addSongFromFile(const QString path);
-  
-  QString m_pathToSongs;
-  QString imgFile;
+  QTextEdit* m_textEdit;
+  bool isOk;
 
-public:
-  static QString latexToUtf8(const QString str);  
-  static QString processString(const QString str);
-  QVariant data(const QModelIndex &index, int role) const;
+private:
+  QString m_filePath;
+  QString m_label; //tab title
+  int m_tabIndex;  //tab index
 };
+
+#endif //SONG_EDITOR_HH

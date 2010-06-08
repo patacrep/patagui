@@ -68,12 +68,12 @@ private:
   void readSettings();
   void writeSettings();
 
-  QCheckBox *artistCheckBox;
-  QCheckBox *titleCheckBox;
-  QCheckBox *pathCheckBox;
-  QCheckBox *albumCheckBox;
-  QCheckBox *lilypondCheckBox;
-  QCheckBox *coverCheckBox;
+  QCheckBox *m_artistCheckBox;
+  QCheckBox *m_titleCheckBox;
+  QCheckBox *m_pathCheckBox;
+  QCheckBox *m_albumCheckBox;
+  QCheckBox *m_lilypondCheckBox;
+  QCheckBox *m_coverCheckBox;
 };
 
 class OptionsPage : public QWidget
@@ -91,67 +91,27 @@ private slots:
   void checkWorkingPath(const QString&);
   void checkLilypondVersion(int);
   void processError(QProcess::ProcessError error);
-  void readProcessOut();
+  void lyricBookMode(bool);
 
 private:
   void readSettings();
   void writeSettings();
 
-  QLineEdit * workingPath;
+  QLineEdit * m_workingPath;
   QLabel* m_workingPathValid;
 
-  QRadioButton *chordbookRadioButton;
-  QRadioButton *lyricbookRadioButton;
+  QRadioButton *m_chordbookRadioButton;
+  QRadioButton *m_lyricbookRadioButton;
 
-  QCheckBox *diagramCheckBox;
-  QCheckBox *lilypondCheckBox;
-  QCheckBox *tablatureCheckBox;
+  QCheckBox *m_diagramCheckBox;
+  QCheckBox *m_lilypondCheckBox;
+  QCheckBox *m_tablatureCheckBox;
 
   //check lilypond version
   QLabel* m_lilypondLabel;
   QProcess* m_lilypondCheck;
-  QProcess* m_grep;
 
-  bool isValid;
+  bool m_isValid;
 };
-
-// class SongbookAppearancePage : public QWidget
-// {
-//   Q_OBJECT
-
-// public:
-//   SongbookAppearancePage(QWidget *parent = 0);
-
-// protected:
-//   void closeEvent(QCloseEvent *event);
-
-// private slots:
-//   void checkWorkingPath(const QString&);
-//   void browseHeaderPicture();
-//   void pickColor();
-//   void resetColor();
-
-// private:
-//   void readSettings();
-//   void writeSettings();
-//   void updateHeader();
-//   void updateCustom();
-
-//   //Header
-//   QLineEdit* m_title;
-//   QLineEdit* m_subtitle;
-//   QLineEdit* m_author;
-//   QLineEdit* m_version;
-//   QLineEdit* m_mail;
-//   QLineEdit* m_picture;
-//   QLineEdit* m_copyright;
-
-//   //Custom
-//   QColor* m_color;
-//   QLabel* m_colorLabel;
-//   QSlider* m_sliderFontSize;
-  
-//   bool isValid;
-// };
 
 #endif // __CONFIGDIALOG_H__
