@@ -31,6 +31,10 @@
 #include <QColorDialog>
 #include <QFileDialog>
 #include <QDir>
+#include <QRadioButton>
+#include <QCheckBox>
+#include <QGroupBox>
+#include <QButtonGroup>
 
 #include <QScriptEngine>
 
@@ -38,6 +42,7 @@
 
 CSongbook::CSongbook()
   : QObject()
+  , m_filename()
   , m_title()
   , m_subtitle()
   , m_author()
@@ -61,13 +66,36 @@ CSongbook::~CSongbook()
     delete m_panel;
 }
 
+QString CSongbook::filename()
+{
+  return m_filename;
+}
+void CSongbook::setFilename(const QString &filename)
+{
+  m_filename = filename;
+}
+
+bool CSongbook::isModified()
+{
+  return m_modified;
+}
+void CSongbook::setModified(bool modified)
+{
+  m_modified = modified;
+  emit(wasModified(modified));
+}
+
 QString CSongbook::title()
 {
   return m_title;
 }
 void CSongbook::setTitle(const QString &title)
 {
-  m_title = title;
+  if (m_title != title)
+    {
+      setModified(true);
+      m_title = title;
+    }
 }
 
 QString CSongbook::subtitle()
@@ -76,7 +104,11 @@ QString CSongbook::subtitle()
 }
 void CSongbook::setSubtitle(const QString &subtitle)
 {
-  m_subtitle = subtitle;
+  if (m_subtitle != subtitle)
+    {
+      setModified(true);
+      m_subtitle = subtitle;
+    }
 }
 
 QString CSongbook::author()
@@ -85,7 +117,11 @@ QString CSongbook::author()
 }
 void CSongbook::setAuthor(const QString &author)
 {
-  m_author = author;
+  if (m_author != author)
+    {
+      setModified(true);
+      m_author = author;
+    }
 }
 
 QString CSongbook::version()
@@ -94,7 +130,11 @@ QString CSongbook::version()
 }
 void CSongbook::setVersion(const QString &version)
 {
-  m_version = version;
+  if (m_version != version)
+    {
+      setModified(true);
+      m_version = version;
+    }
 }
 
 QString CSongbook::mail()
@@ -103,7 +143,11 @@ QString CSongbook::mail()
 }
 void CSongbook::setMail(const QString &mail)
 {
-  m_mail = mail;
+  if (m_mail != mail)
+    {
+      setModified(true);
+      m_mail = mail;
+    }
 }
 
 QString CSongbook::picture()
@@ -112,7 +156,11 @@ QString CSongbook::picture()
 }
 void CSongbook::setPicture(const QString &picture)
 {
-  m_picture = picture;
+  if (m_picture != picture)
+    {
+      setModified(true);
+      m_picture = picture;
+    }
 }
 
 QString CSongbook::pictureCopyright()
@@ -121,7 +169,11 @@ QString CSongbook::pictureCopyright()
 }
 void CSongbook::setPictureCopyright(const QString &pictureCopyright)
 {
-  m_pictureCopyright = pictureCopyright;
+  if (m_pictureCopyright != pictureCopyright)
+    {
+      setModified(true);
+      m_pictureCopyright = pictureCopyright;
+    }
 }
 
 QString CSongbook::footer()
@@ -130,7 +182,11 @@ QString CSongbook::footer()
 }
 void CSongbook::setFooter(const QString &footer)
 {
-  m_footer = footer;
+  if (m_footer != footer)
+    {
+      setModified(true);
+      m_footer = footer;
+    }
 }
 
 QString CSongbook::licence()
@@ -139,7 +195,11 @@ QString CSongbook::licence()
 }
 void CSongbook::setLicence(const QString &licence)
 {
-  m_licence = licence;
+  if (m_licence != licence)
+    {
+      setModified(true);
+      m_licence = licence;
+    }
 }
 
 QString CSongbook::shadeColor()
@@ -148,7 +208,11 @@ QString CSongbook::shadeColor()
 }
 void CSongbook::setShadeColor(const QString &shadeColor)
 {
-  m_shadeColor = shadeColor;
+  if (m_shadeColor != shadeColor)
+    {
+      setModified(true);
+      m_shadeColor = shadeColor;
+    }
 }
 
 QString CSongbook::fontSize()
@@ -157,7 +221,11 @@ QString CSongbook::fontSize()
 }
 void CSongbook::setFontSize(const QString &fontSize)
 {
-  m_fontSize = fontSize;
+  if (m_fontSize != fontSize)
+    {
+      setModified(true);
+      m_fontSize = fontSize;
+    }
 }
 
 QString CSongbook::tmpl()
@@ -166,7 +234,11 @@ QString CSongbook::tmpl()
 }
 void CSongbook::setTmpl(const QString &tmpl)
 {
-  m_tmpl = tmpl;
+  if (m_tmpl != tmpl)
+    {
+      setModified(true);
+      m_tmpl = tmpl;
+    }
 }
 
 QStringList CSongbook::bookType()
@@ -175,7 +247,11 @@ QStringList CSongbook::bookType()
 }
 void CSongbook::setBookType(QStringList bookType)
 {
-  m_bookType = bookType;
+  if (m_bookType != bookType)
+    {
+      setModified(true);
+      m_bookType = bookType;
+    }
 }
 
 QStringList CSongbook::songs()
@@ -185,7 +261,11 @@ QStringList CSongbook::songs()
 
 void CSongbook::setSongs(QStringList songs)
 {
-  m_songs = songs;
+  if (m_songs != songs)
+    {
+      setModified(true);
+      m_songs = songs;
+    }
 }
 
 void CSongbook::save(const QString & filename)
@@ -212,12 +292,17 @@ void CSongbook::save(const QString & filename)
             {
               out << "\"" << property.toLower() 
                   << "\" : \"" 
-                  << value << "\",\n";
+                  << value.replace('\\',"\\\\") << "\",\n";
             }
         }
 
+      if (!bookType().empty())
+        out << "\"booktype\" : [\n    \"" << (bookType().join("\",\n    \"")) << "\"\n  ],\n";
+
       out << "\"songs\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
       file.close();
+      setModified(false);
+      setFilename(filename);
     }
   else
     {
@@ -230,6 +315,8 @@ void CSongbook::load(const QString & filename)
   QFile file(filename);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
+      reset();
+
       QTextStream in(&file);
       QString json = QString("(%1)").arg(in.readAll());
       file.close();
@@ -276,7 +363,7 @@ void CSongbook::load(const QString & filename)
             }
           
           // booktype property (always an array)
-          sv = object.property("bookType");
+          sv = object.property("booktype");
           if (sv.isValid() && sv.isArray())
             {
               QStringList items;
@@ -300,6 +387,8 @@ void CSongbook::load(const QString & filename)
               setSongs(items);
             }
         }
+      setModified(false);
+      setFilename(filename);
       update();
     }
   else
@@ -347,6 +436,19 @@ QWidget * CSongbook::panel()
       m_fontSizeSlider->setTickPosition(QSlider::TicksBelow);
       m_fontSizeSlider->setValue(2);
 
+      // BookType
+      m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
+      m_lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
+      m_diagramCheckBox = new QCheckBox(tr("Chord Diagram"));
+      m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
+      m_tablatureCheckBox = new QCheckBox(tr("Tablature"));
+
+      QButtonGroup *bookTypeGroup = new QButtonGroup();
+      bookTypeGroup->addButton(m_chordbookRadioButton);
+      bookTypeGroup->addButton(m_lyricbookRadioButton);
+
+      m_chordbookRadioButton->setChecked(true);
+
       // connect modification signal
       connect(m_titleEdit, SIGNAL(textChanged(QString)),
               this, SLOT(setTitle(QString)));
@@ -362,39 +464,106 @@ QWidget * CSongbook::panel()
               this, SLOT(setPicture(QString)));
       connect(m_pictureCopyrightEdit, SIGNAL(textChanged(QString)),
               this, SLOT(setPictureCopyright(QString)));
+      connect(m_footerEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setFooter(QString)));
+      connect(m_licenceEdit, SIGNAL(textChanged(QString)),
+              this, SLOT(setLicence(QString)));
+      connect(m_chordbookRadioButton, SIGNAL(toggled(bool)),
+              this, SLOT(updateBooktype(bool)));
+      connect(m_lyricbookRadioButton, SIGNAL(toggled(bool)),
+              this, SLOT(updateBooktype(bool)));
+      connect(m_diagramCheckBox, SIGNAL(toggled(bool)),
+              this, SLOT(updateBooktype(bool)));
+      connect(m_lilypondCheckBox, SIGNAL(toggled(bool)),
+              this, SLOT(updateBooktype(bool)));
+      connect(m_tablatureCheckBox, SIGNAL(toggled(bool)),
+              this, SLOT(updateBooktype(bool)));
       
       QGridLayout *layout = new QGridLayout;
+      int line = -1;
       // title page
-      layout->addWidget(new QLabel(tr("Title:")),0,0,1,1);
-      layout->addWidget(m_titleEdit,0,1,1,3);
-      layout->addWidget(new QLabel(tr("Subtitle:")),1,0,1,1);
-      layout->addWidget(m_subtitleEdit,1,1,1,3);
-      layout->addWidget(new QLabel(tr("Author:")),2,0,1,1);
-      layout->addWidget(m_authorEdit,2,1,1,3);
-      layout->addWidget(new QLabel(tr("Version:")),3,0,1,1);
-      layout->addWidget(m_versionEdit,3,1,1,3);
-      layout->addWidget(new QLabel(tr("Mail:")),4,0,1,1);
-      layout->addWidget(m_mailEdit,4,1,1,3);
-      layout->addWidget(new QLabel(tr("Picture:")),5,0,1,1);
-      layout->addWidget(m_pictureEdit,5,1,1,2);
-      layout->addWidget(browsePictureButton,5,3,1,1);
-      layout->addWidget(new QLabel(tr("Copyright:")),6,0,1,1);
-      layout->addWidget(m_pictureCopyrightEdit,6,1,1,3);
-      layout->addWidget(new QLabel(tr("Footer:")),7,0,1,1);
-      layout->addWidget(m_footerEdit,7,1,1,3);
-      layout->addWidget(new QLabel(tr("Licence:")),8,0,1,1);
-      layout->addWidget(m_licenceEdit,8,1,1,3);
+      layout->addWidget(new QLabel(tr("Title:")),++line,0,1,1);
+      layout->addWidget(m_titleEdit,line,1,1,3);
+      layout->addWidget(new QLabel(tr("Subtitle:")),++line,0,1,1);
+      layout->addWidget(m_subtitleEdit,line,1,1,3);
+      layout->addWidget(new QLabel(tr("Author:")),++line,0,1,1);
+      layout->addWidget(m_authorEdit,line,1,1,3);
+      layout->addWidget(new QLabel(tr("Version:")),++line,0,1,1);
+      layout->addWidget(m_versionEdit,line,1,1,3);
+      layout->addWidget(new QLabel(tr("Mail:")),++line,0,1,1);
+      layout->addWidget(m_mailEdit,line,1,1,3);
+      layout->addWidget(new QLabel(tr("Picture:")),++line,0,1,1);
+      layout->addWidget(m_pictureEdit,line,1,1,3);
+      layout->addWidget(browsePictureButton,line,3,1,1);
+      layout->addWidget(new QLabel(tr("Copyright:")),++line,0,1,1);
+      layout->addWidget(m_pictureCopyrightEdit,line,1,1,3);
+      layout->addWidget(new QLabel(tr("Footer:")),++line,0,1,1);
+      layout->addWidget(m_footerEdit,line,1,1,3);
+      layout->addWidget(new QLabel(tr("Licence:")),++line,0,1,1);
+      layout->addWidget(m_licenceEdit,line,1,1,3);
       // custom options
-      layout->addWidget(new QLabel(tr("Shade Color:")),9,0,1,1);
-      layout->addWidget(m_shadeColorLabel,9,1,1,2);
-      layout->addWidget(pickShadeColorButton,9,3,1,1);
-      layout->addWidget(new QLabel(tr("Shade Color:")),10,0,1,1);
-      layout->addWidget(new QLabel(tr("small")),10,1,1,1);
-      layout->addWidget(m_fontSizeSlider,10,2,1,1);
-      layout->addWidget(new QLabel(tr("large")),10,3,1,1);
+      layout->addWidget(new QLabel(tr("Shade Color:")),++line,0,1,1);
+      layout->addWidget(m_shadeColorLabel,line,1,1,2);
+      layout->addWidget(pickShadeColorButton,line,3,1,1);
+      layout->addWidget(new QLabel(tr("Font Size:")),++line,0,1,1);
+      layout->addWidget(new QLabel(tr("small")),line,1,1,1);
+      layout->addWidget(m_fontSizeSlider,line,2,1,1);
+      layout->addWidget(new QLabel(tr("large")),line,3,1,1);
+
+      
+      layout->addWidget(m_chordbookRadioButton,++line,0,1,2);
+      layout->addWidget(m_lyricbookRadioButton,line,2,1,2);
+      layout->addWidget(m_diagramCheckBox,++line,0,1,2);
+      layout->addWidget(m_lilypondCheckBox,line,2,1,2);
+      layout->addWidget(m_tablatureCheckBox,++line,0,1,2);
+
       m_panel->setLayout(layout);
     }
   return m_panel;
+}
+
+void CSongbook::updateBooktype(bool)
+{
+
+  if (m_lyricbookRadioButton->isChecked())
+    {
+      m_diagramCheckBox->setEnabled(false);
+      m_lilypondCheckBox->setEnabled(false);
+      m_tablatureCheckBox->setEnabled(false);
+      m_bookType = QStringList() << "lyric";
+    }
+  else
+    {
+      m_bookType = QStringList() << "chorded";
+      m_diagramCheckBox->setEnabled(true);
+      m_lilypondCheckBox->setEnabled(true);
+      m_tablatureCheckBox->setEnabled(true);
+      if (m_diagramCheckBox->isChecked())
+        ; // m_bookType << "diagram"; // currently unsupported
+      if (m_lilypondCheckBox->isChecked())
+        m_bookType << "lilypond";
+      if (m_tablatureCheckBox->isChecked())
+        m_bookType << "tabs";
+    } 
+}
+
+void CSongbook::reset()
+{
+  QObject::setProperty("tmpl",QString());
+  QStringList properties;
+  QString property;
+  properties << "filename" << "title" << "author" << "subtitle" << "mail" 
+             << "version" << "picture" << "footer" << "licence"
+             << "pictureCopyright" << "shadeColor" << "fontSize";
+  foreach (property, properties)
+    {
+      QObject::setProperty(property.toStdString().c_str(),QString());
+    }
+
+  setBookType(QStringList()<<"chorded");
+
+  setModified(false);
+  update();
 }
 
 void CSongbook::update()
@@ -408,6 +577,20 @@ void CSongbook::update()
   m_pictureCopyrightEdit->setText(pictureCopyright());
   m_licenceEdit->setText(licence());
   m_footerEdit->setText(footer());
+
+  qDebug() << m_bookType;
+
+  if (m_bookType.contains("lyric"))
+    {
+      m_lyricbookRadioButton->setChecked(true);
+    }
+  else if (m_bookType.contains("chorded"))
+    {
+      m_chordbookRadioButton->setChecked(true);
+      m_diagramCheckBox->setChecked(m_bookType.contains("diagram"));
+      m_lilypondCheckBox->setChecked(m_bookType.contains("lilypond"));
+      m_tablatureCheckBox->setChecked(m_bookType.contains("tabs"));
+    }
 }
 
 void CSongbook::pickShadeColor()
@@ -415,6 +598,7 @@ void CSongbook::pickShadeColor()
   QColor color = QColorDialog::getColor(QColor(), m_panel);
   m_shadeColorLabel->setText(color.name());
   m_shadeColorLabel->setPalette(QPalette(color));
+  setShadeColor(color.name());
 }
 
 void CSongbook::browsePicture()
@@ -426,5 +610,8 @@ void CSongbook::browsePicture()
 						  QDir::home().path(),
 						  tr("Images (*.jpg)"));
   if (!filename.isEmpty())
-    m_pictureEdit->setText(filename);
+    {
+      m_pictureEdit->setText(filename);
+      setPicture(filename);
+    }
 }

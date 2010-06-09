@@ -34,7 +34,7 @@ CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
   , m_proxyModel(new QSortFilterProxyModel)
-  , m_songbook(new CSongbook)
+  , m_songbook()
   , m_view(new QTableView)
   , m_progressBar(new QProgressBar)
   , m_cover(new QPixmap)
@@ -44,8 +44,20 @@ CMainWindow::CMainWindow()
 
   readSettings();
 
+  // main document and title
+  m_songbook = new CSongbook();
+  connect(m_songbook, SIGNAL(wasModified(bool)),
+          this, SLOT(setWindowModified(bool)));
+  updateTitle(m_songbook->filename());
+
   createActions();
   createMenus();
+
+  //Connection to database
+  if(connectDb())
+    synchroniseWithLocalSongs();
+  else
+    applyDisplayColumn();
 
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
@@ -74,6 +86,11 @@ CMainWindow::CMainWindow()
   // toolbar (for the build button)
   QToolBar *toolbar = new QToolBar;
   toolbar->setMovable(false);
+  toolbar->addAction(m_newAct);
+  toolbar->addAction(m_openAct);
+  toolbar->addAction(m_saveAct);
+  toolbar->addAction(m_saveAsAct);
+  toolbar->addSeparator();
   toolbar->addAction(m_buildAct);
 
   // organize the toolbar and the filter into an horizontal layout
@@ -82,29 +99,47 @@ CMainWindow::CMainWindow()
   horizontalLayout->addStretch();
   horizontalLayout->addLayout(filterLayout);
 
+  // Main widgets
+  //  QWidget *mainWidget = new QWidget;
+  QBoxLayout *mainLayout = new QHBoxLayout;
+  QBoxLayout *leftLayout = new QVBoxLayout;
+  leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
+  leftLayout->addWidget(m_songbook->panel());
+  leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
+  leftLayout->addWidget(createSongInfoWidget());
+  leftLayout->addStretch();
+  mainLayout->addLayout(leftLayout);
+  mainLayout->setStretch(0,1);
+  mainLayout->addWidget(m_view);
+  mainLayout->setStretch(1,2);
+  //  mainWidget->setLayout(mainLayout);
+
+  QWidget* libraryTab = new QWidget;
+  QBoxLayout *libraryLayout = new QVBoxLayout;
+  libraryLayout->addLayout(horizontalLayout);
+  libraryLayout->addLayout(mainLayout);
+  libraryTab->setLayout(libraryLayout);
+
   // place elements into the main window
   m_mainWidget = new CTabWidget;
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
   connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
 	   m_mainWidget, SLOT(closeTab(int)) );
+  m_mainWidget->addTab(libraryTab, tr("Library"));
   setCentralWidget(m_mainWidget);
 
-  QWidget* libraryTab = new QWidget;
-  QBoxLayout *libraryLayout = new QVBoxLayout;
-  libraryLayout->addLayout(horizontalLayout);
-  libraryLayout->addWidget(m_view);
-  libraryTab->setLayout(libraryLayout);
-  m_mainWidget->addTab(libraryTab, tr("Library"));
+  // auto adjust column display
+  applyDisplayColumn();
 
-  //Connection to database
-  if(connectDb())
-    synchroniseWithLocalSongs();
-  else
-    applyDisplayColumn();
-
-  //Dock Widgets
-  dockWidgets();
+  // Debugger Info DockWidget
+  m_logInfo = new QDockWidget( tr("Logs"), this );
+  m_logInfo->setMinimumWidth(250);
+  m_log = new QTextEdit;
+  m_log->setReadOnly(true);
+  m_logInfo->setWidget(m_log);
+  addDockWidget( Qt::BottomDockWidgetArea, m_logInfo );
+  m_logInfo->setVisible(false);
 
   // status bar with an embedded progress bar on the right
   m_progressBar->setTextVisible(false);
@@ -137,6 +172,7 @@ void CMainWindow::filterChanged()
 CMainWindow::~CMainWindow()
 {
   delete m_library;
+  delete m_songbook;
 
   {  // close db connection
     QSqlDatabase db = QSqlDatabase::database();
@@ -152,14 +188,6 @@ void CMainWindow::readSettings()
   resize(settings.value("mainWindow/size", QSize(800,600)).toSize());
 
   setWorkingPath(settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString());
-
-  settings.beginGroup("options");
-  m_bookTypeChordbook = settings.value("chordbook", true).toBool();
-  m_bookTypeLyricbook = settings.value("lyricbook", true).toBool();
-  m_optionChordDiagram = settings.value("chordDiagram", true).toBool();
-  m_optionLilypond = settings.value("lilypond", true).toBool();
-  m_optionTablature = settings.value("tablature", true).toBool();
-  settings.endGroup();
 
   settings.beginGroup("display");
   m_displayColumnArtist = settings.value("artist", true).toBool();
@@ -199,47 +227,42 @@ void CMainWindow::setDisplayLogInfo(bool value)
   m_logInfo->setVisible(value);
 }
 //------------------------------------------------------------------------------
-QString CMainWindow::packageOptions()
-{
-  QString options;
-  if( m_bookTypeChordbook )
-    {
-      options = QString("chorded");
-      if( m_optionChordDiagram )
-        options.append(""); // not supported yet by the latex crepbook class
-      if( m_optionLilypond )
-        options.append(",lilypond");
-      if( m_optionTablature )
-        options.append(",tabs");
-    }
-  else if( m_bookTypeLyricbook )
-    {
-      options = QString("lyric");
-    }
-  return options;
-}
-//------------------------------------------------------------------------------
 void CMainWindow::createActions()
 {
+  m_newAct = new QAction(QIcon(":/icons/document-new.png"), tr("New"), this);
+  m_newAct->setShortcut(tr("Ctrl+N"));
+  m_newAct->setStatusTip(tr("New songbook"));
+  connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
+
+  m_openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Open"), this);
+  m_openAct->setShortcut(tr("Ctrl+O"));
+  m_openAct->setStatusTip(tr("Open a songbook"));
+  connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
+
+  m_saveAct = new QAction(QIcon(":/icons/document-save.png"), tr("Save"), this);
+  m_saveAct->setShortcut(tr("Ctrl+S"));
+  m_saveAct->setStatusTip(tr("Save the current songbook"));
+  connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
+
+  m_saveAsAct = new QAction(QIcon(":/icons/document-save.png"), 
+                            tr("SaveAs"), this);
+  m_saveAsAct->setShortcut(tr("Maj+Ctrl+S"));
+  m_saveAsAct->setStatusTip(tr("Save the current songbook as"));
+  connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+  m_aboutAct = new QAction(tr("&About"), this);
+  m_aboutAct->setStatusTip(tr("Show the application's About box"));
+  connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+
   m_exitAct = new QAction(tr("Exit"), this);
   m_exitAct->setShortcut(tr("Ctrl+Q"));
   m_exitAct->setStatusTip(tr("Exit the application"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_newSongAct = new QAction(QIcon(":/icons/document-load.png"), tr("New Song"), this);
-  m_newSongAct->setShortcut(tr("Ctrl+N"));
+  // m_newSongAct->setShortcut(tr("Ctrl+N"));
   m_newSongAct->setStatusTip(tr("Write a new song."));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
-
-  m_openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Load Songs List"), this);
-  m_openAct->setShortcut(tr("Ctrl+O"));
-  m_openAct->setStatusTip(tr("Open a list of songs (.sg) previously saved."));
-  connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
-
-  m_saveAct = new QAction(QIcon(":/icons/document-save.png"), tr("Save Songs List"), this);
-  m_saveAct->setShortcut(tr("Ctrl+S"));
-  m_saveAct->setStatusTip(tr("Save the list of currently selected songs."));
-  connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   m_buildAct = new QAction(tr("Build PDF"), this);
   m_buildAct->setShortcut(tr("Ctrl+B"));
@@ -253,10 +276,6 @@ void CMainWindow::createActions()
   m_preferencesAct = new QAction(tr("&Preferences"), this);
   m_preferencesAct->setStatusTip(tr("Select your preferences."));
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
-
-  m_aboutAct = new QAction(tr("&About"), this);
-  m_aboutAct->setStatusTip(tr("Show the application's About box"));
-  connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
   m_selectAllAct->setStatusTip(tr("Select all displayed songs."));
@@ -368,9 +387,12 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 void CMainWindow::createMenus()
 {
   m_fileMenu = menuBar()->addMenu(tr("&File"));
-  m_fileMenu->addAction(m_newSongAct);
+  m_fileMenu->addAction(m_newAct);
   m_fileMenu->addAction(m_openAct);
   m_fileMenu->addAction(m_saveAct);
+  m_fileMenu->addAction(m_saveAsAct);
+  m_fileMenu->addSeparator();
+  m_fileMenu->addAction(m_newSongAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_buildAct);
   m_fileMenu->addAction(m_cleanAct);
@@ -401,19 +423,8 @@ void CMainWindow::createMenus()
   m_helpMenu->addAction(m_aboutAct);
 }
 //------------------------------------------------------------------------------
-void CMainWindow::dockWidgets()
+QWidget * CMainWindow::createSongInfoWidget()
 {
-  // Songbook property widget
-  m_songbookInfo = new QDockWidget(tr("Songbook"));
-  m_songbookInfo->setMinimumWidth(200);
-  m_songbookInfo->setMaximumHeight(250);
-  m_songbookInfo->setWidget(m_songbook->panel());
-  addDockWidget( Qt::LeftDockWidgetArea, m_songbookInfo );
-
-  // Song Info widget
-  m_songInfo = new QDockWidget( tr("Song"));
-  m_songInfo->setMaximumSize(300, 300);
-
   QWidget * songInfoWidget = new QWidget();
 
   m_artistLabel = new QLabel();
@@ -448,12 +459,7 @@ void CMainWindow::dockWidgets()
   m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
   m_currentSongWidgetLayout->addWidget(buttonBox);
   m_currentSongWidgetLayout->addStretch(1);
-  m_songInfo->setWidget(songInfoWidget);
-  addDockWidget( Qt::LeftDockWidgetArea, m_songInfo );
      
-  connect(m_songInfo, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)),
-          SLOT(dockWidgetDirectionChanged(Qt::DockWidgetArea)));
-
   //Data mapper
   m_mapper = new QDataWidgetMapper();
   m_mapper->setModel(m_proxyModel);
@@ -467,14 +473,7 @@ void CMainWindow::dockWidgets()
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           SLOT(updateCover(const QModelIndex &)));
 
-  // Debugger Info widget
-  m_logInfo = new QDockWidget( tr("Logs"), this );
-  m_logInfo->setMinimumWidth(250);
-  m_log = new QTextEdit;
-  m_log->setReadOnly(true);
-  m_logInfo->setWidget(m_log);
-  addDockWidget( Qt::BottomDockWidgetArea, m_logInfo );
-  m_logInfo->setVisible(false);
+  return songInfoWidget;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
@@ -588,42 +587,32 @@ QStringList CMainWindow::getSelectedSongs()
   qSort(indexes.begin(), indexes.end());
 
   foreach(index, indexes)
-    songsPath << m_library->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString();
+    {
+      songsPath << m_library->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString();
+    }
 
   return songsPath;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::build()
 {
-  QStringList songlist = getSelectedSongs();
-  if( songlist.isEmpty() )
+  save();
+
+  if (!m_songbook->filename().startsWith(workingPath()))
     {
-      if(QMessageBox::question(this, this->windowTitle(), 
-			       QString(tr("You did not select any song. \n Do you want to build the songbook with all songs ?")), 
-			       QMessageBox::Yes, 
-			       QMessageBox::No, 
-			       QMessageBox::NoButton) == QMessageBox::No)
-	return;
-      else
-	{
-	  selectAll();
-	  songlist = getSelectedSongs();
-	}
+      statusBar()->showMessage(tr("The songbook is not in the working directory. Build aborted."));
+      return;
     }
-  clean(); //else songbook indexes are likely to be wrong
-  QString filename = QString("%1/mybook.sgl").arg(workingPath());
-  
-  QString path = QString("%1/").arg(workingPath());
-  songlist.replaceInStrings(path, QString());
-  CSongbook songbook;
-  songbook.setSongs(songlist);
-  songbook.save(filename);
-  
-  applyBookType();
-  
-  if( m_bookTypeChordbook && m_optionLilypond )
-    makeLilypondSheets();
-  
+
+  if (!m_songbook->filename().endsWith(QString(".sb")))
+    {
+      statusBar()->showMessage(tr("Wrong filename. Build aborted."));
+      return;
+    }
+
+  QString target = QString("%1.pdf")
+    .arg(QFileInfo(m_songbook->filename()).baseName());
+
   m_buildProcess = new QProcess(this);
   m_buildProcess->setWorkingDirectory(workingPath());
   connect(m_buildProcess, SIGNAL(finished(int,QProcess::ExitStatus)), 
@@ -634,10 +623,9 @@ void CMainWindow::build()
 	  this, SLOT(readProcessOut()));
   m_log->clear();
   
-  QString msg(tr("The songbook generation is now in progress, please wait ..."));
-  statusBar()->showMessage(msg);
+  statusBar()->showMessage(tr("The songbook is building. Please wait."));
   progressBar()->show();
-  m_buildProcess->start("make", QStringList() << "mybook.pdf");
+  m_buildProcess->start("make", QStringList() << target);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::readProcessOut()
@@ -653,8 +641,9 @@ void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
       QString msg(tr("Songbook successfully generated."));
       statusBar()->showMessage(msg);
 
-      // Visualize produced book: mybook.pdf
-      QDesktopServices::openUrl(QUrl(QString("file:///%1/mybook.pdf").arg(m_workingPath)));
+      QString target = QString("%1.pdf").arg(QFileInfo(m_songbook->filename()).baseName());
+
+      QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
     }
 }
 //------------------------------------------------------------------------------
@@ -677,35 +666,6 @@ void CMainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
     }
 }
 //------------------------------------------------------------------------------
-void CMainWindow::applyBookType()
-{
-  QString options = packageOptions();
-
-  QFile file(QString("%1/mybook.tex").arg(m_workingPath));
-
-  QString old, fileStr;
-  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {      
-      QTextStream stream (&file);
-      fileStr = stream.readAll();
-      file.close();
-      QRegExp rx("documentclass\\[([^\\]]+)");
-      rx.indexIn(fileStr);
-      old = rx.cap(1);
-      fileStr.replace(old, options);
-      if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-          QTextStream stream (&file);
-          stream << fileStr;
-          file.close();
-        }
-    }
-  else
-    {
-      qWarning() << "Mainwindow::applyBookType warning: unable to open file in read mode";
-    }
-}
-//------------------------------------------------------------------------------
 void CMainWindow::clean()
 {
   QProcess clean;
@@ -715,92 +675,75 @@ void CMainWindow::clean()
   if (!clean.waitForFinished()) return;
 }
 //------------------------------------------------------------------------------
-void CMainWindow::makeLilypondSheets()
+void CMainWindow::newSongbook()
 {
-  QModelIndexList indexes = selectionModel()->selectedRows();
-  qSort(indexes.begin(), indexes.end());
-  QModelIndex index;
-  foreach(index, indexes)
-    {
-      
-      if( m_library->record(m_proxyModel->mapToSource(index).row()).field("lilypond").value().toBool() )
-	{
-
-	  QProcess *lilyProcess;
-	  QStringList sheets;
-	  QString path = m_library->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString(); 
-	  QString artist = m_library->record(m_proxyModel->mapToSource(index).row()).field("artist").value().toString(); 
-	  QString title = m_library->record(m_proxyModel->mapToSource(index).row()).field("title").value().toString(); 
-	  QCoreApplication::processEvents();
-	  statusBar()->showMessage(QString(tr("Building lilypond for: %1 - %2").arg(artist).arg(title)));
-
-	  QFile file(path);
-	  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-	    {
-	      QTextStream stream (&file);
-	      path = stream.readAll();
-	      file.close();
-                  
-	      QRegExp rx("\\\\lilypond\\{([^}]+)");
-	      rx.indexIn(path);
-          
-	      // process all lilypond files included in the song
-	      int pos = 0;
-	      while ((pos = rx.indexIn(path, pos)) != -1)
-		{
-		  lilyProcess = new QProcess;
-		  lilyProcess->setWorkingDirectory(QString("%1/lilypond/").arg(workingPath()));
-		  lilyProcess->start("lilypond", QStringList() << QString("%1.ly").arg(rx.cap(1)));
-                      
-		  if (!lilyProcess->waitForFinished()) 
-		    delete lilyProcess;
-              
-		  pos += rx.matchedLength();
-		}
-	    }
-	}
-      else
-        {
-          // str is not present in the current library
-        }
-    }
+  m_songbook->reset();
+  updateTitle(m_songbook->filename());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::open()
 {
   QString filename = QFileDialog::getOpenFileName(this,
-                                                  tr("Load a list of songs"),
+                                                  tr("Open"),
                                                   workingPath(),
-                                                  tr("Songbook File (*.sb)"));
-  m_songbook->load( filename );
-  // QStringList songlist = songbook.songs();
-  // QString path = QString("%1/").arg(workingPath());
-  // songlist.replaceInStrings(QRegExp("^"),path);
+                                                  tr("Songbook (*.sb)"));
+  m_songbook->load(filename);
+  QStringList songlist = m_songbook->songs();
+  QString path = QString("%1/songs/").arg(workingPath());
+  songlist.replaceInStrings(QRegExp("^"),path);
 
-  // m_view->clearSelection();
+  m_view->clearSelection();
   
-  // QList<QModelIndex> indexes;
-  // QString str;
-  // foreach(str, songlist)
-  //   {
-  //     indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
-  //     if(!indexes.isEmpty())
-  //       selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
-  //   }
+  QList<QModelIndex> indexes;
+  QString str;
+  foreach(str, songlist)
+    {
+      indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
+      if(!indexes.isEmpty())
+        selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
+    }
+
+  updateTitle(m_songbook->filename());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::save()
 {
+  if (m_songbook->filename().isEmpty())
+    {
+      saveAs();
+    }
+  else
+    {
+      updateSongsList();
+      m_songbook->save(m_songbook->filename());
+      updateTitle(m_songbook->filename());
+    }
+}
+//------------------------------------------------------------------------------
+void CMainWindow::saveAs()
+{
   QString filename = QFileDialog::getSaveFileName(this,
-                                                  tr("Save the list of selected songs"),
+                                                  tr("Save as"),
                                                   workingPath(),
-                                                  tr("Songbook File (*.sb)"));
+                                                  tr("Songbook (*.sb)"));
+  m_songbook->setFilename(filename);
+  save();
+}
+//------------------------------------------------------------------------------
+void CMainWindow::updateSongsList()
+{
   QStringList songlist = getSelectedSongs();
-  QString path = QString("%1/").arg(workingPath());
+  QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(path, QString());
-  CSongbook songbook;
-  songbook.setSongs(songlist);
-  songbook.save(filename);
+  m_songbook->setSongs(songlist);
+}
+//------------------------------------------------------------------------------
+void CMainWindow::updateTitle(const QString &filename)
+{
+  QString text = filename.isEmpty() ? tr("New songbook") : filename;
+  setWindowTitle(tr("%1 - %2[*]")
+                 .arg(QCoreApplication::applicationName())
+                 .arg(text));
 }
 //------------------------------------------------------------------------------
 const QString CMainWindow::workingPath()

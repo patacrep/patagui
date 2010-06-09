@@ -63,24 +63,29 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
-  void newSong();
-  void songTemplate();
+  void newSongbook();
   void open();
   void save();
+  void saveAs();
+
   void build();
-  void makeLilypondSheets();
   void clean();
+
+  void newSong();
+  void songTemplate();
 
   void selectAll();
   void unselectAll();
   void invertSelection();
+  void updateSongsList();
+
   void setDisplaySongInfo(bool value);
   void setDisplayLogInfo(bool value);
   void applyDisplayColumn();
+
   bool connectDb();
   void filterChanged();
 
-  void dockWidgets();
   void preferences();
 
   void dockWidgetDirectionChanged(Qt::DockWidgetArea area);
@@ -91,8 +96,7 @@ private slots:
 
   void about(); 
 
-  //signals:
-  //void songDeleted(const QModelIndex & index);
+  void updateTitle(const QString &filename);
 
 private:
   void readSettings();
@@ -101,7 +105,8 @@ private:
   void createActions();
   void createMenus();
 
-  QString packageOptions();
+  QWidget * createSongInfoWidget();
+
   bool createDbConnection();
 
   const QString workingPath();
@@ -109,9 +114,6 @@ private:
   QStringList getSelectedSongs();
   
   QString filenameConvention(const QString &, const QString & sep);
-
-  /// Modify mybook.tex according to the selected options
-  void applyBookType();
 
   QItemSelectionModel * selectionModel();
   QDataWidgetMapper* m_mapper;
@@ -129,13 +131,6 @@ private:
 
   // Global
   QString m_workingPath;
-
-  bool m_bookTypeChordbook;
-  bool m_bookTypeLyricbook;
-
-  bool m_optionChordDiagram;
-  bool m_optionLilypond;
-  bool m_optionTablature;
 
   bool m_displayColumnArtist;
   bool m_displayColumnTitle;
@@ -172,14 +167,17 @@ private:
   QMenu *m_helpMenu;
 
   // Actions
-  QAction *m_exitAct;
-  QAction *m_newSongAct;
+  QAction *m_newAct;
   QAction *m_openAct;
   QAction *m_saveAct;
+  QAction *m_saveAsAct;
+  QAction *m_aboutAct;
+  QAction *m_exitAct;
+
+  QAction *m_newSongAct;
   QAction *m_buildAct;
   QAction *m_cleanAct;
   QAction *m_preferencesAct;
-  QAction *m_aboutAct;
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;

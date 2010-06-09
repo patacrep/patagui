@@ -100,13 +100,6 @@ private:
   QLineEdit * m_workingPath;
   QLabel* m_workingPathValid;
 
-  QRadioButton *m_chordbookRadioButton;
-  QRadioButton *m_lyricbookRadioButton;
-
-  QCheckBox *m_diagramCheckBox;
-  QCheckBox *m_lilypondCheckBox;
-  QCheckBox *m_tablatureCheckBox;
-
   //check lilypond version
   QLabel* m_lilypondLabel;
   QProcess* m_lilypondCheck;
