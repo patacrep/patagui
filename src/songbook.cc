@@ -578,8 +578,6 @@ void CSongbook::update()
   m_licenceEdit->setText(licence());
   m_footerEdit->setText(footer());
 
-  qDebug() << m_bookType;
-
   if (m_bookType.contains("lyric"))
     {
       m_lyricbookRadioButton->setChecked(true);
