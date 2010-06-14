@@ -53,6 +53,73 @@ qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
 include_directories (${CMAKE_CURRENT_BINARY_DIR} src)
 #-------------------------------------------------------------------------------
+# Support for qtpropertybrowser
+set(qpe_DIR src/qtpropertybrowser)
+set(qpe_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/src)
+
+include_directories(${qpe_DIR} ${qpe_BUILD_DIR})
+
+set(
+  qtpropertyeditor_HEADER_NEED_MOCS
+  ${qpe_DIR}/qtpropertybrowser.h
+  ${qpe_DIR}/qtpropertymanager.h
+  ${qpe_DIR}/qteditorfactory.h
+  ${qpe_DIR}/qtvariantproperty.h
+  ${qpe_DIR}/qttreepropertybrowser.h
+  ${qpe_DIR}/qtbuttonpropertybrowser.h
+  ${qpe_DIR}/qtgroupboxpropertybrowser.h
+  )
+
+set(
+  qtpropertyeditor_SRCS_NEED_MOCS
+  ${qpe_DIR}/qtpropertymanager.cpp
+  ${qpe_DIR}/qteditorfactory.cpp
+  ${qpe_DIR}/qttreepropertybrowser.cpp
+  )
+
+set(
+  qtpropertyeditor_SRCS
+  ${qtpropertyeditor_SRCS_NEED_MOCS}
+  ${qpe_DIR}/qtpropertybrowser.cpp
+  ${qpe_DIR}/qtvariantproperty.cpp
+  ${qpe_DIR}/qtbuttonpropertybrowser.cpp
+  ${qpe_DIR}/qtgroupboxpropertybrowser.cpp
+  ${qpe_DIR}/qtpropertybrowserutils.cpp
+  )
+
+# Process MOC on QtPropertyEditor headers
+FOREACH(file ${qtpropertyeditor_HEADER_NEED_MOCS})
+  STRING(REGEX REPLACE "${qpe_DIR}/(.*)\\.h" "${qpe_BUILD_DIR}/moc_\\1.cpp" moc_file "${file}" )
+  QT4_GENERATE_MOC(${file} ${moc_file})
+  SET(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
+ENDFOREACH(file)
+
+# Process MOC on QtPropertyEditor srcs
+FOREACH(file ${qtpropertyeditor_SRCS_NEED_MOCS})
+  STRING(REGEX REPLACE "${qpe_DIR}/(.*)\\.cpp" "${qpe_BUILD_DIR}/\\1.moc" moc_file "${file}" )
+  QT4_GENERATE_MOC(${file} ${moc_file})
+  SET(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
+ENDFOREACH(file)
+
+set_source_files_properties(${qtpropertyeditor_MOC}
+  PROPERTIES
+  HEADER_FILE_ONLY true
+)
+
+# qtpropertybrowserutils_p.h is a special file, do not treat him as the other
+# header files.
+QT4_GENERATE_MOC(
+  ${qpe_DIR}/qtpropertybrowserutils_p.h
+  ${qpe_BUILD_DIR}/moc_qtpropertybrowserutils_p.cpp
+)
+
+SET(qtpropertyeditor_MOC
+  ${qtpropertyeditor_MOC} 
+  ${qpe_BUILD_DIR}/moc_qtpropertybrowserutils_p.cpp
+)
+
+QT4_ADD_RESOURCES(qtpropertyeditor_RESOURCES ${qpe_DIR}/qtpropertybrowser.qrc)
+#-------------------------------------------------------------------------------
 #internationalization
 set (TRANSLATIONS
 lang/songbook_en.ts
@@ -79,6 +146,9 @@ add_executable(songbook-client
   ${SONGBOOK_CLIENT_MOCS} 
   ${SONGBOOK_CLIENT_RESSOURCES} 
   ${COMPILED_TRANSLATIONS}
+  ${qtpropertyeditor_SRCS}
+  ${qtpropertyeditor_MOC}
+  ${qtpropertyeditor_RESOURCES}
 )
 target_link_libraries(songbook-client ${QT_LIBRARIES})
 #-------------------------------------------------------------------------------
