@@ -20,6 +20,8 @@
 
 #include <QtGui>
 
+// Config Dialog
+
 ConfigDialog::ConfigDialog()
   : QDialog()
 {
@@ -32,7 +34,6 @@ ConfigDialog::ConfigDialog()
 
   pagesWidget = new QStackedWidget;
   pagesWidget->addWidget(new OptionsPage);
-  // pagesWidget->addWidget(new SongbookAppearancePage);
   pagesWidget->addWidget(new DisplayPage);
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
@@ -101,6 +102,7 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
     }
 }
 
+// Display Page
 
 DisplayPage::DisplayPage(QWidget *parent)
   : QWidget(parent)
@@ -163,6 +165,7 @@ void DisplayPage::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
+// Option Page
 
 OptionsPage::OptionsPage(QWidget *parent)
   : QWidget(parent)
@@ -170,12 +173,16 @@ OptionsPage::OptionsPage(QWidget *parent)
   QSettings settings;
   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
 
-  QGroupBox *workingPathGroupBox = new QGroupBox(tr("Directory for Patacrep Songbook"));
+  // working path
+  QGroupBox *workingPathGroupBox 
+    = new QGroupBox(tr("Directory for Patacrep Songbook"));
 
   QPushButton *browseWorkingPathButton = new QPushButton(tr("Browse"));
-  connect(browseWorkingPathButton, SIGNAL(clicked()), this, SLOT(browse()));
-  m_workingPath = new QLineEdit(QString());
-  connect(m_workingPath, SIGNAL(textChanged(const QString&)), this, SLOT(checkWorkingPath(const QString&)));
+  connect(browseWorkingPathButton, SIGNAL(clicked()),
+          this, SLOT(browse()));
+  m_workingPath = new QLineEdit;
+  connect(m_workingPath, SIGNAL(textChanged(const QString&)),
+          this, SLOT(checkWorkingPath(const QString&)));
   m_workingPathValid = new QLabel;
   checkWorkingPath(workingDir);
 
@@ -185,24 +192,43 @@ OptionsPage::OptionsPage(QWidget *parent)
   workingPathLayout->addWidget(m_workingPathValid,1,0,2,1);
   workingPathGroupBox->setLayout(workingPathLayout);
 
+  // check application
+  QGroupBox *checkApplicationGroupBox 
+    = new QGroupBox(tr("Check application dependencies"));
+
+  QPushButton *checkApplicationButton = new QPushButton(tr("Check"));
+  connect(checkApplicationButton, SIGNAL(clicked()),
+          this, SLOT(checkApplication()));
+  m_lilypondLabel = new QLabel(tr("<a href=\"http://lilypond.org/\">lilypond</a>: <font color=orange>%1</font>"));
+  m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
+
+  QBoxLayout *checkApplicationLayout = new QVBoxLayout;
+  checkApplicationLayout->addWidget(m_lilypondLabel);
+  checkApplicationLayout->addWidget(m_gitLabel);
+  checkApplicationLayout->addWidget(checkApplicationButton);
+  checkApplicationGroupBox->setLayout(checkApplicationLayout);
+
+  // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
+  mainLayout->addWidget(checkApplicationGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 
   readSettings();
+
+  checkApplication();
 }
 
 void OptionsPage::browse()
 {
-  QString directory = QFileDialog::getExistingDirectory(this,
-                                                        tr("Find Files"),
-                                                        m_workingPath->text());
-
-  if (!directory.isEmpty())
+  QString path = QFileDialog::getExistingDirectory(this,
+                                                   tr("Songbook path"),
+                                                   m_workingPath->text());
+  
+  if (!path.isEmpty())
     {
-      m_workingPath->setText(directory);
-      checkWorkingPath(directory);
+      m_workingPath->setText(path);
     }
 }
 
@@ -224,97 +250,104 @@ void OptionsPage::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-void OptionsPage::checkWorkingPath(const QString & path)
+void OptionsPage::checkWorkingPath(const QString &path)
 {
-  m_isValid = false;
   QDir directory(path);
+
+  bool error = true;
+  bool warning = true;
+
+  QString message;
+
   if (!directory.exists())
     {
-      m_workingPathValid->setText("<font color=red>Invalid songbook directory: directory does not exist.</font>");
-      return;
+      message = tr("the directory does not exist");
     }
-
-  if (!directory.entryList(QDir::Files | QDir::Readable).contains("makefile"))
+  else if (!directory.exists("makefile"))
     {
-      m_workingPathValid->setText("<font color=red>Invalid songbook directory: makefile not found.</font>");
-      return;
+      message = tr("makefile not found");
     }
-
-  if (!directory.entryList(QDir::Files | QDir::Readable).contains("mybook.tex"))
+  else if (!directory.exists("songbook.py"))
     {
-      m_workingPathValid->setText("<font color=red>Invalid songbook directory: mybook.tex not found.</font>");
-      return;
+      message = tr("songbook software (songbook.py) not found");
     }
-
-  // subdirectories
-  QDir songs( QString("%1/songs").arg(path) );
-  QDir utils( QString("%1/utils").arg(path) );
-  QDir lilypond( QString("%1/lilypond").arg(path) );
-  QDir img( QString("%1/img").arg(path) );
-
-  if (!songs.exists())
+  else if (!directory.exists("songs"))
     {
-      m_workingPathValid->setText("<font color=red>Invalid songbook directory: subdirectory songs/ not found.</font>");
-      return;
+      message = tr("songs/ directory not found");
     }
-
-  if (!img.exists())
+  else if (!directory.exists("img"))
     {
-      m_workingPathValid->setText("<font color=red>Invalid songbook directory: subdirectory img/ not found.</font>");
-      return;
+      message = tr("img/ directory not found");
     }
+ else if (!directory.exists("lilypond"))
+   {
+     error = false;
+     message = tr("lilypond/ directory not found");
+   }
+ else if (!directory.exists("utils"))
+   {
+     error = false;
+     message = tr("utils/ directory not found");
+   }
+ else
+   {
+     error = false;
+     warning = false;
+     message = tr("The directory is valid");
+   }
 
-  m_isValid = true;
-
-  if (!lilypond.exists())
+  QString mask("<font color=%1>%2%3.</font>");
+  if (error)
     {
-      m_workingPathValid->setText("<font color=orange>Warning: subdirectory lilypond/ not found.</font>");
-      return;
+      mask = mask.arg("red").arg("Error: ");
     }
-
-  if (!utils.exists())
+  else if (warning)
     {
-      m_workingPathValid->setText("<font color=orange>Warning: subdirectory utils/ not found.</font>");
-      return;
-    }
-
-  m_workingPathValid->setText("<font color=green>The songbook directory is valid.</font>");
-}
-
-void OptionsPage::checkLilypondVersion(int AState)
-{
-  if (AState==Qt::Checked)
-    {
-      m_lilypondCheck = new QProcess(this);
-      connect(m_lilypondCheck, SIGNAL(error(QProcess::ProcessError)),
-	      this, SLOT(processError(QProcess::ProcessError)));
-
-      QStringList argsLily;
-      argsLily << "--version";
-      m_lilypondCheck->start("lilypond", argsLily);
-      m_lilypondCheck->waitForFinished();
-      QRegExp rx("GNU([^\n]+)");
-      rx.indexIn(m_lilypondCheck->readAllStandardOutput().data());
-      m_lilypondLabel->setText(QString("<font color=green>Found:%1</font>").arg(rx.cap(1)));
+      mask = mask.arg("orange").arg("Warning: ");
     }
   else
     {
-      m_lilypondLabel->setText("");
+      mask = mask.arg("green").arg("");
+    }
+  m_workingPathValid->setText(mask.arg(message));
+}
+
+void OptionsPage::checkApplication()
+{
+  QProcess *process;
+
+  process = new QProcess(m_gitLabel);
+  connect(process, SIGNAL(error(QProcess::ProcessError)),
+          this, SLOT(processError(QProcess::ProcessError)));
+  
+  process->start("git", QStringList() << "--version");
+  if (process->waitForFinished())
+    {
+      QRegExp rx("git version ([^\n]+)");
+      rx.indexIn(process->readAllStandardOutput().data());
+      m_gitLabel->setText(m_gitLabel->text().replace("orange","green").arg(rx.cap(1)));
+    }
+
+  process = new QProcess(m_lilypondLabel);
+  connect(process, SIGNAL(error(QProcess::ProcessError)),
+          this, SLOT(processError(QProcess::ProcessError)));
+  
+  process->start("lilypond", QStringList() << "--version");
+  if (process->waitForFinished())
+    {
+      QRegExp rx("GNU LilyPond ([^\n]+)");
+      rx.indexIn(process->readAllStandardOutput().data());
+      m_lilypondLabel->setText(m_lilypondLabel->text().replace("orange","green").arg(rx.cap(1)));
     }
 }
 
 void OptionsPage::processError(QProcess::ProcessError error)
 {
-  m_lilypondLabel->setText(tr("<font color=orange>Warning: <a href=\"http://lilypond.org\">Lilypond</a> not found</font>"));
-}
-
-void OptionsPage::lyricBookMode(bool tmp)
-{
-  QObject *object = QObject::sender();
-  if (QRadioButton* lyricBook = qobject_cast< QRadioButton* >(object))
+  QProcess *process = qobject_cast< QProcess* >(QObject::sender());
+  if (process)
     {
-      // m_diagramCheckBox->setEnabled(!lyricBook->isChecked());
-      // m_lilypondCheckBox->setEnabled(!lyricBook->isChecked());
-      // m_tablatureCheckBox->setEnabled(!lyricBook->isChecked());
+      QLabel *label =  qobject_cast< QLabel* >(process->parent());
+      if (label)
+        label->setText(label->text().arg("not found"));
     }
 }

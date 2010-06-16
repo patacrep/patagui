@@ -25,12 +25,13 @@
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
+
+class QLabel;
 class QLineEdit;
 class QCheckBox;
-class QRadioButton;
-class QLabel;
-class QSlider;
 
+/** \brief ConfigDialog handles the display of the config pages
+ */
 class ConfigDialog : public QDialog
 {
   Q_OBJECT
@@ -53,7 +54,8 @@ private:
   QStackedWidget *pagesWidget;
 };
 
-
+/** \brief DisplayPage is the config page used to specify display options
+ */
 class DisplayPage : public QWidget
 {
   Q_OBJECT
@@ -76,6 +78,8 @@ private:
   QCheckBox *m_coverCheckBox;
 };
 
+/** \brief OptionPage is the config page used to specify general options
+ */
 class OptionsPage : public QWidget
 {
   Q_OBJECT
@@ -85,26 +89,23 @@ public:
 
 protected:
   void closeEvent(QCloseEvent *event);
-
+                                     
 private slots:
   void browse();
-  void checkWorkingPath(const QString&);
-  void checkLilypondVersion(int);
+  void checkWorkingPath(const QString &path);
+
+  void checkApplication();
   void processError(QProcess::ProcessError error);
-  void lyricBookMode(bool);
 
 private:
   void readSettings();
   void writeSettings();
 
-  QLineEdit * m_workingPath;
-  QLabel* m_workingPathValid;
+  QLineEdit *m_workingPath;
+  QLabel *m_workingPathValid;
 
-  //check lilypond version
-  QLabel* m_lilypondLabel;
-  QProcess* m_lilypondCheck;
-
-  bool m_isValid;
+  QLabel *m_lilypondLabel;
+  QLabel *m_gitLabel;
 };
 
 #endif // __PREFERENCES_HH__
