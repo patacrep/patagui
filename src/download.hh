@@ -28,7 +28,7 @@ class CMainWindow;
 class CDownloadDialog : public QDialog
 {
   Q_OBJECT
-  
+
 public:
   CDownloadDialog(CMainWindow* AParent);
 

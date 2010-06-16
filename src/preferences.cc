@@ -29,27 +29,27 @@ ConfigDialog::ConfigDialog()
   contentsWidget->setMovement(QListView::Static);
   contentsWidget->setMaximumWidth(128);
   contentsWidget->setSpacing(12);
-  
+
   pagesWidget = new QStackedWidget;
   pagesWidget->addWidget(new OptionsPage);
   // pagesWidget->addWidget(new SongbookAppearancePage);
   pagesWidget->addWidget(new DisplayPage);
-  
+
   QPushButton *closeButton = new QPushButton(tr("Close"));
-  
+
   createIcons();
   contentsWidget->setCurrentRow(0);
-  
+
   connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-  
+
   QHBoxLayout *horizontalLayout = new QHBoxLayout;
   horizontalLayout->addWidget(contentsWidget);
   horizontalLayout->addWidget(pagesWidget, 1);
-  
+
   QHBoxLayout *buttonsLayout = new QHBoxLayout;
   buttonsLayout->addStretch(1);
   buttonsLayout->addWidget(closeButton);
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addLayout(horizontalLayout);
   mainLayout->addStretch(1);
@@ -78,18 +78,18 @@ void ConfigDialog::createIcons()
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-  
+
   connect(contentsWidget,
           SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
           this, SLOT(changePage(QListWidgetItem*,QListWidgetItem*)));
 }
 
-void ConfigDialog::changePage(QListWidgetItem *current, 
+void ConfigDialog::changePage(QListWidgetItem *current,
                               QListWidgetItem *previous)
 {
   if (!current)
     current = previous;
-  
+
   pagesWidget->setCurrentIndex(contentsWidget->row(current));
 }
 
@@ -106,7 +106,7 @@ DisplayPage::DisplayPage(QWidget *parent)
   : QWidget(parent)
 {
   QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
-  
+
   m_artistCheckBox = new QCheckBox(tr("Artist"));
   m_titleCheckBox = new QCheckBox(tr("Title"));
   m_pathCheckBox = new QCheckBox(tr("Path"));
@@ -122,7 +122,7 @@ DisplayPage::DisplayPage(QWidget *parent)
   displayColumnsLayout->addWidget(m_lilypondCheckBox);
   displayColumnsLayout->addWidget(m_coverCheckBox);
   displayColumnsGroupBox->setLayout(displayColumnsLayout);
-  
+
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(displayColumnsGroupBox);
   mainLayout->addStretch(1);
@@ -196,9 +196,9 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::browse()
 {
   QString directory = QFileDialog::getExistingDirectory(this,
-                                                        tr("Find Files"), 
+                                                        tr("Find Files"),
                                                         m_workingPath->text());
-  
+
   if (!directory.isEmpty())
     {
       m_workingPath->setText(directory);
@@ -228,19 +228,19 @@ void OptionsPage::checkWorkingPath(const QString & path)
 {
   m_isValid = false;
   QDir directory(path);
-  if(!directory.exists())
+  if (!directory.exists())
     {
       m_workingPathValid->setText("<font color=red>Invalid songbook directory: directory does not exist.</font>");
       return;
     }
 
-  if(!directory.entryList(QDir::Files | QDir::Readable).contains("makefile"))
+  if (!directory.entryList(QDir::Files | QDir::Readable).contains("makefile"))
     {
       m_workingPathValid->setText("<font color=red>Invalid songbook directory: makefile not found.</font>");
       return;
     }
 
-  if(!directory.entryList(QDir::Files | QDir::Readable).contains("mybook.tex"))
+  if (!directory.entryList(QDir::Files | QDir::Readable).contains("mybook.tex"))
     {
       m_workingPathValid->setText("<font color=red>Invalid songbook directory: mybook.tex not found.</font>");
       return;
@@ -252,13 +252,13 @@ void OptionsPage::checkWorkingPath(const QString & path)
   QDir lilypond( QString("%1/lilypond").arg(path) );
   QDir img( QString("%1/img").arg(path) );
 
-  if(!songs.exists())
+  if (!songs.exists())
     {
       m_workingPathValid->setText("<font color=red>Invalid songbook directory: subdirectory songs/ not found.</font>");
       return;
     }
 
-  if(!img.exists())
+  if (!img.exists())
     {
       m_workingPathValid->setText("<font color=red>Invalid songbook directory: subdirectory img/ not found.</font>");
       return;
@@ -266,13 +266,13 @@ void OptionsPage::checkWorkingPath(const QString & path)
 
   m_isValid = true;
 
-  if(!lilypond.exists())
+  if (!lilypond.exists())
     {
       m_workingPathValid->setText("<font color=orange>Warning: subdirectory lilypond/ not found.</font>");
       return;
     }
 
-  if(!utils.exists())
+  if (!utils.exists())
     {
       m_workingPathValid->setText("<font color=orange>Warning: subdirectory utils/ not found.</font>");
       return;
@@ -283,12 +283,12 @@ void OptionsPage::checkWorkingPath(const QString & path)
 
 void OptionsPage::checkLilypondVersion(int AState)
 {
-  if(AState==Qt::Checked)
+  if (AState==Qt::Checked)
     {
       m_lilypondCheck = new QProcess(this);
-      connect(m_lilypondCheck, SIGNAL(error(QProcess::ProcessError)), 
+      connect(m_lilypondCheck, SIGNAL(error(QProcess::ProcessError)),
 	      this, SLOT(processError(QProcess::ProcessError)));
-      
+
       QStringList argsLily;
       argsLily << "--version";
       m_lilypondCheck->start("lilypond", argsLily);

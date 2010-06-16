@@ -51,7 +51,7 @@ CSongbook::CSongbook()
 {
   QSettings settings;
   QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
-  
+
   QDir templatesDirectory(QString("%1/templates").arg(workingPath));
   m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
 }
@@ -180,10 +180,10 @@ QWidget * CSongbook::panel()
               this, SLOT(updateBooktype(bool)));
       connect(m_tablatureCheckBox, SIGNAL(toggled(bool)),
               this, SLOT(updateBooktype(bool)));
-      
+
       QGridLayout *layout = new QGridLayout;
       int line = -1;
-      
+
       layout->addWidget(m_chordbookRadioButton,++line,0,1,2);
       layout->addWidget(m_lyricbookRadioButton,line,2,1,2);
       layout->addWidget(m_diagramCheckBox,++line,0,1,2);
@@ -218,7 +218,7 @@ void CSongbook::updateBooktype(bool)
         m_bookType << "lilypond";
       if (m_tablatureCheckBox->isChecked())
         m_bookType << "tabs";
-    } 
+    }
 }
 
 void CSongbook::reset()
@@ -400,7 +400,7 @@ void CSongbook::save(const QString & filename)
               string_value = value.toString();
               if (!string_value.isEmpty())
                 {
-                  out << "\"" << it.key() << "\" : \"" 
+                  out << "\"" << it.key() << "\" : \""
                       << string_value.replace('\\',"\\\\") << "\",\n";
                 }
               break;
@@ -465,13 +465,13 @@ void CSongbook::load(const QString & filename)
                   it.value()->setValue(sv.toVariant());
                 }
             }
-          
+
           // booktype property (always an array)
           sv = object.property("booktype");
           if (sv.isValid() && sv.isArray())
             {
               QStringList items;
-              qScriptValueToSequence(sv, items); 
+              qScriptValueToSequence(sv, items);
               setBookType(items);
             }
 
@@ -486,7 +486,7 @@ void CSongbook::load(const QString & filename)
                 }
               else
                 {
-                  qScriptValueToSequence(sv, items); 
+                  qScriptValueToSequence(sv, items);
                 }
               setSongs(items);
             }

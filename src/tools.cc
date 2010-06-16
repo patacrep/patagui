@@ -33,7 +33,7 @@ QString CTools::workingPath()
 //------------------------------------------------------------------------------
 void CTools::toolProcessExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  if(exitStatus == QProcess::NormalExit && exitCode==0)
+  if (exitStatus == QProcess::NormalExit && exitCode==0)
     {
       m_parent->progressBar()->hide();
       m_parent->statusBar()->showMessage(tr("Success!"));
@@ -54,18 +54,18 @@ void CTools::resizeCovers()
 {
   m_process = new QProcess(this);
   m_process->setWorkingDirectory(workingPath());
-  connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)), 
+  connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this, SLOT(toolProcessExit(int,QProcess::ExitStatus)));
 
-  connect(m_process, SIGNAL(error(QProcess::ProcessError)), 
+  connect(m_process, SIGNAL(error(QProcess::ProcessError)),
 	  this, SLOT(toolProcessError(QProcess::ProcessError)));
-  
+
   QString msg(tr("Checking for covers to resize ..."));
   m_parent->statusBar()->showMessage(msg);
   m_parent->progressBar()->show();
   m_process->start("./utils/resize-cover.sh");
-  
-  if (!m_process->waitForFinished()) 
+
+  if (!m_process->waitForFinished())
     delete m_process;
 }
 //------------------------------------------------------------------------------
@@ -73,17 +73,17 @@ void CTools::globalCheck()
 {
   m_process = new QProcess(this);
   m_process->setWorkingDirectory(workingPath());
-  connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)), 
+  connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this, SLOT(toolProcessExit(int,QProcess::ExitStatus)));
 
-  connect(m_process, SIGNAL(error(QProcess::ProcessError)), 
+  connect(m_process, SIGNAL(error(QProcess::ProcessError)),
 	  this, SLOT(toolProcessError(QProcess::ProcessError)));
- 
+
   QString msg(tr("Applying typo rules ..."));
   m_parent->statusBar()->showMessage(msg);
   m_parent->progressBar()->show();
   m_process->start("./utils/latex-preprocessing.py");
-  
-  if (!m_process->waitForFinished()) 
+
+  if (!m_process->waitForFinished())
     delete m_process;
 }

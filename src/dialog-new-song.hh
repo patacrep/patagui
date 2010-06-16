@@ -23,7 +23,7 @@
 class CDialogNewSong : public QDialog
 {
   Q_OBJECT
-  
+
 public:
   CDialogNewSong();
 

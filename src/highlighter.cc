@@ -29,15 +29,15 @@ Highlighter::Highlighter(QTextDocument *parent)
   keywordFormat.setForeground(QColor(206,92,0));
   keywordFormat.setFontWeight(QFont::Bold);
   QStringList keywordPatterns;
-  keywordPatterns << "\\bgtab\\b" << "\\becho\\b" 
+  keywordPatterns << "\\bgtab\\b" << "\\becho\\b"
 		  << "\\brep\\b" << "\\blilypond\\b"
 		  << "\\bimage\\b" << "\\bsongcolumns\\b"
-		  << "\\bcover\\b" << "\\bcapo\\b" 
-		  << "\\bnolyrics\\b" << "\\bmusicnote\\b" 
-		  << "\\btextnote\\b" << "\\bdots\\b" 
+		  << "\\bcover\\b" << "\\bcapo\\b"
+		  << "\\bnolyrics\\b" << "\\bmusicnote\\b"
+		  << "\\btextnote\\b" << "\\bdots\\b"
 		  << "\\bsingle\\b"  ;
 
-  foreach (const QString &pattern, keywordPatterns) 
+  foreach (const QString &pattern, keywordPatterns)
     {
       rule.pattern = QRegExp(pattern);
       rule.format = keywordFormat;
@@ -50,7 +50,7 @@ Highlighter::Highlighter(QTextDocument *parent)
   QStringList keyword2Patterns;
   keyword2Patterns << "\\bbar\\b" ;
 
-  foreach (const QString &pattern, keyword2Patterns) 
+  foreach (const QString &pattern, keyword2Patterns)
     {
       rule.pattern = QRegExp(pattern);
       rule.format = keyword2Format;
@@ -98,7 +98,7 @@ Highlighter::Highlighter(QTextDocument *parent)
   rule.pattern = QRegExp("%[^\n]*");
   rule.format = singleLineCommentFormat;
   highlightingRules.append(rule);
-  
+
   //Quotations (violet)
   quotationFormat.setForeground(QColor(92,53,102));
   rule.pattern = QRegExp("\".*\"");
@@ -108,7 +108,7 @@ Highlighter::Highlighter(QTextDocument *parent)
   rule.pattern = QRegExp("``.*''");
   rule.format = quotationFormat;
   highlightingRules.append(rule);
-  
+
   //LaTeX options (overrided by chords)
   optionFormat.setFontItalic(true);
   rule.pattern = QRegExp("\\[([^\\]]+)\\]");
@@ -116,7 +116,7 @@ Highlighter::Highlighter(QTextDocument *parent)
   highlightingRules.append(rule);
 
   //Chords (blue)
-  chordFormat.setForeground(QColor(32,74,135));  
+  chordFormat.setForeground(QColor(32,74,135));
   chordFormat.setFontWeight(QFont::Bold);
   rule.pattern = QRegExp("\\\\\\[([^\\]]+)\\]");
   rule.format = chordFormat;
@@ -131,7 +131,7 @@ Highlighter::Highlighter(QTextDocument *parent)
   //todo: remove
   commentStartExpression = QRegExp("/\\*");
   commentEndExpression = QRegExp("\\*/");
-  
+
 }
 
 void Highlighter::highlightBlock(const QString &text)
@@ -150,7 +150,7 @@ void Highlighter::highlightBlock(const QString &text)
   int startIndex = 0;
   if (previousBlockState() != 1)
     startIndex = commentStartExpression.indexIn(text);
-  
+
   while (startIndex >= 0) {
     int endIndex = commentEndExpression.indexIn(text, startIndex);
     int commentLength;

@@ -32,10 +32,10 @@ int main( int argc, char * argv[] )
   QString locale = QLocale::system().name().section('_', 0, 0);
   QString filename = QString("songbook_%1").arg(locale) + ".qm";
   QString dir;
-  
+
   const QDir systemDir("/usr/share/songbook-client/translations", "*.qm");
   const QDir userDir("/usr/local/share/songbook-client/translations", "*.qm");
-  
+
   if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
     dir = systemDir.absolutePath();
   else if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
@@ -45,13 +45,13 @@ int main( int argc, char * argv[] )
 
   QTranslator translator;
   translator.load(QString("songbook_%1").arg(locale), dir);
-  
+
   // Main application
   QApplication app(argc, argv);
   app.installTranslator(&translator);
 
   CMainWindow mainWindow;
   mainWindow.show();
-  return app.exec();  
+  return app.exec();
 }
 //******************************************************************************

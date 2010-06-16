@@ -31,7 +31,7 @@
 CSongEditor::CSongEditor(const QString & APath)
 {
   m_filePath = APath;
-  
+
   // toolbar
   QToolBar* toolbar = new QToolBar;
   toolbar->setMovable(false);
@@ -41,12 +41,12 @@ CSongEditor::CSongEditor(const QString & APath)
   m_textEdit->setUndoRedoEnabled(true);
   QFile file(APath);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {      
+    {
       QTextStream stream (&file);
       QString text = stream.readAll();
       file.close();
       m_textEdit->setText(text);
-      new Highlighter(m_textEdit->document()); 
+      new Highlighter(m_textEdit->document());
 
       connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
 
@@ -80,7 +80,7 @@ CSongEditor::CSongEditor(const QString & APath)
       action->setStatusTip(tr("New chorus environment"));
       connect(action, SIGNAL(triggered()), this, SLOT(insertChorus()));
       toolbar->addAction(action);
- 
+
       QBoxLayout* layout = new QVBoxLayout;
       layout->addWidget(toolbar);
       layout->addWidget(m_textEdit);
@@ -109,10 +109,10 @@ QString CSongEditor::filePath()
 //------------------------------------------------------------------------------
 void CSongEditor::setFilePath(const QString & APath)
 {
-  if(QFile(APath).exists())
+  if (QFile(APath).exists())
     m_filePath = APath;
   else
-    qWarning() << "CSongEditor::setFilePath Error: the file " << APath << " does not exist " ; 
+    qWarning() << "CSongEditor::setFilePath Error: the file " << APath << " does not exist " ;
 }
 //------------------------------------------------------------------------------
 int CSongEditor::tabIndex()
@@ -140,10 +140,10 @@ void CSongEditor::save()
 {
   // retrieve text to save
   QString text = m_textEdit->toPlainText();
-  
+
   //open file in write mode
   QFile file(filePath());
-  
+
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream stream (&file);
@@ -159,7 +159,7 @@ void CSongEditor::documentWasModified()
 {
   //add isModified also it seems strange to avoid document marked as
   //modified the first time it is opened
-  if( !label().contains(" *") &&   m_textEdit->document()->isModified() )
+  if ( !label().contains(" *") &&   m_textEdit->document()->isModified() )
     setLabel(label() + " *");
 }
 //------------------------------------------------------------------------------

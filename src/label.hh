@@ -38,7 +38,7 @@ public:
 
   Qt::TextElideMode elideMode() const;
   void setElideMode(Qt::TextElideMode mode);
-  
+
 protected:
     void paintEvent(QPaintEvent *event);
 

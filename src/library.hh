@@ -38,7 +38,7 @@ class CLibrary : public QSqlTableModel
 public:
   CLibrary();
   ~CLibrary();
-  
+
   QString pathToSongs();
   void setPathToSongs(const QString path);
 
@@ -47,12 +47,12 @@ public slots:
 
 public:
   void addSongFromFile(const QString path);
-  
+
   QString m_pathToSongs;
   QString imgFile;
 
 public:
-  static QString latexToUtf8(const QString str);  
+  static QString latexToUtf8(const QString str);
   static QString processString(const QString str);
   QVariant data(const QModelIndex &index, int role) const;
 };

@@ -27,7 +27,7 @@ class CMainWindow;
 class CTools : public QWidget
 {
   Q_OBJECT
-  
+
 public:
   CTools(const QString & APath, CMainWindow* AParent);
 

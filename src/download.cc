@@ -36,9 +36,9 @@ CDownloadDialog::CDownloadDialog(CMainWindow* parent)
   //Git available
   QHBoxLayout* horizontalLayout1 = new QHBoxLayout;
   //horizontalLayout1->addWidget( new QLabel(tr("Checking if Git is available:")) );
-  if(m_isGit) 
+  if (m_isGit)
     horizontalLayout1->addWidget( new QLabel(QString(tr("<font color=green>Found %1</font>")).arg(m_gitVersion)) );
-  else    
+  else
     horizontalLayout1->addWidget( new QLabel(tr("<font color=red>Warning: Git not found !</font>")) );
 
   //Download location
@@ -95,7 +95,7 @@ CDownloadDialog::CDownloadDialog(CMainWindow* parent)
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addLayout(horizontalLayout1);
   mainLayout->addLayout(horizontalLayout2);
-  mainLayout->addLayout(verticalLayout);  
+  mainLayout->addLayout(verticalLayout);
   mainLayout->addLayout(horizontalLayout3);
   mainLayout->addWidget(buttonBox);
   mainLayout->addWidget(m_statusBar);
@@ -116,7 +116,7 @@ void CDownloadDialog::setDownloadPath(QString ADownloadPath )
   while(ADownloadPath.endsWith("/"))
     ADownloadPath.remove(ADownloadPath.lastIndexOf("/"),1);
 
-  if(!ADownloadPath.isEmpty())
+  if (!ADownloadPath.isEmpty())
     m_downloadPath = ADownloadPath;
 }
 //------------------------------------------------------------------------------
@@ -132,18 +132,18 @@ void CDownloadDialog::setGitRepoUrl(const QString & url )
 //------------------------------------------------------------------------------
 void CDownloadDialog::processExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  if(exitStatus == QProcess::NormalExit && exitCode==0)
+  if (exitStatus == QProcess::NormalExit && exitCode==0)
     {
-      if(m_cb1->isChecked())
+      if (m_cb1->isChecked())
 	  m_parent->setWorkingPath(QString("%1/songbook").arg(downloadPath()));
-      
-      if(m_cb2->isChecked())
+
+      if (m_cb2->isChecked())
 	{
 	  QString msg("Synchronizing database ...");
 	  m_statusBar->showMessage(msg);
      	  m_parent->synchroniseWithLocalSongs();
 	}
-      
+
       QString msg("Success!");
       m_statusBar->showMessage(msg);
       m_progressBar->hide();
@@ -162,7 +162,7 @@ void CDownloadDialog::processError(QProcess::ProcessError error)
 //------------------------------------------------------------------------------
 void CDownloadDialog::gitProcessExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  if(exitStatus == QProcess::NormalExit && exitCode==0)
+  if (exitStatus == QProcess::NormalExit && exitCode==0)
     m_isGit = true;
 }
 //------------------------------------------------------------------------------
@@ -185,15 +185,15 @@ void CDownloadDialog::readProcessOut()
 //------------------------------------------------------------------------------
 void CDownloadDialog::download()
 {
-  if(m_isGit && applyDialogOptions())
+  if (m_isGit && applyDialogOptions())
     {
       m_process = new QProcess(this);
       m_process->setWorkingDirectory(downloadPath());
-      connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)), 
+      connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)),
 	      this, SLOT(processExit(int,QProcess::ExitStatus)));
-      connect(m_process, SIGNAL(error(QProcess::ProcessError)), 
+      connect(m_process, SIGNAL(error(QProcess::ProcessError)),
 	      this, SLOT(processError(QProcess::ProcessError)));
-      
+
       QStringList args;
       args << "clone" << gitRepoUrl();
       QString msg = QString(tr("Downloading from %1")).arg(gitRepoUrl());
@@ -206,21 +206,21 @@ void CDownloadDialog::download()
 void CDownloadDialog::browseDownloadPath()
 {
   QString directory = QFileDialog::getExistingDirectory(this,
-                                                        tr("Download into"), 
+                                                        tr("Download into"),
                                                         m_downloadLineEdit->text());
   if (!directory.isEmpty())
     m_downloadLineEdit->setText(directory);
- 
+
 }
 //------------------------------------------------------------------------------
 void CDownloadDialog::checkGitDependency()
 {
   m_gitCheck = new QProcess(this);
-  connect(m_gitCheck, SIGNAL(finished(int,QProcess::ExitStatus)), 
+  connect(m_gitCheck, SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this, SLOT(gitProcessExit(int,QProcess::ExitStatus)));
-  connect(m_gitCheck, SIGNAL(error(QProcess::ProcessError)), 
+  connect(m_gitCheck, SIGNAL(error(QProcess::ProcessError)),
 	  this, SLOT(gitProcessError(QProcess::ProcessError)));
-  connect(m_gitCheck, SIGNAL(readyReadStandardOutput()), 
+  connect(m_gitCheck, SIGNAL(readyReadStandardOutput()),
 	  this, SLOT(readProcessOut()));
 
   QStringList args;
@@ -233,7 +233,7 @@ bool CDownloadDialog::applyDialogOptions()
   //Retrieve download path
   QString path = m_downloadLineEdit->text();
   QDir dir(path);
-  if( !dir.exists() )
+  if ( !dir.exists() )
     {
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Critical);
@@ -245,7 +245,7 @@ bool CDownloadDialog::applyDialogOptions()
     }
 
   dir.setPath(QString("%1/songbook").arg(path));
-  if( dir.exists() && !m_cb3->isChecked() )
+  if ( dir.exists() && !m_cb3->isChecked() )
     {
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Critical);
@@ -258,19 +258,19 @@ bool CDownloadDialog::applyDialogOptions()
   setDownloadPath( m_downloadLineEdit->text() );
 
 
-  if(m_cb3->isChecked())
+  if (m_cb3->isChecked())
     {
       //Confirmation dialog
       QString rmPath = QString("%1/songbook").arg(downloadPath());
 
-      if(QMessageBox::question(this, tr("Remove download directory"), 
-			       QString(tr("This will remove all files in %1 \n Are you sure you want to continue ?")).arg(rmPath), 
-			       QMessageBox::Yes, 
-			       QMessageBox::No, 
+      if (QMessageBox::question(this, tr("Remove download directory"),
+			       QString(tr("This will remove all files in %1 \n Are you sure you want to continue ?")).arg(rmPath),
+			       QMessageBox::Yes,
+			       QMessageBox::No,
 			       QMessageBox::NoButton) == QMessageBox::No)
 	return false;
 
-      //strange to use a qprocess but 
+      //strange to use a qprocess but
       //can't find recursive remove  qt method
       QStringList args;
       args << "-rf" << rmPath;
@@ -281,9 +281,9 @@ bool CDownloadDialog::applyDialogOptions()
 
   //Retrieve git repository url
   setGitRepoUrl( m_gitRepoLineEdit->text() );
-  
+
   //Check url
-  if (!QUrl(gitRepoUrl()).isValid()) 
+  if (!QUrl(gitRepoUrl()).isValid())
     {
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Critical);
@@ -298,7 +298,7 @@ bool CDownloadDialog::applyDialogOptions()
 //------------------------------------------------------------------------------
 bool CDownloadDialog::event(QEvent* e)
 {
-  if(e->type()==QEvent::StatusTip)
+  if (e->type()==QEvent::StatusTip)
     {
       QStatusTipEvent *ev = (QStatusTipEvent*)e;
       m_statusBar->showMessage(ev->tip());

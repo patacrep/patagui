@@ -30,7 +30,7 @@ class CSongEditor : public QWidget
 public:
   CSongEditor(const QString & APath);
   virtual ~CSongEditor();
-  
+
   QString filePath();
   void setFilePath(const QString & APath);
 

@@ -39,7 +39,7 @@ class CTabWidget;
 class CMainWindow : public QMainWindow
 {
   Q_OBJECT
-  
+
 public:
   CMainWindow();
   ~CMainWindow();
@@ -53,7 +53,7 @@ public slots:
   void updateCover(const QModelIndex & index);
   void readProcessOut();
   void downloadDialog();
-  void synchroniseWithLocalSongs();  
+  void synchroniseWithLocalSongs();
   // void playSong();
 
   void setWorkingPath(QString dirname);
@@ -94,7 +94,7 @@ private slots:
   void changeTabLabel();
   void deleteSong();
 
-  void about(); 
+  void about();
 
   void updateTitle(const QString &filename);
 
@@ -112,7 +112,7 @@ private:
   const QString workingPath();
 
   QStringList getSelectedSongs();
-  
+
   QString filenameConvention(const QString &, const QString & sep);
 
   QItemSelectionModel * selectionModel();

@@ -56,7 +56,7 @@ CMainWindow::CMainWindow()
   createMenus();
 
   //Connection to database
-  if(connectDb())
+  if (connectDb())
     synchroniseWithLocalSongs();
   else
     applyDisplayColumn();
@@ -74,7 +74,7 @@ CMainWindow::CMainWindow()
   filterComboBox->addItem(tr("Title"), 1);
   filterComboBox->addItem(tr("Album"), 4);
   m_proxyModel->setFilterKeyColumn(-1);
-   
+
   connect(filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
   connect(filterComboBox, SIGNAL(currentIndexChanged(int)),
@@ -186,7 +186,7 @@ CMainWindow::~CMainWindow()
 void CMainWindow::readSettings()
 {
   QSettings settings;
-  
+
   resize(settings.value("mainWindow/size", QSize(800,600)).toSize());
 
   setWorkingPath(settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString());
@@ -246,7 +246,7 @@ void CMainWindow::createActions()
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
-  m_saveAsAct = new QAction(QIcon(":/icons/document-save.png"), 
+  m_saveAsAct = new QAction(QIcon(":/icons/document-save.png"),
                             tr("SaveAs"), this);
   m_saveAsAct->setShortcut(tr("Maj+Ctrl+S"));
   m_saveAsAct->setStatusTip(tr("Save the current songbook as"));
@@ -307,12 +307,12 @@ void CMainWindow::createActions()
   m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents."));
   connect(m_adjustColumnsAct, SIGNAL(triggered()), SLOT(applyDisplayColumn()));
 
-  m_connectDbAct = new QAction(QIcon(":/icons/network-server.png"), 
+  m_connectDbAct = new QAction(QIcon(":/icons/network-server.png"),
 			       tr("Connection to local database"), this);
   m_connectDbAct->setStatusTip(tr("Connection to local database."));
   connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
 
-  m_rebuildDbAct = new QAction(QIcon(":/icons/view-refresh.png"), 
+  m_rebuildDbAct = new QAction(QIcon(":/icons/view-refresh.png"),
 			       tr("Synchronise"), this);
   m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
   connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
@@ -353,7 +353,7 @@ bool CMainWindow::connectDb()
   m_view->sortByColumn(0, Qt::AscendingOrder);
   m_view->setModel(m_proxyModel);
   m_view->show();
-  
+
   return newdb;
 }
 //------------------------------------------------------------------------------
@@ -361,7 +361,7 @@ void CMainWindow::synchroniseWithLocalSongs()
 {
   //Drop table songs and recreate
   QSqlQuery query("delete from songs");
-    
+
   // Retrieve all songs from .sg files in working dir
   m_library->setPathToSongs(workingPath());
   m_library->retrieveSongs();
@@ -447,7 +447,7 @@ QWidget * CMainWindow::createSongInfoWidget()
   songInfoLayout->setColumnStretch(2,1);
   songInfoLayout->setRowStretch(3,10);
   currentSongTagsBox->setLayout(songInfoLayout);
-  
+
   QDialogButtonBox * buttonBox = new QDialogButtonBox;
   QPushButton* editButton = new QPushButton(tr("Edit"));
   QPushButton * deleteButton = new QPushButton(tr("Delete"));
@@ -457,14 +457,14 @@ QWidget * CMainWindow::createSongInfoWidget()
 
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
-  
+
   m_currentSongWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, songInfoWidget);
   m_coverLabel.setAlignment(Qt::AlignTop);
   m_currentSongWidgetLayout->addWidget(&m_coverLabel);
   m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
   m_currentSongWidgetLayout->addWidget(buttonBox);
   m_currentSongWidgetLayout->addStretch(1);
-     
+
   //Data mapper
   m_mapper = new QDataWidgetMapper();
   m_mapper->setModel(m_proxyModel);
@@ -483,7 +483,7 @@ QWidget * CMainWindow::createSongInfoWidget()
 //------------------------------------------------------------------------------
 void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
 {
-  if(area==Qt::LeftDockWidgetArea || area==Qt::RightDockWidgetArea)
+  if (area==Qt::LeftDockWidgetArea || area==Qt::RightDockWidgetArea)
     {
       m_currentSongWidgetLayout->setDirection(QBoxLayout::TopToBottom);
       m_songInfo->setMaximumSize(300, 300);
@@ -497,7 +497,7 @@ void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
 //------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
 {
-  if(!selectionModel()->hasSelection())
+  if (!selectionModel()->hasSelection())
     {
       m_cover->load(":/icons/unavailable-large");
       m_coverLabel.setPixmap(*m_cover);
@@ -507,7 +507,8 @@ void CMainWindow::updateCover(const QModelIndex & index)
   // do not retrieve last clicked item but last selected item
   QModelIndex lastIndex = selectionModel()->selectedRows().last();
   selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::NoUpdate);
-  if(lastIndex != index) m_mapper->setCurrentModelIndex(lastIndex);
+  if (lastIndex != index)
+    m_mapper->setCurrentModelIndex(lastIndex);
 
   QString coverpath = m_library->record(m_proxyModel->mapToSource(lastIndex).row()).field("cover").value().toString();
   if (QFile::exists(coverpath))
@@ -553,9 +554,10 @@ void CMainWindow::invertSelection()
 
   m_view->selectAll();
 
-  foreach(index, indexes) {
-    selectionModel()->select(index,QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
-  }
+  foreach(index, indexes)
+    {
+      selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
+    }
 }
 //------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
@@ -563,7 +565,7 @@ QStringList CMainWindow::getSelectedSongs()
   QStringList songsPath;
   QModelIndexList indexes = selectionModel()->selectedRows();
   QModelIndex index;
-  
+
   qSort(indexes.begin(), indexes.end());
 
   foreach(index, indexes)
@@ -595,14 +597,14 @@ void CMainWindow::build()
 
   m_buildProcess = new QProcess(this);
   m_buildProcess->setWorkingDirectory(workingPath());
-  connect(m_buildProcess, SIGNAL(finished(int,QProcess::ExitStatus)), 
+  connect(m_buildProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this, SLOT(buildFinished(int,QProcess::ExitStatus)));
-  connect(m_buildProcess, SIGNAL(error(QProcess::ProcessError)), 
+  connect(m_buildProcess, SIGNAL(error(QProcess::ProcessError)),
 	  this, SLOT(buildError(QProcess::ProcessError)));
-  connect(m_buildProcess, SIGNAL(readyReadStandardOutput()), 
+  connect(m_buildProcess, SIGNAL(readyReadStandardOutput()),
 	  this, SLOT(readProcessOut()));
   m_log->clear();
-  
+
   statusBar()->showMessage(tr("The songbook is building. Please wait."));
   progressBar()->show();
   m_buildProcess->start("make", QStringList() << target);
@@ -615,7 +617,7 @@ void CMainWindow::readProcessOut()
 //------------------------------------------------------------------------------
 void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  if(exitStatus == QProcess::NormalExit && exitCode==0)
+  if (exitStatus == QProcess::NormalExit && exitCode == 0)
     {
       m_progressBar->hide();
       QString msg(tr("Songbook successfully generated."));
@@ -639,7 +641,7 @@ void CMainWindow::buildError(QProcess::ProcessError error)
 //------------------------------------------------------------------------------
 void CMainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  if(exitStatus == QProcess::NormalExit && exitCode==0)
+  if (exitStatus == QProcess::NormalExit && exitCode == 0)
     {
       m_progressBar->hide();
       statusBar()->showMessage(tr("Success!"));
@@ -649,7 +651,7 @@ void CMainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 void CMainWindow::clean()
 {
   QProcess clean;
-  clean.setWorkingDirectory(workingPath());  
+  clean.setWorkingDirectory(workingPath());
   statusBar()->showMessage(tr("Cleaning ..."));
   clean.start("make", QStringList() << "clean");
   if (!clean.waitForFinished()) return;
@@ -673,13 +675,13 @@ void CMainWindow::open()
   songlist.replaceInStrings(QRegExp("^"),path);
 
   m_view->clearSelection();
-  
+
   QList<QModelIndex> indexes;
   QString str;
   foreach(str, songlist)
     {
       indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
-      if(!indexes.isEmpty())
+      if (!indexes.isEmpty())
         selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
 
@@ -728,7 +730,7 @@ void CMainWindow::updateTitle(const QString &filename)
 //------------------------------------------------------------------------------
 const QString CMainWindow::workingPath()
 {
-  if( QDir( m_workingPath ).exists() )
+  if (QDir( m_workingPath ).exists())
     return m_workingPath;
   else
     return QDir::currentPath();
@@ -741,12 +743,12 @@ void CMainWindow::setWorkingPath( QString dirname )
 //------------------------------------------------------------------------------
 bool CMainWindow::createDbConnection()
 {
-  QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path()); 
+  QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
   QDir dbdir; dbdir.mkdir( path );
   QString dbpath = QString("%1/patacrep.db").arg(path);
 
   bool exist = QFile::exists(dbpath);
-  
+
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(dbpath);
   if (!db.open())
@@ -757,7 +759,9 @@ bool CMainWindow::createDbConnection()
 			       "Click Cancel to exit."), QMessageBox::Cancel);
       return false;
     }
-  if(exist) return false;
+  if (exist)
+    return false;
+
   QSqlQuery query;
   query.exec("create table songs ( artist char(80), "
 	     "title char(80), "
@@ -765,6 +769,7 @@ bool CMainWindow::createDbConnection()
 	     "path char(80), "
 	     "album char(80), "
 	     "cover char(80))");
+
   return true;
 }
 //------------------------------------------------------------------------------
@@ -785,7 +790,7 @@ QItemSelectionModel * CMainWindow::selectionModel()
 //------------------------------------------------------------------------------
 void CMainWindow::songEditor()
 {
-  if(!selectionModel()->hasSelection())
+  if (!selectionModel()->hasSelection())
     {
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Warning);
@@ -800,9 +805,9 @@ void CMainWindow::songEditor()
   QSqlRecord record = m_library->record(row);
   QString title = record.field("title").value().toString();
   QString path = record.field("path").value().toString();
-  
+
   CSongEditor* editor = new CSongEditor(path);
-  if(!editor->isOk)
+  if (!editor->isOk)
     {
       delete editor;
       return;
@@ -841,7 +846,7 @@ void CMainWindow::songTemplate()
       uint capo = (uint) dialog->capo();
       QString album = dialog->album() ;
       QString cover = dialog->cover() ;
-	    
+
       //remove dialog
       delete dialog;
 
@@ -862,14 +867,14 @@ void CMainWindow::songTemplate()
       QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
       QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
       QDir dir(dirpath);
-      
-      if(!dir.exists())
+
+      if (!dir.exists())
         dir.mkpath(dirpath);
 
       //handle album and cover
       bool img = false;
       QFile coverFile(cover);
-      if(coverFile.exists())
+      if (coverFile.exists())
 	{
 	  //copy in artist directory and resize
 	  QFileInfo fi(cover);
@@ -877,43 +882,47 @@ void CMainWindow::songTemplate()
 	  qDebug() << "new file copy " << cover << "in "<< target;
 	  img = coverFile.copy(target);
 	  QFile copyCover(target);
-	  
+
 	  //if album is specified, rename cover accordingly
-	  if( !album.isEmpty() 
+	  if (!album.isEmpty()
               && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
                                    .arg(workingPath())
                                    .arg(filenameConvention(artist,"_"))
-                                   .arg(filenameConvention(album,"-"))) )
+                                   .arg(filenameConvention(album,"-"))))
 	    copyCover.remove(); //remove copy if file already exists
 	}
-      
+
       //make template
       QFile file(filepath);
       QString songTemplate;
-      if(nbColumns>0) songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
-      if(!img)
+      if (nbColumns > 0)
+        songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
+      if (!img)
 	songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
       else
 	songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
-	
-      if(capo>0) songTemplate.append(QString("\\capo{%1}\n").arg(capo));
+
+      if (capo>0)
+        songTemplate.append(QString("\\capo{%1}\n").arg(capo));
       songTemplate.append(QString("\n\\endsong"));
-      
-      if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+
+      if (file.open(QIODevice::WriteOnly | QIODevice::Text))
 	{
 	  QTextStream stream (&file);
 	  stream << songTemplate;
 	  file.close();
 	}
       else
-      	qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode " ;
-      
+        {
+          qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
+        }
+
       //Insert the song in the library
       m_library->addSongFromFile(filepath);
       m_library->submitAll();
       m_view->sortByColumn(1, Qt::AscendingOrder);
       m_view->sortByColumn(0, Qt::AscendingOrder);
-  
+
       //position index of new song in the library and launch song editor
       CSongEditor* editor = new CSongEditor(filepath);
       m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
@@ -932,7 +941,7 @@ QString CMainWindow::filenameConvention(const QString & str, const QString & sep
   list <<"é"<<"è"<<"ê"<<"ë";
   foreach(tmp, list)
     result.replace(tmp, QString("e"));
-  
+
   list = QStringList();
   list <<" "<<"&"<<"'"<<"`"<<"("<<")"<<"["<<"]"<<"{"<<"}"<<"_"<<"~"<<","<<"?"<<"!"<<":"<<";"<<"."<<"%";
   foreach(tmp, list)
@@ -950,7 +959,7 @@ QString CMainWindow::filenameConvention(const QString & str, const QString & sep
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong()
 {
-  if(!selectionModel()->hasSelection())
+  if (!selectionModel()->hasSelection())
     {
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Warning);
@@ -961,13 +970,13 @@ void CMainWindow::deleteSong()
       return;
     }
 
-  QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
-  
-  if(QMessageBox::question
-     (this, this->windowTitle(), 
-      QString(tr("This will remove the file %1 ?")).arg(path), 
-      QMessageBox::Yes, 
-      QMessageBox::No, 
+  QString path = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+
+  if (QMessageBox::question
+     (this, this->windowTitle(),
+      QString(tr("This will remove the file %1 ?")).arg(path),
+      QMessageBox::Yes,
+      QMessageBox::No,
       QMessageBox::NoButton) == QMessageBox::Yes)
     {
       //todo: debug
@@ -981,9 +990,9 @@ void CMainWindow::deleteSong()
       QFile file(path);
       QFileInfo fileinfo(file);
       QString tmp = fileinfo.canonicalPath();
-      if(file.remove())
+      if (file.remove())
 	{
-	  QDir dir; 
+	  QDir dir;
 	  dir.rmdir(tmp); //remove dir if empty
 	  synchroniseWithLocalSongs(); //temporary hack
 	  //once deleted move selection in the model

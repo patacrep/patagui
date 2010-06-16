@@ -25,7 +25,7 @@ CDialogNewSong::CDialogNewSong()
   m_artist =  "";
   m_nbColumns = 0;
   m_capo = 0;
-  
+
   setModal(true);
 
   //Required fields
@@ -36,7 +36,7 @@ CDialogNewSong::CDialogNewSong()
   //artist
   QLabel* artistLabel = new QLabel(tr("Artist: "));
   QLineEdit* artistEdit = new QLineEdit;
-  
+
   //Optional fields
   //album
   QLabel* albumLabel = new QLabel(tr("Album: "));
@@ -56,7 +56,7 @@ CDialogNewSong::CDialogNewSong()
   QLabel* capoLabel = new QLabel(tr("Capo: "));
   QSpinBox* capoEdit      = new QSpinBox;
   capoEdit->setRange(0,20);
-  
+
   // Action buttons
   QDialogButtonBox * buttonBox = new QDialogButtonBox;
   QPushButton * buttonAccept = new QPushButton(tr("Ok"));
@@ -64,7 +64,7 @@ CDialogNewSong::CDialogNewSong()
   buttonAccept->setDefault(true);
   buttonBox->addButton(buttonAccept, QDialogButtonBox::ActionRole);
   buttonBox->addButton(buttonClose, QDialogButtonBox::DestructiveRole);
- 
+
   connect( buttonAccept, SIGNAL(clicked()), this, SLOT(accept()) );
   connect( buttonClose, SIGNAL(clicked()), this, SLOT(close()) );
 
@@ -88,7 +88,7 @@ CDialogNewSong::CDialogNewSong()
   optionalLayout->addWidget(capoLabel,  2,2,1,1);
   optionalLayout->addWidget(capoEdit, 2,3,1,1);
   optionalFieldsBox->setLayout(optionalLayout);
-  
+
   QBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(requiredFieldsBox);
   layout->addWidget(optionalFieldsBox);
@@ -176,7 +176,7 @@ void CDialogNewSong::browseCover()
   QString directory = QFileDialog::getOpenFileName(this, tr("Select cover image"),
 						  "/home",
 						  tr("Images (*.jpg)"));
- 
+
   if (!directory.isEmpty())
       m_coverEdit->setText(directory);
 }

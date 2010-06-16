@@ -73,7 +73,7 @@ public:
 signals:
   void wasModified(bool modified);
   void songsChanged();
-                 
+
 private slots:
   void update();
   void updateBooktype(bool);
