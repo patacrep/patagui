@@ -491,6 +491,7 @@ void CSongbook::load(const QString & filename)
               setSongs(items);
             }
         }
+      update();
       setModified(false);
       setFilename(filename);
     }
