@@ -151,11 +151,6 @@ private:
 
   QDockWidget* m_songbookInfo;
 
-  //Labels
-  QLabel *m_titleLabel;
-  QLabel *m_artistLabel;
-  QLabel *m_albumLabel;
-
   //Logs
   QTextEdit* m_log;
 

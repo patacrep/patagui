@@ -19,6 +19,8 @@
 #include <QtSql>
 #include <QtAlgorithms>
 
+#include "label.hh"
+
 #include "mainwindow.hh"
 #include "preferences.hh"
 #include "library.hh"
@@ -427,18 +429,21 @@ QWidget * CMainWindow::createSongInfoWidget()
 {
   QWidget * songInfoWidget = new QWidget();
 
-  m_artistLabel = new QLabel();
-  m_titleLabel = new QLabel();
-  m_albumLabel = new QLabel();
+  CLabel *artistLabel = new CLabel();
+  artistLabel->setElideMode(Qt::ElideRight);
+  CLabel *titleLabel = new CLabel();
+  titleLabel->setElideMode(Qt::ElideRight);
+  CLabel *albumLabel = new CLabel();
+  albumLabel->setElideMode(Qt::ElideRight);
 
   QGroupBox* currentSongTagsBox = new QGroupBox;
   QGridLayout *songInfoLayout = new QGridLayout();
   songInfoLayout->addWidget(new QLabel(tr("<b>Song:</b>")),0,0,1,1,Qt::AlignLeft);
-  songInfoLayout->addWidget(m_titleLabel,0,1,1,1);
+  songInfoLayout->addWidget(titleLabel,0,1,1,1);
   songInfoLayout->addWidget(new QLabel(tr("<b>Artist:</b>")),1,0,1,1,Qt::AlignLeft);
-  songInfoLayout->addWidget(m_artistLabel,1,1,1,1);
+  songInfoLayout->addWidget(artistLabel,1,1,1,1);
   songInfoLayout->addWidget(new QLabel(tr("<b>Album:</b>")),2,0,1,1,Qt::AlignLeft);
-  songInfoLayout->addWidget(m_albumLabel,2,1,1,1);
+  songInfoLayout->addWidget(albumLabel,2,1,1,1);
   songInfoLayout->setColumnStretch(2,1);
   songInfoLayout->setRowStretch(3,10);
   currentSongTagsBox->setLayout(songInfoLayout);
@@ -463,9 +468,9 @@ QWidget * CMainWindow::createSongInfoWidget()
   //Data mapper
   m_mapper = new QDataWidgetMapper();
   m_mapper->setModel(m_proxyModel);
-  m_mapper->addMapping(m_artistLabel, 0, QByteArray("text"));
-  m_mapper->addMapping(m_titleLabel, 1, QByteArray("text"));
-  m_mapper->addMapping(m_albumLabel, 4, QByteArray("text"));
+  m_mapper->addMapping(artistLabel, 0, QByteArray("text"));
+  m_mapper->addMapping(titleLabel, 1, QByteArray("text"));
+  m_mapper->addMapping(albumLabel, 4, QByteArray("text"));
   updateCover(QModelIndex());
 
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
@@ -496,9 +501,6 @@ void CMainWindow::updateCover(const QModelIndex & index)
     {
       m_cover->load(":/icons/unavailable-large");
       m_coverLabel.setPixmap(*m_cover);
-      m_titleLabel->setText("");
-      m_artistLabel->setText("");
-      m_albumLabel->setText("");
       return;
     }
 
@@ -513,28 +515,6 @@ void CMainWindow::updateCover(const QModelIndex & index)
   else
     m_cover->load(":/icons/unavailable-large");
   m_coverLabel.setPixmap(*m_cover);
-
-  //todo: is there a way to do it automatically and dynamically ?
-  //truncate labels if too long
-  QString string = m_titleLabel->text();
-  if(string.size() > 30)
-    {
-      string.truncate(27);
-      m_titleLabel->setText(string+"...");
-    }
-  string = m_artistLabel->text();
-  if(string.size() > 30)
-    {
-      string.truncate(27);
-      m_artistLabel->setText(string+"...");
-    }
-  string = m_albumLabel->text();
-  if(string.size() > 30)
-    {
-      string.truncate(27);
-      m_albumLabel->setText(string+"...");
-    }
-
 }
 //------------------------------------------------------------------------------
 void CMainWindow::preferences()
@@ -816,7 +796,10 @@ void CMainWindow::songEditor()
       return;
     }
 
-  QString path  = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+  int row = m_proxyModel->mapToSource(selectionModel()->currentIndex()).row();
+  QSqlRecord record = m_library->record(row);
+  QString title = record.field("title").value().toString();
+  QString path = record.field("path").value().toString();
   
   CSongEditor* editor = new CSongEditor(path);
   if(!editor->isOk)
@@ -824,30 +807,32 @@ void CMainWindow::songEditor()
       delete editor;
       return;
     }
-  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, m_titleLabel->text()));
+  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
   editor->setTabIndex(m_mainWidget->currentIndex());
-  editor->setLabel(m_titleLabel->text());
+  editor->setLabel(title);
   connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::changeTabLabel()
 {
   QObject *object = QObject::sender();
-  if (CSongEditor* editor = qobject_cast< CSongEditor* >(object))
-      m_mainWidget->setTabText(editor->tabIndex(), editor->label() );  
+  if (CSongEditor *editor = qobject_cast< CSongEditor* >(object))
+    {
+      m_mainWidget->setTabText(editor->tabIndex(), editor->label());
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSong()
 {
   //pop up new song dialog
-  CDialogNewSong* dialog = new CDialogNewSong();
-  connect( dialog, SIGNAL(accepted()), this, SLOT(songTemplate()) );
+  CDialogNewSong *dialog = new CDialogNewSong();
+  connect(dialog, SIGNAL(accepted()), this, SLOT(songTemplate()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::songTemplate()
 {
   QObject *object = QObject::sender();
-  if (CDialogNewSong* dialog = qobject_cast< CDialogNewSong* >(object))
+  if (CDialogNewSong *dialog = qobject_cast< CDialogNewSong* >(object))
     {
       //retrieve user input fields
       QString title = dialog->title() ;
@@ -862,7 +847,7 @@ void CMainWindow::songTemplate()
 
       //todo: better (do not close dialog+highlight missing fields)
       //check required fields
-      if(title.isEmpty() || artist.isEmpty())
+      if (title.isEmpty() || artist.isEmpty())
 	{
 	  QMessageBox msgBox;
 	  msgBox.setIcon(QMessageBox::Warning);
@@ -877,7 +862,9 @@ void CMainWindow::songTemplate()
       QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
       QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
       QDir dir(dirpath);
-      if(!dir.exists()) dir.mkpath(dirpath);
+      
+      if(!dir.exists())
+        dir.mkpath(dirpath);
 
       //handle album and cover
       bool img = false;
@@ -892,10 +879,11 @@ void CMainWindow::songTemplate()
 	  QFile copyCover(target);
 	  
 	  //if album is specified, rename cover accordingly
-	  if( !album.isEmpty() && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
-						    .arg(workingPath())
-						    .arg(filenameConvention(artist,"_"))
-						    .arg(filenameConvention(album,"-"))) )
+	  if( !album.isEmpty() 
+              && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
+                                   .arg(workingPath())
+                                   .arg(filenameConvention(artist,"_"))
+                                   .arg(filenameConvention(album,"-"))) )
 	    copyCover.remove(); //remove copy if file already exists
 	}
       
