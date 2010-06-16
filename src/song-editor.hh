@@ -15,8 +15,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef SONG_EDITOR_HH
-#define SONG_EDITOR_HH
+#ifndef __SONG_EDITOR_HH__
+#define __SONG_EDITOR_HH__
 
 #include <QWidget>
 #include <QString>
@@ -63,4 +63,4 @@ private:
   int m_tabIndex;  //tab index
 };
 
-#endif //SONG_EDITOR_HH
+#endif // __SONG_EDITOR_HH__

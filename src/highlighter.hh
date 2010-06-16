@@ -15,8 +15,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef HIGHLIGHTER_HH
-#define HIGHLIGHTER_HH
+#ifndef __HIGHLIGHTER_HH__
+#define __HIGHLIGHTER_HH__
 
 #include <QSyntaxHighlighter>
 
@@ -58,4 +58,4 @@ private:
   QTextCharFormat multiLineCommentFormat;
 };
 
-#endif
+#endif // __HIGHLIGHTER_HH__

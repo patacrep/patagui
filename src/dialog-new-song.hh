@@ -15,8 +15,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef DIALOG_NEW_SONG_HH
-#define DIALOG_NEW_SONG_HH
+#ifndef __DIALOG_NEW_SONG_HH__
+#define __DIALOG_NEW_SONG_HH__
 
 #include <QtGui>
 
@@ -62,4 +62,4 @@ private:
   uint m_capo;
 };
 
-#endif // DIALOG_NEW_SONG_HH
+#endif // __DIALOG_NEW_SONG_HH__

@@ -15,8 +15,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef __TOOLS_H__
-#define __TOOLS_H__
+#ifndef __TOOLS_HH__
+#define __TOOLS_HH__
 
 #include <QtGui>
 #include <QString>
@@ -44,4 +44,4 @@ private:
   CMainWindow* m_parent;
 };
 
-#endif // __TOOLS_H__
+#endif // __TOOLS_HH__

@@ -15,8 +15,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef __DOWNLOAD_H__
-#define __DOWNLOAD_H__
+#ifndef __DOWNLOAD_HH__
+#define __DOWNLOAD_HH__
 
 #include <QtGui>
 #include <QString>
@@ -80,4 +80,4 @@ private:
 
 };
 
-#endif // __DOWNLOAD_H__
+#endif // __DOWNLOAD_HH__

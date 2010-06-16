@@ -15,10 +15,22 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
+
+/**
+ * \file library.hh
+ *
+ * Class for representing the songlibrary.
+ *
+ */
+#ifndef __LIBRARY_HH__
+#define __LIBRARY_HH__
+
 #include <QStandardItemModel>
 #include <QString>
 #include <QSqlTableModel>
+
 class QTableView;
+
 class CLibrary : public QSqlTableModel
 {
   Q_OBJECT
@@ -44,3 +56,5 @@ public:
   static QString processString(const QString str);
   QVariant data(const QModelIndex &index, int role) const;
 };
+
+#endif // __LIBRARY_HH__

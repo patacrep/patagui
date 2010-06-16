@@ -15,8 +15,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef __CONFIGDIALOG_H__
-#define __CONFIGDIALOG_H__
+#ifndef __PREFERENCES_HH__
+#define __PREFERENCES_HH__
 
 #include <QDialog>
 #include <QWidget>
@@ -107,4 +107,4 @@ private:
   bool m_isValid;
 };
 
-#endif // __CONFIGDIALOG_H__
+#endif // __PREFERENCES_HH__
