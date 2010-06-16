@@ -52,14 +52,20 @@ CMainWindow::CMainWindow()
           this, SLOT(setWindowModified(bool)));
   updateTitle(m_songbook->filename());
 
+  // Debugger Info DockWidget
+  m_logInfo = new QDockWidget( tr("Compilation log"), this );
+  m_logInfo->setMinimumWidth(250);
+  m_log = new QTextEdit;
+  m_log->setReadOnly(true);
+  m_logInfo->setWidget(m_log);
+  addDockWidget(Qt::BottomDockWidgetArea, m_logInfo);
+
   createActions();
   createMenus();
 
   //Connection to database
   if (connectDb())
     synchroniseWithLocalSongs();
-  else
-    applyDisplayColumn();
 
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
@@ -131,24 +137,14 @@ CMainWindow::CMainWindow()
   m_mainWidget->addTab(libraryTab, tr("Library"));
   setCentralWidget(m_mainWidget);
 
-  // auto adjust column display
-  applyDisplayColumn();
-
-  // Debugger Info DockWidget
-  m_logInfo = new QDockWidget( tr("Logs"), this );
-  m_logInfo->setMinimumWidth(250);
-  m_log = new QTextEdit;
-  m_log->setReadOnly(true);
-  m_logInfo->setWidget(m_log);
-  addDockWidget( Qt::BottomDockWidgetArea, m_logInfo );
-  m_logInfo->setVisible(false);
-
   // status bar with an embedded progress bar on the right
   m_progressBar->setTextVisible(false);
   m_progressBar->setRange(0, 0);
   m_progressBar->hide();
   statusBar()->addPermanentWidget(m_progressBar);
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
+
+  applyOptionChanges();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterChanged()
@@ -198,6 +194,7 @@ void CMainWindow::readSettings()
   m_displayColumnAlbum = settings.value("album", true).toBool();
   m_displayColumnLilypond = settings.value("lilypond", false).toBool();
   m_displayColumnCover = settings.value("cover", true).toBool();
+  m_displayCompilationLog = settings.value("log", true).toBool();
   settings.endGroup();
 }
 //------------------------------------------------------------------------------
@@ -208,7 +205,7 @@ void CMainWindow::writeSettings()
   settings.setValue("mainWindow/size", size());
 }
 //------------------------------------------------------------------------------
-void CMainWindow::applyDisplayColumn()
+void CMainWindow::applyOptionChanges()
 {
   m_view->setColumnHidden(0,!m_displayColumnArtist);
   m_view->setColumnHidden(1,!m_displayColumnTitle);
@@ -217,16 +214,7 @@ void CMainWindow::applyDisplayColumn()
   m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(5,!m_displayColumnCover);
   m_view->resizeColumnsToContents();
-}
-//------------------------------------------------------------------------------
-void CMainWindow::setDisplaySongInfo(bool value)
-{
-  m_songInfo->setVisible(value);
-}
-//------------------------------------------------------------------------------
-void CMainWindow::setDisplayLogInfo(bool value)
-{
-  m_logInfo->setVisible(value);
+  m_logInfo->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
@@ -291,21 +279,10 @@ void CMainWindow::createActions()
   m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs."));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
-  m_displaySongInfoAct = new QAction(tr("Display Song Info"), this);
-  m_displaySongInfoAct->setStatusTip(tr("Display information about the last selected song."));
-  m_displaySongInfoAct->setCheckable(true);
-  m_displaySongInfoAct->setChecked(true);
-  connect(m_displaySongInfoAct, SIGNAL(toggled(bool)), SLOT(setDisplaySongInfo(bool)));
-
-  m_displayLogInfoAct = new QAction(tr("Display Log Info"), this);
-  m_displayLogInfoAct->setStatusTip(tr("Output out the LaTeX compilation process."));
-  m_displayLogInfoAct->setCheckable(true);
-  m_displayLogInfoAct->setChecked(false);
-  connect(m_displayLogInfoAct, SIGNAL(toggled(bool)), SLOT(setDisplayLogInfo(bool)));
-
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
   m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents."));
-  connect(m_adjustColumnsAct, SIGNAL(triggered()), SLOT(applyDisplayColumn()));
+  connect(m_adjustColumnsAct, SIGNAL(triggered()),
+          m_view, SLOT(resizeColumnsToContents()));
 
   m_connectDbAct = new QAction(QIcon(":/icons/network-server.png"),
 			       tr("Connection to local database"), this);
@@ -368,7 +345,6 @@ void CMainWindow::synchroniseWithLocalSongs()
   m_view->sortByColumn(1, Qt::AscendingOrder);
   m_view->sortByColumn(0, Qt::AscendingOrder);
   m_view->show();
-  applyDisplayColumn();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::contextMenuEvent(QContextMenuEvent *event)
@@ -413,8 +389,6 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_rebuildDbAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
-  m_viewMenu->addAction(m_displaySongInfoAct);
-  m_viewMenu->addAction(m_displayLogInfoAct);
   m_viewMenu->addAction(m_adjustColumnsAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&Tools"));
@@ -523,7 +497,7 @@ void CMainWindow::preferences()
   ConfigDialog dialog;
   dialog.exec();
   readSettings();
-  applyDisplayColumn();
+  applyOptionChanges();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::about()

@@ -125,8 +125,16 @@ DisplayPage::DisplayPage(QWidget *parent)
   displayColumnsLayout->addWidget(m_coverCheckBox);
   displayColumnsGroupBox->setLayout(displayColumnsLayout);
 
+  QGroupBox *displayWindowsGroupBox = new QGroupBox(tr("Display windows"));
+  m_compilationLogCheckBox = new QCheckBox(tr("Compilation log"));
+
+  QVBoxLayout *displayWindowsLayout = new QVBoxLayout;
+  displayWindowsLayout->addWidget(m_compilationLogCheckBox);
+  displayWindowsGroupBox->setLayout(displayWindowsLayout);
+
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(displayColumnsGroupBox);
+  mainLayout->addWidget(displayWindowsGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 
@@ -143,6 +151,7 @@ void DisplayPage::readSettings()
   m_albumCheckBox->setChecked(settings.value("album", true).toBool());
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   m_coverCheckBox->setChecked(settings.value("cover", true).toBool());
+  m_compilationLogCheckBox->setChecked(settings.value("log", true).toBool());
   settings.endGroup();
 }
 
@@ -156,6 +165,7 @@ void DisplayPage::writeSettings()
   settings.setValue("album", m_albumCheckBox->isChecked());
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
   settings.setValue("cover", m_coverCheckBox->isChecked());
+  settings.setValue("log", m_compilationLogCheckBox->isChecked());
   settings.endGroup();
 }
 
@@ -174,7 +184,7 @@ OptionsPage::OptionsPage(QWidget *parent)
   QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
 
   // working path
-  QGroupBox *workingPathGroupBox 
+  QGroupBox *workingPathGroupBox
     = new QGroupBox(tr("Directory for Patacrep Songbook"));
 
   QPushButton *browseWorkingPathButton = new QPushButton(tr("Browse"));
@@ -193,7 +203,7 @@ OptionsPage::OptionsPage(QWidget *parent)
   workingPathGroupBox->setLayout(workingPathLayout);
 
   // check application
-  QGroupBox *checkApplicationGroupBox 
+  QGroupBox *checkApplicationGroupBox
     = new QGroupBox(tr("Check application dependencies"));
 
   QPushButton *checkApplicationButton = new QPushButton(tr("Check"));
@@ -225,7 +235,7 @@ void OptionsPage::browse()
   QString path = QFileDialog::getExistingDirectory(this,
                                                    tr("Songbook path"),
                                                    m_workingPath->text());
-  
+
   if (!path.isEmpty())
     {
       m_workingPath->setText(path);
@@ -319,7 +329,7 @@ void OptionsPage::checkApplication()
   process = new QProcess(m_gitLabel);
   connect(process, SIGNAL(error(QProcess::ProcessError)),
           this, SLOT(processError(QProcess::ProcessError)));
-  
+
   process->start("git", QStringList() << "--version");
   if (process->waitForFinished())
     {
@@ -331,7 +341,7 @@ void OptionsPage::checkApplication()
   process = new QProcess(m_lilypondLabel);
   connect(process, SIGNAL(error(QProcess::ProcessError)),
           this, SLOT(processError(QProcess::ProcessError)));
-  
+
   process->start("lilypond", QStringList() << "--version");
   if (process->waitForFinished())
     {

@@ -76,6 +76,7 @@ private:
   QCheckBox *m_albumCheckBox;
   QCheckBox *m_lilypondCheckBox;
   QCheckBox *m_coverCheckBox;
+  QCheckBox *m_compilationLogCheckBox;
 };
 
 /** \brief OptionPage is the config page used to specify general options
@@ -89,7 +90,7 @@ public:
 
 protected:
   void closeEvent(QCloseEvent *event);
-                                     
+
 private slots:
   void browse();
   void checkWorkingPath(const QString &path);

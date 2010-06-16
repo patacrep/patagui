@@ -79,9 +79,7 @@ private slots:
   void invertSelection();
   void updateSongsList();
 
-  void setDisplaySongInfo(bool value);
-  void setDisplayLogInfo(bool value);
-  void applyDisplayColumn();
+  void applyOptionChanges();
 
   bool connectDb();
   void filterChanged();
@@ -138,6 +136,7 @@ private:
   bool m_displayColumnAlbum;
   bool m_displayColumnLilypond;
   bool m_displayColumnCover;
+  bool m_displayCompilationLog;
 
   QProcess* m_buildProcess;
   QMdiArea* m_area;
@@ -176,8 +175,6 @@ private:
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;
-  QAction *m_displaySongInfoAct;
-  QAction *m_displayLogInfoAct;
   QAction *m_adjustColumnsAct;
   QAction *m_connectDbAct;
   QAction *m_downloadDbAct;
