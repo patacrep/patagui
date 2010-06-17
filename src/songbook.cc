@@ -251,54 +251,46 @@ void CSongbook::update()
 
 void CSongbook::changeTemplate(const QString & filename)
 {
-  // default template value
-  QString json = QString("({\"parameters\" : "
-                         "["
-                         "{\"name\":\"title\", \"description\":\"Title\", \"type\":\"string\"},"
-                         "{\"name\":\"author\", \"description\":\"Author\", \"type\":\"string\", \"default\":\"Alexandre\"},"
-                         "{\"name\":\"version\", \"description\":\"Version\", \"type\":\"string\", \"default\":\"1\"},"
-                         "{\"name\":\"subtitle\", \"description\":\"Subtitle\", \"type\":\"string\"},"
-                         "{\"name\":\"mail\", \"description\":\"Email\", \"type\":\"string\"},"
-                         "{\"name\":\"picture\", \"description\":\"Picture\", \"type\":\"string\"},"
-                         "{\"name\":\"picturecopyright\", \"description\":\"Copyright\", \"type\":\"string\"},"
-                         "{\"name\":\"footer\", \"description\":\"Footer\", \"type\":\"string\"},"
-                         "{\"name\":\"license\", \"description\":\"License\", \"type\":\"string\"}"
-                         "]})"
-                         );
+  QString templateFilename("songbook.tmpl");
+  if (!filename.isEmpty())
+    templateFilename = filename;
+  
+  QString json;
+
+  // reserved template parameters
+  QStringList reservedParameters;
+  reservedParameters << "name" << "booktype" << "songs" << "songslist" 
+                     << "template";
 
   // "shadeColor" << "fontSize";
   //"{\"name\":\"boxshade\", \"description\":\"Box Shade\", \"type\":\"color\"}"
 
   // read template file
-  if (!filename.isEmpty())
+  QSettings settings;
+  QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
+  QFile file(QString("%1/templates/%2").arg(workingPath).arg(templateFilename));
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-      QSettings settings;
-      QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
-      QFile file(QString("%1/templates/%2").arg(workingPath).arg(filename));
-      if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-          QTextStream in(&file);
-          QRegExp jsonFilter("^%%:");
-          QString line;
-          json = "(";
-          do {
-            line = in.readLine();
-            if (line.startsWith("%%:"))
-              {
-                json += line.remove(jsonFilter) + "\n";
-              }
+      QTextStream in(&file);
+      QRegExp jsonFilter("^%%:");
+      QString line;
+      json = "(";
+      do {
+        line = in.readLine();
+        if (line.startsWith("%%:"))
+          {
+            json += line.remove(jsonFilter) + "\n";
+          }
           } while (!line.isNull());
-          json += ")";
-          file.close();
-        }
-      else
-        {
-          qWarning() << "unable to open file in read mode";
-        }
+      json += ")";
+      file.close();
+    }
+  else
+    {
+      qWarning() << "unable to open file in read mode";
     }
 
   // Load json encoded songbook data
-  QScriptValue object;
   QScriptEngine engine;
 
   // check syntax
@@ -308,73 +300,67 @@ void CSongbook::changeTemplate(const QString & filename)
       qDebug() << "Error line "<< res.errorLineNumber()
                << " column " << res.errorColumnNumber()
                << ":" << res.errorMessage();
+      return;
     }
-      // evaluate the json data
-      object = engine.evaluate(json);
 
-      // load data into this object
-      if (object.isObject())
+  // evaluate the json data
+  QScriptValue parameters = engine.evaluate(json);
+
+  // load parameters data
+  if (parameters.isValid() && parameters.isArray())
+    {
+      QScriptValue svName;
+      QScriptValue svDescription;
+      QScriptValue svType;
+      QScriptValue svDefault;
+      QVariant oldValue;
+      int propertyType;
+
+      QMap< QString, QVariant > oldValues;
+      {
+        QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
+        while (it != m_parameters.constEnd())
+          {
+            oldValues.insert(it.key(),it.value()->value());
+            it++;
+          }
+        m_parameters.clear();
+        m_propertyManager->clear();
+      }
+
+      QtVariantProperty *item;
+      QScriptValueIterator it(parameters);
+      while (it.hasNext())
         {
-          QScriptValue sv;
-          QScriptValue svName;
-          QScriptValue svDescription;
-          QScriptValue svType;
-          QScriptValue svDefault;
-          QVariant oldValue;
-          int propertyType;
-
-          QMap< QString, QVariant > oldValues;
-          QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
-          while (it != m_parameters.constEnd())
+          it.next();
+          svName = it.value().property("name");
+          if (!reservedParameters.contains(svName.toString()))
             {
-              oldValues.insert(it.key(),it.value()->value());
-              it++;
-            }
-          m_parameters.clear();
-          m_propertyManager->clear();
-
-          QtVariantProperty *item;
-
-          // booktype property (always an array)
-          sv = object.property("parameters");
-          if (sv.isValid() && sv.isArray())
-            {
-              QScriptValueIterator it(sv);
-              while (it.hasNext())
+              svDescription = it.value().property("description");
+              svDefault = it.value().property("default");
+              svType = it.value().property("type");
+              if (svType.toString() == QString("string"))
+                propertyType = QVariant::String;
+              else if (svType.toString() == QString("color"))
+                propertyType = QVariant::Color;
+              else
+                propertyType = QVariant::String;
+          
+              item = m_propertyManager
+                ->addProperty(propertyType, svDescription.toString());
+              if (oldValues.contains(svName.toString()))
                 {
-                  it.next();
-                  svName = it.value().property("name");
-                  svDescription = it.value().property("description");
-                  svDefault = it.value().property("default");
-                  svType = it.value().property("type");
-                  if (svType.toString() == QString("string"))
-                    {
-                      propertyType = QVariant::String;
-                    }
-                  else if (svType.toString() == QString("color"))
-                    {
-                      propertyType = QVariant::Color;
-                    }
-                  else
-                    {
-                      propertyType = QVariant::String;
-                    }
-
-                  item = m_propertyManager
-                    ->addProperty(propertyType, svDescription.toString());
-                  if (oldValues.contains(svName.toString()))
-                    {
-                      item->setValue(oldValues.value(svName.toString()));
-                    }
-                  else if (svDefault.isValid())
-                    {
-                      item->setValue(svDefault.toVariant());
-                    }
-                  m_parameters.insert(svName.toString(), item);
-                  m_propertyEditor->addProperty(item);
+                  item->setValue(oldValues.value(svName.toString()));
                 }
+              else if (svDefault.isValid())
+                {
+                  item->setValue(svDefault.toVariant());
+                }
+              m_parameters.insert(svName.toString(), item);
+              m_propertyEditor->addProperty(item);
             }
         }
+    }
 }
 
 void CSongbook::save(const QString & filename)
