@@ -69,13 +69,13 @@ QSize ConfigDialog::sizeHint() const
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(contentsWidget);
-  optionsButton->setIcon(QIcon(":/icons/preferences-system.png"));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system"));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(contentsWidget);
-  displayButton->setIcon(QIcon(":/icons/preferences-columns.png"));
+  displayButton->setIcon(QIcon::fromTheme("preferences-columns"));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

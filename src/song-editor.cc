@@ -53,20 +53,20 @@ CSongEditor::CSongEditor(const QString & APath)
       // actions
       QAction* action = new QAction(tr("Save"), this);
       action->setShortcut(tr("Ctrl+S"));
-      action->setIcon(QIcon(":/icons/document-save"));
+      action->setIcon(QIcon::fromTheme("document-save"));
       action->setStatusTip(tr("Save modifications"));
       connect(action, SIGNAL(triggered()), this, SLOT(save()));
       toolbar->addAction(action);
 
       //undo redo
       action = new QAction(tr("Undo"), this);
-      action->setIcon(QIcon(":/icons/edit-undo"));
+      action->setIcon(QIcon::fromTheme("edit-undo"));
       action->setStatusTip(tr("Undo modifications"));
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(undo()));
       toolbar->addAction(action);
 
       action = new QAction(tr("Redo"), this);
-      action->setIcon(QIcon(":/icons/edit-redo"));
+      action->setIcon(QIcon::fromTheme("edit-redo"));
       action->setStatusTip(tr("Redo modifications"));
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
       toolbar->addAction(action);

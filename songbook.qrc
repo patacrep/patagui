@@ -1,22 +1,8 @@
- <!DOCTYPE RCC><RCC version="1.0">
- <qresource>
-     <file>icons/application-exit.png</file>
-     <file>icons/dialog-apply.png</file>
-     <file>icons/emblem-music.png</file>          
-     <file>icons/edit-clear.png</file>
-     <file>icons/document-save.png</file>
-     <file>icons/document-load.png</file>
-     <file>icons/list-add.png</file>
-     <file>icons/preferences-system.png</file>
-     <file>icons/preferences-columns.png</file>
-     <file>icons/text-x-generic.png</file>
-     <file>icons/image-x-generic.png</file>
-     <file>icons/unavailable.png</file>
-     <file>icons/unavailable-large.png</file>
-     <file>icons/network-server.png</file>
-     <file>icons/view-refresh.png</file>
-     <file>icons/patacrep.png</file>
-     <file>icons/edit-undo.png</file>
-     <file>icons/edit-redo.png</file>
- </qresource>
- </RCC>
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>icons/emblem-music.png</file>
+    <file>icons/unavailable.png</file>
+    <file>icons/unavailable-large.png</file>
+    <file>icons/patacrep.png</file>
+</qresource>
+</RCC>

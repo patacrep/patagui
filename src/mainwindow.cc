@@ -219,55 +219,59 @@ void CMainWindow::applyOptionChanges()
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
 {
-  m_newAct = new QAction(QIcon(":/icons/document-new.png"), tr("New"), this);
-  m_newAct->setShortcut(tr("Ctrl+N"));
-  m_newAct->setStatusTip(tr("New songbook"));
+  m_newSongAct = new QAction(tr("New Song"), this);
+  m_newSongAct->setIcon(QIcon::fromTheme("document-new"));
+  m_newSongAct->setStatusTip(tr("Create a new song"));
+  connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
+
+  m_newAct = new QAction(tr("New"), this);
+  m_newAct->setIcon(QIcon::fromTheme("folder-new"));
+  m_newAct->setShortcut(QKeySequence::New);
+  m_newAct->setStatusTip(tr("Create a new songbook"));
   connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
 
-  m_openAct = new QAction(QIcon(":/icons/document-load.png"), tr("Open"), this);
-  m_openAct->setShortcut(tr("Ctrl+O"));
+  m_openAct = new QAction(tr("Open..."), this);
+  m_openAct->setIcon(QIcon::fromTheme("document-open"));
+  m_openAct->setShortcut(QKeySequence::Open);
   m_openAct->setStatusTip(tr("Open a songbook"));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-  m_saveAct = new QAction(QIcon(":/icons/document-save.png"), tr("Save"), this);
-  m_saveAct->setShortcut(tr("Ctrl+S"));
+  m_saveAct = new QAction(tr("Save"), this);
+  m_saveAct->setIcon(QIcon::fromTheme("document-save"));
+  m_saveAct->setShortcut(QKeySequence::Save);
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
-  m_saveAsAct = new QAction(QIcon(":/icons/document-save.png"),
-                            tr("SaveAs"), this);
-  m_saveAsAct->setShortcut(tr("Maj+Ctrl+S"));
-  m_saveAsAct->setStatusTip(tr("Save the current songbook as"));
+  m_saveAsAct = new QAction(tr("Save As..."), this);
+  m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as"));
+  m_saveAsAct->setShortcut(QKeySequence::SaveAs);
+  m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-  m_aboutAct->setStatusTip(tr("Show the application's About box"));
+  m_aboutAct->setStatusTip(tr("About this application"));
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
-  m_exitAct = new QAction(tr("Exit"), this);
-  m_exitAct->setShortcut(tr("Ctrl+Q"));
-  m_exitAct->setStatusTip(tr("Exit the application"));
+  m_exitAct = new QAction(tr("Quit"), this);
+  m_exitAct->setShortcut(QKeySequence::Quit);
+  m_exitAct->setStatusTip(tr("Quit the program"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-  m_newSongAct = new QAction(QIcon(":/icons/document-load.png"), tr("New Song"), this);
-  // m_newSongAct->setShortcut(tr("Ctrl+N"));
-  m_newSongAct->setStatusTip(tr("Write a new song."));
-  connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
-
   m_buildAct = new QAction(tr("Build PDF"), this);
-  m_buildAct->setShortcut(tr("Ctrl+B"));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs."));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  m_cleanAct = new QAction(QIcon(":/icons/edit-clear.png"), tr("Clean"), this);
+  m_cleanAct = new QAction(tr("Clean"), this);
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
   m_cleanAct->setStatusTip(tr("Clean"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
-  m_preferencesAct->setStatusTip(tr("Select your preferences."));
+  m_preferencesAct->setStatusTip(tr("Configure the application"));
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
+  m_selectAllAct->setIcon(QIcon::fromTheme("select-all"));
   m_selectAllAct->setStatusTip(tr("Select all displayed songs."));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
@@ -284,13 +288,13 @@ void CMainWindow::createActions()
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           m_view, SLOT(resizeColumnsToContents()));
 
-  m_connectDbAct = new QAction(QIcon(":/icons/network-server.png"),
-			       tr("Connection to local database"), this);
+  m_connectDbAct = new QAction(tr("Connection to local database"), this);
+  m_connectDbAct->setIcon(QIcon::fromTheme("network-server"));
   m_connectDbAct->setStatusTip(tr("Connection to local database."));
   connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
 
-  m_rebuildDbAct = new QAction(QIcon(":/icons/view-refresh.png"),
-			       tr("Synchronise"), this);
+  m_rebuildDbAct = new QAction(tr("Synchronise"), this);
+  m_rebuildDbAct->setIcon(QIcon::fromTheme("view-refresh"));
   m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
   connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
