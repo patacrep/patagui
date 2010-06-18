@@ -255,12 +255,12 @@ void CSongbook::changeTemplate(const QString & filename)
   QString templateFilename("songbook.tmpl");
   if (!filename.isEmpty())
     templateFilename = filename;
-  
+
   QString json;
 
   // reserved template parameters
   QStringList reservedParameters;
-  reservedParameters << "name" << "booktype" << "songs" << "songslist" 
+  reservedParameters << "name" << "booktype" << "songs" << "songslist"
                      << "template";
 
   // "shadeColor" << "fontSize";
@@ -346,7 +346,7 @@ void CSongbook::changeTemplate(const QString & filename)
                 propertyType = QVariant::Color;
               else
                 propertyType = QVariant::String;
-          
+
               item = m_propertyManager
                 ->addProperty(propertyType, svDescription.toString());
               if (oldValues.contains(svName.toString()))
