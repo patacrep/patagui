@@ -249,10 +249,12 @@ void CMainWindow::createActions()
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   m_aboutAct = new QAction(tr("&About"), this);
+  m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
   m_aboutAct->setStatusTip(tr("About this application"));
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
+  m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
