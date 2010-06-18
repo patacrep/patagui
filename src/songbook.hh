@@ -23,7 +23,7 @@
 #include <QStringList>
 
 #include <QtVariantProperty>
-#include <QtTreePropertyBrowser>
+#include <QtButtonPropertyBrowser>
 
 class QWidget;
 class QLabel;
@@ -100,7 +100,7 @@ private:
   QCheckBox *m_tablatureCheckBox;
 
   QtVariantPropertyManager *m_propertyManager;
-  QtTreePropertyBrowser *m_propertyEditor;
+  QtButtonPropertyBrowser *m_propertyEditor;
 
   QStringList m_templates;
   QMap< QString, QtVariantProperty* > m_parameters;

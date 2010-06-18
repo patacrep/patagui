@@ -136,9 +136,10 @@ QWidget * CSongbook::panel()
       m_panel = new QWidget;
 
       m_propertyManager = new QtVariantPropertyManager();
-      m_propertyEditor = new QtTreePropertyBrowser();
+      m_propertyEditor = new QtButtonPropertyBrowser();
       m_propertyEditor->setFactoryForManager(m_propertyManager,
                                              new QtVariantEditorFactory());
+      m_propertyEditor->setMinimumSize(200,250);
 
 
       QBoxLayout *templateLayout = new QHBoxLayout;
@@ -154,7 +155,7 @@ QWidget * CSongbook::panel()
 
       QBoxLayout *mainLayout = new QVBoxLayout;
       mainLayout->addLayout(templateLayout);
-      mainLayout->addWidget(m_propertyEditor);
+      mainLayout->addWidget(m_propertyEditor,1);
 
       // BookType
       m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
