@@ -29,13 +29,13 @@ Highlighter::Highlighter(QTextDocument *parent)
   keywordFormat.setForeground(QColor(206,92,0));
   keywordFormat.setFontWeight(QFont::Bold);
   QStringList keywordPatterns;
-  keywordPatterns << "\\bgtab\\b" << "\\becho\\b"
-		  << "\\brep\\b" << "\\blilypond\\b"
-		  << "\\bimage\\b" << "\\bsongcolumns\\b"
-		  << "\\bcover\\b" << "\\bcapo\\b"
-		  << "\\bnolyrics\\b" << "\\bmusicnote\\b"
-		  << "\\btextnote\\b" << "\\bdots\\b"
-		  << "\\bsingle\\b"  ;
+  keywordPatterns << "\\\\gtab"     << "\\\\echo"
+		  << "\\\\rep"      << "\\\\lilypond"
+		  << "\\\\image"    << "\\\\songcolumns"
+		  << "\\\\cover"    << "\\\\capo"
+		  << "\\\\nolyrics" << "\\\\musicnote"
+		  << "\\\\textnote" << "\\\\dots"
+		  << "\\\\single"  ;
 
   foreach (const QString &pattern, keywordPatterns)
     {
@@ -48,7 +48,7 @@ Highlighter::Highlighter(QTextDocument *parent)
   keyword2Format.setForeground(QColor(164,0,0));
   keyword2Format.setFontWeight(QFont::Bold);
   QStringList keyword2Patterns;
-  keyword2Patterns << "\\bbar\\b" ;
+  keyword2Patterns << "\\\\bar" ;
 
   foreach (const QString &pattern, keyword2Patterns)
     {
@@ -61,35 +61,35 @@ Highlighter::Highlighter(QTextDocument *parent)
   environmentFormat.setFontWeight(QFont::Bold);
   environmentFormat.setForeground(QColor(78,154,6));
 
-  rule.pattern = QRegExp("\\bbegin\\b");
+  rule.pattern = QRegExp("\\\\begin");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
-  rule.pattern = QRegExp("\\bend\\b");
+  rule.pattern = QRegExp("\\\\end");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
-  rule.pattern = QRegExp("\\bbeginverse\\b");
+  rule.pattern = QRegExp("\\\\beginverse");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
-  rule.pattern = QRegExp("\\bendverse\\b");
+  rule.pattern = QRegExp("\\\\endverse");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
-  rule.pattern = QRegExp("\\bbeginchorus\\b");
+  rule.pattern = QRegExp("\\\\beginchorus");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
-  rule.pattern = QRegExp("\\bendchorus\\b");
+  rule.pattern = QRegExp("\\\\endchorus");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
-  rule.pattern = QRegExp("\\bbeginsong\\b");
+  rule.pattern = QRegExp("\\\\beginsong");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
-  rule.pattern = QRegExp("\\bendsong\\b");
+  rule.pattern = QRegExp("\\\\endsong");
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
