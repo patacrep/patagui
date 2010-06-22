@@ -58,6 +58,32 @@ CSongEditor::CSongEditor(const QString & APath)
       connect(action, SIGNAL(triggered()), this, SLOT(save()));
       toolbar->addAction(action);
 
+      toolbar->addSeparator();
+
+      //copy paste
+      action = new QAction(tr("Cut"), this);
+      action->setShortcut(tr("Ctrl+X"));
+      action->setIcon(QIcon::fromTheme("edit-cut"));
+      action->setStatusTip(tr("Cut the selection"));
+      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(cut()));
+      toolbar->addAction(action);
+
+      action = new QAction(tr("Copy"), this);
+      action->setShortcut(tr("Ctrl+C"));
+      action->setIcon(QIcon::fromTheme("edit-copy"));
+      action->setStatusTip(tr("Copy the selection"));
+      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(copy()));
+      toolbar->addAction(action);
+
+      action = new QAction(tr("Paste"), this);
+      action->setShortcut(tr("Ctrl+V"));
+      action->setIcon(QIcon::fromTheme("edit-paste"));
+      action->setStatusTip(tr("Paste clipboard content"));
+      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(paste()));
+      toolbar->addAction(action);
+
+      toolbar->addSeparator();
+
       //undo redo
       action = new QAction(tr("Undo"), this);
       action->setIcon(QIcon::fromTheme("edit-undo"));
@@ -71,6 +97,9 @@ CSongEditor::CSongEditor(const QString & APath)
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
       toolbar->addAction(action);
 
+      toolbar->addSeparator();
+
+      //songbook
       action = new QAction(tr("Verse"), this);
       action->setStatusTip(tr("New verse environment"));
       connect(action, SIGNAL(triggered()), this, SLOT(insertVerse()));
