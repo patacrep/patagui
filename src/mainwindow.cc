@@ -54,7 +54,6 @@ CMainWindow::CMainWindow()
 
   // Debugger Info DockWidget
   m_logInfo = new QDockWidget( tr("Compilation log"), this );
-  m_logInfo->setMinimumWidth(250);
   m_log = new QTextEdit;
   m_log->setReadOnly(true);
   m_logInfo->setWidget(m_log);
@@ -261,7 +260,7 @@ void CMainWindow::createActions()
 
   m_buildAct = new QAction(tr("Build"), this);
   m_buildAct->setIcon(QIcon::fromTheme("document-export"));
-  m_buildAct->setStatusTip(tr("Generate pdf from selected songs."));
+  m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
@@ -275,43 +274,43 @@ void CMainWindow::createActions()
 
   m_selectAllAct = new QAction(tr("Select all"), this);
   m_selectAllAct->setIcon(QIcon::fromTheme("edit-select-all"));
-  m_selectAllAct->setStatusTip(tr("Select all songs in the library."));
+  m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
-  m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library."));
+  m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
   connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library."));
+  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
-  m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents."));
+  m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           m_view, SLOT(resizeColumnsToContents()));
 
   m_connectDbAct = new QAction(tr("Connection to local database"), this);
   m_connectDbAct->setIcon(QIcon::fromTheme("network-server"));
-  m_connectDbAct->setStatusTip(tr("Connection to local database."));
+  m_connectDbAct->setStatusTip(tr("Connection to local database"));
   connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
 
   m_rebuildDbAct = new QAction(tr("Synchronise"), this);
-  m_rebuildDbAct->setStatusTip(tr("Synchronise the library from a local songs/ directory."));
+  m_rebuildDbAct->setStatusTip(tr("Synchronise the library from a local \"songs\" directory"));
   connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
   m_downloadDbAct = new QAction("Download",this);
   m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
-  m_downloadDbAct->setStatusTip(tr("Download a library from a distant repository."));
+  m_downloadDbAct->setStatusTip(tr("Download a library from a distant repository"));
   connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 
   CTools* tools = new CTools(workingPath(), this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
-  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized."));
+  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
   connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
 
   m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
-  m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)."));
+  m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
   connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
 }
 //------------------------------------------------------------------------------
@@ -480,7 +479,6 @@ void CMainWindow::updateCover(const QModelIndex & index)
 {
   if (!selectionModel()->hasSelection())
     {
-      //m_cover->load(QIcon::fromTheme("image-missing"));
       m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
       m_coverLabel.setPixmap(*m_cover);
       return;
@@ -497,7 +495,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
     m_cover->load(coverpath);
   else
     m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
-    //m_cover->load(QIcon::fromTheme("image-missing"));
+
   m_coverLabel.setPixmap(*m_cover);
 }
 //------------------------------------------------------------------------------
@@ -571,7 +569,7 @@ void CMainWindow::build()
 
   if (!m_songbook->filename().endsWith(QString(".sb")))
     {
-      statusBar()->showMessage(tr("Wrong filename. Build aborted."));
+      statusBar()->showMessage(tr("Wrong filename: songbook does not have \".sb\" extension. Build aborted."));
       return;
     }
 
