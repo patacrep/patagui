@@ -182,14 +182,22 @@ QWidget * CSongbook::panel()
       connect(m_tablatureCheckBox, SIGNAL(toggled(bool)),
               this, SLOT(updateBooktype(bool)));
 
-      QGridLayout *layout = new QGridLayout;
-      int line = -1;
+      QGroupBox* bookTypeGroupBox = new QGroupBox(tr("Book type"));
+      QVBoxLayout* bookTypeLayout = new QVBoxLayout;
+      bookTypeLayout->addWidget(m_chordbookRadioButton);
+      bookTypeLayout->addWidget(m_lyricbookRadioButton);
+      bookTypeGroupBox->setLayout(bookTypeLayout);
 
-      layout->addWidget(m_chordbookRadioButton,++line,0,1,2);
-      layout->addWidget(m_lyricbookRadioButton,line,2,1,2);
-      layout->addWidget(m_diagramCheckBox,++line,0,1,2);
-      layout->addWidget(m_lilypondCheckBox,line,2,1,2);
-      layout->addWidget(m_tablatureCheckBox,++line,0,1,2);
+      QGroupBox* optionsGroupBox = new QGroupBox(tr("Book options"));
+      QVBoxLayout* optionsLayout = new QVBoxLayout;
+      optionsLayout->addWidget(m_diagramCheckBox);
+      optionsLayout->addWidget(m_lilypondCheckBox);
+      optionsLayout->addWidget(m_tablatureCheckBox);
+      optionsGroupBox->setLayout(optionsLayout);
+
+      QHBoxLayout *layout = new QHBoxLayout;
+      layout->addWidget(bookTypeGroupBox);
+      layout->addWidget(optionsGroupBox);
 
       mainLayout->addLayout(layout);
 
