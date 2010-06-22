@@ -221,7 +221,7 @@ void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
   m_newSongAct->setIcon(QIcon::fromTheme("document-new"));
-  m_newSongAct->setStatusTip(tr("Create a new song"));
+  m_newSongAct->setStatusTip(tr("Write a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
@@ -256,16 +256,17 @@ void CMainWindow::createActions()
   m_exitAct = new QAction(tr("Quit"), this);
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
-  m_exitAct->setStatusTip(tr("Quit the program"));
+  m_exitAct->setStatusTip(tr("Exit the application"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-  m_buildAct = new QAction(tr("Build PDF"), this);
+  m_buildAct = new QAction(tr("Build"), this);
+  m_buildAct->setIcon(QIcon::fromTheme("document-export"));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs."));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
-  m_cleanAct->setStatusTip(tr("Clean"));
+  m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
@@ -273,16 +274,16 @@ void CMainWindow::createActions()
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
-  m_selectAllAct->setIcon(QIcon::fromTheme("select-all"));
-  m_selectAllAct->setStatusTip(tr("Select all displayed songs."));
+  m_selectAllAct->setIcon(QIcon::fromTheme("edit-select-all"));
+  m_selectAllAct->setStatusTip(tr("Select all songs in the library."));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
-  m_unselectAllAct->setStatusTip(tr("Unselect all displayed songs."));
+  m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library."));
   connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs."));
+  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library."));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
@@ -296,20 +297,20 @@ void CMainWindow::createActions()
   connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
 
   m_rebuildDbAct = new QAction(tr("Synchronise"), this);
-  m_rebuildDbAct->setIcon(QIcon::fromTheme("view-refresh"));
-  m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
+  m_rebuildDbAct->setStatusTip(tr("Synchronise the library from a local songs/ directory."));
   connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
   m_downloadDbAct = new QAction("Download",this);
-  m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep!"));
+  m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
+  m_downloadDbAct->setStatusTip(tr("Download a library from a distant repository."));
   connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 
   CTools* tools = new CTools(workingPath(), this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
-  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory."));
+  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized."));
   connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
 
-  m_checkerAct = new QAction( tr("Global check"), this);
+  m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
   m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)."));
   connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
 }
@@ -370,13 +371,11 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 //------------------------------------------------------------------------------
 void CMainWindow::createMenus()
 {
-  m_fileMenu = menuBar()->addMenu(tr("&File"));
+  m_fileMenu = menuBar()->addMenu(tr("&Songbook"));
   m_fileMenu->addAction(m_newAct);
   m_fileMenu->addAction(m_openAct);
   m_fileMenu->addAction(m_saveAct);
   m_fileMenu->addAction(m_saveAsAct);
-  m_fileMenu->addSeparator();
-  m_fileMenu->addAction(m_newSongAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_buildAct);
   m_fileMenu->addAction(m_cleanAct);
@@ -390,7 +389,9 @@ void CMainWindow::createMenus()
   m_editMenu->addSeparator();
   m_editMenu->addAction(m_preferencesAct);
 
-  m_dbMenu = menuBar()->addMenu(tr("&Database"));
+  m_dbMenu = menuBar()->addMenu(tr("&Library"));
+  m_dbMenu->addAction(m_newSongAct);
+  m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_downloadDbAct);
   m_dbMenu->addAction(m_rebuildDbAct);
 
@@ -479,7 +480,8 @@ void CMainWindow::updateCover(const QModelIndex & index)
 {
   if (!selectionModel()->hasSelection())
     {
-      m_cover->load(":/icons/unavailable-large");
+      //m_cover->load(QIcon::fromTheme("image-missing"));
+      m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(42,42));
       m_coverLabel.setPixmap(*m_cover);
       return;
     }
@@ -494,7 +496,8 @@ void CMainWindow::updateCover(const QModelIndex & index)
   if (QFile::exists(coverpath))
     m_cover->load(coverpath);
   else
-    m_cover->load(":/icons/unavailable-large");
+    m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(42,42));
+    //m_cover->load(QIcon::fromTheme("image-missing"));
   m_coverLabel.setPixmap(*m_cover);
 }
 //------------------------------------------------------------------------------
