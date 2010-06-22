@@ -184,24 +184,13 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
   //Draws lilypondcheck
   if ( index.column() == 2 )
     {
-      bool lily = QSqlTableModel::data( index, Qt::DisplayRole ).toBool();
       if ( Qt::DisplayRole == role )
 	return QString();
 
       QPixmap pixmap;
-#if QT_VERSION >= 0x040600
-      if (lily && !QPixmapCache::find(":/icons/emblem-music.png", &pixmap))
-	{
-	  pixmap.load(":/icons/emblem-music.png");
-	  QPixmapCache::insert(":/icons/emblem-music.png", pixmap);
-	}
-#else
-      if (lily && !QPixmapCache::find(":/icons/emblem-music.png", pixmap))
-	{
-	  pixmap.load(":/icons/emblem-music.png");
-	  QPixmapCache::insert(":/icons/emblem-music.png", pixmap);
-	}
-#endif
+      if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
+	pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
+      
       if ( role == Qt::DecorationRole )
 	return pixmap;
 
@@ -216,23 +205,17 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       if ( Qt::DisplayRole == role )
 	return QString();
 
-      if ( !QFile::exists( imgFile ) )
-	imgFile = ":/icons/unavailable.png";
-
-      QPixmap pixmap;
+      QPixmap pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
 #if QT_VERSION >= 0x040600
-      if (!imgFile.isEmpty() && !QPixmapCache::find(imgFile, &pixmap))
-	{
-	  pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
-	  QPixmapCache::insert(imgFile, pixmap);
-	}
+      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, &pixmap))
 #else
-      if (!imgFile.isEmpty() && !QPixmapCache::find(imgFile, pixmap))
+      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, pixmap))
+#endif
 	{
 	  pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
 	  QPixmapCache::insert(imgFile, pixmap);
 	}
-#endif
+           
       if ( role == Qt::DecorationRole )
 	return pixmap;
 

@@ -481,7 +481,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
   if (!selectionModel()->hasSelection())
     {
       //m_cover->load(QIcon::fromTheme("image-missing"));
-      m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(42,42));
+      m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
       m_coverLabel.setPixmap(*m_cover);
       return;
     }
@@ -496,7 +496,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
   if (QFile::exists(coverpath))
     m_cover->load(coverpath);
   else
-    m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(42,42));
+    m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
     //m_cover->load(QIcon::fromTheme("image-missing"));
   m_coverLabel.setPixmap(*m_cover);
 }
