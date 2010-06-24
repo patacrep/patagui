@@ -255,7 +255,7 @@ void CMainWindow::createActions()
   m_exitAct = new QAction(tr("Quit"), this);
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
-  m_exitAct->setStatusTip(tr("Exit the application"));
+  m_exitAct->setStatusTip(tr("Quit the program"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_buildAct = new QAction(tr("Build"), this);
@@ -898,6 +898,11 @@ void CMainWindow::songTemplate()
           qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
         }
 
+      //resize cover to avoid bug when image is too large
+      CTools* tools = new CTools(workingPath(), this);
+      tools->resizeCovers();
+      delete tools;
+ 
       //Insert the song in the library
       m_library->addSongFromFile(filepath);
       m_library->submitAll();
