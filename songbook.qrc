@@ -1,8 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file>icons/emblem-music.png</file>
-    <file>icons/unavailable.png</file>
-    <file>icons/unavailable-large.png</file>
     <file>icons/patacrep.png</file>
 </qresource>
 </RCC>
