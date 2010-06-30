@@ -260,7 +260,7 @@ void CMainWindow::createActions()
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_buildAct = new QAction(tr("Build PDF"), this);
-  m_buildAct->setStatusTip(tr("Generate pdf from selected songs."));
+  m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
@@ -274,43 +274,43 @@ void CMainWindow::createActions()
 
   m_selectAllAct = new QAction(tr("Select all"), this);
   m_selectAllAct->setIcon(QIcon::fromTheme("select-all"));
-  m_selectAllAct->setStatusTip(tr("Select all displayed songs."));
+  m_selectAllAct->setStatusTip(tr("Select all displayed songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
-  m_unselectAllAct->setStatusTip(tr("Unselect all displayed songs."));
+  m_unselectAllAct->setStatusTip(tr("Unselect all displayed songs"));
   connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs."));
+  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
-  m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents."));
+  m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           m_view, SLOT(resizeColumnsToContents()));
 
   m_connectDbAct = new QAction(tr("Connection to local database"), this);
   m_connectDbAct->setIcon(QIcon::fromTheme("network-server"));
-  m_connectDbAct->setStatusTip(tr("Connection to local database."));
+  m_connectDbAct->setStatusTip(tr("Connection to local database"));
   connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
 
   m_rebuildDbAct = new QAction(tr("Synchronise"), this);
   m_rebuildDbAct->setIcon(QIcon::fromTheme("view-refresh"));
-  m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs."));
+  m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs"));
   connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
   m_downloadDbAct = new QAction("Download",this);
-  m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep!"));
+  m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep"));
   connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 
   CTools* tools = new CTools(workingPath(), this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
-  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory."));
+  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory"));
   connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
 
   m_checkerAct = new QAction( tr("Global check"), this);
-  m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)."));
+  m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
   connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
 }
 //------------------------------------------------------------------------------
