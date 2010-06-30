@@ -405,7 +405,7 @@ void CMainWindow::createMenus()
 //------------------------------------------------------------------------------
 QWidget * CMainWindow::createSongInfoWidget()
 {
-  QWidget * songInfoWidget = new QWidget();
+  QWidget *songInfoWidget = new QWidget();
 
   CLabel *artistLabel = new CLabel();
   artistLabel->setElideMode(Qt::ElideRight);
@@ -416,7 +416,7 @@ QWidget * CMainWindow::createSongInfoWidget()
 
   QGroupBox* currentSongTagsBox = new QGroupBox;
   QGridLayout *songInfoLayout = new QGridLayout();
-  songInfoLayout->addWidget(new QLabel(tr("<b>Song:</b>")),0,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(new QLabel(tr("<b>Title:</b>")),0,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(titleLabel,0,1,1,1);
   songInfoLayout->addWidget(new QLabel(tr("<b>Artist:</b>")),1,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(artistLabel,1,1,1,1);
@@ -426,9 +426,9 @@ QWidget * CMainWindow::createSongInfoWidget()
   songInfoLayout->setRowStretch(3,10);
   currentSongTagsBox->setLayout(songInfoLayout);
 
-  QDialogButtonBox * buttonBox = new QDialogButtonBox;
-  QPushButton* editButton = new QPushButton(tr("Edit"));
-  QPushButton * deleteButton = new QPushButton(tr("Delete"));
+  QDialogButtonBox *buttonBox = new QDialogButtonBox;
+  QPushButton *editButton = new QPushButton(tr("Edit"));
+  QPushButton *deleteButton = new QPushButton(tr("Delete"));
   editButton->setDefault(true);
   buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
   buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);
@@ -436,12 +436,14 @@ QWidget * CMainWindow::createSongInfoWidget()
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
 
-  m_currentSongWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, songInfoWidget);
+  QBoxLayout *mainLayout = new QVBoxLayout;
+  QBoxLayout *songLayout = new QHBoxLayout;
   m_coverLabel.setAlignment(Qt::AlignTop);
-  m_currentSongWidgetLayout->addWidget(&m_coverLabel);
-  m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
-  m_currentSongWidgetLayout->addWidget(buttonBox);
-  m_currentSongWidgetLayout->addStretch(1);
+  songLayout->addWidget(&m_coverLabel);
+  songLayout->addWidget(currentSongTagsBox);
+  mainLayout->addLayout(songLayout);
+  mainLayout->addWidget(buttonBox);
+  songInfoWidget->setLayout(mainLayout);
 
   //Data mapper
   m_mapper = new QDataWidgetMapper();
