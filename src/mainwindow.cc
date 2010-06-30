@@ -52,13 +52,9 @@ CMainWindow::CMainWindow()
           this, SLOT(setWindowModified(bool)));
   updateTitle(m_songbook->filename());
 
-  // Debugger Info DockWidget
-  m_logInfo = new QDockWidget( tr("Compilation log"), this );
-  m_logInfo->setMinimumWidth(250);
+  // compilation log
   m_log = new QTextEdit;
   m_log->setReadOnly(true);
-  m_logInfo->setWidget(m_log);
-  addDockWidget(Qt::BottomDockWidgetArea, m_logInfo);
 
   createActions();
   createMenus();
@@ -109,18 +105,20 @@ CMainWindow::CMainWindow()
 
   // Main widgets
   //  QWidget *mainWidget = new QWidget;
-  QBoxLayout *mainLayout = new QHBoxLayout;
+  QBoxLayout *mainLayout = new QVBoxLayout;
+  QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
   leftLayout->addWidget(m_songbook->panel());
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
   leftLayout->addWidget(createSongInfoWidget());
   leftLayout->addStretch();
-  mainLayout->addLayout(leftLayout);
-  mainLayout->setStretch(0,1);
-  mainLayout->addWidget(m_view);
-  mainLayout->setStretch(1,2);
-  //  mainWidget->setLayout(mainLayout);
+  centerLayout->addLayout(leftLayout);
+  centerLayout->setStretch(0,1);
+  centerLayout->addWidget(m_view);
+  centerLayout->setStretch(1,2);
+  mainLayout->addLayout(centerLayout);
+  mainLayout->addWidget(m_log);
 
   QWidget* libraryTab = new QWidget;
   QBoxLayout *libraryLayout = new QVBoxLayout;
@@ -214,7 +212,7 @@ void CMainWindow::applyOptionChanges()
   m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(5,!m_displayColumnCover);
   m_view->resizeColumnsToContents();
-  m_logInfo->setVisible(m_displayCompilationLog);
+  m_log->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
