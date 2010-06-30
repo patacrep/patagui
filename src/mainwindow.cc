@@ -689,8 +689,11 @@ void CMainWindow::saveAs()
                                                   tr("Save as"),
                                                   workingPath(),
                                                   tr("Songbook (*.sb)"));
-  m_songbook->setFilename(filename);
-  save();
+  if (!filename.isEmpty())
+    {
+      m_songbook->setFilename(filename);
+      save();
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongsList()
