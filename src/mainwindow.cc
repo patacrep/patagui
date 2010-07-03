@@ -797,107 +797,130 @@ void CMainWindow::changeTabLabel()
 void CMainWindow::newSong()
 {
   //pop up new song dialog
-  CDialogNewSong *dialog = new CDialogNewSong();
-  connect(dialog, SIGNAL(accepted()), this, SLOT(songTemplate()));
+  m_newSongDialog = new CDialogNewSong();
+  connect( m_newSongDialog, SIGNAL(accepted()), this, SLOT(songTemplate()) );
+}
+//------------------------------------------------------------------------------
+bool CMainWindow::checkNewSongRequiredFields()
+{
+  if(!m_newSongDialog) return false;
+
+  //retrieve user input fields
+  QString title = m_newSongDialog->title() ;
+  QString artist = m_newSongDialog->artist() ;
+  
+  if (title.isEmpty() || artist.isEmpty())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please fill all required fields."));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setDefaultButton(QMessageBox::Ok);
+      msgBox.exec();
+      return false;
+    }
+  return true;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::songTemplate()
 {
-  QObject *object = QObject::sender();
-  if (CDialogNewSong *dialog = qobject_cast< CDialogNewSong* >(object))
+  if ( !checkNewSongRequiredFields() )
     {
-      //retrieve user input fields
-      QString title = dialog->title() ;
-      QString artist = dialog->artist() ;
-      uint nbColumns = (uint) dialog->nbColumns();
-      uint capo = (uint) dialog->capo();
-      QString album = dialog->album() ;
-      QString cover = dialog->cover() ;
+      //make a new instance of dialog since it is automtaically destroyed ...
+      newSong();
+      return;
+    }
+    
+  //retrieve user input fields
+  QString title = m_newSongDialog->title() ;
+  QString artist = m_newSongDialog->artist() ;
+  uint nbColumns = (uint) m_newSongDialog->nbColumns();
+  uint capo = (uint) m_newSongDialog->capo();
+  QString album = m_newSongDialog->album() ;
+  QString cover = m_newSongDialog->cover() ;
 
-      //remove dialog
-      delete dialog;
+  //remove dialog
+  delete m_newSongDialog;
 
-      //todo: better (do not close dialog+highlight missing fields)
-      //check required fields
-      if (title.isEmpty() || artist.isEmpty())
-	{
-	  QMessageBox msgBox;
-	  msgBox.setIcon(QMessageBox::Warning);
-	  msgBox.setText(tr("Please fill all required fields."));
-	  msgBox.setStandardButtons(QMessageBox::Cancel);
-	  msgBox.setDefaultButton(QMessageBox::Cancel);
-	  msgBox.exec();
-	  return;
-	}
-
-      //make new dir
-      QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
-      QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
-      QDir dir(dirpath);
-
-      if (!dir.exists())
-        dir.mkpath(dirpath);
-
-      //handle album and cover
-      bool img = false;
-      QFile coverFile(cover);
-      if (coverFile.exists())
-	{
-	  //copy in artist directory and resize
-	  QFileInfo fi(cover);
-	  QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
-	  qDebug() << "new file copy " << cover << "in "<< target;
-	  img = coverFile.copy(target);
-	  QFile copyCover(target);
-
-	  //if album is specified, rename cover accordingly
-	  if (!album.isEmpty()
-              && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
-                                   .arg(workingPath())
-                                   .arg(filenameConvention(artist,"_"))
-                                   .arg(filenameConvention(album,"-"))))
-	    copyCover.remove(); //remove copy if file already exists
-	}
-
-      //make template
-      QFile file(filepath);
-      QString songTemplate;
-      if (nbColumns > 0)
-        songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
-      if (!img)
-	songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
-      else
-	songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
-
-      if (capo>0)
-        songTemplate.append(QString("\\capo{%1}\n").arg(capo));
-      songTemplate.append(QString("\n\\endsong"));
-
-      if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-	{
-	  QTextStream stream (&file);
-	  stream << songTemplate;
-	  file.close();
-	}
-      else
-        {
-          qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
-        }
-
-      //Insert the song in the library
-      m_library->addSongFromFile(filepath);
-      m_library->submitAll();
-      m_view->sortByColumn(1, Qt::AscendingOrder);
-      m_view->sortByColumn(0, Qt::AscendingOrder);
-
-      //position index of new song in the library and launch song editor
-      CSongEditor* editor = new CSongEditor(filepath);
-      m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
-      editor->setTabIndex(m_mainWidget->currentIndex());
-      editor->setLabel(title);
-      connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
+  //todo: better (do not close dialog+highlight missing fields)
+  //check required fields
+  if (title.isEmpty() || artist.isEmpty())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please fill all required fields."));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
+      return;
     }
 
+  //make new dir
+  QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
+  QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
+  QDir dir(dirpath);
+
+  if (!dir.exists())
+    dir.mkpath(dirpath);
+
+  //handle album and cover
+  bool img = false;
+  QFile coverFile(cover);
+  if (coverFile.exists())
+    {
+      //copy in artist directory and resize
+      QFileInfo fi(cover);
+      QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
+      qDebug() << "new file copy " << cover << "in "<< target;
+      img = coverFile.copy(target);
+      QFile copyCover(target);
+
+      //if album is specified, rename cover accordingly
+      if (!album.isEmpty()
+	  && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
+			       .arg(workingPath())
+			       .arg(filenameConvention(artist,"_"))
+			       .arg(filenameConvention(album,"-"))))
+	copyCover.remove(); //remove copy if file already exists
+    }
+
+  //make template
+  QFile file(filepath);
+  QString songTemplate;
+  if (nbColumns > 0)
+    songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
+  if (!img)
+    songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
+  else
+    songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
+
+  if (capo>0)
+    songTemplate.append(QString("\\capo{%1}\n").arg(capo));
+  songTemplate.append(QString("\n\\endsong"));
+
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream (&file);
+      stream << songTemplate;
+      file.close();
+    }
+  else
+    {
+      qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
+    }
+
+  //Insert the song in the library
+  m_library->addSongFromFile(filepath);
+  m_library->submitAll();
+  m_view->sortByColumn(1, Qt::AscendingOrder);
+  m_view->sortByColumn(0, Qt::AscendingOrder);
+
+  //position index of new song in the library and launch song editor
+  CSongEditor* editor = new CSongEditor(filepath);
+  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
+  editor->setTabIndex(m_mainWidget->currentIndex());
+  editor->setLabel(title);
+  connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
 }
 //------------------------------------------------------------------------------
 QString CMainWindow::filenameConvention(const QString & str, const QString & sep)

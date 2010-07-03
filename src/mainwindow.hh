@@ -31,6 +31,7 @@
 class CSongbook;
 class CLibrary;
 class CTabWidget;
+class CDialogNewSong;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -73,7 +74,7 @@ private slots:
 
   void newSong();
   void songTemplate();
-
+  bool checkNewSongRequiredFields();
   void selectAll();
   void unselectAll();
   void invertSelection();
@@ -85,8 +86,6 @@ private slots:
   void filterChanged();
 
   void preferences();
-
-  void dockWidgetDirectionChanged(Qt::DockWidgetArea area);
 
   void songEditor();
   void changeTabLabel();
@@ -147,7 +146,7 @@ private:
   QLabel m_coverLabel;
   uint m_dbType;
   QBoxLayout* m_currentSongWidgetLayout;
-
+  CDialogNewSong *m_newSongDialog;
   QDockWidget* m_songbookInfo;
 
   //Logs
