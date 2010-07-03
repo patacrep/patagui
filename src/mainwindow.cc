@@ -461,20 +461,6 @@ QWidget * CMainWindow::createSongInfoWidget()
   return songInfoWidget;
 }
 //------------------------------------------------------------------------------
-void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
-{
-  if (area==Qt::LeftDockWidgetArea || area==Qt::RightDockWidgetArea)
-    {
-      m_currentSongWidgetLayout->setDirection(QBoxLayout::TopToBottom);
-      m_songInfo->setMaximumSize(300, 300);
-    }
-  else
-    {
-      m_currentSongWidgetLayout->setDirection(QBoxLayout::LeftToRight);
-      m_songInfo->setMaximumSize(450, 170);
-    }
-}
-//------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
 {
   if (!selectionModel()->hasSelection())
