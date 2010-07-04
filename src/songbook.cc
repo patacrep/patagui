@@ -164,6 +164,10 @@ QWidget * CSongbook::panel()
       m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
       m_tablatureCheckBox = new QCheckBox(tr("Tablature"));
 
+      // diagram option cannot (yet) be disabled
+      m_diagramCheckBox->setChecked(true);
+      m_diagramCheckBox->setEnabled(false);
+
       QButtonGroup *bookTypeGroup = new QButtonGroup();
       bookTypeGroup->addButton(m_chordbookRadioButton);
       bookTypeGroup->addButton(m_lyricbookRadioButton);
@@ -218,7 +222,8 @@ void CSongbook::updateBooktype(bool)
   else
     {
       m_bookType = QStringList() << "chorded";
-      m_diagramCheckBox->setEnabled(true);
+      // diagram option cannot (yet) be disabled
+      //m_diagramCheckBox->setEnabled(true);
       m_lilypondCheckBox->setEnabled(true);
       m_tablatureCheckBox->setEnabled(true);
       if (m_diagramCheckBox->isChecked())
@@ -252,7 +257,8 @@ void CSongbook::update()
   else if (m_bookType.contains("chorded"))
     {
       m_chordbookRadioButton->setChecked(true);
-      m_diagramCheckBox->setChecked(m_bookType.contains("diagram"));
+      // diagram option cannot (yet) be disabled
+      //m_diagramCheckBox->setChecked(m_bookType.contains("diagram"));
       m_lilypondCheckBox->setChecked(m_bookType.contains("lilypond"));
       m_tablatureCheckBox->setChecked(m_bookType.contains("tabs"));
     }
