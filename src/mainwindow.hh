@@ -91,6 +91,9 @@ private slots:
   void changeTabLabel();
   void deleteSong();
 
+  void setToolbarDisplayed(bool);
+  void setStatusbarDisplayed(bool);
+
   void about();
 
   void updateTitle(const QString &filename);
@@ -112,8 +115,12 @@ private:
 
   QString filenameConvention(const QString &, const QString & sep);
 
+  bool isToolbarDisplayed();
+  bool isStatusbarDisplayed();
+
   QItemSelectionModel * selectionModel();
   QDataWidgetMapper* m_mapper;
+  
   // Song library and view
   CLibrary *m_library;
   QSortFilterProxyModel *m_proxyModel;
@@ -137,6 +144,9 @@ private:
   bool m_displayColumnCover;
   bool m_displayCompilationLog;
 
+  bool m_isToolbarDisplayed;
+  bool m_isStatusbarDisplayed;
+
   QProcess* m_buildProcess;
   QMdiArea* m_area;
   QScrollArea* m_scrollArea;
@@ -159,6 +169,8 @@ private:
   QMenu *m_viewMenu;
   QMenu *m_helpMenu;
 
+  QToolBar *m_toolbar;
+
   // Actions
   QAction *m_newAct;
   QAction *m_openAct;
@@ -174,6 +186,8 @@ private:
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;
+  QAction *m_toolbarViewAct;
+  QAction *m_statusbarViewAct;
   QAction *m_adjustColumnsAct;
   QAction *m_connectDbAct;
   QAction *m_downloadDbAct;

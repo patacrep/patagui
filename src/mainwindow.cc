@@ -59,8 +59,20 @@ CMainWindow::CMainWindow()
   m_logInfo->setWidget(m_log);
   addDockWidget(Qt::BottomDockWidgetArea, m_logInfo);
 
+  // toolbar (for the build button)
+  m_toolbar = new QToolBar;
+  m_toolbar->setMovable(false);
+
   createActions();
   createMenus();
+
+  m_toolbar->addAction(m_newAct);
+  m_toolbar->addAction(m_openAct);
+  m_toolbar->addAction(m_saveAct);
+  m_toolbar->addAction(m_saveAsAct);
+  m_toolbar->addSeparator();
+  m_toolbar->addAction(m_buildAct);
+  m_isToolbarDisplayed = true;
 
   //Connection to database
   if (connectDb())
@@ -90,19 +102,9 @@ CMainWindow::CMainWindow()
   filterLayout->addWidget(filterLineEdit);
   filterLayout->addWidget(filterComboBox);
 
-  // toolbar (for the build button)
-  QToolBar *toolbar = new QToolBar;
-  toolbar->setMovable(false);
-  toolbar->addAction(m_newAct);
-  toolbar->addAction(m_openAct);
-  toolbar->addAction(m_saveAct);
-  toolbar->addAction(m_saveAsAct);
-  toolbar->addSeparator();
-  toolbar->addAction(m_buildAct);
-
   // organize the toolbar and the filter into an horizontal layout
   QBoxLayout *horizontalLayout = new QHBoxLayout;
-  horizontalLayout->addWidget(toolbar);
+  horizontalLayout->addWidget(m_toolbar);
   horizontalLayout->addStretch();
   horizontalLayout->addLayout(filterLayout);
 
@@ -142,7 +144,8 @@ CMainWindow::CMainWindow()
   m_progressBar->hide();
   statusBar()->addPermanentWidget(m_progressBar);
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
-
+  m_isStatusbarDisplayed = true;
+  
   applyOptionChanges();
 }
 //------------------------------------------------------------------------------
@@ -304,6 +307,18 @@ void CMainWindow::createActions()
   m_downloadDbAct->setStatusTip(tr("Download a library from a distant repository"));
   connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 
+  m_toolbarViewAct = new QAction("Toolbar",this);
+  m_toolbarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
+  m_toolbarViewAct->setCheckable(true);
+  m_toolbarViewAct->setChecked(isToolbarDisplayed());
+  connect(m_toolbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolbarDisplayed(bool)));
+  
+  m_statusbarViewAct = new QAction("Statusbar",this);
+  m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
+  m_statusbarViewAct->setCheckable(true);
+  m_toolbarViewAct->setChecked(isStatusbarDisplayed());
+  connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
+
   CTools* tools = new CTools(workingPath(), this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
   m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
@@ -312,6 +327,34 @@ void CMainWindow::createActions()
   m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
   m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
   connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
+}
+//------------------------------------------------------------------------------
+void CMainWindow::setToolbarDisplayed( bool value )
+{
+  if( m_isToolbarDisplayed != value && m_toolbar )
+    {
+      m_isToolbarDisplayed = value;
+      m_toolbar->setVisible(value);
+    }
+}
+//------------------------------------------------------------------------------
+bool CMainWindow::isToolbarDisplayed( )
+{
+  return m_isToolbarDisplayed;
+}
+//------------------------------------------------------------------------------
+void CMainWindow::setStatusbarDisplayed( bool value )
+{
+  if( m_isStatusbarDisplayed != value )
+    {
+      m_isStatusbarDisplayed = value;
+      statusBar()->setVisible(value);
+    }
+}
+//------------------------------------------------------------------------------
+bool CMainWindow::isStatusbarDisplayed( )
+{
+  return m_isStatusbarDisplayed;
 }
 //------------------------------------------------------------------------------
 bool CMainWindow::connectDb()
@@ -395,6 +438,8 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_rebuildDbAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
+  m_viewMenu->addAction(m_toolbarViewAct);
+  m_viewMenu->addAction(m_statusbarViewAct);
   m_viewMenu->addAction(m_adjustColumnsAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&Tools"));
