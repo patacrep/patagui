@@ -463,11 +463,11 @@ QWidget * CMainWindow::createSongInfoWidget()
 
   QGroupBox* currentSongTagsBox = new QGroupBox;
   QGridLayout *songInfoLayout = new QGridLayout();
-  songInfoLayout->addWidget(new QLabel(tr("<b>Song:</b>")),0,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(new QLabel(tr("<i>Title:</i>")),0,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(titleLabel,0,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("<b>Artist:</b>")),1,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(artistLabel,1,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("<b>Album:</b>")),2,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(new QLabel(tr("<i>Album:</i>")),2,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(albumLabel,2,1,1,1);
   songInfoLayout->setColumnStretch(2,1);
   songInfoLayout->setRowStretch(3,10);
@@ -1009,7 +1009,7 @@ void CMainWindow::deleteSong()
 
   if (QMessageBox::question
      (this, this->windowTitle(),
-      QString(tr("This will remove the file %1 ?")).arg(path),
+      QString(tr("Are you sure you want to permanently remove the file %1 ?")).arg(path),
       QMessageBox::Yes,
       QMessageBox::No,
       QMessageBox::NoButton) == QMessageBox::Yes)

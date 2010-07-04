@@ -55,7 +55,6 @@ public slots:
   void readProcessOut();
   void downloadDialog();
   void synchroniseWithLocalSongs();
-  // void playSong();
 
   void setWorkingPath(QString dirname);
 
