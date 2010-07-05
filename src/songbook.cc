@@ -318,7 +318,7 @@ void CSongbook::changeTemplate(const QString & filename)
       qWarning() << "unable to open file in read mode";
     }
 
-  qDebug() << "json ==== "<< json ;
+  //qDebug() << "json ==== "<< json ;
 
   // Load json encoded songbook data
   QScriptEngine engine;
