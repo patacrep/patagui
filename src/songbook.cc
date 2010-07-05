@@ -270,7 +270,7 @@ void CSongbook::changeTemplate(const QString & filename)
   if (!filename.isEmpty())
     templateFilename = filename;
   
-  qDebug() << "template filename  = "<< templateFilename ;
+  //qDebug() << "template filename  = "<< templateFilename ;
 
   QString json;
 
@@ -286,7 +286,7 @@ void CSongbook::changeTemplate(const QString & filename)
   QSettings settings;
   QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
 
-  qDebug() << "working path  = "<< workingPath ;
+  //qDebug() << "working path  = "<< workingPath ;
 
   QFile file(QString("%1/templates/%2").arg(workingPath).arg(templateFilename));
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -298,16 +298,16 @@ void CSongbook::changeTemplate(const QString & filename)
       do {
         line = in.readLine();
 
-	qDebug() << "processing line = " << line ; 
+	//qDebug() << "processing line = " << line ; 
 	
         if (line.startsWith("%%:"))
           {
-	    qDebug() << "remove line = " << line ; 
+	    //qDebug() << "remove line = " << line ; 
             json += line.remove(jsonFilter) + "\n";
           }
 	else
 	  {
-	    qDebug() << "line does notn start with %%: = " << line ; 
+	    //qDebug() << "line does notn start with %%: = " << line ; 
 	  }
       } while (!line.isNull());
       json += ")";
