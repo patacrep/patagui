@@ -52,12 +52,9 @@ CMainWindow::CMainWindow()
           this, SLOT(setWindowModified(bool)));
   updateTitle(m_songbook->filename());
 
-  // Debugger Info DockWidget
-  m_logInfo = new QDockWidget( tr("Compilation log"), this );
+  // compilation log
   m_log = new QTextEdit;
   m_log->setReadOnly(true);
-  m_logInfo->setWidget(m_log);
-  addDockWidget(Qt::BottomDockWidgetArea, m_logInfo);
 
   // toolbar (for the build button)
   m_toolbar = new QToolBar;
@@ -110,18 +107,20 @@ CMainWindow::CMainWindow()
 
   // Main widgets
   //  QWidget *mainWidget = new QWidget;
-  QBoxLayout *mainLayout = new QHBoxLayout;
+  QBoxLayout *mainLayout = new QVBoxLayout;
+  QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
   leftLayout->addWidget(m_songbook->panel());
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
   leftLayout->addWidget(createSongInfoWidget());
   leftLayout->addStretch();
-  mainLayout->addLayout(leftLayout);
-  mainLayout->setStretch(0,1);
-  mainLayout->addWidget(m_view);
-  mainLayout->setStretch(1,2);
-  //  mainWidget->setLayout(mainLayout);
+  centerLayout->addLayout(leftLayout);
+  centerLayout->setStretch(0,1);
+  centerLayout->addWidget(m_view);
+  centerLayout->setStretch(1,2);
+  mainLayout->addLayout(centerLayout);
+  mainLayout->addWidget(m_log);
 
   QWidget* libraryTab = new QWidget;
   QBoxLayout *libraryLayout = new QVBoxLayout;
@@ -216,7 +215,7 @@ void CMainWindow::applyOptionChanges()
   m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(5,!m_displayColumnCover);
   m_view->resizeColumnsToContents();
-  m_logInfo->setVisible(m_displayCompilationLog);
+  m_log->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
@@ -452,7 +451,7 @@ void CMainWindow::createMenus()
 //------------------------------------------------------------------------------
 QWidget * CMainWindow::createSongInfoWidget()
 {
-  QWidget * songInfoWidget = new QWidget();
+  QWidget *songInfoWidget = new QWidget();
 
   CLabel *artistLabel = new CLabel();
   artistLabel->setElideMode(Qt::ElideRight);
@@ -473,9 +472,9 @@ QWidget * CMainWindow::createSongInfoWidget()
   songInfoLayout->setRowStretch(3,10);
   currentSongTagsBox->setLayout(songInfoLayout);
 
-  QDialogButtonBox * buttonBox = new QDialogButtonBox;
-  QPushButton* editButton = new QPushButton(tr("Edit"));
-  QPushButton * deleteButton = new QPushButton(tr("Delete"));
+  QDialogButtonBox *buttonBox = new QDialogButtonBox;
+  QPushButton *editButton = new QPushButton(tr("Edit"));
+  QPushButton *deleteButton = new QPushButton(tr("Delete"));
   editButton->setDefault(true);
   buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
   buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);
@@ -483,12 +482,14 @@ QWidget * CMainWindow::createSongInfoWidget()
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
 
-  m_currentSongWidgetLayout = new QBoxLayout(QBoxLayout::TopToBottom, songInfoWidget);
+  QBoxLayout *mainLayout = new QVBoxLayout;
+  QBoxLayout *songLayout = new QHBoxLayout;
   m_coverLabel.setAlignment(Qt::AlignTop);
-  m_currentSongWidgetLayout->addWidget(&m_coverLabel);
-  m_currentSongWidgetLayout->addWidget(currentSongTagsBox);
-  m_currentSongWidgetLayout->addWidget(buttonBox);
-  m_currentSongWidgetLayout->addStretch(1);
+  songLayout->addWidget(&m_coverLabel);
+  songLayout->addWidget(currentSongTagsBox);
+  mainLayout->addLayout(songLayout);
+  mainLayout->addWidget(buttonBox);
+  songInfoWidget->setLayout(mainLayout);
 
   //Data mapper
   m_mapper = new QDataWidgetMapper();
@@ -720,8 +721,11 @@ void CMainWindow::saveAs()
                                                   tr("Save as"),
                                                   workingPath(),
                                                   tr("Songbook (*.sb)"));
-  m_songbook->setFilename(filename);
-  save();
+  if (!filename.isEmpty())
+    {
+      m_songbook->setFilename(filename);
+      save();
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongsList()
