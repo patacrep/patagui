@@ -189,7 +189,12 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 
       QPixmap pixmap;
       if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
-	pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
+#if QT_VERSION >= 0x040600
+      return pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
+#else
+      return pixmap;
+#endif
+      
       
       if ( role == Qt::DecorationRole )
 	return pixmap;
@@ -205,7 +210,12 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       if ( Qt::DisplayRole == role )
 	return QString();
 
+#if QT_VERSION >= 0x040600
       QPixmap pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
+#else
+      QPixmap pixmap;
+#endif
+
 #if QT_VERSION >= 0x040600
       if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, &pixmap))
 #else

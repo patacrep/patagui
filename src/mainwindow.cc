@@ -56,8 +56,20 @@ CMainWindow::CMainWindow()
   m_log = new QTextEdit;
   m_log->setReadOnly(true);
 
+  // toolbar (for the build button)
+  m_toolbar = new QToolBar;
+  m_toolbar->setMovable(false);
+
   createActions();
   createMenus();
+
+  m_toolbar->addAction(m_newAct);
+  m_toolbar->addAction(m_openAct);
+  m_toolbar->addAction(m_saveAct);
+  m_toolbar->addAction(m_saveAsAct);
+  m_toolbar->addSeparator();
+  m_toolbar->addAction(m_buildAct);
+  m_isToolbarDisplayed = true;
 
   //Connection to database
   if (connectDb())
@@ -87,19 +99,9 @@ CMainWindow::CMainWindow()
   filterLayout->addWidget(filterLineEdit);
   filterLayout->addWidget(filterComboBox);
 
-  // toolbar (for the build button)
-  QToolBar *toolbar = new QToolBar;
-  toolbar->setMovable(false);
-  toolbar->addAction(m_newAct);
-  toolbar->addAction(m_openAct);
-  toolbar->addAction(m_saveAct);
-  toolbar->addAction(m_saveAsAct);
-  toolbar->addSeparator();
-  toolbar->addAction(m_buildAct);
-
   // organize the toolbar and the filter into an horizontal layout
   QBoxLayout *horizontalLayout = new QHBoxLayout;
-  horizontalLayout->addWidget(toolbar);
+  horizontalLayout->addWidget(m_toolbar);
   horizontalLayout->addStretch();
   horizontalLayout->addLayout(filterLayout);
 
@@ -141,7 +143,8 @@ CMainWindow::CMainWindow()
   m_progressBar->hide();
   statusBar()->addPermanentWidget(m_progressBar);
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
-
+  m_isStatusbarDisplayed = true;
+  
   applyOptionChanges();
 }
 //------------------------------------------------------------------------------
@@ -221,7 +224,7 @@ void CMainWindow::createActions()
 #if QT_VERSION >= 0x040600
   m_newSongAct->setIcon(QIcon::fromTheme("document-new"));
 #endif
-  m_newSongAct->setStatusTip(tr("Create a new song"));
+  m_newSongAct->setStatusTip(tr("Write a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
@@ -272,14 +275,16 @@ void CMainWindow::createActions()
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_buildAct = new QAction(tr("Build PDF"), this);
+#if QT_VERSION >= 0x040600
+  m_buildAct->setIcon(QIcon::fromTheme("document-export"));
+#endif
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
 #if QT_VERSION >= 0x040600
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
-#endif
-  m_cleanAct->setStatusTip(tr("Clean"));
+  m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
@@ -288,17 +293,17 @@ void CMainWindow::createActions()
 
   m_selectAllAct = new QAction(tr("Select all"), this);
 #if QT_VERSION >= 0x040600
-  m_selectAllAct->setIcon(QIcon::fromTheme("select-all"));
+  m_selectAllAct->setIcon(QIcon::fromTheme("edit-select-all"));
 #endif
-  m_selectAllAct->setStatusTip(tr("Select all displayed songs"));
+  m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
-  m_unselectAllAct->setStatusTip(tr("Unselect all displayed songs"));
+  m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
   connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs"));
+  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
@@ -317,21 +322,62 @@ void CMainWindow::createActions()
 #if QT_VERSION >= 0x040600
   m_rebuildDbAct->setIcon(QIcon::fromTheme("view-refresh"));
 #endif
-  m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs"));
-  connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
   m_downloadDbAct = new QAction("Download",this);
   m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep"));
+#if QT_VERSION >= 0x040600
+  m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
+#endif
   connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
+
+  m_toolbarViewAct = new QAction("Toolbar",this);
+  m_toolbarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
+  m_toolbarViewAct->setCheckable(true);
+  m_toolbarViewAct->setChecked(isToolbarDisplayed());
+  connect(m_toolbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolbarDisplayed(bool)));
+  
+  m_statusbarViewAct = new QAction("Statusbar",this);
+  m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
+  m_statusbarViewAct->setCheckable(true);
+  m_toolbarViewAct->setChecked(isStatusbarDisplayed());
+  connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
   CTools* tools = new CTools(workingPath(), this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
-  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized in songbook directory"));
+  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
   connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
 
-  m_checkerAct = new QAction( tr("Global check"), this);
+  m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
   m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
   connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
+}
+//------------------------------------------------------------------------------
+void CMainWindow::setToolbarDisplayed( bool value )
+{
+  if( m_isToolbarDisplayed != value && m_toolbar )
+    {
+      m_isToolbarDisplayed = value;
+      m_toolbar->setVisible(value);
+    }
+}
+//------------------------------------------------------------------------------
+bool CMainWindow::isToolbarDisplayed( )
+{
+  return m_isToolbarDisplayed;
+}
+//------------------------------------------------------------------------------
+void CMainWindow::setStatusbarDisplayed( bool value )
+{
+  if( m_isStatusbarDisplayed != value )
+    {
+      m_isStatusbarDisplayed = value;
+      statusBar()->setVisible(value);
+    }
+}
+//------------------------------------------------------------------------------
+bool CMainWindow::isStatusbarDisplayed( )
+{
+  return m_isStatusbarDisplayed;
 }
 //------------------------------------------------------------------------------
 bool CMainWindow::connectDb()
@@ -390,13 +436,11 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 //------------------------------------------------------------------------------
 void CMainWindow::createMenus()
 {
-  m_fileMenu = menuBar()->addMenu(tr("&File"));
+  m_fileMenu = menuBar()->addMenu(tr("&Songbook"));
   m_fileMenu->addAction(m_newAct);
   m_fileMenu->addAction(m_openAct);
   m_fileMenu->addAction(m_saveAct);
   m_fileMenu->addAction(m_saveAsAct);
-  m_fileMenu->addSeparator();
-  m_fileMenu->addAction(m_newSongAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_buildAct);
   m_fileMenu->addAction(m_cleanAct);
@@ -410,11 +454,15 @@ void CMainWindow::createMenus()
   m_editMenu->addSeparator();
   m_editMenu->addAction(m_preferencesAct);
 
-  m_dbMenu = menuBar()->addMenu(tr("&Database"));
+  m_dbMenu = menuBar()->addMenu(tr("&Library"));
+  m_dbMenu->addAction(m_newSongAct);
+  m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_downloadDbAct);
   m_dbMenu->addAction(m_rebuildDbAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
+  m_viewMenu->addAction(m_toolbarViewAct);
+  m_viewMenu->addAction(m_statusbarViewAct);
   m_viewMenu->addAction(m_adjustColumnsAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&Tools"));
@@ -438,11 +486,11 @@ QWidget * CMainWindow::createSongInfoWidget()
 
   QGroupBox* currentSongTagsBox = new QGroupBox;
   QGridLayout *songInfoLayout = new QGridLayout();
-  songInfoLayout->addWidget(new QLabel(tr("<b>Title:</b>")),0,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(new QLabel(tr("<i>Title:</i>")),0,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(titleLabel,0,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("<b>Artist:</b>")),1,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(artistLabel,1,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("<b>Album:</b>")),2,0,1,1,Qt::AlignLeft);
+  songInfoLayout->addWidget(new QLabel(tr("<i>Album:</i>")),2,0,1,1,Qt::AlignLeft);
   songInfoLayout->addWidget(albumLabel,2,1,1,1);
   songInfoLayout->setColumnStretch(2,1);
   songInfoLayout->setRowStretch(3,10);
@@ -458,12 +506,10 @@ QWidget * CMainWindow::createSongInfoWidget()
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
 
-  //  QBoxLayout *mainLayout = new QVBoxLayout;
   QGridLayout *songLayout = new QGridLayout;
   m_coverLabel.setAlignment(Qt::AlignTop);
   songLayout->addWidget(&m_coverLabel,0,0,1,1);
   songLayout->addWidget(currentSongTagsBox,0,1,2,1);
-  //songLayout->addLayout(songLayout);
   songLayout->addWidget(buttonBox,1,0,1,1);
   songInfoWidget->setLayout(songLayout);
 
@@ -481,20 +527,6 @@ QWidget * CMainWindow::createSongInfoWidget()
           SLOT(updateCover(const QModelIndex &)));
 
   return songInfoWidget;
-}
-//------------------------------------------------------------------------------
-void CMainWindow::dockWidgetDirectionChanged(Qt::DockWidgetArea area)
-{
-  if (area==Qt::LeftDockWidgetArea || area==Qt::RightDockWidgetArea)
-    {
-      m_currentSongWidgetLayout->setDirection(QBoxLayout::TopToBottom);
-      m_songInfo->setMaximumSize(300, 300);
-    }
-  else
-    {
-      m_currentSongWidgetLayout->setDirection(QBoxLayout::LeftToRight);
-      m_songInfo->setMaximumSize(450, 170);
-    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
@@ -599,7 +631,7 @@ void CMainWindow::build()
 
   if (!m_songbook->filename().endsWith(QString(".sb")))
     {
-      statusBar()->showMessage(tr("Wrong filename. Build aborted."));
+      statusBar()->showMessage(tr("Wrong filename: songbook does not have \".sb\" extension. Build aborted."));
       return;
     }
 
@@ -844,107 +876,135 @@ void CMainWindow::changeTabLabel()
 void CMainWindow::newSong()
 {
   //pop up new song dialog
-  CDialogNewSong *dialog = new CDialogNewSong();
-  connect(dialog, SIGNAL(accepted()), this, SLOT(songTemplate()));
+  m_newSongDialog = new CDialogNewSong();
+  connect( m_newSongDialog, SIGNAL(accepted()), this, SLOT(songTemplate()) );
+}
+//------------------------------------------------------------------------------
+bool CMainWindow::checkNewSongRequiredFields()
+{
+  if(!m_newSongDialog) return false;
+
+  //retrieve user input fields
+  QString title = m_newSongDialog->title() ;
+  QString artist = m_newSongDialog->artist() ;
+  
+  if (title.isEmpty() || artist.isEmpty())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please fill all required fields."));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setDefaultButton(QMessageBox::Ok);
+      msgBox.exec();
+      return false;
+    }
+  return true;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::songTemplate()
 {
-  QObject *object = QObject::sender();
-  if (CDialogNewSong *dialog = qobject_cast< CDialogNewSong* >(object))
+  if ( !checkNewSongRequiredFields() )
     {
-      //retrieve user input fields
-      QString title = dialog->title() ;
-      QString artist = dialog->artist() ;
-      uint nbColumns = (uint) dialog->nbColumns();
-      uint capo = (uint) dialog->capo();
-      QString album = dialog->album() ;
-      QString cover = dialog->cover() ;
+      //make a new instance of dialog since it is automtaically destroyed ...
+      newSong();
+      return;
+    }
+    
+  //retrieve user input fields
+  QString title = m_newSongDialog->title() ;
+  QString artist = m_newSongDialog->artist() ;
+  uint nbColumns = (uint) m_newSongDialog->nbColumns();
+  uint capo = (uint) m_newSongDialog->capo();
+  QString album = m_newSongDialog->album() ;
+  QString cover = m_newSongDialog->cover() ;
 
-      //remove dialog
-      delete dialog;
+  //remove dialog
+  delete m_newSongDialog;
 
-      //todo: better (do not close dialog+highlight missing fields)
-      //check required fields
-      if (title.isEmpty() || artist.isEmpty())
-	{
-	  QMessageBox msgBox;
-	  msgBox.setIcon(QMessageBox::Warning);
-	  msgBox.setText(tr("Please fill all required fields."));
-	  msgBox.setStandardButtons(QMessageBox::Cancel);
-	  msgBox.setDefaultButton(QMessageBox::Cancel);
-	  msgBox.exec();
-	  return;
-	}
-
-      //make new dir
-      QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
-      QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
-      QDir dir(dirpath);
-
-      if (!dir.exists())
-        dir.mkpath(dirpath);
-
-      //handle album and cover
-      bool img = false;
-      QFile coverFile(cover);
-      if (coverFile.exists())
-	{
-	  //copy in artist directory and resize
-	  QFileInfo fi(cover);
-	  QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
-	  qDebug() << "new file copy " << cover << "in "<< target;
-	  img = coverFile.copy(target);
-	  QFile copyCover(target);
-
-	  //if album is specified, rename cover accordingly
-	  if (!album.isEmpty()
-              && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
-                                   .arg(workingPath())
-                                   .arg(filenameConvention(artist,"_"))
-                                   .arg(filenameConvention(album,"-"))))
-	    copyCover.remove(); //remove copy if file already exists
-	}
-
-      //make template
-      QFile file(filepath);
-      QString songTemplate;
-      if (nbColumns > 0)
-        songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
-      if (!img)
-	songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
-      else
-	songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
-
-      if (capo>0)
-        songTemplate.append(QString("\\capo{%1}\n").arg(capo));
-      songTemplate.append(QString("\n\\endsong"));
-
-      if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-	{
-	  QTextStream stream (&file);
-	  stream << songTemplate;
-	  file.close();
-	}
-      else
-        {
-          qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
-        }
-
-      //Insert the song in the library
-      m_library->addSongFromFile(filepath);
-      m_library->submitAll();
-      m_view->sortByColumn(1, Qt::AscendingOrder);
-      m_view->sortByColumn(0, Qt::AscendingOrder);
-
-      //position index of new song in the library and launch song editor
-      CSongEditor* editor = new CSongEditor(filepath);
-      m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
-      editor->setTabIndex(m_mainWidget->currentIndex());
-      editor->setLabel(title);
-      connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
+  //todo: better (do not close dialog+highlight missing fields)
+  //check required fields
+  if (title.isEmpty() || artist.isEmpty())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please fill all required fields."));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
+      return;
     }
 
+  //make new dir
+  QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
+  QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
+  QDir dir(dirpath);
+
+  if (!dir.exists())
+    dir.mkpath(dirpath);
+
+  //handle album and cover
+  bool img = false;
+  QFile coverFile(cover);
+  if (coverFile.exists())
+    {
+      //copy in artist directory and resize
+      QFileInfo fi(cover);
+      QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
+      qDebug() << "new file copy " << cover << "in "<< target;
+      img = coverFile.copy(target);
+      QFile copyCover(target);
+
+      //if album is specified, rename cover accordingly
+      if (!album.isEmpty()
+	  && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
+			       .arg(workingPath())
+			       .arg(filenameConvention(artist,"_"))
+			       .arg(filenameConvention(album,"-"))))
+	copyCover.remove(); //remove copy if file already exists
+    }
+
+  //make template
+  QFile file(filepath);
+  QString songTemplate;
+  if (nbColumns > 0)
+    songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
+  if (!img)
+    songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
+  else
+    songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
+
+  if (capo>0)
+    songTemplate.append(QString("\\capo{%1}\n").arg(capo));
+  songTemplate.append(QString("\n\\endsong"));
+
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream (&file);
+      stream << songTemplate;
+      file.close();
+    }
+  else
+    {
+      qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
+    }
+
+  //resize cover to avoid bug when image is too large
+  CTools* tools = new CTools(workingPath(), this);
+  tools->resizeCovers();
+  delete tools;
+ 
+  //Insert the song in the library
+  m_library->addSongFromFile(filepath);
+  m_library->submitAll();
+  m_view->sortByColumn(1, Qt::AscendingOrder);
+  m_view->sortByColumn(0, Qt::AscendingOrder);
+
+  //position index of new song in the library and launch song editor
+  CSongEditor* editor = new CSongEditor(filepath);
+  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
+  editor->setTabIndex(m_mainWidget->currentIndex());
+  editor->setLabel(title);
+  connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
 }
 //------------------------------------------------------------------------------
 QString CMainWindow::filenameConvention(const QString & str, const QString & sep)
@@ -988,7 +1048,7 @@ void CMainWindow::deleteSong()
 
   if (QMessageBox::question
      (this, this->windowTitle(),
-      QString(tr("This will remove the file %1 ?")).arg(path),
+      QString(tr("Are you sure you want to permanently remove the file %1 ?")).arg(path),
       QMessageBox::Yes,
       QMessageBox::No,
       QMessageBox::NoButton) == QMessageBox::Yes)

@@ -31,6 +31,7 @@
 class CSongbook;
 class CLibrary;
 class CTabWidget;
+class CDialogNewSong;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -54,7 +55,6 @@ public slots:
   void readProcessOut();
   void downloadDialog();
   void synchroniseWithLocalSongs();
-  // void playSong();
 
   void setWorkingPath(QString dirname);
 
@@ -73,7 +73,7 @@ private slots:
 
   void newSong();
   void songTemplate();
-
+  bool checkNewSongRequiredFields();
   void selectAll();
   void unselectAll();
   void invertSelection();
@@ -86,11 +86,12 @@ private slots:
 
   void preferences();
 
-  void dockWidgetDirectionChanged(Qt::DockWidgetArea area);
-
   void songEditor();
   void changeTabLabel();
   void deleteSong();
+
+  void setToolbarDisplayed(bool);
+  void setStatusbarDisplayed(bool);
 
   void about();
 
@@ -113,8 +114,12 @@ private:
 
   QString filenameConvention(const QString &, const QString & sep);
 
+  bool isToolbarDisplayed();
+  bool isStatusbarDisplayed();
+
   QItemSelectionModel * selectionModel();
   QDataWidgetMapper* m_mapper;
+  
   // Song library and view
   CLibrary *m_library;
   QSortFilterProxyModel *m_proxyModel;
@@ -138,6 +143,9 @@ private:
   bool m_displayColumnCover;
   bool m_displayCompilationLog;
 
+  bool m_isToolbarDisplayed;
+  bool m_isStatusbarDisplayed;
+
   QProcess* m_buildProcess;
   QMdiArea* m_area;
   QScrollArea* m_scrollArea;
@@ -147,7 +155,7 @@ private:
   QLabel m_coverLabel;
   uint m_dbType;
   QBoxLayout* m_currentSongWidgetLayout;
-
+  CDialogNewSong *m_newSongDialog;
   QDockWidget* m_songbookInfo;
 
   //Logs
@@ -159,6 +167,8 @@ private:
   QMenu *m_dbMenu;
   QMenu *m_viewMenu;
   QMenu *m_helpMenu;
+
+  QToolBar *m_toolbar;
 
   // Actions
   QAction *m_newAct;
@@ -175,6 +185,8 @@ private:
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;
+  QAction *m_toolbarViewAct;
+  QAction *m_statusbarViewAct;
   QAction *m_adjustColumnsAct;
   QAction *m_connectDbAct;
   QAction *m_downloadDbAct;
