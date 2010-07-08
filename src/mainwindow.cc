@@ -218,42 +218,56 @@ void CMainWindow::applyOptionChanges()
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
+#if QT_VERSION >= 0x040600
   m_newSongAct->setIcon(QIcon::fromTheme("document-new"));
+#endif
   m_newSongAct->setStatusTip(tr("Create a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
+#if QT_VERSION >= 0x040600
   m_newAct->setIcon(QIcon::fromTheme("folder-new"));
+#endif
   m_newAct->setShortcut(QKeySequence::New);
   m_newAct->setStatusTip(tr("Create a new songbook"));
   connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
 
   m_openAct = new QAction(tr("Open..."), this);
+#if QT_VERSION >= 0x040600
   m_openAct->setIcon(QIcon::fromTheme("document-open"));
+#endif
   m_openAct->setShortcut(QKeySequence::Open);
   m_openAct->setStatusTip(tr("Open a songbook"));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   m_saveAct = new QAction(tr("Save"), this);
+#if QT_VERSION >= 0x040600
   m_saveAct->setIcon(QIcon::fromTheme("document-save"));
+#endif
   m_saveAct->setShortcut(QKeySequence::Save);
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   m_saveAsAct = new QAction(tr("Save As..."), this);
+#if QT_VERSION >= 0x040600
   m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as"));
+#endif
   m_saveAsAct->setShortcut(QKeySequence::SaveAs);
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   m_aboutAct = new QAction(tr("&About"), this);
+#if QT_VERSION >= 0x040600
   m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
+#endif
   m_aboutAct->setStatusTip(tr("About this application"));
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
+#if QT_VERSION >= 0x040600
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
+#endif
   m_exitAct->setStatusTip(tr("Quit the program"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -262,7 +276,9 @@ void CMainWindow::createActions()
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
+#if QT_VERSION >= 0x040600
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
+#endif
   m_cleanAct->setStatusTip(tr("Clean"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
 
@@ -271,7 +287,9 @@ void CMainWindow::createActions()
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
+#if QT_VERSION >= 0x040600
   m_selectAllAct->setIcon(QIcon::fromTheme("select-all"));
+#endif
   m_selectAllAct->setStatusTip(tr("Select all displayed songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
@@ -289,12 +307,16 @@ void CMainWindow::createActions()
           m_view, SLOT(resizeColumnsToContents()));
 
   m_connectDbAct = new QAction(tr("Connection to local database"), this);
+#if QT_VERSION >= 0x040600
   m_connectDbAct->setIcon(QIcon::fromTheme("network-server"));
+#endif
   m_connectDbAct->setStatusTip(tr("Connection to local database"));
   connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
 
   m_rebuildDbAct = new QAction(tr("Synchronise"), this);
+#if QT_VERSION >= 0x040600
   m_rebuildDbAct->setIcon(QIcon::fromTheme("view-refresh"));
+#endif
   m_rebuildDbAct->setStatusTip(tr("Rebuild database from local songs"));
   connect(m_rebuildDbAct, SIGNAL(triggered()), SLOT(synchroniseWithLocalSongs()));
 
@@ -436,14 +458,14 @@ QWidget * CMainWindow::createSongInfoWidget()
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
 
-  QBoxLayout *mainLayout = new QVBoxLayout;
-  QBoxLayout *songLayout = new QHBoxLayout;
+  //  QBoxLayout *mainLayout = new QVBoxLayout;
+  QGridLayout *songLayout = new QGridLayout;
   m_coverLabel.setAlignment(Qt::AlignTop);
-  songLayout->addWidget(&m_coverLabel);
-  songLayout->addWidget(currentSongTagsBox);
-  mainLayout->addLayout(songLayout);
-  mainLayout->addWidget(buttonBox);
-  songInfoWidget->setLayout(mainLayout);
+  songLayout->addWidget(&m_coverLabel,0,0,1,1);
+  songLayout->addWidget(currentSongTagsBox,0,1,2,1);
+  //songLayout->addLayout(songLayout);
+  songLayout->addWidget(buttonBox,1,0,1,1);
+  songInfoWidget->setLayout(songLayout);
 
   //Data mapper
   m_mapper = new QDataWidgetMapper();
@@ -479,11 +501,15 @@ void CMainWindow::updateCover(const QModelIndex & index)
 {
   if (!selectionModel()->hasSelection())
     {
+#if QT_VERSION >= 0x040600
       m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
+#else
+      m_cover = new QPixmap;
+#endif
       m_coverLabel.setPixmap(*m_cover);
       return;
     }
-
+  
   // do not retrieve last clicked item but last selected item
   QModelIndex lastIndex = selectionModel()->selectedRows().last();
   selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::NoUpdate);
@@ -494,8 +520,12 @@ void CMainWindow::updateCover(const QModelIndex & index)
   if (QFile::exists(coverpath))
     m_cover->load(coverpath);
   else
+#if QT_VERSION >= 0x040600
     m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
-    //m_cover->load(QIcon::fromTheme("image-missing"));
+#else
+  m_cover = new QPixmap;
+#endif
+
   m_coverLabel.setPixmap(*m_cover);
 }
 //------------------------------------------------------------------------------
