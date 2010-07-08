@@ -284,6 +284,7 @@ void CMainWindow::createActions()
   m_cleanAct = new QAction(tr("Clean"), this);
 #if QT_VERSION >= 0x040600
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
+#endif
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
 
