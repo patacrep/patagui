@@ -93,6 +93,7 @@ private slots:
   void setToolbarDisplayed(bool);
   void setStatusbarDisplayed(bool);
 
+  void documentation();
   void about();
 
   void updateTitle(const QString &filename);
@@ -175,6 +176,7 @@ private:
   QAction *m_openAct;
   QAction *m_saveAct;
   QAction *m_saveAsAct;
+  QAction *m_documentationAct;
   QAction *m_aboutAct;
   QAction *m_exitAct;
 

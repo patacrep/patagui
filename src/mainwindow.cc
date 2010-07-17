@@ -249,6 +249,11 @@ void CMainWindow::createActions()
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
+  m_documentationAct = new QAction(tr("Online documentation"), this);
+  m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
+  m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
+  connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
+
   m_aboutAct = new QAction(tr("&About"), this);
   m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
   m_aboutAct->setStatusTip(tr("About this application"));
@@ -446,6 +451,7 @@ void CMainWindow::createMenus()
   m_viewMenu->addAction(m_checkerAct);
 
   m_helpMenu = menuBar()->addMenu(tr("&Help"));
+  m_helpMenu->addAction(m_documentationAct);
   m_helpMenu->addAction(m_aboutAct);
 }
 //------------------------------------------------------------------------------
@@ -539,6 +545,11 @@ void CMainWindow::preferences()
   applyOptionChanges();
 }
 //------------------------------------------------------------------------------
+void CMainWindow::documentation()
+{
+  QDesktopServices::openUrl(QUrl(QString("http://www.patacrep.com/data/documents/doc.pdf")));  
+}
+//------------------------------------------------------------------------------
 void CMainWindow::about()
 {
   QMessageBox::about(this, tr("About Patacrep Songbook Client"),
@@ -546,7 +557,7 @@ void CMainWindow::about()
 			"<br>Songbooks may represent lyrics, guitar chords or sheets for the songs available on"
 			" <a href=\"http::www.patacrep.com\">www.patacrep.com</a> </br>"
 			"<br>You may clone the <a href=\"git://git.lohrun.net/songbook.git\">songbook repository</a> </br>"
-			"<br><b>Version:</b> 0.1 April 25th, 2010 </br>"
+			"<br><b>Version:</b> 0.3 July 2010 </br>"
 			"<br><b>Authors:</b> Crep (R.Goffe), Lohrun (A.Dupas) </br>"));
 }
 //------------------------------------------------------------------------------
