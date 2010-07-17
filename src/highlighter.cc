@@ -35,7 +35,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 		  << "\\\\cover"    << "\\\\capo"
 		  << "\\\\nolyrics" << "\\\\musicnote"
 		  << "\\\\textnote" << "\\\\dots"
-		  << "\\\\single"  ;
+		  << "\\\\single"  << "\\\\emph";
 
   foreach (const QString &pattern, keywordPatterns)
     {
