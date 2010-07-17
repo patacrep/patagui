@@ -185,24 +185,23 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
   if ( index.column() == 2 )
     {
       if ( Qt::DisplayRole == role )
-	return QString();
+      	return QString();
 
-      QPixmap pixmap;
       if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
+	{           
 #if QT_VERSION >= 0x040600
-      return pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
+	  QPixmap pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
 #else
-      return pixmap;
+	  QPixmap pixmap;
 #endif
-      
-      
-      if ( role == Qt::DecorationRole )
-	return pixmap;
-
-      if (role == Qt::SizeHintRole)
-	return pixmap.size();
+	  if ( role == Qt::DecorationRole )
+	    return pixmap;
+	  
+	  if (role == Qt::SizeHintRole)
+	    return pixmap.size();
+	}
     }
-
+  
   //Draws the cover
   if ( index.column() == 5 )
     {
