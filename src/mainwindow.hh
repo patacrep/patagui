@@ -49,13 +49,11 @@ public:
 
 public slots:
   void buildFinished(int exitCode, QProcess::ExitStatus exitStatus);
-  void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
   void buildError(QProcess::ProcessError error);
   void updateCover(const QModelIndex & index);
   void readProcessOut();
   void downloadDialog();
-  void synchroniseWithLocalSongs();
-
+  void refreshLibrary();
   void setWorkingPath(QString dirname);
 
 protected:
@@ -63,39 +61,38 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
+
+  //songbook
   void newSongbook();
   void open();
   void save();
   void saveAs();
-
   void build();
   void clean();
 
+  //library
   void newSong();
-  void songTemplate();
   bool checkNewSongRequiredFields();
-  void selectAll();
-  void unselectAll();
-  void invertSelection();
-  void updateSongsList();
-
-  void applyOptionChanges();
-
-  bool connectDb();
-  void filterChanged();
-
-  void preferences();
-
+  void songTemplate();
   void songEditor();
   void changeTabLabel();
   void deleteSong();
 
+  //model
+  void selectAll();
+  void unselectAll();
+  void invertSelection();
+  void updateSongsList();
+  bool connectDb();
+  void filterChanged();
+
+  //application
+  void preferences();
+  void applySettings();
   void setToolbarDisplayed(bool);
   void setStatusbarDisplayed(bool);
-
   void documentation();
   void about();
-
   void updateTitle(const QString &filename);
 
 private:
@@ -171,31 +168,34 @@ private:
 
   QToolBar *m_toolbar;
 
-  // Actions
-  QAction *m_newAct;
-  QAction *m_openAct;
-  QAction *m_saveAct;
-  QAction *m_saveAsAct;
+  // Application actions
+  QAction *m_preferencesAct;
+  QAction *m_toolbarViewAct;
+  QAction *m_statusbarViewAct;
+  QAction *m_adjustColumnsAct;
   QAction *m_documentationAct;
   QAction *m_aboutAct;
   QAction *m_exitAct;
 
-  QAction *m_newSongAct;
+  // Songbook actions
+  QAction *m_newAct;
+  QAction *m_openAct;
+  QAction *m_saveAct;
+  QAction *m_saveAsAct;
   QAction *m_buildAct;
   QAction *m_cleanAct;
-  QAction *m_preferencesAct;
+
+  // Library action
+  QAction *m_newSongAct;
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;
-  QAction *m_toolbarViewAct;
-  QAction *m_statusbarViewAct;
-  QAction *m_adjustColumnsAct;
-  QAction *m_connectDbAct;
   QAction *m_downloadDbAct;
-  QAction *m_rebuildDbAct;
+  QAction *m_refreshLibraryAct;
+
+  // Tools actions
   QAction *m_resizeCoversAct;
   QAction *m_checkerAct;
-
 };
 
 class CTabWidget : public QTabWidget

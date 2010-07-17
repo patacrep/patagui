@@ -52,13 +52,13 @@ CDownloadDialog::CDownloadDialog(CMainWindow* parent)
 
   //Checkbox options
   QVBoxLayout *verticalLayout = new QVBoxLayout;
-  m_cb1 = new QCheckBox(tr("Set as Patacrep songbook"), this);
+  m_cb1 = new QCheckBox(tr("Define as new library"), this);
   m_cb1->setChecked(true);
   verticalLayout->addWidget(m_cb1);
-  m_cb2 = new QCheckBox(tr("Synchronize after download"), this);
+  m_cb2 = new QCheckBox(tr("Refresh library after download"), this);
   m_cb2->setChecked(true);
   verticalLayout->addWidget(m_cb2);
-  m_cb3 = new QCheckBox(tr("Remove existing directory"), this);
+  m_cb3 = new QCheckBox(tr("Remove previous library"), this);
   m_cb3->setChecked(false);
   verticalLayout->addWidget(m_cb3);
 
@@ -139,9 +139,9 @@ void CDownloadDialog::processExit(int exitCode, QProcess::ExitStatus exitStatus)
 
       if (m_cb2->isChecked())
 	{
-	  QString msg("Synchronizing database ...");
+	  QString msg("Updating database ...");
 	  m_statusBar->showMessage(msg);
-     	  m_parent->synchroniseWithLocalSongs();
+     	  m_parent->refreshLibrary();
 	}
 
       QString msg("Success!");

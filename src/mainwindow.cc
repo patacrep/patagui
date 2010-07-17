@@ -73,7 +73,7 @@ CMainWindow::CMainWindow()
 
   //Connection to database
   if (connectDb())
-    synchroniseWithLocalSongs();
+    refreshLibrary();
 
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
@@ -145,7 +145,7 @@ CMainWindow::CMainWindow()
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
   m_isStatusbarDisplayed = true;
   
-  applyOptionChanges();
+  applySettings();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterChanged()
@@ -206,7 +206,7 @@ void CMainWindow::writeSettings()
   settings.setValue("mainWindow/size", size());
 }
 //------------------------------------------------------------------------------
-void CMainWindow::applyOptionChanges()
+void CMainWindow::applySettings()
 {
   m_view->setColumnHidden(0,!m_displayColumnArtist);
   m_view->setColumnHidden(1,!m_displayColumnTitle);
@@ -317,17 +317,11 @@ void CMainWindow::createActions()
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           m_view, SLOT(resizeColumnsToContents()));
 
-  m_connectDbAct = new QAction(tr("Connection to local database"), this);
+  m_refreshLibraryAct = new QAction(tr("Refresh"), this);
 #if QT_VERSION >= 0x040600
-  m_connectDbAct->setIcon(QIcon::fromTheme("network-server"));
+  m_refreshLibraryAct->setIcon(QIcon::fromTheme("view-refresh"));
 #endif
-  m_connectDbAct->setStatusTip(tr("Connection to local database"));
-  connect(m_connectDbAct, SIGNAL(triggered()), SLOT(connectDb()));
-
-  m_rebuildDbAct = new QAction(tr("Synchronise"), this);
-#if QT_VERSION >= 0x040600
-  m_rebuildDbAct->setIcon(QIcon::fromTheme("view-refresh"));
-#endif
+  m_refreshLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
 
   m_downloadDbAct = new QAction("Download",this);
   m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep"));
@@ -389,7 +383,34 @@ bool CMainWindow::isStatusbarDisplayed( )
 bool CMainWindow::connectDb()
 {
   //Connect to database
-  bool newdb = createDbConnection();
+  bool newdb = false;//createDbConnection();
+
+  QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
+  QDir dbdir; dbdir.mkdir( path );
+  QString dbpath = QString("%1/patacrep.db").arg(path);
+
+  bool exist = QFile::exists(dbpath);
+
+  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+  db.setDatabaseName(dbpath);
+  if (!db.open())
+    {
+      QMessageBox::critical(this, tr("Cannot open database"),
+			    tr("Unable to establish a database connection.\n"
+			       "This application needs SQLite support. "
+			       "Click Cancel to exit."), QMessageBox::Cancel);
+    }
+  if (!exist)
+    {
+      QSqlQuery query;
+      query.exec("create table songs ( artist char(80), "
+		 "title char(80), "
+		 "lilypond bool, "
+		 "path char(80), "
+		 "album char(80), "
+		 "cover char(80))");
+      newdb = true;
+    }
 
   // Initialize the song library
   m_library = new CLibrary();
@@ -412,7 +433,7 @@ bool CMainWindow::connectDb()
   return newdb;
 }
 //------------------------------------------------------------------------------
-void CMainWindow::synchroniseWithLocalSongs()
+void CMainWindow::refreshLibrary()
 {
   //Drop table songs and recreate
   QSqlQuery query("delete from songs");
@@ -464,7 +485,7 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_newSongAct);
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_downloadDbAct);
-  m_dbMenu->addAction(m_rebuildDbAct);
+  m_dbMenu->addAction(m_refreshLibraryAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toolbarViewAct);
@@ -573,7 +594,7 @@ void CMainWindow::preferences()
   ConfigDialog dialog;
   dialog.exec();
   readSettings();
-  applyOptionChanges();
+  applySettings();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::documentation()
@@ -694,15 +715,6 @@ void CMainWindow::buildError(QProcess::ProcessError error)
   msgBox.exec();
 }
 //------------------------------------------------------------------------------
-void CMainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
-{
-  if (exitStatus == QProcess::NormalExit && exitCode == 0)
-    {
-      m_progressBar->hide();
-      statusBar()->showMessage(tr("Success!"));
-    }
-}
-//------------------------------------------------------------------------------
 void CMainWindow::clean()
 {
   QProcess clean;
@@ -801,33 +813,6 @@ void CMainWindow::setWorkingPath( QString dirname )
 //------------------------------------------------------------------------------
 bool CMainWindow::createDbConnection()
 {
-  QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
-  QDir dbdir; dbdir.mkdir( path );
-  QString dbpath = QString("%1/patacrep.db").arg(path);
-
-  bool exist = QFile::exists(dbpath);
-
-  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName(dbpath);
-  if (!db.open())
-    {
-      QMessageBox::critical(this, tr("Cannot open database"),
-			    tr("Unable to establish a database connection.\n"
-			       "This application needs SQLite support. "
-			       "Click Cancel to exit."), QMessageBox::Cancel);
-      return false;
-    }
-  if (exist)
-    return false;
-
-  QSqlQuery query;
-  query.exec("create table songs ( artist char(80), "
-	     "title char(80), "
-	     "lilypond bool, "
-	     "path char(80), "
-	     "album char(80), "
-	     "cover char(80))");
-
   return true;
 }
 //------------------------------------------------------------------------------
@@ -1080,7 +1065,7 @@ void CMainWindow::deleteSong()
 	{
 	  QDir dir;
 	  dir.rmdir(tmp); //remove dir if empty
-	  synchroniseWithLocalSongs(); //temporary hack
+	  refreshLibrary(); //temporary hack
 	  //once deleted move selection in the model
 	  updateCover(selectionModel()->currentIndex());
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());

@@ -270,8 +270,6 @@ void CSongbook::changeTemplate(const QString & filename)
   if (!filename.isEmpty())
     templateFilename = filename;
   
-  //qDebug() << "template filename  = "<< templateFilename ;
-
   QString json;
 
   // reserved template parameters
@@ -286,8 +284,6 @@ void CSongbook::changeTemplate(const QString & filename)
   QSettings settings;
   QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
 
-  //qDebug() << "working path  = "<< workingPath ;
-
   QFile file(QString("%1/templates/%2").arg(workingPath).arg(templateFilename));
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -297,18 +293,9 @@ void CSongbook::changeTemplate(const QString & filename)
       json = "(";
       do {
         line = in.readLine();
-
-	//qDebug() << "processing line = " << line ; 
-	
         if (line.startsWith("%%:"))
-          {
-	    //qDebug() << "remove line = " << line ; 
-            json += line.remove(jsonFilter) + "\n";
-          }
-	else
-	  {
-	    //qDebug() << "line does notn start with %%: = " << line ; 
-	  }
+	  json += line.remove(jsonFilter) + "\n";
+	
       } while (!line.isNull());
       json += ")";
       file.close();
@@ -317,8 +304,6 @@ void CSongbook::changeTemplate(const QString & filename)
     {
       qWarning() << "unable to open file in read mode";
     }
-
-  //qDebug() << "json ==== "<< json ;
 
   // Load json encoded songbook data
   QScriptEngine engine;
