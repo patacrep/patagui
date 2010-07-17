@@ -53,7 +53,9 @@ CSongEditor::CSongEditor(const QString & APath)
       // actions
       QAction* action = new QAction(tr("Save"), this);
       action->setShortcut(tr("Ctrl+S"));
+#if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("document-save"));
+#endif
       action->setStatusTip(tr("Save modifications"));
       connect(action, SIGNAL(triggered()), this, SLOT(save()));
       toolbar->addAction(action);
@@ -63,21 +65,27 @@ CSongEditor::CSongEditor(const QString & APath)
       //copy paste
       action = new QAction(tr("Cut"), this);
       action->setShortcut(tr("Ctrl+X"));
+#if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-cut"));
+#endif
       action->setStatusTip(tr("Cut the selection"));
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(cut()));
       toolbar->addAction(action);
 
       action = new QAction(tr("Copy"), this);
       action->setShortcut(tr("Ctrl+C"));
+#if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-copy"));
+#endif
       action->setStatusTip(tr("Copy the selection"));
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(copy()));
       toolbar->addAction(action);
 
       action = new QAction(tr("Paste"), this);
       action->setShortcut(tr("Ctrl+V"));
+#if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-paste"));
+#endif
       action->setStatusTip(tr("Paste clipboard content"));
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(paste()));
       toolbar->addAction(action);
@@ -86,13 +94,17 @@ CSongEditor::CSongEditor(const QString & APath)
 
       //undo redo
       action = new QAction(tr("Undo"), this);
+#if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-undo"));
+#endif
       action->setStatusTip(tr("Undo modifications"));
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(undo()));
       toolbar->addAction(action);
 
       action = new QAction(tr("Redo"), this);
+#if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-redo"));
+#endif
       action->setStatusTip(tr("Redo modifications"));
       connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
       toolbar->addAction(action);
