@@ -50,8 +50,65 @@ void CTools::toolProcessError(QProcess::ProcessError error)
   msgBox.exec();
 }
 //------------------------------------------------------------------------------
+void CTools::resizeCoversDialog()
+{
+  QDialog *dialog = new QDialog;
+
+  // Action buttons
+  QDialogButtonBox * buttonBox = new QDialogButtonBox;
+  QPushButton * buttonResize = new QPushButton(tr("Resize"));
+  QPushButton * buttonClose = new QPushButton(tr("Close"));
+  buttonResize->setDefault(true);
+  buttonBox->addButton(buttonResize, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(buttonClose, QDialogButtonBox::DestructiveRole);
+
+  //Connect buttons
+  connect(buttonResize, SIGNAL(clicked()),
+	  this, SLOT(resizeCovers()) );
+  connect(buttonClose, SIGNAL(clicked()),
+	  dialog, SLOT(close()) );
+
+  //retrieve cover files
+  QStringList filter;
+  filter << "*.jpg";
+  QString path = QString("%1/songs/").arg(workingPath());
+  QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
+
+  QListWidget* list = new QListWidget;
+  QColor green(138,226,52,100);
+  QColor red(239,41,41,100);  
+  while(it.hasNext())
+    {
+      QString filename = it.next();
+      QFileInfo fi(filename);
+      QString basename = fi.baseName();
+      QPixmap pixmap = QPixmap::fromImage(QImage(filename));
+      QIcon cover(pixmap.scaledToWidth(24));
+      
+      //create item from current cover
+      QListWidgetItem* item = new QListWidgetItem(cover, basename);
+      if(pixmap.height()>128)
+	item->setBackground(QBrush(red));
+      else
+	item->setBackground(QBrush(green));
+      //apppend items in coversTable
+      list->addItem(item);
+    }
+
+  QVBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(list);
+  mainLayout->addWidget(buttonBox);
+  dialog->setLayout(mainLayout);
+
+  dialog->setWindowTitle(tr("Resize covers"));
+  dialog->setMinimumWidth(450);
+  dialog->setMinimumHeight(450);
+  dialog->show();
+}
+//------------------------------------------------------------------------------
 void CTools::resizeCovers()
 {
+  //todo: do not call extern script but do it here
   m_process = new QProcess(this);
   m_process->setWorkingDirectory(workingPath());
   connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)),

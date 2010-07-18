@@ -34,6 +34,7 @@ public:
 public slots:
   void toolProcessExit(int exitCode, QProcess::ExitStatus exitStatus);
   void toolProcessError(QProcess::ProcessError error);
+  void resizeCoversDialog();
   void resizeCovers();
   void globalCheck();
 

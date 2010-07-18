@@ -345,7 +345,7 @@ void CMainWindow::createActions()
   CTools* tools = new CTools(workingPath(), this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
   m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
-  connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCovers()));
+  connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCoversDialog()));
 
   m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
   m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
