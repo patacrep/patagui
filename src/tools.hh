@@ -36,7 +36,9 @@ public slots:
   void toolProcessError(QProcess::ProcessError error);
   void resizeCoversDialog();
   void resizeCovers();
-  void globalCheck();
+  void latexPreprocessingDialog();
+  void latexPreprocessing();
+  //void addRule();
 
 private:
   QString workingPath();

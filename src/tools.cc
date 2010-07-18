@@ -126,7 +126,89 @@ void CTools::resizeCovers()
     delete m_process;
 }
 //------------------------------------------------------------------------------
-void CTools::globalCheck()
+void CTools::latexPreprocessingDialog()
+{
+  QDialog *dialog = new QDialog;
+
+  // Action buttons
+  QDialogButtonBox * buttonBox = new QDialogButtonBox;
+  QPushButton * buttonApply = new QPushButton(tr("Apply"));
+  //QPushButton * buttonRule = new QPushButton(tr("Add rule"));
+  QPushButton * buttonClose = new QPushButton(tr("Close"));
+  buttonApply->setDefault(true);
+  buttonBox->addButton(buttonApply, QDialogButtonBox::ActionRole);
+  //buttonBox->addButton(buttonRule, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(buttonClose, QDialogButtonBox::DestructiveRole);
+
+  //Connect buttons
+  connect(buttonApply, SIGNAL(clicked()),
+	  this, SLOT(latexPreprocessing()) );
+  connect(buttonClose, SIGNAL(clicked()),
+	  dialog, SLOT(close()) );
+  //connect(buttonRule, SIGNAL(clicked()),
+  //	  this, SLOT(addRule()) );
+
+  QListWidget* list = new QListWidget;
+  QColor orange(252,175,62,150);
+  QColor yellow(252,233,79,150);
+
+  //Retrieve rules from ./utils/latex-preprocessing file
+  QFile file(QString("%1/utils/latex-preprocessing.py").arg(workingPath()));
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+      QTextStream in(&file);
+      QRegExp filter("^##:");
+      QString line;
+      bool rule = false;
+      QListWidgetItem *item;
+      do {
+        line = in.readLine();
+
+	if (line.startsWith("###")) //end of rules
+	  break;
+
+        if (line.startsWith("##:")) //category
+	  {
+	    item = new QListWidgetItem("\n" + line.remove(filter) + "\n");
+	    item->setBackground(QBrush(orange));
+	    list->addItem(item);
+	    rule = true;
+	  }
+	else if(rule)
+	  {
+	    if(line.startsWith("#")) //subcategory
+	      {	 
+		item = new QListWidgetItem(line);
+		item->setBackground(QBrush(yellow));
+	      }
+	    else
+	      {
+		line.replace(":", "  ->  ");
+		line.chop(1);
+		item = new QListWidgetItem(line);
+	      }
+	    list->addItem(item);
+	  }
+      } while (!line.isNull());
+      file.close();
+    }
+  else
+    {
+      qWarning() << "unable to open file in read mode: utils/latex-preprocessing";
+    }
+ 
+  QVBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(list);
+  mainLayout->addWidget(buttonBox);
+  dialog->setLayout(mainLayout);
+
+  dialog->setWindowTitle(tr("LaTeX Preprocessing"));
+  dialog->setMinimumWidth(400);
+  dialog->setMinimumHeight(450);
+  dialog->show();
+}
+//------------------------------------------------------------------------------
+void CTools::latexPreprocessing()
 {
   m_process = new QProcess(this);
   m_process->setWorkingDirectory(workingPath());
@@ -144,3 +226,8 @@ void CTools::globalCheck()
   if (!m_process->waitForFinished())
     delete m_process;
 }
+//------------------------------------------------------------------------------
+//void CTools::addRule()
+//{
+//
+//}

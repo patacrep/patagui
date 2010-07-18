@@ -350,7 +350,7 @@ void CMainWindow::createActions()
 
   m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
   m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
-  connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(globalCheck()));
+  connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(latexPreprocessingDialog()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::setToolbarDisplayed( bool value )
