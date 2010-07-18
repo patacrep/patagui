@@ -23,7 +23,7 @@ CDialogNewSong::CDialogNewSong()
 {
   m_title = "";
   m_artist =  "";
-  m_nbColumns = 0;
+  m_nbColumns = 2;
   m_capo = 0;
 
   setModal(true);
@@ -50,7 +50,8 @@ CDialogNewSong::CDialogNewSong()
   //nb columns
   QLabel* nbColumnsLabel = new QLabel(tr("Number of columns: "));
   QSpinBox* nbColumnsEdit = new QSpinBox;
-  nbColumnsEdit->setRange(0,20);
+  nbColumnsEdit->setValue(m_nbColumns);
+  nbColumnsEdit->setRange(0,10);
 
   //capo
   QLabel* capoLabel = new QLabel(tr("Capo: "));
