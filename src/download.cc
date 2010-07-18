@@ -154,7 +154,7 @@ void CDownloadDialog::processError(QProcess::ProcessError error)
 {
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Critical);
-  msgBox.setText(tr("Sorry: an error occured during the download."));
+  msgBox.setText(tr("Warning: an error occured during the download."));
   msgBox.setStandardButtons(QMessageBox::Cancel);
   msgBox.setDefaultButton(QMessageBox::Cancel);
   msgBox.exec();

@@ -324,20 +324,20 @@ void CMainWindow::createActions()
   m_refreshLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
   connect(m_refreshLibraryAct, SIGNAL(triggered()), this, SLOT(refreshLibrary()));
 
-  m_downloadDbAct = new QAction("Download",this);
+  m_downloadDbAct = new QAction(tr("Download"),this);
   m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep"));
 #if QT_VERSION >= 0x040600
   m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
 #endif
   connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 
-  m_toolbarViewAct = new QAction("Toolbar",this);
+  m_toolbarViewAct = new QAction(tr("Toolbar"),this);
   m_toolbarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
   m_toolbarViewAct->setCheckable(true);
   m_toolbarViewAct->setChecked(isToolbarDisplayed());
   connect(m_toolbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolbarDisplayed(bool)));
   
-  m_statusbarViewAct = new QAction("Statusbar",this);
+  m_statusbarViewAct = new QAction(tr("Statusbar"),this);
   m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
   m_statusbarViewAct->setCheckable(true);
   m_toolbarViewAct->setChecked(isStatusbarDisplayed());
@@ -710,7 +710,7 @@ void CMainWindow::buildError(QProcess::ProcessError error)
 {
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Critical);
-  msgBox.setText(tr("Sorry: an error occured during the songbook generation."));
+  msgBox.setText(tr("Warning: an error occured during the songbook generation."));
   msgBox.setStandardButtons(QMessageBox::Cancel);
   msgBox.setDefaultButton(QMessageBox::Cancel);
   msgBox.exec();
@@ -810,11 +810,6 @@ const QString CMainWindow::workingPath()
 void CMainWindow::setWorkingPath( QString dirname )
 {
   m_workingPath = dirname;
-}
-//------------------------------------------------------------------------------
-bool CMainWindow::createDbConnection()
-{
-  return true;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::downloadDialog()

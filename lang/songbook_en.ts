@@ -34,42 +34,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="56"/>
+        <location filename="../src/dialog-new-song.cc" line="57"/>
         <source>Capo: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="62"/>
+        <location filename="../src/dialog-new-song.cc" line="63"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="63"/>
+        <location filename="../src/dialog-new-song.cc" line="64"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="71"/>
+        <location filename="../src/dialog-new-song.cc" line="72"/>
         <source>Required fields</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="79"/>
+        <location filename="../src/dialog-new-song.cc" line="80"/>
         <source>Optional fields</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="108"/>
+        <location filename="../src/dialog-new-song.cc" line="109"/>
         <source>New song</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="176"/>
+        <location filename="../src/dialog-new-song.cc" line="177"/>
         <source>Select cover image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dialog-new-song.cc" line="178"/>
+        <location filename="../src/dialog-new-song.cc" line="179"/>
         <source>Images (*.jpg)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -93,17 +93,17 @@
     </message>
     <message>
         <location filename="../src/download.cc" line="55"/>
-        <source>Set as Patacrep songbook</source>
+        <source>Define as new library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/download.cc" line="58"/>
-        <source>Synchronize after download</source>
+        <source>Refresh library after download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/download.cc" line="61"/>
-        <source>Remove existing directory</source>
+        <source>Remove previous library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -124,7 +124,7 @@
     </message>
     <message>
         <location filename="../src/download.cc" line="157"/>
-        <source>Sorry: an error occured during the download.</source>
+        <source>Warning: an error occured during the download.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -208,400 +208,409 @@
 <context>
     <name>CMainWindow</name>
     <message>
-        <location filename="../src/mainwindow.cc" line="113"/>
+        <location filename="../src/mainwindow.cc" line="145"/>
         <source>A context menu is available by right-clicking</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.cc" line="227"/>
+        <source>Write a new song</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="230"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="235"/>
+        <source>Create a new songbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="238"/>
+        <source>Open...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cc" line="243"/>
+        <source>Open a songbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="246"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="251"/>
+        <source>Save the current songbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="254"/>
+        <source>Save As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="259"/>
+        <source>Save the current songbook with a different name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="262"/>
+        <source>Online documentation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="264"/>
+        <source>Download documentation pdf file </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="271"/>
+        <source>About this application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="274"/>
+        <source>Quit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="279"/>
+        <source>Quit the program</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="282"/>
         <source>Build PDF</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="54"/>
+        <location filename="../src/mainwindow.cc" line="286"/>
+        <source>Generate pdf from selected songs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="297"/>
+        <source>Configure the application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="304"/>
+        <source>Select all songs in the library</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="308"/>
+        <source>Unselect all songs in the library</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="312"/>
+        <source>Invert currently selected songs in the library</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="316"/>
+        <source>Adjust columns to contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="320"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="324"/>
+        <source>Update current song list from &quot;.sg&quot; files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="327"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="328"/>
+        <source>Download songs from Patacrep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="334"/>
+        <source>Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="335"/>
+        <source>Show or hide the toolbar in the current window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="340"/>
+        <source>Statusbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="341"/>
+        <source>Show or hide the statusbar in the current window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="348"/>
+        <source>Ensure that covers are correctly resized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="351"/>
+        <source>LaTeX Preprocessing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="352"/>
+        <source>Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="467"/>
+        <source>&amp;Songbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="485"/>
+        <source>&amp;Library</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="518"/>
+        <source>&lt;i&gt;Title:&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="520"/>
+        <source>&lt;i&gt;Artist:&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="522"/>
+        <source>&lt;i&gt;Album:&lt;/i&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="609"/>
+        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 July 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="662"/>
+        <source>The songbook is not in the working directory. Build aborted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="668"/>
+        <source>Wrong filename: songbook does not have &quot;.sb&quot; extension. Build aborted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="685"/>
+        <source>The songbook is building. Please wait.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="713"/>
+        <source>Warning: an error occured during the songbook generation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="737"/>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="739"/>
+        <location filename="../src/mainwindow.cc" line="778"/>
+        <source>Songbook (*.sb)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="776"/>
+        <source>Save as</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="796"/>
+        <source>New songbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="797"/>
+        <source>%1 - %2[*]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="1044"/>
+        <source>Are you sure you want to permanently remove the file %1 ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="83"/>
         <source>&amp;Filter:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="57"/>
+        <location filename="../src/mainwindow.cc" line="86"/>
         <source>All</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="58"/>
+        <location filename="../src/mainwindow.cc" line="87"/>
         <source>Artist</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="59"/>
+        <location filename="../src/mainwindow.cc" line="88"/>
         <source>Title</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="60"/>
+        <location filename="../src/mainwindow.cc" line="89"/>
         <source>Album</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="97"/>
+        <location filename="../src/mainwindow.cc" line="113"/>
+        <source>&lt;b&gt;Songbook&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="115"/>
+        <source>&lt;b&gt;Song&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="137"/>
         <source>Library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cc" line="223"/>
-        <source>Exit</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="224"/>
-        <source>Ctrl+Q</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="225"/>
-        <source>Exit the application</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="228"/>
         <source>New Song</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="229"/>
-        <source>Ctrl+N</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="230"/>
-        <source>Write a new song.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="233"/>
-        <source>Load Songs List</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="234"/>
-        <source>Ctrl+O</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="235"/>
-        <source>Open a list of songs (.sgl) previously saved.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="238"/>
-        <source>Save Songs List</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="239"/>
-        <source>Ctrl+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="240"/>
-        <source>Save the list of currently selected songs.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="244"/>
-        <source>Ctrl+B</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="245"/>
-        <source>Generate pdf from selected songs.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="248"/>
-        <location filename="../src/mainwindow.cc" line="249"/>
+        <location filename="../src/mainwindow.cc" line="289"/>
         <source>Clean</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="252"/>
+        <location filename="../src/mainwindow.cc" line="293"/>
+        <source>Clean LaTeX temporary files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="296"/>
         <source>&amp;Preferences</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="253"/>
-        <source>Select your preferences.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="256"/>
+        <location filename="../src/mainwindow.cc" line="267"/>
         <source>&amp;About</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="257"/>
-        <source>Show the application&apos;s About box</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="260"/>
+        <location filename="../src/mainwindow.cc" line="300"/>
         <source>Select all</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="261"/>
-        <source>Select all displayed songs.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="264"/>
+        <location filename="../src/mainwindow.cc" line="307"/>
         <source>Unselect all</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="265"/>
-        <source>Unselect all displayed songs.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="268"/>
+        <location filename="../src/mainwindow.cc" line="311"/>
         <source>Invert Selection</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="269"/>
-        <source>Invert currently selected songs.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="272"/>
-        <source>Display Song Info</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="273"/>
-        <source>Display information about the last selected song.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="278"/>
-        <source>Display Log Info</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="279"/>
-        <source>Output out the LaTeX compilation process.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="284"/>
+        <location filename="../src/mainwindow.cc" line="315"/>
         <source>Auto Adjust Columns</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="285"/>
-        <source>Adjust columns to contents.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="289"/>
-        <source>Connection to local database</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="290"/>
-        <source>Connection to local database.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="294"/>
-        <source>Synchronise</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="295"/>
-        <source>Rebuild database from local songs.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="299"/>
-        <source>Download songs from Patacrep!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="303"/>
+        <location filename="../src/mainwindow.cc" line="347"/>
         <source>Resize covers</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="304"/>
-        <source>Ensure that covers are correctly resized in songbook directory.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="307"/>
-        <source>Global check</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="308"/>
-        <source>Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...).</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="369"/>
-        <source>&amp;File</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="379"/>
+        <location filename="../src/mainwindow.cc" line="478"/>
         <source>&amp;Edit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="386"/>
-        <source>&amp;Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="390"/>
+        <location filename="../src/mainwindow.cc" line="491"/>
         <source>&amp;View</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="395"/>
+        <location filename="../src/mainwindow.cc" line="496"/>
         <source>&amp;Tools</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="399"/>
+        <location filename="../src/mainwindow.cc" line="500"/>
         <source>&amp;Help</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="406"/>
-        <source>Current song</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="416"/>
-        <source>&lt;b&gt;Song:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="418"/>
-        <source>&lt;b&gt;Artist:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="420"/>
-        <source>&lt;b&gt;Album:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="427"/>
+        <location filename="../src/mainwindow.cc" line="529"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="428"/>
+        <location filename="../src/mainwindow.cc" line="530"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="543"/>
-        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 June 4th, 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="861"/>
+        <location filename="../src/mainwindow.cc" line="836"/>
         <source>Please select a song to edit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="918"/>
+        <location filename="../src/mainwindow.cc" line="888"/>
+        <location filename="../src/mainwindow.cc" line="923"/>
         <source>Please fill all required fields.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="1018"/>
+        <location filename="../src/mainwindow.cc" line="1033"/>
         <source>Please select a song to remove.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="1029"/>
-        <source>This will remove the file %1 ?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="462"/>
-        <source>Logs</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="542"/>
+        <location filename="../src/mainwindow.cc" line="608"/>
         <source>About Patacrep Songbook Client</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="593"/>
-        <source>You did not select any song. 
- Do you want to build the songbook with all songs ?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="628"/>
-        <source>The songbook generation is now in progress, please wait ...</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="644"/>
+        <location filename="../src/mainwindow.cc" line="700"/>
         <source>Songbook successfully generated.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="656"/>
-        <source>Sorry: an error occured during the songbook generation.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="667"/>
-        <source>Success!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="704"/>
+        <location filename="../src/mainwindow.cc" line="723"/>
         <source>Cleaning ...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="726"/>
-        <source>Building lilypond for: %1 - %2</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="763"/>
-        <source>Load a list of songs</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="765"/>
-        <location filename="../src/mainwindow.cc" line="789"/>
-        <source>Songbook File (*.sgl)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="787"/>
-        <source>Save the list of selected songs</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cc" line="823"/>
+        <location filename="../src/mainwindow.cc" line="399"/>
         <source>Cannot open database</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="824"/>
+        <location filename="../src/mainwindow.cc" line="400"/>
         <source>Unable to establish a database connection.
 This application needs SQLite support. Click Cancel to exit.</source>
         <translation></translation>
@@ -620,54 +629,142 @@ This application needs SQLite support. Click Cancel to exit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="57"/>
+        <location filename="../src/song-editor.cc" line="59"/>
         <source>Save modifications</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="62"/>
-        <source>Undo</source>
+        <location filename="../src/song-editor.cc" line="66"/>
+        <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="64"/>
-        <source>Undo modifications</source>
+        <location filename="../src/song-editor.cc" line="67"/>
+        <source>Ctrl+X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="68"/>
-        <source>Redo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/song-editor.cc" line="70"/>
-        <source>Redo modifications</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/song-editor.cc" line="74"/>
-        <source>Verse</source>
+        <location filename="../src/song-editor.cc" line="71"/>
+        <source>Cut the selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/song-editor.cc" line="75"/>
-        <source>New verse environment</source>
+        <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="79"/>
-        <source>Chorus</source>
+        <location filename="../src/song-editor.cc" line="76"/>
+        <source>Ctrl+C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/song-editor.cc" line="80"/>
+        <source>Copy the selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="84"/>
+        <source>Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="85"/>
+        <source>Ctrl+V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="89"/>
+        <source>Paste clipboard content</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="96"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="100"/>
+        <source>Undo modifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="104"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="108"/>
+        <source>Redo modifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="115"/>
+        <source>Verse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="116"/>
+        <source>New verse environment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="120"/>
+        <source>Chorus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/song-editor.cc" line="121"/>
         <source>New chorus environment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="95"/>
+        <location filename="../src/song-editor.cc" line="136"/>
         <source>Unable to open file:
 %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CSongbook</name>
+    <message>
+        <location filename="../src/songbook.cc" line="150"/>
+        <source>Template:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="161"/>
+        <source>Chordbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="162"/>
+        <source>Lyricbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="163"/>
+        <source>Chord Diagram</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="164"/>
+        <source>Lilypond</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="165"/>
+        <source>Tablature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="189"/>
+        <source>Book type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="195"/>
+        <source>Book options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -680,16 +777,42 @@ This application needs SQLite support. Click Cancel to exit.</source>
     </message>
     <message>
         <location filename="../src/tools.cc" line="47"/>
-        <source>Sorry: an error occured while applying this tool.</source>
-        <translation></translation>
+        <source>Warning: an error occured while applying this tool.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="63"/>
+        <location filename="../src/tools.cc" line="59"/>
+        <source>Resize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/tools.cc" line="60"/>
+        <location filename="../src/tools.cc" line="137"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/tools.cc" line="103"/>
+        <source>Resize covers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/tools.cc" line="120"/>
         <source>Checking for covers to resize ...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="82"/>
+        <location filename="../src/tools.cc" line="135"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/tools.cc" line="205"/>
+        <source>LaTeX Preprocessing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/tools.cc" line="221"/>
         <source>Applying typo rules ...</source>
         <translation></translation>
     </message>
@@ -697,28 +820,22 @@ This application needs SQLite support. Click Cancel to exit.</source>
 <context>
     <name>ConfigDialog</name>
     <message>
-        <location filename="../src/preferences.cc" line="41"/>
+        <location filename="../src/preferences.cc" line="39"/>
         <source>Close</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="63"/>
+        <location filename="../src/preferences.cc" line="61"/>
         <source>Preferences</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="75"/>
+        <location filename="../src/preferences.cc" line="73"/>
         <source>Options</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="81"/>
-        <source>Songbook
-Appearance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="87"/>
+        <location filename="../src/preferences.cc" line="79"/>
         <source>Display</source>
         <translation></translation>
     </message>
@@ -726,174 +843,126 @@ Appearance</source>
 <context>
     <name>DisplayPage</name>
     <message>
-        <location filename="../src/preferences.cc" line="117"/>
+        <location filename="../src/preferences.cc" line="110"/>
         <source>Display Columns</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="119"/>
+        <location filename="../src/preferences.cc" line="112"/>
         <source>Artist</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="120"/>
+        <location filename="../src/preferences.cc" line="113"/>
         <source>Title</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="121"/>
+        <location filename="../src/preferences.cc" line="114"/>
         <source>Path</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="122"/>
+        <location filename="../src/preferences.cc" line="115"/>
         <source>Album</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="123"/>
+        <location filename="../src/preferences.cc" line="116"/>
         <source>Lilypond</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="124"/>
+        <location filename="../src/preferences.cc" line="117"/>
         <source>Cover</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/preferences.cc" line="128"/>
+        <source>Display windows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/preferences.cc" line="129"/>
+        <source>Compilation log</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>OptionsPage</name>
     <message>
-        <location filename="../src/preferences.cc" line="182"/>
+        <location filename="../src/preferences.cc" line="188"/>
         <source>Directory for Patacrep Songbook</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="184"/>
+        <location filename="../src/preferences.cc" line="190"/>
         <source>Browse</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="194"/>
-        <source>Chordbook</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="196"/>
-        <source>Lyricbook</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="191"/>
-        <source>Main options</source>
+        <location filename="../src/preferences.cc" line="207"/>
+        <source>Check application dependencies</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="200"/>
-        <source>Chord Diagram</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="201"/>
-        <source>Lilypond</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="202"/>
-        <source>Tablature</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="233"/>
-        <source>Find Files</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="358"/>
-        <source>&lt;font color=orange&gt;Warning: &lt;a href=&quot;http://lilypond.org&quot;&gt;Lilypond&lt;/a&gt; not found&lt;/font&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>SongbookAppearancePage</name>
-    <message>
-        <location filename="../src/preferences.cc" line="378"/>
-        <source>Front Page Options</source>
+        <location filename="../src/preferences.cc" line="209"/>
+        <source>Check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="379"/>
-        <source>Title:</source>
+        <location filename="../src/preferences.cc" line="212"/>
+        <source>&lt;a href=&quot;http://lilypond.org/&quot;&gt;lilypond&lt;/a&gt;: &lt;font color=orange&gt;%1&lt;/font&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="380"/>
-        <source>Subtitle:</source>
+        <location filename="../src/preferences.cc" line="213"/>
+        <source>&lt;a href=&quot;http://git-scm.com/&quot;&gt;git&lt;/a&gt;: &lt;font color=orange&gt;%1&lt;/font&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="381"/>
-        <source>Author:</source>
+        <location filename="../src/preferences.cc" line="236"/>
+        <source>Songbook path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="382"/>
-        <source>Version:</source>
+        <location filename="../src/preferences.cc" line="274"/>
+        <source>the directory does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="383"/>
-        <source>Mail:</source>
+        <location filename="../src/preferences.cc" line="278"/>
+        <source>makefile not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="384"/>
-        <source>Picture:</source>
+        <location filename="../src/preferences.cc" line="282"/>
+        <source>songbook software (songbook.py) not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="385"/>
-        <source>Copyright:</source>
+        <location filename="../src/preferences.cc" line="286"/>
+        <source>songs/ directory not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="404"/>
-        <source>Custom options</source>
+        <location filename="../src/preferences.cc" line="290"/>
+        <source>img/ directory not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="405"/>
-        <source>Boxes color:</source>
+        <location filename="../src/preferences.cc" line="295"/>
+        <source>lilypond/ directory not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="411"/>
-        <source>Font size:</source>
+        <location filename="../src/preferences.cc" line="300"/>
+        <source>utils/ directory not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="418"/>
-        <source>small</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="419"/>
-        <source>large</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="421"/>
-        <source>Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="493"/>
-        <source>Open Image File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/preferences.cc" line="495"/>
-        <source>Images (*.jpg)</source>
+        <location filename="../src/preferences.cc" line="306"/>
+        <source>The directory is valid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

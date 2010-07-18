@@ -44,7 +44,7 @@ void CTools::toolProcessError(QProcess::ProcessError error)
 {
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Critical);
-  msgBox.setText(tr("Sorry: an error occured while applying this tool."));
+  msgBox.setText(tr("Warning: an error occured while applying this tool."));
   msgBox.setStandardButtons(QMessageBox::Cancel);
   msgBox.setDefaultButton(QMessageBox::Cancel);
   msgBox.exec();

@@ -104,8 +104,6 @@ private:
 
   QWidget * createSongInfoWidget();
 
-  bool createDbConnection();
-
   const QString workingPath();
 
   QStringList getSelectedSongs();
