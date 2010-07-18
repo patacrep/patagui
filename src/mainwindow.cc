@@ -322,6 +322,7 @@ void CMainWindow::createActions()
   m_refreshLibraryAct->setIcon(QIcon::fromTheme("view-refresh"));
 #endif
   m_refreshLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
+  connect(m_refreshLibraryAct, SIGNAL(triggered()), this, SLOT(refreshLibrary()));
 
   m_downloadDbAct = new QAction("Download",this);
   m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep"));
