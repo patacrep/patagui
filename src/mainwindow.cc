@@ -513,18 +513,6 @@ QWidget * CMainWindow::createSongInfoWidget()
   CLabel *albumLabel = new CLabel();
   albumLabel->setElideMode(Qt::ElideRight);
 
-  QGroupBox* currentSongTagsBox = new QGroupBox;
-  QGridLayout *songInfoLayout = new QGridLayout();
-  songInfoLayout->addWidget(new QLabel(tr("<i>Title:</i>")),0,0,1,1,Qt::AlignLeft);
-  songInfoLayout->addWidget(titleLabel,0,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,0,1,1,Qt::AlignLeft);
-  songInfoLayout->addWidget(artistLabel,1,1,1,1);
-  songInfoLayout->addWidget(new QLabel(tr("<i>Album:</i>")),2,0,1,1,Qt::AlignLeft);
-  songInfoLayout->addWidget(albumLabel,2,1,1,1);
-  songInfoLayout->setColumnStretch(2,1);
-  songInfoLayout->setRowStretch(3,10);
-  currentSongTagsBox->setLayout(songInfoLayout);
-
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
   QPushButton *deleteButton = new QPushButton(tr("Delete"));
@@ -537,9 +525,14 @@ QWidget * CMainWindow::createSongInfoWidget()
 
   QGridLayout *songLayout = new QGridLayout;
   m_coverLabel.setAlignment(Qt::AlignTop);
-  songLayout->addWidget(&m_coverLabel,0,0,1,1);
-  songLayout->addWidget(currentSongTagsBox,0,1,2,1);
-  songLayout->addWidget(buttonBox,1,0,1,1);
+  songLayout->addWidget(&m_coverLabel,0,0,4,1);
+  songLayout->addWidget(new QLabel(tr("<i>Title:</i>")),0,1,1,1,Qt::AlignLeft);
+  songLayout->addWidget(titleLabel,0,2,1,1);
+  songLayout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,1,1,1,Qt::AlignLeft);
+  songLayout->addWidget(artistLabel,1,2,1,1);
+  songLayout->addWidget(new QLabel(tr("<i>Album:</i>")),2,1,1,1,Qt::AlignLeft);
+  songLayout->addWidget(albumLabel,2,2,1,1);
+  songLayout->addWidget(buttonBox,3,1,1,2);
   songInfoWidget->setLayout(songLayout);
 
   //Data mapper
