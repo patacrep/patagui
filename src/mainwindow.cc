@@ -672,6 +672,8 @@ void CMainWindow::build()
 	  this, SLOT(buildError(QProcess::ProcessError)));
   connect(m_buildProcess, SIGNAL(readyReadStandardOutput()),
 	  this, SLOT(readProcessOut()));
+  connect(m_buildProcess, SIGNAL(readyReadStandardError()),
+	  this, SLOT(readProcessOut()));
   m_log->clear();
 
   statusBar()->showMessage(tr("The songbook is building. Please wait."));
@@ -702,7 +704,8 @@ void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
       
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText(tr("Warning: an error occured during the songbook generation."));
+      msgBox.setText(tr("An error occured during the songbook generation.\n You may check compilation logs for more information."));
+      msgBox.setDetailedText(m_log->toPlainText());
       msgBox.setStandardButtons(QMessageBox::Cancel);
       msgBox.setDefaultButton(QMessageBox::Cancel);
       msgBox.exec();
