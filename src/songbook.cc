@@ -20,7 +20,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QSettings>
-
+#include <QScrollArea>
 #include <QWidget>
 #include <QGridLayout>
 #include <QLabel>
@@ -39,6 +39,8 @@
 
 #include <QDebug>
 
+#include "qtpropertymanager.h"
+
 CSongbook::CSongbook()
   : QObject()
   , m_filename()
@@ -54,6 +56,9 @@ CSongbook::CSongbook()
 
   QDir templatesDirectory(QString("%1/templates").arg(workingPath));
   m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
+
+  QtGroupPropertyManager *groupManager = new QtGroupPropertyManager(this);
+  m_advParamItem = groupManager->addProperty(tr("Advanced Parameters"));
 }
 
 CSongbook::~CSongbook()
@@ -139,8 +144,6 @@ QWidget * CSongbook::panel()
       m_propertyEditor = new QtButtonPropertyBrowser();
       m_propertyEditor->setFactoryForManager(m_propertyManager,
                                              new QtVariantEditorFactory());
-      m_propertyEditor->setMinimumSize(200,250);
-
 
       QBoxLayout *templateLayout = new QHBoxLayout;
       m_templateComboBox = new QComboBox(m_panel);
@@ -152,10 +155,11 @@ QWidget * CSongbook::panel()
       templateLayout->setStretch(1,1);
 
       changeTemplate();
-
-      QBoxLayout *mainLayout = new QVBoxLayout;
-      mainLayout->addLayout(templateLayout);
-      mainLayout->addWidget(m_propertyEditor,1);
+      
+      QScrollArea *scroll = new QScrollArea();
+      scroll->setWidgetResizable(true);
+      scroll->setWidget(m_propertyEditor);
+      scroll->setMinimumHeight(180);
 
       // BookType
       m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
@@ -203,7 +207,10 @@ QWidget * CSongbook::panel()
       layout->addWidget(bookTypeGroupBox);
       layout->addWidget(optionsGroupBox);
 
+      QBoxLayout *mainLayout = new QVBoxLayout;
       mainLayout->addLayout(layout);
+      mainLayout->addLayout(templateLayout);
+      mainLayout->addWidget(scroll,1);
 
       m_panel->setLayout(mainLayout);
     }
@@ -345,8 +352,11 @@ void CSongbook::changeTemplate(const QString & filename)
 
       QtVariantProperty *item;
       QScriptValueIterator it(parameters);
+      bool count = false;
+  
       while (it.hasNext())
         {
+	  count = true;
           it.next();
           svName = it.value().property("name");
           if (!reservedParameters.contains(svName.toString()))
@@ -372,9 +382,17 @@ void CSongbook::changeTemplate(const QString & filename)
                   item->setValue(svDefault.toVariant());
                 }
               m_parameters.insert(svName.toString(), item);
-              m_propertyEditor->addProperty(item);
+
+	      if( svName.toString() == "title"  || 
+		  svName.toString() == "author" ||
+		  svName.toString() == "subtitle" )
+		m_propertyEditor->addProperty(item);
+	      else //advanced collapsed parameters
+		m_advParamItem->addSubProperty(item);
             }
         }
+      if(count)
+	m_propertyEditor->addProperty(m_advParamItem);
     }
 }
 

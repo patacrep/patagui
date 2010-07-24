@@ -104,6 +104,8 @@ private:
 
   QStringList m_templates;
   QMap< QString, QtVariantProperty* > m_parameters;
+  //test
+  QtProperty * m_advParamItem;
 };
 
 #endif // __SONGBOOK_HH__

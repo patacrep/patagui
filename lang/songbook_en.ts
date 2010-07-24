@@ -383,73 +383,73 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="518"/>
+        <location filename="../src/mainwindow.cc" line="529"/>
         <source>&lt;i&gt;Title:&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="520"/>
+        <location filename="../src/mainwindow.cc" line="531"/>
         <source>&lt;i&gt;Artist:&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="522"/>
+        <location filename="../src/mainwindow.cc" line="533"/>
         <source>&lt;i&gt;Album:&lt;/i&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="609"/>
+        <location filename="../src/mainwindow.cc" line="602"/>
         <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 July 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="662"/>
+        <location filename="../src/mainwindow.cc" line="655"/>
         <source>The songbook is not in the working directory. Build aborted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="668"/>
+        <location filename="../src/mainwindow.cc" line="661"/>
         <source>Wrong filename: songbook does not have &quot;.sb&quot; extension. Build aborted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="685"/>
+        <location filename="../src/mainwindow.cc" line="678"/>
         <source>The songbook is building. Please wait.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="713"/>
+        <location filename="../src/mainwindow.cc" line="706"/>
         <source>Warning: an error occured during the songbook generation.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="737"/>
+        <location filename="../src/mainwindow.cc" line="730"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="739"/>
-        <location filename="../src/mainwindow.cc" line="778"/>
+        <location filename="../src/mainwindow.cc" line="732"/>
+        <location filename="../src/mainwindow.cc" line="771"/>
         <source>Songbook (*.sb)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="776"/>
+        <location filename="../src/mainwindow.cc" line="769"/>
         <source>Save as</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="796"/>
+        <location filename="../src/mainwindow.cc" line="789"/>
         <source>New songbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="797"/>
+        <location filename="../src/mainwindow.cc" line="790"/>
         <source>%1 - %2[*]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="1044"/>
+        <location filename="../src/mainwindow.cc" line="1036"/>
         <source>Are you sure you want to permanently remove the file %1 ?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -564,43 +564,43 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="529"/>
+        <location filename="../src/mainwindow.cc" line="517"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="530"/>
+        <location filename="../src/mainwindow.cc" line="518"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="836"/>
+        <location filename="../src/mainwindow.cc" line="829"/>
         <source>Please select a song to edit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="888"/>
-        <location filename="../src/mainwindow.cc" line="923"/>
+        <location filename="../src/mainwindow.cc" line="881"/>
+        <location filename="../src/mainwindow.cc" line="916"/>
         <source>Please fill all required fields.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="1033"/>
+        <location filename="../src/mainwindow.cc" line="1025"/>
         <source>Please select a song to remove.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="608"/>
+        <location filename="../src/mainwindow.cc" line="601"/>
         <source>About Patacrep Songbook Client</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="700"/>
+        <location filename="../src/mainwindow.cc" line="693"/>
         <source>Songbook successfully generated.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="723"/>
+        <location filename="../src/mainwindow.cc" line="716"/>
         <source>Cleaning ...</source>
         <translation></translation>
     </message>
@@ -728,91 +728,96 @@ This application needs SQLite support. Click Cancel to exit.</source>
 <context>
     <name>CSongbook</name>
     <message>
-        <location filename="../src/songbook.cc" line="150"/>
+        <location filename="../src/songbook.cc" line="151"/>
         <source>Template:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/songbook.cc" line="161"/>
+        <location filename="../src/songbook.cc" line="162"/>
         <source>Chordbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/songbook.cc" line="162"/>
+        <location filename="../src/songbook.cc" line="163"/>
         <source>Lyricbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/songbook.cc" line="163"/>
+        <location filename="../src/songbook.cc" line="164"/>
         <source>Chord Diagram</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/songbook.cc" line="164"/>
+        <location filename="../src/songbook.cc" line="165"/>
         <source>Lilypond</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/songbook.cc" line="165"/>
+        <location filename="../src/songbook.cc" line="166"/>
         <source>Tablature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/songbook.cc" line="189"/>
+        <location filename="../src/songbook.cc" line="190"/>
         <source>Book type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/songbook.cc" line="195"/>
+        <location filename="../src/songbook.cc" line="196"/>
         <source>Book options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/songbook.cc" line="349"/>
+        <source>Advanced Parameters</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>CTools</name>
     <message>
-        <location filename="../src/tools.cc" line="39"/>
+        <location filename="../src/tools.cc" line="41"/>
         <source>Success!</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="47"/>
+        <location filename="../src/tools.cc" line="49"/>
         <source>Warning: an error occured while applying this tool.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="59"/>
+        <location filename="../src/tools.cc" line="64"/>
         <source>Resize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="60"/>
-        <location filename="../src/tools.cc" line="137"/>
+        <location filename="../src/tools.cc" line="65"/>
+        <location filename="../src/tools.cc" line="153"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="103"/>
+        <location filename="../src/tools.cc" line="84"/>
         <source>Resize covers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="120"/>
+        <location filename="../src/tools.cc" line="132"/>
         <source>Checking for covers to resize ...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="135"/>
+        <location filename="../src/tools.cc" line="151"/>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="205"/>
+        <location filename="../src/tools.cc" line="221"/>
         <source>LaTeX Preprocessing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/tools.cc" line="221"/>
+        <location filename="../src/tools.cc" line="237"/>
         <source>Applying typo rules ...</source>
         <translation></translation>
     </message>
