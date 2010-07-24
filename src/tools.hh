@@ -29,7 +29,7 @@ class CTools : public QWidget
   Q_OBJECT
 
 public:
-  CTools(const QString & APath, CMainWindow* AParent);
+  CTools(CMainWindow* AParent);
 
 public slots:
   void toolProcessExit(int exitCode, QProcess::ExitStatus exitStatus);
@@ -44,7 +44,6 @@ private:
   void coverList();
   QString workingPath();
   QProcess* m_process;
-  QString m_workingPath;
   CMainWindow* m_parent;
   QDialog* m_dialogResizeCovers;
   QListWidget* m_coverList;

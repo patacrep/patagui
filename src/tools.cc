@@ -19,10 +19,9 @@
 #include "tools.hh"
 #include "mainwindow.hh"
 
-CTools::CTools(const QString & APath, CMainWindow* parent)
+CTools::CTools(CMainWindow* parent)
   : QWidget()
 {
-  m_workingPath = APath;
   m_parent = parent;
   m_coverList = NULL;
   m_dialogResizeCovers = NULL;
@@ -30,7 +29,7 @@ CTools::CTools(const QString & APath, CMainWindow* parent)
 //------------------------------------------------------------------------------
 QString CTools::workingPath()
 {
-  return m_workingPath;
+  return m_parent->workingPath();
 }
 //------------------------------------------------------------------------------
 void CTools::toolProcessExit(int exitCode, QProcess::ExitStatus exitStatus)

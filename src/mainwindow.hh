@@ -46,6 +46,7 @@ public:
   ~CMainWindow();
 
   QProgressBar * progressBar();
+  const QString workingPath();
 
 public slots:
   void buildFinished(int exitCode, QProcess::ExitStatus exitStatus);
@@ -103,8 +104,6 @@ private:
   void createMenus();
 
   QWidget * createSongInfoWidget();
-
-  const QString workingPath();
 
   QStringList getSelectedSongs();
 

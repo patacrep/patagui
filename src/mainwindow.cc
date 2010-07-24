@@ -345,7 +345,7 @@ void CMainWindow::createActions()
   m_statusbarViewAct->setChecked(m_isStatusbarDisplayed);
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
-  CTools* tools = new CTools(workingPath(), this);
+  CTools* tools = new CTools(this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
   m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
   connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCoversDialog()));
@@ -986,7 +986,7 @@ void CMainWindow::songTemplate()
     }
 
   //resize cover to avoid bug when image is too large
-  CTools* tools = new CTools(workingPath(), this);
+  CTools* tools = new CTools(this);
   tools->resizeCovers();
   delete tools;
  
