@@ -24,6 +24,8 @@ CTools::CTools(const QString & APath, CMainWindow* parent)
 {
   m_workingPath = APath;
   m_parent = parent;
+  m_coverList = NULL;
+  m_dialogResizeCovers = NULL;
 }
 //------------------------------------------------------------------------------
 QString CTools::workingPath()
@@ -52,7 +54,10 @@ void CTools::toolProcessError(QProcess::ProcessError error)
 //------------------------------------------------------------------------------
 void CTools::resizeCoversDialog()
 {
-  QDialog *dialog = new QDialog;
+  if(m_dialogResizeCovers) 
+    m_dialogResizeCovers->close();
+
+  m_dialogResizeCovers = new QDialog;
 
   // Action buttons
   QDialogButtonBox * buttonBox = new QDialogButtonBox;
@@ -66,49 +71,56 @@ void CTools::resizeCoversDialog()
   connect(buttonResize, SIGNAL(clicked()),
 	  this, SLOT(resizeCovers()) );
   connect(buttonClose, SIGNAL(clicked()),
-	  dialog, SLOT(close()) );
+	  m_dialogResizeCovers, SLOT(close()) );
 
-  //retrieve cover files
+  //retrieve cover files 
+  coverList();
+
+  QVBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(m_coverList);
+  mainLayout->addWidget(buttonBox);
+  m_dialogResizeCovers->setLayout(mainLayout);
+  
+  m_dialogResizeCovers->setWindowTitle(tr("Resize covers"));
+  m_dialogResizeCovers->setMinimumWidth(450);
+  m_dialogResizeCovers->setMinimumHeight(450);
+  m_dialogResizeCovers->show();
+}
+//------------------------------------------------------------------------------
+void CTools::coverList()
+{
+  if(m_coverList) 
+    delete m_coverList;
+
   QStringList filter;
-  filter << "*.jpg";
+  filter << "*.jpg" << "*.png" << "*.JPG" ;
   QString path = QString("%1/songs/").arg(workingPath());
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
 
-  QListWidget* list = new QListWidget;
+  m_coverList = new QListWidget;
   QColor green(138,226,52,100);
   QColor red(239,41,41,100);  
   while(it.hasNext())
     {
       QString filename = it.next();
       QFileInfo fi(filename);
-      QString basename = fi.baseName();
+      QString name = fi.fileName();
       QPixmap pixmap = QPixmap::fromImage(QImage(filename));
       QIcon cover(pixmap.scaledToWidth(24));
       
       //create item from current cover
-      QListWidgetItem* item = new QListWidgetItem(cover, basename);
+      QListWidgetItem* item = new QListWidgetItem(cover, name);
       if(pixmap.height()>128)
 	item->setBackground(QBrush(red));
       else
 	item->setBackground(QBrush(green));
-      //apppend items in coversTable
-      list->addItem(item);
+      //apppend items 
+      m_coverList->addItem(item);
     }
-
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(list);
-  mainLayout->addWidget(buttonBox);
-  dialog->setLayout(mainLayout);
-
-  dialog->setWindowTitle(tr("Resize covers"));
-  dialog->setMinimumWidth(450);
-  dialog->setMinimumHeight(450);
-  dialog->show();
 }
 //------------------------------------------------------------------------------
 void CTools::resizeCovers()
 {
-  //todo: do not call extern script but do it here
   m_process = new QProcess(this);
   m_process->setWorkingDirectory(workingPath());
   connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)),
@@ -124,6 +136,10 @@ void CTools::resizeCovers()
 
   if (!m_process->waitForFinished())
     delete m_process;
+
+  //warning: slot may be used from mainwindow (no m_coverlist defined)
+  if(m_coverList)
+      resizeCoversDialog();
 }
 //------------------------------------------------------------------------------
 void CTools::latexPreprocessingDialog()

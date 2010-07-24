@@ -41,10 +41,13 @@ public slots:
   //void addRule();
 
 private:
+  void coverList();
   QString workingPath();
   QProcess* m_process;
   QString m_workingPath;
   CMainWindow* m_parent;
+  QDialog* m_dialogResizeCovers;
+  QListWidget* m_coverList;
 };
 
 #endif // __TOOLS_HH__
