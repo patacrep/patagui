@@ -40,8 +40,9 @@
 #include <QDebug>
 
 #include "qtpropertymanager.h"
+#include "mainwindow.hh"
 
-CSongbook::CSongbook()
+CSongbook::CSongbook(CMainWindow* parent)
   : QObject()
   , m_filename()
   , m_tmpl()
@@ -51,12 +52,11 @@ CSongbook::CSongbook()
   , m_templates()
   , m_parameters()
 {
+  m_parent = parent;
   m_advParamItem = NULL;
   m_groupManager = NULL;
-  QSettings settings;
-  QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
 
-  QDir templatesDirectory(QString("%1/templates").arg(workingPath));
+  QDir templatesDirectory(QString("%1/templates").arg(workingPath()));
   m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
 }
 
@@ -288,10 +288,7 @@ void CSongbook::changeTemplate(const QString & filename)
   //"{\"name\":\"boxshade\", \"description\":\"Box Shade\", \"type\":\"color\"}"
 
   // read template file
-  QSettings settings;
-  QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
-
-  QFile file(QString("%1/templates/%2").arg(workingPath).arg(templateFilename));
+  QFile file(QString("%1/templates/%2").arg(workingPath()).arg(templateFilename));
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       QTextStream in(&file);
@@ -526,4 +523,10 @@ void CSongbook::load(const QString & filename)
     {
       qWarning() << "unable to open file in read mode";
     }
+}
+
+QString CSongbook::workingPath() const
+{
+  //assert(m_parent);
+  return m_parent->workingPath();
 }

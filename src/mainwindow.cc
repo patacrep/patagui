@@ -50,7 +50,7 @@ CMainWindow::CMainWindow()
   readSettings();
 
   // main document and title
-  m_songbook = new CSongbook();
+  m_songbook = new CSongbook(this);
   connect(m_songbook, SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
   updateTitle(m_songbook->filename());

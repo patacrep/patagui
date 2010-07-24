@@ -33,6 +33,7 @@ class QRadioButton;
 class QCheckBox;
 class QComboBox;
 class QtGroupPropertyManager;
+class CMainWindow;
 
 class CSongbook : public QObject
 {
@@ -58,7 +59,7 @@ public slots:
   void changeTemplate(const QString &filename = QString());
 
 public:
-  CSongbook();
+  CSongbook(CMainWindow* parent);
   ~CSongbook();
 
   QString filename();
@@ -80,6 +81,7 @@ private slots:
   void updateBooktype(bool);
 
 private:
+  QString workingPath() const;
   QString m_filename;
   QString m_tmpl;
 
@@ -108,6 +110,7 @@ private:
 
   QtGroupPropertyManager *m_groupManager;
   QtProperty *m_advParamItem;
+  CMainWindow* m_parent;
 };
 
 #endif // __SONGBOOK_HH__
