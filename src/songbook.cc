@@ -159,7 +159,7 @@ QWidget * CSongbook::panel()
       QScrollArea *scroll = new QScrollArea();
       scroll->setWidgetResizable(true);
       scroll->setWidget(m_propertyEditor);
-      scroll->setMinimumHeight(180);
+      scroll->setMinimumHeight(150);
 
       // BookType
       m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
@@ -244,6 +244,7 @@ void CSongbook::updateBooktype(bool)
 
 void CSongbook::reset()
 {
+  setFilename(QString());
   setBookType(QStringList()<<"chorded");
 
   QMap< QString, QtVariantProperty* >::const_iterator it;
@@ -386,8 +387,7 @@ void CSongbook::changeTemplate(const QString & filename)
               m_parameters.insert(svName.toString(), item);
 
 	      if( svName.toString() == "title"  || 
-		  svName.toString() == "author" ||
-		  svName.toString() == "subtitle" )
+		  svName.toString() == "author" )
 		m_propertyEditor->addProperty(item);
 	      else //advanced collapsed parameters
 		{
