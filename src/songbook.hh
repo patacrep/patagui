@@ -32,6 +32,7 @@ class QSlider;
 class QRadioButton;
 class QCheckBox;
 class QComboBox;
+class QtGroupPropertyManager;
 
 class CSongbook : public QObject
 {
@@ -104,8 +105,9 @@ private:
 
   QStringList m_templates;
   QMap< QString, QtVariantProperty* > m_parameters;
-  //test
-  QtProperty * m_advParamItem;
+
+  QtGroupPropertyManager *m_groupManager;
+  QtProperty *m_advParamItem;
 };
 
 #endif // __SONGBOOK_HH__

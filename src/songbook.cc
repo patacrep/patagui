@@ -51,14 +51,13 @@ CSongbook::CSongbook()
   , m_templates()
   , m_parameters()
 {
+  m_advParamItem = NULL;
+  m_groupManager = NULL;
   QSettings settings;
   QString workingPath = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
 
   QDir templatesDirectory(QString("%1/templates").arg(workingPath));
   m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
-
-  QtGroupPropertyManager *groupManager = new QtGroupPropertyManager(this);
-  m_advParamItem = groupManager->addProperty(tr("Advanced Parameters"));
 }
 
 CSongbook::~CSongbook()
@@ -148,6 +147,7 @@ QWidget * CSongbook::panel()
       QBoxLayout *templateLayout = new QHBoxLayout;
       m_templateComboBox = new QComboBox(m_panel);
       m_templateComboBox->addItems(m_templates);
+      m_templateComboBox->setCurrentIndex(m_templates.indexOf("patacrep.tmpl"));
       connect(m_templateComboBox, SIGNAL(currentIndexChanged(const QString &)),
               this, SLOT(setTmpl(const QString &)));
       templateLayout->addWidget(new QLabel(tr("Template:")));
@@ -273,7 +273,7 @@ void CSongbook::update()
 
 void CSongbook::changeTemplate(const QString & filename)
 {
-  QString templateFilename("songbook.tmpl");
+  QString templateFilename("patacrep.tmpl");
   if (!filename.isEmpty())
     templateFilename = filename;
   
@@ -352,11 +352,16 @@ void CSongbook::changeTemplate(const QString & filename)
 
       QtVariantProperty *item;
       QScriptValueIterator it(parameters);
-      bool count = false;
-  
+      bool advparam = false;
+
+      if(m_groupManager)
+	delete m_groupManager;
+
+      m_groupManager = new QtGroupPropertyManager(this);
+      m_advParamItem = m_groupManager->addProperty(tr("Advanced Parameters"));
+
       while (it.hasNext())
         {
-	  count = true;
           it.next();
           svName = it.value().property("name");
           if (!reservedParameters.contains(svName.toString()))
@@ -388,10 +393,13 @@ void CSongbook::changeTemplate(const QString & filename)
 		  svName.toString() == "subtitle" )
 		m_propertyEditor->addProperty(item);
 	      else //advanced collapsed parameters
-		m_advParamItem->addSubProperty(item);
+		{
+		  advparam = true;
+		  m_advParamItem->addSubProperty(item);
+		}
             }
         }
-      if(count)
+      if(advparam)
 	m_propertyEditor->addProperty(m_advParamItem);
     }
 }
