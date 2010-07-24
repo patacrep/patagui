@@ -697,10 +697,23 @@ void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
 
       QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
     }
+  else
+    {
+      m_progressBar->hide();
+      
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.setText(tr("Warning: an error occured during the songbook generation."));
+      msgBox.setStandardButtons(QMessageBox::Cancel);
+      msgBox.setDefaultButton(QMessageBox::Cancel);
+      msgBox.exec();
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::buildError(QProcess::ProcessError error)
 {
+  m_progressBar->hide();
+
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Critical);
   msgBox.setText(tr("Warning: an error occured during the songbook generation."));
