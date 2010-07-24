@@ -44,6 +44,9 @@ CMainWindow::CMainWindow()
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
 
+  m_isToolbarDisplayed = true;
+  m_isStatusbarDisplayed = true;
+
   readSettings();
 
   // main document and title
@@ -54,6 +57,7 @@ CMainWindow::CMainWindow()
 
   // compilation log
   m_log = new QTextEdit;
+  m_log->setMaximumHeight(150);
   m_log->setReadOnly(true);
 
   // toolbar (for the build button)
@@ -69,7 +73,6 @@ CMainWindow::CMainWindow()
   m_toolbar->addAction(m_saveAsAct);
   m_toolbar->addSeparator();
   m_toolbar->addAction(m_buildAct);
-  m_isToolbarDisplayed = true;
 
   //Connection to database
   if (connectDb())
@@ -143,7 +146,6 @@ CMainWindow::CMainWindow()
   m_progressBar->hide();
   statusBar()->addPermanentWidget(m_progressBar);
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
-  m_isStatusbarDisplayed = true;
   
   applySettings();
 }
@@ -334,13 +336,13 @@ void CMainWindow::createActions()
   m_toolbarViewAct = new QAction(tr("Toolbar"),this);
   m_toolbarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
   m_toolbarViewAct->setCheckable(true);
-  m_toolbarViewAct->setChecked(isToolbarDisplayed());
+  m_toolbarViewAct->setChecked(m_isToolbarDisplayed);
   connect(m_toolbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolbarDisplayed(bool)));
   
   m_statusbarViewAct = new QAction(tr("Statusbar"),this);
   m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
   m_statusbarViewAct->setCheckable(true);
-  m_toolbarViewAct->setChecked(isStatusbarDisplayed());
+  m_statusbarViewAct->setChecked(m_isStatusbarDisplayed);
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
   CTools* tools = new CTools(workingPath(), this);
@@ -369,11 +371,8 @@ bool CMainWindow::isToolbarDisplayed( )
 //------------------------------------------------------------------------------
 void CMainWindow::setStatusbarDisplayed( bool value )
 {
-  if( m_isStatusbarDisplayed != value )
-    {
-      m_isStatusbarDisplayed = value;
-      statusBar()->setVisible(value);
-    }
+  m_isStatusbarDisplayed = value;
+  statusBar()->setVisible(value);
 }
 //------------------------------------------------------------------------------
 bool CMainWindow::isStatusbarDisplayed( )
