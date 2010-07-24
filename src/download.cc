@@ -46,8 +46,7 @@ CDownloadDialog::CDownloadDialog(CMainWindow* parent)
   horizontalLayout2->addWidget( new QLabel(tr("Download into:")) );
   m_downloadLineEdit = new QLineEdit(QString("%1").arg(downloadPath()));
   horizontalLayout2->addWidget(m_downloadLineEdit);
-  QToolButton* browseDownloadButton = new QToolButton;
-  browseDownloadButton->setIcon(QIcon(":/icons/document-load.png"));
+  QPushButton* browseDownloadButton = new QPushButton(tr("Browse"));
   horizontalLayout2->addWidget(browseDownloadButton);
 
   //Checkbox options
