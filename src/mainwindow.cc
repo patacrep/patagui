@@ -936,7 +936,6 @@ void CMainWindow::songTemplate()
       //copy in artist directory and resize
       QFileInfo fi(cover);
       QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
-      qDebug() << "new file copy " << cover << "in "<< target;
       img = coverFile.copy(target);
       QFile copyCover(target);
 
