@@ -209,8 +209,8 @@ OptionsPage::OptionsPage(QWidget *parent)
   QPushButton *checkApplicationButton = new QPushButton(tr("Check"));
   connect(checkApplicationButton, SIGNAL(clicked()),
           this, SLOT(checkApplication()));
-  m_lilypondLabel = new QLabel(tr("<a href=\"http://lilypond.org/\">lilypond</a>: <font color=orange>%1</font>"));
-  m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
+  m_lilypondLabel = new QLabel(tr("<a href=\"http://lilypond.org/\">lilypond</a>: "));
+  m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: "));
 
   QBoxLayout *checkApplicationLayout = new QVBoxLayout;
   checkApplicationLayout->addWidget(m_lilypondLabel);
