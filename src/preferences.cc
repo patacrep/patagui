@@ -151,7 +151,7 @@ void DisplayPage::readSettings()
   m_albumCheckBox->setChecked(settings.value("album", true).toBool());
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   m_coverCheckBox->setChecked(settings.value("cover", true).toBool());
-  m_compilationLogCheckBox->setChecked(settings.value("log", true).toBool());
+  m_compilationLogCheckBox->setChecked(settings.value("log", false).toBool());
   settings.endGroup();
 }
 
