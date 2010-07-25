@@ -109,7 +109,6 @@ CMainWindow::CMainWindow()
   horizontalLayout->addLayout(filterLayout);
 
   // Main widgets
-  //  QWidget *mainWidget = new QWidget;
   QBoxLayout *mainLayout = new QVBoxLayout;
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
@@ -117,7 +116,8 @@ CMainWindow::CMainWindow()
   leftLayout->addWidget(m_songbook->panel());
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
   leftLayout->addWidget(createSongInfoWidget());
-  leftLayout->addStretch();
+  leftLayout->setStretch(1,4);
+  leftLayout->setStretch(3,1);
   centerLayout->addLayout(leftLayout);
   centerLayout->setStretch(0,1);
   centerLayout->addWidget(m_view);
@@ -516,8 +516,8 @@ QWidget * CMainWindow::createSongInfoWidget()
   QPushButton *editButton = new QPushButton(tr("Edit"));
   QPushButton *deleteButton = new QPushButton(tr("Delete"));
   editButton->setDefault(true);
-  buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
-  buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(editButton, QDialogButtonBox::ResetRole);
+  buttonBox->addButton(deleteButton, QDialogButtonBox::ResetRole);
 
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
@@ -532,6 +532,7 @@ QWidget * CMainWindow::createSongInfoWidget()
   songLayout->addWidget(new QLabel(tr("<i>Album:</i>")),2,1,1,1,Qt::AlignLeft);
   songLayout->addWidget(albumLabel,2,2,1,1);
   songLayout->addWidget(buttonBox,3,1,1,2);
+  songLayout->setColumnStretch(2,1);
   songInfoWidget->setLayout(songLayout);
 
   //Data mapper

@@ -135,9 +135,14 @@ void CSongbook::setSongs(QStringList songs)
 
 QWidget * CSongbook::panel()
 {
+  QScrollArea *scroll = new QScrollArea();
+
   if (!m_panel)
     {
       m_panel = new QWidget;
+      m_panel->setMinimumWidth(350);
+      scroll->setWidgetResizable(true);
+      scroll->setWidget(m_panel);
 
       m_propertyManager = new QtVariantPropertyManager();
       m_propertyEditor = new QtButtonPropertyBrowser();
@@ -156,11 +161,6 @@ QWidget * CSongbook::panel()
 
       changeTemplate();
       
-      QScrollArea *scroll = new QScrollArea();
-      scroll->setWidgetResizable(true);
-      scroll->setWidget(m_propertyEditor);
-      scroll->setMinimumHeight(150);
-
       // BookType
       m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
       m_lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
@@ -210,11 +210,11 @@ QWidget * CSongbook::panel()
       QBoxLayout *mainLayout = new QVBoxLayout;
       mainLayout->addLayout(layout);
       mainLayout->addLayout(templateLayout);
-      mainLayout->addWidget(scroll,1);
+      mainLayout->addWidget(m_propertyEditor,1);
 
       m_panel->setLayout(mainLayout);
     }
-  return m_panel;
+  return scroll;
 }
 
 void CSongbook::updateBooktype(bool)
