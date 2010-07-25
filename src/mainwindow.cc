@@ -579,8 +579,11 @@ void CMainWindow::updateCover(const QModelIndex & index)
 #else
   m_cover = new QPixmap;
 #endif
-
-  m_coverLabel.setPixmap(*m_cover);
+  
+  if(m_cover->width()>m_cover->height())
+    m_coverLabel.setPixmap(m_cover->scaledToWidth(128));
+  else
+    m_coverLabel.setPixmap(m_cover->scaledToHeight(128));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::preferences()
@@ -989,11 +992,6 @@ void CMainWindow::songTemplate()
       qDebug() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
     }
 
-  //resize cover to avoid bug when image is too large
-  CTools* tools = new CTools(this);
-  tools->resizeCovers();
-  delete tools;
- 
   //Insert the song in the library
   m_library->addSongFromFile(filepath);
   m_library->submitAll();
