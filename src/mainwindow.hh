@@ -57,6 +57,9 @@ public slots:
   void refreshLibrary();
   void setWorkingPath(QString dirname);
 
+signals:
+  void workingPathChanged(QString path);
+
 protected:
   void closeEvent(QCloseEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);

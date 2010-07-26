@@ -50,9 +50,12 @@ CMainWindow::CMainWindow()
   readSettings();
 
   // main document and title
-  m_songbook = new CSongbook(this);
+  m_songbook = new CSongbook();
+  m_songbook->setWorkingPath(workingPath());
   connect(m_songbook, SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
+  connect(this, SIGNAL(workingPathChanged(QString)),
+	  m_songbook, SLOT(setWorkingPath(QString)));
   updateTitle(m_songbook->filename());
 
   // compilation log
@@ -822,9 +825,13 @@ const QString CMainWindow::workingPath()
     return QDir::currentPath();
  }
 //------------------------------------------------------------------------------
-void CMainWindow::setWorkingPath( QString dirname )
+void CMainWindow::setWorkingPath(QString dirname)
 {
-  m_workingPath = dirname;
+  if (dirname != m_workingPath)
+    {
+      m_workingPath = dirname;
+      emit(workingPathChanged(dirname));
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::downloadDialog()

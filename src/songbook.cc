@@ -42,7 +42,7 @@
 #include "qtpropertymanager.h"
 #include "mainwindow.hh"
 
-CSongbook::CSongbook(CMainWindow* parent)
+CSongbook::CSongbook()
   : QObject()
   , m_filename()
   , m_tmpl()
@@ -52,12 +52,8 @@ CSongbook::CSongbook(CMainWindow* parent)
   , m_templates()
   , m_parameters()
 {
-  m_parent = parent;
   m_advParamItem = NULL;
   m_groupManager = NULL;
-
-  QDir templatesDirectory(QString("%1/templates").arg(workingPath()));
-  m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
 }
 
 CSongbook::~CSongbook()
@@ -527,6 +523,20 @@ void CSongbook::load(const QString & filename)
 
 QString CSongbook::workingPath() const
 {
-  //assert(m_parent);
-  return m_parent->workingPath();
+  return m_workingPath;
+}
+
+void CSongbook::setWorkingPath(QString path)
+{
+  if (m_workingPath != path)
+    {
+      m_workingPath = path;
+      QDir templatesDirectory(QString("%1/templates").arg(workingPath()));
+      m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
+      if (m_panel)
+	{
+	  m_templateComboBox->clear();
+	  m_templateComboBox->addItems(m_templates);
+	  m_templateComboBox->setCurrentIndex(m_templates.indexOf("patacrep.tmpl"));    }
+    }
 }

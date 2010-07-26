@@ -46,6 +46,7 @@ class CSongbook : public QObject
   Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
 
 public slots:
+  void setWorkingPath(QString path);
   void setFilename(const QString &filename);
   void setTmpl(const QString &tmpl);
   void setBookType(QStringList bookType);
@@ -59,7 +60,7 @@ public slots:
   void changeTemplate(const QString &filename = QString());
 
 public:
-  CSongbook(CMainWindow* parent);
+  CSongbook();
   ~CSongbook();
 
   QString filename();
@@ -82,6 +83,7 @@ private slots:
 
 private:
   QString workingPath() const;
+  QString m_workingPath;
   QString m_filename;
   QString m_tmpl;
 
@@ -110,7 +112,6 @@ private:
 
   QtGroupPropertyManager *m_groupManager;
   QtProperty *m_advParamItem;
-  CMainWindow* m_parent;
 };
 
 #endif // __SONGBOOK_HH__
