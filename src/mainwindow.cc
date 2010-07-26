@@ -668,7 +668,10 @@ void CMainWindow::build()
   QString target = QString("%1.pdf")
     .arg(QFileInfo(m_songbook->filename()).baseName());
 
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   m_buildProcess = new QProcess(this);
+  env.insert("LATEX_OPTIONS", "-halt-on-error");
+  m_buildProcess->setProcessEnvironment(env);
   m_buildProcess->setWorkingDirectory(workingPath());
   connect(m_buildProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this, SLOT(buildFinished(int,QProcess::ExitStatus)));
