@@ -116,7 +116,11 @@ CMainWindow::CMainWindow()
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
-  leftLayout->addWidget(m_songbook->panel());
+  QScrollArea *songbookScrollArea = new QScrollArea();
+  songbookScrollArea->setWidgetResizable(true);
+  songbookScrollArea->setWidget(m_songbook->panel());
+  songbookScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  leftLayout->addWidget(songbookScrollArea);
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
   leftLayout->addWidget(createSongInfoWidget());
   leftLayout->setStretch(1,4);

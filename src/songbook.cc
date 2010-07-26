@@ -51,9 +51,9 @@ CSongbook::CSongbook()
   , m_panel()
   , m_templates()
   , m_parameters()
+  , m_groupManager()
+  , m_advancedParameters()
 {
-  m_advParamItem = NULL;
-  m_groupManager = NULL;
 }
 
 CSongbook::~CSongbook()
@@ -131,14 +131,10 @@ void CSongbook::setSongs(QStringList songs)
 
 QWidget * CSongbook::panel()
 {
-  QScrollArea *scroll = new QScrollArea();
-
   if (!m_panel)
     {
       m_panel = new QWidget;
-      m_panel->setMinimumWidth(350);
-      scroll->setWidgetResizable(true);
-      scroll->setWidget(m_panel);
+      m_panel->setMinimumWidth(300);
 
       m_propertyManager = new QtVariantPropertyManager();
       m_propertyEditor = new QtButtonPropertyBrowser();
@@ -210,7 +206,7 @@ QWidget * CSongbook::panel()
 
       m_panel->setLayout(mainLayout);
     }
-  return scroll;
+  return m_panel;
 }
 
 void CSongbook::updateBooktype(bool)
@@ -346,13 +342,13 @@ void CSongbook::changeTemplate(const QString & filename)
 
       QtVariantProperty *item;
       QScriptValueIterator it(parameters);
-      bool advparam = false;
+      bool advancedParameters = false;
 
       if(m_groupManager)
 	delete m_groupManager;
 
       m_groupManager = new QtGroupPropertyManager(this);
-      m_advParamItem = m_groupManager->addProperty(tr("Advanced Parameters"));
+      m_advancedParameters = m_groupManager->addProperty(tr("Advanced Parameters"));
 
       while (it.hasNext())
         {
@@ -384,16 +380,20 @@ void CSongbook::changeTemplate(const QString & filename)
 
 	      if( svName.toString() == "title"  || 
 		  svName.toString() == "author" )
-		m_propertyEditor->addProperty(item);
-	      else //advanced collapsed parameters
 		{
-		  advparam = true;
-		  m_advParamItem->addSubProperty(item);
+		  m_propertyEditor->addProperty(item);
+		}
+	      else
+		{
+		  advancedParameters = true;
+		  m_advancedParameters->addSubProperty(item);
 		}
             }
         }
-      if(advparam)
-	m_propertyEditor->addProperty(m_advParamItem);
+      if (advancedParameters)
+	{
+	  m_propertyEditor->addProperty(m_advancedParameters);
+	}
     }
 }
 

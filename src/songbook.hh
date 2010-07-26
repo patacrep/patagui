@@ -39,8 +39,8 @@ class CSongbook : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(bool modified READ isModified WRITE setModified NOTIFY wasModified)
+  Q_PROPERTY(QString workingPath READ workingPath WRITE setWorkingPath)
   Q_PROPERTY(QString filename READ filename WRITE setFilename)
-
   Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
   Q_PROPERTY(QStringList bookType READ bookType WRITE setBookType)
   Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
@@ -63,6 +63,7 @@ public:
   CSongbook();
   ~CSongbook();
 
+  QString workingPath() const;
   QString filename();
   QString tmpl();
 
@@ -82,7 +83,6 @@ private slots:
   void updateBooktype(bool);
 
 private:
-  QString workingPath() const;
   QString m_workingPath;
   QString m_filename;
   QString m_tmpl;
@@ -111,7 +111,7 @@ private:
   QMap< QString, QtVariantProperty* > m_parameters;
 
   QtGroupPropertyManager *m_groupManager;
-  QtProperty *m_advParamItem;
+  QtProperty *m_advancedParameters;
 };
 
 #endif // __SONGBOOK_HH__
