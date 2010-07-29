@@ -1081,7 +1081,7 @@ void CMainWindow::deleteSong()
 	{
 	  QDir dir;
 	  dir.rmdir(tmp); //remove dir if empty
-	  refreshLibrary(); //temporary hack
+	  refreshLibrary(); clean(); //temporary hack
 	  //once deleted move selection in the model
 	  updateCover(selectionModel()->currentIndex());
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
