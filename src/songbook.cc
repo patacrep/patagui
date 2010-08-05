@@ -413,6 +413,7 @@ void CSongbook::save(const QString & filename)
       QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
       QVariant value;
       QString string_value;
+      QColor color_value;
       while (it != m_parameters.constEnd())
         {
           value = it.value()->value();
@@ -424,6 +425,16 @@ void CSongbook::save(const QString & filename)
                 {
                   out << "\"" << it.key() << "\" : \""
                       << string_value.replace('\\',"\\\\") << "\",\n";
+                }
+              break;
+            case QVariant::Color:
+              color_value = value.value< QColor>();
+              string_value = color_value.name();
+              string_value.remove(0,1);
+              if (!string_value.isEmpty())
+                {
+                  out << "\"" << it.key() << "\" : \"#"
+                      << string_value.toUpper() << "\",\n";
                 }
               break;
             default:
