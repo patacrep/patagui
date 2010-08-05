@@ -49,6 +49,7 @@ CSongbook::CSongbook()
   , m_bookType()
   , m_songs()
   , m_panel()
+  , m_propertyManager(new QtVariantPropertyManager())
   , m_templates()
   , m_parameters()
   , m_groupManager()
@@ -60,6 +61,8 @@ CSongbook::~CSongbook()
 {
   if (m_panel)
     delete m_panel;
+
+  delete m_propertyManager;
 }
 
 QString CSongbook::filename()
@@ -136,7 +139,6 @@ QWidget * CSongbook::panel()
       m_panel = new QWidget;
       m_panel->setMinimumWidth(300);
 
-      m_propertyManager = new QtVariantPropertyManager();
       m_propertyEditor = new QtButtonPropertyBrowser();
       m_propertyEditor->setFactoryForManager(m_propertyManager,
                                              new QtVariantEditorFactory());
