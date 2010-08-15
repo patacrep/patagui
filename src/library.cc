@@ -188,7 +188,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       	return QString();
 
       if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
-	{           
+	{
 #if QT_VERSION >= 0x040600
 	  QPixmap pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
 #else
@@ -196,12 +196,12 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 #endif
 	  if ( role == Qt::DecorationRole )
 	    return pixmap;
-	  
+
 	  if (role == Qt::SizeHintRole)
 	    return pixmap.size();
 	}
     }
-  
+
   //Draws the cover
   if ( index.column() == 5 )
     {
@@ -224,7 +224,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	  pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
 	  QPixmapCache::insert(imgFile, pixmap);
 	}
-           
+
       if ( role == Qt::DecorationRole )
 	return pixmap;
 

@@ -153,7 +153,7 @@ CMainWindow::CMainWindow()
   m_progressBar->hide();
   statusBar()->addPermanentWidget(m_progressBar);
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
-  
+
   applySettings();
 }
 //------------------------------------------------------------------------------
@@ -345,7 +345,7 @@ void CMainWindow::createActions()
   m_toolbarViewAct->setCheckable(true);
   m_toolbarViewAct->setChecked(m_isToolbarDisplayed);
   connect(m_toolbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolbarDisplayed(bool)));
-  
+
   m_statusbarViewAct = new QAction(tr("Statusbar"),this);
   m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
   m_statusbarViewAct->setCheckable(true);
@@ -570,7 +570,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
       m_coverLabel.setPixmap(*m_cover);
       return;
     }
-  
+
   // do not retrieve last clicked item but last selected item
   QModelIndex lastIndex = selectionModel()->selectedRows().last();
   selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::NoUpdate);
@@ -586,7 +586,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
 #else
   m_cover = new QPixmap;
 #endif
-  
+
   if(m_cover->width()>m_cover->height())
     m_coverLabel.setPixmap(m_cover->scaledToWidth(128));
   else
@@ -603,7 +603,7 @@ void CMainWindow::preferences()
 //------------------------------------------------------------------------------
 void CMainWindow::documentation()
 {
-  QDesktopServices::openUrl(QUrl(QString("http://www.patacrep.com/data/documents/doc.pdf")));  
+  QDesktopServices::openUrl(QUrl(QString("http://www.patacrep.com/data/documents/doc.pdf")));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::about()
@@ -715,7 +715,7 @@ void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
   else
     {
       m_progressBar->hide();
-      
+
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.setText(tr("An error occured during the songbook generation.\n You may check compilation logs for more information."));
@@ -906,7 +906,7 @@ bool CMainWindow::checkNewSongRequiredFields()
   //retrieve user input fields
   QString title = m_newSongDialog->title() ;
   QString artist = m_newSongDialog->artist() ;
-  
+
   if (title.isEmpty() || artist.isEmpty())
     {
       QMessageBox msgBox;
@@ -928,7 +928,7 @@ void CMainWindow::songTemplate()
       newSong();
       return;
     }
-    
+
   //retrieve user input fields
   QString title = m_newSongDialog->title() ;
   QString artist = m_newSongDialog->artist() ;

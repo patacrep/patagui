@@ -53,7 +53,7 @@ void CTools::toolProcessError(QProcess::ProcessError error)
 //------------------------------------------------------------------------------
 void CTools::resizeCoversDialog()
 {
-  if(m_dialogResizeCovers) 
+  if(m_dialogResizeCovers)
     m_dialogResizeCovers->close();
 
   m_dialogResizeCovers = new QDialog;
@@ -72,14 +72,14 @@ void CTools::resizeCoversDialog()
   connect(buttonClose, SIGNAL(clicked()),
 	  m_dialogResizeCovers, SLOT(close()) );
 
-  //retrieve cover files 
+  //retrieve cover files
   coverList();
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(m_coverList);
   mainLayout->addWidget(buttonBox);
   m_dialogResizeCovers->setLayout(mainLayout);
-  
+
   m_dialogResizeCovers->setWindowTitle(tr("Resize covers"));
   m_dialogResizeCovers->setMinimumWidth(450);
   m_dialogResizeCovers->setMinimumHeight(450);
@@ -88,7 +88,7 @@ void CTools::resizeCoversDialog()
 //------------------------------------------------------------------------------
 void CTools::coverList()
 {
-  if(m_coverList) 
+  if(m_coverList)
     delete m_coverList;
 
   QStringList filter;
@@ -98,7 +98,7 @@ void CTools::coverList()
 
   m_coverList = new QListWidget;
   QColor green(138,226,52,100);
-  QColor red(239,41,41,100);  
+  QColor red(239,41,41,100);
   while(it.hasNext())
     {
       QString filename = it.next();
@@ -106,14 +106,14 @@ void CTools::coverList()
       QString name = fi.fileName();
       QPixmap pixmap = QPixmap::fromImage(QImage(filename));
       QIcon cover(pixmap.scaledToWidth(24));
-      
+
       //create item from current cover
       QListWidgetItem* item = new QListWidgetItem(cover, name);
       if(pixmap.height()>128)
 	item->setBackground(QBrush(red));
       else
 	item->setBackground(QBrush(green));
-      //apppend items 
+      //apppend items
       m_coverList->addItem(item);
     }
 }
@@ -192,7 +192,7 @@ void CTools::latexPreprocessingDialog()
 	else if(rule)
 	  {
 	    if(line.startsWith("#")) //subcategory
-	      {	 
+	      {
 		item = new QListWidgetItem(line);
 		item->setBackground(QBrush(yellow));
 	      }
@@ -211,7 +211,7 @@ void CTools::latexPreprocessingDialog()
     {
       qWarning() << "unable to open file in read mode: utils/latex-preprocessing";
     }
- 
+
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(list);
   mainLayout->addWidget(buttonBox);

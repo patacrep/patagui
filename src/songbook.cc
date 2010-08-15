@@ -154,7 +154,7 @@ QWidget * CSongbook::panel()
       templateLayout->setStretch(1,1);
 
       changeTemplate();
-      
+
       // BookType
       m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
       m_lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
@@ -291,7 +291,7 @@ void CSongbook::changeTemplate(const QString & filename)
         line = in.readLine();
         if (line.startsWith("%%:"))
 	  json += line.remove(jsonFilter) + "\n";
-	
+
       } while (!line.isNull());
       json += ")";
       file.close();
@@ -394,7 +394,7 @@ void CSongbook::changeTemplate(const QString & filename)
                 {
                   oldValue = svDefault.toVariant();
                 }
- 
+
               if (oldValue.isValid())
                 {
                   if (!enumNames.isEmpty())
@@ -407,7 +407,7 @@ void CSongbook::changeTemplate(const QString & filename)
 
               m_parameters.insert(svName.toString(), item);
 
-	      if( svName.toString() == "title" || 
+	      if( svName.toString() == "title" ||
 		  svName.toString() == "author" )
 		{
 		  m_propertyEditor->addProperty(item);

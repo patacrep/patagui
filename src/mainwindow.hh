@@ -117,7 +117,7 @@ private:
 
   QItemSelectionModel * selectionModel();
   QDataWidgetMapper* m_mapper;
-  
+
   // Song library and view
   CLibrary *m_library;
   QSortFilterProxyModel *m_proxyModel;
