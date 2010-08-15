@@ -324,7 +324,8 @@ void CSongbook::changeTemplate(const QString & filename)
       QScriptValue svDescription;
       QScriptValue svType;
       QScriptValue svDefault;
-      QVariant oldValue;
+      QScriptValue svValues;
+
       int propertyType;
 
       QMap< QString, QVariant > oldValues;
@@ -355,9 +356,14 @@ void CSongbook::changeTemplate(const QString & filename)
           svName = it.value().property("name");
           if (!reservedParameters.contains(svName.toString()))
             {
+              QVariant oldValue;
+              QStringList enumNames;
+
               svDescription = it.value().property("description");
               svDefault = it.value().property("default");
               svType = it.value().property("type");
+              svValues = it.value().property("values");
+
               if (svType.toString() == QString("string"))
                 propertyType = QVariant::String;
               else if (svType.toString() == QString("color"))
@@ -365,19 +371,43 @@ void CSongbook::changeTemplate(const QString & filename)
               else
                 propertyType = QVariant::String;
 
+              if (svValues.isValid())
+                {
+                  propertyType = QtVariantPropertyManager::enumTypeId();
+                }
+
               item = m_propertyManager
                 ->addProperty(propertyType, svDescription.toString());
+
+              if (svValues.isValid() && svValues.isArray())
+                {
+                  qScriptValueToSequence(svValues, enumNames);
+                  m_propertyManager->setAttribute(item, "enumNames",
+                                                  QVariant(enumNames));
+                }
+
               if (oldValues.contains(svName.toString()))
                 {
-                  item->setValue(oldValues.value(svName.toString()));
+                  oldValue = oldValues.value(svName.toString());
                 }
               else if (svDefault.isValid())
                 {
-                  item->setValue(svDefault.toVariant());
+                  oldValue = svDefault.toVariant();
                 }
+ 
+              if (oldValue.isValid())
+                {
+                  if (!enumNames.isEmpty())
+                    {
+                      oldValue = QVariant(enumNames.indexOf(oldValue.toString()));
+                    }
+                  item->setValue(oldValue);
+                }
+
+
               m_parameters.insert(svName.toString(), item);
 
-	      if( svName.toString() == "title"  || 
+	      if( svName.toString() == "title" || 
 		  svName.toString() == "author" )
 		{
 		  m_propertyEditor->addProperty(item);
@@ -408,24 +438,29 @@ void CSongbook::save(const QString & filename)
         out << "\"template\" : \"" << tmpl() << "\",\n";
 
       QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
+      QtProperty *property;
+      int type;
       QVariant value;
       QString string_value;
       QColor color_value;
+      QVariant enumNames;
       while (it != m_parameters.constEnd())
         {
-          value = it.value()->value();
-          switch (value.type())
+          property = it.value();
+          type = m_propertyManager->propertyType(property);
+          value = m_propertyManager->value(property);
+          if (type == QVariant::String)
             {
-            case QVariant::String:
               string_value = value.toString();
               if (!string_value.isEmpty())
                 {
                   out << "\"" << it.key() << "\" : \""
                       << string_value.replace('\\',"\\\\") << "\",\n";
                 }
-              break;
-            case QVariant::Color:
-              color_value = value.value< QColor>();
+            }
+          else if (type == QVariant::Color)
+            {
+              color_value = value.value< QColor >();
               string_value = color_value.name();
               string_value.remove(0,1);
               if (!string_value.isEmpty())
@@ -433,9 +468,17 @@ void CSongbook::save(const QString & filename)
                   out << "\"" << it.key() << "\" : \"#"
                       << string_value.toUpper() << "\",\n";
                 }
-              break;
-            default:
-              break;
+            }
+          else if (type == QtVariantPropertyManager::enumTypeId())
+            {
+              enumNames = m_propertyManager->attributeValue(property,
+                                                            "enumNames");
+              string_value = enumNames.toStringList()[value.toInt()];
+              if (!string_value.isEmpty())
+                {
+                  out << "\"" << it.key() << "\" : \""
+                      << string_value.replace('\\',"\\\\") << "\",\n";
+                }
             }
           ++it;
         }
@@ -486,13 +529,25 @@ void CSongbook::load(const QString & filename)
             }
 
           // template specific properties
+          QtProperty *property;
+          int type;
+          QVariant value;
           QMap< QString, QtVariantProperty* >::const_iterator it;
           for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
             {
               sv = object.property(it.key());
               if (sv.isValid())
                 {
-                  it.value()->setValue(sv.toVariant());
+                  property = it.value();
+                  type = m_propertyManager->propertyType(property);
+                  value = sv.toVariant();
+                  QVariant enumNames;
+                  if (type == QtVariantPropertyManager::enumTypeId())
+                    {
+                      enumNames = m_propertyManager->attributeValue(property, "enumNames");
+                      value = QVariant(enumNames.toStringList().indexOf(value.toString()));
+                    }
+                  m_propertyManager->setValue(property, value);
                 }
             }
 
