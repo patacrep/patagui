@@ -271,16 +271,13 @@ void CSongbook::changeTemplate(const QString & filename)
   QString templateFilename("patacrep.tmpl");
   if (!filename.isEmpty())
     templateFilename = filename;
-  
+
   QString json;
 
   // reserved template parameters
   QStringList reservedParameters;
   reservedParameters << "name" << "booktype" << "songs" << "songslist"
                      << "template";
-
-  // "shadeColor" << "fontSize";
-  //"{\"name\":\"boxshade\", \"description\":\"Box Shade\", \"type\":\"color\"}"
 
   // read template file
   QFile file(QString("%1/templates/%2").arg(workingPath()).arg(templateFilename));
