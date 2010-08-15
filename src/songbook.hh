@@ -57,8 +57,6 @@ public slots:
   void load(const QString &filename);
   void setModified(bool modified);
 
-  void changeTemplate(const QString &filename = QString());
-
 public:
   CSongbook();
   ~CSongbook();
@@ -81,6 +79,8 @@ signals:
 private slots:
   void update();
   void updateBooktype(bool);
+
+  void changeTemplate(const QString &filename = QString());
 
 private:
   QString m_workingPath;
