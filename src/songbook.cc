@@ -158,13 +158,9 @@ QWidget * CSongbook::panel()
       // BookType
       m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
       m_lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
-      m_diagramCheckBox = new QCheckBox(tr("Chord Diagram"));
+      m_diagramCheckBox = new QCheckBox(tr("No Chord Diagram"));
       m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
       m_tablatureCheckBox = new QCheckBox(tr("Tablature"));
-
-      // diagram option cannot (yet) be disabled
-      m_diagramCheckBox->setChecked(true);
-      m_diagramCheckBox->setEnabled(false);
 
       QButtonGroup *bookTypeGroup = new QButtonGroup();
       bookTypeGroup->addButton(m_chordbookRadioButton);
@@ -223,12 +219,11 @@ void CSongbook::updateBooktype(bool)
   else
     {
       m_bookType = QStringList() << "chorded";
-      // diagram option cannot (yet) be disabled
-      //m_diagramCheckBox->setEnabled(true);
+      m_diagramCheckBox->setEnabled(true);
       m_lilypondCheckBox->setEnabled(true);
       m_tablatureCheckBox->setEnabled(true);
       if (m_diagramCheckBox->isChecked())
-        ; // m_bookType << "diagram"; // currently unsupported
+        m_bookType << "nodiagram";
       if (m_lilypondCheckBox->isChecked())
         m_bookType << "lilypond";
       if (m_tablatureCheckBox->isChecked())
@@ -260,7 +255,7 @@ void CSongbook::update()
     {
       m_chordbookRadioButton->setChecked(true);
       // diagram option cannot (yet) be disabled
-      //m_diagramCheckBox->setChecked(m_bookType.contains("diagram"));
+      m_diagramCheckBox->setChecked(m_bookType.contains("nodiagram"));
       m_lilypondCheckBox->setChecked(m_bookType.contains("lilypond"));
       m_tablatureCheckBox->setChecked(m_bookType.contains("tabs"));
     }
