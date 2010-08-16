@@ -26,11 +26,6 @@
 #include <QtButtonPropertyBrowser>
 
 class QWidget;
-class QLabel;
-class QLineEdit;
-class QSlider;
-class QRadioButton;
-class QCheckBox;
 class QComboBox;
 class QtGroupPropertyManager;
 class CMainWindow;
@@ -42,14 +37,12 @@ class CSongbook : public QObject
   Q_PROPERTY(QString workingPath READ workingPath WRITE setWorkingPath)
   Q_PROPERTY(QString filename READ filename WRITE setFilename)
   Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
-  Q_PROPERTY(QStringList bookType READ bookType WRITE setBookType)
   Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
 
 public slots:
   void setWorkingPath(QString path);
   void setFilename(const QString &filename);
   void setTmpl(const QString &tmpl);
-  void setBookType(QStringList bookType);
   void setSongs(QStringList songs);
 
   void reset();
@@ -65,7 +58,6 @@ public:
   QString filename();
   QString tmpl();
 
-  QStringList bookType();
   QStringList songs();
 
   bool isModified();
@@ -77,9 +69,6 @@ signals:
   void songsChanged();
 
 private slots:
-  void update();
-  void updateBooktype(bool);
-
   void changeTemplate(const QString &filename = QString());
 
 private:
@@ -87,7 +76,6 @@ private:
   QString m_filename;
   QString m_tmpl;
 
-  QStringList m_bookType;
   QStringList m_songs;
 
   bool m_modified;
@@ -96,13 +84,6 @@ private:
   QWidget *m_panel;
 
   QComboBox *m_templateComboBox;
-
-  QRadioButton *m_chordbookRadioButton;
-  QRadioButton *m_lyricbookRadioButton;
-
-  QCheckBox *m_diagramCheckBox;
-  QCheckBox *m_lilypondCheckBox;
-  QCheckBox *m_tablatureCheckBox;
 
   QtVariantPropertyManager *m_propertyManager;
   QtButtonPropertyBrowser *m_propertyEditor;

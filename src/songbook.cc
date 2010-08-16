@@ -17,21 +17,13 @@
 //******************************************************************************
 #include "songbook.hh"
 
+#include <QDir>
 #include <QFile>
 #include <QTextStream>
 #include <QSettings>
-#include <QScrollArea>
 #include <QWidget>
-#include <QGridLayout>
 #include <QLabel>
-#include <QLineEdit>
 #include <QComboBox>
-#include <QPushButton>
-#include <QDir>
-#include <QRadioButton>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QButtonGroup>
 
 #include <QScriptEngine>
 #include <QScriptValue>
@@ -46,7 +38,6 @@ CSongbook::CSongbook()
   : QObject()
   , m_filename()
   , m_tmpl()
-  , m_bookType()
   , m_songs()
   , m_panel()
   , m_propertyManager(new QtVariantPropertyManager())
@@ -54,8 +45,7 @@ CSongbook::CSongbook()
   , m_parameters()
   , m_groupManager()
   , m_advancedParameters()
-{
-}
+{}
 
 CSongbook::~CSongbook()
 {
@@ -103,20 +93,6 @@ void CSongbook::setTmpl(const QString &tmpl)
     }
 }
 
-QStringList CSongbook::bookType()
-{
-  return m_bookType;
-}
-
-void CSongbook::setBookType(QStringList bookType)
-{
-  if (m_bookType != bookType)
-    {
-      setModified(true);
-      m_bookType = bookType;
-    }
-}
-
 QStringList CSongbook::songs()
 {
   return m_songs;
@@ -155,50 +131,7 @@ QWidget * CSongbook::panel()
 
       changeTemplate();
 
-      // BookType
-      m_chordbookRadioButton = new QRadioButton(tr("Chordbook"));
-      m_lyricbookRadioButton = new QRadioButton(tr("Lyricbook"));
-      m_diagramCheckBox = new QCheckBox(tr("No Chord Diagram"));
-      m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
-      m_tablatureCheckBox = new QCheckBox(tr("Tablature"));
-
-      QButtonGroup *bookTypeGroup = new QButtonGroup();
-      bookTypeGroup->addButton(m_chordbookRadioButton);
-      bookTypeGroup->addButton(m_lyricbookRadioButton);
-
-      m_chordbookRadioButton->setChecked(true);
-
-      // connect modification signal
-      connect(m_chordbookRadioButton, SIGNAL(toggled(bool)),
-              this, SLOT(updateBooktype(bool)));
-      connect(m_lyricbookRadioButton, SIGNAL(toggled(bool)),
-              this, SLOT(updateBooktype(bool)));
-      connect(m_diagramCheckBox, SIGNAL(toggled(bool)),
-              this, SLOT(updateBooktype(bool)));
-      connect(m_lilypondCheckBox, SIGNAL(toggled(bool)),
-              this, SLOT(updateBooktype(bool)));
-      connect(m_tablatureCheckBox, SIGNAL(toggled(bool)),
-              this, SLOT(updateBooktype(bool)));
-
-      QGroupBox* bookTypeGroupBox = new QGroupBox(tr("Book type"));
-      QVBoxLayout* bookTypeLayout = new QVBoxLayout;
-      bookTypeLayout->addWidget(m_chordbookRadioButton);
-      bookTypeLayout->addWidget(m_lyricbookRadioButton);
-      bookTypeGroupBox->setLayout(bookTypeLayout);
-
-      QGroupBox* optionsGroupBox = new QGroupBox(tr("Book options"));
-      QVBoxLayout* optionsLayout = new QVBoxLayout;
-      optionsLayout->addWidget(m_diagramCheckBox);
-      optionsLayout->addWidget(m_lilypondCheckBox);
-      optionsLayout->addWidget(m_tablatureCheckBox);
-      optionsGroupBox->setLayout(optionsLayout);
-
-      QHBoxLayout *layout = new QHBoxLayout;
-      layout->addWidget(bookTypeGroupBox);
-      layout->addWidget(optionsGroupBox);
-
       QBoxLayout *mainLayout = new QVBoxLayout;
-      mainLayout->addLayout(layout);
       mainLayout->addLayout(templateLayout);
       mainLayout->addWidget(m_propertyEditor,1);
 
@@ -207,34 +140,9 @@ QWidget * CSongbook::panel()
   return m_panel;
 }
 
-void CSongbook::updateBooktype(bool)
-{
-  if (m_lyricbookRadioButton->isChecked())
-    {
-      m_diagramCheckBox->setEnabled(false);
-      m_lilypondCheckBox->setEnabled(false);
-      m_tablatureCheckBox->setEnabled(false);
-      m_bookType = QStringList() << "lyric";
-    }
-  else
-    {
-      m_bookType = QStringList() << "chorded";
-      m_diagramCheckBox->setEnabled(true);
-      m_lilypondCheckBox->setEnabled(true);
-      m_tablatureCheckBox->setEnabled(true);
-      if (m_diagramCheckBox->isChecked())
-        m_bookType << "nodiagram";
-      if (m_lilypondCheckBox->isChecked())
-        m_bookType << "lilypond";
-      if (m_tablatureCheckBox->isChecked())
-        m_bookType << "tabs";
-    }
-}
-
 void CSongbook::reset()
 {
   setFilename(QString());
-  setBookType(QStringList()<<"chorded");
 
   QMap< QString, QtVariantProperty* >::const_iterator it;
   for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
@@ -242,23 +150,6 @@ void CSongbook::reset()
       it.value()->setValue(QVariant(""));
     }
   setModified(false);
-  update();
-}
-
-void CSongbook::update()
-{
-  if (m_bookType.contains("lyric"))
-    {
-      m_lyricbookRadioButton->setChecked(true);
-    }
-  else if (m_bookType.contains("chorded"))
-    {
-      m_chordbookRadioButton->setChecked(true);
-      // diagram option cannot (yet) be disabled
-      m_diagramCheckBox->setChecked(m_bookType.contains("nodiagram"));
-      m_lilypondCheckBox->setChecked(m_bookType.contains("lilypond"));
-      m_tablatureCheckBox->setChecked(m_bookType.contains("tabs"));
-    }
 }
 
 void CSongbook::changeTemplate(const QString & filename)
@@ -271,8 +162,7 @@ void CSongbook::changeTemplate(const QString & filename)
 
   // reserved template parameters
   QStringList reservedParameters;
-  reservedParameters << "name" << "booktype" << "songs" << "songslist"
-                     << "template";
+  reservedParameters << "name" << "template" << "songs" << "songslist";
 
   // read template file
   QFile file(QString("%1/templates/%2").arg(workingPath()).arg(templateFilename));
@@ -320,6 +210,7 @@ void CSongbook::changeTemplate(const QString & filename)
       QScriptValue svType;
       QScriptValue svDefault;
       QScriptValue svValues;
+      QScriptValue svMandatory;
 
       int propertyType;
 
@@ -352,35 +243,31 @@ void CSongbook::changeTemplate(const QString & filename)
           if (!reservedParameters.contains(svName.toString()))
             {
               QVariant oldValue;
-              QStringList enumNames;
+              QStringList stringValues;
 
               svDescription = it.value().property("description");
               svDefault = it.value().property("default");
               svType = it.value().property("type");
               svValues = it.value().property("values");
+              svMandatory = it.value().property("mandatory");
 
+              // determine property type
               if (svType.toString() == QString("string"))
                 propertyType = QVariant::String;
               else if (svType.toString() == QString("color"))
                 propertyType = QVariant::Color;
+              else if (svType.toString() == QString("enum"))
+                propertyType = QtVariantPropertyManager::enumTypeId();
+              else if (svType.toString() == QString("flag"))
+                propertyType = QtVariantPropertyManager::flagTypeId();
               else
                 propertyType = QVariant::String;
 
-              if (svValues.isValid())
-                {
-                  propertyType = QtVariantPropertyManager::enumTypeId();
-                }
-
+              // add new property
               item = m_propertyManager
                 ->addProperty(propertyType, svDescription.toString());
 
-              if (svValues.isValid() && svValues.isArray())
-                {
-                  qScriptValueToSequence(svValues, enumNames);
-                  m_propertyManager->setAttribute(item, "enumNames",
-                                                  QVariant(enumNames));
-                }
-
+              // retrieve existing or default value
               if (oldValues.contains(svName.toString()))
                 {
                   oldValue = oldValues.value(svName.toString());
@@ -390,21 +277,53 @@ void CSongbook::changeTemplate(const QString & filename)
                   oldValue = svDefault.toVariant();
                 }
 
+              if (propertyType == QtVariantPropertyManager::enumTypeId())
+                {
+                  qScriptValueToSequence(svValues, stringValues);
+                  m_propertyManager->setAttribute(item, "enumNames",
+                                                  QVariant(stringValues));
+                  // handle existing or default value in case of enum
+                  if (oldValue.isValid() && oldValue.type() == QVariant::String)
+                    {
+                      oldValue = QVariant(stringValues.indexOf(oldValue.toString()));
+                    }
+                }
+              else if (propertyType == QtVariantPropertyManager::flagTypeId())
+                {
+                  qScriptValueToSequence(svValues, stringValues);
+                  m_propertyManager->setAttribute(item, "flagNames",
+                                                  QVariant(stringValues));
+                  // handle existing or default value in case of flag
+                  if (oldValue.isValid() && oldValue.type() == QVariant::List)
+                    {
+                      QStringList activatedFlags;
+                      qScriptValueToSequence(svDefault, activatedFlags);
+                      int flags = 0;
+                      int index = 1;
+                      for (int i = 0; i < stringValues.size(); ++i)
+                        {
+                          if (activatedFlags.contains(stringValues.at(i)))
+                            {
+                              flags |= index;
+                            }
+                          index *= 2;
+                        }
+                      oldValue = QVariant(flags);
+                    }
+                }
+
+              // set the existing or default value
               if (oldValue.isValid())
                 {
-                  if (!enumNames.isEmpty())
-                    {
-                      oldValue = QVariant(enumNames.indexOf(oldValue.toString()));
-                    }
                   item->setValue(oldValue);
                 }
 
-
+              // insert the property into the list of parameters
               m_parameters.insert(svName.toString(), item);
 
-	      if( svName.toString() == "title" ||
-		  svName.toString() == "author" )
-		{
+              // handle the mandatory boolean parameter
+	      if (svMandatory.isValid() && svMandatory.toBool())
+                {
 		  m_propertyEditor->addProperty(item);
 		}
 	      else
@@ -438,7 +357,7 @@ void CSongbook::save(const QString & filename)
       QVariant value;
       QString string_value;
       QColor color_value;
-      QVariant enumNames;
+      QVariant stringValues;
       while (it != m_parameters.constEnd())
         {
           property = it.value();
@@ -466,20 +385,41 @@ void CSongbook::save(const QString & filename)
             }
           else if (type == QtVariantPropertyManager::enumTypeId())
             {
-              enumNames = m_propertyManager->attributeValue(property,
-                                                            "enumNames");
-              string_value = enumNames.toStringList()[value.toInt()];
+              stringValues = m_propertyManager->attributeValue(property,
+                                                               "enumNames");
+              string_value = stringValues.toStringList()[value.toInt()];
               if (!string_value.isEmpty())
                 {
                   out << "\"" << it.key() << "\" : \""
                       << string_value.replace('\\',"\\\\") << "\",\n";
                 }
             }
+          else if (type == QtVariantPropertyManager::flagTypeId())
+            {
+              stringValues = m_propertyManager->attributeValue(property,
+                                                               "flagNames");
+              QStringList flagValues = stringValues.toStringList();
+              QStringList activatedFlags;
+              int index = 1;
+              int flags = value.toInt();
+              for (int i = 0; i < flagValues.size(); ++i)
+                {
+                  if (flags & index)
+                    {
+                      activatedFlags << flagValues.at(i);
+                    }
+                  index *= 2;
+                }
+
+              if (!activatedFlags.isEmpty())
+                {
+                  out << "\"" << it.key() << "\" : [\n    \""
+                      << (activatedFlags.join("\",\n    \""))
+                      << "\"\n  ],\n";
+                }
+            }
           ++it;
         }
-
-      if (!bookType().empty())
-        out << "\"booktype\" : [\n    \"" << (bookType().join("\",\n    \"")) << "\"\n  ],\n";
 
       out << "\"songs\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
       file.close();
@@ -536,23 +476,31 @@ void CSongbook::load(const QString & filename)
                   property = it.value();
                   type = m_propertyManager->propertyType(property);
                   value = sv.toVariant();
-                  QVariant enumNames;
+                  QVariant stringValues;
                   if (type == QtVariantPropertyManager::enumTypeId())
                     {
-                      enumNames = m_propertyManager->attributeValue(property, "enumNames");
-                      value = QVariant(enumNames.toStringList().indexOf(value.toString()));
+                      stringValues = m_propertyManager->attributeValue(property, "enumNames");
+                      value = QVariant(stringValues.toStringList().indexOf(value.toString()));
+                    }
+                  else if (type == QtVariantPropertyManager::flagTypeId())
+                    {
+                      stringValues = m_propertyManager->attributeValue(property, "flagNames");
+                      QStringList flagValues = stringValues.toStringList();
+                      QStringList activatedFlags = value.toStringList();
+                      int flags = 0;
+                      int index = 1;
+                      for (int i = 0; i < flagValues.size(); ++i)
+                        {
+                          if (activatedFlags.contains(flagValues.at(i)))
+                            {
+                              flags |= index;
+                            }
+                          index *= 2;
+                        }
+                      value = QVariant(flags);
                     }
                   m_propertyManager->setValue(property, value);
                 }
-            }
-
-          // booktype property (always an array)
-          sv = object.property("booktype");
-          if (sv.isValid() && sv.isArray())
-            {
-              QStringList items;
-              qScriptValueToSequence(sv, items);
-              setBookType(items);
             }
 
           // songs property (if not an array, the value can be "all")
@@ -571,7 +519,6 @@ void CSongbook::load(const QString & filename)
               setSongs(items);
             }
         }
-      update();
       setModified(false);
       setFilename(filename);
     }
