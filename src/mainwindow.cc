@@ -410,12 +410,12 @@ bool CMainWindow::connectDb()
   if (!exist)
     {
       QSqlQuery query;
-      query.exec("create table songs ( artist char(80), "
-		 "title char(80), "
+      query.exec("create table songs ( artist text, "
+		 "title text, "
 		 "lilypond bool, "
-		 "path char(80), "
-		 "album char(80), "
-		 "cover char(80))");
+		 "path text, "
+		 "album text, "
+		 "cover text)");
       newdb = true;
     }
 
