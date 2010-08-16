@@ -393,7 +393,7 @@ bool CMainWindow::connectDb()
   bool newdb = false;//createDbConnection();
 
   QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
-  QDir dbdir; dbdir.mkdir( path );
+  QDir dbdir; dbdir.mkpath( path );
   QString dbpath = QString("%1/patacrep.db").arg(path);
 
   bool exist = QFile::exists(dbpath);
