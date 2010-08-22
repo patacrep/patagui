@@ -430,11 +430,10 @@ bool CMainWindow::connectDb()
   m_view->setModel(m_library);
   m_view->setShowGrid( false );
   m_view->setAlternatingRowColors(true);
-  m_view->setSortingEnabled(true);
   m_view->setSelectionMode(QAbstractItemView::MultiSelection);
   m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
   m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  m_view->sortByColumn(1, Qt::AscendingOrder);
+  m_view->setSortingEnabled(true);
   m_view->sortByColumn(0, Qt::AscendingOrder);
   m_view->setModel(m_proxyModel);
   m_view->show();
