@@ -658,8 +658,7 @@ QStringList CMainWindow::getSelectedSongs()
 //------------------------------------------------------------------------------
 void CMainWindow::build()
 {
-  QStringList songlist = getSelectedSongs();
-  if( songlist.isEmpty() )
+  if( getSelectedSongs().isEmpty() )
     {
       if(QMessageBox::question(this, this->windowTitle(), 
 			       QString(tr("You did not select any song. \n Do you want to build the songbook with all songs ?")), 
@@ -668,10 +667,7 @@ void CMainWindow::build()
 			       QMessageBox::NoButton) == QMessageBox::No)
 	return;
       else
-	{
-	  selectAll();
-	  songlist = getSelectedSongs();
-	}
+	selectAll();
     }
   
   save();
