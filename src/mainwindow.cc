@@ -658,6 +658,22 @@ QStringList CMainWindow::getSelectedSongs()
 //------------------------------------------------------------------------------
 void CMainWindow::build()
 {
+  QStringList songlist = getSelectedSongs();
+  if( songlist.isEmpty() )
+    {
+      if(QMessageBox::question(this, this->windowTitle(), 
+			       QString(tr("You did not select any song. \n Do you want to build the songbook with all songs ?")), 
+			       QMessageBox::Yes, 
+			       QMessageBox::No, 
+			       QMessageBox::NoButton) == QMessageBox::No)
+	return;
+      else
+	{
+	  selectAll();
+	  songlist = getSelectedSongs();
+	}
+    }
+  
   save();
 
   if (!m_songbook->filename().startsWith(workingPath()))
