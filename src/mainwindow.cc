@@ -223,7 +223,9 @@ void CMainWindow::applySettings()
   m_view->setColumnHidden(4,!m_displayColumnAlbum);
   m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(5,!m_displayColumnCover);
-  m_view->resizeColumnsToContents();
+  m_view->setColumnWidth(0,200);
+  m_view->setColumnWidth(1,300);
+  m_view->setColumnWidth(4,200);
   m_log->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
