@@ -93,6 +93,14 @@ Highlighter::Highlighter(QTextDocument *parent)
   rule.format = environmentFormat;
   highlightingRules.append(rule);
 
+  rule.pattern = QRegExp("\\\\beginscripture");
+  rule.format = environmentFormat;
+  highlightingRules.append(rule);
+
+  rule.pattern = QRegExp("\\\\endscripture");
+  rule.format = environmentFormat;
+  highlightingRules.append(rule);
+
   //Comments (grey)
   singleLineCommentFormat.setForeground(QColor(136,138,133));
   rule.pattern = QRegExp("%[^\n]*");
