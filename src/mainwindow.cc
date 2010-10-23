@@ -78,8 +78,8 @@ CMainWindow::CMainWindow()
   m_toolbar->addAction(m_buildAct);
 
   //Connection to database
-  if (connectDb())
-    refreshLibrary();
+  if (!connectDb())
+    refreshLibrary(); //database did not exist 
 
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
@@ -195,7 +195,7 @@ void CMainWindow::readSettings()
 
   resize(settings.value("mainWindow/size", QSize(800,600)).toSize());
 
-  setWorkingPath(settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString());
+  setWorkingPath( settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString() );
 
   settings.beginGroup("display");
   m_displayColumnArtist = settings.value("artist", true).toBool();
@@ -204,14 +204,13 @@ void CMainWindow::readSettings()
   m_displayColumnAlbum = settings.value("album", true).toBool();
   m_displayColumnLilypond = settings.value("lilypond", false).toBool();
   m_displayColumnCover = settings.value("cover", true).toBool();
-  m_displayCompilationLog = settings.value("log", true).toBool();
+  m_displayCompilationLog = settings.value("log", false).toBool();
   settings.endGroup();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::writeSettings()
 {
   QSettings settings;
-
   settings.setValue("mainWindow/size", size());
 }
 //------------------------------------------------------------------------------
@@ -392,8 +391,6 @@ bool CMainWindow::isStatusbarDisplayed( )
 bool CMainWindow::connectDb()
 {
   //Connect to database
-  bool newdb = false;//createDbConnection();
-
   QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
   QDir dbdir; dbdir.mkpath( path );
   QString dbpath = QString("%1/patacrep.db").arg(path);
@@ -418,7 +415,6 @@ bool CMainWindow::connectDb()
 		 "path text, "
 		 "album text, "
 		 "cover text)");
-      newdb = true;
     }
 
   // Initialize the song library
@@ -438,7 +434,7 @@ bool CMainWindow::connectDb()
   m_view->setModel(m_proxyModel);
   m_view->show();
 
-  return newdb;
+  return exist;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::refreshLibrary()
@@ -643,6 +639,11 @@ void CMainWindow::invertSelection()
 //------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
 {
+  //ensure the songs are correctly sorted by artist And title
+  //todo: do not sort the view but define the < operator
+  m_view->sortByColumn(1, Qt::AscendingOrder);
+  m_view->sortByColumn(0, Qt::AscendingOrder);
+
   QStringList songsPath;
   QModelIndexList indexes = selectionModel()->selectedRows();
   QModelIndex index;
@@ -836,18 +837,29 @@ void CMainWindow::updateTitle(const QString &filename)
 //------------------------------------------------------------------------------
 const QString CMainWindow::workingPath()
 {
-  if (QDir( m_workingPath ).exists())
-    return m_workingPath;
-  else
-    return QDir::currentPath();
+  if (!QDir( m_workingPath ).exists())
+    m_workingPath = QDir::currentPath();
+  return m_workingPath;
  }
 //------------------------------------------------------------------------------
 void CMainWindow::setWorkingPath(QString dirname)
 {
-  if (dirname != m_workingPath)
+  if(dirname.endsWith("/"))
+    dirname.remove(-1,1);
+  bool first = m_workingPath.isEmpty();
+
+  if ( dirname != m_workingPath)
     {
       m_workingPath = dirname;
       emit(workingPathChanged(dirname));
+
+      if (!first && QMessageBox::question
+       	  (this, this->windowTitle(),
+       	   QString(tr("The songbook directory has been changed.\nWould you like to scan for available songs ?")),
+       	   QMessageBox::Yes,
+       	   QMessageBox::No,
+       	   QMessageBox::NoButton) == QMessageBox::Yes)
+	refreshLibrary();
     }
 }
 //------------------------------------------------------------------------------

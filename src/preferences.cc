@@ -180,8 +180,11 @@ void DisplayPage::closeEvent(QCloseEvent *event)
 OptionsPage::OptionsPage(QWidget *parent)
   : QWidget(parent)
 {
+  m_workingPath = new QLineEdit;
+  m_workingPathValid = new QLabel;
+  readSettings();
   QSettings settings;
-  QString workingDir = settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString();
+  QString workingDir = settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString();
 
   // working path
   QGroupBox *workingPathGroupBox
@@ -190,10 +193,8 @@ OptionsPage::OptionsPage(QWidget *parent)
   QPushButton *browseWorkingPathButton = new QPushButton(tr("Browse"));
   connect(browseWorkingPathButton, SIGNAL(clicked()),
           this, SLOT(browse()));
-  m_workingPath = new QLineEdit;
   connect(m_workingPath, SIGNAL(textChanged(const QString&)),
           this, SLOT(checkWorkingPath(const QString&)));
-  m_workingPathValid = new QLabel;
   checkWorkingPath(workingDir);
 
   QGridLayout *workingPathLayout = new QGridLayout;
@@ -225,8 +226,6 @@ OptionsPage::OptionsPage(QWidget *parent)
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 
-  readSettings();
-
   checkApplication();
 }
 
@@ -245,7 +244,7 @@ void OptionsPage::browse()
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  m_workingPath->setText(settings.value("workingPath", QString("%1/").arg(QDir::currentPath())).toString());
+  m_workingPath->setText(settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString());
 }
 
 void OptionsPage::writeSettings()
@@ -289,23 +288,23 @@ void OptionsPage::checkWorkingPath(const QString &path)
     {
       message = tr("img/ directory not found");
     }
- else if (!directory.exists("lilypond"))
-   {
-     error = false;
-     message = tr("lilypond/ directory not found");
-   }
- else if (!directory.exists("utils"))
-   {
-     error = false;
-     message = tr("utils/ directory not found");
-   }
- else
-   {
-     error = false;
-     warning = false;
-     message = tr("The directory is valid");
-   }
-
+  else if (!directory.exists("lilypond"))
+    {
+      error = false;
+      message = tr("lilypond/ directory not found");
+    }
+  else if (!directory.exists("utils"))
+    {
+      error = false;
+      message = tr("utils/ directory not found");
+    }
+  else
+    {
+      error = false;
+      warning = false;
+      message = tr("The directory is valid");
+    }
+  
   QString mask("<font color=%1>%2%3.</font>");
   if (error)
     {
@@ -321,6 +320,7 @@ void OptionsPage::checkWorkingPath(const QString &path)
     }
   m_workingPathValid->setText(mask.arg(message));
 }
+
 
 void OptionsPage::checkApplication()
 {

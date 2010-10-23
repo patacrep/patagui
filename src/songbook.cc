@@ -183,7 +183,7 @@ void CSongbook::changeTemplate(const QString & filename)
     }
   else
     {
-      qWarning() << "unable to open file in read mode";
+      qWarning() << "CSongbook::changeTemplate : unable to open file in read mode";
     }
 
   // Load json encoded songbook data
@@ -193,7 +193,7 @@ void CSongbook::changeTemplate(const QString & filename)
   QScriptSyntaxCheckResult res = QScriptEngine::checkSyntax(json);
   if (res.state() != QScriptSyntaxCheckResult::Valid)
     {
-      qDebug() << "Error line "<< res.errorLineNumber()
+      qDebug() << "CSongbook::changeTemplate : Error line "<< res.errorLineNumber()
                << " column " << res.errorColumnNumber()
                << ":" << res.errorMessage();
       return;
@@ -445,7 +445,7 @@ void CSongbook::load(const QString & filename)
       QScriptSyntaxCheckResult res = QScriptEngine::checkSyntax(json);
       if (res.state() != QScriptSyntaxCheckResult::Valid)
         {
-          qDebug() << "Error line "<< res.errorLineNumber()
+          qDebug() << "CSongbook::load : Error line "<< res.errorLineNumber()
                    << " column " << res.errorColumnNumber()
                    << ":" << res.errorMessage();
         }
@@ -510,7 +510,7 @@ void CSongbook::load(const QString & filename)
               QStringList items;
               if (!sv.isArray())
                 {
-                  qDebug() << "not implemented yet";
+                  qDebug() << "CSongbook::load : not implemented yet";
                 }
               else
                 {
@@ -524,7 +524,7 @@ void CSongbook::load(const QString & filename)
     }
   else
     {
-      qWarning() << "unable to open file in read mode";
+      qWarning() << "CSongbook::load : unable to open file in read mode";
     }
 }
 
