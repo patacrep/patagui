@@ -187,20 +187,23 @@ QString CLibrary::processString(const QString str)
 //------------------------------------------------------------------------------
 QVariant CLibrary::data(const QModelIndex &index, int role) const
 {
-
+  QPixmap pixmap;
   //Draws lilypondcheck
   if ( index.column() == 2 )
     {
+      if ( role == Qt::DisplayRole )
+	return QString();
       if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
 	{
 #if QT_VERSION >= 0x040600
 	  QPixmap pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
-#else
-	  QPixmap pixmap;
 #endif
-	  if ( role == Qt::DecorationRole && !pixmap.isNull() )
+	  if ( role == Qt::DecorationRole )
 	    return pixmap;
 	  
+	  if( pixmap.isNull() )
+	    return true;
+
 	  if ( role == Qt::SizeHintRole )
 	    return pixmap.size();
 	}
@@ -216,9 +219,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	return QString();
 
 #if QT_VERSION >= 0x040600
-      QPixmap pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
-#else
-      QPixmap pixmap;
+      pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
 #endif
 
 #if QT_VERSION >= 0x040600
