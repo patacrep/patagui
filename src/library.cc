@@ -191,9 +191,6 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
   //Draws lilypondcheck
   if ( index.column() == 2 )
     {
-      if ( Qt::DisplayRole == role )
-      	return QString();
-
       if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
 	{
 #if QT_VERSION >= 0x040600
@@ -201,12 +198,14 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 #else
 	  QPixmap pixmap;
 #endif
-	  if ( role == Qt::DecorationRole )
+	  if ( role == Qt::DecorationRole && !pixmap.isNull() )
 	    return pixmap;
-
-	  if (role == Qt::SizeHintRole)
+	  
+	  if ( role == Qt::SizeHintRole )
 	    return pixmap.size();
 	}
+      else
+	return QString();
     }
 
   //Draws the cover
