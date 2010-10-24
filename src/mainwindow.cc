@@ -439,9 +439,6 @@ bool CMainWindow::connectDb()
 //------------------------------------------------------------------------------
 void CMainWindow::refreshLibrary()
 {
-  //Drop table songs and recreate
-  QSqlQuery query("delete from songs");
-
   // Retrieve all songs from .sg files in working dir
   m_library->setPathToSongs(workingPath());
   m_library->retrieveSongs();
@@ -859,7 +856,11 @@ void CMainWindow::setWorkingPath(QString dirname)
        	   QMessageBox::Yes,
        	   QMessageBox::No,
        	   QMessageBox::NoButton) == QMessageBox::Yes)
-	refreshLibrary();
+	{
+	  //Drop table songs and recreate
+	  QSqlQuery query("delete from songs");
+	  refreshLibrary();
+	}
     }
 }
 //------------------------------------------------------------------------------
@@ -1091,13 +1092,21 @@ void CMainWindow::deleteSong()
       QMessageBox::No,
       QMessageBox::NoButton) == QMessageBox::Yes)
     {
-      //todo: debug
       //remove entry in database
-      //QModelIndexList list = m_library->match(m_proxyModel->index(0,3), Qt::MatchExactly, path);
-      //QModelIndex index;
-      //foreach(index, list)
-      //	removeRow(index.row());
-      //submitAll();
+      QSqlQuery query;
+      query.exec(QString("DELETE FROM songs WHERE path = '%1'").arg(path));
+
+      delete m_library; 
+      m_library = new CLibrary();
+      m_library->setPathToSongs(workingPath());
+      //update models and display the song list
+      m_proxyModel->setSourceModel(m_library);
+      m_view->setModel(m_library);
+      m_view->sortByColumn(0, Qt::AscendingOrder);
+      m_view->setModel(m_proxyModel);
+      m_view->sortByColumn(1, Qt::AscendingOrder);
+      m_view->sortByColumn(0, Qt::AscendingOrder);
+
       //removal on disk
       QFile file(path);
       QFileInfo fileinfo(file);
@@ -1106,7 +1115,7 @@ void CMainWindow::deleteSong()
 	{
 	  QDir dir;
 	  dir.rmdir(tmp); //remove dir if empty
-	  refreshLibrary(); clean(); //temporary hack
+	  clean();
 	  //once deleted move selection in the model
 	  updateCover(selectionModel()->currentIndex());
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());

@@ -29,6 +29,7 @@
 #include <QSqlRecord>
 #include <QSqlTableModel>
 #include <QSqlField>
+#include <QtSql>
 #include <QPixmapCache>
 #include <QDebug>
 //------------------------------------------------------------------------------
@@ -76,6 +77,12 @@ void CLibrary::retrieveSongs()
 //------------------------------------------------------------------------------
 void CLibrary::addSongFromFile(const QString path)
 {
+  //do not insert if the song is already in the library
+  QSqlQuery query;
+  query.exec(QString("SELECT artist FROM songs WHERE path = '%1'").arg(path));
+  if (query.next())
+    return;
+  
   QFile file(path);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
