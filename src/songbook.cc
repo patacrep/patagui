@@ -272,7 +272,7 @@ void CSongbook::changeTemplate(const QString & filename)
                 {
                   oldValue = oldValues.value(svName.toString());
                 }
-              else if (svDefault.isValid())
+              if (svDefault.isValid())
                 {
                   oldValue = svDefault.toVariant();
                 }
