@@ -1,3 +1,9 @@
+songbook-client (0.3.2-1) maverick; urgency=low
+
+  * New upstream version
+
+ -- Romain Goffe <romain.goffe@gmail.com>  Sun, 31 Oct 2010 19:06:33 +0100
+
 songbook-client (0.3.1-1) maverick; urgency=low
 
   * New upstream version
