@@ -48,6 +48,7 @@ public slots:
 
 public:
   void addSongFromFile(const QString path);
+  uint nbTotalSongs() const;
 
   QString m_pathToSongs;
   QString imgFile;

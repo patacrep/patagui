@@ -90,6 +90,7 @@ private slots:
   void updateSongsList();
   bool connectDb();
   void filterChanged();
+  void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
 
   //application
   void preferences();
@@ -125,6 +126,7 @@ private:
 
   // Songbook
   CSongbook *m_songbook;
+  QLabel* m_selectedSongs;
 
   // Widgets
   CTabWidget* m_mainWidget;

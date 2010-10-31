@@ -65,15 +65,16 @@ CMainWindow::CMainWindow()
   m_noDataInfo = new QTextEdit;
   m_noDataInfo->setReadOnly(true);
   m_noDataInfo->setMaximumHeight(150);
-  m_noDataInfo->setHtml(QString(tr("<table><tr><td valign=middle>  "
-				   "<img src=\":/icons/attention.png\" />  </td><td>"
-				   "<p>The directory <b>%1</b> does not contain any song file (\".sg\").<br/><br/> "
-				   "You may :<ul><li>select a valid directory in the menu <i>Edit/Preferences</i></li>"
-				   "<li>use the menu <i>Library/Download</i> to get the latest git snapshot</li>"
-				   "<li>manually download the latest tarball on "
-				   "<a href=\"http://www.patacrep.com/static1/downloads\">"
-				   "patacrep.com</a></li></ul>"
-				   "</p></td></tr></table>")).arg(workingPath()));
+  m_noDataInfo->
+    setHtml(QString(tr("<table><tr><td valign=middle>  "
+		       "<img src=\":/icons/attention.png\" />  </td><td>"
+		       "<p>The directory <b>%1</b> does not contain any song file (\".sg\").<br/><br/> "
+		       "You may :<ul><li>select a valid directory in the menu <i>Edit/Preferences</i></li>"
+		       "<li>use the menu <i>Library/Download</i> to get the latest git snapshot</li>"
+		       "<li>manually download the latest tarball on "
+		       "<a href=\"http://www.patacrep.com/static1/downloads\">"
+		       "patacrep.com</a></li></ul>"
+		       "</p></td></tr></table>")).arg(workingPath()));
   m_noDataInfo->hide();
 
   // toolbar (for the build button)
@@ -124,12 +125,18 @@ CMainWindow::CMainWindow()
   horizontalLayout->addStretch();
   horizontalLayout->addLayout(filterLayout);
 
+  m_selectedSongs = new QLabel(QString(tr("<b>Songbook</b> (contains 0/%1 songs)"))
+			       .arg(m_library->nbTotalSongs()));
+  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection & , 
+						    const QItemSelection & )),
+	  this, SLOT(selectionChanged(const QItemSelection & , const QItemSelection & )));
+
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
   QBoxLayout *dataLayout = new QVBoxLayout;
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
-  leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
+  leftLayout->addWidget(m_selectedSongs);
   QScrollArea *songbookScrollArea = new QScrollArea();
   songbookScrollArea->setWidgetResizable(true);
   songbookScrollArea->setWidget(m_songbook->panel());
@@ -137,8 +144,6 @@ CMainWindow::CMainWindow()
   leftLayout->addWidget(songbookScrollArea);
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
   leftLayout->addWidget(createSongInfoWidget());
-  leftLayout->setStretch(1,4);
-  leftLayout->setStretch(3,1);
   dataLayout->addWidget(m_view);
   dataLayout->addWidget(m_noDataInfo);
   centerLayout->addLayout(leftLayout);
@@ -171,26 +176,6 @@ CMainWindow::CMainWindow()
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
 
   applySettings();
-}
-//------------------------------------------------------------------------------
-void CMainWindow::filterChanged()
-{
-  QObject *object = QObject::sender();
-
-  if (QLineEdit *lineEdit = qobject_cast< QLineEdit* >(object))
-    {
-      QRegExp expression = QRegExp(lineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
-      m_proxyModel->setFilterRegExp(expression);
-    }
-  else if (QComboBox *comboBox = qobject_cast< QComboBox* >(object))
-    {
-      int column = comboBox->itemData(comboBox->currentIndex()).toInt();
-      m_proxyModel->setFilterKeyColumn(column);
-    }
-  else
-    {
-      qWarning() << "Unknown caller to filterChanged.";
-    }
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
@@ -242,6 +227,33 @@ void CMainWindow::applySettings()
   m_view->setColumnWidth(1,300);
   m_view->setColumnWidth(4,200);
   m_log->setVisible(m_displayCompilationLog);
+}
+//------------------------------------------------------------------------------
+void CMainWindow::filterChanged()
+{
+  QObject *object = QObject::sender();
+
+  if (QLineEdit *lineEdit = qobject_cast< QLineEdit* >(object))
+    {
+      QRegExp expression = QRegExp(lineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
+      m_proxyModel->setFilterRegExp(expression);
+    }
+  else if (QComboBox *comboBox = qobject_cast< QComboBox* >(object))
+    {
+      int column = comboBox->itemData(comboBox->currentIndex()).toInt();
+      m_proxyModel->setFilterKeyColumn(column);
+    }
+  else
+    {
+      qWarning() << "Unknown caller to filterChanged.";
+    }
+}
+//------------------------------------------------------------------------------
+void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
+{
+  m_selectedSongs->setText(QString(tr("<b>Songbook</b> (contains %1/%2 songs)"))
+			   .arg(selectionModel()->selectedRows().size())
+			   .arg(m_library->nbTotalSongs()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
