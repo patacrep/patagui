@@ -43,7 +43,8 @@ public:
   void setPathToSongs(const QString path);
 
 public slots:
-  void retrieveSongs();
+  /// @return false if no song could be found
+  bool retrieveSongs();
 
 public:
   void addSongFromFile(const QString path);

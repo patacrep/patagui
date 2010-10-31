@@ -18,9 +18,9 @@
 #include <QtGui>
 #include <QtSql>
 #include <QtAlgorithms>
+#include <QDebug>
 
 #include "label.hh"
-
 #include "mainwindow.hh"
 #include "preferences.hh"
 #include "library.hh"
@@ -29,8 +29,6 @@
 #include "download.hh"
 #include "song-editor.hh"
 #include "dialog-new-song.hh"
-
-#include <QDebug>
 //******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
@@ -63,6 +61,21 @@ CMainWindow::CMainWindow()
   m_log->setMaximumHeight(150);
   m_log->setReadOnly(true);
 
+  // no data info widget
+  m_noDataInfo = new QTextEdit;
+  m_noDataInfo->setReadOnly(true);
+  m_noDataInfo->setMaximumHeight(150);
+  m_noDataInfo->setHtml(QString(tr("<table><tr><td valign=middle>  "
+				   "<img src=\":/icons/attention.png\" />  </td><td>"
+				   "<p>The directory <b>%1</b> does not contain any song file (\".sg\").<br/><br/> "
+				   "You may :<ul><li>select a valid directory in the menu <i>Edit/Preferences</i></li>"
+				   "<li>use the menu <i>Library/Download</i> to get the latest git snapshot</li>"
+				   "<li>manually download the latest tarball on "
+				   "<a href=\"http://www.patacrep.com/static1/downloads\">"
+				   "patacrep.com</a></li></ul>"
+				   "</p></td></tr></table>")).arg(workingPath()));
+  m_noDataInfo->hide();
+
   // toolbar (for the build button)
   m_toolbar = new QToolBar;
   m_toolbar->setMovable(false);
@@ -78,8 +91,8 @@ CMainWindow::CMainWindow()
   m_toolbar->addAction(m_buildAct);
 
   //Connection to database
-  if (!connectDb())
-    refreshLibrary(); //database did not exist 
+  connectDb();
+  refreshLibrary();
 
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
@@ -111,8 +124,9 @@ CMainWindow::CMainWindow()
   horizontalLayout->addStretch();
   horizontalLayout->addLayout(filterLayout);
 
-  // Main widgets
+  //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
+  QBoxLayout *dataLayout = new QVBoxLayout;
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
@@ -125,9 +139,11 @@ CMainWindow::CMainWindow()
   leftLayout->addWidget(createSongInfoWidget());
   leftLayout->setStretch(1,4);
   leftLayout->setStretch(3,1);
+  dataLayout->addWidget(m_view);
+  dataLayout->addWidget(m_noDataInfo);
   centerLayout->addLayout(leftLayout);
   centerLayout->setStretch(0,1);
-  centerLayout->addWidget(m_view);
+  centerLayout->addLayout(dataLayout);
   centerLayout->setStretch(1,2);
   mainLayout->addLayout(centerLayout);
   mainLayout->addWidget(m_log);
@@ -335,7 +351,7 @@ void CMainWindow::createActions()
   connect(m_refreshLibraryAct, SIGNAL(triggered()), this, SLOT(refreshLibrary()));
 
   m_rebuildLibraryAct = new QAction(tr("Rebuild"), this);
-  m_refreshLibraryAct->setStatusTip(tr("Rebuild the current song list from \".sg\" files"));
+  m_rebuildLibraryAct->setStatusTip(tr("Rebuild the current song list from \".sg\" files"));
   connect(m_rebuildLibraryAct, SIGNAL(triggered()), this, SLOT(rebuildLibrary()));
 
   m_downloadDbAct = new QAction(tr("Download"),this);
@@ -443,9 +459,13 @@ bool CMainWindow::connectDb()
 //------------------------------------------------------------------------------
 void CMainWindow::refreshLibrary()
 {
+  m_noDataInfo->hide();
+
   // Retrieve all songs from .sg files in working dir
   m_library->setPathToSongs(workingPath());
-  m_library->retrieveSongs();
+  if(!m_library->retrieveSongs())
+    m_noDataInfo->show();
+  
   m_view->sortByColumn(1, Qt::AscendingOrder);
   m_view->sortByColumn(0, Qt::AscendingOrder);
   m_view->show();

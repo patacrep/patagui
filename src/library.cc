@@ -61,8 +61,9 @@ void CLibrary::setPathToSongs(const QString path)
   m_pathToSongs = path;
 }
 //------------------------------------------------------------------------------
-void CLibrary::retrieveSongs()
+bool CLibrary::retrieveSongs()
 {
+  bool res = false;
   QStringList filter;
   filter << "*.sg";
 
@@ -70,9 +71,12 @@ void CLibrary::retrieveSongs()
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
 
   while(it.hasNext())
-    addSongFromFile(it.next());
-
+    {
+      res = true;
+      addSongFromFile(it.next());
+    }
   submitAll();
+  return res;
 }
 //------------------------------------------------------------------------------
 void CLibrary::addSongFromFile(const QString path)

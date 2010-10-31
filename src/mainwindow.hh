@@ -130,6 +130,7 @@ private:
   CTabWidget* m_mainWidget;
   QTableView *m_view;
   QProgressBar* m_progressBar;
+  QTextEdit* m_noDataInfo;
 
   // Global
   QString m_workingPath;

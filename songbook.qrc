@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>icons/patacrep.png</file>
+    <file>icons/attention.png</file>
 </qresource>
 </RCC>
