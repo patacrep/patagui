@@ -55,6 +55,7 @@ public slots:
   void readProcessOut();
   void downloadDialog();
   void refreshLibrary();
+  void rebuildLibrary();
   void setWorkingPath(QString dirname);
 
 signals:
@@ -192,6 +193,7 @@ private:
   QAction *m_invertSelectionAct;
   QAction *m_downloadDbAct;
   QAction *m_refreshLibraryAct;
+  QAction *m_rebuildLibraryAct;
 
   // Tools actions
   QAction *m_resizeCoversAct;

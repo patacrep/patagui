@@ -334,6 +334,10 @@ void CMainWindow::createActions()
   m_refreshLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
   connect(m_refreshLibraryAct, SIGNAL(triggered()), this, SLOT(refreshLibrary()));
 
+  m_rebuildLibraryAct = new QAction(tr("Rebuild"), this);
+  m_refreshLibraryAct->setStatusTip(tr("Rebuild the current song list from \".sg\" files"));
+  connect(m_rebuildLibraryAct, SIGNAL(triggered()), this, SLOT(rebuildLibrary()));
+
   m_downloadDbAct = new QAction(tr("Download"),this);
   m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep"));
 #if QT_VERSION >= 0x040600
@@ -447,6 +451,13 @@ void CMainWindow::refreshLibrary()
   m_view->show();
 }
 //------------------------------------------------------------------------------
+void CMainWindow::rebuildLibrary()
+{
+  //Drop table songs and recreate
+  QSqlQuery query("delete from songs");
+  refreshLibrary();
+}
+//------------------------------------------------------------------------------
 void CMainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
   QMenu *menu = new QMenu();
@@ -487,6 +498,7 @@ void CMainWindow::createMenus()
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_downloadDbAct);
   m_dbMenu->addAction(m_refreshLibraryAct);
+  m_dbMenu->addAction(m_rebuildLibraryAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toolbarViewAct);
@@ -857,9 +869,7 @@ void CMainWindow::setWorkingPath(QString dirname)
        	   QMessageBox::No,
        	   QMessageBox::NoButton) == QMessageBox::Yes)
 	{
-	  //Drop table songs and recreate
-	  QSqlQuery query("delete from songs");
-	  refreshLibrary();
+	  rebuildLibrary();
 	}
     }
 }
