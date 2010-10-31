@@ -233,302 +233,326 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
 <context>
     <name>CMainWindow</name>
     <message>
-        <location filename="../src/mainwindow.cc" line="155"/>
+        <location filename="../src/mainwindow.cc" line="128"/>
+        <source>&lt;b&gt;Songbook&lt;/b&gt; (contains 0/%1 songs)</source>
+        <translation>&lt;b&gt;Recueil&lt;/b&gt; (contient 0/%1 chansons)</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="176"/>
         <source>A context menu is available by right-clicking</source>
         <translation>Un menu contextuel est disponible par clic droit</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="237"/>
+        <location filename="../src/mainwindow.cc" line="254"/>
+        <source>&lt;b&gt;Songbook&lt;/b&gt; (contains %1/%2 songs)</source>
+        <translation>&lt;b&gt;Recueil&lt;/b&gt; (contient %1/%2 chansons)</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="265"/>
         <source>Write a new song</source>
         <translation>Écrire une nouvelle chanson</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="240"/>
+        <location filename="../src/mainwindow.cc" line="268"/>
         <source>New</source>
         <translation>Nouveau</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="245"/>
+        <location filename="../src/mainwindow.cc" line="273"/>
         <source>Create a new songbook</source>
         <translation>Créer un nouveau recueil</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="248"/>
+        <location filename="../src/mainwindow.cc" line="276"/>
         <source>Open...</source>
         <translation>Ouvrir...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="253"/>
+        <location filename="../src/mainwindow.cc" line="281"/>
         <source>Open a songbook</source>
         <translation>Ouvrir un recueil</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="256"/>
+        <location filename="../src/mainwindow.cc" line="284"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="261"/>
+        <location filename="../src/mainwindow.cc" line="289"/>
         <source>Save the current songbook</source>
         <translation>Enregistrer le recueil courant</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="264"/>
+        <location filename="../src/mainwindow.cc" line="292"/>
         <source>Save As...</source>
         <translation>Enregistrer sous...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="269"/>
+        <location filename="../src/mainwindow.cc" line="297"/>
         <source>Save the current songbook with a different name</source>
         <translation>Enregistrer le recueil courant sous un nom différent</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="272"/>
+        <location filename="../src/mainwindow.cc" line="300"/>
         <source>Online documentation</source>
         <translation>Documentation en ligne</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="274"/>
+        <location filename="../src/mainwindow.cc" line="302"/>
         <source>Download documentation pdf file </source>
         <translation>Télécharger le pdf de la documentation</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="281"/>
+        <location filename="../src/mainwindow.cc" line="309"/>
         <source>About this application</source>
         <translation>À propos</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="289"/>
+        <location filename="../src/mainwindow.cc" line="317"/>
         <source>Quit the program</source>
         <translation>Quitte le programme</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="292"/>
+        <location filename="../src/mainwindow.cc" line="320"/>
         <source>Build PDF</source>
         <translation>Générer PDF</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="296"/>
+        <location filename="../src/mainwindow.cc" line="324"/>
         <source>Generate pdf from selected songs</source>
         <translation>Construire le pdf depuis les chansons sélectionnées</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="307"/>
+        <location filename="../src/mainwindow.cc" line="335"/>
         <source>Configure the application</source>
         <translation>Configure l&apos;application</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="314"/>
+        <location filename="../src/mainwindow.cc" line="342"/>
         <source>Select all songs in the library</source>
         <translation>Sélectionne toutes les chansons de la bibliothèque</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="318"/>
+        <location filename="../src/mainwindow.cc" line="346"/>
         <source>Unselect all songs in the library</source>
         <translation>Déselectionne toutes les chansons de la bibliothèque</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="322"/>
+        <location filename="../src/mainwindow.cc" line="350"/>
         <source>Invert currently selected songs in the library</source>
         <translation>Inverse les chansons sélectionnées dans la bibliothèque</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="326"/>
+        <location filename="../src/mainwindow.cc" line="354"/>
         <source>Adjust columns to contents</source>
         <translation>Ajuste les colonnes au contenu</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="330"/>
+        <location filename="../src/mainwindow.cc" line="358"/>
         <source>Refresh</source>
         <translation>Rafraichir</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="334"/>
+        <location filename="../src/mainwindow.cc" line="362"/>
         <source>Update current song list from &quot;.sg&quot; files</source>
         <translation>Rafraichi la liste courante des chansons depuis les fichiers &quot;.sg&quot;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="337"/>
+        <location filename="../src/mainwindow.cc" line="365"/>
+        <source>Rebuild</source>
+        <translation>Reconstruire</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="366"/>
+        <source>Rebuild the current song list from &quot;.sg&quot; files</source>
+        <translation>Reconstruit la bibliothèque à partir des fichiers &quot;.sg&quot;</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="369"/>
         <source>Download</source>
         <translation>Télécharger</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="338"/>
+        <location filename="../src/mainwindow.cc" line="370"/>
         <source>Download songs from Patacrep</source>
         <translation>Télécharger les chansons depuis Patacrep</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="344"/>
+        <location filename="../src/mainwindow.cc" line="376"/>
         <source>Toolbar</source>
         <translation>Barre d&apos;outils</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="345"/>
+        <location filename="../src/mainwindow.cc" line="377"/>
         <source>Show or hide the toolbar in the current window</source>
         <translation>Affiche ou cache la barre d&apos;outils dans la fenêtre actuelle</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="350"/>
+        <location filename="../src/mainwindow.cc" line="382"/>
         <source>Statusbar</source>
         <translation>Barre d&apos;état</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="351"/>
+        <location filename="../src/mainwindow.cc" line="383"/>
         <source>Show or hide the statusbar in the current window</source>
         <translation>Affiche ou cache la barre d&apos;état dans la fenêtre actuelle</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="358"/>
+        <location filename="../src/mainwindow.cc" line="390"/>
         <source>Ensure that covers are correctly resized</source>
         <translation>Vérifie que les pochettes soient aux bonnes dimensions</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="361"/>
+        <location filename="../src/mainwindow.cc" line="393"/>
         <source>LaTeX Preprocessing</source>
         <translation>Prétraitement LaTeX</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="362"/>
+        <location filename="../src/mainwindow.cc" line="394"/>
         <source>Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)</source>
         <translation>Vérifie les erreurs courantes dans les chansons (i.e orthographe, accords, typographie LaTeX ...)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="467"/>
+        <location filename="../src/mainwindow.cc" line="510"/>
         <source>&amp;Songbook</source>
         <translation>&amp;Recueil</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="485"/>
+        <location filename="../src/mainwindow.cc" line="528"/>
         <source>&amp;Library</source>
         <translation>&amp;Bibliothèque</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="529"/>
+        <location filename="../src/mainwindow.cc" line="573"/>
         <source>&lt;i&gt;Title:&lt;/i&gt;</source>
         <translation>&lt;i&gt;Titre:&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="531"/>
+        <location filename="../src/mainwindow.cc" line="575"/>
         <source>&lt;i&gt;Artist:&lt;/i&gt;</source>
         <translation>&lt;i&gt;Artiste:&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="533"/>
+        <location filename="../src/mainwindow.cc" line="577"/>
         <source>&lt;i&gt;Album:&lt;/i&gt;</source>
         <translation>&lt;i&gt;Album:&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="606"/>
+        <location filename="../src/mainwindow.cc" line="650"/>
         <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 July 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
         <translation>&lt;br&gt;Ce programme est une interface pour la création de recueils pdf générés avec LaTeX. &lt;/br&gt; &lt;br&gt;Les recueils peuvent contenir les paroles, accords de guitare ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Vous pouvez dupliquer le dépôt du recueil à l&apos;adresse &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 Juillet 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="676"/>
+        <location filename="../src/mainwindow.cc" line="720"/>
         <source>The songbook is not in the working directory. Build aborted.</source>
         <translation>Le recueil ne se trouve pas dans le répertoire de travail. Opération annulée.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="682"/>
+        <location filename="../src/mainwindow.cc" line="726"/>
         <source>Wrong filename: songbook does not have &quot;.sb&quot; extension. Build aborted.</source>
         <translation>Nom de fichier incorrect: le recueil n&apos;a pas l&apos;extension &quot;.sb&quot;. Opération annulée.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="704"/>
+        <location filename="../src/mainwindow.cc" line="748"/>
         <source>The songbook is building. Please wait.</source>
         <translation>Le recueil est en cours de construction. Veuillez patienter.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="732"/>
+        <location filename="../src/mainwindow.cc" line="776"/>
         <source>An error occured during the songbook generation.
  You may check compilation logs for more information.</source>
         <translation>Une erreur est survenue pendant la génération du recueil.
 Veuillez consulter les traces de compilation pour plus de détails.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="746"/>
+        <location filename="../src/mainwindow.cc" line="790"/>
         <source>Warning: an error occured during the songbook generation.</source>
         <translation>Attention: une erreur est survenue pendant la construction du recueil.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="770"/>
+        <location filename="../src/mainwindow.cc" line="814"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="772"/>
-        <location filename="../src/mainwindow.cc" line="811"/>
+        <location filename="../src/mainwindow.cc" line="816"/>
+        <location filename="../src/mainwindow.cc" line="855"/>
         <source>Songbook (*.sb)</source>
         <translation>Recueil (*.sb)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="809"/>
+        <location filename="../src/mainwindow.cc" line="853"/>
         <source>Save as</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="829"/>
+        <location filename="../src/mainwindow.cc" line="873"/>
         <source>New songbook</source>
         <translation>Nouveau recueil</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="830"/>
+        <location filename="../src/mainwindow.cc" line="874"/>
         <source>%1 - %2[*]</source>
         <translation>%1 - %2[*]</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="855"/>
+        <location filename="../src/mainwindow.cc" line="899"/>
         <source>The songbook directory has been changed.
 Would you like to scan for available songs ?</source>
         <translation>Le répertoire du recueil de chansons a été modifié.
 Voulez-vous reconstruire la bibliothèque ?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="1090"/>
+        <location filename="../src/mainwindow.cc" line="1132"/>
         <source>Are you sure you want to permanently remove the file %1 ?</source>
         <translation>Souhaitez-vous vraiment supprimer définitivement le fichier %1 ?</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="284"/>
+        <location filename="../src/mainwindow.cc" line="312"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="89"/>
+        <location filename="../src/mainwindow.cc" line="69"/>
+        <source>&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;The directory &lt;b&gt;%1&lt;/b&gt; does not contain any song file (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; You may :&lt;ul&gt;&lt;li&gt;select a valid directory in the menu &lt;i&gt;Edit/Preferences&lt;/i&gt;&lt;/li&gt;&lt;li&gt;use the menu &lt;i&gt;Library/Download&lt;/i&gt; to get the latest git snapshot&lt;/li&gt;&lt;li&gt;manually download the latest tarball on &lt;a href=&quot;http://www.patacrep.com/static1/downloads&quot;&gt;patacrep.com&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
+        <translation>&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;Le répertoire &lt;b&gt;%1&lt;/b&gt; ne contient aucune chanson (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; Vous pouvez :&lt;ul&gt;&lt;li&gt;sélectionner un répertoire valide dans le menu &lt;i&gt;Édition/Préférences&lt;/i&gt; ;&lt;/li&gt;&lt;li&gt;utiliser le menu &lt;i&gt;Bibliothèque/Télécharger&lt;/i&gt; pour récupérer la dernière version du dépôt git ;&lt;/li&gt;&lt;li&gt;télécharger manuellement l&apos;archive &quot;.tar.gz&quot; disponoible sur &lt;a href=&quot;http://www.patacrep.com/static1/downloads&quot;&gt;patacrep.com&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="103"/>
         <source>&amp;Filter:</source>
         <translation>&amp;Filtre:</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="92"/>
+        <location filename="../src/mainwindow.cc" line="106"/>
         <source>All</source>
         <translation>Tous</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="93"/>
+        <location filename="../src/mainwindow.cc" line="107"/>
         <source>Artist</source>
         <translation>Artiste</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="94"/>
+        <location filename="../src/mainwindow.cc" line="108"/>
         <source>Title</source>
         <translation>Titre</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="95"/>
+        <location filename="../src/mainwindow.cc" line="109"/>
         <source>Album</source>
         <translation>Album</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="118"/>
         <source>&lt;b&gt;Songbook&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Recueil&lt;/b&gt;</translation>
+        <translation type="obsolete">&lt;b&gt;Recueil&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="124"/>
+        <location filename="../src/mainwindow.cc" line="145"/>
         <source>&lt;b&gt;Song&lt;/b&gt;</source>
         <translation>&lt;b&gt;Chanson&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="147"/>
+        <location filename="../src/mainwindow.cc" line="168"/>
         <source>Library</source>
         <translation>Bibliothèque</translation>
     </message>
@@ -545,7 +569,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Fermer l&apos;application</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="233"/>
+        <location filename="../src/mainwindow.cc" line="261"/>
         <source>New Song</source>
         <translation>Nouvelle chanson</translation>
     </message>
@@ -590,17 +614,17 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Générer le pdf à partir des chansons sélectionnées.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="299"/>
+        <location filename="../src/mainwindow.cc" line="327"/>
         <source>Clean</source>
         <translation>Nettoyer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="303"/>
+        <location filename="../src/mainwindow.cc" line="331"/>
         <source>Clean LaTeX temporary files</source>
         <translation>Supprimer les fichiers LaTeX temporaires</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="306"/>
+        <location filename="../src/mainwindow.cc" line="334"/>
         <source>&amp;Preferences</source>
         <translation>&amp;Préférences</translation>
     </message>
@@ -609,7 +633,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Modifie les préférences de l&apos;application.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="277"/>
+        <location filename="../src/mainwindow.cc" line="305"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
     </message>
@@ -618,7 +642,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Affiche des informations relatives à l&apos;application</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="310"/>
+        <location filename="../src/mainwindow.cc" line="338"/>
         <source>Select all</source>
         <translation>Tout sélectionner</translation>
     </message>
@@ -627,7 +651,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Sélectionner toutes les chansons.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="317"/>
+        <location filename="../src/mainwindow.cc" line="345"/>
         <source>Unselect all</source>
         <translation>Tout désélectionner</translation>
     </message>
@@ -636,7 +660,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Désélectionner toutes les chansons.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="321"/>
+        <location filename="../src/mainwindow.cc" line="349"/>
         <source>Invert Selection</source>
         <translation>Inverser la sélection</translation>
     </message>
@@ -665,12 +689,12 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&lt;b&gt;Album:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="517"/>
+        <location filename="../src/mainwindow.cc" line="561"/>
         <source>Edit</source>
         <translation>Éditer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="518"/>
+        <location filename="../src/mainwindow.cc" line="562"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
@@ -679,18 +703,18 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&lt;br&gt;Cette application permet de créer des recueils de chansons en LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil peut afficher les paroles, tablatures ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 du 4 Juin 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="888"/>
+        <location filename="../src/mainwindow.cc" line="930"/>
         <source>Please select a song to edit.</source>
         <translation>Veuillez sélectionner une chanson à éditer.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="940"/>
-        <location filename="../src/mainwindow.cc" line="975"/>
+        <location filename="../src/mainwindow.cc" line="982"/>
+        <location filename="../src/mainwindow.cc" line="1017"/>
         <source>Please fill all required fields.</source>
         <translation>Veuillez remplir tous les champs obligatoires.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="1079"/>
+        <location filename="../src/mainwindow.cc" line="1121"/>
         <source>Please select a song to remove.</source>
         <translation>Veuillez sélectionner une chanson à supprimer.</translation>
     </message>
@@ -715,7 +739,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Afficher la sortie du processus de compilation LaTeX.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="325"/>
+        <location filename="../src/mainwindow.cc" line="353"/>
         <source>Auto Adjust Columns</source>
         <translation>Ajuster automatiquement les colonnes</translation>
     </message>
@@ -744,7 +768,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Téléchargement des chansons depuis Patacrep!</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="357"/>
+        <location filename="../src/mainwindow.cc" line="389"/>
         <source>Resize covers</source>
         <translation>Redimmensionner les pochettes</translation>
     </message>
@@ -765,7 +789,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="478"/>
+        <location filename="../src/mainwindow.cc" line="521"/>
         <source>&amp;Edit</source>
         <translation>&amp;Edition</translation>
     </message>
@@ -774,17 +798,17 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&amp;Base de données</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="491"/>
+        <location filename="../src/mainwindow.cc" line="535"/>
         <source>&amp;View</source>
         <translation>&amp;Affichage</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="496"/>
+        <location filename="../src/mainwindow.cc" line="540"/>
         <source>&amp;Tools</source>
         <translation>&amp;Outils</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="500"/>
+        <location filename="../src/mainwindow.cc" line="544"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
@@ -853,7 +877,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Images (*.png *.jpg)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="605"/>
+        <location filename="../src/mainwindow.cc" line="649"/>
         <source>About Patacrep Songbook Client</source>
         <translation>À propos du Songbook Client Patacrep</translation>
     </message>
@@ -862,7 +886,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&lt;br&gt;Cette application est une interface pour construire des recueils de chansons pdf avec LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil de chansons peut intégrer les paroles, accords de guitare et/ou des partitionspour les chansons disponibles sur&lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Pour récupérer ces chansons, il faut dupliquer le dépôt git disponible sur &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 25 avril 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="663"/>
+        <location filename="../src/mainwindow.cc" line="707"/>
         <source>You did not select any song. 
  Do you want to build the songbook with all songs ?</source>
         <translation>Aucune chanson n&apos;a été sélectionnée. 
@@ -873,7 +897,7 @@ Voulez-vous générer le recueil avec toutes les chansons ?</translation>
         <translation type="obsolete">Génération du recueil de chansons, veuillez patienter ...</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="719"/>
+        <location filename="../src/mainwindow.cc" line="763"/>
         <source>Songbook successfully generated.</source>
         <translation>La recueil de chansons a été correctement généré.</translation>
     </message>
@@ -886,7 +910,7 @@ Voulez-vous générer le recueil avec toutes les chansons ?</translation>
         <translation type="obsolete">Réussi!</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="756"/>
+        <location filename="../src/mainwindow.cc" line="800"/>
         <source>Cleaning ...</source>
         <translation>Nettoyage ...</translation>
     </message>
@@ -907,12 +931,12 @@ Voulez-vous générer le recueil avec toutes les chansons ?</translation>
         <translation type="obsolete">Enregistrer la liste des chansons sélectionnées</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="404"/>
+        <location filename="../src/mainwindow.cc" line="436"/>
         <source>Cannot open database</source>
         <translation>Impossible de se connecter à la base de données</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="405"/>
+        <location filename="../src/mainwindow.cc" line="437"/>
         <source>Unable to establish a database connection.
 This application needs SQLite support. Click Cancel to exit.</source>
         <translation>Impossible d&apos;établir la connexion avec la base de données.
