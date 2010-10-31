@@ -651,7 +651,7 @@ void CMainWindow::about()
 			"<br>Songbooks may represent lyrics, guitar chords or sheets for the songs available on"
 			" <a href=\"http::www.patacrep.com\">www.patacrep.com</a> </br>"
 			"<br>You may clone the <a href=\"git://git.lohrun.net/songbook.git\">songbook repository</a> </br>"
-			"<br><b>Version:</b> 0.3 July 2010 </br>"
+			"<br><b>Version:</b> 0.3.2 October 2010 </br>"
 			"<br><b>Authors:</b> Crep (R.Goffe), Lohrun (A.Dupas) </br>"));
 }
 //------------------------------------------------------------------------------
