@@ -39,8 +39,11 @@ CSongbook::CSongbook()
   , m_filename()
   , m_tmpl()
   , m_songs()
+  , m_modified()
   , m_panel()
+  , m_templateComboBox()
   , m_propertyManager(new QtVariantPropertyManager())
+  , m_propertyEditor()
   , m_templates()
   , m_parameters()
   , m_groupManager()
@@ -49,9 +52,7 @@ CSongbook::CSongbook()
 
 CSongbook::~CSongbook()
 {
-  if (m_panel)
-    delete m_panel;
-
+  delete m_panel;
   delete m_propertyManager;
 }
 
@@ -230,8 +231,7 @@ void CSongbook::changeTemplate(const QString & filename)
       QScriptValueIterator it(parameters);
       bool advancedParameters = false;
 
-      if(m_groupManager)
-	delete m_groupManager;
+      delete m_groupManager;
 
       m_groupManager = new QtGroupPropertyManager(this);
       m_advancedParameters = m_groupManager->addProperty(tr("Advanced Parameters"));
