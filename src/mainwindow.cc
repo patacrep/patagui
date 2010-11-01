@@ -125,8 +125,7 @@ CMainWindow::CMainWindow()
   horizontalLayout->addStretch();
   horizontalLayout->addLayout(filterLayout);
 
-  m_selectedSongs = new QLabel(QString(tr("<b>Songbook</b> (contains 0/%1 songs)"))
-			       .arg(m_library->nbTotalSongs()));
+  m_selectedSongs = new QLabel;
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection & , 
 						    const QItemSelection & )),
 	  this, SLOT(selectionChanged(const QItemSelection & , const QItemSelection & )));
@@ -176,6 +175,7 @@ CMainWindow::CMainWindow()
   statusBar()->showMessage(tr("A context menu is available by right-clicking"));
 
   applySettings();
+  selectionChanged();
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
@@ -249,11 +249,17 @@ void CMainWindow::filterChanged()
     }
 }
 //------------------------------------------------------------------------------
+void CMainWindow::selectionChanged()
+{
+  QItemSelection invalid;
+  selectionChanged(invalid, invalid);
+}
+//------------------------------------------------------------------------------
 void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
 {
   m_selectedSongs->setText(QString(tr("<b>Songbook</b> (contains %1/%2 songs)"))
 			   .arg(selectionModel()->selectedRows().size())
-			   .arg(m_library->nbTotalSongs()));
+			   .arg(m_library->rowCount()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
@@ -918,6 +924,9 @@ QProgressBar * CMainWindow::progressBar()
 //------------------------------------------------------------------------------
 QItemSelectionModel * CMainWindow::selectionModel()
 {
+  while (m_library->canFetchMore())
+    m_library->fetchMore();
+
   return m_view->selectionModel();
 }
 //------------------------------------------------------------------------------

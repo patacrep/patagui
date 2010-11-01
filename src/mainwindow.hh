@@ -90,6 +90,7 @@ private slots:
   void updateSongsList();
   bool connectDb();
   void filterChanged();
+  void selectionChanged();
   void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
 
   //application

@@ -244,16 +244,3 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     }
   return QSqlTableModel::data( index, role );
 }
-//------------------------------------------------------------------------------
-uint CLibrary::nbTotalSongs() const
-{
-  //todo: maybe it would be better to store the value 
-  //but it does not seem to impact performance
-  uint total = 0;
-  QSqlQuery query;
-  query.exec("SELECT * FROM songs");
-  while (query.next())
-    ++total;
-  
-  return total;
-}
