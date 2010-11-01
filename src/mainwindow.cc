@@ -1147,8 +1147,6 @@ void CMainWindow::deleteSong()
       QSqlQuery query;
       query.exec(QString("DELETE FROM songs WHERE path = '%1'").arg(path));
 
-      delete m_library; 
-      m_library = new CLibrary();
       m_library->setPathToSongs(workingPath());
       //update models and display the song list
       m_proxyModel->setSourceModel(m_library);
