@@ -39,8 +39,6 @@ class ConfigDialog : public QDialog
 public:
   ConfigDialog();
 
-  QSize sizeHint() const;
-
 public slots:
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 

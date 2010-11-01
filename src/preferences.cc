@@ -61,11 +61,6 @@ ConfigDialog::ConfigDialog()
   setWindowTitle(tr("Preferences"));
 }
 
-QSize ConfigDialog::sizeHint() const
-{
-  return QSize(700,300);
-}
-
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(contentsWidget);
