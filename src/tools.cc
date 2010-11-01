@@ -22,6 +22,7 @@
 CTools::CTools(CMainWindow* parent)
   : QWidget()
 {
+  m_process = NULL;
   m_parent = parent;
   m_coverList = NULL;
   m_dialogResizeCovers = NULL;
@@ -88,8 +89,7 @@ void CTools::resizeCoversDialog()
 //------------------------------------------------------------------------------
 void CTools::coverList()
 {
-  if(m_coverList)
-    delete m_coverList;
+  delete m_coverList;
 
   QStringList filter;
   filter << "*.jpg" << "*.png" << "*.JPG" ;
