@@ -46,6 +46,7 @@ CLibrary::CLibrary()
   setHeaderData(3, Qt::Horizontal, tr("Path"));
   setHeaderData(4, Qt::Horizontal, tr("Album"));
   setHeaderData(5, Qt::Horizontal, tr("Cover"));
+  setHeaderData(6, Qt::Horizontal, tr("Language"));
 }
 //------------------------------------------------------------------------------
 CLibrary::~CLibrary()
@@ -100,7 +101,8 @@ void CLibrary::addSongFromFile(const QString path)
       bool lilypond(false);
       QString album;
       QString coverName;
-
+      QString lang;
+ 
       //artist
       QRegExp rx1("by=([^[,|\\]]+)");
       rx1.indexIn(fileStr);
@@ -124,6 +126,12 @@ void CLibrary::addSongFromFile(const QString path)
       QRegExp rx4("\\\\lilypond");
       lilypond = QBool(rx4.indexIn(fileStr) > -1);
 
+      //lang
+      QRegExp rx5("selectlanguage\\{([^[\\}]+)");
+      rx5.indexIn(fileStr);
+      lang = rx5.cap(1);
+      qDebug() << "lang = " << lang << "\n" ;
+      
       //cover
       QString coverPath = path;
       coverPath.replace( QRegExp("\\/([^\\/]*).sg"), QString() ); //deletes file.sg and keep the path
@@ -136,6 +144,7 @@ void CLibrary::addSongFromFile(const QString path)
       QSqlField f4("path", QVariant::String);
       QSqlField f5("album", QVariant::String);
       QSqlField f6("cover", QVariant::String);
+      QSqlField f7("lang", QVariant::String);
 
       f1.setValue(QVariant(artist));
       f2.setValue(QVariant(title));
@@ -143,13 +152,15 @@ void CLibrary::addSongFromFile(const QString path)
       f4.setValue(QVariant(path));
       f5.setValue(QVariant(album));
       f6.setValue(QVariant(QString("%1/%2.jpg").arg(coverPath).arg(coverName)));
-
+      f7.setValue(QVariant(lang));
+      
       song.append(f1);
       song.append(f2);
       song.append(f3);
       song.append(f4);
       song.append(f5);
       song.append(f6);
+      song.append(f7);
 
       insertRecord(-1,song);
     }

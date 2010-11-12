@@ -98,6 +98,19 @@ CMainWindow::CMainWindow()
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
 
+  
+  //filter according to lang
+  QToolBar *langbar = new QToolBar;
+  QAction *action = new QAction(tr("english"), this);
+  action->setStatusTip(tr("Select/Unselect songs in English"));
+  connect(action, SIGNAL(triggered()), this, SLOT(selectLanguage()));
+  langbar->addAction(action);
+  
+  action = new QAction(tr("french"), this);
+  action->setStatusTip(tr("Select/Unselect songs in French"));
+  connect(action, SIGNAL(triggered()), this, SLOT(selectLanguage()));
+  langbar->addAction(action);
+  
   // filtering related widgets
   QLineEdit *filterLineEdit = new QLineEdit;
   QLabel *filterLabel = new QLabel(tr("&Filter:"));
@@ -115,6 +128,7 @@ CMainWindow::CMainWindow()
 	  this, SLOT(filterChanged()));
 
   QBoxLayout *filterLayout = new QHBoxLayout;
+  filterLayout->addWidget(langbar);
   filterLayout->addWidget(filterLabel);
   filterLayout->addWidget(filterLineEdit);
   filterLayout->addWidget(filterComboBox);
@@ -205,6 +219,7 @@ void CMainWindow::readSettings()
   m_displayColumnAlbum = settings.value("album", true).toBool();
   m_displayColumnLilypond = settings.value("lilypond", false).toBool();
   m_displayColumnCover = settings.value("cover", true).toBool();
+  m_displayColumnLang = settings.value("lang", false).toBool();
   m_displayCompilationLog = settings.value("log", false).toBool();
   settings.endGroup();
 }
@@ -223,6 +238,7 @@ void CMainWindow::applySettings()
   m_view->setColumnHidden(4,!m_displayColumnAlbum);
   m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(5,!m_displayColumnCover);
+  m_view->setColumnHidden(6,!m_displayColumnLang);
   m_view->setColumnWidth(0,200);
   m_view->setColumnWidth(1,300);
   m_view->setColumnWidth(4,200);
@@ -452,7 +468,8 @@ bool CMainWindow::connectDb()
 		 "lilypond bool, "
 		 "path text, "
 		 "album text, "
-		 "cover text)");
+		 "cover text, "
+		 "lang text)");
     }
 
   // Initialize the song library
@@ -1172,6 +1189,17 @@ void CMainWindow::deleteSong()
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
 	}
     }
+}
+//------------------------------------------------------------------------------
+void CMainWindow::selectLanguage()
+{
+  QList<QModelIndex> indexes;
+  QModelIndex index;
+  QString str=qobject_cast<QAction*>(QObject::sender())->text();
+  indexes = m_library->match( m_proxyModel->index(0,6), Qt::MatchExactly, str, -1 );
+  
+  foreach(index, indexes)
+    selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 }
 //******************************************************************************
 //******************************************************************************

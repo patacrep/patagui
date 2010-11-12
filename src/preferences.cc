@@ -115,6 +115,7 @@ DisplayPage::DisplayPage(QWidget *parent)
   m_albumCheckBox = new QCheckBox(tr("Album"));
   m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
   m_coverCheckBox = new QCheckBox(tr("Cover"));
+  m_langCheckBox = new QCheckBox(tr("Language"));
 
   QVBoxLayout *displayColumnsLayout = new QVBoxLayout;
   displayColumnsLayout->addWidget(m_artistCheckBox);
@@ -123,6 +124,7 @@ DisplayPage::DisplayPage(QWidget *parent)
   displayColumnsLayout->addWidget(m_albumCheckBox);
   displayColumnsLayout->addWidget(m_lilypondCheckBox);
   displayColumnsLayout->addWidget(m_coverCheckBox);
+  displayColumnsLayout->addWidget(m_langCheckBox);
   displayColumnsGroupBox->setLayout(displayColumnsLayout);
 
   QGroupBox *displayWindowsGroupBox = new QGroupBox(tr("Display windows"));
@@ -151,6 +153,7 @@ void DisplayPage::readSettings()
   m_albumCheckBox->setChecked(settings.value("album", true).toBool());
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   m_coverCheckBox->setChecked(settings.value("cover", true).toBool());
+  m_langCheckBox->setChecked(settings.value("lang", false).toBool());
   m_compilationLogCheckBox->setChecked(settings.value("log", false).toBool());
   settings.endGroup();
 }
@@ -165,6 +168,7 @@ void DisplayPage::writeSettings()
   settings.setValue("album", m_albumCheckBox->isChecked());
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
   settings.setValue("cover", m_coverCheckBox->isChecked());
+  settings.setValue("lang", m_langCheckBox->isChecked());
   settings.setValue("log", m_compilationLogCheckBox->isChecked());
   settings.endGroup();
 }
