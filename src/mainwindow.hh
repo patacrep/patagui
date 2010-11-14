@@ -57,7 +57,7 @@ public slots:
   void refreshLibrary();
   void rebuildLibrary();
   void setWorkingPath(QString dirname);
-  void selectLanguage();
+  void selectLanguage(bool);
 
 signals:
   void workingPathChanged(QString path);

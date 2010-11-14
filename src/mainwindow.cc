@@ -102,13 +102,15 @@ CMainWindow::CMainWindow()
   //filter according to lang
   QToolBar *langbar = new QToolBar;
   QAction *action = new QAction(tr("english"), this);
+  action->setCheckable(true);
   action->setStatusTip(tr("Select/Unselect songs in English"));
-  connect(action, SIGNAL(triggered()), this, SLOT(selectLanguage()));
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
   langbar->addAction(action);
   
   action = new QAction(tr("french"), this);
+  action->setCheckable(true);
   action->setStatusTip(tr("Select/Unselect songs in French"));
-  connect(action, SIGNAL(triggered()), this, SLOT(selectLanguage()));
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
   langbar->addAction(action);
   
   // filtering related widgets
@@ -1191,15 +1193,19 @@ void CMainWindow::deleteSong()
     }
 }
 //------------------------------------------------------------------------------
-void CMainWindow::selectLanguage()
+void CMainWindow::selectLanguage(bool selection)
 {
   QList<QModelIndex> indexes;
   QModelIndex index;
   QString str=qobject_cast<QAction*>(QObject::sender())->text();
   indexes = m_library->match( m_proxyModel->index(0,6), Qt::MatchExactly, str, -1 );
-  
-  foreach(index, indexes)
-    selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+ 
+  if(selection)
+    foreach(index, indexes)
+      selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+  else
+    foreach(index, indexes)
+      selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
 }
 //******************************************************************************
 //******************************************************************************
