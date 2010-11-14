@@ -671,13 +671,14 @@ void CMainWindow::documentation()
 //------------------------------------------------------------------------------
 void CMainWindow::about()
 {
-  QMessageBox::about(this, tr("About Patacrep Songbook Client"),
-		     tr("<br>This program is a client for building pdf songbooks with LaTeX. </br> "
-			"<br>Songbooks may represent lyrics, guitar chords or sheets for the songs available on"
-			" <a href=\"http::www.patacrep.com\">www.patacrep.com</a> </br>"
-			"<br>You may clone the <a href=\"git://git.lohrun.net/songbook.git\">songbook repository</a> </br>"
-			"<br><b>Version:</b> 0.3.2 October 2010 </br>"
-			"<br><b>Authors:</b> Crep (R.Goffe), Lohrun (A.Dupas) </br>"));
+  QString version = tr("0.4 November 2010");
+  QMessageBox::about(this, 
+		     tr("About Patacrep Songbook Client"),
+		     QString
+		     (tr("<br>This program is a client for building and customizing the songbooks available on"
+			 " <a href=\"http::www.patacrep.com\">www.patacrep.com</a> </br>"
+			 "<br><b>Version:</b> %1 </br>"
+			 "<br><b>Authors:</b> Crep (R.Goffe), Lohrun (A.Dupas) </br>")).arg(version));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::selectAll()
