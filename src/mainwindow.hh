@@ -57,6 +57,7 @@ public slots:
   void refreshLibrary();
   void rebuildLibrary();
   void setWorkingPath(QString dirname);
+  void selectLanguage(bool);
 
 signals:
   void workingPathChanged(QString path);
@@ -144,6 +145,7 @@ private:
   bool m_displayColumnAlbum;
   bool m_displayColumnLilypond;
   bool m_displayColumnCover;
+  bool m_displayColumnLang;
   bool m_displayCompilationLog;
 
   bool m_isToolbarDisplayed;

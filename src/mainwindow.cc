@@ -98,6 +98,21 @@ CMainWindow::CMainWindow()
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
 
+  
+  //filter according to lang
+  QToolBar *langbar = new QToolBar;
+  QAction *action = new QAction(tr("english"), this);
+  action->setCheckable(true);
+  action->setStatusTip(tr("Select/Unselect songs in English"));
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
+  langbar->addAction(action);
+  
+  action = new QAction(tr("french"), this);
+  action->setCheckable(true);
+  action->setStatusTip(tr("Select/Unselect songs in French"));
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
+  langbar->addAction(action);
+  
   // filtering related widgets
   QLineEdit *filterLineEdit = new QLineEdit;
   QLabel *filterLabel = new QLabel(tr("&Filter:"));
@@ -115,6 +130,7 @@ CMainWindow::CMainWindow()
 	  this, SLOT(filterChanged()));
 
   QBoxLayout *filterLayout = new QHBoxLayout;
+  filterLayout->addWidget(langbar);
   filterLayout->addWidget(filterLabel);
   filterLayout->addWidget(filterLineEdit);
   filterLayout->addWidget(filterComboBox);
@@ -205,6 +221,7 @@ void CMainWindow::readSettings()
   m_displayColumnAlbum = settings.value("album", true).toBool();
   m_displayColumnLilypond = settings.value("lilypond", false).toBool();
   m_displayColumnCover = settings.value("cover", true).toBool();
+  m_displayColumnLang = settings.value("lang", false).toBool();
   m_displayCompilationLog = settings.value("log", false).toBool();
   settings.endGroup();
 }
@@ -223,6 +240,7 @@ void CMainWindow::applySettings()
   m_view->setColumnHidden(4,!m_displayColumnAlbum);
   m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(5,!m_displayColumnCover);
+  m_view->setColumnHidden(6,!m_displayColumnLang);
   m_view->setColumnWidth(0,200);
   m_view->setColumnWidth(1,300);
   m_view->setColumnWidth(4,200);
@@ -452,7 +470,8 @@ bool CMainWindow::connectDb()
 		 "lilypond bool, "
 		 "path text, "
 		 "album text, "
-		 "cover text)");
+		 "cover text, "
+		 "lang text)");
     }
 
   // Initialize the song library
@@ -652,13 +671,14 @@ void CMainWindow::documentation()
 //------------------------------------------------------------------------------
 void CMainWindow::about()
 {
-  QMessageBox::about(this, tr("About Patacrep Songbook Client"),
-		     tr("<br>This program is a client for building pdf songbooks with LaTeX. </br> "
-			"<br>Songbooks may represent lyrics, guitar chords or sheets for the songs available on"
-			" <a href=\"http::www.patacrep.com\">www.patacrep.com</a> </br>"
-			"<br>You may clone the <a href=\"git://git.lohrun.net/songbook.git\">songbook repository</a> </br>"
-			"<br><b>Version:</b> 0.3.2 October 2010 </br>"
-			"<br><b>Authors:</b> Crep (R.Goffe), Lohrun (A.Dupas) </br>"));
+  QString version = tr("0.4 November 2010");
+  QMessageBox::about(this, 
+		     tr("About Patacrep Songbook Client"),
+		     QString
+		     (tr("<br>This program is a client for building and customizing the songbooks available on"
+			 " <a href=\"http::www.patacrep.com\">www.patacrep.com</a> </br>"
+			 "<br><b>Version:</b> %1 </br>"
+			 "<br><b>Authors:</b> Crep (R.Goffe), Lohrun (A.Dupas) </br>")).arg(version));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::selectAll()
@@ -1170,6 +1190,21 @@ void CMainWindow::deleteSong()
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
 	}
     }
+}
+//------------------------------------------------------------------------------
+void CMainWindow::selectLanguage(bool selection)
+{
+  QList<QModelIndex> indexes;
+  QModelIndex index;
+  QString str=qobject_cast<QAction*>(QObject::sender())->text();
+  indexes = m_library->match( m_proxyModel->index(0,6), Qt::MatchExactly, str, -1 );
+ 
+  if(selection)
+    foreach(index, indexes)
+      selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+  else
+    foreach(index, indexes)
+      selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
 }
 //******************************************************************************
 //******************************************************************************

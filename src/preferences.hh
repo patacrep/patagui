@@ -74,6 +74,7 @@ private:
   QCheckBox *m_albumCheckBox;
   QCheckBox *m_lilypondCheckBox;
   QCheckBox *m_coverCheckBox;
+  QCheckBox *m_langCheckBox;
   QCheckBox *m_compilationLogCheckBox;
 };
 
