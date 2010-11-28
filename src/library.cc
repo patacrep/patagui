@@ -95,7 +95,6 @@ void CLibrary::addSongFromFile(const QString path)
       QString fileStr = stream.readAll();
       file.close();
 
-      QString res;
       QString artist;
       QString title;
       bool lilypond(false);
@@ -106,14 +105,12 @@ void CLibrary::addSongFromFile(const QString path)
       //artist
       QRegExp rx1("by=([^[,|\\]]+)");
       rx1.indexIn(fileStr);
-      res = rx1.cap(1);
-      artist = CLibrary::latexToUtf8(res);
+      artist = CLibrary::latexToUtf8(rx1.cap(1));
 
       //title
       QRegExp rx2("beginsong\\{([^[\\}]+)");
       rx2.indexIn(fileStr);
-      res = rx2.cap(1);
-      title = CLibrary::latexToUtf8(res);
+      title = CLibrary::latexToUtf8(rx2.cap(1));
 
       //album
       QRegExp rx3(",album=([^[\\]]+)");
@@ -136,7 +133,6 @@ void CLibrary::addSongFromFile(const QString path)
       QString coverPath = path;
       //deletes "filename.sg" from string and keep the path
       coverPath.replace( QRegExp("\\/([^\\/]*).sg"), QString() ); 
-
 
       // Create the actual item
       QSqlRecord song;
