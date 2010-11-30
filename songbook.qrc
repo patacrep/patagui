@@ -2,5 +2,8 @@
 <qresource>
     <file>icons/patacrep.png</file>
     <file>icons/attention.png</file>
+    <file>icons/en.png</file>
+    <file>icons/fr.png</file>
+    <file>icons/es.png</file>
 </qresource>
 </RCC>

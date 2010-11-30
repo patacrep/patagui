@@ -98,18 +98,30 @@ CMainWindow::CMainWindow()
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
 
-  
   //filter according to lang
   QToolBar *langbar = new QToolBar;
+  QLabel* label = new QLabel(tr("Language: "));
+  langbar->addWidget(label);
+  
   QAction *action = new QAction(tr("english"), this);
+  action->setIcon(QIcon(":/icons/en.png"));
   action->setCheckable(true);
   action->setStatusTip(tr("Select/Unselect songs in English"));
   connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
   langbar->addAction(action);
-  
+
+
   action = new QAction(tr("french"), this);
+  action->setIcon(QIcon(":/icons/fr.png"));
   action->setCheckable(true);
   action->setStatusTip(tr("Select/Unselect songs in French"));
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
+  langbar->addAction(action);
+
+  action = new QAction(tr("spanish"), this);
+  action->setIcon(QIcon(":/icons/es.png"));
+  action->setCheckable(true);
+  action->setStatusTip(tr("Select/Unselect songs in Spanish"));
   connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
   langbar->addAction(action);
   
