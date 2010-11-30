@@ -47,8 +47,15 @@ CDialogNewSong::CDialogNewSong()
   m_coverEdit = new QLineEdit(QString());
   QPushButton *browseCoverButton = new QPushButton(tr("Browse"));
 
+  //lang
+  QLabel* langLabel = new QLabel(tr("Language: "));
+  QComboBox* langComboBox = new QComboBox;
+  langComboBox->addItem ( tr("english") );
+  langComboBox->addItem ( tr("french") );
+  langComboBox->addItem ( tr("spanish") );
+
   //nb columns
-  QLabel* nbColumnsLabel = new QLabel(tr("Number of columns: "));
+  QLabel* nbColumnsLabel = new QLabel(tr("Columns: "));
   QSpinBox* nbColumnsEdit = new QSpinBox;
   nbColumnsEdit->setValue(m_nbColumns);
   nbColumnsEdit->setRange(0,10);
@@ -80,14 +87,16 @@ CDialogNewSong::CDialogNewSong()
   QGroupBox* optionalFieldsBox = new QGroupBox(tr("Optional fields"));
   QGridLayout* optionalLayout = new QGridLayout;
   optionalLayout->addWidget(albumLabel,   0,0,1,1);
-  optionalLayout->addWidget(albumEdit,  0,1,1,3);
+  optionalLayout->addWidget(albumEdit,  0,1,1,5);
   optionalLayout->addWidget(coverLabel,   1,0,1,1);
-  optionalLayout->addWidget(m_coverEdit,  1,1,1,2);
-  optionalLayout->addWidget(browseCoverButton,  1,3,1,1);
-  optionalLayout->addWidget(nbColumnsLabel,   2,0,1,1);
-  optionalLayout->addWidget(nbColumnsEdit,  2,1,1,1);
-  optionalLayout->addWidget(capoLabel,  2,2,1,1);
-  optionalLayout->addWidget(capoEdit, 2,3,1,1);
+  optionalLayout->addWidget(m_coverEdit,  1,1,1,3);
+  optionalLayout->addWidget(browseCoverButton,  1,4,1,2);
+  optionalLayout->addWidget(langLabel,   2,0,1,1);
+  optionalLayout->addWidget(langComboBox,  2,1,1,1);
+  optionalLayout->addWidget(nbColumnsLabel,   2,2,1,1);
+  optionalLayout->addWidget(nbColumnsEdit,  2,3,1,1);
+  optionalLayout->addWidget(capoLabel,  2,4,1,1);
+  optionalLayout->addWidget(capoEdit, 2,5,1,1);
   optionalFieldsBox->setLayout(optionalLayout);
 
   QBoxLayout* layout = new QVBoxLayout;
@@ -100,6 +109,7 @@ CDialogNewSong::CDialogNewSong()
   //Connections
   connect(titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)) );
   connect(artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)) );
+  connect(langComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLang(const QString&)) );
   connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)) );
   connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)) );
   connect(albumEdit, SIGNAL(textChanged(QString)), this, SLOT(setAlbum(QString)) );
@@ -170,6 +180,16 @@ QString CDialogNewSong::cover() const
 void CDialogNewSong::setCover(QString ACover )
 {
   m_cover = ACover;
+}
+//------------------------------------------------------------------------------
+QString CDialogNewSong::lang() const
+{
+  return m_lang;
+}
+//------------------------------------------------------------------------------
+void CDialogNewSong::setLang(const QString & ALang )
+{
+  m_lang = ALang;
 }
 //------------------------------------------------------------------------------
 void CDialogNewSong::browseCover()

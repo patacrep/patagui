@@ -46,6 +46,9 @@ public slots:
   QString cover() const;
   void setCover(QString);
 
+  QString lang() const;
+  void setLang(const QString &);
+
 private slots:
   void browseCover();
 
@@ -57,6 +60,7 @@ private:
   //optional fields
   QString m_album;
   QString m_cover;
+  QString m_lang;
   QLineEdit* m_coverEdit;
   uint m_nbColumns;
   uint m_capo;

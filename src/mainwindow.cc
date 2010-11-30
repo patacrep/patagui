@@ -1033,6 +1033,7 @@ void CMainWindow::songTemplate()
   uint capo = (uint) m_newSongDialog->capo();
   QString album = m_newSongDialog->album() ;
   QString cover = m_newSongDialog->cover() ;
+  QString lang = m_newSongDialog->lang() ;
 
   //remove dialog
   delete m_newSongDialog;
@@ -1081,15 +1082,26 @@ void CMainWindow::songTemplate()
   //make template
   QFile file(filepath);
   QString songTemplate;
+  songTemplate.append(QString("\\selectlanguage{%1}\n").arg(lang));
   if (nbColumns > 0)
     songTemplate.append(QString("\\songcolumns{%1}\n").arg(nbColumns));
-  if (!img)
-    songTemplate.append(QString("\\beginsong{%1}[by=%2]\n\n").arg(title).arg(artist));
-  else
-    songTemplate.append(QString("\\beginsong{%1}[by=%2,cov=%3]\n\n\\cover\n").arg(title).arg(artist).arg(filenameConvention(album,"-")));
+  
+  songTemplate.append(QString("\\beginsong{%1}[by=%2").arg(title).arg(artist));
+  
+  if(!album.isEmpty())
+    songTemplate.append(QString(",album=%1").arg(album));
+  
+  if(img)
+    songTemplate.append(QString(",cov=%1").arg(filenameConvention(album,"-")));
+
+  songTemplate.append(QString("]\n\n"));
+  
+  if(img)
+    songTemplate.append(QString("\\cover\n"));
 
   if (capo>0)
     songTemplate.append(QString("\\capo{%1}\n").arg(capo));
+  
   songTemplate.append(QString("\n\\endsong"));
 
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
