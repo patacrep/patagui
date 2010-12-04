@@ -239,6 +239,10 @@ void CSongbook::changeTemplate(const QString & filename)
       while (it.hasNext())
         {
           it.next();
+
+          if (it.flags() & QScriptValue::SkipInEnumeration)
+            continue;
+
           svName = it.value().property("name");
           if (!reservedParameters.contains(svName.toString()))
             {
