@@ -5,5 +5,8 @@
     <file>icons/en.png</file>
     <file>icons/fr.png</file>
     <file>icons/es.png</file>
+    <file>icons/select-all.png</file>
+    <file>icons/unselect-all.png</file>
+    <file>icons/invert-selection.png</file>
 </qresource>
 </RCC>
