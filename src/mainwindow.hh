@@ -197,6 +197,9 @@ private:
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;
+  QAction *m_selectEnglishAct;
+  QAction *m_selectFrenchAct;
+  QAction *m_selectSpanishAct;
   QAction *m_downloadDbAct;
   QAction *m_refreshLibraryAct;
   QAction *m_rebuildLibraryAct;

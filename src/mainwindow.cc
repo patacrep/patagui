@@ -90,6 +90,14 @@ CMainWindow::CMainWindow()
   m_toolbar->addAction(m_saveAsAct);
   m_toolbar->addSeparator();
   m_toolbar->addAction(m_buildAct);
+  m_toolbar->addSeparator();
+  m_toolbar->addAction(m_selectAllAct);
+  m_toolbar->addAction(m_unselectAllAct);
+  m_toolbar->addAction(m_invertSelectionAct);
+  m_toolbar->addSeparator();
+  m_toolbar->addAction(m_selectEnglishAct);
+  m_toolbar->addAction(m_selectFrenchAct);
+  m_toolbar->addAction(m_selectSpanishAct);
 
   //Connection to database
   connectDb();
@@ -98,33 +106,6 @@ CMainWindow::CMainWindow()
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
 
-  //filter according to lang
-  QToolBar *langbar = new QToolBar;
-  QLabel* label = new QLabel(tr("Language: "));
-  langbar->addWidget(label);
-  
-  QAction *action = new QAction(tr("english"), this);
-  action->setIcon(QIcon(":/icons/en.png"));
-  action->setCheckable(true);
-  action->setStatusTip(tr("Select/Unselect songs in English"));
-  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
-  langbar->addAction(action);
-
-
-  action = new QAction(tr("french"), this);
-  action->setIcon(QIcon(":/icons/fr.png"));
-  action->setCheckable(true);
-  action->setStatusTip(tr("Select/Unselect songs in French"));
-  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
-  langbar->addAction(action);
-
-  action = new QAction(tr("spanish"), this);
-  action->setIcon(QIcon(":/icons/es.png"));
-  action->setCheckable(true);
-  action->setStatusTip(tr("Select/Unselect songs in Spanish"));
-  connect(action, SIGNAL(triggered(bool)), this, SLOT(selectLanguage(bool)));
-  langbar->addAction(action);
-  
   // filtering related widgets
   QLineEdit *filterLineEdit = new QLineEdit;
   QLabel *filterLabel = new QLabel(tr("&Filter:"));
@@ -142,7 +123,6 @@ CMainWindow::CMainWindow()
 	  this, SLOT(filterChanged()));
 
   QBoxLayout *filterLayout = new QHBoxLayout;
-  filterLayout->addWidget(langbar);
   filterLayout->addWidget(filterLabel);
   filterLayout->addWidget(filterLineEdit);
   filterLayout->addWidget(filterComboBox);
@@ -385,6 +365,24 @@ void CMainWindow::createActions()
   m_invertSelectionAct->setIcon(QIcon(":/icons/invert-selection.png"));
   m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
+
+  m_selectEnglishAct = new QAction(tr("english"), this);
+  m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
+  m_selectEnglishAct->setIcon(QIcon(":/icons/en.png"));
+  m_selectEnglishAct->setCheckable(true);
+  connect(m_selectEnglishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
+
+  m_selectFrenchAct = new QAction(tr("french"), this);
+  m_selectFrenchAct->setStatusTip(tr("Select/Unselect songs in french"));
+  m_selectFrenchAct->setIcon(QIcon(":/icons/fr.png"));
+  m_selectFrenchAct->setCheckable(true);
+  connect(m_selectFrenchAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
+
+  m_selectSpanishAct = new QAction(tr("spanish"), this);
+  m_selectSpanishAct->setStatusTip(tr("Select/Unselect songs in spanish"));
+  m_selectSpanishAct->setIcon(QIcon(":/icons/es.png"));
+  m_selectSpanishAct->setCheckable(true);
+  connect(m_selectSpanishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
   m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
