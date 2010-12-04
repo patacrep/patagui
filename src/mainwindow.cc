@@ -180,7 +180,6 @@ CMainWindow::CMainWindow()
   m_progressBar->setRange(0, 0);
   m_progressBar->hide();
   statusBar()->addPermanentWidget(m_progressBar);
-  statusBar()->showMessage(tr("A context menu is available by right-clicking"));
 
   applySettings();
   selectionChanged();
@@ -523,15 +522,6 @@ void CMainWindow::rebuildLibrary()
   //Drop table songs and recreate
   QSqlQuery query("delete from songs");
   refreshLibrary();
-}
-//------------------------------------------------------------------------------
-void CMainWindow::contextMenuEvent(QContextMenuEvent *event)
-{
-  QMenu *menu = new QMenu();
-  menu->addAction(m_selectAllAct);
-  menu->addAction(m_unselectAllAct);
-  menu->addAction(m_invertSelectionAct);
-  menu->exec(event->globalPos());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent *event)
