@@ -57,7 +57,6 @@ public slots:
   void refreshLibrary();
   void rebuildLibrary();
   void setWorkingPath(QString dirname);
-  void selectLanguage(bool);
 
 signals:
   void workingPathChanged(QString path);
@@ -88,6 +87,7 @@ private slots:
   void selectAll();
   void unselectAll();
   void invertSelection();
+  void selectLanguage(bool);
   void updateSongsList();
   bool connectDb();
   void filterChanged();

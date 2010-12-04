@@ -714,6 +714,22 @@ void CMainWindow::invertSelection()
     }
 }
 //------------------------------------------------------------------------------
+void CMainWindow::selectLanguage(bool selection)
+{
+  QString language = qobject_cast< QAction* >(QObject::sender())->text();
+  QList<QModelIndex> indexes;
+  QModelIndex index;
+  
+  indexes = m_library->match(m_proxyModel->index(6,6), Qt::MatchExactly, language, -1);
+
+  QItemSelectionModel::SelectionFlags flag = (selection ? QItemSelectionModel::Select : QItemSelectionModel::Deselect) | QItemSelectionModel::Rows;
+
+  foreach(index, indexes)
+    {
+      selectionModel()->select(index, flag);
+    }
+}
+//------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
 {
   //ensure the songs are correctly sorted by artist And title
@@ -1212,21 +1228,6 @@ void CMainWindow::deleteSong()
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
 	}
     }
-}
-//------------------------------------------------------------------------------
-void CMainWindow::selectLanguage(bool selection)
-{
-  QList<QModelIndex> indexes;
-  QModelIndex index;
-  QString str=qobject_cast<QAction*>(QObject::sender())->text();
-  indexes = m_library->match( m_proxyModel->index(0,6), Qt::MatchExactly, str, -1 );
- 
-  if(selection)
-    foreach(index, indexes)
-      selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-  else
-    foreach(index, indexes)
-      selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
 }
 //******************************************************************************
 //******************************************************************************
