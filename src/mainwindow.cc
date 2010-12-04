@@ -248,9 +248,9 @@ void CMainWindow::applySettings()
 {
   m_view->setColumnHidden(0,!m_displayColumnArtist);
   m_view->setColumnHidden(1,!m_displayColumnTitle);
+  m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(3,!m_displayColumnPath);
   m_view->setColumnHidden(4,!m_displayColumnAlbum);
-  m_view->setColumnHidden(2,!m_displayColumnLilypond);
   m_view->setColumnHidden(5,!m_displayColumnCover);
   m_view->setColumnHidden(6,!m_displayColumnLang);
   m_view->setColumnWidth(0,200);
