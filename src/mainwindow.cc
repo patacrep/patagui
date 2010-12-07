@@ -879,14 +879,14 @@ void CMainWindow::save()
 {
   if (m_songbook->filename().isEmpty())
     {
-      //default songbook sb file
-      QString defaultFile( QString("%1/default.sb").arg(workingPath()) );
-      m_songbook->setFilename(defaultFile);
+      saveAs();
     }
-
-  updateSongsList();
-  m_songbook->save(m_songbook->filename());
-  updateTitle(m_songbook->filename());
+  else
+    {
+      updateSongsList();
+      m_songbook->save(m_songbook->filename());
+      updateTitle(m_songbook->filename());
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::saveAs()
