@@ -69,7 +69,7 @@ private slots:
   //songbook
   void newSongbook();
   void open();
-  void save();
+  void save(bool forced=false);
   void saveAs();
   void build();
   void clean();

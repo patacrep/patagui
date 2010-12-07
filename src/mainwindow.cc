@@ -755,7 +755,7 @@ void CMainWindow::build()
 	selectAll();
     }
   
-  save();
+  save(true);
 
   if (!m_songbook->filename().startsWith(workingPath()))
     {
@@ -875,17 +875,34 @@ void CMainWindow::open()
   updateTitle(m_songbook->filename());
 }
 //------------------------------------------------------------------------------
-void CMainWindow::save()
+void CMainWindow::save(bool forced)
 {
-  if (m_songbook->filename().isEmpty())
+  if(forced)
     {
-      saveAs();
+      if (m_songbook->filename().isEmpty() )
+	{
+	  m_songbook->setFilename(QString("%1/default.sb").arg(workingPath()));
+	}
+      else
+	{
+	  updateSongsList();
+	  m_songbook->save(m_songbook->filename());
+	  updateTitle(m_songbook->filename());
+	}
     }
   else
     {
-      updateSongsList();
-      m_songbook->save(m_songbook->filename());
-      updateTitle(m_songbook->filename());
+      if (m_songbook->filename().isEmpty() || 
+	  QString::compare(m_songbook->filename(), QString("%1/default.sb").arg(workingPath()))==0 )
+	{
+	  saveAs();
+	}
+      else
+	{
+	  updateSongsList();
+	  m_songbook->save(m_songbook->filename());
+	  updateTitle(m_songbook->filename());
+	}
     }
 }
 //------------------------------------------------------------------------------
@@ -898,7 +915,7 @@ void CMainWindow::saveAs()
   if (!filename.isEmpty())
     {
       m_songbook->setFilename(filename);
-      save();
+      save(true);
     }
 }
 //------------------------------------------------------------------------------
