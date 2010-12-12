@@ -102,9 +102,6 @@ CMainWindow::CMainWindow()
   //Connection to database
   connectDb();
 
-  // initialize the filtering proxy
-  m_proxyModel->setDynamicSortFilter(true);
-
   // filtering related widgets
   QLineEdit *filterLineEdit = new QLineEdit;
   QLabel *filterLabel = new QLabel(tr("&Filter:"));
@@ -452,14 +449,12 @@ bool CMainWindow::isStatusbarDisplayed( )
   return m_isStatusbarDisplayed;
 }
 //------------------------------------------------------------------------------
-bool CMainWindow::connectDb()
+void CMainWindow::connectDb()
 {
   //Connect to database
   QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
   QDir dbdir; dbdir.mkpath( path );
   QString dbpath = QString("%1/patacrep.db").arg(path);
-
-  bool exist = QFile::exists(dbpath);
 
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(dbpath);
@@ -470,7 +465,7 @@ bool CMainWindow::connectDb()
 			       "This application needs SQLite support. "
 			       "Click Cancel to exit."), QMessageBox::Cancel);
     }
-  if (!exist)
+  if (!QFile::exists(dbpath))
     {
       QSqlQuery query;
       query.exec("create table songs ( artist text, "
@@ -486,8 +481,9 @@ bool CMainWindow::connectDb()
   m_library = new CLibrary();
   m_library->setPathToSongs(workingPath());
 
-  // Display the song list
   m_proxyModel->setSourceModel(m_library);
+  m_proxyModel->setDynamicSortFilter(true);
+
   m_view->setModel(m_library);
   m_view->setShowGrid( false );
   m_view->setAlternatingRowColors(true);
@@ -498,8 +494,6 @@ bool CMainWindow::connectDb()
   m_view->sortByColumn(0, Qt::AscendingOrder);
   m_view->setModel(m_proxyModel);
   m_view->show();
-
-  return exist;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::refreshLibrary()

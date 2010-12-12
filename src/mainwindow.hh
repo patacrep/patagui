@@ -88,7 +88,7 @@ private slots:
   void invertSelection();
   void selectLanguage(bool);
   void updateSongsList();
-  bool connectDb();
+  void connectDb();
   void filterChanged();
   void selectionChanged();
   void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
