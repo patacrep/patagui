@@ -101,7 +101,6 @@ CMainWindow::CMainWindow()
 
   //Connection to database
   connectDb();
-  refreshLibrary();
 
   // initialize the filtering proxy
   m_proxyModel->setDynamicSortFilter(true);
