@@ -677,6 +677,7 @@ void CMainWindow::about()
 void CMainWindow::selectAll()
 {
   m_view->selectAll();
+  m_view->setFocus();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::unselectAll()
@@ -710,7 +711,8 @@ void CMainWindow::selectLanguage(bool selection)
   foreach(index, indexes)
     {
       selectionModel()->select(index, flag);
-    }
+    }  
+  m_view->setFocus();
 }
 //------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
