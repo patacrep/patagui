@@ -1251,10 +1251,9 @@ void CTabWidget::closeTab(int index)
 int CTabWidget::addTab(QWidget* widget, const QString & label)
 {
   int res = QTabWidget::addTab(widget, label);
+  tabBar()->show();
   if (count() == 1)
     tabBar()->hide();
-  else
-    tabBar()->show();
   return res;
 }
 //******************************************************************************

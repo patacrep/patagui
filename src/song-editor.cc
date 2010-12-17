@@ -141,7 +141,9 @@ CSongEditor::CSongEditor(const QString & APath)
 }
 //------------------------------------------------------------------------------
 CSongEditor::~CSongEditor()
-{}
+{
+  delete m_textEdit;
+}
 //------------------------------------------------------------------------------
 QString CSongEditor::filePath()
 {

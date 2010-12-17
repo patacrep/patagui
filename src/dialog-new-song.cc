@@ -121,6 +121,11 @@ CDialogNewSong::CDialogNewSong()
   show();
 }
 //------------------------------------------------------------------------------
+CDialogNewSong::~CDialogNewSong()
+{
+  delete m_coverEdit;
+}
+//------------------------------------------------------------------------------
 QString CDialogNewSong::title() const
 {
   return m_title;

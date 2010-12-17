@@ -26,6 +26,7 @@ class CDialogNewSong : public QDialog
 
 public:
   CDialogNewSong();
+  virtual ~CDialogNewSong();
 
 public slots:
   QString title() const;
