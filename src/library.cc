@@ -47,6 +47,14 @@ CLibrary::CLibrary()
   setHeaderData(4, Qt::Horizontal, tr("Album"));
   setHeaderData(5, Qt::Horizontal, tr("Cover"));
   setHeaderData(6, Qt::Horizontal, tr("Language"));
+
+  m_pixmap = new QPixmap;
+  m_pixmap->load(":/icons/fr.png");
+  QPixmapCache::insert("french", *m_pixmap);
+  m_pixmap->load(":/icons/en.png");
+  QPixmapCache::insert("english", *m_pixmap);
+  m_pixmap->load(":/icons/es.png");
+  QPixmapCache::insert("spanish", *m_pixmap);
 }
 //------------------------------------------------------------------------------
 CLibrary::~CLibrary()
@@ -200,28 +208,27 @@ QString CLibrary::processString(const QString str)
 //------------------------------------------------------------------------------
 QVariant CLibrary::data(const QModelIndex &index, int role) const
 {
-  QPixmap pixmap;
   //Draws lilypondcheck
   if ( index.column() == 2 )
     {
       if ( role == Qt::DisplayRole )
 	return QString();
+
       if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
 	{
 #if QT_VERSION >= 0x040600
-	  QPixmap pixmap = QIcon::fromTheme("audio-x-generic").pixmap(24,24);
+	  *m_pixmap = QPixmap(QIcon::fromTheme("audio-x-generic").pixmap(24,24));
 #endif
 	  if ( role == Qt::DecorationRole )
-	    return pixmap;
+	    return *m_pixmap;
 	  
-	  if( pixmap.isNull() )
+	  if( m_pixmap->isNull() )
 	    return true;
 
 	  if ( role == Qt::SizeHintRole )
-	    return pixmap.size();
+	    return m_pixmap->size();
 	}
-      else
-	return QString();
+      return QString();
     }
 
   //Draws the cover
@@ -232,24 +239,49 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	return QString();
 
 #if QT_VERSION >= 0x040600
-      pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
+      *m_pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
 #endif
 
 #if QT_VERSION >= 0x040600
-      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, &pixmap))
+      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, m_pixmap))
 #else
-      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, pixmap))
+      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, *m_pixmap))
 #endif
 	{
-	  pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
-	  QPixmapCache::insert(imgFile, pixmap);
+	  *m_pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
+	  QPixmapCache::insert(imgFile, *m_pixmap);
 	}
 
       if ( role == Qt::DecorationRole )
-	return pixmap;
+	return *m_pixmap;
 
-      if (role == Qt::SizeHintRole)
-	return pixmap.size();
+      if ( role == Qt::SizeHintRole )
+	return m_pixmap->size();
+    }
+
+  //Draws language flag
+  if ( index.column() == 6 )
+    {
+      if ( role == Qt::DisplayRole )
+      	return QString();
+
+      QString lang = QSqlTableModel::data( index, Qt::DisplayRole ).toString();
+
+      if ( role == Qt::ToolTipRole )
+      	return lang;
+
+#if QT_VERSION >= 0x040600
+      if(QPixmapCache::find(lang, m_pixmap))
+#else
+      if(QPixmapCache::find(lang, *m_pixmap))
+#endif
+	{
+	  if ( role == Qt::DecorationRole )
+	    return *m_pixmap;
+
+	  if ( role == Qt::SizeHintRole )
+	    return m_pixmap->size();
+	}
     }
   return QSqlTableModel::data( index, role );
 }

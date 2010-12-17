@@ -702,8 +702,8 @@ void CMainWindow::selectLanguage(bool selection)
   QString language = qobject_cast< QAction* >(QObject::sender())->text();
   QList<QModelIndex> indexes;
   QModelIndex index;
-  
-  indexes = m_library->match(m_proxyModel->index(6,6), Qt::MatchExactly, language, -1);
+
+  indexes = m_library->match(m_proxyModel->index(0,6), Qt::ToolTipRole, language, -1);
 
   QItemSelectionModel::SelectionFlags flag = (selection ? QItemSelectionModel::Select : QItemSelectionModel::Deselect) | QItemSelectionModel::Rows;
 

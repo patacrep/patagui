@@ -56,6 +56,8 @@ public:
   static QString latexToUtf8(const QString str);
   static QString processString(const QString str);
   QVariant data(const QModelIndex &index, int role) const;
+private:
+  QPixmap* m_pixmap;
 };
 
 #endif // __LIBRARY_HH__
