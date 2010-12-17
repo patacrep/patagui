@@ -179,6 +179,7 @@ CMainWindow::CMainWindow()
 
   applySettings();
   selectionChanged();
+  filterLineEdit->setFocus();
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
@@ -258,6 +259,7 @@ void CMainWindow::selectionChanged()
 {
   QItemSelection invalid;
   selectionChanged(invalid, invalid);
+  m_view->setFocus();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
