@@ -179,6 +179,7 @@ CMainWindow::CMainWindow()
 
   applySettings();
   selectionChanged();
+  filterLineEdit->setFocus();
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
@@ -265,6 +266,7 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
   m_selectedSongs->setText(QString(tr("<b>Songbook</b> (contains %1/%2 songs)"))
 			   .arg(selectionModel()->selectedRows().size())
 			   .arg(m_library->rowCount()));
+  m_view->setFocus();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
