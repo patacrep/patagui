@@ -1,47 +1,40 @@
 /****************************************************************************
-** 
-** Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
+**
 ** Contact: Nokia Corporation (qt-info@nokia.com)
-** 
+**
 ** This file is part of a Qt Solutions component.
 **
-** Commercial Usage  
-** Licensees holding valid Qt Commercial licenses may use this file in
-** accordance with the Qt Solutions Commercial License Agreement provided
-** with the Software or, alternatively, in accordance with the terms
-** contained in a written agreement between you and Nokia.
-** 
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-** 
-** In addition, as a special exception, Nokia gives you certain
-** additional rights. These rights are described in the Nokia Qt LGPL
-** Exception version 1.1, included in the file LGPL_EXCEPTION.txt in this
-** package.
-** 
-** GNU General Public License Usage 
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
-** 
-** Please note Third Party Software included with Qt Solutions may impose
-** additional restrictions and it is the user's responsibility to ensure
-** that they have met the licensing requirements of the GPL, LGPL, or Qt
-** Solutions Commercial license and the relevant license of the Third
-** Party Software they are using.
-** 
-** If you are unsure which license is appropriate for your use, please
-** contact Nokia at qt-info@nokia.com.
-** 
+** You may use this file under the terms of the BSD license as follows:
+**
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+**
 ****************************************************************************/
 
 
@@ -227,7 +220,7 @@ class QtPropertyEditorDelegate : public QItemDelegate
     Q_OBJECT
 public:
     QtPropertyEditorDelegate(QObject *parent = 0)
-        : QItemDelegate(parent), m_editorPrivate(0), m_editedItem(0), m_editedWidget(0)
+        : QItemDelegate(parent), m_editorPrivate(0), m_editedItem(0), m_editedWidget(0), m_disablePainting(false)
         {}
 
     void setEditorPrivate(QtTreePropertyBrowserPrivate *editorPrivate)
@@ -254,6 +247,13 @@ public:
 
     QTreeWidgetItem *editedItem() const { return m_editedItem; }
 
+protected:
+
+    void drawDecoration(QPainter *painter, const QStyleOptionViewItem &option,
+            const QRect &rect, const QPixmap &pixmap) const;
+    void drawDisplay(QPainter *painter, const QStyleOptionViewItem &option,
+            const QRect &rect, const QString &text) const;
+
 private slots:
     void slotEditorDestroyed(QObject *object);
 
@@ -268,6 +268,7 @@ private:
     QtTreePropertyBrowserPrivate *m_editorPrivate;
     mutable QTreeWidgetItem *m_editedItem;
     mutable QWidget *m_editedWidget;
+    mutable bool m_disablePainting;
 };
 
 int QtPropertyEditorDelegate::indentation(const QModelIndex &index) const
@@ -366,7 +367,13 @@ void QtPropertyEditorDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     if (c.isValid())
         painter->fillRect(option.rect, c);
     opt.state &= ~QStyle::State_HasFocus;
+    if (index.column() == 1) {
+        QTreeWidgetItem *item = m_editorPrivate->indexToItem(index);
+        if (m_editedItem && m_editedItem == item)
+            m_disablePainting = true;
+        }
     QItemDelegate::paint(painter, opt, index);
+    m_disablePainting = false;
 
     opt.palette.setCurrentColorGroup(QPalette::Active);
     QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor, &opt));
@@ -377,6 +384,24 @@ void QtPropertyEditorDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         painter->drawLine(right, option.rect.y(), right, option.rect.bottom());
     }
     painter->restore();
+}
+
+void QtPropertyEditorDelegate::drawDecoration(QPainter *painter, const QStyleOptionViewItem &option,
+            const QRect &rect, const QPixmap &pixmap) const
+{
+    if (m_disablePainting)
+        return;
+
+    QItemDelegate::drawDecoration(painter, option, rect, pixmap);
+}
+
+void QtPropertyEditorDelegate::drawDisplay(QPainter *painter, const QStyleOptionViewItem &option,
+            const QRect &rect, const QString &text) const
+{
+    if (m_disablePainting)
+        return;
+
+    QItemDelegate::drawDisplay(painter, option, rect, text);
 }
 
 QSize QtPropertyEditorDelegate::sizeHint(const QStyleOptionViewItem &option,
