@@ -6211,37 +6211,37 @@ void QtColorPropertyManager::initializeProperty(QtProperty *property)
     QColor val;
     d_ptr->m_values[property] = val;
 
-    QtProperty *rProp = d_ptr->m_intPropertyManager->addProperty();
-    rProp->setPropertyName(tr("Red"));
-    d_ptr->m_intPropertyManager->setValue(rProp, val.red());
-    d_ptr->m_intPropertyManager->setRange(rProp, 0, 0xFF);
-    d_ptr->m_propertyToR[property] = rProp;
-    d_ptr->m_rToProperty[rProp] = property;
-    property->addSubProperty(rProp);
-
-    QtProperty *gProp = d_ptr->m_intPropertyManager->addProperty();
-    gProp->setPropertyName(tr("Green"));
-    d_ptr->m_intPropertyManager->setValue(gProp, val.green());
-    d_ptr->m_intPropertyManager->setRange(gProp, 0, 0xFF);
-    d_ptr->m_propertyToG[property] = gProp;
-    d_ptr->m_gToProperty[gProp] = property;
-    property->addSubProperty(gProp);
-
-    QtProperty *bProp = d_ptr->m_intPropertyManager->addProperty();
-    bProp->setPropertyName(tr("Blue"));
-    d_ptr->m_intPropertyManager->setValue(bProp, val.blue());
-    d_ptr->m_intPropertyManager->setRange(bProp, 0, 0xFF);
-    d_ptr->m_propertyToB[property] = bProp;
-    d_ptr->m_bToProperty[bProp] = property;
-    property->addSubProperty(bProp);
-
-    QtProperty *aProp = d_ptr->m_intPropertyManager->addProperty();
-    aProp->setPropertyName(tr("Alpha"));
-    d_ptr->m_intPropertyManager->setValue(aProp, val.alpha());
-    d_ptr->m_intPropertyManager->setRange(aProp, 0, 0xFF);
-    d_ptr->m_propertyToA[property] = aProp;
-    d_ptr->m_aToProperty[aProp] = property;
-    property->addSubProperty(aProp);
+//    QtProperty *rProp = d_ptr->m_intPropertyManager->addProperty();
+//    rProp->setPropertyName(tr("Red"));
+//    d_ptr->m_intPropertyManager->setValue(rProp, val.red());
+//    d_ptr->m_intPropertyManager->setRange(rProp, 0, 0xFF);
+//    d_ptr->m_propertyToR[property] = rProp;
+//    d_ptr->m_rToProperty[rProp] = property;
+//    property->addSubProperty(rProp);
+//
+//    QtProperty *gProp = d_ptr->m_intPropertyManager->addProperty();
+//    gProp->setPropertyName(tr("Green"));
+//    d_ptr->m_intPropertyManager->setValue(gProp, val.green());
+//    d_ptr->m_intPropertyManager->setRange(gProp, 0, 0xFF);
+//    d_ptr->m_propertyToG[property] = gProp;
+//    d_ptr->m_gToProperty[gProp] = property;
+//    property->addSubProperty(gProp);
+//
+//    QtProperty *bProp = d_ptr->m_intPropertyManager->addProperty();
+//    bProp->setPropertyName(tr("Blue"));
+//    d_ptr->m_intPropertyManager->setValue(bProp, val.blue());
+//    d_ptr->m_intPropertyManager->setRange(bProp, 0, 0xFF);
+//    d_ptr->m_propertyToB[property] = bProp;
+//    d_ptr->m_bToProperty[bProp] = property;
+//    property->addSubProperty(bProp);
+//
+//    QtProperty *aProp = d_ptr->m_intPropertyManager->addProperty();
+//    aProp->setPropertyName(tr("Alpha"));
+//    d_ptr->m_intPropertyManager->setValue(aProp, val.alpha());
+//    d_ptr->m_intPropertyManager->setRange(aProp, 0, 0xFF);
+//    d_ptr->m_propertyToA[property] = aProp;
+//    d_ptr->m_aToProperty[aProp] = property;
+//    property->addSubProperty(aProp);
 }
 
 /*!
