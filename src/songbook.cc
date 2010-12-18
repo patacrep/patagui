@@ -264,6 +264,8 @@ void CSongbook::changeTemplate(const QString & filename)
                 propertyType = QtVariantPropertyManager::enumTypeId();
               else if (svType.toString() == QString("flag"))
                 propertyType = QtVariantPropertyManager::flagTypeId();
+              else if (svType.toString() == QString("font"))
+                propertyType = QVariant::Int;
               else
                 propertyType = QVariant::String;
 
@@ -315,6 +317,12 @@ void CSongbook::changeTemplate(const QString & filename)
                       oldValue = QVariant(flags);
                     }
                 }
+              else if (propertyType == QVariant::Int)
+		{
+		  //warning : only font field use int factory !
+		  item->setAttribute(QLatin1String("minimum"), 10);
+		  item->setAttribute(QLatin1String("maximum"), 12);
+		}
 
               // set the existing or default value
               if (oldValue.isValid())
@@ -385,6 +393,15 @@ void CSongbook::save(const QString & filename)
                 {
                   out << "\"" << it.key() << "\" : \"#"
                       << string_value.toUpper() << "\",\n";
+                }
+            }
+          else if (type == QVariant::Int)
+            {
+              string_value = value.toString();
+              if (!string_value.isEmpty())
+                {
+                  out << "\"" << it.key() << "\" : \""
+                      << string_value << "\",\n";
                 }
             }
           else if (type == QtVariantPropertyManager::enumTypeId())
