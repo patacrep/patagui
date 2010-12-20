@@ -23,12 +23,14 @@
 #include <QStringList>
 
 #include <QtVariantProperty>
-#include <QtButtonPropertyBrowser>
+#include <QtGroupBoxPropertyBrowser>
 
 class QWidget;
 class QComboBox;
 class QtGroupPropertyManager;
 class CMainWindow;
+class CUnitPropertyManager;
+class CFilePropertyManager;
 
 class CSongbook : public QObject
 {
@@ -38,7 +40,8 @@ class CSongbook : public QObject
   Q_PROPERTY(QString filename READ filename WRITE setFilename)
   Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
   Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
-
+    
+    
 public slots:
   void setWorkingPath(QString path);
   void setFilename(const QString &filename);
@@ -86,7 +89,9 @@ private:
   QComboBox *m_templateComboBox;
 
   QtVariantPropertyManager *m_propertyManager;
-  QtButtonPropertyBrowser *m_propertyEditor;
+  CUnitPropertyManager *m_unitManager;
+  CFilePropertyManager *m_fileManager;
+  QtGroupBoxPropertyBrowser *m_propertyEditor;
 
   QStringList m_templates;
   QMap< QString, QtVariantProperty* > m_parameters;

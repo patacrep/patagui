@@ -28,6 +28,10 @@ set(SONGBOOK_CLIENT_SOURCES
   src/highlighter.cc
   src/dialog-new-song.cc
   src/label.cc
+  src/unit-property-manager.cc
+  src/unit-factory.cc
+  src/file-property-manager.cc
+  src/file-factory.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -42,6 +46,10 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/highlighter.hh
   src/dialog-new-song.hh
   src/label.hh
+  src/unit-property-manager.hh
+  src/unit-factory.hh
+  src/file-property-manager.hh
+  src/file-factory.hh
   )
 #-------------------------------------------------------------------------------
 # ressources

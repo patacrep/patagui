@@ -29,10 +29,18 @@
 #include <QScriptValue>
 #include <QScriptValueIterator>
 
+#include <QtSliderFactory>
+#include <QtIntPropertyManager>
+#include <QtAbstractPropertyManager>
+
 #include <QDebug>
 
 #include "qtpropertymanager.h"
 #include "mainwindow.hh"
+#include "unit-property-manager.hh"
+#include "unit-factory.hh"
+#include "file-property-manager.hh"
+#include "file-factory.hh"
 
 CSongbook::CSongbook()
   : QObject()
@@ -43,6 +51,8 @@ CSongbook::CSongbook()
   , m_panel()
   , m_templateComboBox()
   , m_propertyManager(new QtVariantPropertyManager())
+  , m_unitManager(new CUnitPropertyManager())
+  , m_fileManager(new CFilePropertyManager())
   , m_propertyEditor()
   , m_templates()
   , m_parameters()
@@ -54,6 +64,7 @@ CSongbook::~CSongbook()
 {
   delete m_panel;
   delete m_propertyManager;
+  delete m_unitManager;
 }
 
 QString CSongbook::filename()
@@ -116,9 +127,12 @@ QWidget * CSongbook::panel()
       m_panel = new QWidget;
       m_panel->setMinimumWidth(300);
 
-      m_propertyEditor = new QtButtonPropertyBrowser();
+      m_propertyEditor = new QtGroupBoxPropertyBrowser();
       m_propertyEditor->setFactoryForManager(m_propertyManager,
-                                             new QtVariantEditorFactory());
+					     new QtVariantEditorFactory());
+
+      m_propertyEditor->setFactoryForManager(m_unitManager, new CUnitFactory());
+      m_propertyEditor->setFactoryForManager(m_fileManager, new CFileFactory());
 
       QBoxLayout *templateLayout = new QHBoxLayout;
       m_templateComboBox = new QComboBox(m_panel);
@@ -220,7 +234,12 @@ void CSongbook::changeTemplate(const QString & filename)
         QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
         while (it != m_parameters.constEnd())
           {
-            oldValues.insert(it.key(),it.value()->value());
+	    if(it.key() == "mainfontsize")
+	      oldValues.insert(it.key(),m_unitManager->valueText(it.value()));
+	    else if( it.key() == "picture")
+	      oldValues.insert(it.key(),m_fileManager->value(it.value()));
+	    else
+	      oldValues.insert(it.key(),it.value()->value());
             it++;
           }
         m_parameters.clear();
@@ -265,7 +284,9 @@ void CSongbook::changeTemplate(const QString & filename)
               else if (svType.toString() == QString("flag"))
                 propertyType = QtVariantPropertyManager::flagTypeId();
               else if (svType.toString() == QString("font"))
-                propertyType = QVariant::Int;
+                propertyType = CUnitPropertyManager::id();
+              else if (svType.toString() == QString("file"))
+                propertyType = CFilePropertyManager::id();
               else
                 propertyType = QVariant::String;
 
@@ -317,15 +338,26 @@ void CSongbook::changeTemplate(const QString & filename)
                       oldValue = QVariant(flags);
                     }
                 }
-              else if (propertyType == QVariant::Int)
+	      else if (propertyType == m_unitManager->id())
 		{
-		  //warning : only font field use int factory !
-		  item->setAttribute(QLatin1String("minimum"), 10);
-		  item->setAttribute(QLatin1String("maximum"), 12);
+		  item = static_cast<QtVariantProperty*>(m_unitManager->addProperty(svDescription.toString()));
+		  m_unitManager->setSuffix(item, " pt");
+		  m_unitManager->setRange(item, 10, 12);
+		}
+	      else if (propertyType == m_fileManager->id())
+		{
+		  item = static_cast<QtVariantProperty*>(m_fileManager->addProperty(svDescription.toString()));
+		  if (oldValue.isValid())
+		    m_fileManager->setFilename(item, oldValue.toString());
+		  //m_fileManager->setFilename(static_cast<QtProperty*>(item), oldValue.toString());
+		  //m_fileManager->setFilter(item, ".jpg");
+		  //m_unitManager->setRange(item, 10, 12);
 		}
 
               // set the existing or default value
-              if (oldValue.isValid())
+              if (oldValue.isValid() && 
+		  propertyType != m_unitManager->id() &&
+		  propertyType != m_fileManager->id())
                 {
                   item->setValue(oldValue);
                 }
@@ -439,6 +471,37 @@ void CSongbook::save(const QString & filename)
                       << "\"\n  ],\n";
                 }
             }
+	  else //non variant types
+	    {
+	      if(it.key() == "mainfontsize")
+		{
+		  string_value = m_unitManager->valueText(property);
+		  if (!string_value.isEmpty())
+		    {
+		      out << "\"" << it.key() << "\" : \""
+			  << string_value << "\",\n";
+		    }
+		}
+	      else if(it.key() == "picture")
+		{
+		  string_value = m_fileManager->value(property);
+		  //copy the file in songbook directory
+		  QFile file(string_value);
+		  if(file.exists())
+		    {
+		      QFileInfo fi(string_value);
+		      QString target = QString("%1/img/%2").arg(workingPath()).arg(fi.fileName());
+		      		      file.copy(target);
+		      //write basename as json value
+		      string_value = fi.baseName();
+		    }
+		  if (!string_value.isEmpty())
+		    {
+		      out << "\"" << it.key() << "\" : \""
+			  << string_value << "\",\n";
+		    }
+		}
+	    }
           ++it;
         }
 
@@ -568,3 +631,4 @@ void CSongbook::setWorkingPath(QString path)
 	  m_templateComboBox->setCurrentIndex(m_templates.indexOf("patacrep.tmpl"));    }
     }
 }
+
