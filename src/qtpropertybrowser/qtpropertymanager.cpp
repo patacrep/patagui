@@ -1478,6 +1478,7 @@ bool QtBoolPropertyManager::value(const QtProperty *property) const
 */
 QString QtBoolPropertyManager::valueText(const QtProperty *property) const
 {
+  return QString();
     const QMap<const QtProperty *, bool>::const_iterator it = d_ptr->m_values.constFind(property);
     if (it == d_ptr->m_values.constEnd())
         return QString();
@@ -5061,7 +5062,7 @@ QString QtFlagPropertyManager::valueText(const QtProperty *property) const
 
     QString str;
     int level = 0;
-    const QChar bar = QLatin1Char('|');
+    const QChar bar = QLatin1Char(',');
     const QStringList::const_iterator fncend = data.flagNames.constEnd();
     for (QStringList::const_iterator it =  data.flagNames.constBegin(); it != fncend; ++it) {
         if (data.val & (1 << level)) {
