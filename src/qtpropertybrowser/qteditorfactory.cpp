@@ -688,6 +688,7 @@ QWidget *QtCheckBoxFactory::createEditor(QtBoolPropertyManager *manager, QtPrope
         QWidget *parent)
 {
     QtBoolEdit *editor = d_ptr->createEditor(property, parent);
+    editor->setTextVisible(false);
     editor->setChecked(manager->value(property));
 
     connect(editor, SIGNAL(toggled(bool)), this, SLOT(slotSetValue(bool)));
@@ -2177,19 +2178,20 @@ QtColorEditWidget::QtColorEditWidget(QWidget *parent) :
 {
     QHBoxLayout *lt = new QHBoxLayout(this);
     setupTreeViewEditorMargin(lt);
-    lt->setSpacing(0);
+    //lt->setSpacing(0);
     lt->addWidget(m_pixmapLabel);
-    lt->addWidget(m_label);
-    lt->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Ignored));
+    //lt->addWidget(m_label);
+    //lt->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Ignored));
 
-    m_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
-    m_button->setFixedWidth(20);
+    //m_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    //m_button->setFixedWidth(20);
     setFocusProxy(m_button);
     setFocusPolicy(m_button->focusPolicy());
-    m_button->setText(tr("..."));
+    m_button->setText(tr("Change"));
     m_button->installEventFilter(this);
     connect(m_button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
     lt->addWidget(m_button);
+    lt->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Ignored));
     m_pixmapLabel->setPixmap(QtPropertyBrowserUtils::brushValuePixmap(QBrush(m_color)));
     m_label->setText(QtPropertyBrowserUtils::colorValueText(m_color));
 }
