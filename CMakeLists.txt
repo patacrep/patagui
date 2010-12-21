@@ -1,7 +1,37 @@
 #-------------------------------------------------------------------------------
 project(songbook-client)
+IF( APPLE )
+  SET( PROGNAME Songbook-Client )
+  SET( MACOSX_BUNDLE_ICON_FILE patacrep.icns )
+  SET( CPACK_BUNDLE_NAME Sonbook Client With Space)
+  #versions
+  SET( MACOSX_BUNDLE_VERSION 0.3 )
+  SET( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.3 )
+  SET( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.3 )
+
+  #SET( CMAKE_OSX_ARCHITECTURES ppc;i386 ) #Comment out if not universal binary
+  #other variable tha can be set for mac os
+  #MACOSX_BUNDLE_INFO_STRING
+  #MACOSX_BUNDLE_COPYRIGHT
+  #MACOSX_BUNDLE_BUNDLE_VERSION
+  #MACOSX_BUNDLE_BUNDLE_NAME
+
+  #name of the preference file, usefull if we need to keep the same preference file
+  #upgrade after upgrade without loosing preferences
+  set(MACOSX_BUNDLE_GUI_IDENTIFIER com.patacrep.songbook-client)
+
+  #need to copy the icns (icon) file in the buils dir
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/icons/patacrep.icns
+    ${CMAKE_CURRENT_BINARY_DIR}/patacrep.icns COPYONLY)
+ELSE( APPLE )
+  SET( PROGNAME soongbook-client )
+ENDIF( APPLE )
+
 #-------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
+SET( CMAKE_COLOR_MAKEFILE ON )
+#SET( CMAKE_VERBOSE_MAKEFILE ON )
+#SET( CMAKE_INCLUDE_CURRENT_DIR TRUE )
 #-------------------------------------------------------------------------------
 # process options and parameters
 if(DEFINED PREFIX)
@@ -151,7 +181,19 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 #-------------------------------------------------------------------------------
 # generating executable
 ADD_DEFINITIONS("-g -Wall")
-add_executable(songbook-client
+IF( APPLE )
+    ADD_EXECUTABLE( ${PROGNAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
+      ${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
+      ${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
+      )
+    ADD_CUSTOM_COMMAND( TARGET ${PROGNAME} POST_BUILD
+      COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
+      COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
+      #COMMAND cp ARGS *.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources 
+      )
+
+ELSE( APPLE )
+add_executable(${PROGNAME}
   ${SONGBOOK_CLIENT_SOURCES} 
   ${SONGBOOK_CLIENT_MOCS} 
   ${SONGBOOK_CLIENT_RESSOURCES} 
@@ -160,10 +202,13 @@ add_executable(songbook-client
   ${qtpropertyeditor_MOC}
   ${qtpropertyeditor_RESOURCES}
 )
-target_link_libraries(songbook-client ${QT_LIBRARIES})
+ENDIF( APPLE )
+target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
 #-------------------------------------------------------------------------------
 # install instructions
-install(TARGETS songbook-client RUNTIME DESTINATION bin)
-install(FILES songbook-client.desktop DESTINATION share/applications)
-install(FILES icons/patacrep.png DESTINATION share/icons)
-install(FILES ${COMPILED_TRANSLATIONS} DESTINATION share/songbook-client/translations)
+IF(NOT APPLE)
+  install(TARGETS ${PROGNAME} RUNTIME DESTINATION bin)
+  install(FILES ${PROGNAME}.desktop DESTINATION share/applications)
+  install(FILES icons/patacrep.png DESTINATION share/icons)
+  install(FILES ${COMPILED_TRANSLATIONS} DESTINATION share/${PROGNAME}/translations)
+ENDIF(NOT APPLE)
