@@ -2,7 +2,7 @@
 project(songbook-client)
 IF( APPLE )
   SET( PROGNAME Songbook-Client )
-  SET( MACOSX_BUNDLE_ICON_FILE patacrep.icns )
+  SET( MACOSX_BUNDLE_ICON_FILE livre.icns )
   SET( CPACK_BUNDLE_NAME Sonbook Client With Space)
   #versions
   SET( MACOSX_BUNDLE_VERSION 0.3 )
@@ -21,8 +21,8 @@ IF( APPLE )
   set(MACOSX_BUNDLE_GUI_IDENTIFIER com.patacrep.songbook-client)
 
   #need to copy the icns (icon) file in the buils dir
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/icons/patacrep.icns
-    ${CMAKE_CURRENT_BINARY_DIR}/patacrep.icns COPYONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
+    ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
 ELSE( APPLE )
   SET( PROGNAME soongbook-client )
 ENDIF( APPLE )
