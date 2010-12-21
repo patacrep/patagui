@@ -24,7 +24,7 @@ IF( APPLE )
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
     ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
 ELSE( APPLE )
-  SET( PROGNAME soongbook-client )
+  SET( PROGNAME songbook-client )
 ENDIF( APPLE )
 
 #-------------------------------------------------------------------------------
