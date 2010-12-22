@@ -30,11 +30,13 @@
 #include "song-editor.hh"
 #include "highlighter.hh"
 #include "dialog-new-song.hh"
+#include "filter-lineedit.hh"
+#include "songSortFilterProxyModel.hh"
 //******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
-  , m_proxyModel(new QSortFilterProxyModel)
+  , m_proxyModel(new CSongSortFilterProxyModel)
   , m_songbook()
   , m_view(new QTableView)
   , m_progressBar(new QProgressBar)
@@ -107,31 +109,17 @@ CMainWindow::CMainWindow()
   connectDb();
 
   // filtering related widgets
-  QLineEdit *filterLineEdit = new QLineEdit;
-  QLabel *filterLabel = new QLabel(tr("&Filter:"));
-  filterLabel->setBuddy(filterLineEdit);
-  QComboBox *filterComboBox = new QComboBox;
-  filterComboBox->addItem(tr("All"), -1);
-  filterComboBox->addItem(tr("Artist"), 0);
-  filterComboBox->addItem(tr("Title"), 1);
-  filterComboBox->addItem(tr("Album"), 4);
+  CFilterLineEdit *filterLineEdit = new CFilterLineEdit;
   m_proxyModel->setFilterKeyColumn(-1);
 
   connect(filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
-  connect(filterComboBox, SIGNAL(currentIndexChanged(int)),
-	  this, SLOT(filterChanged()));
-
-  QBoxLayout *filterLayout = new QHBoxLayout;
-  filterLayout->addWidget(filterLabel);
-  filterLayout->addWidget(filterLineEdit);
-  filterLayout->addWidget(filterComboBox);
 
   // organize the toolbar and the filter into an horizontal layout
   QBoxLayout *horizontalLayout = new QHBoxLayout;
   horizontalLayout->addWidget(m_toolbar);
   horizontalLayout->addStretch();
-  horizontalLayout->addLayout(filterLayout);
+  horizontalLayout->addWidget(filterLineEdit);
 
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection & , 
 						    const QItemSelection & )),
@@ -282,11 +270,6 @@ void CMainWindow::filterChanged()
     {
       QRegExp expression = QRegExp(lineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
       m_proxyModel->setFilterRegExp(expression);
-    }
-  else if (QComboBox *comboBox = qobject_cast< QComboBox* >(object))
-    {
-      int column = comboBox->itemData(comboBox->currentIndex()).toInt();
-      m_proxyModel->setFilterKeyColumn(column);
     }
   else
     {
