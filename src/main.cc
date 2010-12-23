@@ -25,7 +25,7 @@ int main( int argc, char * argv[] )
 
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");
-  QCoreApplication::setApplicationName("songbook");
+  QCoreApplication::setApplicationName("songbook-client");
 
   // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
