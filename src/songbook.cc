@@ -67,7 +67,7 @@ CSongbook::~CSongbook()
   delete m_unitManager;
 }
 
-QString CSongbook::filename()
+QString CSongbook::filename() const
 {
   return m_filename;
 }
@@ -88,10 +88,11 @@ void CSongbook::setModified(bool modified)
   emit(wasModified(modified));
 }
 
-QString CSongbook::tmpl()
+QString CSongbook::tmpl() const
 {
   return m_tmpl;
 }
+
 
 void CSongbook::setTmpl(const QString &tmpl)
 {
@@ -118,6 +119,25 @@ void CSongbook::setSongs(QStringList songs)
       m_songs = songs;
       emit(songsChanged());
     }
+}
+
+QString CSongbook::title() const
+{
+  return m_parameters.value("title") ?
+    m_parameters.value("title")->value().toString():QString();
+}
+
+QString CSongbook::authors() const
+{
+  return m_parameters.value("author") ?
+    m_parameters.value("author")->value().toString()
+    .replace("\\and","&"):QString();
+}
+
+QString CSongbook::style() const
+{
+  return tmpl().isEmpty() ? 
+    QString("patacrep"):tmpl().replace(".tmpl","");
 }
 
 QWidget * CSongbook::panel()

@@ -58,9 +58,12 @@ public:
   ~CSongbook();
 
   QString workingPath() const;
-  QString filename();
-  QString tmpl();
-
+  QString filename() const;
+  QString tmpl() const;
+  QString title() const;
+  QString authors() const;
+  QString style() const;
+  
   QStringList songs();
 
   bool isModified();
