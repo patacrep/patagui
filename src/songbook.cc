@@ -100,9 +100,9 @@ void CSongbook::setTmpl(const QString &tmpl)
   if (m_tmpl != tmpl && -1 != index)
     {
       m_tmpl = tmpl;
-      setModified(true);
       m_templateComboBox->setCurrentIndex(index);
       changeTemplate(tmpl);
+      setModified(true);
     }
 }
 
