@@ -182,7 +182,8 @@ void CSongbook::reset()
   QMap< QString, QtVariantProperty* >::const_iterator it;
   for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
     {
-      it.value()->setValue(QVariant(""));
+      if(it.key() != "mainfontsize" && it.key() != "picture")
+	it.value()->setValue(QVariant(""));
     }
   setModified(false);
 }
