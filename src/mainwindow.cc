@@ -127,9 +127,13 @@ CMainWindow::CMainWindow()
 						    const QItemSelection & )),
 	  this, SLOT(selectionChanged(const QItemSelection & , const QItemSelection & )));
 
+  
+  QHBoxLayout* sbBottomLayout = new QHBoxLayout;
   QPushButton* buttonSettings = new QPushButton(tr("Settings"));
   connect(buttonSettings, SIGNAL(clicked()), this, SLOT(templateSettings()));
-  
+  sbBottomLayout->addStretch();
+  sbBottomLayout->addWidget(buttonSettings);
+
   m_sbInfoTitle     = new QLabel;
   m_sbInfoAuthors   = new QLabel;
   m_sbInfoStyle     = new QLabel;
@@ -145,7 +149,8 @@ CMainWindow::CMainWindow()
   leftLayout->addWidget(m_sbInfoAuthors);
   leftLayout->addWidget(m_sbInfoStyle);
   leftLayout->addWidget(m_sbInfoSelection);
-  leftLayout->addWidget(buttonSettings);
+  leftLayout->addLayout(sbBottomLayout);
+  leftLayout->addStretch();
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
   leftLayout->addWidget(createSongInfoWidget());
   dataLayout->addWidget(m_view);
@@ -243,9 +248,9 @@ void CMainWindow::templateSettings()
   QVBoxLayout *layout = new QVBoxLayout;
 
   QScrollArea *songbookScrollArea = new QScrollArea();
-  songbookScrollArea->setWidgetResizable(true);
-  songbookScrollArea->setMinimumWidth(350);
-  songbookScrollArea->setMinimumHeight(400);
+  //songbookScrollArea->setWidgetResizable(true); //bug qt ?
+  songbookScrollArea->setMinimumWidth(400);
+  //songbookScrollArea->setMinimumHeight(450);
   songbookScrollArea->setWidget(m_songbook->panel());
   songbookScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   
@@ -268,10 +273,8 @@ void CMainWindow::templateSettings()
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongbookLabels(bool modified)
 {
-  m_sbInfoSelection->setText(QString(tr("Selection: %1/%2"))
-			     .arg(m_sbNbSelected).arg(m_sbNbTotal) );
   m_sbInfoTitle->setText(    QString(tr("Title: %1")).arg(m_songbook->title()) );
-  m_sbInfoAuthors->setText(  QString(tr("Auteurs: %1")).arg(m_songbook->authors()) );
+  m_sbInfoAuthors->setText(  QString(tr("Authors: %1")).arg(m_songbook->authors()) );
   m_sbInfoStyle->setText(    QString(tr("Style: %1")).arg(m_songbook->style()) );
 }
 //------------------------------------------------------------------------------
@@ -292,6 +295,8 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
 {
   m_sbNbSelected = selectionModel()->selectedRows().size();
   m_sbNbTotal = m_library->rowCount();
+  m_sbInfoSelection->setText(QString(tr("Selection: %1/%2"))
+			     .arg(m_sbNbSelected).arg(m_sbNbTotal) );
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
@@ -606,8 +611,8 @@ QWidget * CMainWindow::createSongInfoWidget()
   QPushButton *editButton = new QPushButton(tr("Edit"));
   QPushButton *deleteButton = new QPushButton(tr("Delete"));
   editButton->setDefault(true);
-  buttonBox->addButton(editButton, QDialogButtonBox::ResetRole);
-  buttonBox->addButton(deleteButton, QDialogButtonBox::ResetRole);
+  buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(deleteButton, QDialogButtonBox::NoRole);
 
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
