@@ -31,6 +31,7 @@
 class CSongbook;
 class CLibrary;
 class CTabWidget;
+class CSortFilterProxyModel;
 class CDialogNewSong;
 
 /** \class CMainWindow "mainWindow.hh"
@@ -125,7 +126,7 @@ private:
 
   // Song library and view
   CLibrary *m_library;
-  QSortFilterProxyModel *m_proxyModel;
+  CSortFilterProxyModel *m_proxyModel;
 
   // Songbook
   CSongbook *m_songbook;

@@ -62,6 +62,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/unit-factory.cc
   src/file-property-manager.cc
   src/file-factory.cc
+  src/sort-filter-proxy-model.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -80,6 +81,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/unit-factory.hh
   src/file-property-manager.hh
   src/file-factory.hh
+  src/sort-filter-proxy-model.hh
   )
 #-------------------------------------------------------------------------------
 # ressources
