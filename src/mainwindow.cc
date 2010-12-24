@@ -144,6 +144,8 @@ CMainWindow::CMainWindow()
   QBoxLayout *dataLayout = new QVBoxLayout;
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
+  leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
+  leftLayout->addWidget(createSongInfoWidget());
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
   leftLayout->addWidget(m_sbInfoTitle);
   leftLayout->addWidget(m_sbInfoAuthors);
@@ -151,8 +153,6 @@ CMainWindow::CMainWindow()
   leftLayout->addWidget(m_sbInfoSelection);
   leftLayout->addLayout(sbBottomLayout);
   leftLayout->addStretch();
-  leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
-  leftLayout->addWidget(createSongInfoWidget());
   dataLayout->addWidget(m_view);
   dataLayout->addWidget(m_noDataInfo);
   centerLayout->addLayout(leftLayout);
@@ -178,10 +178,10 @@ CMainWindow::CMainWindow()
   setCentralWidget(m_mainWidget);
 
   // status bar with an embedded progress bar on the right
-  m_progressBar->setTextVisible(false);
-  m_progressBar->setRange(0, 0);
-  m_progressBar->hide();
-  statusBar()->addPermanentWidget(m_progressBar);
+  progressBar()->setTextVisible(false);
+  progressBar()->setRange(0, 0);
+  progressBar()->hide();
+  statusBar()->addPermanentWidget(progressBar());
 
   applySettings();
   selectionChanged();
@@ -248,9 +248,7 @@ void CMainWindow::templateSettings()
   QVBoxLayout *layout = new QVBoxLayout;
 
   QScrollArea *songbookScrollArea = new QScrollArea();
-  //songbookScrollArea->setWidgetResizable(true); //bug qt ?
   songbookScrollArea->setMinimumWidth(400);
-  //songbookScrollArea->setMinimumHeight(450);
   songbookScrollArea->setWidget(m_songbook->panel());
   songbookScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   
@@ -273,9 +271,9 @@ void CMainWindow::templateSettings()
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongbookLabels(bool modified)
 {
-  m_sbInfoTitle->setText(    QString(tr("Title: %1")).arg(m_songbook->title()) );
-  m_sbInfoAuthors->setText(  QString(tr("Authors: %1")).arg(m_songbook->authors()) );
-  m_sbInfoStyle->setText(    QString(tr("Style: %1")).arg(m_songbook->style()) );
+  m_sbInfoTitle->setText(QString(tr("<i>Title:</i> %1")).arg(m_songbook->title()));
+  m_sbInfoAuthors->setText(QString(tr("<i>Authors:</i> %1")).arg(m_songbook->authors()));
+  m_sbInfoStyle->setText(QString(tr("<i>Style:</i> %1")).arg(m_songbook->style()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterChanged()
@@ -828,7 +826,7 @@ void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
   if (exitStatus == QProcess::NormalExit && exitCode == 0)
     {
-      m_progressBar->hide();
+      progressBar()->hide();
       QString msg(tr("Songbook successfully generated."));
       statusBar()->showMessage(msg);
 
@@ -838,7 +836,7 @@ void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
     }
   else
     {
-      m_progressBar->hide();
+      progressBar()->hide();
 
       QMessageBox msgBox;
       msgBox.setIcon(QMessageBox::Critical);
@@ -852,7 +850,7 @@ void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
 //------------------------------------------------------------------------------
 void CMainWindow::buildError(QProcess::ProcessError error)
 {
-  m_progressBar->hide();
+  progressBar()->hide();
 
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Critical);
@@ -868,7 +866,11 @@ void CMainWindow::clean()
   clean.setWorkingDirectory(workingPath());
   statusBar()->showMessage(tr("Cleaning ..."));
   clean.start("make", QStringList() << "clean");
-  if (!clean.waitForFinished()) return;
+  if (clean.waitForFinished())
+    progressBar()->show();
+  
+  progressBar()->hide();
+  statusBar()->showMessage(tr("Cleaning completed."));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()
@@ -997,7 +999,7 @@ void CMainWindow::downloadDialog()
   new CDownloadDialog(this);
 }
 //------------------------------------------------------------------------------
-QProgressBar * CMainWindow::progressBar()
+QProgressBar * CMainWindow::progressBar() const
 {
   return m_progressBar;
 }

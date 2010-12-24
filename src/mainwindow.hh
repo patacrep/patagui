@@ -46,7 +46,7 @@ public:
   CMainWindow();
   ~CMainWindow();
 
-  QProgressBar * progressBar();
+  QProgressBar * progressBar() const;
   const QString workingPath();
 
 public slots:
