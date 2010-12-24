@@ -57,6 +57,8 @@ public slots:
   void refreshLibrary();
   void rebuildLibrary();
   void setWorkingPath(QString dirname);
+  void templateSettings();
+  void updateSongbookLabels(bool);
 
 signals:
   void workingPathChanged(QString path);
@@ -127,7 +129,12 @@ private:
 
   // Songbook
   CSongbook *m_songbook;
-  QLabel* m_selectedSongs;
+  uint m_sbNbSelected;
+  uint m_sbNbTotal;
+  QLabel* m_sbInfoSelection;
+  QLabel* m_sbInfoTitle;
+  QLabel* m_sbInfoAuthors;
+  QLabel* m_sbInfoStyle;
 
   // Widgets
   CTabWidget* m_mainWidget;
