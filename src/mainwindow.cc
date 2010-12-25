@@ -158,7 +158,9 @@ CMainWindow::CMainWindow()
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
   connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
-	   m_mainWidget, SLOT(closeTab(int)) );
+	   this, SLOT(closeTab(int)) );
+  connect( m_mainWidget, SIGNAL(currentChanged(int)),
+	   this, SLOT(changeTab(int)) );
   m_mainWidget->addTab(libraryTab, tr("Library"));
   setCentralWidget(m_mainWidget);
 
@@ -309,22 +311,23 @@ void CMainWindow::createActions()
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   m_saveAct = new QAction(tr("Save"), this);
+  m_saveAct->setShortcut(QKeySequence::Save);
 #if QT_VERSION >= 0x040600
   m_saveAct->setIcon(QIcon::fromTheme("document-save"));
 #endif
-  m_saveAct->setShortcut(QKeySequence::Save);
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   m_saveAsAct = new QAction(tr("Save As..."), this);
+  m_saveAsAct->setShortcut(QKeySequence::SaveAs);
 #if QT_VERSION >= 0x040600
   m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as"));
 #endif
-  m_saveAsAct->setShortcut(QKeySequence::SaveAs);
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
+  m_saveAsAct->setShortcut(QKeySequence::HelpContents);
   m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
@@ -337,6 +340,7 @@ void CMainWindow::createActions()
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
+  m_saveAsAct->setShortcut(QKeySequence::Close);
 #if QT_VERSION >= 0x040600
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
@@ -400,10 +404,7 @@ void CMainWindow::createActions()
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           m_view, SLOT(resizeColumnsToContents()));
 
-  m_refreshLibraryAct = new QAction(tr("Refresh"), this);
-#if QT_VERSION >= 0x040600
-  m_refreshLibraryAct->setIcon(QIcon::fromTheme("view-refresh"));
-#endif
+  m_refreshLibraryAct = new QAction(tr("Update"), this);
   m_refreshLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
   connect(m_refreshLibraryAct, SIGNAL(triggered()), this, SLOT(refreshLibrary()));
 
@@ -1272,11 +1273,34 @@ void CMainWindow::deleteSong()
 	}
     }
 }
+//------------------------------------------------------------------------------
+void CMainWindow::closeTab(int index)
+{
+  //forbid to close main tab
+  if(index!=0)
+    m_mainWidget->closeTab(index);
+}
+//------------------------------------------------------------------------------
+void CMainWindow::changeTab(int index)
+{
+  //avoid shortcuts conflicts
+  if(index!=0)
+    m_saveAct->setShortcutContext(Qt::WidgetShortcut);
+  else
+    m_saveAct->setShortcutContext(Qt::WindowShortcut);
+}
+
 //******************************************************************************
 //******************************************************************************
 CTabWidget::CTabWidget():QTabWidget()
 {
   tabBar()->hide();
+  QAction* action = new QAction(tr("Next tab"), this);
+  action->setShortcut(QKeySequence::NextChild);
+  connect(action, SIGNAL(triggered()), this, SLOT(next()));
+  action = new QAction(tr("Previous tab"), this);
+  action->setShortcut(QKeySequence::PreviousChild);
+  connect(action, SIGNAL(triggered()), this, SLOT(prev()));
 }
 //------------------------------------------------------------------------------
 CTabWidget::~CTabWidget()
@@ -1296,6 +1320,16 @@ int CTabWidget::addTab(QWidget* widget, const QString & label)
   if (count() == 1)
     tabBar()->hide();
   return res;
+}
+//------------------------------------------------------------------------------
+void CTabWidget::next()
+{
+  setCurrentIndex(currentIndex()+1);
+}
+//------------------------------------------------------------------------------
+void CTabWidget::prev()
+{
+  setCurrentIndex(currentIndex()-1);
 }
 //******************************************************************************
 //******************************************************************************

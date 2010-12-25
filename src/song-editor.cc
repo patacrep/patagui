@@ -33,11 +33,11 @@ CSongEditor::CSongEditor(const QString & APath)
   m_filePath = APath;
 
   // toolbar
-  QToolBar* toolbar = new QToolBar;
+  QToolBar* toolbar = new QToolBar(this);
   toolbar->setMovable(false);
 
   //retrieve song text
-  m_textEdit = new QTextEdit;
+  m_textEdit = new QTextEdit(this);
   m_textEdit->setUndoRedoEnabled(true);
   QFile file(APath);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -52,7 +52,7 @@ CSongEditor::CSongEditor(const QString & APath)
 
       // actions
       QAction* action = new QAction(tr("Save"), this);
-      action->setShortcut(tr("Ctrl+S"));
+      action->setShortcut(QKeySequence::Save);
 #if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("document-save"));
 #endif
@@ -64,7 +64,7 @@ CSongEditor::CSongEditor(const QString & APath)
 
       //copy paste
       action = new QAction(tr("Cut"), this);
-      action->setShortcut(tr("Ctrl+X"));
+      action->setShortcut(QKeySequence::Cut);
 #if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-cut"));
 #endif
@@ -73,7 +73,7 @@ CSongEditor::CSongEditor(const QString & APath)
       toolbar->addAction(action);
 
       action = new QAction(tr("Copy"), this);
-      action->setShortcut(tr("Ctrl+C"));
+      action->setShortcut(QKeySequence::Copy);
 #if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-copy"));
 #endif
@@ -82,7 +82,7 @@ CSongEditor::CSongEditor(const QString & APath)
       toolbar->addAction(action);
 
       action = new QAction(tr("Paste"), this);
-      action->setShortcut(tr("Ctrl+V"));
+      action->setShortcut(QKeySequence::Paste);
 #if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-paste"));
 #endif
@@ -94,6 +94,7 @@ CSongEditor::CSongEditor(const QString & APath)
 
       //undo redo
       action = new QAction(tr("Undo"), this);
+      action->setShortcut(QKeySequence::Undo);
 #if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-undo"));
 #endif
@@ -102,6 +103,7 @@ CSongEditor::CSongEditor(const QString & APath)
       toolbar->addAction(action);
 
       action = new QAction(tr("Redo"), this);
+      action->setShortcut(QKeySequence::Redo);
 #if QT_VERSION >= 0x040600
       action->setIcon(QIcon::fromTheme("edit-redo"));
 #endif

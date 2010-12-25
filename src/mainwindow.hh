@@ -76,6 +76,8 @@ private slots:
   void saveAs();
   void build();
   void clean();
+  void closeTab(int index);
+  void changeTab(int index);
 
   //library
   void newSong();
@@ -227,9 +229,12 @@ public:
 
   int addTab(QWidget* widget, const QString & label);
 
-private slots:
+public slots:
   void closeTab(int);
 
+private slots:
+  void next();
+  void prev();
 };
 
 #endif  // __MAIN_WINDOW_HH__
