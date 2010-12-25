@@ -128,30 +128,15 @@ CMainWindow::CMainWindow()
 	  this, SLOT(selectionChanged(const QItemSelection & , const QItemSelection & )));
 
   
-  QHBoxLayout* sbBottomLayout = new QHBoxLayout;
-  QPushButton* buttonSettings = new QPushButton(tr("Settings"));
-  connect(buttonSettings, SIGNAL(clicked()), this, SLOT(templateSettings()));
-  sbBottomLayout->addStretch();
-  sbBottomLayout->addWidget(buttonSettings);
-
-  m_sbInfoTitle     = new QLabel;
-  m_sbInfoAuthors   = new QLabel;
-  m_sbInfoStyle     = new QLabel;
-  m_sbInfoSelection = new QLabel;
-  
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
   QBoxLayout *dataLayout = new QVBoxLayout;
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
-  leftLayout->addWidget(createSongInfoWidget());
+  leftLayout->addLayout(songInfo());
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
-  leftLayout->addWidget(m_sbInfoTitle);
-  leftLayout->addWidget(m_sbInfoAuthors);
-  leftLayout->addWidget(m_sbInfoStyle);
-  leftLayout->addWidget(m_sbInfoSelection);
-  leftLayout->addLayout(sbBottomLayout);
+  leftLayout->addLayout(songbookInfo());
   leftLayout->addStretch();
   dataLayout->addWidget(m_view);
   dataLayout->addWidget(m_noDataInfo);
@@ -245,6 +230,7 @@ void CMainWindow::applySettings()
 void CMainWindow::templateSettings()
 {
   QDialog *dialog = new QDialog;
+  dialog->setWindowTitle(tr("Songbook settings"));
   QVBoxLayout *layout = new QVBoxLayout;
 
   QScrollArea *songbookScrollArea = new QScrollArea();
@@ -254,14 +240,14 @@ void CMainWindow::templateSettings()
   
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   
-  QPushButton *button = new QPushButton(tr("Ok"));
+  QPushButton *button = new QPushButton(tr("Reset"));
+  connect( button, SIGNAL(clicked()), m_songbook, SLOT(reset()) );
+  buttonBox->addButton(button, QDialogButtonBox::ResetRole);
+  
+  button = new QPushButton(tr("Ok"));
   button->setDefault(true);
   connect( button, SIGNAL(clicked()), dialog, SLOT(accept()) );
   buttonBox->addButton(button, QDialogButtonBox::ActionRole);
-
-  button = new QPushButton(tr("Reset"));
-  connect( button, SIGNAL(clicked()), m_songbook, SLOT(reset()) );
-  buttonBox->addButton(button, QDialogButtonBox::ResetRole);
   
   layout->addWidget(songbookScrollArea);
   layout->addWidget(buttonBox);
@@ -271,9 +257,9 @@ void CMainWindow::templateSettings()
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongbookLabels(bool modified)
 {
-  m_sbInfoTitle->setText(QString(tr("<i>Title:</i> %1")).arg(m_songbook->title()));
-  m_sbInfoAuthors->setText(QString(tr("<i>Authors:</i> %1")).arg(m_songbook->authors()));
-  m_sbInfoStyle->setText(QString(tr("<i>Style:</i> %1")).arg(m_songbook->style()));
+  m_sbInfoTitle->setText(m_songbook->title());
+  m_sbInfoAuthors->setText(m_songbook->authors());
+  m_sbInfoStyle->setText(m_songbook->style());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterChanged()
@@ -293,7 +279,7 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
 {
   m_sbNbSelected = selectionModel()->selectedRows().size();
   m_sbNbTotal = m_library->rowCount();
-  m_sbInfoSelection->setText(QString(tr("Selection: %1/%2"))
+  m_sbInfoSelection->setText(QString(tr("%1/%2"))
 			     .arg(m_sbNbSelected).arg(m_sbNbTotal) );
 }
 //------------------------------------------------------------------------------
@@ -594,17 +580,18 @@ void CMainWindow::createMenus()
   m_helpMenu->addAction(m_aboutAct);
 }
 //------------------------------------------------------------------------------
-QWidget * CMainWindow::createSongInfoWidget()
+QGridLayout * CMainWindow::songInfo()
 {
-  QWidget *songInfoWidget = new QWidget();
-
   CLabel *artistLabel = new CLabel();
   artistLabel->setElideMode(Qt::ElideRight);
+  artistLabel->setFixedWidth(175);
   CLabel *titleLabel = new CLabel();
   titleLabel->setElideMode(Qt::ElideRight);
+  titleLabel->setFixedWidth(175);
   CLabel *albumLabel = new CLabel();
   albumLabel->setElideMode(Qt::ElideRight);
-
+  albumLabel->setFixedWidth(175);
+  
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
   QPushButton *deleteButton = new QPushButton(tr("Delete"));
@@ -615,19 +602,18 @@ QWidget * CMainWindow::createSongInfoWidget()
   connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
   connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
 
-  QGridLayout *songLayout = new QGridLayout;
+  QGridLayout *layout = new QGridLayout;
   m_coverLabel.setAlignment(Qt::AlignTop);
-  songLayout->addWidget(&m_coverLabel,0,0,4,1);
-  songLayout->addWidget(new QLabel(tr("<i>Title:</i>")),0,1,1,1,Qt::AlignLeft);
-  songLayout->addWidget(titleLabel,0,2,1,1);
-  songLayout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,1,1,1,Qt::AlignLeft);
-  songLayout->addWidget(artistLabel,1,2,1,1);
-  songLayout->addWidget(new QLabel(tr("<i>Album:</i>")),2,1,1,1,Qt::AlignLeft);
-  songLayout->addWidget(albumLabel,2,2,1,1);
-  songLayout->addWidget(buttonBox,3,1,1,2);
-  songLayout->setColumnStretch(2,1);
-  songInfoWidget->setLayout(songLayout);
-
+  layout->addWidget(&m_coverLabel,0,0,4,1);
+  layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,1,1,1,Qt::AlignLeft);
+  layout->addWidget(titleLabel,0,2,1,1);
+  layout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,1,1,1,Qt::AlignLeft);
+  layout->addWidget(artistLabel,1,2,1,1);
+  layout->addWidget(new QLabel(tr("<i>Album:</i>")),2,1,1,1,Qt::AlignLeft);
+  layout->addWidget(albumLabel,2,2,1,1);
+  layout->addWidget(buttonBox,3,1,1,2);
+  layout->setColumnStretch(2,1);
+  
   //Data mapper
   m_mapper = new QDataWidgetMapper();
   m_mapper->setModel(m_proxyModel);
@@ -641,7 +627,31 @@ QWidget * CMainWindow::createSongInfoWidget()
   connect(m_view, SIGNAL(clicked(const QModelIndex &)),
           SLOT(updateCover(const QModelIndex &)));
 
-  return songInfoWidget;
+  return layout;
+}
+//------------------------------------------------------------------------------
+QGridLayout * CMainWindow::songbookInfo()
+{
+  m_sbInfoTitle     = new QLabel;
+  m_sbInfoAuthors   = new QLabel;
+  m_sbInfoStyle     = new QLabel;
+  m_sbInfoSelection = new QLabel;
+  
+  QPushButton* button = new QPushButton(tr("Settings"));
+  connect(button, SIGNAL(clicked()), this, SLOT(templateSettings()));
+  
+  QGridLayout* layout = new QGridLayout;
+  layout->addWidget(new QLabel("<i>Title:</i>"),0,0,1,1);
+  layout->addWidget(m_sbInfoTitle,0,1,1,2);
+  layout->addWidget(new QLabel("<i>Authors:</i>"),1,0,1,1);
+  layout->addWidget(m_sbInfoAuthors,1,1,1,2);
+  layout->addWidget(new QLabel("<i>Style:</i>"),2,0,1,1);
+  layout->addWidget(m_sbInfoStyle,2,1,1,2);
+  layout->addWidget(new QLabel("<i>Selection:</i>"),3,0,1,1);
+  layout->addWidget(m_sbInfoSelection,3,1,1,2);
+  layout->addWidget(button,4,2,1,1);
+  
+  return layout;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateCover(const QModelIndex & index)
@@ -673,10 +683,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
   m_cover = new QPixmap;
 #endif
 
-  if(m_cover->width()>m_cover->height())
-    m_coverLabel.setPixmap(m_cover->scaledToWidth(128));
-  else
-    m_coverLabel.setPixmap(m_cover->scaledToHeight(128));
+  m_coverLabel.setPixmap(m_cover->scaled(128, 128, Qt::IgnoreAspectRatio));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::preferences()

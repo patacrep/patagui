@@ -112,7 +112,8 @@ private:
   void createActions();
   void createMenus();
 
-  QWidget * createSongInfoWidget();
+  QGridLayout * songInfo();
+  QGridLayout * songbookInfo();
 
   QStringList getSelectedSongs();
 
