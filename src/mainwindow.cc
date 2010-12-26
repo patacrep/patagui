@@ -28,8 +28,10 @@
 #include "tools.hh"
 #include "download.hh"
 #include "song-editor.hh"
+#include "highlighter.hh"
 #include "dialog-new-song.hh"
 #include "sort-filter-proxy-model.hh"
+
 //******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
@@ -63,6 +65,7 @@ CMainWindow::CMainWindow()
   m_log = new QTextEdit;
   m_log->setMaximumHeight(150);
   m_log->setReadOnly(true);
+  new CHighlighter(m_log->document());
 
   // no data info widget
   m_noDataInfo = new QTextEdit;

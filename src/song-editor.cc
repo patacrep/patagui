@@ -46,7 +46,7 @@ CSongEditor::CSongEditor(const QString & APath)
       QString text = stream.readAll();
       file.close();
       m_textEdit->setText(text);
-      new Highlighter(m_textEdit->document());
+      new CHighlighter(m_textEdit->document());
 
       connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
 

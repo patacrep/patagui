@@ -25,12 +25,12 @@
 
 class QTextDocument;
 
-class Highlighter : public QSyntaxHighlighter
+class CHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
 
   public:
-  Highlighter(QTextDocument *parent = 0);
+  CHighlighter(QTextDocument *parent = 0);
 
 protected:
   void highlightBlock(const QString &text);
@@ -55,6 +55,10 @@ private:
   QTextCharFormat argumentFormat;
   QTextCharFormat optionFormat;
 
+  QTextCharFormat m_latexFileFormat;
+  QTextCharFormat m_latexErrorFormat;
+  QTextCharFormat m_latexWarningFormat;
+  
   QTextCharFormat multiLineCommentFormat;
 };
 

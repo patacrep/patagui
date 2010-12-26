@@ -20,7 +20,7 @@
 
 #include "highlighter.hh"
 
-Highlighter::Highlighter(QTextDocument *parent)
+CHighlighter::CHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
 {
   HighlightingRule rule;
@@ -49,14 +49,41 @@ Highlighter::Highlighter(QTextDocument *parent)
   keyword2Format.setForeground(QColor(164,0,0));
   keyword2Format.setFontWeight(QFont::Bold);
   QStringList keyword2Patterns;
-  keyword2Patterns << "\\\\bar" ;
-
+  keyword2Patterns << "\\\\bar"; 
+  
   foreach (const QString &pattern, keyword2Patterns)
     {
       rule.pattern = QRegExp(pattern);
       rule.format = keyword2Format;
       highlightingRules.append(rule);
     }
+
+  //LaTeX compilation logs
+  //files (light blue)
+  QStringList extensions;
+  extensions << "pdf" << "jpg" << "png";
+  m_latexFileFormat.setForeground(QColor(114,159,207));
+
+  foreach (const QString &extension, extensions)
+    {
+      rule.pattern = QRegExp(QString("[^(\\s|/)]*\\.%1").arg(extension));
+      rule.format = m_latexFileFormat;
+      highlightingRules.append(rule);
+    }
+  
+  //errors (light red)
+  m_latexErrorFormat.setForeground(QColor(239,41,41));
+
+  rule.pattern = QRegExp("^!.*");
+  rule.format = m_latexErrorFormat;
+  highlightingRules.append(rule);
+
+  //warnings (light orange)
+  m_latexWarningFormat.setForeground(QColor(252,175,62));
+
+  rule.pattern = QRegExp("^.*(W|w)arning.*$");
+  rule.format = m_latexWarningFormat;
+  highlightingRules.append(rule);
 
   //Environments (bold, green)
   environmentFormat.setFontWeight(QFont::Bold);
@@ -143,7 +170,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 
 }
 
-void Highlighter::highlightBlock(const QString &text)
+void CHighlighter::highlightBlock(const QString &text)
 {
   foreach (const HighlightingRule &rule, highlightingRules) {
     QRegExp expression(rule.pattern);
