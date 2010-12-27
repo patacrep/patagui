@@ -52,7 +52,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/preferences.cc
   src/library.cc
   src/songbook.cc
-  src/tools.cc
+  src/build-engine.cc
   src/download.cc
   src/song-editor.cc
   src/highlighter.cc
@@ -65,6 +65,10 @@ set(SONGBOOK_CLIENT_SOURCES
   src/songSortFilterProxyModel.cc
   src/filter-lineedit.cc
   src/utils/lineedit.cc
+  src/utils/lineedit.cc
+  src/build-engine/resize-covers.cc
+  src/build-engine/latex-preprocessing.cc
+  src/build-engine/make-songbook.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -72,7 +76,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/mainwindow.hh
   src/preferences.hh
   src/library.hh
-  src/tools.hh
+  src/build-engine.hh
   src/download.hh
   src/songbook.hh
   src/song-editor.hh
