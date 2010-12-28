@@ -25,7 +25,9 @@
 #include "preferences.hh"
 #include "library.hh"
 #include "songbook.hh"
-#include "tools.hh"
+#include "build-engine/resize-covers.hh"
+#include "build-engine/latex-preprocessing.hh"
+#include "build-engine/make-songbook.hh"
 #include "download.hh"
 #include "song-editor.hh"
 #include "highlighter.hh"
@@ -354,20 +356,6 @@ void CMainWindow::createActions()
   m_exitAct->setStatusTip(tr("Quit the program"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-  m_buildAct = new QAction(tr("Build PDF"), this);
-#if QT_VERSION >= 0x040600
-  m_buildAct->setIcon(QIcon::fromTheme("document-export"));
-#endif
-  m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
-  connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
-
-  m_cleanAct = new QAction(tr("Clean"), this);
-#if QT_VERSION >= 0x040600
-  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
-#endif
-  m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
-  connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(clean()));
-
   m_preferencesAct = new QAction(tr("&Preferences"), this);
   m_preferencesAct->setStatusTip(tr("Configure the application"));
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
@@ -437,14 +425,33 @@ void CMainWindow::createActions()
   m_statusbarViewAct->setChecked(m_isStatusbarDisplayed);
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
-  CTools* tools = new CTools(this);
+  CBuildEngine* process = new CResizeCovers(this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
   m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
-  connect(m_resizeCoversAct, SIGNAL(triggered()), tools, SLOT(resizeCoversDialog()));
+  connect(m_resizeCoversAct, SIGNAL(triggered()), process, SLOT(dialog()));
 
+  process = new CLatexPreprocessing(this);
   m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
   m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
-  connect(m_checkerAct, SIGNAL(triggered()), tools, SLOT(latexPreprocessingDialog()));
+  connect(m_checkerAct, SIGNAL(triggered()), process, SLOT(dialog()));
+
+  //process = new CMakeSongbook(this);
+  m_buildAct = new QAction(tr("Build PDF"), this);
+#if QT_VERSION >= 0x040600
+  m_buildAct->setIcon(QIcon::fromTheme("document-export"));
+#endif
+  m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
+  connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
+
+  process = new CMakeSongbook(this);
+  process->setProcessOptions(QStringList() << "clean");
+  m_cleanAct = new QAction(tr("Clean"), this);
+#if QT_VERSION >= 0x040600
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
+#endif
+  m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
+  connect(m_cleanAct, SIGNAL(triggered()), process, SLOT(action()));
+
 }
 //------------------------------------------------------------------------------
 void CMainWindow::setToolbarDisplayed( bool value )
@@ -762,7 +769,6 @@ void CMainWindow::selectLanguage(bool selection)
 QStringList CMainWindow::getSelectedSongs()
 {
   //ensure the songs are correctly sorted by artist And title
-  //todo: do not sort the view but define the < operator
   m_view->sortByColumn(1, Qt::AscendingOrder);
   m_view->sortByColumn(0, Qt::AscendingOrder);
 
@@ -804,87 +810,18 @@ void CMainWindow::build()
 
   if (!m_songbook->filename().endsWith(QString(".sb")))
     {
-      statusBar()->showMessage(tr("Wrong filename: songbook does not have \".sb\" extension. Build aborted."));
+      statusBar()->showMessage(tr("Wrong filename: songbook does not have "
+				  "\".sb\" extension. Build aborted."));
       return;
     }
 
   QString target = QString("%1.pdf")
     .arg(QFileInfo(m_songbook->filename()).baseName());
-
-  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-  m_buildProcess = new QProcess(this);
-  env.insert("LATEX_OPTIONS", "-halt-on-error");
-  m_buildProcess->setProcessEnvironment(env);
-  m_buildProcess->setWorkingDirectory(workingPath());
-  connect(m_buildProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
-	  this, SLOT(buildFinished(int,QProcess::ExitStatus)));
-  connect(m_buildProcess, SIGNAL(error(QProcess::ProcessError)),
-	  this, SLOT(buildError(QProcess::ProcessError)));
-  connect(m_buildProcess, SIGNAL(readyReadStandardOutput()),
-	  this, SLOT(readProcessOut()));
-  connect(m_buildProcess, SIGNAL(readyReadStandardError()),
-	  this, SLOT(readProcessOut()));
-  m_log->clear();
-
-  statusBar()->showMessage(tr("The songbook is building. Please wait."));
-  progressBar()->show();
-  m_buildProcess->start("make", QStringList() << target);
-}
-//------------------------------------------------------------------------------
-void CMainWindow::readProcessOut()
-{
-  m_log->append(m_buildProcess->readAllStandardOutput().data());
-}
-//------------------------------------------------------------------------------
-void CMainWindow::buildFinished(int exitCode, QProcess::ExitStatus exitStatus)
-{
-  if (exitStatus == QProcess::NormalExit && exitCode == 0)
-    {
-      progressBar()->hide();
-      QString msg(tr("Songbook successfully generated."));
-      statusBar()->showMessage(msg);
-
-      QString target = QString("%1.pdf").arg(QFileInfo(m_songbook->filename()).baseName());
-
-      QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
-    }
-  else
-    {
-      progressBar()->hide();
-
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText(tr("An error occured during the songbook generation.\n You may check compilation logs for more information."));
-      msgBox.setDetailedText(m_log->toPlainText());
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
-    }
-}
-//------------------------------------------------------------------------------
-void CMainWindow::buildError(QProcess::ProcessError error)
-{
-  progressBar()->hide();
-
-  QMessageBox msgBox;
-  msgBox.setIcon(QMessageBox::Critical);
-  msgBox.setText(tr("Warning: an error occured during the songbook generation."));
-  msgBox.setStandardButtons(QMessageBox::Cancel);
-  msgBox.setDefaultButton(QMessageBox::Cancel);
-  msgBox.exec();
-}
-//------------------------------------------------------------------------------
-void CMainWindow::clean()
-{
-  QProcess clean;
-  clean.setWorkingDirectory(workingPath());
-  statusBar()->showMessage(tr("Cleaning ..."));
-  clean.start("make", QStringList() << "clean");
-  if (clean.waitForFinished())
-    progressBar()->show();
   
-  progressBar()->hide();
-  statusBar()->showMessage(tr("Cleaning completed."));
+  CBuildEngine * process = new CMakeSongbook(this);
+  process->setProcessOptions(QStringList() << target);
+  process->action();
+  QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()
@@ -982,6 +919,7 @@ const QString CMainWindow::workingPath()
 {
   if (!QDir( m_workingPath ).exists())
     m_workingPath = QDir::currentPath();
+  //todo emit(directoryChanged) -> connect tous les widget qui dépendent de ça !
   return m_workingPath;
  }
 //------------------------------------------------------------------------------
@@ -998,7 +936,8 @@ void CMainWindow::setWorkingPath(QString dirname)
 
       if (!first && QMessageBox::question
        	  (this, this->windowTitle(),
-       	   QString(tr("The songbook directory has been changed.\nWould you like to scan for available songs ?")),
+       	   QString(tr("The songbook directory has been changed.\n"
+		      "Would you like to scan for available songs ?")),
        	   QMessageBox::Yes,
        	   QMessageBox::No,
        	   QMessageBox::NoButton) == QMessageBox::Yes)
@@ -1272,7 +1211,7 @@ void CMainWindow::deleteSong()
 	{
 	  QDir dir;
 	  dir.rmdir(tmp); //remove dir if empty
-	  clean();
+	  //clean();
 	  //once deleted move selection in the model
 	  updateCover(selectionModel()->currentIndex());
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());

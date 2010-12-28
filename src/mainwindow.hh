@@ -49,10 +49,7 @@ public:
   const QString workingPath();
 
 public slots:
-  void buildFinished(int exitCode, QProcess::ExitStatus exitStatus);
-  void buildError(QProcess::ProcessError error);
   void updateCover(const QModelIndex & index);
-  void readProcessOut();
   void downloadDialog();
   void refreshLibrary();
   void rebuildLibrary();
@@ -74,7 +71,6 @@ private slots:
   void save(bool forced=false);
   void saveAs();
   void build();
-  void clean();
   void closeTab(int index);
   void changeTab(int index);
 
@@ -160,7 +156,6 @@ private:
   bool m_isToolbarDisplayed;
   bool m_isStatusbarDisplayed;
 
-  QProcess* m_buildProcess;
   QMdiArea* m_area;
   QScrollArea* m_scrollArea;
   QDockWidget* m_songInfo;
