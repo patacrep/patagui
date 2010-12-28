@@ -22,10 +22,8 @@ CMakeSongbook::CMakeSongbook(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
   setFileName("make");
-  setStatusActionMessage(tr("Building the songbook. Please wait..."));
-  setStatusSuccessMessage(tr("Songbook successfully generated."));
-  setStatusErrorMessage(tr("An error occured during the songbook generation.\n " 
-			   "You may check compilation logs for more information."));
+  
+  setProcessOptions(QStringList());
   
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   env.insert("LATEX_OPTIONS", "-halt-on-error");
@@ -35,4 +33,21 @@ CMakeSongbook::CMakeSongbook(CMainWindow* AParent)
 QWidget* CMakeSongbook::mainWidget()
 {
   return NULL;
+}
+
+void CMakeSongbook::setProcessOptions(const QStringList & value)
+{
+  if(value.contains("clean") || value.contains("cleanall"))
+    {
+      setStatusActionMessage(tr("Removing temporary LaTeX files. Please wait..."));
+      setStatusSuccessMessage(tr("Cleaning completed."));
+      setStatusErrorMessage(tr("An error occured during the cleaning operation."));
+    }
+  else
+    {
+      setStatusActionMessage(tr("Building the songbook. Please wait..."));
+      setStatusSuccessMessage(tr("Songbook successfully generated."));
+      setStatusErrorMessage(tr("An error occured during the songbook generation.\n " 
+			       "You may check compilation logs for more information."));
+    }
 }

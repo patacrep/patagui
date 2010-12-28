@@ -28,6 +28,7 @@ public:
   CMakeSongbook(CMainWindow* parent=NULL);
   
   virtual QWidget* mainWidget();
+  void setProcessOptions(const QStringList& value);
 };
 
 #endif // __MAKE_SONGBOOK_HH__
