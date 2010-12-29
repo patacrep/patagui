@@ -20,6 +20,7 @@
 #include <QtAlgorithms>
 #include <QDebug>
 
+#include "utils/utils.hh"
 #include "label.hh"
 #include "mainwindow.hh"
 #include "preferences.hh"
@@ -34,14 +35,17 @@
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "songSortFilterProxyModel.hh"
+
+using namespace SbUtils;
+
 //******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
   , m_proxyModel(new CSongSortFilterProxyModel)
   , m_songbook()
-  , m_view(new QTableView)
-  , m_progressBar(new QProgressBar)
+  , m_view(new QTableView(this))
+  , m_progressBar(new QProgressBar(this))
   , m_cover(new QPixmap)
 {
   setWindowTitle("Patacrep Songbook Client");
@@ -822,6 +826,7 @@ void CMainWindow::build()
   process->setProcessOptions(QStringList() << target);
   process->action();
   QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
+  delete process;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()
@@ -919,7 +924,6 @@ const QString CMainWindow::workingPath()
 {
   if (!QDir( m_workingPath ).exists())
     m_workingPath = QDir::currentPath();
-  //todo emit(directoryChanged) -> connect tous les widget qui dépendent de ça !
   return m_workingPath;
  }
 //------------------------------------------------------------------------------
@@ -1067,8 +1071,8 @@ void CMainWindow::songTemplate()
     }
 
   //make new dir
-  QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(filenameConvention(artist,"_"));
-  QString filepath = QString("%1/%2.sg").arg(dirpath).arg(filenameConvention(title,"_"));
+  QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(stringToFilename(artist,"_"));
+  QString filepath = QString("%1/%2.sg").arg(dirpath).arg(stringToFilename(title,"_"));
   QDir dir(dirpath);
 
   if (!dir.exists())
@@ -1081,7 +1085,7 @@ void CMainWindow::songTemplate()
     {
       //copy in artist directory and resize
       QFileInfo fi(cover);
-      QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(filenameConvention(artist,"_")).arg(fi.fileName());
+      QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(stringToFilename(artist,"_")).arg(fi.fileName());
       img = coverFile.copy(target);
       QFile copyCover(target);
 
@@ -1089,8 +1093,8 @@ void CMainWindow::songTemplate()
       if (!album.isEmpty()
 	  && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
 			       .arg(workingPath())
-			       .arg(filenameConvention(artist,"_"))
-			       .arg(filenameConvention(album,"-"))))
+			       .arg(stringToFilename(artist,"_"))
+			       .arg(stringToFilename(album,"-"))))
 	copyCover.remove(); //remove copy if file already exists
     }
 
@@ -1107,7 +1111,7 @@ void CMainWindow::songTemplate()
     songTemplate.append(QString(",album=%1").arg(album));
   
   if(img)
-    songTemplate.append(QString(",cov=%1").arg(filenameConvention(album,"-")));
+    songTemplate.append(QString(",cov=%1").arg(stringToFilename(album,"-")));
 
   songTemplate.append(QString("]\n\n"));
   
@@ -1142,30 +1146,6 @@ void CMainWindow::songTemplate()
   editor->setTabIndex(m_mainWidget->currentIndex());
   editor->setLabel(title);
   connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
-}
-//------------------------------------------------------------------------------
-QString CMainWindow::filenameConvention(const QString & str, const QString & sep)
-{
-  QString result = str;
-  QString tmp;
-  QStringList list;
-  list <<"é"<<"è"<<"ê"<<"ë";
-  foreach(tmp, list)
-    result.replace(tmp, QString("e"));
-
-  list = QStringList();
-  list <<" "<<"&"<<"'"<<"`"<<"("<<")"<<"["<<"]"<<"{"<<"}"<<"_"<<"~"<<","<<"?"<<"!"<<":"<<";"<<"."<<"%";
-  foreach(tmp, list)
-    result.replace(tmp, sep);
-
-  result.replace(QString("à"), QString("a"));
-  result.replace(QString("â"), QString("a"));
-  result.replace(QString("ï"), QString("i"));
-  result.replace(QString("î"), QString("i"));
-  result.replace(QString("ô"), QString("o"));
-  result.replace(QString("ù"), QString("u"));
-
-  return result;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong()

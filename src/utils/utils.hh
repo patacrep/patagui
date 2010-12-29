@@ -16,39 +16,16 @@
 // MA  02110-1301, USA.
 //******************************************************************************
 
-/**
- * \file library.hh
- *
- * Class for representing the songlibrary.
- *
- */
-#ifndef __LIBRARY_HH__
-#define __LIBRARY_HH__
+#ifndef __UTILS_HH__
+#define __UTILS_HH__
 
 #include <QString>
-#include <QSqlTableModel>
 
-class CLibrary : public QSqlTableModel
+namespace SbUtils
 {
-  Q_OBJECT
+  QString latexToUtf8(const QString & str);
+  QString filenameToString(const QString & str);
+  QString stringToFilename(const QString & str, const QString & sep);
+}
 
-public:
-  CLibrary();
-  ~CLibrary();
-
-  QString pathToSongs();
-  void setPathToSongs(const QString path);
-
-  void addSongFromFile(const QString path);
-  QVariant data(const QModelIndex &index, int role) const;
-
-public slots:
-  /// @return false if no song could be found
-  bool retrieveSongs();
-  
-private:
-  QPixmap* m_pixmap;
-  QString m_pathToSongs;
-};
-
-#endif // __LIBRARY_HH__
+#endif // __UTILS_HH__

@@ -114,8 +114,6 @@ private:
 
   QStringList getSelectedSongs();
 
-  QString filenameConvention(const QString &, const QString & sep);
-
   bool isToolbarDisplayed();
   bool isStatusbarDisplayed();
 

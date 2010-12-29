@@ -15,23 +15,12 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#include "library.hh"
-
-#include <QList>
-#include <QStringList>
-#include <QTextStream>
-#include <QDir>
-#include <QDirIterator>
-#include <QRegExp>
-#include <QPixmap>
-#include <QIcon>
-#include <QTableView>
-#include <QSqlRecord>
-#include <QSqlTableModel>
-#include <QSqlField>
+#include <QtGui>
 #include <QtSql>
-#include <QPixmapCache>
-#include <QDebug>
+
+#include "library.hh"
+#include "utils/utils.hh"
+using namespace SbUtils;
 //------------------------------------------------------------------------------
 CLibrary::CLibrary()
   : QSqlTableModel()
@@ -115,12 +104,12 @@ void CLibrary::addSongFromFile(const QString path)
       //artist
       QRegExp rx1("by=([^[,|\\]]+)");
       rx1.indexIn(fileStr);
-      artist = CLibrary::latexToUtf8(rx1.cap(1));
+      artist = latexToUtf8(rx1.cap(1));
 
       //title
       QRegExp rx2("beginsong\\{([^[\\}]+)");
       rx2.indexIn(fileStr);
-      title = CLibrary::latexToUtf8(rx2.cap(1));
+      title = latexToUtf8(rx2.cap(1));
 
       //album
       QRegExp rx3(",album=([^[\\]]+)");
@@ -172,40 +161,6 @@ void CLibrary::addSongFromFile(const QString path)
 
       insertRecord(-1,song);
     }
-}
-//------------------------------------------------------------------------------
-QString CLibrary::latexToUtf8(const QString str)
-{
-  QString AString(str);
-  AString.replace(QString("\\'e"), QString("é"));
-  AString.replace(QString("\\`e"), QString("è"));
-  AString.replace(QString("\\^e"), QString("ê"));
-  AString.replace(QString("\\¨e"), QString("ë"));
-  AString.replace(QString("\\¨i"), QString("ï"));
-  AString.replace(QString("\\^i"), QString("î"));
-  AString.replace(QString("\\^o"), QString("ô"));
-  AString.replace(QString("\\`u"), QString("ù"));
-  AString.replace(QString("\\`a"), QString("à"));
-  AString.replace(QString("\\^a"), QString("â"));
-  AString.replace(QString("\\&"), QString("&"));
-  AString.replace(QString("\\~"), QString("~"));
-  AString.replace(QString("~"), QString(" "));
-  AString.replace(QString("\\dots"), QString("..."));
-
-  return AString;
-}
-//------------------------------------------------------------------------------
-QString CLibrary::processString(const QString str)
-{
-  QString AString(str);
-  if (AString.isEmpty())
-    return AString;
-
-  //Set the first letter to uppercase
-  AString[0] = AString[0].toUpper();
-  AString.replace(QString("_"), QString(" "));
-  AString.replace(QString("-"), QString(" "));
-  return AString;
 }
 //------------------------------------------------------------------------------
 QVariant CLibrary::data(const QModelIndex &index, int role) const
