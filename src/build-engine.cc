@@ -24,7 +24,8 @@ CBuildEngine::CBuildEngine(CMainWindow* parent)
 {
   m_parent = parent;
   m_log = new QTextEdit;
-  m_process = new QProcess(this);
+  m_process = new QProcess(parent);
+  qDebug() << "working dir = " << workingPath() ;
   m_process->setWorkingDirectory(workingPath());
 
   setStatusSuccessMessage(tr("Success!"));
@@ -41,6 +42,9 @@ CBuildEngine::CBuildEngine(CMainWindow* parent)
   
   connect(m_process, SIGNAL(readyReadStandardError()),
 	  this, SLOT(readProcessOut()));
+
+  connect(m_process, SIGNAL(finished()),
+	  this, SLOT(processFinished()));
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::workingPath()
@@ -59,16 +63,19 @@ void CBuildEngine::processExit(int exitCode, QProcess::ExitStatus exitStatus)
   parent()->progressBar()->hide();
   
   if (exitStatus == QProcess::NormalExit && exitCode==0)
-    parent()->statusBar()->showMessage(statusSuccessMessage());    
+    parent()->statusBar()->showMessage(statusSuccessMessage());
   else
     processError(QProcess::UnknownError);
 }
 //------------------------------------------------------------------------------
 void CBuildEngine::processError(QProcess::ProcessError error)
 {
+  parent()->progressBar()->hide();
+
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Critical);
   msgBox.setText(statusErrorMessage());
+  msgBox.setDetailedText(m_log->toPlainText());
   msgBox.setStandardButtons(QMessageBox::Cancel);
   msgBox.setDefaultButton(QMessageBox::Cancel);
   msgBox.exec();
@@ -110,23 +117,18 @@ void CBuildEngine::dialog()
 void CBuildEngine::updateDialog()
 {
   qDebug() << "CBuildEngine::updateDialog not implemented yet";
-  /*
-    if(m_dialog)
-    m_dialog->close();
-    dialog();
-  */
+  //if(m_dialog)
+  //  m_dialog->close();
+  //dialog();
 }
 //------------------------------------------------------------------------------
 void CBuildEngine::action()
 {
   parent()->statusBar()->showMessage(statusActionMessage());
   parent()->progressBar()->show();
+    
+  m_log->clear();
   m_process->start(fileName(), processOptions());
-
-  if (!m_process->waitForFinished())
-    delete m_process;
-
-  updateDialog();
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::windowTitle()

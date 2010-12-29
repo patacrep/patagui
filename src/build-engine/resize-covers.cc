@@ -21,9 +21,11 @@
 CResizeCovers::CResizeCovers(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
+  setFileName("./utils/resize-cover.sh");
   setWindowTitle(tr("Resize covers"));
   setStatusActionMessage(tr("Resizing covers. Please wait ..."));
-  setFileName("./utils/resize-covers.sh");
+  setStatusSuccessMessage(tr("Covers correctly resized."));
+  setStatusErrorMessage(tr("An error occured while resizing covers."));
 }
 
 QWidget* CResizeCovers::mainWidget()

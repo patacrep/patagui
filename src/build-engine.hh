@@ -46,23 +46,23 @@ public:
   virtual QWidget* mainWidget()=0;
   CMainWindow* parent();
   
-  QString fileName();
-  void setFileName(const QString & value);
+  virtual QString fileName();
+  virtual void setFileName(const QString & value);
 
-  QString windowTitle();
-  void setWindowTitle(const QString & value);
+  virtual QString windowTitle();
+  virtual void setWindowTitle(const QString & value);
   
-  QString statusSuccessMessage();
-  void setStatusSuccessMessage(const QString & value);
+  virtual QString statusSuccessMessage();
+  virtual void setStatusSuccessMessage(const QString & value);
 
-  QString statusErrorMessage();
-  void setStatusErrorMessage(const QString & value);
+  virtual QString statusErrorMessage();
+  virtual void setStatusErrorMessage(const QString & value);
 
-  QString statusActionMessage();
-  void setStatusActionMessage(const QString & value);
+  virtual QString statusActionMessage();
+  virtual void setStatusActionMessage(const QString & value);
 
-  QStringList processOptions();
-  void setProcessOptions(const QStringList & value);
+  virtual QStringList processOptions();
+  virtual void setProcessOptions(const QStringList & value);
     
   QString workingPath();
 
