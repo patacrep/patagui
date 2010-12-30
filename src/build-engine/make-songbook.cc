@@ -52,3 +52,14 @@ void CMakeSongbook::setProcessOptions(const QStringList & value)
     }
   CBuildEngine::setProcessOptions(value);
 }
+
+//------------------------------------------------------------------------------
+void CMakeSongbook::processExit(int exitCode, QProcess::ExitStatus exitStatus)
+{
+  if (exitStatus == QProcess::NormalExit && exitCode==0)
+    QDesktopServices::openUrl(QUrl(QString("file:///%1/%2")
+				   .arg(workingPath())
+				   .arg(processOptions().at(0))));
+
+  CBuildEngine::processExit(exitCode, exitStatus);
+}

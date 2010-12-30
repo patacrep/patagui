@@ -791,16 +791,18 @@ QStringList CMainWindow::getSelectedSongs()
 //------------------------------------------------------------------------------
 void CMainWindow::build()
 {
-  if(getSelectedSongs().isEmpty() &&
-     QMessageBox::question(this, windowTitle(), 
-			   QString(tr("You did not select any song. \n "
-				      "Do you want to build the songbook with all songs ?")), 
-			   QMessageBox::Yes, 
-			   QMessageBox::No, 
-			   QMessageBox::NoButton) == QMessageBox::No)
-    return;
-  else
-    selectAll();
+  if(getSelectedSongs().isEmpty())
+    {
+      if(QMessageBox::question(this, windowTitle(), 
+			       QString(tr("You did not select any song. \n "
+					  "Do you want to build the songbook with all songs ?")), 
+			       QMessageBox::Yes, 
+			       QMessageBox::No, 
+			       QMessageBox::NoButton) == QMessageBox::No)
+	return;
+      else
+	selectAll();
+    }
   
   save(true);
   
@@ -822,7 +824,7 @@ void CMainWindow::build()
   m_builder = new CMakeSongbook(this);
   m_builder->setProcessOptions(QStringList() << target);
   m_builder->action();
-  QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
+  //QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()

@@ -26,9 +26,15 @@ class CMakeSongbook : public CBuildEngine
 {
 public:
   CMakeSongbook(CMainWindow* parent=NULL);
+
   
+  virtual void processExit(int exitCode, QProcess::ExitStatus exitStatus);
+
   virtual QWidget* mainWidget();
   void setProcessOptions(const QStringList& value);
+
+  QString m_target;
+
 };
 
 #endif // __MAKE_SONGBOOK_HH__

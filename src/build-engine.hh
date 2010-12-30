@@ -21,7 +21,6 @@
 #include <QWidget>
 #include <QString>
 #include <QProcess>
-#include <QThread>
 
 class QDialog;
 class QTextEdit;
@@ -35,17 +34,17 @@ class CBuildEngine : public QWidget
   CBuildEngine(CMainWindow* parent=NULL);
   				
 public slots:
-  void processExit(int exitCode, QProcess::ExitStatus exitStatus);
-  void processError(QProcess::ProcessError error);
-  void readProcessOut();
+  virtual void processExit(int exitCode, QProcess::ExitStatus exitStatus);
+  virtual void processError(QProcess::ProcessError error);
+  virtual void readProcessOut();
   
-  void dialog();
-  void updateDialog();
-  void action();
+  virtual void dialog();
+  virtual void updateDialog();
+  virtual void action();
   
 public:
   virtual QWidget* mainWidget()=0;
-  CMainWindow* parent();
+  virtual CMainWindow* parent();
   
   virtual QString fileName();
   virtual void setFileName(const QString & value);
@@ -65,9 +64,8 @@ public:
   virtual QStringList processOptions();
   virtual void setProcessOptions(const QStringList & value);
     
-  QString workingPath();
-  QTextEdit* log();
-  QProcess* process();
+  virtual QString workingPath();
+  virtual QProcess* process();
 
 protected:
   CMainWindow* m_parent;
@@ -81,17 +79,4 @@ protected:
   QString m_statusErrorMessage;
   QStringList m_processOptions;
 };
-
-//class CThread : public QThread
-//{
-//  
-//public:
-//  CThread(CBuildEngine * builder);
-//  void run();
-//  
-//private:
-//  CBuildEngine * m_builder;
-//};
-
-
 #endif // __BUILD_ENGINE_HH__
