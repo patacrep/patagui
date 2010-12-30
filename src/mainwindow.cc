@@ -72,7 +72,7 @@ CMainWindow::CMainWindow()
   m_log->setMaximumHeight(150);
   m_log->setReadOnly(true);
   new CHighlighter(m_log->document());
-
+  
   // no data info widget
   m_noDataInfo = new QTextEdit;
   m_noDataInfo->setReadOnly(true);
@@ -149,7 +149,7 @@ CMainWindow::CMainWindow()
   centerLayout->addLayout(dataLayout);
   centerLayout->setStretch(1,2);
   mainLayout->addLayout(centerLayout);
-  mainLayout->addWidget(m_log);
+  mainLayout->addWidget(log());
 
   QWidget* libraryTab = new QWidget;
   QBoxLayout *libraryLayout = new QVBoxLayout;
@@ -230,7 +230,7 @@ void CMainWindow::applySettings()
   m_view->setColumnWidth(0,200);
   m_view->setColumnWidth(1,300);
   m_view->setColumnWidth(4,200);
-  m_log->setVisible(m_displayCompilationLog);
+  log()->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::templateSettings()
@@ -429,17 +429,16 @@ void CMainWindow::createActions()
   m_statusbarViewAct->setChecked(m_isStatusbarDisplayed);
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
-  CBuildEngine* process = new CResizeCovers(this);
+  m_builder = new CResizeCovers(this);
   m_resizeCoversAct = new QAction( tr("Resize covers"), this);
   m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
-  connect(m_resizeCoversAct, SIGNAL(triggered()), process, SLOT(dialog()));
+  connect(m_resizeCoversAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
-  process = new CLatexPreprocessing(this);
+  m_builder = new CLatexPreprocessing(this);
   m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
   m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
-  connect(m_checkerAct, SIGNAL(triggered()), process, SLOT(dialog()));
+  connect(m_checkerAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
-  //process = new CMakeSongbook(this);
   m_buildAct = new QAction(tr("Build PDF"), this);
 #if QT_VERSION >= 0x040600
   m_buildAct->setIcon(QIcon::fromTheme("document-export"));
@@ -447,14 +446,14 @@ void CMainWindow::createActions()
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  process = new CMakeSongbook(this);
-  process->setProcessOptions(QStringList() << "clean");
+  m_builder = new CMakeSongbook(this);
+  m_builder->setProcessOptions(QStringList() << "clean");
   m_cleanAct = new QAction(tr("Clean"), this);
 #if QT_VERSION >= 0x040600
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
 #endif
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
-  connect(m_cleanAct, SIGNAL(triggered()), process, SLOT(action()));
+  connect(m_cleanAct, SIGNAL(triggered()), m_builder, SLOT(action()));
 
 }
 //------------------------------------------------------------------------------
@@ -792,41 +791,38 @@ QStringList CMainWindow::getSelectedSongs()
 //------------------------------------------------------------------------------
 void CMainWindow::build()
 {
-  if( getSelectedSongs().isEmpty() )
-    {
-      if(QMessageBox::question(this, this->windowTitle(), 
-			       QString(tr("You did not select any song. \n Do you want to build the songbook with all songs ?")), 
-			       QMessageBox::Yes, 
-			       QMessageBox::No, 
-			       QMessageBox::NoButton) == QMessageBox::No)
-	return;
-      else
-	selectAll();
-    }
+  if(getSelectedSongs().isEmpty() &&
+     QMessageBox::question(this, windowTitle(), 
+			   QString(tr("You did not select any song. \n "
+				      "Do you want to build the songbook with all songs ?")), 
+			   QMessageBox::Yes, 
+			   QMessageBox::No, 
+			   QMessageBox::NoButton) == QMessageBox::No)
+    return;
+  else
+    selectAll();
   
   save(true);
-
-  if (!m_songbook->filename().startsWith(workingPath()))
+  
+  switch(m_songbook->checkFilename())
     {
+    case WrongDirectory:
       statusBar()->showMessage(tr("The songbook is not in the working directory. Build aborted."));
       return;
-    }
-
-  if (!m_songbook->filename().endsWith(QString(".sb")))
-    {
-      statusBar()->showMessage(tr("Wrong filename: songbook does not have "
-				  "\".sb\" extension. Build aborted."));
+    case WrongExtension:
+      statusBar()->showMessage(tr("Wrong filename: songbook does not have \".sb\" extension. Build aborted."));
       return;
+    default:
+      qDebug() << "filename ok";
     }
 
   QString target = QString("%1.pdf")
     .arg(QFileInfo(m_songbook->filename()).baseName());
   
-  CBuildEngine * process = new CMakeSongbook(this);
-  process->setProcessOptions(QStringList() << target);
-  process->action();
+  m_builder = new CMakeSongbook(this);
+  m_builder->setProcessOptions(QStringList() << target);
+  m_builder->action();
   QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
-  delete process;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()
@@ -1191,7 +1187,6 @@ void CMainWindow::deleteSong()
 	{
 	  QDir dir;
 	  dir.rmdir(tmp); //remove dir if empty
-	  //clean();
 	  //once deleted move selection in the model
 	  updateCover(selectionModel()->currentIndex());
 	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
@@ -1213,6 +1208,11 @@ void CMainWindow::changeTab(int index)
     m_saveAct->setShortcutContext(Qt::WidgetShortcut);
   else
     m_saveAct->setShortcutContext(Qt::WindowShortcut);
+}
+//------------------------------------------------------------------------------
+QTextEdit* CMainWindow::log() const
+{
+  return m_log;
 }
 
 //******************************************************************************

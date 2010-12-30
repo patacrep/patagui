@@ -32,6 +32,7 @@ class CSongbook;
 class CLibrary;
 class CTabWidget;
 class CDialogNewSong;
+class CBuildEngine;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -46,6 +47,7 @@ public:
   ~CMainWindow();
 
   QProgressBar * progressBar() const;
+  QTextEdit * log() const;
   const QString workingPath();
 
 public slots:
@@ -124,7 +126,7 @@ private:
   CLibrary *m_library;
   QSortFilterProxyModel *m_proxyModel;
 
-  // Songbook
+  // Songbook widget
   CSongbook *m_songbook;
   uint m_sbNbSelected;
   uint m_sbNbTotal;
@@ -154,16 +156,10 @@ private:
   bool m_isToolbarDisplayed;
   bool m_isStatusbarDisplayed;
 
-  QMdiArea* m_area;
-  QScrollArea* m_scrollArea;
-  QDockWidget* m_songInfo;
-  QDockWidget* m_logInfo;
   QPixmap *m_cover;
   QLabel m_coverLabel;
-  uint m_dbType;
-  QBoxLayout* m_currentSongWidgetLayout;
   CDialogNewSong *m_newSongDialog;
-  QDockWidget* m_songbookInfo;
+  CBuildEngine* m_builder;
 
   //Logs
   QTextEdit* m_log;
