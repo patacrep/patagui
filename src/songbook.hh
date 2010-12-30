@@ -25,6 +25,8 @@
 #include <QtVariantProperty>
 #include <QtGroupBoxPropertyBrowser>
 
+#include "utils/utils.hh"
+
 class QWidget;
 class QComboBox;
 class QtGroupPropertyManager;
@@ -63,6 +65,7 @@ public:
   QString title() const;
   QString authors() const;
   QString style() const;
+  SbError checkFilename() const;
   
   QStringList songs();
 

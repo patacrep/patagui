@@ -21,6 +21,8 @@
 
 #include <QString>
 
+enum SbError { WrongDirectory, WrongExtension };
+
 namespace SbUtils
 {
   QString latexToUtf8(const QString & str);

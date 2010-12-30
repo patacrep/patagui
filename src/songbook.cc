@@ -653,3 +653,11 @@ void CSongbook::setWorkingPath(QString path)
     }
 }
 
+SbError CSongbook::checkFilename() const
+{
+  if (!filename().startsWith(workingPath()))
+    return WrongDirectory;
+  
+  if (!filename().endsWith(QString(".sb")))
+    return WrongExtension;
+}
