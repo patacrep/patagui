@@ -37,21 +37,14 @@ QWidget* CMakeSongbook::mainWidget()
 
 void CMakeSongbook::setProcessOptions(const QStringList & value)
 {
-  QString item;
-  foreach(item, value)
-    qDebug() << "item = " << item;
-
-
   if(value.contains("clean") || value.contains("cleanall"))
     {
-      qDebug() << "make clean";
       setStatusActionMessage(tr("Removing temporary LaTeX files. Please wait..."));
       setStatusSuccessMessage(tr("Cleaning completed."));
       setStatusErrorMessage(tr("An error occured during the cleaning operation."));
     }
   else
     {
-      qDebug() << "make pdf";
       setStatusActionMessage(tr("Building the songbook. Please wait..."));
       setStatusSuccessMessage(tr("Songbook successfully generated."));
       setStatusErrorMessage(tr("An error occured during the songbook generation.\n " 
