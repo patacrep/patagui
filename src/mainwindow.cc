@@ -860,32 +860,21 @@ void CMainWindow::open()
 //------------------------------------------------------------------------------
 void CMainWindow::save(bool forced)
 {
-  if(forced)
+  if(forced && m_songbook->filename().isEmpty() )
     {
-      if (m_songbook->filename().isEmpty() )
-	{
-	  m_songbook->setFilename(QString("%1/default.sb").arg(workingPath()));
-	}
-      else
-	{
-	  updateSongsList();
-	  m_songbook->save(m_songbook->filename());
-	  updateTitle(m_songbook->filename());
-	}
+      m_songbook->setFilename(QString("%1/default.sb").arg(workingPath()));
+    }
+  else if(!forced && 
+	  (m_songbook->filename().isEmpty() || 
+	   QString::compare(m_songbook->filename(), QString("%1/default.sb").arg(workingPath()))==0) )
+    {
+      saveAs();
     }
   else
     {
-      if (m_songbook->filename().isEmpty() || 
-	  QString::compare(m_songbook->filename(), QString("%1/default.sb").arg(workingPath()))==0 )
-	{
-	  saveAs();
-	}
-      else
-	{
-	  updateSongsList();
-	  m_songbook->save(m_songbook->filename());
-	  updateTitle(m_songbook->filename());
-	}
+      updateSongsList();
+      m_songbook->save(m_songbook->filename());
+      updateTitle(m_songbook->filename());
     }
 }
 //------------------------------------------------------------------------------
