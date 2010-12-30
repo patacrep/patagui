@@ -18,16 +18,16 @@
 
 #include "build-engine.hh"
 #include "mainwindow.hh"
+#include "highlighter.hh"
 
 CBuildEngine::CBuildEngine(CMainWindow* parent)
   : QWidget()
 {
   m_parent = parent;
-  m_log = new QTextEdit;
+  
   m_process = new QProcess(parent);
-  qDebug() << "working dir = " << workingPath() ;
   m_process->setWorkingDirectory(workingPath());
-
+   
   setStatusSuccessMessage(tr("Success!"));
   setStatusErrorMessage(tr("Error!"));
   
@@ -42,9 +42,6 @@ CBuildEngine::CBuildEngine(CMainWindow* parent)
   
   connect(m_process, SIGNAL(readyReadStandardError()),
 	  this, SLOT(readProcessOut()));
-
-  connect(m_process, SIGNAL(finished()),
-	  this, SLOT(processFinished()));
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::workingPath()
@@ -71,11 +68,11 @@ void CBuildEngine::processExit(int exitCode, QProcess::ExitStatus exitStatus)
 void CBuildEngine::processError(QProcess::ProcessError error)
 {
   parent()->progressBar()->hide();
-
+  
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Critical);
   msgBox.setText(statusErrorMessage());
-  msgBox.setDetailedText(m_log->toPlainText());
+  msgBox.setDetailedText(parent()->log()->toPlainText());
   msgBox.setStandardButtons(QMessageBox::Cancel);
   msgBox.setDefaultButton(QMessageBox::Cancel);
   msgBox.exec();
@@ -83,7 +80,7 @@ void CBuildEngine::processError(QProcess::ProcessError error)
 //------------------------------------------------------------------------------
 void CBuildEngine::readProcessOut()
 {
-  m_log->append(m_process->readAllStandardOutput().data());
+  parent()->log()->append(m_process->readAllStandardOutput().data());
 }
 //------------------------------------------------------------------------------
 void CBuildEngine::dialog()
@@ -126,9 +123,10 @@ void CBuildEngine::action()
 {
   parent()->statusBar()->showMessage(statusActionMessage());
   parent()->progressBar()->show();
-    
-  m_log->clear();
-  m_process->start(fileName(), processOptions());
+  parent()->log()->clear();
+  QApplication::processEvents();
+  
+  process()->start(fileName(), processOptions());
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::windowTitle()
@@ -189,4 +187,9 @@ QStringList CBuildEngine::processOptions()
 void CBuildEngine::setProcessOptions(const QStringList & value)
 {
   m_processOptions = value;
+}
+//------------------------------------------------------------------------------
+QProcess* CBuildEngine::process()
+{
+  return m_process;
 }

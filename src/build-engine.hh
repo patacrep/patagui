@@ -21,6 +21,7 @@
 #include <QWidget>
 #include <QString>
 #include <QProcess>
+#include <QThread>
 
 class QDialog;
 class QTextEdit;
@@ -65,12 +66,13 @@ public:
   virtual void setProcessOptions(const QStringList & value);
     
   QString workingPath();
+  QTextEdit* log();
+  QProcess* process();
 
 protected:
   CMainWindow* m_parent;
   QProcess* m_process;
   QDialog* m_dialog;
-  QTextEdit* m_log;//
   
   QString m_fileName;
   QString m_windowTitle;
@@ -78,7 +80,18 @@ protected:
   QString m_statusSuccessMessage;
   QString m_statusErrorMessage;
   QStringList m_processOptions;
-  
 };
+
+//class CThread : public QThread
+//{
+//  
+//public:
+//  CThread(CBuildEngine * builder);
+//  void run();
+//  
+//private:
+//  CBuildEngine * m_builder;
+//};
+
 
 #endif // __BUILD_ENGINE_HH__
