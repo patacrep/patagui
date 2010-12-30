@@ -66,6 +66,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/filter-lineedit.cc
   src/utils/lineedit.cc
   src/utils/lineedit.cc
+  src/utils/utils.cc
   src/build-engine/resize-covers.cc
   src/build-engine/latex-preprocessing.cc
   src/build-engine/make-songbook.cc
