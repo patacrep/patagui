@@ -43,7 +43,7 @@ CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library(new CLibrary(this))
   , m_proxyModel(new CSongSortFilterProxyModel)
-  , m_songbook(new CSongbook(this))
+  , m_songbook(new CSongbook())
   , m_view(new QTableView(this))
   , m_progressBar(new QProgressBar(this))
   , m_cover(new QPixmap)
@@ -58,7 +58,8 @@ CMainWindow::CMainWindow()
 
   // main document and title
   //m_songbook = new CSongbook();
-  //m_songbook->setWorkingPath(workingPath());
+  songbook()->setWorkingPath(workingPath());
+  library()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
   connect(songbook(), SIGNAL(wasModified(bool)),
@@ -297,6 +298,10 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
   m_sbNbTotal = library()->rowCount();
   m_sbInfoSelection->setText(QString(tr("%1/%2"))
 			     .arg(m_sbNbSelected).arg(m_sbNbTotal) );
+  if(m_sbNbTotal==0)
+    m_noDataInfo->show();
+  else
+    m_noDataInfo->hide();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::createActions()
@@ -531,25 +536,39 @@ void CMainWindow::connectDb()
   view()->show();
 }
 //------------------------------------------------------------------------------
-void CMainWindow::refreshLibrary()
-{
-  m_noDataInfo->hide();
-
-  // Retrieve all songs from .sg files in working dir
-  library()->setPathToSongs(workingPath());
-  if(!library()->retrieveSongs())
-    m_noDataInfo->show();
-  
-  view()->sortByColumn(1, Qt::AscendingOrder);
-  view()->sortByColumn(0, Qt::AscendingOrder);
-  view()->show();
-}
-//------------------------------------------------------------------------------
 void CMainWindow::rebuildLibrary()
 {
   //Drop table songs and recreate
   QSqlQuery query("delete from songs");
   refreshLibrary();
+}
+//------------------------------------------------------------------------------
+void CMainWindow::refreshLibrary()
+{
+  QStringList filter = QStringList() << "*.sg";
+  QString path = QString("%1/songs/").arg(workingPath());
+  
+  QDirIterator i(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
+  uint count = 0;
+  while(i.hasNext())
+    {
+      ++count;
+      i.next();
+    }
+  
+  progressBar()->show();
+  progressBar()->setTextVisible(true);
+  progressBar()->setRange(0, count);
+
+  library()->retrieveSongs();
+
+  selectionChanged();
+  view()->sortByColumn(1, Qt::AscendingOrder);
+  view()->sortByColumn(0, Qt::AscendingOrder);
+  view()->show();
+  progressBar()->setTextVisible(false);
+  progressBar()->hide();
+  statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent *event)
@@ -1178,7 +1197,7 @@ void CMainWindow::deleteSong()
       QSqlQuery query;
       query.exec(QString("DELETE FROM songs WHERE path = '%1'").arg(path));
 
-      library()->setPathToSongs(workingPath());
+      //library()->setWorking(workingPath());
       //update models and display the song list
       m_proxyModel->setSourceModel(library());
       view()->setModel(library());

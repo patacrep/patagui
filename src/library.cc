@@ -19,13 +19,18 @@
 #include <QtSql>
 
 #include "library.hh"
+#include "mainwindow.hh"
 #include "utils/utils.hh"
 using namespace SbUtils;
 //------------------------------------------------------------------------------
-CLibrary::CLibrary()
+CLibrary::CLibrary(CMainWindow* AParent)
   : QSqlTableModel()
-  , m_pathToSongs()
 {
+  m_parent = AParent;
+  m_workingPath = parent()->workingPath();
+  connect(parent(), SIGNAL(workingPathChanged(QString)),
+	  this, SLOT(setWorkingPath(QString)));
+  
   setTable("songs");
   setEditStrategy(QSqlTableModel::OnManualSubmit);
   select();
@@ -51,32 +56,25 @@ CLibrary::~CLibrary()
   delete m_pixmap;
 }
 //------------------------------------------------------------------------------
-QString CLibrary::pathToSongs()
+CMainWindow* CLibrary::parent()
 {
-  return m_pathToSongs;
+  return m_parent ;
 }
 //------------------------------------------------------------------------------
-void CLibrary::setPathToSongs(const QString path)
+void CLibrary::retrieveSongs()
 {
-  m_pathToSongs = path;
-}
-//------------------------------------------------------------------------------
-bool CLibrary::retrieveSongs()
-{
-  bool res = false;
-  QStringList filter;
-  filter << "*.sg";
-
-  QString path = QString("%1/songs/").arg(pathToSongs());
+  uint count = 0;
+  QStringList filter = QStringList() << "*.sg";
+  QString path = QString("%1/songs/").arg(workingPath());
+  
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
-
   while(it.hasNext())
     {
-      res = true;
+      parent()->statusBar()->showMessage(QString(tr("Found song : %1")).arg(it.fileInfo().fileName()));      
+      parent()->progressBar()->setValue(++count);
       addSongFromFile(it.next());
     }
   submitAll();
-  return res;
 }
 //------------------------------------------------------------------------------
 void CLibrary::addSongFromFile(const QString path)
@@ -242,3 +240,14 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     }
   return QSqlTableModel::data( index, role );
 }
+//------------------------------------------------------------------------------
+QString CLibrary::workingPath() const
+{
+  return m_workingPath;
+}
+//------------------------------------------------------------------------------
+void CLibrary::setWorkingPath(QString value)
+{
+  m_workingPath = value;
+}
+//------------------------------------------------------------------------------

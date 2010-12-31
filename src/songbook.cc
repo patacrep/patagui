@@ -649,7 +649,8 @@ void CSongbook::setWorkingPath(QString path)
 	{
 	  m_templateComboBox->clear();
 	  m_templateComboBox->addItems(m_templates);
-	  m_templateComboBox->setCurrentIndex(m_templates.indexOf("patacrep.tmpl"));    }
+	  m_templateComboBox->setCurrentIndex(m_templates.indexOf("patacrep.tmpl"));
+	}
     }
 }
 

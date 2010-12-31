@@ -56,8 +56,8 @@ public:
 public slots:
   void updateCover(const QModelIndex & index);
   void downloadDialog();
-  void refreshLibrary();
   void rebuildLibrary();
+  void refreshLibrary();
   void setWorkingPath(QString dirname);
   void templateSettings();
   void updateSongbookLabels(bool);

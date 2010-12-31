@@ -28,27 +28,30 @@
 #include <QString>
 #include <QSqlTableModel>
 
+class CMainWindow;
+
 class CLibrary : public QSqlTableModel
 {
   Q_OBJECT
 
 public:
-  CLibrary();
+  CLibrary(CMainWindow* parent=NULL);
   ~CLibrary();
 
-  QString pathToSongs();
-  void setPathToSongs(const QString path);
-
+  QString workingPath() const;
+  
   void addSongFromFile(const QString path);
   QVariant data(const QModelIndex &index, int role) const;
-
+  CMainWindow* parent();
+  
 public slots:
-  /// @return false if no song could be found
-  bool retrieveSongs();
+  void setWorkingPath(QString);
+  void retrieveSongs();
   
 private:
+  CMainWindow* m_parent;
   QPixmap* m_pixmap;
-  QString m_pathToSongs;
+  QString m_workingPath;
 };
 
 #endif // __LIBRARY_HH__
