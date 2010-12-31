@@ -843,6 +843,12 @@ void CMainWindow::build()
     .arg(QFileInfo(songbook()->filename()).baseName());
   
   m_builder = new CMakeSongbook(this);
+
+  //force a make clean
+  m_builder->setProcessOptions(QStringList() << "clean");
+  m_builder->action();
+  m_builder->process()->waitForFinished();
+  
   m_builder->setProcessOptions(QStringList() << target);
   m_builder->action();
   //QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
