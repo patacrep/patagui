@@ -41,9 +41,9 @@ using namespace SbUtils;
 //******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
-  , m_library()
+  , m_library(new CLibrary(this))
   , m_proxyModel(new CSongSortFilterProxyModel)
-  , m_songbook()
+  , m_songbook(new CSongbook(this))
   , m_view(new QTableView(this))
   , m_progressBar(new QProgressBar(this))
   , m_cover(new QPixmap)
@@ -57,15 +57,17 @@ CMainWindow::CMainWindow()
   readSettings();
 
   // main document and title
-  m_songbook = new CSongbook();
-  m_songbook->setWorkingPath(workingPath());
-  connect(m_songbook, SIGNAL(wasModified(bool)),
+  //m_songbook = new CSongbook();
+  //m_songbook->setWorkingPath(workingPath());
+  connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
-  connect(m_songbook, SIGNAL(wasModified(bool)),
+  connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(updateSongbookLabels(bool)));
   connect(this, SIGNAL(workingPathChanged(QString)),
-	  m_songbook, SLOT(setWorkingPath(QString)));
-  updateTitle(m_songbook->filename());
+	  songbook(), SLOT(setWorkingPath(QString)));
+  connect(this, SIGNAL(workingPathChanged(QString)),
+	  library(), SLOT(setWorkingPath(QString)));
+  updateTitle(songbook()->filename());
 
   // compilation log
   m_log = new QTextEdit;
@@ -142,7 +144,7 @@ CMainWindow::CMainWindow()
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
   leftLayout->addLayout(songbookInfo());
   leftLayout->addStretch();
-  dataLayout->addWidget(m_view);
+  dataLayout->addWidget(view());
   dataLayout->addWidget(m_noDataInfo);
   centerLayout->addLayout(leftLayout);
   centerLayout->setStretch(0,1);
@@ -176,7 +178,7 @@ CMainWindow::CMainWindow()
 
   applySettings();
   selectionChanged();
-  m_songbook->panel();
+  songbook()->panel();
   updateSongbookLabels(true);
 }
 //------------------------------------------------------------------------------
@@ -220,16 +222,16 @@ void CMainWindow::writeSettings()
 //------------------------------------------------------------------------------
 void CMainWindow::applySettings()
 {
-  m_view->setColumnHidden(0,!m_displayColumnArtist);
-  m_view->setColumnHidden(1,!m_displayColumnTitle);
-  m_view->setColumnHidden(2,!m_displayColumnLilypond);
-  m_view->setColumnHidden(3,!m_displayColumnPath);
-  m_view->setColumnHidden(4,!m_displayColumnAlbum);
-  m_view->setColumnHidden(5,!m_displayColumnCover);
-  m_view->setColumnHidden(6,!m_displayColumnLang);
-  m_view->setColumnWidth(0,200);
-  m_view->setColumnWidth(1,300);
-  m_view->setColumnWidth(4,200);
+  view()->setColumnHidden(0,!m_displayColumnArtist);
+  view()->setColumnHidden(1,!m_displayColumnTitle);
+  view()->setColumnHidden(2,!m_displayColumnLilypond);
+  view()->setColumnHidden(3,!m_displayColumnPath);
+  view()->setColumnHidden(4,!m_displayColumnAlbum);
+  view()->setColumnHidden(5,!m_displayColumnCover);
+  view()->setColumnHidden(6,!m_displayColumnLang);
+  view()->setColumnWidth(0,200);
+  view()->setColumnWidth(1,300);
+  view()->setColumnWidth(4,200);
   log()->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
@@ -241,13 +243,13 @@ void CMainWindow::templateSettings()
 
   QScrollArea *songbookScrollArea = new QScrollArea();
   songbookScrollArea->setMinimumWidth(400);
-  songbookScrollArea->setWidget(m_songbook->panel());
+  songbookScrollArea->setWidget(songbook()->panel());
   songbookScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   
   QPushButton *button = new QPushButton(tr("Reset"));
-  connect( button, SIGNAL(clicked()), m_songbook, SLOT(reset()) );
+  connect( button, SIGNAL(clicked()), songbook(), SLOT(reset()) );
   buttonBox->addButton(button, QDialogButtonBox::ResetRole);
   
   button = new QPushButton(tr("Ok"));
@@ -263,9 +265,9 @@ void CMainWindow::templateSettings()
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongbookLabels(bool modified)
 {
-  m_sbInfoTitle->setText(m_songbook->title());
-  m_sbInfoAuthors->setText(m_songbook->authors());
-  m_sbInfoStyle->setText(m_songbook->style());
+  m_sbInfoTitle->setText(songbook()->title());
+  m_sbInfoAuthors->setText(songbook()->authors());
+  m_sbInfoStyle->setText(songbook()->style());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterChanged()
@@ -292,7 +294,7 @@ void CMainWindow::selectionChanged()
 void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
 {
   m_sbNbSelected = selectionModel()->selectedRows().size();
-  m_sbNbTotal = m_library->rowCount();
+  m_sbNbTotal = library()->rowCount();
   m_sbInfoSelection->setText(QString(tr("%1/%2"))
 			     .arg(m_sbNbSelected).arg(m_sbNbTotal) );
 }
@@ -400,7 +402,7 @@ void CMainWindow::createActions()
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
   m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
-          m_view, SLOT(resizeColumnsToContents()));
+          view(), SLOT(resizeColumnsToContents()));
 
   m_refreshLibraryAct = new QAction(tr("Update"), this);
   m_refreshLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
@@ -511,22 +513,22 @@ void CMainWindow::connectDb()
     }
 
   // Initialize the song library
-  m_library = new CLibrary();
-  m_library->setPathToSongs(workingPath());
+  //m_library = new CLibrary();
+  //m_library->setPathToSongs(workingPath());
 
-  m_proxyModel->setSourceModel(m_library);
+  m_proxyModel->setSourceModel(library());
   m_proxyModel->setDynamicSortFilter(true);
 
-  m_view->setModel(m_library);
-  m_view->setShowGrid( false );
-  m_view->setAlternatingRowColors(true);
-  m_view->setSelectionMode(QAbstractItemView::MultiSelection);
-  m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-  m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  m_view->setSortingEnabled(true);
-  m_view->sortByColumn(0, Qt::AscendingOrder);
-  m_view->setModel(m_proxyModel);
-  m_view->show();
+  view()->setModel(library());
+  view()->setShowGrid( false );
+  view()->setAlternatingRowColors(true);
+  view()->setSelectionMode(QAbstractItemView::MultiSelection);
+  view()->setSelectionBehavior(QAbstractItemView::SelectRows);
+  view()->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  view()->setSortingEnabled(true);
+  view()->sortByColumn(0, Qt::AscendingOrder);
+  view()->setModel(m_proxyModel);
+  view()->show();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::refreshLibrary()
@@ -534,13 +536,13 @@ void CMainWindow::refreshLibrary()
   m_noDataInfo->hide();
 
   // Retrieve all songs from .sg files in working dir
-  m_library->setPathToSongs(workingPath());
-  if(!m_library->retrieveSongs())
+  library()->setPathToSongs(workingPath());
+  if(!library()->retrieveSongs())
     m_noDataInfo->show();
   
-  m_view->sortByColumn(1, Qt::AscendingOrder);
-  m_view->sortByColumn(0, Qt::AscendingOrder);
-  m_view->show();
+  view()->sortByColumn(1, Qt::AscendingOrder);
+  view()->sortByColumn(0, Qt::AscendingOrder);
+  view()->show();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::rebuildLibrary()
@@ -639,9 +641,9 @@ QGridLayout * CMainWindow::songInfo()
   m_mapper->addMapping(albumLabel, 4, QByteArray("text"));
   updateCover(QModelIndex());
 
-  connect(m_view, SIGNAL(clicked(const QModelIndex &)),
+  connect(view(), SIGNAL(clicked(const QModelIndex &)),
           m_mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
-  connect(m_view, SIGNAL(clicked(const QModelIndex &)),
+  connect(view(), SIGNAL(clicked(const QModelIndex &)),
           SLOT(updateCover(const QModelIndex &)));
 
   return layout;
@@ -690,7 +692,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
   if (lastIndex != index)
     m_mapper->setCurrentModelIndex(lastIndex);
 
-  QString coverpath = m_library->record(m_proxyModel->mapToSource(lastIndex).row()).field("cover").value().toString();
+  QString coverpath = library()->record(m_proxyModel->mapToSource(lastIndex).row()).field("cover").value().toString();
   if (QFile::exists(coverpath))
     m_cover->load(coverpath);
   else
@@ -730,13 +732,13 @@ void CMainWindow::about()
 //------------------------------------------------------------------------------
 void CMainWindow::selectAll()
 {
-  m_view->selectAll();
-  m_view->setFocus();
+  view()->selectAll();
+  view()->setFocus();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::unselectAll()
 {
-  m_view->clearSelection();
+  view()->clearSelection();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::invertSelection()
@@ -744,7 +746,7 @@ void CMainWindow::invertSelection()
   QModelIndexList indexes = selectionModel()->selectedRows();
   QModelIndex index;
 
-  m_view->selectAll();
+  view()->selectAll();
 
   foreach(index, indexes)
     {
@@ -758,7 +760,7 @@ void CMainWindow::selectLanguage(bool selection)
   QList<QModelIndex> indexes;
   QModelIndex index;
 
-  indexes = m_library->match(m_proxyModel->index(0,6), Qt::ToolTipRole, language, -1);
+  indexes = library()->match(m_proxyModel->index(0,6), Qt::ToolTipRole, language, -1);
 
   QItemSelectionModel::SelectionFlags flag = (selection ? QItemSelectionModel::Select : QItemSelectionModel::Deselect) | QItemSelectionModel::Rows;
 
@@ -766,14 +768,14 @@ void CMainWindow::selectLanguage(bool selection)
     {
       selectionModel()->select(index, flag);
     }  
-  m_view->setFocus();
+  view()->setFocus();
 }
 //------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
 {
   //ensure the songs are correctly sorted by artist And title
-  m_view->sortByColumn(1, Qt::AscendingOrder);
-  m_view->sortByColumn(0, Qt::AscendingOrder);
+  view()->sortByColumn(1, Qt::AscendingOrder);
+  view()->sortByColumn(0, Qt::AscendingOrder);
 
   QStringList songsPath;
   QModelIndexList indexes = selectionModel()->selectedRows();
@@ -783,7 +785,7 @@ QStringList CMainWindow::getSelectedSongs()
 
   foreach(index, indexes)
     {
-      songsPath << m_library->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString();
+      songsPath << library()->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString();
     }
 
   return songsPath;
@@ -806,7 +808,7 @@ void CMainWindow::build()
   
   save(true);
   
-  switch(m_songbook->checkFilename())
+  switch(songbook()->checkFilename())
     {
     case WrongDirectory:
       statusBar()->showMessage(tr("The songbook is not in the working directory. Build aborted."));
@@ -819,7 +821,7 @@ void CMainWindow::build()
     }
 
   QString target = QString("%1.pdf")
-    .arg(QFileInfo(m_songbook->filename()).baseName());
+    .arg(QFileInfo(songbook()->filename()).baseName());
   
   m_builder = new CMakeSongbook(this);
   m_builder->setProcessOptions(QStringList() << target);
@@ -829,8 +831,8 @@ void CMainWindow::build()
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()
 {
-  m_songbook->reset();
-  updateTitle(m_songbook->filename());
+  songbook()->reset();
+  updateTitle(songbook()->filename());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::open()
@@ -839,42 +841,42 @@ void CMainWindow::open()
                                                   tr("Open"),
                                                   workingPath(),
                                                   tr("Songbook (*.sb)"));
-  m_songbook->load(filename);
-  QStringList songlist = m_songbook->songs();
+  songbook()->load(filename);
+  QStringList songlist = songbook()->songs();
   QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(QRegExp("^"),path);
 
-  m_view->clearSelection();
+  view()->clearSelection();
 
   QList<QModelIndex> indexes;
   QString str;
   foreach(str, songlist)
     {
-      indexes = m_library->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
+      indexes = library()->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
       if (!indexes.isEmpty())
         selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
 
-  updateTitle(m_songbook->filename());
+  updateTitle(songbook()->filename());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::save(bool forced)
 {
-  if(forced && m_songbook->filename().isEmpty() )
+  if(forced && songbook()->filename().isEmpty() )
     {
-      m_songbook->setFilename(QString("%1/default.sb").arg(workingPath()));
+      songbook()->setFilename(QString("%1/default.sb").arg(workingPath()));
     }
   else if(!forced && 
-	  (m_songbook->filename().isEmpty() || 
-	   QString::compare(m_songbook->filename(), QString("%1/default.sb").arg(workingPath()))==0) )
+	  (songbook()->filename().isEmpty() || 
+	   QString::compare(songbook()->filename(), QString("%1/default.sb").arg(workingPath()))==0) )
     {
       saveAs();
     }
   else
     {
       updateSongsList();
-      m_songbook->save(m_songbook->filename());
-      updateTitle(m_songbook->filename());
+      songbook()->save(songbook()->filename());
+      updateTitle(songbook()->filename());
     }
 }
 //------------------------------------------------------------------------------
@@ -886,7 +888,7 @@ void CMainWindow::saveAs()
                                                   tr("Songbook (*.sb)"));
   if (!filename.isEmpty())
     {
-      m_songbook->setFilename(filename);
+      songbook()->setFilename(filename);
       save(true);
     }
 }
@@ -896,7 +898,7 @@ void CMainWindow::updateSongsList()
   QStringList songlist = getSelectedSongs();
   QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(path, QString());
-  m_songbook->setSongs(songlist);
+  songbook()->setSongs(songlist);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateTitle(const QString &filename)
@@ -948,12 +950,27 @@ QProgressBar * CMainWindow::progressBar() const
   return m_progressBar;
 }
 //------------------------------------------------------------------------------
+CSongbook * CMainWindow::songbook() const
+{
+  return m_songbook;
+}
+//------------------------------------------------------------------------------
+QTableView * CMainWindow::view() const
+{
+  return m_view;
+}
+//------------------------------------------------------------------------------
+CLibrary * CMainWindow::library() const
+{
+  return m_library;
+}
+//------------------------------------------------------------------------------
 QItemSelectionModel * CMainWindow::selectionModel()
 {
-  while (m_library->canFetchMore())
-    m_library->fetchMore();
+  while (library()->canFetchMore())
+    library()->fetchMore();
 
-  return m_view->selectionModel();
+  return view()->selectionModel();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::songEditor()
@@ -970,7 +987,7 @@ void CMainWindow::songEditor()
     }
 
   int row = m_proxyModel->mapToSource(selectionModel()->currentIndex()).row();
-  QSqlRecord record = m_library->record(row);
+  QSqlRecord record = library()->record(row);
   QString title = record.field("title").value().toString();
   QString path = record.field("path").value().toString();
 
@@ -1122,10 +1139,10 @@ void CMainWindow::songTemplate()
     }
 
   //Insert the song in the library
-  m_library->addSongFromFile(filepath);
-  m_library->submitAll();
-  m_view->sortByColumn(1, Qt::AscendingOrder);
-  m_view->sortByColumn(0, Qt::AscendingOrder);
+  library()->addSongFromFile(filepath);
+  library()->submitAll();
+  view()->sortByColumn(1, Qt::AscendingOrder);
+  view()->sortByColumn(0, Qt::AscendingOrder);
 
   //position index of new song in the library and launch song editor
   CSongEditor* editor = new CSongEditor(filepath);
@@ -1148,7 +1165,7 @@ void CMainWindow::deleteSong()
       return;
     }
 
-  QString path = m_library->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+  QString path = library()->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
 
   if (QMessageBox::question
      (this, this->windowTitle(),
@@ -1161,14 +1178,14 @@ void CMainWindow::deleteSong()
       QSqlQuery query;
       query.exec(QString("DELETE FROM songs WHERE path = '%1'").arg(path));
 
-      m_library->setPathToSongs(workingPath());
+      library()->setPathToSongs(workingPath());
       //update models and display the song list
-      m_proxyModel->setSourceModel(m_library);
-      m_view->setModel(m_library);
-      m_view->sortByColumn(0, Qt::AscendingOrder);
-      m_view->setModel(m_proxyModel);
-      m_view->sortByColumn(1, Qt::AscendingOrder);
-      m_view->sortByColumn(0, Qt::AscendingOrder);
+      m_proxyModel->setSourceModel(library());
+      view()->setModel(library());
+      view()->sortByColumn(0, Qt::AscendingOrder);
+      view()->setModel(m_proxyModel);
+      view()->sortByColumn(1, Qt::AscendingOrder);
+      view()->sortByColumn(0, Qt::AscendingOrder);
 
       //removal on disk
       QFile file(path);

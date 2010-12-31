@@ -48,6 +48,9 @@ public:
 
   QProgressBar * progressBar() const;
   QTextEdit * log() const;
+  QTableView * view() const;
+  CLibrary * library() const;
+  CSongbook * songbook() const;
   const QString workingPath();
 
 public slots:
