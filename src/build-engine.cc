@@ -20,33 +20,32 @@
 #include "mainwindow.hh"
 #include "highlighter.hh"
 
-CBuildEngine::CBuildEngine(CMainWindow* parent)
+CBuildEngine::CBuildEngine(CMainWindow* AParent)
   : QWidget()
 {
-  m_parent = parent;
-  
-  m_process = new QProcess(parent);
-  m_process->setWorkingDirectory(workingPath());
+  m_parent = AParent;
+  m_workingPath = parent()->workingPath();
+
+  m_process = new QProcess(AParent);
+  process()->setWorkingDirectory(parent()->workingPath());
    
   setStatusSuccessMessage(tr("Success!"));
   setStatusErrorMessage(tr("Error!"));
   
-  connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)),
+  connect(parent(), SIGNAL(workingPathChanged(QString)),
+	  this, SLOT(setWorkingPath(QString)));
+  
+  connect(process(), SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this, SLOT(processExit(int,QProcess::ExitStatus)));
 
-  connect(m_process, SIGNAL(error(QProcess::ProcessError)),
+  connect(process(), SIGNAL(error(QProcess::ProcessError)),
 	  this, SLOT(processError(QProcess::ProcessError)));
 
-  connect(m_process, SIGNAL(readyReadStandardOutput()),
+  connect(process(), SIGNAL(readyReadStandardOutput()),
 	  this, SLOT(readProcessOut()));
   
-  connect(m_process, SIGNAL(readyReadStandardError()),
+  connect(process(), SIGNAL(readyReadStandardError()),
 	  this, SLOT(readProcessOut()));
-}
-//------------------------------------------------------------------------------
-QString CBuildEngine::workingPath()
-{
-  return parent()->workingPath();
 }
 //------------------------------------------------------------------------------
 CMainWindow* CBuildEngine::parent()
@@ -80,7 +79,7 @@ void CBuildEngine::processError(QProcess::ProcessError error)
 //------------------------------------------------------------------------------
 void CBuildEngine::readProcessOut()
 {
-  parent()->log()->append(m_process->readAllStandardOutput().data());
+  parent()->log()->append(process()->readAllStandardOutput().data());
 }
 //------------------------------------------------------------------------------
 void CBuildEngine::dialog()
@@ -129,7 +128,7 @@ void CBuildEngine::action()
   process()->start(fileName(), processOptions());
 }
 //------------------------------------------------------------------------------
-QString CBuildEngine::windowTitle()
+QString CBuildEngine::windowTitle() const
 {
   return m_windowTitle;
 }
@@ -139,7 +138,7 @@ void CBuildEngine::setWindowTitle(const QString & value)
   m_windowTitle = value;
 }
 //------------------------------------------------------------------------------
-QString CBuildEngine::fileName()
+QString CBuildEngine::fileName() const
 {
   return m_fileName;
 }
@@ -149,7 +148,7 @@ void CBuildEngine::setFileName(const QString & value)
   m_fileName = value;
 }
 //------------------------------------------------------------------------------
-QString CBuildEngine::statusSuccessMessage()
+QString CBuildEngine::statusSuccessMessage() const
 {
   return m_statusSuccessMessage;
 }
@@ -159,7 +158,7 @@ void CBuildEngine::setStatusSuccessMessage(const QString & value)
   m_statusSuccessMessage = value;
 }
 //------------------------------------------------------------------------------
-QString CBuildEngine::statusErrorMessage()
+QString CBuildEngine::statusErrorMessage() const
 {
   return m_statusErrorMessage;
 }
@@ -169,7 +168,7 @@ void CBuildEngine::setStatusErrorMessage(const QString & value)
   m_statusErrorMessage = value;
 }
 //------------------------------------------------------------------------------
-QString CBuildEngine::statusActionMessage()
+QString CBuildEngine::statusActionMessage() const
 {
   return m_statusActionMessage;
 }
@@ -179,7 +178,7 @@ void CBuildEngine::setStatusActionMessage(const QString & value)
   m_statusActionMessage = value;
 }
 //------------------------------------------------------------------------------
-QStringList CBuildEngine::processOptions()
+QStringList CBuildEngine::processOptions() const
 {
   return m_processOptions;
 }
@@ -189,7 +188,18 @@ void CBuildEngine::setProcessOptions(const QStringList & value)
   m_processOptions = value;
 }
 //------------------------------------------------------------------------------
-QProcess* CBuildEngine::process()
+QProcess* CBuildEngine::process() const
 {
   return m_process;
 }
+//------------------------------------------------------------------------------
+QString CBuildEngine::workingPath() const
+{
+  return m_workingPath;
+}
+//------------------------------------------------------------------------------
+void CBuildEngine::setWorkingPath(QString value)
+{
+  m_workingPath = value;
+}
+//------------------------------------------------------------------------------

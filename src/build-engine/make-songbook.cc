@@ -22,12 +22,12 @@ CMakeSongbook::CMakeSongbook(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
   setFileName("make");
-  
+
   setProcessOptions(QStringList());
   
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   env.insert("LATEX_OPTIONS", "-halt-on-error");
-  m_process->setProcessEnvironment(env);
+  process()->setProcessEnvironment(env);
 }
 
 QWidget* CMakeSongbook::mainWidget()
@@ -57,9 +57,12 @@ void CMakeSongbook::setProcessOptions(const QStringList & value)
 void CMakeSongbook::processExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
   if (exitStatus == QProcess::NormalExit && exitCode==0)
-    QDesktopServices::openUrl(QUrl(QString("file:///%1/%2")
+    {
+      QString("file:///%1/%2").arg(workingPath()).arg(processOptions().at(0)) ;
+
+      QDesktopServices::openUrl(QUrl(QString("file:///%1/%2")
 				   .arg(workingPath())
 				   .arg(processOptions().at(0))));
-
+    }
   CBuildEngine::processExit(exitCode, exitStatus);
 }

@@ -41,36 +41,40 @@ public slots:
   virtual void dialog();
   virtual void updateDialog();
   virtual void action();
-  
+ 
+  virtual void setWorkingPath(QString);
+ 
 public:
   virtual QWidget* mainWidget()=0;
   virtual CMainWindow* parent();
   
-  virtual QString fileName();
+  virtual QString fileName() const;
   virtual void setFileName(const QString & value);
 
-  virtual QString windowTitle();
+  virtual QString windowTitle() const;
   virtual void setWindowTitle(const QString & value);
   
-  virtual QString statusSuccessMessage();
+  virtual QString statusSuccessMessage() const;
   virtual void setStatusSuccessMessage(const QString & value);
 
-  virtual QString statusErrorMessage();
+  virtual QString statusErrorMessage() const;
   virtual void setStatusErrorMessage(const QString & value);
 
-  virtual QString statusActionMessage();
+  virtual QString statusActionMessage() const;
   virtual void setStatusActionMessage(const QString & value);
 
-  virtual QStringList processOptions();
+  virtual QStringList processOptions() const;
   virtual void setProcessOptions(const QStringList & value);
-    
-  virtual QString workingPath();
-  virtual QProcess* process();
+  
+  virtual QProcess* process() const;
 
-protected:
+  virtual QString workingPath() const;
+    
+private:
   CMainWindow* m_parent;
   QProcess* m_process;
   QDialog* m_dialog;
+  QString m_workingPath;
   
   QString m_fileName;
   QString m_windowTitle;
