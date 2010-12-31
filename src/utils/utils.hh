@@ -21,7 +21,7 @@
 
 #include <QString>
 
-enum SbError { WrongDirectory, WrongExtension };
+enum SbError { WrongDirectory, WrongExtension, Invalid };
 
 namespace SbUtils
 {

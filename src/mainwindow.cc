@@ -837,7 +837,7 @@ void CMainWindow::build()
       statusBar()->showMessage(tr("Wrong filename: songbook does not have \".sb\" extension. Build aborted."));
       return;
     default:
-      qDebug() << "filename ok";
+      break;
     }
 
   QString target = QString("%1.pdf")

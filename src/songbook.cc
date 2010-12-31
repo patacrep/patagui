@@ -661,4 +661,6 @@ SbError CSongbook::checkFilename() const
   
   if (!filename().endsWith(QString(".sb")))
     return WrongExtension;
+  
+  return Invalid;
 }
