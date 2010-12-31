@@ -61,6 +61,7 @@ public slots:
   void setWorkingPath(QString dirname);
   void templateSettings();
   void updateSongbookLabels(bool);
+  void updateView();
 
 signals:
   void workingPathChanged(QString path);

@@ -69,6 +69,8 @@ CMainWindow::CMainWindow()
 	  songbook(), SLOT(setWorkingPath(QString)));
   connect(this, SIGNAL(workingPathChanged(QString)),
 	  library(), SLOT(setWorkingPath(QString)));
+  connect(library(), SIGNAL(wasModified()),
+          this, SLOT(updateView()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -270,6 +272,17 @@ void CMainWindow::updateSongbookLabels(bool modified)
   m_sbInfoTitle->setText(songbook()->title());
   m_sbInfoAuthors->setText(songbook()->authors());
   m_sbInfoStyle->setText(songbook()->style());
+}
+//------------------------------------------------------------------------------
+void CMainWindow::updateView()
+{
+  selectionChanged();
+  m_proxyModel->setSourceModel(library());
+  view()->setModel(library());
+  view()->sortByColumn(1, Qt::AscendingOrder);
+  view()->sortByColumn(0, Qt::AscendingOrder);
+  view()->setModel(m_proxyModel);
+  view()->show();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterChanged()
@@ -519,22 +532,16 @@ void CMainWindow::connectDb()
     }
 
   // Initialize the song library
-  //m_library = new CLibrary();
-  //m_library->setPathToSongs(workingPath());
-
   m_proxyModel->setSourceModel(library());
   m_proxyModel->setDynamicSortFilter(true);
 
-  view()->setModel(library());
   view()->setShowGrid( false );
   view()->setAlternatingRowColors(true);
   view()->setSelectionMode(QAbstractItemView::MultiSelection);
   view()->setSelectionBehavior(QAbstractItemView::SelectRows);
   view()->setEditTriggers(QAbstractItemView::NoEditTriggers);
   view()->setSortingEnabled(true);
-  view()->sortByColumn(0, Qt::AscendingOrder);
-  view()->setModel(m_proxyModel);
-  view()->show();
+  updateView();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::rebuildLibrary()
@@ -563,10 +570,6 @@ void CMainWindow::refreshLibrary()
 
   library()->retrieveSongs();
 
-  selectionChanged();
-  view()->sortByColumn(1, Qt::AscendingOrder);
-  view()->sortByColumn(0, Qt::AscendingOrder);
-  view()->show();
   progressBar()->setTextVisible(false);
   progressBar()->hide();
   statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
@@ -794,9 +797,8 @@ void CMainWindow::selectLanguage(bool selection)
 QStringList CMainWindow::getSelectedSongs()
 {
   //ensure the songs are correctly sorted by artist And title
-  view()->sortByColumn(1, Qt::AscendingOrder);
-  view()->sortByColumn(0, Qt::AscendingOrder);
-
+  updateView();
+  
   QStringList songsPath;
   QModelIndexList indexes = selectionModel()->selectedRows();
   QModelIndex index;
@@ -1168,8 +1170,7 @@ void CMainWindow::songTemplate()
   //Insert the song in the library
   library()->addSongFromFile(filepath);
   library()->submitAll();
-  view()->sortByColumn(1, Qt::AscendingOrder);
-  view()->sortByColumn(0, Qt::AscendingOrder);
+  updateView();
 
   //position index of new song in the library and launch song editor
   CSongEditor* editor = new CSongEditor(filepath);
@@ -1207,12 +1208,7 @@ void CMainWindow::deleteSong()
 
       //library()->setWorking(workingPath());
       //update models and display the song list
-      m_proxyModel->setSourceModel(library());
-      view()->setModel(library());
-      view()->sortByColumn(0, Qt::AscendingOrder);
-      view()->setModel(m_proxyModel);
-      view()->sortByColumn(1, Qt::AscendingOrder);
-      view()->sortByColumn(0, Qt::AscendingOrder);
+      updateView();
 
       //removal on disk
       QFile file(path);

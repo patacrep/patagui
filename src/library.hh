@@ -48,6 +48,9 @@ public slots:
   void setWorkingPath(QString);
   void retrieveSongs();
   
+signals:
+  void wasModified();
+
 private:
   CMainWindow* m_parent;
   QPixmap* m_pixmap;

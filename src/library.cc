@@ -75,6 +75,7 @@ void CLibrary::retrieveSongs()
       addSongFromFile(it.next());
     }
   submitAll();
+  emit(wasModified());
 }
 //------------------------------------------------------------------------------
 void CLibrary::addSongFromFile(const QString path)
