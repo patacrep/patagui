@@ -53,6 +53,7 @@ CMainWindow::CMainWindow()
 
   m_isToolbarDisplayed = true;
   m_isStatusbarDisplayed = true;
+  m_first = true;
 
   readSettings();
 
@@ -945,14 +946,13 @@ void CMainWindow::setWorkingPath(QString dirname)
 {
   if(dirname.endsWith("/"))
     dirname.remove(-1,1);
-  bool first = m_workingPath.isEmpty();
-
+  
   if ( dirname != m_workingPath)
     {
       m_workingPath = dirname;
       emit(workingPathChanged(dirname));
 
-      if (!first && QMessageBox::question
+      if (!m_first && QMessageBox::question
        	  (this, this->windowTitle(),
        	   QString(tr("The songbook directory has been changed.\n"
 		      "Would you like to scan for available songs ?")),
@@ -962,7 +962,9 @@ void CMainWindow::setWorkingPath(QString dirname)
 	{
 	  rebuildLibrary();
 	}
+      save(true);
     }
+  m_first = false;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::downloadDialog()
