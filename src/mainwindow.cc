@@ -276,7 +276,6 @@ void CMainWindow::updateSongbookLabels(bool modified)
 //------------------------------------------------------------------------------
 void CMainWindow::updateView()
 {
-  selectionChanged();
   m_proxyModel->setSourceModel(library());
   view()->setModel(library());
   view()->sortByColumn(1, Qt::AscendingOrder);
@@ -573,6 +572,7 @@ void CMainWindow::refreshLibrary()
   progressBar()->setTextVisible(false);
   progressBar()->hide();
   statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
+  selectionChanged();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent *event)
