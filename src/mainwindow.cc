@@ -571,7 +571,7 @@ void CMainWindow::refreshLibrary()
   progressBar()->setTextVisible(false);
   progressBar()->hide();
   statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
-  updateView();
+  //updateView();
   selectionChanged();
 }
 //------------------------------------------------------------------------------
@@ -796,9 +796,6 @@ void CMainWindow::selectLanguage(bool selection)
 //------------------------------------------------------------------------------
 QStringList CMainWindow::getSelectedSongs()
 {
-  //ensure the songs are correctly sorted by artist And title
-  updateView();
-  
   QStringList songsPath;
   QModelIndexList indexes = selectionModel()->selectedRows();
   QModelIndex index;
