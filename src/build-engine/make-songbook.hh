@@ -24,7 +24,8 @@ class CMainWindow;
 
 class CMakeSongbook : public CBuildEngine
 {
-public:
+  Q_OBJECT
+  public:
   CMakeSongbook(CMainWindow* parent=NULL);
 
   

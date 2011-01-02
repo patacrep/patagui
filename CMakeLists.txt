@@ -92,6 +92,9 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/filter-lineedit.hh
   src/utils/lineedit.hh
   src/utils/lineedit_p.hh
+  src/build-engine/resize-covers.hh
+  src/build-engine/latex-preprocessing.hh
+  src/build-engine/make-songbook.hh
   )
 #-------------------------------------------------------------------------------
 # ressources

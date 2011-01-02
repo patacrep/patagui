@@ -24,7 +24,8 @@ class CMainWindow;
 
 class CResizeCovers : public CBuildEngine
 {
-public:
+  Q_OBJECT
+  public:
   CResizeCovers(CMainWindow* parent=NULL);
   
   virtual QWidget* mainWidget();

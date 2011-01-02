@@ -24,7 +24,8 @@ class CMainWindow;
 
 class CLatexPreprocessing : public CBuildEngine
 {
-public:
+  Q_OBJECT
+  public:
   CLatexPreprocessing(CMainWindow* parent=NULL);
   
   virtual QWidget* mainWidget();
