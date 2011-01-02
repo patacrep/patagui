@@ -879,7 +879,7 @@ void CMainWindow::open()
   QString str;
   foreach(str, songlist)
     {
-      indexes = library()->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
+      indexes = m_proxyModel->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
       if (!indexes.isEmpty())
         selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
