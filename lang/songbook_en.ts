@@ -505,6 +505,7 @@ Are you sure you want to continue ?</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cc" line="650"/>
+        <location filename="../src/mainwindow.cc" line="686"/>
         <source>&lt;i&gt;Title:&lt;/i&gt;</source>
         <translation>&lt;i&gt;Title:&lt;/i&gt;</translation>
     </message>
@@ -777,6 +778,26 @@ Would you like to scan for available songs ?</translation>
         <translation>Settings</translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.cc" line="688"/>
+        <source>&lt;i&gt;Authors:&lt;/i&gt;</source>
+        <translation>&lt;i&gt;Authors:&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="690"/>
+        <source>&lt;i&gt;Style:&lt;/i&gt;</source>
+        <translation>&lt;i&gt;Style:&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="692"/>
+        <source>&lt;i&gt;Selection:&lt;/i&gt;</source>
+        <translation>&lt;i&gt;Selection:&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cc" line="746"/>
+        <source>0.4 (January 2011)</source>
+        <translation>0.4 (January 2011)</translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.cc" line="1001"/>
         <source>Please select a song to edit.</source>
         <translation>Please select a song to edit.</translation>
@@ -798,9 +819,8 @@ Would you like to scan for available songs ?</translation>
         <translation>About Patacrep Songbook Client</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cc" line="746"/>
         <source>0.4 November 2010</source>
-        <translation>0.4 (November 2010)</translation>
+        <translation type="obsolete">0.4 (November 2010)</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cc" line="750"/>

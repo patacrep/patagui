@@ -683,13 +683,13 @@ QGridLayout * CMainWindow::songbookInfo()
   connect(button, SIGNAL(clicked()), this, SLOT(templateSettings()));
   
   QGridLayout* layout = new QGridLayout;
-  layout->addWidget(new QLabel("<i>Title:</i>"),0,0,1,1);
+  layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,0,1,1);
   layout->addWidget(m_sbInfoTitle,0,1,1,2);
-  layout->addWidget(new QLabel("<i>Authors:</i>"),1,0,1,1);
+  layout->addWidget(new QLabel(tr("<i>Authors:</i>")),1,0,1,1);
   layout->addWidget(m_sbInfoAuthors,1,1,1,2);
-  layout->addWidget(new QLabel("<i>Style:</i>"),2,0,1,1);
+  layout->addWidget(new QLabel(tr("<i>Style:</i>")),2,0,1,1);
   layout->addWidget(m_sbInfoStyle,2,1,1,2);
-  layout->addWidget(new QLabel("<i>Selection:</i>"),3,0,1,1);
+  layout->addWidget(new QLabel(tr("<i>Selection:</i>")),3,0,1,1);
   layout->addWidget(m_sbInfoSelection,3,1,1,2);
   layout->addWidget(button,4,2,1,1);
   
@@ -743,7 +743,7 @@ void CMainWindow::documentation()
 //------------------------------------------------------------------------------
 void CMainWindow::about()
 {
-  QString version = tr("0.4 November 2010");
+  QString version = tr("0.4 (January 2011)");
   QMessageBox::about(this, 
 		     tr("About Patacrep Songbook Client"),
 		     QString
