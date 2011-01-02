@@ -41,7 +41,7 @@ using namespace SbUtils;
 //******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
-  , m_library(new CLibrary(this))
+  , m_library()
   , m_proxyModel(new CSongSortFilterProxyModel)
   , m_songbook(new CSongbook())
   , m_view(new QTableView(this))
@@ -60,17 +60,12 @@ CMainWindow::CMainWindow()
   // main document and title
   //m_songbook = new CSongbook();
   songbook()->setWorkingPath(workingPath());
-  library()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(updateSongbookLabels(bool)));
   connect(this, SIGNAL(workingPathChanged(QString)),
 	  songbook(), SLOT(setWorkingPath(QString)));
-  connect(this, SIGNAL(workingPathChanged(QString)),
-	  library(), SLOT(setWorkingPath(QString)));
-  connect(library(), SIGNAL(wasModified()),
-          this, SLOT(updateView()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -276,11 +271,8 @@ void CMainWindow::updateSongbookLabels(bool modified)
 //------------------------------------------------------------------------------
 void CMainWindow::updateView()
 {
-  m_proxyModel->setSourceModel(library());
-  view()->setModel(library());
   view()->sortByColumn(1, Qt::AscendingOrder);
   view()->sortByColumn(0, Qt::AscendingOrder);
-  view()->setModel(m_proxyModel);
   view()->show();
 }
 //------------------------------------------------------------------------------
@@ -531,15 +523,22 @@ void CMainWindow::connectDb()
     }
 
   // Initialize the song library
+  m_library = new CLibrary(this);
+  library()->setWorkingPath(workingPath());
+  connect(library(), SIGNAL(wasModified()),
+          this, SLOT(updateView()));
+
   m_proxyModel->setSourceModel(library());
   m_proxyModel->setDynamicSortFilter(true);
 
+  view()->setModel(m_proxyModel);
   view()->setShowGrid( false );
   view()->setAlternatingRowColors(true);
   view()->setSelectionMode(QAbstractItemView::MultiSelection);
   view()->setSelectionBehavior(QAbstractItemView::SelectRows);
   view()->setEditTriggers(QAbstractItemView::NoEditTriggers);
   view()->setSortingEnabled(true);
+  view()->verticalHeader()->setVisible(false);
   updateView();
 }
 //------------------------------------------------------------------------------
@@ -572,6 +571,7 @@ void CMainWindow::refreshLibrary()
   progressBar()->setTextVisible(false);
   progressBar()->hide();
   statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
+  updateView();
   selectionChanged();
 }
 //------------------------------------------------------------------------------
@@ -854,7 +854,6 @@ void CMainWindow::build()
   
   m_builder->setProcessOptions(QStringList() << target);
   m_builder->action();
-  //QDesktopServices::openUrl(QUrl(QString("file:///%1/%2").arg(m_workingPath).arg(target)));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()
@@ -890,22 +889,17 @@ void CMainWindow::open()
 //------------------------------------------------------------------------------
 void CMainWindow::save(bool forced)
 {
-  if(forced && songbook()->filename().isEmpty() )
+  if(songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
     {
-      songbook()->setFilename(QString("%1/default.sb").arg(workingPath()));
+      if(forced)
+	songbook()->setFilename(QString("%1/default.sb").arg(workingPath()));
+      else
+	saveAs();
     }
-  else if(!forced && 
-	  (songbook()->filename().isEmpty() || 
-	   QString::compare(songbook()->filename(), QString("%1/default.sb").arg(workingPath()))==0) )
-    {
-      saveAs();
-    }
-  else
-    {
-      updateSongsList();
-      songbook()->save(songbook()->filename());
-      updateTitle(songbook()->filename());
-    }
+
+  updateSongsList();
+  songbook()->save(songbook()->filename());
+  updateTitle(songbook()->filename());
 }
 //------------------------------------------------------------------------------
 void CMainWindow::saveAs()
@@ -915,10 +909,7 @@ void CMainWindow::saveAs()
                                                   workingPath(),
                                                   tr("Songbook (*.sb)"));
   if (!filename.isEmpty())
-    {
-      songbook()->setFilename(filename);
-      save(true);
-    }
+    songbook()->setFilename(filename);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongsList()
@@ -946,7 +937,7 @@ const QString CMainWindow::workingPath()
 //------------------------------------------------------------------------------
 void CMainWindow::setWorkingPath(QString dirname)
 {
-  if(dirname.endsWith("/"))
+  while(dirname.endsWith("/"))
     dirname.remove(-1,1);
   
   if ( dirname != m_workingPath)
@@ -964,7 +955,6 @@ void CMainWindow::setWorkingPath(QString dirname)
 	{
 	  rebuildLibrary();
 	}
-      save(true);
     }
   m_first = false;
 }
