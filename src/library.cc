@@ -113,7 +113,7 @@ void CLibrary::addSongFromFile(const QString path)
       //album
       QRegExp rx3(",album=([^[\\]]+)");
       rx3.indexIn(fileStr);
-      album = rx3.cap(1);
+      album = latexToUtf8(rx3.cap(1));
 
       //lilypond
       QRegExp rx4("\\\\lilypond");
@@ -141,7 +141,7 @@ void CLibrary::addSongFromFile(const QString path)
       QSqlField f5("album", QVariant::String);
       QSqlField f6("cover", QVariant::String);
       QSqlField f7("lang", QVariant::String);
-
+   
       f1.setValue(QVariant(artist));
       f2.setValue(QVariant(title));
       f3.setValue(QVariant(lilypond));
@@ -158,7 +158,17 @@ void CLibrary::addSongFromFile(const QString path)
       song.append(f6);
       song.append(f7);
 
-      insertRecord(-1,song);
+      if(!insertRecord(-1,song))
+	{
+	  qDebug() << "\n artiste = " << artist;
+	  qDebug() << "title = " << title;
+	  qDebug() << "lilypond = " << lilypond;
+	  qDebug() << "path = " << path;
+	  qDebug() << "album = " << album;
+	  qDebug() << "cover = " << QString("%1/%2.jpg").arg(coverPath).arg(coverName);
+	  qDebug() << "lang = " << lang;
+	  qWarning() << "CLibrary::addSongFromFile : unable to insert song " << path;
+	}
     }
 }
 //------------------------------------------------------------------------------
