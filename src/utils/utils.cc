@@ -37,6 +37,7 @@ namespace SbUtils
     str.replace(QString("\\^a"), QString("â"));
     str.replace(QString("\\&"), QString("&"));
     str.replace(QString("\\~"), QString("~"));
+    str.replace(QString("\\,"), QString(" "));
     str.replace(QString("~"), QString(" "));
     str.replace(QString("\\dots"), QString("..."));
 
