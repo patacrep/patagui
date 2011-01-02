@@ -783,7 +783,7 @@ void CMainWindow::selectLanguage(bool selection)
   QList<QModelIndex> indexes;
   QModelIndex index;
 
-  indexes = library()->match(m_proxyModel->index(0,6), Qt::ToolTipRole, language, -1);
+  indexes = m_proxyModel->match(m_proxyModel->index(0,6), Qt::ToolTipRole, language, -1);
 
   QItemSelectionModel::SelectionFlags flag = (selection ? QItemSelectionModel::Select : QItemSelectionModel::Deselect) | QItemSelectionModel::Rows;
 
