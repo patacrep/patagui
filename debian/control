@@ -9,7 +9,7 @@ Homepage: http://www.patacrep.com
 Package: songbook-client
 Architecture: any
 Depends: libqt4-sql-sqlite (>= 4.3), texlive-base, texlive-lang-french, texlive-latex-extra, texlive-fonts-recommended, python, libqtscript4-core, libqtgui4
-Recommends: git-core, lilypond
+Recommends: git-core, lilypond, texlive-xetex 
 Description: Client for patacrep songbooks
  The songbook-client is an interface to build
  customized PDF songbooks with lyrics, guitar 
