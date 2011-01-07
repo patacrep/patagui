@@ -44,6 +44,10 @@ CMainWindow::CMainWindow()
   , m_library()
   , m_proxyModel(new CSongSortFilterProxyModel)
   , m_songbook(new CSongbook())
+  , m_sbInfoSelection(new QLabel)
+  , m_sbInfoTitle(new QLabel)
+  , m_sbInfoAuthors(new QLabel)
+  , m_sbInfoStyle(new QLabel)
   , m_view(new QTableView(this))
   , m_progressBar(new QProgressBar(this))
   , m_cover(new QPixmap)
@@ -58,7 +62,6 @@ CMainWindow::CMainWindow()
   readSettings();
 
   // main document and title
-  //m_songbook = new CSongbook();
   songbook()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
@@ -114,6 +117,7 @@ CMainWindow::CMainWindow()
 
   //Connection to database
   connectDb();
+  refreshLibrary();
 
   // filtering related widgets
   CFilterLineEdit *filterLineEdit = new CFilterLineEdit;
@@ -500,6 +504,7 @@ void CMainWindow::connectDb()
   QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
   QDir dbdir; dbdir.mkpath( path );
   QString dbpath = QString("%1/patacrep.db").arg(path);
+  bool exist = QFile::exists(dbpath); 
 
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(dbpath);
@@ -510,7 +515,7 @@ void CMainWindow::connectDb()
 			       "This application needs SQLite support. "
 			       "Click Cancel to exit."), QMessageBox::Cancel);
     }
-  if (!QFile::exists(dbpath))
+  if (!exist)
     {
       QSqlQuery query;
       query.exec("create table songs ( artist text, "
@@ -525,8 +530,6 @@ void CMainWindow::connectDb()
   // Initialize the song library
   m_library = new CLibrary(this);
   library()->setWorkingPath(workingPath());
-  connect(library(), SIGNAL(wasModified()),
-          this, SLOT(updateView()));
 
   m_proxyModel->setSourceModel(library());
   m_proxyModel->setDynamicSortFilter(true);
@@ -539,7 +542,11 @@ void CMainWindow::connectDb()
   view()->setEditTriggers(QAbstractItemView::NoEditTriggers);
   view()->setSortingEnabled(true);
   view()->verticalHeader()->setVisible(false);
-  updateView();
+
+  connect(library(), SIGNAL(wasModified()),
+          this, SLOT(updateView()));
+  connect(library(), SIGNAL(wasModified()),
+          this, SLOT(selectionChanged()));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::rebuildLibrary()
@@ -571,8 +578,6 @@ void CMainWindow::refreshLibrary()
   progressBar()->setTextVisible(false);
   progressBar()->hide();
   statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
-  //updateView();
-  selectionChanged();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent *event)
@@ -674,11 +679,6 @@ QGridLayout * CMainWindow::songInfo()
 //------------------------------------------------------------------------------
 QGridLayout * CMainWindow::songbookInfo()
 {
-  m_sbInfoTitle     = new QLabel;
-  m_sbInfoAuthors   = new QLabel;
-  m_sbInfoStyle     = new QLabel;
-  m_sbInfoSelection = new QLabel;
-  
   QPushButton* button = new QPushButton(tr("Settings"));
   connect(button, SIGNAL(clicked()), this, SLOT(templateSettings()));
   
@@ -1192,10 +1192,6 @@ void CMainWindow::deleteSong()
       //remove entry in database
       QSqlQuery query;
       query.exec(QString("DELETE FROM songs WHERE path = '%1'").arg(path));
-
-      //library()->setWorking(workingPath());
-      //update models and display the song list
-      updateView();
 
       //removal on disk
       QFile file(path);
