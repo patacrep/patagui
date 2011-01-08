@@ -55,9 +55,10 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   //lang
   QLabel* langLabel = new QLabel(tr("Language: "));
   QComboBox* langComboBox = new QComboBox;
-  langComboBox->addItem ( tr("english") );
-  langComboBox->addItem ( tr("french") );
-  langComboBox->addItem ( tr("spanish") );
+  langComboBox->addItem ("english");
+  langComboBox->addItem ("french");
+  langComboBox->addItem ("spanish");
+  setLang(langComboBox->currentText());
 
   //nb columns
   QLabel* nbColumnsLabel = new QLabel(tr("Columns: "));
@@ -158,12 +159,12 @@ QString CDialogNewSong::songTemplate()
   
   text.append(QString("\\beginsong{%1}[by=%2").arg(title()).arg(artist()));
   
-  if(!album().isEmpty())
-    text.append(QString(",album=%1").arg(album()));
-  
   if(!cover().isEmpty())
     text.append(QString(",cov=%1").arg(SbUtils::stringToFilename(album(),"-")));
 
+  if(!album().isEmpty())
+    text.append(QString(",album=%1").arg(album()));
+ 
   text.append(QString("]\n\n"));
   
   if(!cover().isEmpty())
@@ -180,7 +181,10 @@ QString CDialogNewSong::songTemplate()
 void CDialogNewSong::addSong()
 {
   if ( !checkRequiredFields() )
-    return;
+    {
+      new CDialogNewSong(parent());
+      return;
+    }
 
   //make new dir
   QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(SbUtils::stringToFilename(artist(),"_"));
@@ -191,23 +195,20 @@ void CDialogNewSong::addSong()
     dir.mkpath(dirpath);
 
   //handle album and cover
-  bool img = false;
   QFile coverFile(cover());
   if (coverFile.exists())
     {
       //copy in artist directory and resize
       QFileInfo fi(cover());
-      QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(SbUtils::stringToFilename(artist(),"_")).arg(fi.fileName());
-      img = coverFile.copy(target);
+      QString target = QString("%1/%2").arg(dirpath).arg(fi.fileName());
+      coverFile.copy(target);
       QFile copyCover(target);
 
-      //if album is specified, rename cover accordingly
-      if (!album().isEmpty()
-	  && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
-			       .arg(workingPath())
-			       .arg(SbUtils::stringToFilename(artist(),"_"))
-			       .arg(SbUtils::stringToFilename(album(),"-"))))
-	copyCover.remove(); //remove copy if file already exists
+      //if album is specified, rename cover accordingly and remove if file already exists
+      if (!album().isEmpty() && !copyCover.rename(QString("%1/%3.jpg")
+						  .arg(dirpath)
+						  .arg(SbUtils::stringToFilename(album(),"-"))))
+	copyCover.remove();
     }
 
   //write template in sg file
