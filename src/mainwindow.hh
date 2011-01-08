@@ -82,8 +82,6 @@ private slots:
 
   //library
   void newSong();
-  bool checkNewSongRequiredFields();
-  void songTemplate();
   void songEditor();
   void changeTabLabel();
   void deleteSong();

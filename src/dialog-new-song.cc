@@ -17,16 +17,21 @@
 //******************************************************************************
 
 #include "dialog-new-song.hh"
+#include "utils/utils.hh"
+#include "mainwindow.hh"
 
-CDialogNewSong::CDialogNewSong()
+CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   : QDialog()
+  ,m_parent(AParent)
+  ,m_workingPath()
+  ,m_title()
+  ,m_artist()
+  ,m_nbColumns(2)
+  ,m_capo(0)
 {
-  m_title = "";
-  m_artist =  "";
-  m_nbColumns = 2;
-  m_capo = 0;
-
-  setModal(true);
+  m_workingPath = parent()->workingPath();
+  connect(parent(), SIGNAL(workingPathChanged(QString)),
+	  this, SLOT(setWorkingPath(QString)));
 
   //Required fields
   //title
@@ -104,8 +109,6 @@ CDialogNewSong::CDialogNewSong()
   layout->addWidget(optionalFieldsBox);
   layout->addWidget(buttonBox);
 
-  setLayout(layout);
-
   //Connections
   connect(titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)) );
   connect(artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)) );
@@ -116,6 +119,10 @@ CDialogNewSong::CDialogNewSong()
   connect(browseCoverButton, SIGNAL(clicked()), this, SLOT(browseCover()) );
   connect(m_coverEdit, SIGNAL(textChanged(QString)), this, SLOT(setCover(QString)) );
 
+  connect(this, SIGNAL(accepted()), this, SLOT(addSong()) );
+
+  setLayout(layout);
+  setModal(true);
   setWindowTitle(tr("New song"));
   setMinimumWidth(450);
   show();
@@ -124,6 +131,100 @@ CDialogNewSong::CDialogNewSong()
 CDialogNewSong::~CDialogNewSong()
 {
   delete m_coverEdit;
+}
+
+//------------------------------------------------------------------------------
+bool CDialogNewSong::checkRequiredFields()
+{
+  if (title().isEmpty() || artist().isEmpty())
+    {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.setText(tr("Please fill all required fields."));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setDefaultButton(QMessageBox::Ok);
+      msgBox.exec();
+      return false;
+    }
+  return true;
+}
+//------------------------------------------------------------------------------
+QString CDialogNewSong::songTemplate()
+{
+  QString text;;
+  text.append(QString("\\selectlanguage{%1}\n").arg(lang()));
+  if (nbColumns() > 0)
+    text.append(QString("\\songcolumns{%1}\n").arg(nbColumns()));
+  
+  text.append(QString("\\beginsong{%1}[by=%2").arg(title()).arg(artist()));
+  
+  if(!album().isEmpty())
+    text.append(QString(",album=%1").arg(album()));
+  
+  if(!cover().isEmpty())
+    text.append(QString(",cov=%1").arg(SbUtils::stringToFilename(album(),"-")));
+
+  text.append(QString("]\n\n"));
+  
+  if(!cover().isEmpty())
+    text.append(QString("\\cover\n"));
+
+  if (capo() > 0)
+    text.append(QString("\\capo{%1}\n").arg(capo()));
+  
+  text.append(QString("\n\\endsong"));
+
+  return text;
+}
+//------------------------------------------------------------------------------
+void CDialogNewSong::addSong()
+{
+  if ( !checkRequiredFields() )
+    return;
+
+  //make new dir
+  QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(SbUtils::stringToFilename(artist(),"_"));
+  QString filepath = QString("%1/%2.sg").arg(dirpath).arg(SbUtils::stringToFilename(title(),"_"));
+  QDir dir(dirpath);
+
+  if (!dir.exists())
+    dir.mkpath(dirpath);
+
+  //handle album and cover
+  bool img = false;
+  QFile coverFile(cover());
+  if (coverFile.exists())
+    {
+      //copy in artist directory and resize
+      QFileInfo fi(cover());
+      QString target = QString("%1/songs/%2/%3").arg(workingPath()).arg(SbUtils::stringToFilename(artist(),"_")).arg(fi.fileName());
+      img = coverFile.copy(target);
+      QFile copyCover(target);
+
+      //if album is specified, rename cover accordingly
+      if (!album().isEmpty()
+	  && !copyCover.rename(QString("%1/songs/%2/%3.jpg")
+			       .arg(workingPath())
+			       .arg(SbUtils::stringToFilename(artist(),"_"))
+			       .arg(SbUtils::stringToFilename(album(),"-"))))
+	copyCover.remove(); //remove copy if file already exists
+    }
+
+  //write template in sg file
+  QFile file(filepath);
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream (&file);
+      stream << songTemplate();
+      file.close();
+    }
+  else
+    {
+      qWarning() << " CMainWindow::newsong unable to open file " << filepath << " in write mode ";
+    }
+
+  //add the song to the library
+  parent()->refreshLibrary();
 }
 //------------------------------------------------------------------------------
 QString CDialogNewSong::title() const
@@ -205,4 +306,19 @@ void CDialogNewSong::browseCover()
 
   if (!directory.isEmpty())
       m_coverEdit->setText(directory);
+}
+//------------------------------------------------------------------------------
+QString CDialogNewSong::workingPath() const
+{
+  return m_workingPath;
+}
+//------------------------------------------------------------------------------
+void CDialogNewSong::setWorkingPath(QString value)
+{
+  m_workingPath = value;
+}
+//------------------------------------------------------------------------------
+CMainWindow* CDialogNewSong::parent() const
+{
+  return m_parent ;
 }

@@ -20,51 +20,51 @@
 
 #include <QtGui>
 
+class CMainWindow;
+
 class CDialogNewSong : public QDialog
 {
   Q_OBJECT
 
 public:
-  CDialogNewSong();
+  CDialogNewSong(CMainWindow* AParent);
   virtual ~CDialogNewSong();
 
-public slots:
-  QString title() const;
-  void setTitle(QString);
-
-  QString artist() const;
-  void setArtist(QString);
-
-  int nbColumns() const;
-  void setNbColumns(int);
-
-  int capo() const;
-  void setCapo(int);
-
-  QString album() const;
-  void setAlbum(QString);
-
-  QString cover() const;
-  void setCover(QString);
-
-  QString lang() const;
-  void setLang(const QString &);
-
 private slots:
+  void setTitle(QString);
+  void setArtist(QString);
+  void setNbColumns(int);
+  void setCapo(int);
+  void setAlbum(QString);
+  void setCover(QString);
+  void setLang(const QString &);
+  void setWorkingPath(QString);
   void browseCover();
+  void addSong();
 
 private:
-  //required fields
+  CMainWindow* parent() const;
+  QString title() const;
+  QString artist() const;
+  int nbColumns() const;
+  int capo() const;
+  QString album() const;
+  QString cover() const;
+  QString lang() const;
+  QString workingPath() const;
+  bool checkRequiredFields();
+  QString songTemplate();
+
+  CMainWindow* m_parent;
+  QString m_workingPath;
   QString m_title;
   QString m_artist;
-
-  //optional fields
   QString m_album;
   QString m_cover;
   QString m_lang;
   QLineEdit* m_coverEdit;
-  uint m_nbColumns;
-  uint m_capo;
+  int m_nbColumns;
+  int m_capo;
 };
 
 #endif // __DIALOG_NEW_SONG_HH__
