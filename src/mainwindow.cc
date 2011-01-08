@@ -1058,7 +1058,8 @@ void CMainWindow::deleteSong()
       //remove entry in database
       QSqlQuery query;
       query.exec(QString("DELETE FROM songs WHERE path = '%1'").arg(path));
-
+      view()->hideRow(selectionModel()->currentIndex().row());
+	
       //removal on disk
       QFile file(path);
       QFileInfo fileinfo(file);
