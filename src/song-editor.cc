@@ -19,13 +19,13 @@
 #include "highlighter.hh"
 #include <QToolBar>
 #include <QAction>
-#include <QTextEdit>
 #include <QTextDocumentFragment>
 #include <QLayout>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
 #include <QDebug>
+#include "code-editor.hh"
 
 //------------------------------------------------------------------------------
 CSongEditor::CSongEditor(const QString & APath)
@@ -37,7 +37,7 @@ CSongEditor::CSongEditor(const QString & APath)
   toolbar->setMovable(false);
 
   //retrieve song text
-  m_textEdit = new QTextEdit(this);
+  m_textEdit = new CodeEditor(this);
   m_textEdit->setUndoRedoEnabled(true);
   QFile file(APath);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -45,7 +45,7 @@ CSongEditor::CSongEditor(const QString & APath)
       QTextStream stream (&file);
       QString text = stream.readAll();
       file.close();
-      m_textEdit->setText(text);
+      m_textEdit->setPlainText(text);
       new CHighlighter(m_textEdit->document());
 
       connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));

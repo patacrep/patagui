@@ -70,6 +70,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/build-engine/resize-covers.cc
   src/build-engine/latex-preprocessing.cc
   src/build-engine/make-songbook.cc
+  src/code-editor.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -95,6 +96,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/build-engine/resize-covers.hh
   src/build-engine/latex-preprocessing.hh
   src/build-engine/make-songbook.hh
+  src/code-editor.hh
   )
 #-------------------------------------------------------------------------------
 # ressources

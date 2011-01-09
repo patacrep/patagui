@@ -21,7 +21,7 @@
 #include <QWidget>
 #include <QString>
 
-class QTextEdit;
+class CodeEditor;
 
 class CSongEditor : public QWidget
 {
@@ -54,7 +54,7 @@ signals:
   void labelChanged();
 
 public:
-  QTextEdit* m_textEdit;
+  CodeEditor* m_textEdit;
   bool isOk;
 
 private:
