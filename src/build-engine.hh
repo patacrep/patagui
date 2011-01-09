@@ -23,7 +23,7 @@
 #include <QProcess>
 
 class QDialog;
-class QTextEdit;
+class QDialogButtonBox;
 class CMainWindow;
 
 class CBuildEngine : public QWidget
@@ -74,6 +74,7 @@ private:
   CMainWindow* m_parent;
   QProcess* m_process;
   QDialog* m_dialog;
+  QDialogButtonBox *m_buttonBox;
   QString m_workingPath;
   
   QString m_fileName;
@@ -82,5 +83,6 @@ private:
   QString m_statusSuccessMessage;
   QString m_statusErrorMessage;
   QStringList m_processOptions;
+  QLayout *m_layout;
 };
 #endif // __BUILD_ENGINE_HH__

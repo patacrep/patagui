@@ -59,7 +59,10 @@ void CBuildEngine::processExit(int exitCode, QProcess::ExitStatus exitStatus)
   parent()->progressBar()->hide();
   
   if (exitStatus == QProcess::NormalExit && exitCode==0)
-    parent()->statusBar()->showMessage(statusSuccessMessage());
+    {
+      parent()->statusBar()->showMessage(statusSuccessMessage());
+      updateDialog();
+    }
   else
     processError(QProcess::UnknownError);
 }
@@ -84,25 +87,21 @@ void CBuildEngine::readProcessOut()
 //------------------------------------------------------------------------------
 void CBuildEngine::dialog()
 {
-  QWidget* widget = mainWidget();
-  if(!widget) return;
+  if(!mainWidget()) return;
 
   m_dialog = new QDialog;
+  m_buttonBox = new QDialogButtonBox;
 
-  QDialogButtonBox * buttonBox = new QDialogButtonBox;
   QPushButton * button = new QPushButton(tr("Close"));
-  buttonBox->addButton(button, QDialogButtonBox::DestructiveRole);
+  m_buttonBox->addButton(button, QDialogButtonBox::DestructiveRole);
   connect(button, SIGNAL(clicked()), m_dialog, SLOT(close()) );
 
   button = new QPushButton(tr("Apply"));
   button->setDefault(true);
-  buttonBox->addButton(button, QDialogButtonBox::ActionRole);
+  m_buttonBox->addButton(button, QDialogButtonBox::ActionRole);
   connect(button, SIGNAL(clicked()), this, SLOT(action()) );
-  
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(widget);
-  layout->addWidget(buttonBox);
-  m_dialog->setLayout(layout);
+
+  updateDialog();
 
   m_dialog->setWindowTitle(windowTitle());
   m_dialog->setMinimumWidth(450);
@@ -112,10 +111,13 @@ void CBuildEngine::dialog()
 //------------------------------------------------------------------------------
 void CBuildEngine::updateDialog()
 {
-  qDebug() << "CBuildEngine::updateDialog not implemented yet";
-  //if(m_dialog)
-  //  m_dialog->close();
-  //dialog();
+  if(!mainWidget()) return;
+  delete m_layout;
+  
+  m_layout = new QVBoxLayout;
+  m_layout->addWidget(mainWidget());
+  m_layout->addWidget(m_buttonBox);
+  m_dialog->setLayout(m_layout);
 }
 //------------------------------------------------------------------------------
 void CBuildEngine::action()
