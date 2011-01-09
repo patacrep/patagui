@@ -36,11 +36,11 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   //Required fields
   //title
   QLabel* titleLabel = new QLabel(tr("Title: "));
-  QLineEdit* titleEdit = new QLineEdit;
+  m_titleEdit = new QLineEdit;
 
   //artist
   QLabel* artistLabel = new QLabel(tr("Artist: "));
-  QLineEdit* artistEdit = new QLineEdit;
+  m_artistEdit = new QLineEdit;
 
   //Optional fields
   //album
@@ -85,9 +85,9 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   QGroupBox* requiredFieldsBox = new QGroupBox(tr("Required fields"));
   QGridLayout* requiredLayout = new QGridLayout;
   requiredLayout->addWidget(titleLabel,   0,0,1,1);
-  requiredLayout->addWidget(titleEdit,  0,1,1,1);
+  requiredLayout->addWidget(m_titleEdit,  0,1,1,1);
   requiredLayout->addWidget(artistLabel,  1,0,1,1);
-  requiredLayout->addWidget(artistEdit, 1,1,1,1);
+  requiredLayout->addWidget(m_artistEdit, 1,1,1,1);
   requiredFieldsBox->setLayout(requiredLayout);
 
   QGroupBox* optionalFieldsBox = new QGroupBox(tr("Optional fields"));
@@ -111,8 +111,8 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   layout->addWidget(buttonBox);
 
   //Connections
-  connect(titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)) );
-  connect(artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)) );
+  connect(m_titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)) );
+  connect(m_artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)) );
   connect(langComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLang(const QString&)) );
   connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)) );
   connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)) );
@@ -120,10 +120,9 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   connect(browseCoverButton, SIGNAL(clicked()), this, SLOT(browseCover()) );
   connect(m_coverEdit, SIGNAL(textChanged(QString)), this, SLOT(setCover(QString)) );
 
-  connect(this, SIGNAL(accepted()), this, SLOT(addSong()) );
+  connect(this, SIGNAL(accepted()), this, SLOT(accept()) );
 
   setLayout(layout);
-  setModal(true);
   setWindowTitle(tr("New song"));
   setMinimumWidth(450);
   show();
@@ -133,21 +132,34 @@ CDialogNewSong::~CDialogNewSong()
 {
   delete m_coverEdit;
 }
-
+//------------------------------------------------------------------------------
+void CDialogNewSong::accept()
+{
+  addSong();
+}
 //------------------------------------------------------------------------------
 bool CDialogNewSong::checkRequiredFields()
 {
-  if (title().isEmpty() || artist().isEmpty())
+  bool result = true;
+  QMap<QLineEdit*, QString> map;
+  map.insert(m_titleEdit, title());
+  map.insert(m_artistEdit, artist());
+  QMapIterator<QLineEdit*, QString> it(map);
+    
+  while(it.hasNext())
     {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.setText(tr("Please fill all required fields."));
-      msgBox.setStandardButtons(QMessageBox::Ok);
-      msgBox.setDefaultButton(QMessageBox::Ok);
-      msgBox.exec();
-      return false;
+      it.next();
+      if(it.value().isEmpty())
+	{
+	  it.key()->setStyleSheet("border: 1px solid red;border-radius: 3px;");
+	  result = false;
+	}
+      else
+	{
+	  it.key()->setStyleSheet(QString());
+	}
     }
-  return true;
+  return result;
 }
 //------------------------------------------------------------------------------
 QString CDialogNewSong::songTemplate()
@@ -181,10 +193,7 @@ QString CDialogNewSong::songTemplate()
 void CDialogNewSong::addSong()
 {
   if ( !checkRequiredFields() )
-    {
-      new CDialogNewSong(parent());
-      return;
-    }
+    return;
 
   //make new dir
   QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(SbUtils::stringToFilename(artist(),"_"));
@@ -226,6 +235,7 @@ void CDialogNewSong::addSong()
 
   //add the song to the library
   parent()->refreshLibrary();
+  close();
 }
 //------------------------------------------------------------------------------
 QString CDialogNewSong::title() const

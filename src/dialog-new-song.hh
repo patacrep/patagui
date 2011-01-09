@@ -41,6 +41,7 @@ private slots:
   void setWorkingPath(QString);
   void browseCover();
   void addSong();
+  void accept();
 
 private:
   CMainWindow* parent() const;
@@ -65,6 +66,9 @@ private:
   QLineEdit* m_coverEdit;
   int m_nbColumns;
   int m_capo;
+
+  QLineEdit* m_titleEdit;
+  QLineEdit* m_artistEdit;
 };
 
 #endif // __DIALOG_NEW_SONG_HH__
