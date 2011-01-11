@@ -44,10 +44,10 @@ CMainWindow::CMainWindow()
   , m_library()
   , m_proxyModel(new CSongSortFilterProxyModel)
   , m_songbook(new CSongbook())
-  , m_sbInfoSelection(new QLabel)
-  , m_sbInfoTitle(new QLabel)
-  , m_sbInfoAuthors(new QLabel)
-  , m_sbInfoStyle(new QLabel)
+  , m_sbInfoSelection(new CLabel)
+  , m_sbInfoTitle(new CLabel)
+  , m_sbInfoAuthors(new CLabel)
+  , m_sbInfoStyle(new CLabel)
   , m_view(new QTableView(this))
   , m_progressBar(new QProgressBar(this))
   , m_cover(new QPixmap)
@@ -65,8 +65,6 @@ CMainWindow::CMainWindow()
   songbook()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
-  connect(songbook(), SIGNAL(wasModified(bool)),
-          this, SLOT(updateSongbookLabels(bool)));
   connect(this, SIGNAL(workingPathChanged(QString)),
 	  songbook(), SLOT(setWorkingPath(QString)));
   updateTitle(songbook()->filename());
@@ -150,7 +148,6 @@ CMainWindow::CMainWindow()
   dataLayout->addWidget(view());
   dataLayout->addWidget(m_noDataInfo);
   centerLayout->addLayout(leftLayout);
-  centerLayout->setStretch(0,1);
   centerLayout->addLayout(dataLayout);
   centerLayout->setStretch(1,2);
   mainLayout->addLayout(centerLayout);
@@ -182,7 +179,7 @@ CMainWindow::CMainWindow()
   applySettings();
   selectionChanged();
   songbook()->panel();
-  updateSongbookLabels(true);
+  updateSongbookLabels();
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
@@ -232,9 +229,9 @@ void CMainWindow::applySettings()
   view()->setColumnHidden(4,!m_displayColumnAlbum);
   view()->setColumnHidden(5,!m_displayColumnCover);
   view()->setColumnHidden(6,!m_displayColumnLang);
-  view()->setColumnWidth(0,200);
-  view()->setColumnWidth(1,300);
-  view()->setColumnWidth(4,200);
+  view()->setColumnWidth(0,250);
+  view()->setColumnWidth(1,350);
+  view()->setColumnWidth(4,250);
   log()->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
@@ -259,6 +256,8 @@ void CMainWindow::templateSettings()
   button->setDefault(true);
   connect( button, SIGNAL(clicked()), dialog, SLOT(accept()) );
   buttonBox->addButton(button, QDialogButtonBox::ActionRole);
+
+  connect( dialog, SIGNAL(accepted()), this, SLOT(updateSongbookLabels()) );
   
   layout->addWidget(songbookScrollArea);
   layout->addWidget(buttonBox);
@@ -266,7 +265,7 @@ void CMainWindow::templateSettings()
   dialog->show();  
 }
 //------------------------------------------------------------------------------
-void CMainWindow::updateSongbookLabels(bool modified)
+void CMainWindow::updateSongbookLabels()
 {
   m_sbInfoTitle->setText(songbook()->title());
   m_sbInfoAuthors->setText(songbook()->authors());
@@ -692,7 +691,14 @@ QGridLayout * CMainWindow::songbookInfo()
   layout->addWidget(new QLabel(tr("<i>Selection:</i>")),3,0,1,1);
   layout->addWidget(m_sbInfoSelection,3,1,1,2);
   layout->addWidget(button,4,2,1,1);
-  
+
+  m_sbInfoTitle->setElideMode(Qt::ElideRight);
+  m_sbInfoTitle->setFixedWidth(250);
+  m_sbInfoAuthors->setElideMode(Qt::ElideRight);
+  m_sbInfoAuthors->setFixedWidth(250);
+  m_sbInfoStyle->setElideMode(Qt::ElideRight);
+  m_sbInfoStyle->setFixedWidth(250);
+
   return layout;
 }
 //------------------------------------------------------------------------------

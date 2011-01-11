@@ -33,6 +33,7 @@ class CLibrary;
 class CTabWidget;
 class CDialogNewSong;
 class CBuildEngine;
+class CLabel;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -60,7 +61,7 @@ public slots:
   void refreshLibrary();
   void setWorkingPath(QString dirname);
   void templateSettings();
-  void updateSongbookLabels(bool);
+  void updateSongbookLabels();
   void updateView();
 
 signals:
@@ -132,10 +133,10 @@ private:
   CSongbook *m_songbook;
   uint m_sbNbSelected;
   uint m_sbNbTotal;
-  QLabel* m_sbInfoSelection;
-  QLabel* m_sbInfoTitle;
-  QLabel* m_sbInfoAuthors;
-  QLabel* m_sbInfoStyle;
+  CLabel* m_sbInfoSelection;
+  CLabel* m_sbInfoTitle;
+  CLabel* m_sbInfoAuthors;
+  CLabel* m_sbInfoStyle;
 
   // Widgets
   CTabWidget* m_mainWidget;
