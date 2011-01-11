@@ -484,13 +484,9 @@ void CSongbook::save(const QString & filename)
                     }
                   index *= 2;
                 }
-
-              if (!activatedFlags.isEmpty())
-                {
-                  out << "\"" << it.key() << "\" : [\n    \""
-                      << (activatedFlags.join("\",\n    \""))
-                      << "\"\n  ],\n";
-                }
+	      out << "\"" << it.key() << "\" : [\n    \""
+		  << (activatedFlags.join("\",\n    \""))
+		  << "\"\n  ],\n";
             }
 	  else //non variant types
 	    {
