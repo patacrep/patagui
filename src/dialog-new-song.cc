@@ -204,20 +204,12 @@ void CDialogNewSong::addSong()
     dir.mkpath(dirpath);
 
   //handle album and cover
-  QFile coverFile(cover());
-  if (coverFile.exists())
-    {
-      //copy in artist directory and resize
-      QFileInfo fi(cover());
-      QString target = QString("%1/%2").arg(dirpath).arg(fi.fileName());
-      coverFile.copy(target);
-      QFile copyCover(target);
-
-      //if album is specified, rename cover accordingly and remove if file already exists
-      if (!album().isEmpty() && !copyCover.rename(QString("%1/%3.jpg")
-						  .arg(dirpath)
-						  .arg(SbUtils::stringToFilename(album(),"-"))))
-	copyCover.remove();
+  if( SbUtils::copyFile(cover(), dirpath) && !album().isEmpty() )
+    { 
+      QFile copy(QString("%1/%2").arg(dirpath).arg(QFileInfo(cover()).fileName()));
+      QString convertedFileName(QString("%1.jpg").arg(SbUtils::stringToFilename(album(),"-")));
+      if( !copy.rename(QString("%1/%2").arg(dirpath).arg(convertedFileName)) )
+	copy.remove(); //file already exists
     }
 
   //write template in sg file
@@ -312,8 +304,8 @@ void CDialogNewSong::setLang(const QString & ALang )
 void CDialogNewSong::browseCover()
 {
   QString directory = QFileDialog::getOpenFileName(this, tr("Select cover image"),
-						  "/home",
-						  tr("Images (*.jpg)"));
+						   QDir::home().path(),
+						   tr("Images (*.jpg)"));
 
   if (!directory.isEmpty())
       m_coverEdit->setText(directory);

@@ -502,16 +502,9 @@ void CSongbook::save(const QString & filename)
 	      else if(it.key() == "picture")
 		{
 		  string_value = m_fileManager->value(property);
-		  //copy the file in songbook directory
-		  QFile file(string_value);
-		  if(file.exists())
-		    {
-		      QFileInfo fi(string_value);
-		      QString target = QString("%1/img/%2").arg(workingPath()).arg(fi.fileName());
-		      		      file.copy(target);
-		      //write basename as json value
-		      string_value = fi.baseName();
-		    }
+		  if(SbUtils::copyFile(string_value, QString("%1/img").arg(workingPath())))
+		    string_value = QFileInfo(string_value).baseName();
+		  
 		  if (!string_value.isEmpty())
 		    {
 		      out << "\"" << it.key() << "\" : \""

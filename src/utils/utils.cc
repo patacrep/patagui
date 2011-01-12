@@ -16,6 +16,10 @@
 // MA  02110-1301, USA.
 //******************************************************************************
 #include <QStringList>
+#include <QFile>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QDebug>
 
 #include "utils.hh"
 
@@ -83,5 +87,30 @@ namespace SbUtils
     str.replace(QString("ù"), QString("u"));
 
     return str;
+  }
+  //------------------------------------------------------------------------------
+  bool copyFile(const QString & ASourcePath, const QString & ATargetDirectory)
+  {
+    //qDebug() << "Copying file " << ASourcePath << " to the direcotry " << ATargetDirectory;
+    QFile sourceFile(ASourcePath);
+    if(sourceFile.exists())
+      {
+	QFileInfo sourceFileInfo(ASourcePath);
+	QString targetPath = QString("%1/%2").arg(ATargetDirectory).arg(sourceFileInfo.fileName());
+	QFile targetFile(targetPath);
+	QFileInfo targetFileInfo(targetPath);
+
+	//todo: Q_OBJECT/CMakeList -> to use tr macro for MessageBox strings
+	//ask for confirmation
+	if( targetFile.exists() && 
+	    QMessageBox::question(NULL, QString("File conflict"),
+				  QString("Replace the file \"%1\" ?").arg(targetFileInfo.fileName()),
+				  QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton) == QMessageBox::Yes)
+	  {
+	    targetFile.remove();
+	  }
+	return sourceFile.copy(targetPath); //QFile::copy does not overwrite data
+      }
+    return false;
   }
 }

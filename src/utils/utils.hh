@@ -28,6 +28,7 @@ namespace SbUtils
   QString latexToUtf8(const QString & str);
   QString filenameToString(const QString & str);
   QString stringToFilename(const QString & str, const QString & sep);
+  bool copyFile(const QString & ASourcePath, const QString & ATargetDirectory);
 }
 
 #endif // __UTILS_HH__
