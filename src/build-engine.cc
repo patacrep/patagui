@@ -105,14 +105,13 @@ void CBuildEngine::dialog()
 
   m_dialog->setWindowTitle(windowTitle());
   m_dialog->setMinimumWidth(450);
-  m_dialog->setMinimumHeight(450);
   m_dialog->show();
 }
 //------------------------------------------------------------------------------
 void CBuildEngine::updateDialog()
 {
   if(!mainWidget()) return;
-  delete m_layout;
+  //delete m_layout;
   
   m_layout = new QVBoxLayout;
   m_layout->addWidget(mainWidget());
@@ -125,7 +124,6 @@ void CBuildEngine::action()
   parent()->statusBar()->showMessage(statusActionMessage());
   parent()->progressBar()->show();
   parent()->log()->clear();
-  QApplication::processEvents();
   
   process()->start(fileName(), processOptions());
 }

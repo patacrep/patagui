@@ -53,7 +53,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/library.cc
   src/songbook.cc
   src/build-engine.cc
-  src/download.cc
   src/song-editor.cc
   src/highlighter.cc
   src/dialog-new-song.cc
@@ -70,6 +69,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/build-engine/resize-covers.cc
   src/build-engine/latex-preprocessing.cc
   src/build-engine/make-songbook.cc
+  src/build-engine/download.cc
   src/code-editor.cc
   )
 #-------------------------------------------------------------------------------
@@ -79,7 +79,6 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/preferences.hh
   src/library.hh
   src/build-engine.hh
-  src/download.hh
   src/songbook.hh
   src/song-editor.hh
   src/highlighter.hh
@@ -96,6 +95,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/build-engine/resize-covers.hh
   src/build-engine/latex-preprocessing.hh
   src/build-engine/make-songbook.hh
+  src/build-engine/download.hh
   src/code-editor.hh
   )
 #-------------------------------------------------------------------------------

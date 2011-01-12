@@ -56,7 +56,6 @@ public:
 
 public slots:
   void updateCover(const QModelIndex & index);
-  void downloadDialog();
   void rebuildLibrary();
   void refreshLibrary();
   void setWorkingPath(QString dirname);

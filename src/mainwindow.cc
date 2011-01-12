@@ -29,7 +29,7 @@
 #include "build-engine/resize-covers.hh"
 #include "build-engine/latex-preprocessing.hh"
 #include "build-engine/make-songbook.hh"
-#include "download.hh"
+#include "build-engine/download.hh"
 #include "song-editor.hh"
 #include "highlighter.hh"
 #include "dialog-new-song.hh"
@@ -425,12 +425,13 @@ void CMainWindow::createActions()
   m_rebuildLibraryAct->setStatusTip(tr("Rebuild the current song list from \".sg\" files"));
   connect(m_rebuildLibraryAct, SIGNAL(triggered()), this, SLOT(rebuildLibrary()));
 
+  m_builder = new CDownload(this);
   m_downloadDbAct = new QAction(tr("Download"),this);
-  m_downloadDbAct->setStatusTip(tr("Download songs from Patacrep"));
+  m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
 #if QT_VERSION >= 0x040600
   m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
 #endif
-  connect(m_downloadDbAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
+  connect(m_downloadDbAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
   m_toolbarViewAct = new QAction(tr("Toolbar"),this);
   m_toolbarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
@@ -948,23 +949,19 @@ void CMainWindow::setWorkingPath(QString dirname)
       m_workingPath = dirname;
       emit(workingPathChanged(dirname));
 
-      if (!m_first && QMessageBox::question
-       	  (this, this->windowTitle(),
-       	   QString(tr("The songbook directory has been changed.\n"
-		      "Would you like to scan for available songs ?")),
-       	   QMessageBox::Yes,
-       	   QMessageBox::No,
-       	   QMessageBox::NoButton) == QMessageBox::Yes)
-	{
-	  rebuildLibrary();
-	}
+//      if (!m_first && QMessageBox::question
+//       	  (this, this->windowTitle(),
+//       	   QString(tr("The songbook directory has been changed.\n"
+//		      "Would you like to scan for available songs ?")),
+//       	   QMessageBox::Yes,
+//       	   QMessageBox::No,
+//       	   QMessageBox::NoButton) == QMessageBox::Yes)
+	
+	  if(!m_first)
+	    rebuildLibrary();
+	
     }
   m_first = false;
-}
-//------------------------------------------------------------------------------
-void CMainWindow::downloadDialog()
-{
-  new CDownloadDialog(this);
 }
 //------------------------------------------------------------------------------
 QProgressBar * CMainWindow::progressBar() const
