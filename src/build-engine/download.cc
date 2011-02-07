@@ -29,7 +29,7 @@ CDownload::CDownload(CMainWindow* AParent)
   
   m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
   
-  setGitRepoUrl(QString("git://git.lohrun.net/songbook.git"));
+  setGitRepoUrl(QString("http://git.lohrun.net/songbook.git"));
   setDownloadPath(QDir::homePath()); // also initialise process working dir
   
   m_gitRepoLineEdit = new QLineEdit(gitRepoUrl());
