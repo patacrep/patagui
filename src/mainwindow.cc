@@ -568,13 +568,11 @@ void CMainWindow::refreshLibrary()
       ++count;
       i.next();
     }
-  
   progressBar()->show();
   progressBar()->setTextVisible(true);
   progressBar()->setRange(0, count);
 
   library()->retrieveSongs();
-
   progressBar()->setTextVisible(false);
   progressBar()->hide();
   statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
@@ -951,17 +949,8 @@ void CMainWindow::setWorkingPath(QString dirname)
       m_workingPath = dirname;
       emit(workingPathChanged(dirname));
 
-//      if (!m_first && QMessageBox::question
-//       	  (this, this->windowTitle(),
-//       	   QString(tr("The songbook directory has been changed.\n"
-//		      "Would you like to scan for available songs ?")),
-//       	   QMessageBox::Yes,
-//       	   QMessageBox::No,
-//       	   QMessageBox::NoButton) == QMessageBox::Yes)
-	
-	  if(!m_first)
-	    rebuildLibrary();
-	
+      if(!m_first)
+	rebuildLibrary();
     }
   m_first = false;
 }
@@ -1061,10 +1050,8 @@ void CMainWindow::deleteSong()
       QMessageBox::NoButton) == QMessageBox::Yes)
     {
       //remove entry in database
-      QSqlQuery query;
-      query.exec(QString("DELETE FROM songs WHERE path = '%1'").arg(path));
-      view()->hideRow(selectionModel()->currentIndex().row());
-	
+      library()->removeSong(path);
+
       //removal on disk
       QFile file(path);
       QFileInfo fileinfo(file);
