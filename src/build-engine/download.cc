@@ -29,7 +29,7 @@ CDownload::CDownload(CMainWindow* AParent)
   
   m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
   
-  setGitRepoUrl(QString("http://git.lohrun.net/songbook.git"));
+  setGitRepoUrl(QString("http://lohrun.net/git/songbook.git"));
   setDownloadPath(QDir::homePath()); // also initialise process working dir
   
   m_gitRepoLineEdit = new QLineEdit(gitRepoUrl());
@@ -95,7 +95,6 @@ void CDownload::action()
 				QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton) == QMessageBox::Yes )
 	{
 	  QProcess rmProcess;
-	  qDebug() << "rmPath = " << rmPath;
 	  rmProcess.start("rm", QStringList() << "-rf" << rmPath);
 	  rmProcess.waitForFinished();
 	}
@@ -113,9 +112,7 @@ void CDownload::action()
       msgBox.exec();
       return;
     }
-  qDebug() << "bouh";
   CBuildEngine::action();
-  qDebug() << "bah";
 }
 //------------------------------------------------------------------------------
 bool CDownload::checkGitDependency()
