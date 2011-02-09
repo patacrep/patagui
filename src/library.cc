@@ -17,6 +17,7 @@
 //******************************************************************************
 #include <QtGui>
 #include <QtSql>
+#include <QFileSystemWatcher>
 
 #include "library.hh"
 #include "mainwindow.hh"
@@ -42,6 +43,10 @@ CLibrary::CLibrary(CMainWindow* AParent)
   setHeaderData(5, Qt::Horizontal, tr("Cover"));
   setHeaderData(6, Qt::Horizontal, tr("Language"));
 
+  m_watcher = new QFileSystemWatcher;
+  connect(m_watcher, SIGNAL(fileChanged(const QString &)),
+	  this, SLOT(updateSong(const QString &)));
+
   m_pixmap = new QPixmap;
   m_pixmap->load(":/icons/fr.png");
   QPixmapCache::insert("french", *m_pixmap);
@@ -63,29 +68,33 @@ CMainWindow* CLibrary::parent()
 //------------------------------------------------------------------------------
 void CLibrary::retrieveSongs()
 {
+  //qDebug() << "CLibrary::retrieveSongs";
   uint count = 0;
   QStringList filter = QStringList() << "*.sg";
   QString path = QString("%1/songs/").arg(workingPath());
-  
+  QStringList paths;
+  if(!m_watcher->files().isEmpty())
+    m_watcher->removePaths(m_watcher->files());
+
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
   while(it.hasNext())
     {
-      parent()->statusBar()->showMessage(QString(tr("Found song : %1")).arg(it.fileInfo().fileName()));      
+      parent()->statusBar()->showMessage(QString(tr("Inserting song : %1")).arg(it.fileInfo().fileName()));
+      paths << it.fileInfo().absoluteFilePath();
       parent()->progressBar()->setValue(++count);
-      addSongFromFile(it.next());
+      addSong(it.next());
     }
-  submitAll();
+  m_watcher->addPaths(paths);
   emit(wasModified());
 }
 //------------------------------------------------------------------------------
-void CLibrary::addSongFromFile(const QString path)
+void CLibrary::addSong(const QString & path)
 {
   //do not insert if the song is already in the library
-  QSqlQuery query;
-  query.exec(QString("SELECT artist FROM songs WHERE path = '%1'").arg(path));
-  if (query.next())
+  if(containsSong(path))
     return;
 
+  //qDebug() << "CLibrary::addSong " << path;
   QFile file(path);
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -170,6 +179,38 @@ void CLibrary::addSongFromFile(const QString path)
 	  qWarning() << "CLibrary::addSongFromFile : unable to insert song " << path;
 	}
     }
+  submitAll();
+}
+//------------------------------------------------------------------------------
+void CLibrary::removeSong(const QString & path)
+{
+  //qDebug() << "CLibrary::removeSong " << path;
+  QModelIndex index = createIndex(0,3); //column 3 stores the path
+  QModelIndexList list = match(index, Qt::DisplayRole, path, -1, Qt::MatchExactly);
+
+  foreach(index, list)
+    removeRows(index.row(), 1);
+
+  submitAll();
+}
+//------------------------------------------------------------------------------
+void CLibrary::updateSong(const QString & path)
+{
+  //qDebug() << "CLibrary::updateSong " << path;
+  removeSong(path);
+  addSong(path);
+  emit(wasModified());
+}
+//------------------------------------------------------------------------------
+bool CLibrary::containsSong(const QString & path)
+{
+  //qDebug() << "CLibrary::containsSong " << path;
+  //QModelIndex index = createIndex(0,3); //column 3 stores the path
+  //QModelIndexList list = match(index, Qt::DisplayRole, path, -1, Qt::MatchExactly);
+  //return !list.isEmpty();
+  QSqlQuery query;
+  query.exec(QString("SELECT artist FROM songs WHERE path = '%1'").arg(path));
+  return query.next();
 }
 //------------------------------------------------------------------------------
 QVariant CLibrary::data(const QModelIndex &index, int role) const

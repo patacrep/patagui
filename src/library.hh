@@ -29,6 +29,7 @@
 #include <QSqlTableModel>
 
 class CMainWindow;
+class QFileSystemWatcher;
 
 class CLibrary : public QSqlTableModel
 {
@@ -40,14 +41,17 @@ public:
 
   QString workingPath() const;
   
-  void addSongFromFile(const QString path);
+  void addSong(const QString & path);
+  void removeSong(const QString & path);
+  bool containsSong(const QString & path);
   QVariant data(const QModelIndex &index, int role) const;
   CMainWindow* parent();
   
 public slots:
   void setWorkingPath(QString);
   void retrieveSongs();
-  
+  void updateSong(const QString & path);
+
 signals:
   void wasModified();
 
@@ -55,6 +59,7 @@ private:
   CMainWindow* m_parent;
   QPixmap* m_pixmap;
   QString m_workingPath;
+  QFileSystemWatcher* m_watcher;
 };
 
 #endif // __LIBRARY_HH__
