@@ -120,9 +120,15 @@ CMainWindow::CMainWindow()
   // filtering related widgets
   CFilterLineEdit *filterLineEdit = new CFilterLineEdit;
   m_proxyModel->setFilterKeyColumn(-1);
-
   connect(filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
+
+  //artist autocompletion in the filter bar
+  QCompleter *completer = new QCompleter;
+  artistCompleter->setModel(library());
+  artistCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  artistCompleter->setCompletionMode(QCompleter::InlineCompletion);
+  filterLineEdit->setCompleter(artistCompleter);
 
   // organize the toolbar and the filter into an horizontal layout
   QBoxLayout *horizontalLayout = new QHBoxLayout;
