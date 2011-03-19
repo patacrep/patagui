@@ -20,6 +20,7 @@
 #include <QtAlgorithms>
 #include <QDebug>
 
+#include <assert.h>
 #include "utils/utils.hh"
 #include "label.hh"
 #include "mainwindow.hh"
@@ -93,7 +94,9 @@ CMainWindow::CMainWindow()
 
   // toolbar (for the build button)
   m_toolbar = new QToolBar;
+  current_toolbar = m_toolbar;
   m_toolbar->setMovable(false);
+  this->setUnifiedTitleAndToolBarOnMac(true);
 
   createActions();
   createMenus();
@@ -126,7 +129,7 @@ CMainWindow::CMainWindow()
 
   // organize the toolbar and the filter into an horizontal layout
   QBoxLayout *horizontalLayout = new QHBoxLayout;
-  horizontalLayout->addWidget(m_toolbar);
+  this->addToolBar(m_toolbar);
   horizontalLayout->addStretch();
   horizontalLayout->addWidget(filterLineEdit);
 
@@ -192,6 +195,19 @@ CMainWindow::~CMainWindow()
     db.close();
   }
   QSqlDatabase::removeDatabase(QString());
+}
+
+void CMainWindow::switchToolBar( QToolBar * toolbar )
+{
+    if(toolbar != current_toolbar)
+    {
+        //keep this order to avoid 'jump' on mac os
+        this->addToolBar(toolbar);
+        toolbar->setVisible(true);
+        current_toolbar->setVisible(false);
+        this->removeToolBar(current_toolbar);
+        current_toolbar = toolbar;
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::readSettings()
@@ -1001,7 +1017,7 @@ void CMainWindow::songEditor()
   QString title = record.field("title").value().toString();
   QString path = record.field("path").value().toString();
 
-  CSongEditor* editor = new CSongEditor(path);
+  CSongEditor* editor = new CSongEditor(path,this);
   if (!editor->isOk)
     {
       delete editor;
@@ -1071,11 +1087,32 @@ void CMainWindow::closeTab(int index)
 {
   //forbid to close main tab
   if(index!=0)
+  {
+    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
+    {
+        this->removeToolBar(editor->getToolbar());
+    }
     m_mainWidget->closeTab(index);
+  }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::changeTab(int index)
 {
+  if(index == 0)
+  {
+    this->switchToolBar(m_toolbar);
+  }
+  else
+  {
+    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->currentWidget()))
+    {
+        this->switchToolBar(editor->getToolbar());
+    }
+    else
+    {
+        assert(false); //there shouldn't be a tab different than 0 which is not an editor
+    }
+  }
   //avoid shortcuts conflicts
   if(index!=0)
     m_saveAct->setShortcutContext(Qt::WidgetShortcut);
@@ -1092,6 +1129,10 @@ QTextEdit* CMainWindow::log() const
 //******************************************************************************
 CTabWidget::CTabWidget():QTabWidget()
 {
+  // change the tab mode on os x put between #ifdef __APPLE__ if necessary
+  setDocumentMode(true);
+
+  //
   tabBar()->hide();
   QAction* action = new QAction(tr("Next tab"), this);
   action->setShortcut(QKeySequence::NextChild);

@@ -71,6 +71,7 @@ protected:
 
 private slots:
 
+  void switchToolBar( QToolBar * toolbar );
   //songbook
   void newSongbook();
   void open();
@@ -175,6 +176,7 @@ private:
   QMenu *m_helpMenu;
 
   QToolBar *m_toolbar;
+  QToolBar *current_toolbar;
 
   // Application actions
   QAction *m_preferencesAct;
