@@ -9,4 +9,13 @@
     <file>icons/unselect-all.png</file>
     <file>icons/invert-selection.png</file>
 </qresource>
+<qresource prefix="icons/thm">
+    <file alias="index.theme">icons/thm/index.theme</file>
+
+    <file alias="16x16/application-exit.png">icons/thm/16x16/stop.png</file>
+    <file alias="16x16/document-open.png">icons/thm/16x16/folder_page.png</file>
+    <file >icons/thm/16x16/document-open.png</file>
+</qresource>
+
+
 </RCC>
