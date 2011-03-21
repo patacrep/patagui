@@ -128,10 +128,10 @@ CMainWindow::CMainWindow()
 
   //artist autocompletion in the filter bar
   QCompleter *completer = new QCompleter;
-  artistCompleter->setModel(library());
-  artistCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-  artistCompleter->setCompletionMode(QCompleter::InlineCompletion);
-  filterLineEdit->setCompleter(artistCompleter);
+  completer->setModel(library());
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  completer->setCompletionMode(QCompleter::InlineCompletion);
+  filterLineEdit->setCompleter(completer);
 
   // organize the toolbar and the filter into an horizontal layout
   QBoxLayout *horizontalLayout = new QHBoxLayout;
