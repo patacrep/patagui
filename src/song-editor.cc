@@ -17,6 +17,7 @@
 //******************************************************************************
 #include "song-editor.hh"
 #include "highlighter.hh"
+#include "mainwindow.hh"
 #include <QToolBar>
 #include <QAction>
 #include <QTextDocumentFragment>
@@ -28,12 +29,12 @@
 #include "code-editor.hh"
 
 //------------------------------------------------------------------------------
-CSongEditor::CSongEditor(const QString & APath)
+CSongEditor::CSongEditor(const QString & APath,CMainWindow* mw)
 {
   m_filePath = APath;
 
   // toolbar
-  QToolBar* toolbar = new QToolBar(this);
+  toolbar = new QToolBar(mw);
   toolbar->setMovable(false);
 
   //retrieve song text
@@ -125,7 +126,7 @@ CSongEditor::CSongEditor(const QString & APath)
       toolbar->addAction(action);
 
       QBoxLayout* layout = new QVBoxLayout;
-      layout->addWidget(toolbar);
+      layout->setContentsMargins(0,0,0,0);
       layout->addWidget(m_textEdit);
       setLayout(layout);
       isOk = true;
@@ -218,4 +219,9 @@ void CSongEditor::insertChorus()
 {
   QString selection = m_textEdit->textCursor().selectedText();
   m_textEdit->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
+}
+//------------------------------------------------------------------------------
+QToolBar* CSongEditor::getToolbar()
+{
+  return toolbar;
 }

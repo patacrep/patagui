@@ -26,18 +26,18 @@ CDownload::CDownload(CMainWindow* AParent)
   setStatusActionMessage(tr("Downloading the songbook library. Please wait ..."));
   setStatusSuccessMessage(tr("Download completed."));
   setStatusErrorMessage(tr("An error occured during the download."));
-  
+
   m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
-  
+
   setGitRepoUrl(QString("http://lohrun.net/git/songbook.git"));
   setDownloadPath(QDir::homePath()); // also initialise process working dir
-  
+
   m_gitRepoLineEdit = new QLineEdit(gitRepoUrl());
   connect(m_gitRepoLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setGitRepoUrl(QString)));
-  
+
   m_downloadLineEdit = new QLineEdit(downloadPath());
   connect(m_downloadLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setDownloadPath(QString)));
-  
+
   setFileName("git");
   setProcessOptions(QStringList() << "clone" << gitRepoUrl());
 }
@@ -101,7 +101,7 @@ void CDownload::action()
       else
 	return;
     }
-    
+
   if (!QUrl(gitRepoUrl()).isValid())
     {
       QMessageBox msgBox;

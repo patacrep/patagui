@@ -20,6 +20,8 @@
 
 #include <QWidget>
 #include <QString>
+#include <QToolBar>
+#include "mainwindow.hh"
 
 class CodeEditor;
 
@@ -28,7 +30,7 @@ class CSongEditor : public QWidget
   Q_OBJECT
 
 public:
-  CSongEditor(const QString & APath);
+  CSongEditor(const QString & APath,CMainWindow* mw);
   virtual ~CSongEditor();
 
   QString filePath();
@@ -40,8 +42,11 @@ public:
   QString label();
   void setLabel(const QString & ALabel);
 
+  QToolBar* getToolbar();
+
 private:
   QString syntaxicColoration(const QString &);
+  QToolBar* toolbar;
 
 private slots:
   //write modifications of the textEdit into sg file.
