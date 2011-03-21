@@ -123,8 +123,15 @@ CMainWindow::CMainWindow()
   // filtering related widgets
   CFilterLineEdit *filterLineEdit = new CFilterLineEdit;
   m_proxyModel->setFilterKeyColumn(-1);
+  filterLineEdit->setVisible(true);
   connect(filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
+
+  QWidget* stretchWidget = new QWidget;
+  stretchWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  m_toolbar->addWidget(stretchWidget);
+  m_toolbar->addWidget(filterLineEdit);
+  addToolBar(m_toolbar);
 
   //artist autocompletion in the filter bar
   QCompleter *completer = new QCompleter;
@@ -133,12 +140,8 @@ CMainWindow::CMainWindow()
   completer->setCompletionMode(QCompleter::InlineCompletion);
   filterLineEdit->setCompleter(completer);
 
-  // organize the toolbar and the filter into an horizontal layout
-  QBoxLayout *horizontalLayout = new QHBoxLayout;
-  this->addToolBar(m_toolbar);
-  horizontalLayout->addStretch();
-  horizontalLayout->addWidget(filterLineEdit);
-
+  addToolBar(m_toolbar);
+  
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection & , 
 						    const QItemSelection & )),
 	  this, SLOT(selectionChanged(const QItemSelection & , const QItemSelection & )));
@@ -164,7 +167,6 @@ CMainWindow::CMainWindow()
 
   QWidget* libraryTab = new QWidget;
   QBoxLayout *libraryLayout = new QVBoxLayout;
-  libraryLayout->addLayout(horizontalLayout);
   libraryLayout->addLayout(mainLayout);
   libraryTab->setLayout(libraryLayout);
 
