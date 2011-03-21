@@ -21,9 +21,11 @@
 
 CLabel::CLabel(QWidget *parent)
   : QLabel(parent)
-  , m_elideMode(Qt::ElideNone)
+  , m_elideMode(Qt::ElideRight)
   , m_textCache()
-{}
+{ 
+  setFixedWidth(175);
+}
 
 CLabel::~CLabel()
 {}
