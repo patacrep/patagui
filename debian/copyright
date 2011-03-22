@@ -8,11 +8,13 @@ Upstream Author(s):
 
     Romain Goffe <romain.goffe@gmail.com>
     Alexandre Dupas <alexandre.dupas@gmail.com>
+    Matthias Bussonnier <bussonniermatthias@gmail.com>
 
 Copyright:
 
-    <Copyright (C) 2010 Romain Goffe>
-    <Copyright (C) 2010 Alexandre Dupas>
+    <Copyright (C) 2011 Romain Goffe>
+    <Copyright (C) 2011 Alexandre Dupas>
+    <Copyright (C) 2011 Matthias Bussonnier>
 
 License:
 
@@ -34,7 +36,7 @@ License:
 
 The Debian packaging is:
 
-    Copyright (C) 2010 Romain Goffe <romain.goffe@gmail.com>
+    Copyright (C) 2011 Romain Goffe <romain.goffe@gmail.com>
 
 and is licensed under the GPL version 3, 
 see `/usr/share/common-licenses/GPL-3'.
