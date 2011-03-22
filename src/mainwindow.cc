@@ -378,7 +378,7 @@ void CMainWindow::createActions()
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
-  m_saveAsAct->setShortcut(QKeySequence::HelpContents);
+  m_documentationAct->setShortcut(QKeySequence::HelpContents);
   m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
@@ -391,7 +391,7 @@ void CMainWindow::createActions()
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
-  m_saveAsAct->setShortcut(QKeySequence::Close);
+  m_exitAct->setShortcut(QKeySequence::Close);
 #if QT_VERSION >= 0x040600
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
