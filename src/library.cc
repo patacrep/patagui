@@ -80,7 +80,9 @@ void CLibrary::retrieveSongs()
   while(it.hasNext())
     {
       parent()->statusBar()->showMessage(QString(tr("Inserting song : %1")).arg(it.fileInfo().fileName()));
-      paths << it.fileInfo().absoluteFilePath();
+      QString filePath = it.fileInfo().absoluteFilePath();
+      if(!filePath.isEmpty())
+	paths << filePath;
       parent()->progressBar()->setValue(++count);
       addSong(it.next());
     }
