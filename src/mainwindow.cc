@@ -131,7 +131,7 @@ CMainWindow::CMainWindow()
   stretchWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   m_toolbar->addWidget(stretchWidget);
   m_toolbar->addWidget(filterLineEdit);
-  addToolBar(m_toolbar);
+  m_toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
 
   //artist autocompletion in the filter bar
   QCompleter *completer = new QCompleter;
@@ -210,6 +210,7 @@ void CMainWindow::switchToolBar( QToolBar * toolbar )
     if(toolbar != current_toolbar)
     {
         //keep this order to avoid 'jump' on mac os
+        toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
         this->addToolBar(toolbar);
         toolbar->setVisible(true);
         current_toolbar->setVisible(false);
