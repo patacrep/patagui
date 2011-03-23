@@ -39,7 +39,7 @@ CDownload::CDownload(CMainWindow* AParent)
   connect(m_downloadLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setDownloadPath(QString)));
 
   setFileName("git");
-  setProcessOptions(QStringList() << "clone" << gitRepoUrl());
+  setProcessOptions(QStringList() << "clone" << << "--quiet" << "--depth" << "1" << gitRepoUrl());
 }
 //------------------------------------------------------------------------------
 QWidget* CDownload::mainWidget()
