@@ -30,7 +30,6 @@
  * \brief CTabWidget is a class.
  */
 
-
 class CTabWidget : public QTabWidget
 {
   Q_OBJECT
@@ -39,14 +38,12 @@ public:
   CTabWidget();
   virtual ~CTabWidget();
 
-  int addTab(QWidget* widget, const QString & label);
+  int addTab(QWidget *widget, const QString &label);
 
 public slots:
-  void closeTab(int);
-
-private slots:
-  void next();
+  void closeTab(int index);
   void prev();
+  void next();
 };
 
 #endif  // __TAB_WIDGET_HH__

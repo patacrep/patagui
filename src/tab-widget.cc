@@ -23,50 +23,45 @@
 
 #include <QDebug>
 
-//******************************************************************************
-//******************************************************************************
 CTabWidget::CTabWidget():QTabWidget()
 {
-  // change the tab mode on os x put between #ifdef __APPLE__ if necessary
   setDocumentMode(true);
 
-  //
   tabBar()->hide();
-  QAction* action = new QAction(tr("Next tab"), this);
+
+  QAction* action;
+  action = new QAction(tr("Next tab"), this);
   action->setShortcut(QKeySequence::NextChild);
   connect(action, SIGNAL(triggered()), this, SLOT(next()));
   action = new QAction(tr("Previous tab"), this);
   action->setShortcut(QKeySequence::PreviousChild);
   connect(action, SIGNAL(triggered()), this, SLOT(prev()));
 }
-//------------------------------------------------------------------------------
+
 CTabWidget::~CTabWidget()
 {}
-//------------------------------------------------------------------------------
+
 void CTabWidget::closeTab(int index)
 {
   removeTab(index);
-  if (count() == 1)
+  if (count() < 2)
     tabBar()->hide();
 }
-//------------------------------------------------------------------------------
+
 int CTabWidget::addTab(QWidget* widget, const QString & label)
 {
   int res = QTabWidget::addTab(widget, label);
-  tabBar()->show();
-  if (count() == 1)
-    tabBar()->hide();
+  if (count() > 1)
+    tabBar()->show();
   return res;
 }
-//------------------------------------------------------------------------------
+
 void CTabWidget::next()
 {
-  setCurrentIndex(currentIndex()+1);
+  setCurrentIndex(currentIndex() + 1);
 }
-//------------------------------------------------------------------------------
+
 void CTabWidget::prev()
 {
-  setCurrentIndex(currentIndex()-1);
+  setCurrentIndex(currentIndex() - 1);
 }
-//******************************************************************************
-//******************************************************************************
