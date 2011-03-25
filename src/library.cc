@@ -86,9 +86,11 @@ void CLibrary::retrieveSongs()
       parent()->progressBar()->setValue(++count);
       addSong(it.next());
     }
-  #ifndef __APPLE__
+
+#ifndef __APPLE__
   m_watcher->addPaths(paths);
-  #endif
+#endif
+
   emit(wasModified());
 }
 //------------------------------------------------------------------------------
