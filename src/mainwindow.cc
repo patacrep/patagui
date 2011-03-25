@@ -1099,14 +1099,13 @@ void CMainWindow::closeTab(int index)
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
   if (editor)
     {
-      removeToolBar(editor->getToolbar());
       m_mainWidget->closeTab(index);
     }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::changeTab(int index)
 {
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->currentWidget());
+  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
 
   if (editor)
     {
