@@ -34,6 +34,7 @@ class CTabWidget;
 class CDialogNewSong;
 class CBuildEngine;
 class CLabel;
+class CTabWidget;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -210,24 +211,6 @@ private:
   // Tools actions
   QAction *m_resizeCoversAct;
   QAction *m_checkerAct;
-};
-
-class CTabWidget : public QTabWidget
-{
-  Q_OBJECT
-
-public:
-  CTabWidget();
-  virtual ~CTabWidget();
-
-  int addTab(QWidget* widget, const QString & label);
-
-public slots:
-  void closeTab(int);
-
-private slots:
-  void next();
-  void prev();
 };
 
 #endif  // __MAIN_WINDOW_HH__

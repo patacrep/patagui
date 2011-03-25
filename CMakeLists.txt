@@ -71,6 +71,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/build-engine/make-songbook.cc
   src/build-engine/download.cc
   src/code-editor.cc
+  src/tab-widget.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -97,6 +98,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/build-engine/make-songbook.hh
   src/build-engine/download.hh
   src/code-editor.hh
+  src/tab-widget.hh
   )
 #-------------------------------------------------------------------------------
 # ressources
