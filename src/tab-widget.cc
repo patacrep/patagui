@@ -29,7 +29,7 @@ CTabWidget::CTabWidget()
 {
   setDocumentMode(true);
 
-  tabBar()->hide();
+  updateTabBarVisibility();
 
   QAction* action;
   action = new QAction(tr("Next tab"), this);
@@ -56,20 +56,28 @@ void CTabWidget::setSelectionBehaviorOnAdd(CTabWidget::SelectionBehavior behavio
 void CTabWidget::closeTab(int index)
 {
   removeTab(index);
-  if (count() < 2)
-    tabBar()->hide();
+  
+  updateTabBarVisibility();
 }
 
 int CTabWidget::addTab(QWidget* widget, const QString & label)
 {
   int index = QTabWidget::addTab(widget, label);
 
+  updateTabBarVisibility();
+
   if (selectionBehaviorOnAdd() == SelectNew)
     setCurrentIndex(index);
 
+  return index;
+}
+
+void CTabWidget::updateTabBarVisibility()
+{
   if (count() > 1)
     tabBar()->show();
-  return index;
+  else
+    tabBar()->hide();
 }
 
 void CTabWidget::next()

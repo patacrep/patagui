@@ -54,6 +54,9 @@ public slots:
   void prev();
   void next();
 
+protected:
+  void updateTabBarVisibility();
+
 private:
   SelectionBehavior m_selectionBehaviorOnAdd;
 };
