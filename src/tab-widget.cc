@@ -23,7 +23,9 @@
 
 #include <QDebug>
 
-CTabWidget::CTabWidget():QTabWidget()
+CTabWidget::CTabWidget()
+  : QTabWidget()
+  , m_selectionBehaviorOnAdd(SelectCurrent)
 {
   setDocumentMode(true);
 
@@ -41,6 +43,16 @@ CTabWidget::CTabWidget():QTabWidget()
 CTabWidget::~CTabWidget()
 {}
 
+CTabWidget::SelectionBehavior CTabWidget::selectionBehaviorOnAdd() const
+{
+  return m_selectionBehaviorOnAdd;
+}
+
+void CTabWidget::setSelectionBehaviorOnAdd(CTabWidget::SelectionBehavior behavior)
+{
+  m_selectionBehaviorOnAdd = behavior;
+}
+
 void CTabWidget::closeTab(int index)
 {
   removeTab(index);
@@ -50,10 +62,14 @@ void CTabWidget::closeTab(int index)
 
 int CTabWidget::addTab(QWidget* widget, const QString & label)
 {
-  int res = QTabWidget::addTab(widget, label);
+  int index = QTabWidget::addTab(widget, label);
+
+  if (selectionBehaviorOnAdd() == SelectNew)
+    setCurrentIndex(index);
+
   if (count() > 1)
     tabBar()->show();
-  return res;
+  return index;
 }
 
 void CTabWidget::next()

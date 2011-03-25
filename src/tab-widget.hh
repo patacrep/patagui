@@ -33,17 +33,29 @@
 class CTabWidget : public QTabWidget
 {
   Q_OBJECT
+  Q_ENUMS(SelectionBehavior)
+  Q_PROPERTY(SelectionBehavior selectionBehaviorOnAdd
+	     READ selectionBehaviorOnAdd
+	     WRITE setSelectionBehaviorOnAdd)
 
 public:
+  enum SelectionBehavior { SelectCurrent, SelectNew };
+
   CTabWidget();
   virtual ~CTabWidget();
 
   int addTab(QWidget *widget, const QString &label);
+  
+  SelectionBehavior selectionBehaviorOnAdd() const;
+  void setSelectionBehaviorOnAdd(SelectionBehavior behavior);
 
 public slots:
   void closeTab(int index);
   void prev();
   void next();
+
+private:
+  SelectionBehavior m_selectionBehaviorOnAdd;
 };
 
 #endif  // __TAB_WIDGET_HH__
