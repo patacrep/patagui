@@ -1095,39 +1095,28 @@ void CMainWindow::deleteSong()
 //------------------------------------------------------------------------------
 void CMainWindow::closeTab(int index)
 {
-  //forbid to close main tab
-  if(index!=0)
-  {
-    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
+  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
+  if (editor)
     {
-        this->removeToolBar(editor->getToolbar());
+      removeToolBar(editor->getToolbar());
+      m_mainWidget->closeTab(index);
     }
-    m_mainWidget->closeTab(index);
-  }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::changeTab(int index)
 {
-  if(index == 0)
-  {
-    this->switchToolBar(m_toolbar);
-  }
-  else
-  {
-    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->currentWidget()))
+  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->currentWidget());
+
+  if (editor)
     {
-        this->switchToolBar(editor->getToolbar());
+      switchToolBar(editor->getToolbar());
+      m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
-    else
-    {
-        assert(false); //there shouldn't be a tab different than 0 which is not an editor
-    }
-  }
-  //avoid shortcuts conflicts
-  if(index!=0)
-    m_saveAct->setShortcutContext(Qt::WidgetShortcut);
   else
-    m_saveAct->setShortcutContext(Qt::WindowShortcut);
+    {
+      switchToolBar(m_toolbar);
+      m_saveAct->setShortcutContext(Qt::WindowShortcut);
+    }
 }
 //------------------------------------------------------------------------------
 QTextEdit* CMainWindow::log() const
