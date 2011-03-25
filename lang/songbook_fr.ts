@@ -682,7 +682,7 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
     <message>
         <location filename="../src/mainwindow.cc" line="755"/>
         <source>&lt;br&gt;This program is a client for building and customizing the songbooks available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; %1 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation>&lt;br&gt;Cette application permet de générer de de personnaliser les recueils de chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; %1 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+        <translation>&lt;br&gt;Cette application permet de générer et de personnaliser les recueils de chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; %1 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
         <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3.2 October 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
@@ -761,7 +761,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
     <message>
         <location filename="../src/mainwindow.cc" line="83"/>
         <source>&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;The directory &lt;b&gt;%1&lt;/b&gt; does not contain any song file (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; You may :&lt;ul&gt;&lt;li&gt;select a valid directory in the menu &lt;i&gt;Edit/Preferences&lt;/i&gt;&lt;/li&gt;&lt;li&gt;use the menu &lt;i&gt;Library/Download&lt;/i&gt; to get the latest git snapshot&lt;/li&gt;&lt;li&gt;manually download the latest tarball on &lt;a href=&quot;http://www.patacrep.com/static1/downloads&quot;&gt;patacrep.com&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
-        <translation>&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;Le répertoire &lt;b&gt;%1&lt;/b&gt; ne contient aucune chanson (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; Vous pouvez :&lt;ul&gt;&lt;li&gt;sélectionner un répertoire valide dans le menu &lt;i&gt;Édition/Préférences&lt;/i&gt; ;&lt;/li&gt;&lt;li&gt;utiliser le menu &lt;i&gt;Bibliothèque/Télécharger&lt;/i&gt; pour récupérer la dernière version du dépôt git ;&lt;/li&gt;&lt;li&gt;télécharger manuellement l&apos;archive &quot;.tar.gz&quot; disponoible sur &lt;a href=&quot;http://www.patacrep.com/static1/downloads&quot;&gt;patacrep.com&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
+        <translation>&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;Le répertoire &lt;b&gt;%1&lt;/b&gt; ne contient aucune chanson (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; Vous pouvez :&lt;ul&gt;&lt;li&gt;sélectionner un répertoire valide dans le menu &lt;i&gt;Édition/Préférences&lt;/i&gt; ;&lt;/li&gt;&lt;li&gt;utiliser le menu &lt;i&gt;Bibliothèque/Télécharger&lt;/i&gt; pour récupérer la dernière version du dépôt git ;&lt;/li&gt;&lt;li&gt;télécharger manuellement l&apos;archive &quot;.tar.gz&quot; disponible sur &lt;a href=&quot;http://www.patacrep.com/static1/downloads&quot;&gt;patacrep.com&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cc" line="397"/>
@@ -1226,7 +1226,7 @@ Cette application nécessite le support de SQLITE. Cliquez sur annuler pour quit
     <message>
         <location filename="../src/build-engine/make-songbook.cc" line="49"/>
         <source>Songbook successfully generated.</source>
-        <translation>La recueil de chansons a été correctement généré.</translation>
+        <translation>Le recueil de chansons a été correctement généré.</translation>
     </message>
     <message>
         <location filename="../src/build-engine/make-songbook.cc" line="50"/>
