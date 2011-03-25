@@ -205,17 +205,16 @@ CMainWindow::~CMainWindow()
   QSqlDatabase::removeDatabase(QString());
 }
 
-void CMainWindow::switchToolBar( QToolBar * toolbar )
+void CMainWindow::switchToolBar(QToolBar * toolbar)
 {
-    if(toolbar != current_toolbar)
+  if (toolbar != current_toolbar)
     {
-        //keep this order to avoid 'jump' on mac os
-        toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
-        this->addToolBar(toolbar);
-        toolbar->setVisible(true);
-        current_toolbar->setVisible(false);
-        this->removeToolBar(current_toolbar);
-        current_toolbar = toolbar;
+      toolbar->setContextMenuPolicy(Qt::PreventContextMenu); // avoid 'jump' on MacOS
+      addToolBar(toolbar);
+      toolbar->setVisible(true);
+      current_toolbar->setVisible(false);
+      removeToolBar(current_toolbar);
+      current_toolbar = toolbar;
     }
 }
 //------------------------------------------------------------------------------
