@@ -175,6 +175,7 @@ CMainWindow::CMainWindow()
   m_mainWidget = new CTabWidget;
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
+  m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
   connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
 	   this, SLOT(closeTab(int)) );
   connect( m_mainWidget, SIGNAL(currentChanged(int)),
@@ -1033,7 +1034,7 @@ void CMainWindow::songEditor()
       delete editor;
       return;
     }
-  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
+  m_mainWidget->addTab(editor, title);
   editor->setTabIndex(m_mainWidget->currentIndex());
   editor->setLabel(title);
   connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
