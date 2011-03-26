@@ -422,19 +422,19 @@ void CMainWindow::createActions()
 
   m_selectEnglishAct = new QAction(tr("english"), this);
   m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
-  m_selectEnglishAct->setIcon(QIcon(":/icons/en.png"));
+  m_selectEnglishAct->setIcon(QIcon::fromTheme("flag-en",QIcon(":/icons/en.png")));
   m_selectEnglishAct->setCheckable(true);
   connect(m_selectEnglishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectFrenchAct = new QAction(tr("french"), this);
   m_selectFrenchAct->setStatusTip(tr("Select/Unselect songs in french"));
-  m_selectFrenchAct->setIcon(QIcon(":/icons/fr.png"));
+  m_selectFrenchAct->setIcon(QIcon::fromTheme("flag-fr",QIcon(":/icons/fr.png")));
   m_selectFrenchAct->setCheckable(true);
   connect(m_selectFrenchAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectSpanishAct = new QAction(tr("spanish"), this);
   m_selectSpanishAct->setStatusTip(tr("Select/Unselect songs in spanish"));
-  m_selectSpanishAct->setIcon(QIcon(":/icons/es.png"));
+  m_selectSpanishAct->setIcon(QIcon::fromTheme("flag-es",QIcon(":/icons/es.png")));
   m_selectSpanishAct->setCheckable(true);
   connect(m_selectSpanishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
