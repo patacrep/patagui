@@ -229,9 +229,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 
       if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
 	{
-#if QT_VERSION >= 0x040600
 	  *m_pixmap = QPixmap(QIcon::fromTheme("audio-x-generic").pixmap(24,24));
-#endif
 	  if ( role == Qt::DecorationRole )
 	    return *m_pixmap;
 	  
@@ -251,15 +249,8 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       if ( Qt::DisplayRole == role )
 	return QString();
 
-#if QT_VERSION >= 0x040600
       *m_pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
-#endif
-
-#if QT_VERSION >= 0x040600
       if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, m_pixmap))
-#else
-      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, *m_pixmap))
-#endif
 	{
 	  *m_pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
 	  QPixmapCache::insert(imgFile, *m_pixmap);
@@ -283,11 +274,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       if ( role == Qt::ToolTipRole )
       	return lang;
 
-#if QT_VERSION >= 0x040600
       if(QPixmapCache::find(lang, m_pixmap))
-#else
-      if(QPixmapCache::find(lang, *m_pixmap))
-#endif
 	{
 	  if ( role == Qt::DecorationRole )
 	    return *m_pixmap;
