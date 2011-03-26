@@ -48,8 +48,8 @@ protected:
 private:
   void createIcons();
 
-  QListWidget *contentsWidget;
-  QStackedWidget *pagesWidget;
+  QListWidget *m_contentsWidget;
+  QStackedWidget *m_pagesWidget;
 };
 
 /** \brief DisplayPage is the config page used to specify display options
