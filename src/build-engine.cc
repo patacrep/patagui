@@ -22,13 +22,15 @@
 
 CBuildEngine::CBuildEngine(CMainWindow* AParent)
   : QWidget()
+  , m_layout(NULL)
+  , m_widget(NULL)
 {
   m_parent = AParent;
   m_workingPath = parent()->workingPath();
 
   m_process = new QProcess(AParent);
   process()->setWorkingDirectory(parent()->workingPath());
-   
+
   setStatusSuccessMessage(tr("Success!"));
   setStatusErrorMessage(tr("Error!"));
   
@@ -94,7 +96,7 @@ void CBuildEngine::dialog()
 
   QPushButton * button = new QPushButton(tr("Close"));
   m_buttonBox->addButton(button, QDialogButtonBox::DestructiveRole);
-  connect(button, SIGNAL(clicked()), m_dialog, SLOT(close()) );
+  connect(button, SIGNAL(clicked()), this, SLOT(close()) );
 
   button = new QPushButton(tr("Apply"));
   button->setDefault(true);
@@ -110,13 +112,17 @@ void CBuildEngine::dialog()
 //------------------------------------------------------------------------------
 void CBuildEngine::updateDialog()
 {
-  if(!mainWidget()) return;
-  //delete m_layout;
-  
-  m_layout = new QVBoxLayout;
-  m_layout->addWidget(mainWidget());
-  m_layout->addWidget(m_buttonBox);
-  m_dialog->setLayout(m_layout);
+  if(!(m_widget = mainWidget()))
+    return;
+
+  if(!m_layout)
+    {
+      m_layout = new QVBoxLayout;
+      m_layout->addWidget(m_widget);
+      m_layout->addWidget(m_buttonBox);
+      m_dialog->setLayout(m_layout);
+    }
+  m_dialog->update();
 }
 //------------------------------------------------------------------------------
 void CBuildEngine::action()
@@ -126,6 +132,13 @@ void CBuildEngine::action()
   parent()->log()->clear();
   
   process()->start(fileName(), processOptions());
+}
+//------------------------------------------------------------------------------
+void CBuildEngine::close()
+{
+  delete m_widget; m_widget=NULL;
+  delete m_layout; m_layout=NULL;
+  m_dialog->close();
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::windowTitle() const

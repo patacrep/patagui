@@ -41,6 +41,7 @@ public slots:
   virtual void dialog();
   virtual void updateDialog();
   virtual void action();
+  virtual void close();
  
   virtual void setWorkingPath(QString);
  
@@ -84,5 +85,6 @@ private:
   QString m_statusErrorMessage;
   QStringList m_processOptions;
   QLayout *m_layout;
+  QWidget *m_widget;
 };
 #endif // __BUILD_ENGINE_HH__

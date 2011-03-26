@@ -32,12 +32,6 @@ CDownload::CDownload(CMainWindow* AParent)
   setGitRepoUrl(QString("http://lohrun.net/git/songbook.git"));
   setDownloadPath(QDir::homePath()); // also initialise process working dir
 
-  m_gitRepoLineEdit = new QLineEdit(gitRepoUrl());
-  connect(m_gitRepoLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setGitRepoUrl(QString)));
-
-  m_downloadLineEdit = new QLineEdit(downloadPath());
-  connect(m_downloadLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setDownloadPath(QString)));
-
   setFileName("git");
   setProcessOptions(QStringList() << "clone" << "--quiet" << "--depth" << "1" << gitRepoUrl());
 }
@@ -47,18 +41,26 @@ QWidget* CDownload::mainWidget()
   if(!checkGitDependency())
     return NULL;
 
+  m_gitRepoLineEdit = new QLineEdit(gitRepoUrl());
+  connect(m_gitRepoLineEdit, SIGNAL(textChanged(QString)),
+	  this, SLOT(setGitRepoUrl(QString)));
+
+  m_downloadLineEdit = new QLineEdit(downloadPath());
+  connect(m_downloadLineEdit, SIGNAL(textChanged(QString)),
+	  this, SLOT(setDownloadPath(QString)));
+
   QWidget* widget = new QWidget;
   QPushButton* button = new QPushButton(tr("Browse"));
   connect(button, SIGNAL(clicked()), this, SLOT(browse()) );
 
-  QLayout* layout = new QGridLayout;
-  static_cast<QGridLayout*>(layout)->addWidget(new QLabel(tr("Remote repository:")), 0,0,1,1);
-  static_cast<QGridLayout*>(layout)->addWidget(m_gitRepoLineEdit, 0,1,1,2);
-  static_cast<QGridLayout*>(layout)->addWidget(new QLabel(tr("Target directory:")), 1,0,1,1);
-  static_cast<QGridLayout*>(layout)->addWidget(m_downloadLineEdit, 1,1,1,1);
-  static_cast<QGridLayout*>(layout)->addWidget(button, 1,2,1,1);
-  static_cast<QGridLayout*>(layout)->setRowStretch(2,1);
-  static_cast<QGridLayout*>(layout)->setColumnStretch(1,1);
+  QGridLayout* layout = new QGridLayout;
+  layout->addWidget(new QLabel(tr("Remote repository:")), 0,0,1,1);
+  layout->addWidget(m_gitRepoLineEdit, 0,1,1,2);
+  layout->addWidget(new QLabel(tr("Target directory:")), 1,0,1,1);
+  layout->addWidget(m_downloadLineEdit, 1,1,1,1);
+  layout->addWidget(button, 1,2,1,1);
+  layout->setRowStretch(2,1);
+  layout->setColumnStretch(1,1);
   widget->setLayout(layout);
   return widget;
 }
