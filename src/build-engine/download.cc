@@ -69,6 +69,8 @@ void CDownload::processExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
   CBuildEngine::processExit(exitCode, exitStatus);
   parent()->setWorkingPath(QString("%1/songbook").arg(downloadPath()));
+  QSettings settings;
+  settings.setValue("workingPath", parent()->workingPath());
 }
 //------------------------------------------------------------------------------
 void CDownload::action()
