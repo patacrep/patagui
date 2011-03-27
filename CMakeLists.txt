@@ -61,6 +61,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/unit-factory.cc
   src/file-property-manager.cc
   src/file-factory.cc
+  src/file-chooser.cc
   src/songSortFilterProxyModel.cc
   src/filter-lineedit.cc
   src/utils/lineedit.cc
@@ -89,6 +90,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/unit-factory.hh
   src/file-property-manager.hh
   src/file-factory.hh
+  src/file-chooser.hh
   src/songSortFilterProxyModel.hh
   src/filter-lineedit.hh
   src/utils/lineedit.hh
