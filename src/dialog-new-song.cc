@@ -19,6 +19,7 @@
 #include "dialog-new-song.hh"
 #include "utils/utils.hh"
 #include "mainwindow.hh"
+#include <QLayout>
 
 CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   : QDialog()
@@ -28,19 +29,12 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   ,m_artist()
   ,m_nbColumns(2)
   ,m_capo(0)
+  ,m_titleEdit(new QLineEdit)
+  ,m_artistEdit(new QLineEdit)
 {
   m_workingPath = parent()->workingPath();
   connect(parent(), SIGNAL(workingPathChanged(QString)),
 	  this, SLOT(setWorkingPath(QString)));
-
-  //Required fields
-  //title
-  QLabel* titleLabel = new QLabel(tr("Title: "));
-  m_titleEdit = new QLineEdit;
-
-  //artist
-  QLabel* artistLabel = new QLabel(tr("Artist: "));
-  m_artistEdit = new QLineEdit;
 
   //Optional fields
   //album
@@ -83,11 +77,9 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   connect( buttonClose, SIGNAL(clicked()), this, SLOT(close()) );
 
   QGroupBox* requiredFieldsBox = new QGroupBox(tr("Required fields"));
-  QGridLayout* requiredLayout = new QGridLayout;
-  requiredLayout->addWidget(titleLabel,   0,0,1,1);
-  requiredLayout->addWidget(m_titleEdit,  0,1,1,1);
-  requiredLayout->addWidget(artistLabel,  1,0,1,1);
-  requiredLayout->addWidget(m_artistEdit, 1,1,1,1);
+  QFormLayout *requiredLayout = new QFormLayout;
+  requiredLayout->addRow(tr("&Title:"), m_titleEdit);
+  requiredLayout->addRow(tr("&Artist:"), m_artistEdit);
   requiredFieldsBox->setLayout(requiredLayout);
 
   QGroupBox* optionalFieldsBox = new QGroupBox(tr("Optional fields"));
