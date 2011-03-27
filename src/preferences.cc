@@ -17,6 +17,7 @@
 //******************************************************************************
 
 #include "preferences.hh"
+#include "file-chooser.hh"
 
 #include <QtGui>
 
@@ -178,9 +179,14 @@ void DisplayPage::closeEvent(QCloseEvent *event)
 
 OptionsPage::OptionsPage(QWidget *parent)
   : QWidget(parent)
+  ,m_workingPath(new CFileChooser(CFileChooser::DirectoryChooser))
+  ,m_workingPathValid(new QLabel)
 {
-  m_workingPath = new QLineEdit;
-  m_workingPathValid = new QLabel;
+  m_workingPath->setWindowTitle(tr("Songbook path"));
+  m_workingPath->setDefaultLocation(m_workingPath->text());
+  connect(m_workingPath->lineEdit(), SIGNAL(textChanged(const QString&)),
+          this, SLOT(checkWorkingPath(const QString&)));
+
   readSettings();
   QSettings settings;
   QString workingDir = settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString();
@@ -189,17 +195,11 @@ OptionsPage::OptionsPage(QWidget *parent)
   QGroupBox *workingPathGroupBox
     = new QGroupBox(tr("Directory for Patacrep Songbook"));
 
-  QPushButton *browseWorkingPathButton = new QPushButton(tr("Browse"));
-  connect(browseWorkingPathButton, SIGNAL(clicked()),
-          this, SLOT(browse()));
-  connect(m_workingPath, SIGNAL(textChanged(const QString&)),
-          this, SLOT(checkWorkingPath(const QString&)));
   checkWorkingPath(workingDir);
 
-  QGridLayout *workingPathLayout = new QGridLayout;
-  workingPathLayout->addWidget(m_workingPath,0,0,1,1);
-  workingPathLayout->addWidget(browseWorkingPathButton,0,1,1,1);
-  workingPathLayout->addWidget(m_workingPathValid,1,0,2,1);
+  QLayout *workingPathLayout = new QVBoxLayout;
+  workingPathLayout->addWidget(m_workingPath);
+  workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
   // check application
@@ -226,18 +226,6 @@ OptionsPage::OptionsPage(QWidget *parent)
   setLayout(mainLayout);
 
   checkApplication();
-}
-
-void OptionsPage::browse()
-{
-  QString path = QFileDialog::getExistingDirectory(this,
-                                                   tr("Songbook path"),
-                                                   m_workingPath->text());
-
-  if (!path.isEmpty())
-    {
-      m_workingPath->setText(path);
-    }
 }
 
 void OptionsPage::readSettings()

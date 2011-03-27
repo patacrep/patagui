@@ -29,6 +29,7 @@ class QStackedWidget;
 class QLabel;
 class QLineEdit;
 class QCheckBox;
+class CFileChooser;
 
 /** \brief ConfigDialog handles the display of the config pages
  */
@@ -91,7 +92,6 @@ protected:
   void closeEvent(QCloseEvent *event);
 
 private slots:
-  void browse();
   void checkWorkingPath(const QString &path);
 
   void checkApplication();
@@ -101,7 +101,7 @@ private:
   void readSettings();
   void writeSettings();
 
-  QLineEdit *m_workingPath;
+  CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
 
   QLabel *m_lilypondLabel;
