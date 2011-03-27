@@ -17,6 +17,7 @@
 //******************************************************************************
 #include "download.hh"
 #include "mainwindow.hh"
+#include "file-chooser.hh"
 #include <QLayout>
 
 CDownload::CDownload(CMainWindow* AParent)
@@ -41,26 +42,21 @@ QWidget* CDownload::mainWidget()
   if(!checkGitDependency())
     return NULL;
 
-  m_gitRepoLineEdit = new QLineEdit(gitRepoUrl());
-  connect(m_gitRepoLineEdit, SIGNAL(textChanged(QString)),
+  QLineEdit* gitRepoLineEdit = new QLineEdit(gitRepoUrl());
+  connect(gitRepoLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(setGitRepoUrl(QString)));
 
-  m_downloadLineEdit = new QLineEdit(downloadPath());
-  connect(m_downloadLineEdit, SIGNAL(textChanged(QString)),
+  CFileChooser* download = new CFileChooser(CFileChooser::DirectoryChooser);
+  download->setWindowTitle(tr("Target directory"));
+  download->setDefaultLocation(downloadPath());
+  download->setText(downloadPath());
+  connect(download->lineEdit(), SIGNAL(textChanged(QString)),
 	  this, SLOT(setDownloadPath(QString)));
 
   QWidget* widget = new QWidget;
-  QPushButton* button = new QPushButton(tr("Browse"));
-  connect(button, SIGNAL(clicked()), this, SLOT(browse()) );
-
-  QGridLayout* layout = new QGridLayout;
-  layout->addWidget(new QLabel(tr("Remote repository:")), 0,0,1,1);
-  layout->addWidget(m_gitRepoLineEdit, 0,1,1,2);
-  layout->addWidget(new QLabel(tr("Target directory:")), 1,0,1,1);
-  layout->addWidget(m_downloadLineEdit, 1,1,1,1);
-  layout->addWidget(button, 1,2,1,1);
-  layout->setRowStretch(2,1);
-  layout->setColumnStretch(1,1);
+  QFormLayout* layout = new QFormLayout;
+  layout->addRow(tr("Remote repository:"), gitRepoLineEdit);
+  layout->addRow(tr("Target directory:"),  download);
   widget->setLayout(layout);
   return widget;
 }
@@ -140,14 +136,6 @@ bool CDownload::checkGitDependency()
   msgBox.setDefaultButton(QMessageBox::Cancel);
   msgBox.exec();
   return false;
-}
-//------------------------------------------------------------------------------
-void CDownload::browse()
-{
-  QString directory = QFileDialog::getExistingDirectory(this, tr("Target directory"),
-                                                        downloadPath());
-  if (!directory.isEmpty())
-    m_downloadLineEdit->setText(directory);
 }
 //------------------------------------------------------------------------------
 QString CDownload::downloadPath()

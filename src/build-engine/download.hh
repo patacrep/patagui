@@ -21,7 +21,6 @@
 #include "build-engine.hh"
 
 class QLabel;
-class QLineEdit;
 class CMainWindow;
 
 class CDownload : public CBuildEngine
@@ -37,7 +36,6 @@ public slots:
   virtual void processExit(int exitCode, QProcess::ExitStatus exitStatus);
 
 private slots:
-  void browse();
   void setGitRepoUrl(QString);
   void setDownloadPath(QString);
 
@@ -51,8 +49,6 @@ private:
   QLabel* m_gitLabel;
   QString m_downloadPath;
   QString m_gitRepoUrl;
-  QLineEdit* m_downloadLineEdit;
-  QLineEdit* m_gitRepoLineEdit;
 };
 
 #endif // __DOWNLOAD_HH__
