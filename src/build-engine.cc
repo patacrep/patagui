@@ -22,8 +22,10 @@
 
 CBuildEngine::CBuildEngine(CMainWindow* AParent)
   : QWidget()
-  , m_layout(NULL)
-  , m_widget(NULL)
+  , m_dialog(NULL)
+  , m_statusActionMessage(tr("Processing"))
+  , m_statusSuccessMessage(tr("Success!"))
+  , m_statusErrorMessage(tr("Error!"))
 {
   m_parent = AParent;
   m_workingPath = parent()->workingPath();
@@ -31,9 +33,6 @@ CBuildEngine::CBuildEngine(CMainWindow* AParent)
   m_process = new QProcess(AParent);
   process()->setWorkingDirectory(parent()->workingPath());
 
-  setStatusSuccessMessage(tr("Success!"));
-  setStatusErrorMessage(tr("Error!"));
-  
   connect(parent(), SIGNAL(workingPathChanged(QString)),
 	  this, SLOT(setWorkingPath(QString)));
   
@@ -61,10 +60,7 @@ void CBuildEngine::processExit(int exitCode, QProcess::ExitStatus exitStatus)
   parent()->progressBar()->hide();
   
   if (exitStatus == QProcess::NormalExit && exitCode==0)
-    {
-      parent()->statusBar()->showMessage(statusSuccessMessage());
-      updateDialog();
-    }
+    parent()->statusBar()->showMessage(statusSuccessMessage());
   else
     processError(QProcess::UnknownError);
 }
@@ -89,56 +85,37 @@ void CBuildEngine::readProcessOut()
 //------------------------------------------------------------------------------
 void CBuildEngine::dialog()
 {
-  if(!mainWidget()) return;
+  if(!mainWidget())
+    return;
 
   m_dialog = new QDialog;
-  m_buttonBox = new QDialogButtonBox;
 
-  QPushButton * button = new QPushButton(tr("Close"));
-  m_buttonBox->addButton(button, QDialogButtonBox::DestructiveRole);
-  connect(button, SIGNAL(clicked()), this, SLOT(close()) );
+  QDialogButtonBox* buttonBox =
+    new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-  button = new QPushButton(tr("Apply"));
-  button->setDefault(true);
-  m_buttonBox->addButton(button, QDialogButtonBox::ActionRole);
-  connect(button, SIGNAL(clicked()), this, SLOT(action()) );
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(action()));
+  connect(buttonBox, SIGNAL(rejected()), m_dialog, SLOT(close()));
 
-  updateDialog();
+  QLayout *layout = new QVBoxLayout;
+  layout->addWidget(mainWidget());
+  layout->addWidget(buttonBox);
+  m_dialog->setLayout(layout);
 
   m_dialog->setWindowTitle(windowTitle());
   m_dialog->setMinimumWidth(450);
   m_dialog->show();
 }
 //------------------------------------------------------------------------------
-void CBuildEngine::updateDialog()
-{
-  if(!(m_widget = mainWidget()))
-    return;
-
-  if(!m_layout)
-    {
-      m_layout = new QVBoxLayout;
-      m_layout->addWidget(m_widget);
-      m_layout->addWidget(m_buttonBox);
-      m_dialog->setLayout(m_layout);
-    }
-  m_dialog->update();
-}
-//------------------------------------------------------------------------------
 void CBuildEngine::action()
 {
+  if(m_dialog)
+    m_dialog->close();
+
   parent()->statusBar()->showMessage(statusActionMessage());
   parent()->progressBar()->show();
   parent()->log()->clear();
   
   process()->start(fileName(), processOptions());
-}
-//------------------------------------------------------------------------------
-void CBuildEngine::close()
-{
-  delete m_widget; m_widget=NULL;
-  delete m_layout; m_layout=NULL;
-  m_dialog->close();
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::windowTitle() const

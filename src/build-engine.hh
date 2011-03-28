@@ -39,9 +39,7 @@ public slots:
   virtual void readProcessOut();
   
   virtual void dialog();
-  virtual void updateDialog();
   virtual void action();
-  virtual void close();
  
   virtual void setWorkingPath(QString);
  
@@ -75,7 +73,6 @@ private:
   CMainWindow* m_parent;
   QProcess* m_process;
   QDialog* m_dialog;
-  QDialogButtonBox *m_buttonBox;
   QString m_workingPath;
   
   QString m_fileName;
@@ -84,7 +81,6 @@ private:
   QString m_statusSuccessMessage;
   QString m_statusErrorMessage;
   QStringList m_processOptions;
-  QLayout *m_layout;
-  QWidget *m_widget;
+
 };
 #endif // __BUILD_ENGINE_HH__
