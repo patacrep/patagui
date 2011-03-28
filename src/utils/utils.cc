@@ -72,12 +72,7 @@ namespace SbUtils
     foreach(item, list)
       str.replace(item, QString("e"));
 
-    list = QStringList() 
-      << " "<<"&"<<"'"<<"`"<<"("<<")"<<"["<<"]"<<"{"<<"}"
-      <<"_"<<"~"<<","<<"?"<<"!"<<":"<<";"<<"."<<"%";
-  
-    foreach(item, list)
-      str.replace(item, sep);
+    str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
 
     str.replace(QString("à"), QString("a"));
     str.replace(QString("â"), QString("a"));

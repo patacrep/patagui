@@ -175,7 +175,7 @@ void CDialogNewSong::addSong()
     dir.mkpath(dirpath);
 
   //handle album and cover
-  if( SbUtils::copyFile(cover(), dirpath) && !album().isEmpty() )
+  if(SbUtils::copyFile(cover(), dirpath) && !album().isEmpty() )
     { 
       QFile copy(QString("%1/%2").arg(dirpath).arg(QFileInfo(cover()).fileName()));
       QString convertedFileName(QString("%1.jpg").arg(SbUtils::stringToFilename(album(),"-")));
