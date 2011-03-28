@@ -204,7 +204,7 @@ QString CDialogNewSong::title() const
   return m_title;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setTitle(QString ATitle )
+void CDialogNewSong::setTitle(const QString &ATitle)
 {
   m_title = ATitle;
 }
@@ -214,7 +214,7 @@ QString CDialogNewSong::artist() const
   return m_artist;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setArtist(QString AArtist )
+void CDialogNewSong::setArtist(const QString &AArtist)
 {
   m_artist = AArtist;
 }
@@ -245,7 +245,7 @@ QString CDialogNewSong::album() const
   return m_album;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setAlbum(QString AAlbum )
+void CDialogNewSong::setAlbum(const QString &AAlbum)
 {
   m_album = AAlbum;
 }
@@ -255,7 +255,7 @@ QString CDialogNewSong::cover() const
   return m_cover;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setCover(QString ACover )
+void CDialogNewSong::setCover(const QString &ACover)
 {
   m_cover = ACover;
 }
@@ -265,7 +265,7 @@ QString CDialogNewSong::lang() const
   return m_lang;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setLang(const QString & ALang )
+void CDialogNewSong::setLang(const QString & ALang)
 {
   m_lang = ALang;
 }
@@ -275,9 +275,9 @@ QString CDialogNewSong::workingPath() const
   return m_workingPath;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setWorkingPath(QString value)
+void CDialogNewSong::setWorkingPath(const QString &path)
 {
-  m_workingPath = value;
+  m_workingPath = path;
 }
 //------------------------------------------------------------------------------
 CMainWindow* CDialogNewSong::parent() const

@@ -31,14 +31,14 @@ public:
   virtual ~CDialogNewSong();
 
 private slots:
-  void setTitle(QString);
-  void setArtist(QString);
+  void setTitle(const QString &title);
+  void setArtist(const QString &artist);
   void setNbColumns(int);
   void setCapo(int);
-  void setAlbum(QString);
-  void setCover(QString);
-  void setLang(const QString &);
-  void setWorkingPath(QString);
+  void setAlbum(const QString &album);
+  void setCover(const QString &cover);
+  void setLang(const QString &lang);
+  void setWorkingPath(const QString &path);
   void addSong();
   void accept();
 
