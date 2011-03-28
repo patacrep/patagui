@@ -1117,6 +1117,17 @@ void CMainWindow::closeTab(int index)
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
   if (editor)
     {
+      if (editor->document()->isModified())
+	{
+	  QMessageBox::StandardButton answer = 
+	    QMessageBox::question(this,
+				  tr("Close"),
+				  tr("There is unsaved modification in the current editor, do you really want to close it?"),
+				  QMessageBox::Ok | QMessageBox::Cancel,
+				  QMessageBox::Cancel);
+	  if (answer != QMessageBox::Ok)
+	    return;
+	}
       m_editors.remove(editor->path());
       m_mainWidget->closeTab(index);
     }
