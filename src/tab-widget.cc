@@ -60,6 +60,11 @@ void CTabWidget::closeTab(int index)
   updateTabBarVisibility();
 }
 
+int CTabWidget::addTab(QWidget* widget)
+{
+  return addTab(widget, widget->windowTitle());
+}
+
 int CTabWidget::addTab(QWidget* widget, const QString & label)
 {
   int index = QTabWidget::addTab(widget, label);

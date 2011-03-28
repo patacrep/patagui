@@ -44,6 +44,7 @@ public:
   CTabWidget();
   virtual ~CTabWidget();
 
+  int addTab(QWidget *widget);
   int addTab(QWidget *widget, const QString &label);
   
   SelectionBehavior selectionBehaviorOnAdd() const;
