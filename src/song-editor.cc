@@ -139,6 +139,7 @@ void CSongEditor::save()
       QTextStream stream (&file);
       stream << toPlainText();
       file.close();
+      document()->setModified(false);
       setWindowTitle(windowTitle().remove(" *"));
       emit(labelChanged(windowTitle()));
     }
