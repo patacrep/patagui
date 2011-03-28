@@ -27,7 +27,6 @@ class QListWidgetItem;
 class QStackedWidget;
 
 class QLabel;
-class QLineEdit;
 class QCheckBox;
 class CFileChooser;
 
