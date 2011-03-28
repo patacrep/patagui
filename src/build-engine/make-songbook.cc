@@ -21,8 +21,7 @@
 CMakeSongbook::CMakeSongbook(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
-  setFileName("make");
-
+  setProcessName("make");
   setProcessOptions(QStringList());
   
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();

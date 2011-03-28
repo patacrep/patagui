@@ -21,7 +21,7 @@
 CResizeCovers::CResizeCovers(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
-  setFileName("./utils/resize-cover.sh");
+  setProcessName("./utils/resize-cover.sh");
   setWindowTitle(tr("Resize covers"));
   setStatusActionMessage(tr("Resizing covers. Please wait ..."));
   setStatusSuccessMessage(tr("Covers correctly resized."));

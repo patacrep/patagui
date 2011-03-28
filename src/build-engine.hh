@@ -47,8 +47,8 @@ public:
   virtual QWidget* mainWidget()=0;
   virtual CMainWindow* parent();
   
-  virtual QString fileName() const;
-  virtual void setFileName(const QString & value);
+  virtual QString processName() const;
+  virtual void setProcessName(const QString & value);
 
   virtual QString windowTitle() const;
   virtual void setWindowTitle(const QString & value);
@@ -75,7 +75,7 @@ private:
   QDialog* m_dialog;
   QString m_workingPath;
   
-  QString m_fileName;
+  QString m_processName;
   QString m_windowTitle;
   QString m_statusActionMessage;
   QString m_statusSuccessMessage;

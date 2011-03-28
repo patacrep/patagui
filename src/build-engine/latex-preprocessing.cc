@@ -22,7 +22,7 @@
 CLatexPreprocessing::CLatexPreprocessing(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
-  setFileName("./utils/latex-preprocessing.py");
+  setProcessName("./utils/latex-preprocessing.py");
   setWindowTitle(tr("LaTeX preprocessing"));
   setStatusActionMessage(tr("Check \".sg\" files for common mistakes. "
 			    "Please wait ..."));

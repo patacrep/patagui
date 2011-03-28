@@ -115,7 +115,7 @@ void CBuildEngine::action()
   parent()->progressBar()->show();
   parent()->log()->clear();
   
-  process()->start(fileName(), processOptions());
+  process()->start(processName(), processOptions());
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::windowTitle() const
@@ -128,14 +128,14 @@ void CBuildEngine::setWindowTitle(const QString & value)
   m_windowTitle = value;
 }
 //------------------------------------------------------------------------------
-QString CBuildEngine::fileName() const
+QString CBuildEngine::processName() const
 {
-  return m_fileName;
+  return m_processName;
 }
 //------------------------------------------------------------------------------
-void CBuildEngine::setFileName(const QString & value)
+void CBuildEngine::setProcessName(const QString & value)
 {
-  m_fileName = value;
+  m_processName = value;
 }
 //------------------------------------------------------------------------------
 QString CBuildEngine::statusSuccessMessage() const

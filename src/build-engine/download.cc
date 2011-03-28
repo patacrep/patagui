@@ -32,7 +32,7 @@ CDownload::CDownload(CMainWindow* AParent)
   m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
   setGitRepoUrl(QString("http://lohrun.net/git/songbook.git"));
 
-  setFileName("git");
+  setProcessName("git");
   setProcessOptions(QStringList() << "clone" << "--quiet" << "--depth" << "1" << gitRepoUrl());
 }
 //------------------------------------------------------------------------------
