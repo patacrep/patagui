@@ -1060,7 +1060,12 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 //------------------------------------------------------------------------------
 void CMainWindow::newSong()
 {
-  m_newSongDialog = new CDialogNewSong(this);
+  CDialogNewSong *dialog = new CDialogNewSong(this);
+  if (dialog->exec() == QDialog::Accepted)
+    {
+      songEditor(dialog->path(), dialog->title());
+    }
+  delete dialog;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong()
