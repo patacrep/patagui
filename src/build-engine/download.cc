@@ -98,12 +98,7 @@ void CDownload::action()
 
   if (!QUrl(gitRepoUrl()).isValid())
     {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText(tr("The Git repository url is not valid."));
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
+      parent()->statusBar()->showMessage(tr("The Git repository url is not valid."));
       return;
     }
   process()->setWorkingDirectory(downloadPath());
