@@ -46,11 +46,11 @@ QWidget* CDownload::mainWidget()
   connect(gitRepoLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(setGitRepoUrl(QString)));
 
-  CFileChooser* download = new CFileChooser(CFileChooser::DirectoryChooser);
-  download->setWindowTitle(tr("Target directory"));
-  download->setDefaultLocation(downloadPath());
-  download->setText(downloadPath());
-  connect(download->lineEdit(), SIGNAL(textChanged(QString)),
+  CFileChooser *download = new CFileChooser();
+  download->setType(CFileChooser::DirectoryChooser);
+  download->setCaption(tr("Target directory"));
+  download->setPath(downloadPath());
+  connect(download, SIGNAL(pathChanged(QString)),
 	  this, SLOT(setDownloadPath(QString)));
 
   QWidget* widget = new QWidget;

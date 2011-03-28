@@ -41,8 +41,9 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   //Optional fields
   QLineEdit* albumEdit = new QLineEdit;
 
-  CFileChooser* coverEdit = new CFileChooser(CFileChooser::FileChooser);
-  coverEdit->setWindowTitle(tr("Select cover image"));
+  CFileChooser* coverEdit = new CFileChooser();
+  coverEdit->setType(CFileChooser::OpenFileChooser);
+  coverEdit->setCaption(tr("Select cover image"));
   coverEdit->setFilter(tr("Images (*.jpg)"));
 
   QComboBox* langComboBox = new QComboBox;
@@ -92,7 +93,7 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)) );
   connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)) );
   connect(albumEdit, SIGNAL(textChanged(QString)), this, SLOT(setAlbum(QString)) );
-  connect(coverEdit->lineEdit(), SIGNAL(textChanged(QString)), this, SLOT(setCover(QString)) );
+  connect(coverEdit, SIGNAL(pathChanged(const QString&)), this, SLOT(setCover(const QString&)) );
 
   setLayout(layout);
   setWindowTitle(tr("New song"));

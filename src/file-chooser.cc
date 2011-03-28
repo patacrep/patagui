@@ -15,32 +15,36 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-
 #include "file-chooser.hh"
-#include <QDir>
+
 #include <QFileDialog>
+
+#include <QFileInfo>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QDebug>
 #include <QBoxLayout>
 
-CFileChooser::CFileChooser(const TypeChooser & type)
+#include <QDebug>
+
+CFileChooser::CFileChooser()
   : QWidget()
-  ,m_readOnly(false)
-  ,m_type(type)
-  ,m_filter()
-  ,m_text()
-  ,m_windowTitle(QString(tr("Choose a file")))
-  ,m_defaultLocation(QDir::currentPath())
-  ,m_lineEdit(new QLineEdit)
-  ,m_button(new QPushButton(tr("Browse")))
+  , m_type(CFileChooser::OpenFileChooser)
+  , m_filter()
+  , m_caption()
+  , m_directory(QDir::currentPath())
+  , m_lineEdit(0)
+  , m_button(0)
 {
-  connect(m_button, SIGNAL(clicked()), 
-	  this, SLOT(browse()));
+  m_lineEdit = new QLineEdit();
+
+  m_button = new QPushButton(tr("Browse"));
+  connect(m_button, SIGNAL(clicked()), SLOT(browse()));
 
   QLayout* layout = new QHBoxLayout;
   layout->addWidget(m_lineEdit);
   layout->addWidget(m_button);
+  // disable layout's margin to have a proper "one widget" appeareance
+  layout->setContentsMargins(0, 0, 0, 0);
   setLayout(layout);
 }
 
@@ -49,59 +53,33 @@ CFileChooser::~CFileChooser()
 
 void CFileChooser::browse()
 {
-  QString str;
-  if (type() == FileChooser)
-    str = QFileDialog::getOpenFileName(NULL, windowTitle(), defaultLocation(), filter());
-  else if (type() == DirectoryChooser)
-    str = QFileDialog::getExistingDirectory(NULL, windowTitle(), defaultLocation());
-  else
-    qWarning() << "CFileChooser::browse : unknow type";
-
-  if (!str.isEmpty())
-    m_lineEdit->setText(str);
-}
-
-QString CFileChooser::filter() const
-{
-  return m_filter;
-}
-
-void CFileChooser::setFilter(QString str)
-{
-  if (type() == DirectoryChooser)
-    qWarning() << "CFileChooser::setFilter : directories do not support filters";
-
-  m_filter = str;
-}
-
-QString CFileChooser::text() const
-{
-  return m_lineEdit->text();
-}
-
-void CFileChooser::setText(QString str)
-{
-  m_lineEdit->setText(str);
-}
-
-QString CFileChooser::windowTitle() const
-{
-  return m_windowTitle;
-}
-
-void CFileChooser::setWindowTitle(QString str)
-{
-  m_windowTitle = str;
-}
-
-QString CFileChooser::defaultLocation() const
-{
-  return m_defaultLocation;
-}
-
-void CFileChooser::setDefaultLocation(QString str)
-{
-  m_defaultLocation = str;
+  QString path;
+  switch (type())
+    {
+    case CFileChooser::OpenFileChooser:
+      path = QFileDialog::getOpenFileName(NULL,
+					  caption(),
+					  directory().path(),
+					  filter());
+      break;
+    case CFileChooser::SaveFileChooser:
+      path = QFileDialog::getSaveFileName(NULL,
+					  caption(),
+					  directory().path(),
+					  filter());
+      break;
+    case CFileChooser::DirectoryChooser:
+      path = QFileDialog::getExistingDirectory(NULL,
+					       caption(),
+					       directory().path());
+      break;
+    default:
+      qWarning() << "CFileChooser::browse : unknow type";
+      break;
+    }
+  
+  if (!path.isEmpty())
+    setPath(path);
 }
 
 CFileChooser::TypeChooser CFileChooser::type() const
@@ -109,17 +87,60 @@ CFileChooser::TypeChooser CFileChooser::type() const
   return m_type;
 }
 
-void CFileChooser::setType(CFileChooser::TypeChooser type)
+void CFileChooser::setType(const CFileChooser::TypeChooser &type)
 {
   m_type = type;
 }
 
-QLineEdit* CFileChooser::lineEdit() const
+QString CFileChooser::filter() const
 {
-  return m_lineEdit;
+  return m_filter;
 }
 
-QPushButton* CFileChooser::button() const
+void CFileChooser::setFilter(const QString &filter)
 {
-  return m_button;
+  m_filter = filter;
+}
+
+QString CFileChooser::caption() const
+{
+  return m_caption;
+}
+
+void CFileChooser::setCaption(const QString &caption)
+{
+  m_caption = caption;
+}
+
+QDir CFileChooser::directory() const
+{
+  return m_directory;
+}
+
+void CFileChooser::setDirectory(const QString &directory)
+{
+  m_directory = QDir(directory);
+}
+
+void CFileChooser::setDirectory(const QDir &directory)
+{
+  m_directory = directory;
+}
+
+QString CFileChooser::path() const
+{
+  return m_lineEdit->text();
+}
+
+void CFileChooser::setPath(const QString &path)
+{
+  m_lineEdit->setText(path);
+
+  QFileInfo fileInfo(path);
+  if (fileInfo.isDir())
+    setDirectory(path);
+  else
+    setDirectory(fileInfo.dir());
+
+  emit(pathChanged(path));
 }

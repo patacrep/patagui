@@ -23,8 +23,9 @@
 #ifndef __FILE_CHOOSER_HH__
 #define __FILE_CHOOSER_HH__
 
-#include <QTabWidget>
+#include <QWidget>
 #include <QString>
+#include <QDir>
 
 /** \class CFileChooser "file-chooser-widget.hh"
  *  \brief CFileChooser is a small widget composed
@@ -40,38 +41,39 @@ class CFileChooser : public QWidget
   Q_ENUMS(TypeChooser)
 
 public:
-  enum TypeChooser { FileChooser, DirectoryChooser };
-  CFileChooser(const TypeChooser & type);
-  virtual ~CFileChooser();
+  enum TypeChooser { OpenFileChooser, SaveFileChooser, DirectoryChooser };
+
+  CFileChooser();
+  ~CFileChooser();
 
   TypeChooser type() const;
-  void setType(TypeChooser);
+  void setType(const TypeChooser &type);
 
   QString filter() const;
-  void setFilter(QString);
+  void setFilter(const QString &filter);
 
-  QString text() const;
-  void setText(QString);
+  QString caption() const;
+  void setCaption(const QString &caption);
 
-  QString windowTitle() const;
-  void setWindowTitle(QString);
+  QDir directory() const;
+  void setDirectory(const QString &directory);
+  void setDirectory(const QDir &directory);
 
-  QString defaultLocation() const;
-  void setDefaultLocation(QString);
+  QString path() const;
+  void setPath(const QString &path);
 
-  QLineEdit* lineEdit() const;
-  QPushButton* button() const;
-			   
+signals:
+  void pathChanged(const QString &path);
+
 private slots:
   void browse();
 
 private:
-  bool m_readOnly;
   TypeChooser m_type;
   QString m_filter;
-  QString m_text;
-  QString m_windowTitle;
-  QString m_defaultLocation;
+  QString m_caption;
+  QDir m_directory;
+
   QLineEdit* m_lineEdit;
   QPushButton* m_button;
 };

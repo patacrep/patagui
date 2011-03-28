@@ -179,23 +179,25 @@ void DisplayPage::closeEvent(QCloseEvent *event)
 
 OptionsPage::OptionsPage(QWidget *parent)
   : QWidget(parent)
-  ,m_workingPath(new CFileChooser(CFileChooser::DirectoryChooser))
-  ,m_workingPathValid(new QLabel)
+  , m_workingPath(0)
+  , m_workingPathValid(0)
 {
-  m_workingPath->setWindowTitle(tr("Songbook path"));
-  m_workingPath->setDefaultLocation(m_workingPath->text());
-  connect(m_workingPath->lineEdit(), SIGNAL(textChanged(const QString&)),
+  m_workingPathValid = new QLabel;
+
+  m_workingPath = new CFileChooser();
+  m_workingPath->setType(CFileChooser::DirectoryChooser);
+  m_workingPath->setCaption(tr("Songbook path"));
+
+  connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
           this, SLOT(checkWorkingPath(const QString&)));
 
   readSettings();
-  QSettings settings;
-  QString workingDir = settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString();
 
   // working path
   QGroupBox *workingPathGroupBox
     = new QGroupBox(tr("Directory for Patacrep Songbook"));
 
-  checkWorkingPath(workingDir);
+  checkWorkingPath(m_workingPath->path());
 
   QLayout *workingPathLayout = new QVBoxLayout;
   workingPathLayout->addWidget(m_workingPath);
@@ -231,13 +233,13 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  m_workingPath->setText(settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString());
+  m_workingPath->setPath(settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString());
 }
 
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.setValue("workingPath", m_workingPath->text());
+  settings.setValue("workingPath", m_workingPath->path());
 }
 
 void OptionsPage::closeEvent(QCloseEvent *event)
