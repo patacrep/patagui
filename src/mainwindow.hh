@@ -32,6 +32,7 @@ class CSongbook;
 class CLibrary;
 class CTabWidget;
 class CDialogNewSong;
+class CSongEditor;
 class CBuildEngine;
 class CLabel;
 class CTabWidget;
@@ -85,7 +86,6 @@ private slots:
   //library
   void newSong();
   void songEditor();
-  void changeTabLabel();
   void deleteSong();
 
   //model
@@ -211,6 +211,9 @@ private:
   // Tools actions
   QAction *m_resizeCoversAct;
   QAction *m_checkerAct;
+
+  // Editors
+  QMap< QString, CSongEditor* > m_editors;
 };
 
 #endif  // __MAIN_WINDOW_HH__

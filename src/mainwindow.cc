@@ -1028,25 +1028,20 @@ void CMainWindow::songEditor()
   QString title = record.field("title").value().toString();
   QString path = record.field("path").value().toString();
 
-  CSongEditor* editor = new CSongEditor(path,this);
-  if (!editor->isOk)
+  if (m_editors.contains(path))
     {
-      delete editor;
+      m_mainWidget->setCurrentWidget(m_editors[path]);
       return;
     }
-  m_mainWidget->addTab(editor, title);
-  editor->setTabIndex(m_mainWidget->currentIndex());
-  editor->setLabel(title);
-  connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
-}
-//------------------------------------------------------------------------------
-void CMainWindow::changeTabLabel()
-{
-  QObject *object = QObject::sender();
-  if (CSongEditor *editor = qobject_cast< CSongEditor* >(object))
-    {
-      m_mainWidget->setTabText(editor->tabIndex(), editor->label());
-    }
+
+  CSongEditor* editor = new CSongEditor();
+  editor->setPath(path);
+  editor->setWindowTitle(title);
+  connect(editor, SIGNAL(labelChanged(const QString&)),
+	  m_mainWidget, SLOT(changeTabText(const QString&)));
+  m_mainWidget->addTab(editor);
+  
+  m_editors.insert(path, editor);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSong()
@@ -1099,6 +1094,7 @@ void CMainWindow::closeTab(int index)
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
   if (editor)
     {
+      m_editors.remove(editor->path());
       m_mainWidget->closeTab(index);
     }
 }
@@ -1109,7 +1105,7 @@ void CMainWindow::changeTab(int index)
 
   if (editor)
     {
-      switchToolBar(editor->getToolbar());
+      switchToolBar(editor->toolbar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else

@@ -18,35 +18,25 @@
 #ifndef __SONG_EDITOR_HH__
 #define __SONG_EDITOR_HH__
 
-#include <QWidget>
-#include <QString>
+#include "code-editor.hh"
+
 #include <QToolBar>
-#include "mainwindow.hh"
 
-class CodeEditor;
-
-class CSongEditor : public QWidget
+class CSongEditor : public CodeEditor
 {
   Q_OBJECT
 
 public:
-  CSongEditor(const QString & APath,CMainWindow* mw);
-  virtual ~CSongEditor();
+  CSongEditor();
+  ~CSongEditor();
 
-  QString filePath();
-  void setFilePath(const QString & APath);
+  QString path();
+  void setPath(const QString & APath);
 
-  int tabIndex();
-  void setTabIndex(int AIndex);
+  QToolBar* toolbar();
 
-  QString label();
-  void setLabel(const QString & ALabel);
-
-  QToolBar* getToolbar();
-
-private:
-  QString syntaxicColoration(const QString &);
-  QToolBar* toolbar;
+signals:
+  void labelChanged(const QString &label);
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -55,17 +45,11 @@ private slots:
   void insertVerse();
   void insertChorus();
 
-signals:
-  void labelChanged();
-
-public:
-  CodeEditor* m_textEdit;
-  bool isOk;
-
 private:
-  QString m_filePath;
-  QString m_label; //tab title
-  int m_tabIndex;  //tab index
+  QString syntaxicColoration(const QString &);
+
+  QToolBar* m_toolbar;
+  QString m_path;
 };
 
 #endif // __SONG_EDITOR_HH__
