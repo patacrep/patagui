@@ -1014,12 +1014,7 @@ void CMainWindow::songEditor()
 {
   if (!selectionModel()->hasSelection())
     {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.setText(tr("Please select a song to edit."));
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
+      statusBar()->showMessage(tr("Please select a song to edit."));
       return;
     }
 
@@ -1072,12 +1067,7 @@ void CMainWindow::deleteSong()
 {
   if (!selectionModel()->hasSelection())
     {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.setText(tr("Please select a song to remove."));
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
+      statusBar()->showMessage(tr("Please select a song to remove."));
       return;
     }
 
