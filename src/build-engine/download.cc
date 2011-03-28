@@ -74,12 +74,7 @@ void CDownload::action()
   QDir dir(downloadPath());
   if ( !dir.exists() )
     {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText( tr("The download directory does not exist.") );
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
+      parent()->statusBar()->showMessage(tr("The download directory does not exist."));
       return;
     }
 
@@ -128,13 +123,7 @@ bool CDownload::checkGitDependency()
       return true;
     }
 
-  QMessageBox msgBox;
-  msgBox.setIcon(QMessageBox::Warning);
-  msgBox.setText(tr("Unable to find <a href=\"http://git-scm.com\">Git</a> application. \n"
-		    "Please install or use manual download from <a href=\"http::www.patacrep.com\">www.patacrep.com</a>."));
-  msgBox.setStandardButtons(QMessageBox::Cancel);
-  msgBox.setDefaultButton(QMessageBox::Cancel);
-  msgBox.exec();
+  parent()->statusBar()->showMessage(tr("Unable to find Git application."));
   return false;
 }
 //------------------------------------------------------------------------------
