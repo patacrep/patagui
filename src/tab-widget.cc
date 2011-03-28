@@ -94,3 +94,16 @@ void CTabWidget::prev()
 {
   setCurrentIndex(currentIndex() - 1);
 }
+
+void CTabWidget::changeTabText(const QString &text)
+{
+  QWidget *widget = qobject_cast< QWidget* >(QObject::sender());
+  int index = indexOf(widget);
+  
+  if (index < 0)
+    {
+      qWarning() << "CTabWidget::changeText: unknown caller";
+      return;
+    }
+  setTabText(index, text);
+}

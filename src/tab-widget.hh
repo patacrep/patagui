@@ -55,6 +55,8 @@ public slots:
   void prev();
   void next();
 
+  void changeTabText(const QString &text);
+
 protected:
   void updateTabBarVisibility();
 
