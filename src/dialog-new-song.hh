@@ -39,7 +39,6 @@ private slots:
   void setCover(QString);
   void setLang(const QString &);
   void setWorkingPath(QString);
-  void browseCover();
   void addSong();
   void accept();
 
@@ -63,7 +62,6 @@ private:
   QString m_album;
   QString m_cover;
   QString m_lang;
-  QLineEdit* m_coverEdit;
   int m_nbColumns;
   int m_capo;
 
