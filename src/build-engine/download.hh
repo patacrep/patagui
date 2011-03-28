@@ -20,7 +20,6 @@
 
 #include "build-engine.hh"
 
-class QLabel;
 class CMainWindow;
 
 class CDownload : public CBuildEngine
@@ -46,7 +45,6 @@ private:
   bool checkGitDependency();
   bool applyDialogOptions();
 
-  QLabel* m_gitLabel;
   QString m_downloadPath;
   QString m_gitRepoUrl;
 };

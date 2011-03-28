@@ -23,17 +23,13 @@
 CDownload::CDownload(CMainWindow* AParent)
   : CBuildEngine(AParent)
   ,m_downloadPath(QDir::home().path())
+  ,m_gitRepoUrl(QString("http://lohrun.net/git/songbook.git"))
 {
   setWindowTitle(tr("Download library"));
   setStatusActionMessage(tr("Downloading the songbook library. Please wait ..."));
   setStatusSuccessMessage(tr("Download completed."));
   setStatusErrorMessage(tr("An error occured during the download."));
-
-  m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
-  setGitRepoUrl(QString("http://lohrun.net/git/songbook.git"));
-
   setProcessName("git");
-  setProcessOptions(QStringList() << "clone" << "--quiet" << "--depth" << "1" << gitRepoUrl());
 }
 //------------------------------------------------------------------------------
 QWidget* CDownload::mainWidget()
@@ -102,19 +98,19 @@ void CDownload::action()
       return;
     }
   process()->setWorkingDirectory(downloadPath());
+  setProcessOptions(QStringList() << "clone" << "--quiet" << "--depth" << "1" << gitRepoUrl());
   CBuildEngine::action();
 }
 //------------------------------------------------------------------------------
 bool CDownload::checkGitDependency()
 {
-  QProcess *process = new QProcess(m_gitLabel);
-  process->start("git", QStringList() << "--version");
+  QProcess process;
+  process.start("git", QStringList() << "--version");
 
-  if (process->waitForFinished())
+  if (process.waitForFinished())
     {
       QRegExp rx("git version ([^\n]+)");
-      rx.indexIn(process->readAllStandardOutput().data());
-      m_gitLabel->setText(m_gitLabel->text().replace("orange","green").arg(rx.cap(1)));
+      rx.indexIn(process.readAllStandardOutput().data());
       return true;
     }
 
