@@ -1025,9 +1025,14 @@ void CMainWindow::songEditor()
 
   int row = m_proxyModel->mapToSource(selectionModel()->currentIndex()).row();
   QSqlRecord record = library()->record(row);
-  QString title = record.field("title").value().toString();
   QString path = record.field("path").value().toString();
+  QString title = record.field("title").value().toString();
 
+  songEditor(path, title);
+}
+//------------------------------------------------------------------------------
+void CMainWindow::songEditor(const QString &path, const QString &title)
+{
   if (m_editors.contains(path))
     {
       m_mainWidget->setCurrentWidget(m_editors[path]);
@@ -1036,11 +1041,20 @@ void CMainWindow::songEditor()
 
   CSongEditor* editor = new CSongEditor();
   editor->setPath(path);
-  editor->setWindowTitle(title);
+  if (title == QString())
+    {
+      QFileInfo fileInfo(path);
+      editor->setWindowTitle(fileInfo.fileName());
+    }
+  else
+    {
+      editor->setWindowTitle(title);
+    }
+
   connect(editor, SIGNAL(labelChanged(const QString&)),
 	  m_mainWidget, SLOT(changeTabText(const QString&)));
+
   m_mainWidget->addTab(editor);
-  
   m_editors.insert(path, editor);
 }
 //------------------------------------------------------------------------------
@@ -1064,12 +1078,16 @@ void CMainWindow::deleteSong()
 
   QString path = library()->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
 
-  if (QMessageBox::question
-     (this, this->windowTitle(),
-      QString(tr("Are you sure you want to permanently remove the file %1 ?")).arg(path),
-      QMessageBox::Yes,
-      QMessageBox::No,
-      QMessageBox::NoButton) == QMessageBox::Yes)
+  deleteSong(path);
+}
+//------------------------------------------------------------------------------
+void CMainWindow::deleteSong(const QString &path)
+{
+  if (QMessageBox::question(this, this->windowTitle(),
+			    QString(tr("Are you sure you want to permanently remove the file %1 ?")).arg(path),
+			    QMessageBox::Yes,
+			    QMessageBox::No,
+			    QMessageBox::NoButton) == QMessageBox::Yes)
     {
       //remove entry in database
       library()->removeSong(path);

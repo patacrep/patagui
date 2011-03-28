@@ -88,6 +88,9 @@ private slots:
   void songEditor();
   void deleteSong();
 
+  void songEditor(const QString &filename, const QString &title = QString());
+  void deleteSong(const QString &filename);
+
   //model
   void selectAll();
   void unselectAll();
