@@ -60,6 +60,8 @@ public:
   void setDirectory(const QDir &directory);
 
   QString path() const;
+
+public slots:
   void setPath(const QString &path);
 
 signals:
@@ -67,6 +69,7 @@ signals:
 
 private slots:
   void browse();
+
 
 private:
   TypeChooser m_type;

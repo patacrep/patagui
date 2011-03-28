@@ -36,6 +36,8 @@ CFileChooser::CFileChooser()
   , m_button(0)
 {
   m_lineEdit = new QLineEdit();
+  connect(m_lineEdit, SIGNAL(textChanged(const QString &)),
+	  this, SLOT(setPath(const QString &)));
 
   m_button = new QPushButton(tr("Browse"));
   connect(m_button, SIGNAL(clicked()), SLOT(browse()));
