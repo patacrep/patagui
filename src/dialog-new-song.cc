@@ -31,6 +31,7 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   ,m_artist()
   ,m_nbColumns(2)
   ,m_capo(0)
+  , m_path()
   ,m_titleEdit(new QLineEdit)
   ,m_artistEdit(new QLineEdit)
 {
@@ -197,7 +198,10 @@ void CDialogNewSong::addSong()
 
   //add the song to the library
   parent()->library()->addSong(filepath);
-  close();
+
+  m_path = filepath;
+
+  QDialog::accept();
 }
 //------------------------------------------------------------------------------
 QString CDialogNewSong::title() const
@@ -285,4 +289,9 @@ CMainWindow* CDialogNewSong::parent() const
 {
   return m_parent ;
 }
-
+//------------------------------------------------------------------------------
+QString CDialogNewSong::path() const
+{
+  return m_path;
+}
+//------------------------------------------------------------------------------
