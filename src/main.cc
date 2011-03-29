@@ -47,17 +47,16 @@ int main( int argc, char * argv[] )
   QString filename = QString("songbook_%1").arg(locale) + ".qm";
   QString dir;
 
-  #ifndef __APPLE__
-  const QDir systemDir("/usr/share/songbook-client/translations", "*.qm");
-  const QDir userDir("/usr/local/share/songbook-client/translations", "*.qm");
-  #endif
-  #ifdef __APPLE__
+#ifdef __APPLE__
   QDir cdir(app.applicationDirPath());
   cdir.cdUp();
   cdir.cd("Resources/lang");
   const QDir systemDir(cdir.absolutePath());
   const QDir userDir(cdir.absolutePath());
-  #endif
+#else
+  const QDir systemDir("/usr/share/songbook-client/translations", "*.qm");
+  const QDir userDir("/usr/local/share/songbook-client/translations", "*.qm");
+#endif
 
   if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
     dir = systemDir.absolutePath();

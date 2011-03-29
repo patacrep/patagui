@@ -32,8 +32,10 @@ class CSongbook;
 class CLibrary;
 class CTabWidget;
 class CDialogNewSong;
+class CSongEditor;
 class CBuildEngine;
 class CLabel;
+class CTabWidget;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -84,8 +86,10 @@ private slots:
   //library
   void newSong();
   void songEditor();
-  void changeTabLabel();
   void deleteSong();
+
+  void songEditor(const QString &filename, const QString &title = QString());
+  void deleteSong(const QString &filename);
 
   //model
   void selectAll();
@@ -210,24 +214,9 @@ private:
   // Tools actions
   QAction *m_resizeCoversAct;
   QAction *m_checkerAct;
-};
 
-class CTabWidget : public QTabWidget
-{
-  Q_OBJECT
-
-public:
-  CTabWidget();
-  virtual ~CTabWidget();
-
-  int addTab(QWidget* widget, const QString & label);
-
-public slots:
-  void closeTab(int);
-
-private slots:
-  void next();
-  void prev();
+  // Editors
+  QMap< QString, CSongEditor* > m_editors;
 };
 
 #endif  // __MAIN_WINDOW_HH__

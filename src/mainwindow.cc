@@ -36,6 +36,7 @@
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "songSortFilterProxyModel.hh"
+#include "tab-widget.hh"
 
 using namespace SbUtils;
 
@@ -174,6 +175,7 @@ CMainWindow::CMainWindow()
   m_mainWidget = new CTabWidget;
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
+  m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
   connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
 	   this, SLOT(closeTab(int)) );
   connect( m_mainWidget, SIGNAL(currentChanged(int)),
@@ -205,17 +207,16 @@ CMainWindow::~CMainWindow()
   QSqlDatabase::removeDatabase(QString());
 }
 
-void CMainWindow::switchToolBar( QToolBar * toolbar )
+void CMainWindow::switchToolBar(QToolBar * toolbar)
 {
-    if(toolbar != current_toolbar)
+  if (toolbar != current_toolbar)
     {
-        //keep this order to avoid 'jump' on mac os
-        toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
-        this->addToolBar(toolbar);
-        toolbar->setVisible(true);
-        current_toolbar->setVisible(false);
-        this->removeToolBar(current_toolbar);
-        current_toolbar = toolbar;
+      toolbar->setContextMenuPolicy(Qt::PreventContextMenu); // avoid 'jump' on MacOS
+      addToolBar(toolbar);
+      toolbar->setVisible(true);
+      current_toolbar->setVisible(false);
+      removeToolBar(current_toolbar);
+      current_toolbar = toolbar;
     }
 }
 //------------------------------------------------------------------------------
@@ -421,19 +422,19 @@ void CMainWindow::createActions()
 
   m_selectEnglishAct = new QAction(tr("english"), this);
   m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
-  m_selectEnglishAct->setIcon(QIcon(":/icons/en.png"));
+  m_selectEnglishAct->setIcon(QIcon::fromTheme("flag-en",QIcon(":/icons/en.png")));
   m_selectEnglishAct->setCheckable(true);
   connect(m_selectEnglishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectFrenchAct = new QAction(tr("french"), this);
   m_selectFrenchAct->setStatusTip(tr("Select/Unselect songs in french"));
-  m_selectFrenchAct->setIcon(QIcon(":/icons/fr.png"));
+  m_selectFrenchAct->setIcon(QIcon::fromTheme("flag-fr",QIcon(":/icons/fr.png")));
   m_selectFrenchAct->setCheckable(true);
   connect(m_selectFrenchAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectSpanishAct = new QAction(tr("spanish"), this);
   m_selectSpanishAct->setStatusTip(tr("Select/Unselect songs in spanish"));
-  m_selectSpanishAct->setIcon(QIcon(":/icons/es.png"));
+  m_selectSpanishAct->setIcon(QIcon::fromTheme("flag-es",QIcon(":/icons/es.png")));
   m_selectSpanishAct->setCheckable(true);
   connect(m_selectSpanishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
@@ -1013,67 +1014,75 @@ void CMainWindow::songEditor()
 {
   if (!selectionModel()->hasSelection())
     {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.setText(tr("Please select a song to edit."));
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
+      statusBar()->showMessage(tr("Please select a song to edit."));
       return;
     }
 
   int row = m_proxyModel->mapToSource(selectionModel()->currentIndex()).row();
   QSqlRecord record = library()->record(row);
-  QString title = record.field("title").value().toString();
   QString path = record.field("path").value().toString();
+  QString title = record.field("title").value().toString();
 
-  CSongEditor* editor = new CSongEditor(path,this);
-  if (!editor->isOk)
-    {
-      delete editor;
-      return;
-    }
-  m_mainWidget->setCurrentIndex(m_mainWidget->addTab(editor, title));
-  editor->setTabIndex(m_mainWidget->currentIndex());
-  editor->setLabel(title);
-  connect(editor, SIGNAL(labelChanged()), this, SLOT(changeTabLabel()));
+  songEditor(path, title);
 }
 //------------------------------------------------------------------------------
-void CMainWindow::changeTabLabel()
+void CMainWindow::songEditor(const QString &path, const QString &title)
 {
-  QObject *object = QObject::sender();
-  if (CSongEditor *editor = qobject_cast< CSongEditor* >(object))
+  if (m_editors.contains(path))
     {
-      m_mainWidget->setTabText(editor->tabIndex(), editor->label());
+      m_mainWidget->setCurrentWidget(m_editors[path]);
+      return;
     }
+
+  CSongEditor* editor = new CSongEditor();
+  editor->setPath(path);
+  if (title == QString())
+    {
+      QFileInfo fileInfo(path);
+      editor->setWindowTitle(fileInfo.fileName());
+    }
+  else
+    {
+      editor->setWindowTitle(title);
+    }
+
+  connect(editor, SIGNAL(labelChanged(const QString&)),
+	  m_mainWidget, SLOT(changeTabText(const QString&)));
+
+  m_mainWidget->addTab(editor);
+  m_editors.insert(path, editor);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSong()
 {
-  m_newSongDialog = new CDialogNewSong(this);
+  CDialogNewSong *dialog = new CDialogNewSong(this);
+  if (dialog->exec() == QDialog::Accepted)
+    {
+      songEditor(dialog->path(), dialog->title());
+    }
+  delete dialog;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong()
 {
   if (!selectionModel()->hasSelection())
     {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.setText(tr("Please select a song to remove."));
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
+      statusBar()->showMessage(tr("Please select a song to remove."));
       return;
     }
 
   QString path = library()->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
 
-  if (QMessageBox::question
-     (this, this->windowTitle(),
-      QString(tr("Are you sure you want to permanently remove the file %1 ?")).arg(path),
-      QMessageBox::Yes,
-      QMessageBox::No,
-      QMessageBox::NoButton) == QMessageBox::Yes)
+  deleteSong(path);
+}
+//------------------------------------------------------------------------------
+void CMainWindow::deleteSong(const QString &path)
+{
+  if (QMessageBox::question(this, this->windowTitle(),
+			    QString(tr("Are you sure you want to permanently remove the file %1 ?")).arg(path),
+			    QMessageBox::Yes,
+			    QMessageBox::No,
+			    QMessageBox::NoButton) == QMessageBox::Yes)
     {
       //remove entry in database
       library()->removeSong(path);
@@ -1095,90 +1104,42 @@ void CMainWindow::deleteSong()
 //------------------------------------------------------------------------------
 void CMainWindow::closeTab(int index)
 {
-  //forbid to close main tab
-  if(index!=0)
-  {
-    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
+  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
+  if (editor)
     {
-        this->removeToolBar(editor->getToolbar());
+      if (editor->document()->isModified())
+	{
+	  QMessageBox::StandardButton answer = 
+	    QMessageBox::question(this,
+				  tr("Close"),
+				  tr("There is unsaved modification in the current editor, do you really want to close it?"),
+				  QMessageBox::Ok | QMessageBox::Cancel,
+				  QMessageBox::Cancel);
+	  if (answer != QMessageBox::Ok)
+	    return;
+	}
+      m_editors.remove(editor->path());
+      m_mainWidget->closeTab(index);
     }
-    m_mainWidget->closeTab(index);
-  }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::changeTab(int index)
 {
-  if(index == 0)
-  {
-    this->switchToolBar(m_toolbar);
-  }
-  else
-  {
-    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->currentWidget()))
+  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
+
+  if (editor)
     {
-        this->switchToolBar(editor->getToolbar());
+      switchToolBar(editor->toolbar());
+      m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
-    else
-    {
-        assert(false); //there shouldn't be a tab different than 0 which is not an editor
-    }
-  }
-  //avoid shortcuts conflicts
-  if(index!=0)
-    m_saveAct->setShortcutContext(Qt::WidgetShortcut);
   else
-    m_saveAct->setShortcutContext(Qt::WindowShortcut);
+    {
+      switchToolBar(m_toolbar);
+      m_saveAct->setShortcutContext(Qt::WindowShortcut);
+    }
 }
 //------------------------------------------------------------------------------
 QTextEdit* CMainWindow::log() const
 {
   return m_log;
 }
-
-//******************************************************************************
-//******************************************************************************
-CTabWidget::CTabWidget():QTabWidget()
-{
-  // change the tab mode on os x put between #ifdef __APPLE__ if necessary
-  setDocumentMode(true);
-
-  //
-  tabBar()->hide();
-  QAction* action = new QAction(tr("Next tab"), this);
-  action->setShortcut(QKeySequence::NextChild);
-  connect(action, SIGNAL(triggered()), this, SLOT(next()));
-  action = new QAction(tr("Previous tab"), this);
-  action->setShortcut(QKeySequence::PreviousChild);
-  connect(action, SIGNAL(triggered()), this, SLOT(prev()));
-}
-//------------------------------------------------------------------------------
-CTabWidget::~CTabWidget()
-{}
-//------------------------------------------------------------------------------
-void CTabWidget::closeTab(int index)
-{
-  removeTab(index);
-  if (count() == 1)
-    tabBar()->hide();
-}
-//------------------------------------------------------------------------------
-int CTabWidget::addTab(QWidget* widget, const QString & label)
-{
-  int res = QTabWidget::addTab(widget, label);
-  tabBar()->show();
-  if (count() == 1)
-    tabBar()->hide();
-  return res;
-}
-//------------------------------------------------------------------------------
-void CTabWidget::next()
-{
-  setCurrentIndex(currentIndex()+1);
-}
-//------------------------------------------------------------------------------
-void CTabWidget::prev()
-{
-  setCurrentIndex(currentIndex()-1);
-}
-//******************************************************************************
-//******************************************************************************

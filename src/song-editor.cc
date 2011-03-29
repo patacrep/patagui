@@ -16,212 +16,161 @@
 // MA  02110-1301, USA.
 //******************************************************************************
 #include "song-editor.hh"
+#include "code-editor.hh"
+
 #include "highlighter.hh"
-#include "mainwindow.hh"
+
 #include <QToolBar>
 #include <QAction>
 #include <QTextDocumentFragment>
-#include <QLayout>
 #include <QFile>
 #include <QTextStream>
-#include <QMessageBox>
+
 #include <QDebug>
-#include "code-editor.hh"
 
 //------------------------------------------------------------------------------
-CSongEditor::CSongEditor(const QString & APath,CMainWindow* mw)
+CSongEditor::CSongEditor()
+  : CodeEditor()
+  , m_toolbar(0)
+  , m_path()
 {
-  m_filePath = APath;
+  setUndoRedoEnabled(true);
+
+  CHighlighter *highlighter = new CHighlighter(document());
+  Q_UNUSED(highlighter);
+
+  connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   // toolbar
-  toolbar = new QToolBar(mw);
-  toolbar->setMovable(false);
+  m_toolbar = new QToolBar(this);
+  m_toolbar->setMovable(false);
 
-  //retrieve song text
-  m_textEdit = new CodeEditor(this);
-  m_textEdit->setUndoRedoEnabled(true);
-  QFile file(APath);
-  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-      QTextStream stream (&file);
-      QString text = stream.readAll();
-      file.close();
-      m_textEdit->setPlainText(text);
-      new CHighlighter(m_textEdit->document());
+  // actions
+  QAction* action = new QAction(tr("Save"), this);
+  action->setShortcut(QKeySequence::Save);
+  action->setIcon(QIcon::fromTheme("document-save"));
+  action->setStatusTip(tr("Save modifications"));
+  connect(action, SIGNAL(triggered()), SLOT(save()));
+  m_toolbar->addAction(action);
+  
+  m_toolbar->addSeparator();
+  
+  //copy paste
+  action = new QAction(tr("Cut"), this);
+  action->setShortcut(QKeySequence::Cut);
+  action->setIcon(QIcon::fromTheme("edit-cut"));
+  action->setStatusTip(tr("Cut the selection"));
+  connect(action, SIGNAL(triggered()), SLOT(cut()));
+  m_toolbar->addAction(action);
+  
+  action = new QAction(tr("Copy"), this);
+  action->setShortcut(QKeySequence::Copy);
+  action->setIcon(QIcon::fromTheme("edit-copy"));
+  action->setStatusTip(tr("Copy the selection"));
+  connect(action, SIGNAL(triggered()), SLOT(copy()));
+  m_toolbar->addAction(action);
+  
+  action = new QAction(tr("Paste"), this);
+  action->setShortcut(QKeySequence::Paste);
+  action->setIcon(QIcon::fromTheme("edit-paste"));
+  action->setStatusTip(tr("Paste clipboard content"));
+  connect(action, SIGNAL(triggered()), SLOT(paste()));
+  m_toolbar->addAction(action);
+  
+  m_toolbar->addSeparator();
+  
+  //undo redo
+  action = new QAction(tr("Undo"), this);
+  action->setShortcut(QKeySequence::Undo);
+  action->setIcon(QIcon::fromTheme("edit-undo"));
+  action->setStatusTip(tr("Undo modifications"));
+  connect(action, SIGNAL(triggered()), SLOT(undo()));
+  m_toolbar->addAction(action);
+  
+  action = new QAction(tr("Redo"), this);
+  action->setShortcut(QKeySequence::Redo);
+  action->setIcon(QIcon::fromTheme("edit-redo"));
+  action->setStatusTip(tr("Redo modifications"));
+  connect(action, SIGNAL(triggered()), SLOT(redo()));
+  m_toolbar->addAction(action);
 
-      connect(m_textEdit->document(), SIGNAL(contentsChanged()), this, SLOT(documentWasModified()));
-
-      // actions
-      QAction* action = new QAction(tr("Save"), this);
-      action->setShortcut(QKeySequence::Save);
-#if QT_VERSION >= 0x040600
-      action->setIcon(QIcon::fromTheme("document-save"));
-#endif
-      action->setStatusTip(tr("Save modifications"));
-      connect(action, SIGNAL(triggered()), this, SLOT(save()));
-      toolbar->addAction(action);
-
-      toolbar->addSeparator();
-
-      //copy paste
-      action = new QAction(tr("Cut"), this);
-      action->setShortcut(QKeySequence::Cut);
-#if QT_VERSION >= 0x040600
-      action->setIcon(QIcon::fromTheme("edit-cut"));
-#endif
-      action->setStatusTip(tr("Cut the selection"));
-      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(cut()));
-      toolbar->addAction(action);
-
-      action = new QAction(tr("Copy"), this);
-      action->setShortcut(QKeySequence::Copy);
-#if QT_VERSION >= 0x040600
-      action->setIcon(QIcon::fromTheme("edit-copy"));
-#endif
-      action->setStatusTip(tr("Copy the selection"));
-      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(copy()));
-      toolbar->addAction(action);
-
-      action = new QAction(tr("Paste"), this);
-      action->setShortcut(QKeySequence::Paste);
-#if QT_VERSION >= 0x040600
-      action->setIcon(QIcon::fromTheme("edit-paste"));
-#endif
-      action->setStatusTip(tr("Paste clipboard content"));
-      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(paste()));
-      toolbar->addAction(action);
-
-      toolbar->addSeparator();
-
-      //undo redo
-      action = new QAction(tr("Undo"), this);
-      action->setShortcut(QKeySequence::Undo);
-#if QT_VERSION >= 0x040600
-      action->setIcon(QIcon::fromTheme("edit-undo"));
-#endif
-      action->setStatusTip(tr("Undo modifications"));
-      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(undo()));
-      toolbar->addAction(action);
-
-      action = new QAction(tr("Redo"), this);
-      action->setShortcut(QKeySequence::Redo);
-#if QT_VERSION >= 0x040600
-      action->setIcon(QIcon::fromTheme("edit-redo"));
-#endif
-      action->setStatusTip(tr("Redo modifications"));
-      connect(action, SIGNAL(triggered()), m_textEdit, SLOT(redo()));
-      toolbar->addAction(action);
-
-      toolbar->addSeparator();
-
-      //songbook
-      action = new QAction(tr("Verse"), this);
-      action->setStatusTip(tr("New verse environment"));
-      connect(action, SIGNAL(triggered()), this, SLOT(insertVerse()));
-      toolbar->addAction(action);
-
-      action = new QAction(tr("Chorus"), this);
-      action->setStatusTip(tr("New chorus environment"));
-      connect(action, SIGNAL(triggered()), this, SLOT(insertChorus()));
-      toolbar->addAction(action);
-
-      QBoxLayout* layout = new QVBoxLayout;
-      layout->setContentsMargins(0,0,0,0);
-      layout->addWidget(m_textEdit);
-      setLayout(layout);
-      isOk = true;
-    }
-  else
-    {
-      isOk = false;
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText(QString(tr("Unable to open file:\n%1")).arg(APath));
-      msgBox.setStandardButtons(QMessageBox::Cancel);
-      msgBox.setDefaultButton(QMessageBox::Cancel);
-      msgBox.exec();
-    }
+  m_toolbar->addSeparator();
+  
+  //songbook
+  action = new QAction(tr("Verse"), this);
+  action->setStatusTip(tr("New verse environment"));
+  connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
+  m_toolbar->addAction(action);
+  
+  action = new QAction(tr("Chorus"), this);
+  action->setStatusTip(tr("New chorus environment"));
+  connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
+  m_toolbar->addAction(action);
 }
 //------------------------------------------------------------------------------
 CSongEditor::~CSongEditor()
+{}
+//------------------------------------------------------------------------------
+QString CSongEditor::path()
 {
-  delete m_textEdit;
+  return m_path;
 }
 //------------------------------------------------------------------------------
-QString CSongEditor::filePath()
+void CSongEditor::setPath(const QString &path)
 {
-  return m_filePath;
-}
-//------------------------------------------------------------------------------
-void CSongEditor::setFilePath(const QString & APath)
-{
-  if (QFile(APath).exists())
-    m_filePath = APath;
-  else
-    qWarning() << "CSongEditor::setFilePath Error: the file " << APath << " does not exist " ;
-}
-//------------------------------------------------------------------------------
-int CSongEditor::tabIndex()
-{
-  return m_tabIndex;
-}
-//------------------------------------------------------------------------------
-void CSongEditor::setTabIndex(int AIndex)
-{
-  m_tabIndex = AIndex;
-}
-//------------------------------------------------------------------------------
-QString CSongEditor::label()
-{
-  return m_label;
-}
-//------------------------------------------------------------------------------
-void CSongEditor::setLabel(const QString & ALabel)
-{
-  m_label = ALabel;
-  emit( labelChanged() );
+  QString text;
+  QFile file(path);
+  if (file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+      QTextStream stream (&file);
+      text = stream.readAll();
+      file.close();
+    }
+  setPlainText(text);
+  m_path = path;
 }
 //------------------------------------------------------------------------------
 void CSongEditor::save()
 {
-  // retrieve text to save
-  QString text = m_textEdit->toPlainText();
-
   //open file in write mode
-  QFile file(filePath());
-
+  QFile file(path());
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream stream (&file);
-      stream << text;
+      stream << toPlainText();
       file.close();
-      setLabel( label().remove(" *") );
+      document()->setModified(false);
+      setWindowTitle(windowTitle().remove(" *"));
+      emit(labelChanged(windowTitle()));
     }
   else
-    qWarning() << "Mainwindow::songEditorSave warning: unable to open file in write mode";
+    {
+      qWarning() << "Mainwindow::songEditorSave warning: unable to open file in write mode";
+    }
 }
 //------------------------------------------------------------------------------
 void CSongEditor::documentWasModified()
 {
-  //add isModified also it seems strange to avoid document marked as
-  //modified the first time it is opened
-  if ( !label().contains(" *") &&   m_textEdit->document()->isModified() )
-    setLabel(label() + " *");
+  if (!windowTitle().contains(" *") && document()->isModified())
+    {
+      setWindowTitle(windowTitle() + " *");
+      emit(labelChanged(windowTitle()));
+    }
 }
 //------------------------------------------------------------------------------
 void CSongEditor::insertVerse()
 {
-  QString selection = m_textEdit->textCursor().selectedText();
-  m_textEdit->insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
+  QString selection = textCursor().selectedText();
+  insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
 }
 //------------------------------------------------------------------------------
 void CSongEditor::insertChorus()
 {
-  QString selection = m_textEdit->textCursor().selectedText();
-  m_textEdit->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
+  QString selection = textCursor().selectedText();
+  insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
 //------------------------------------------------------------------------------
-QToolBar* CSongEditor::getToolbar()
+QToolBar* CSongEditor::toolbar()
 {
-  return toolbar;
+  return m_toolbar;
 }

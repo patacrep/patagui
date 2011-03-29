@@ -17,6 +17,7 @@
 //******************************************************************************
 
 #include "preferences.hh"
+#include "file-chooser.hh"
 
 #include <QtGui>
 
@@ -25,27 +26,27 @@
 ConfigDialog::ConfigDialog()
   : QDialog()
 {
-  contentsWidget = new QListWidget;
-  contentsWidget->setViewMode(QListView::IconMode);
-  contentsWidget->setIconSize(QSize(96, 84));
-  contentsWidget->setMovement(QListView::Static);
-  contentsWidget->setMaximumWidth(128);
-  contentsWidget->setSpacing(12);
+  m_contentsWidget = new QListWidget;
+  m_contentsWidget->setViewMode(QListView::IconMode);
+  m_contentsWidget->setIconSize(QSize(96, 84));
+  m_contentsWidget->setMovement(QListView::Static);
+  m_contentsWidget->setMaximumWidth(128);
+  m_contentsWidget->setSpacing(12);
 
-  pagesWidget = new QStackedWidget;
-  pagesWidget->addWidget(new OptionsPage);
-  pagesWidget->addWidget(new DisplayPage);
+  m_pagesWidget = new QStackedWidget;
+  m_pagesWidget->addWidget(new OptionsPage);
+  m_pagesWidget->addWidget(new DisplayPage);
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
 
   createIcons();
-  contentsWidget->setCurrentRow(0);
+  m_contentsWidget->setCurrentRow(0);
 
   connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
   QHBoxLayout *horizontalLayout = new QHBoxLayout;
-  horizontalLayout->addWidget(contentsWidget);
-  horizontalLayout->addWidget(pagesWidget, 1);
+  horizontalLayout->addWidget(m_contentsWidget);
+  horizontalLayout->addWidget(m_pagesWidget, 1);
 
   QHBoxLayout *buttonsLayout = new QHBoxLayout;
   buttonsLayout->addStretch(1);
@@ -63,19 +64,19 @@ ConfigDialog::ConfigDialog()
 
 void ConfigDialog::createIcons()
 {
-  QListWidgetItem *optionsButton = new QListWidgetItem(contentsWidget);
+  QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
   //optionsButton->setIcon(QIcon::fromTheme("preferences-system"));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-  QListWidgetItem *displayButton = new QListWidgetItem(contentsWidget);
+  QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
   //displayButton->setIcon(QIcon::fromTheme("preferences-columns"));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-  connect(contentsWidget,
+  connect(m_contentsWidget,
           SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
           this, SLOT(changePage(QListWidgetItem*,QListWidgetItem*)));
 }
@@ -86,14 +87,14 @@ void ConfigDialog::changePage(QListWidgetItem *current,
   if (!current)
     current = previous;
 
-  pagesWidget->setCurrentIndex(contentsWidget->row(current));
+  m_pagesWidget->setCurrentIndex(m_contentsWidget->row(current));
 }
 
 void ConfigDialog::closeEvent(QCloseEvent *event)
 {
-  for( int i = 0 ; i < pagesWidget->count() ; ++i )
+  for( int i = 0 ; i < m_pagesWidget->count() ; ++i )
     {
-      pagesWidget->widget(i)->close();
+      m_pagesWidget->widget(i)->close();
     }
 }
 
@@ -178,28 +179,29 @@ void DisplayPage::closeEvent(QCloseEvent *event)
 
 OptionsPage::OptionsPage(QWidget *parent)
   : QWidget(parent)
+  , m_workingPath(0)
+  , m_workingPathValid(0)
 {
-  m_workingPath = new QLineEdit;
   m_workingPathValid = new QLabel;
+
+  m_workingPath = new CFileChooser();
+  m_workingPath->setType(CFileChooser::DirectoryChooser);
+  m_workingPath->setCaption(tr("Songbook path"));
+
+  connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
+          this, SLOT(checkWorkingPath(const QString&)));
+
   readSettings();
-  QSettings settings;
-  QString workingDir = settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString();
 
   // working path
   QGroupBox *workingPathGroupBox
     = new QGroupBox(tr("Directory for Patacrep Songbook"));
 
-  QPushButton *browseWorkingPathButton = new QPushButton(tr("Browse"));
-  connect(browseWorkingPathButton, SIGNAL(clicked()),
-          this, SLOT(browse()));
-  connect(m_workingPath, SIGNAL(textChanged(const QString&)),
-          this, SLOT(checkWorkingPath(const QString&)));
-  checkWorkingPath(workingDir);
+  checkWorkingPath(m_workingPath->path());
 
-  QGridLayout *workingPathLayout = new QGridLayout;
-  workingPathLayout->addWidget(m_workingPath,0,0,1,1);
-  workingPathLayout->addWidget(browseWorkingPathButton,0,1,1,1);
-  workingPathLayout->addWidget(m_workingPathValid,1,0,2,1);
+  QLayout *workingPathLayout = new QVBoxLayout;
+  workingPathLayout->addWidget(m_workingPath);
+  workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
   // check application
@@ -228,28 +230,16 @@ OptionsPage::OptionsPage(QWidget *parent)
   checkApplication();
 }
 
-void OptionsPage::browse()
-{
-  QString path = QFileDialog::getExistingDirectory(this,
-                                                   tr("Songbook path"),
-                                                   m_workingPath->text());
-
-  if (!path.isEmpty())
-    {
-      m_workingPath->setText(path);
-    }
-}
-
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  m_workingPath->setText(settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString());
+  m_workingPath->setPath(settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString());
 }
 
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.setValue("workingPath", m_workingPath->text());
+  settings.setValue("workingPath", m_workingPath->path());
 }
 
 void OptionsPage::closeEvent(QCloseEvent *event)

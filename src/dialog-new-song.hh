@@ -30,22 +30,23 @@ public:
   CDialogNewSong(CMainWindow* AParent);
   virtual ~CDialogNewSong();
 
+  QString title() const;
+  QString path() const;
+
 private slots:
-  void setTitle(QString);
-  void setArtist(QString);
+  void setTitle(const QString &title);
+  void setArtist(const QString &artist);
   void setNbColumns(int);
   void setCapo(int);
-  void setAlbum(QString);
-  void setCover(QString);
-  void setLang(const QString &);
-  void setWorkingPath(QString);
-  void browseCover();
+  void setAlbum(const QString &album);
+  void setCover(const QString &cover);
+  void setLang(const QString &lang);
+  void setWorkingPath(const QString &path);
   void addSong();
   void accept();
 
 private:
   CMainWindow* parent() const;
-  QString title() const;
   QString artist() const;
   int nbColumns() const;
   int capo() const;
@@ -63,9 +64,9 @@ private:
   QString m_album;
   QString m_cover;
   QString m_lang;
-  QLineEdit* m_coverEdit;
   int m_nbColumns;
   int m_capo;
+  QString m_path;
 
   QLineEdit* m_titleEdit;
   QLineEdit* m_artistEdit;

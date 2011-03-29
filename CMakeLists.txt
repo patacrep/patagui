@@ -61,6 +61,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/unit-factory.cc
   src/file-property-manager.cc
   src/file-factory.cc
+  src/file-chooser.cc
   src/songSortFilterProxyModel.cc
   src/filter-lineedit.cc
   src/utils/lineedit.cc
@@ -71,6 +72,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/build-engine/make-songbook.cc
   src/build-engine/download.cc
   src/code-editor.cc
+  src/tab-widget.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -88,6 +90,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/unit-factory.hh
   src/file-property-manager.hh
   src/file-factory.hh
+  src/file-chooser.hh
   src/songSortFilterProxyModel.hh
   src/filter-lineedit.hh
   src/utils/lineedit.hh
@@ -97,6 +100,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/build-engine/make-songbook.hh
   src/build-engine/download.hh
   src/code-editor.hh
+  src/tab-widget.hh
   )
 #-------------------------------------------------------------------------------
 # ressources

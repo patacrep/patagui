@@ -19,6 +19,9 @@
 #include "dialog-new-song.hh"
 #include "utils/utils.hh"
 #include "mainwindow.hh"
+#include "library.hh"
+#include "file-chooser.hh"
+#include <QLayout>
 
 CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   : QDialog()
@@ -28,81 +31,55 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   ,m_artist()
   ,m_nbColumns(2)
   ,m_capo(0)
+  , m_path()
+  ,m_titleEdit(new QLineEdit)
+  ,m_artistEdit(new QLineEdit)
 {
   m_workingPath = parent()->workingPath();
   connect(parent(), SIGNAL(workingPathChanged(QString)),
 	  this, SLOT(setWorkingPath(QString)));
 
-  //Required fields
-  //title
-  QLabel* titleLabel = new QLabel(tr("Title: "));
-  m_titleEdit = new QLineEdit;
-
-  //artist
-  QLabel* artistLabel = new QLabel(tr("Artist: "));
-  m_artistEdit = new QLineEdit;
-
   //Optional fields
-  //album
-  QLabel* albumLabel = new QLabel(tr("Album: "));
   QLineEdit* albumEdit = new QLineEdit;
 
-  //cover
-  QLabel* coverLabel = new QLabel(tr("Cover: "));
-  m_coverEdit = new QLineEdit(QString());
-  QPushButton *browseCoverButton = new QPushButton(tr("Browse"));
+  CFileChooser* coverEdit = new CFileChooser();
+  coverEdit->setType(CFileChooser::OpenFileChooser);
+  coverEdit->setCaption(tr("Select cover image"));
+  coverEdit->setFilter(tr("Images (*.jpg)"));
 
-  //lang
-  QLabel* langLabel = new QLabel(tr("Language: "));
   QComboBox* langComboBox = new QComboBox;
   langComboBox->addItem ("english");
   langComboBox->addItem ("french");
   langComboBox->addItem ("spanish");
   setLang(langComboBox->currentText());
 
-  //nb columns
-  QLabel* nbColumnsLabel = new QLabel(tr("Columns: "));
   QSpinBox* nbColumnsEdit = new QSpinBox;
   nbColumnsEdit->setValue(m_nbColumns);
   nbColumnsEdit->setRange(0,10);
 
-  //capo
-  QLabel* capoLabel = new QLabel(tr("Capo: "));
   QSpinBox* capoEdit      = new QSpinBox;
   capoEdit->setRange(0,20);
 
   // Action buttons
-  QDialogButtonBox * buttonBox = new QDialogButtonBox;
-  QPushButton * buttonAccept = new QPushButton(tr("Ok"));
-  QPushButton * buttonClose = new QPushButton(tr("Close"));
-  buttonAccept->setDefault(true);
-  buttonBox->addButton(buttonAccept, QDialogButtonBox::ActionRole);
-  buttonBox->addButton(buttonClose, QDialogButtonBox::DestructiveRole);
+  QDialogButtonBox * buttonBox =
+    new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-  connect( buttonAccept, SIGNAL(clicked()), this, SLOT(accept()) );
-  connect( buttonClose, SIGNAL(clicked()), this, SLOT(close()) );
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
   QGroupBox* requiredFieldsBox = new QGroupBox(tr("Required fields"));
-  QGridLayout* requiredLayout = new QGridLayout;
-  requiredLayout->addWidget(titleLabel,   0,0,1,1);
-  requiredLayout->addWidget(m_titleEdit,  0,1,1,1);
-  requiredLayout->addWidget(artistLabel,  1,0,1,1);
-  requiredLayout->addWidget(m_artistEdit, 1,1,1,1);
+  QFormLayout *requiredLayout = new QFormLayout;
+  requiredLayout->addRow(tr("&Title:"), m_titleEdit);
+  requiredLayout->addRow(tr("&Artist:"), m_artistEdit);
   requiredFieldsBox->setLayout(requiredLayout);
 
   QGroupBox* optionalFieldsBox = new QGroupBox(tr("Optional fields"));
-  QGridLayout* optionalLayout = new QGridLayout;
-  optionalLayout->addWidget(albumLabel,   0,0,1,1);
-  optionalLayout->addWidget(albumEdit,  0,1,1,5);
-  optionalLayout->addWidget(coverLabel,   1,0,1,1);
-  optionalLayout->addWidget(m_coverEdit,  1,1,1,3);
-  optionalLayout->addWidget(browseCoverButton,  1,4,1,2);
-  optionalLayout->addWidget(langLabel,   2,0,1,1);
-  optionalLayout->addWidget(langComboBox,  2,1,1,1);
-  optionalLayout->addWidget(nbColumnsLabel,   2,2,1,1);
-  optionalLayout->addWidget(nbColumnsEdit,  2,3,1,1);
-  optionalLayout->addWidget(capoLabel,  2,4,1,1);
-  optionalLayout->addWidget(capoEdit, 2,5,1,1);
+  QFormLayout* optionalLayout = new QFormLayout;
+  optionalLayout->addRow(tr("A&lbum:"),     albumEdit);
+  optionalLayout->addRow(tr("&Cover:"),     coverEdit);
+  optionalLayout->addRow(tr("&Language: "), langComboBox);
+  optionalLayout->addRow(tr("C&olumns: "),  nbColumnsEdit);
+  optionalLayout->addRow(tr("Ca&po: "),     capoEdit);
   optionalFieldsBox->setLayout(optionalLayout);
 
   QBoxLayout* layout = new QVBoxLayout;
@@ -110,28 +87,22 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   layout->addWidget(optionalFieldsBox);
   layout->addWidget(buttonBox);
 
-  //Connections
   connect(m_titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)) );
   connect(m_artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)) );
+
   connect(langComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLang(const QString&)) );
   connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)) );
   connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)) );
   connect(albumEdit, SIGNAL(textChanged(QString)), this, SLOT(setAlbum(QString)) );
-  connect(browseCoverButton, SIGNAL(clicked()), this, SLOT(browseCover()) );
-  connect(m_coverEdit, SIGNAL(textChanged(QString)), this, SLOT(setCover(QString)) );
-
-  connect(this, SIGNAL(accepted()), this, SLOT(accept()) );
+  connect(coverEdit, SIGNAL(pathChanged(const QString&)), this, SLOT(setCover(const QString&)) );
 
   setLayout(layout);
   setWindowTitle(tr("New song"));
-  setMinimumWidth(450);
   show();
 }
 //------------------------------------------------------------------------------
 CDialogNewSong::~CDialogNewSong()
-{
-  delete m_coverEdit;
-}
+{}
 //------------------------------------------------------------------------------
 void CDialogNewSong::accept()
 {
@@ -226,8 +197,11 @@ void CDialogNewSong::addSong()
     }
 
   //add the song to the library
-  parent()->refreshLibrary();
-  close();
+  parent()->library()->addSong(filepath);
+
+  m_path = filepath;
+
+  QDialog::accept();
 }
 //------------------------------------------------------------------------------
 QString CDialogNewSong::title() const
@@ -235,7 +209,7 @@ QString CDialogNewSong::title() const
   return m_title;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setTitle(QString ATitle )
+void CDialogNewSong::setTitle(const QString &ATitle)
 {
   m_title = ATitle;
 }
@@ -245,7 +219,7 @@ QString CDialogNewSong::artist() const
   return m_artist;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setArtist(QString AArtist )
+void CDialogNewSong::setArtist(const QString &AArtist)
 {
   m_artist = AArtist;
 }
@@ -276,7 +250,7 @@ QString CDialogNewSong::album() const
   return m_album;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setAlbum(QString AAlbum )
+void CDialogNewSong::setAlbum(const QString &AAlbum)
 {
   m_album = AAlbum;
 }
@@ -286,7 +260,7 @@ QString CDialogNewSong::cover() const
   return m_cover;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setCover(QString ACover )
+void CDialogNewSong::setCover(const QString &ACover)
 {
   m_cover = ACover;
 }
@@ -296,19 +270,9 @@ QString CDialogNewSong::lang() const
   return m_lang;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setLang(const QString & ALang )
+void CDialogNewSong::setLang(const QString & ALang)
 {
   m_lang = ALang;
-}
-//------------------------------------------------------------------------------
-void CDialogNewSong::browseCover()
-{
-  QString directory = QFileDialog::getOpenFileName(this, tr("Select cover image"),
-						   QDir::home().path(),
-						   tr("Images (*.jpg)"));
-
-  if (!directory.isEmpty())
-      m_coverEdit->setText(directory);
 }
 //------------------------------------------------------------------------------
 QString CDialogNewSong::workingPath() const
@@ -316,12 +280,18 @@ QString CDialogNewSong::workingPath() const
   return m_workingPath;
 }
 //------------------------------------------------------------------------------
-void CDialogNewSong::setWorkingPath(QString value)
+void CDialogNewSong::setWorkingPath(const QString &path)
 {
-  m_workingPath = value;
+  m_workingPath = path;
 }
 //------------------------------------------------------------------------------
 CMainWindow* CDialogNewSong::parent() const
 {
   return m_parent ;
 }
+//------------------------------------------------------------------------------
+QString CDialogNewSong::path() const
+{
+  return m_path;
+}
+//------------------------------------------------------------------------------

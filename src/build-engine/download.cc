@@ -17,6 +17,7 @@
 //******************************************************************************
 #include "download.hh"
 #include "mainwindow.hh"
+#include "file-chooser.hh"
 #include <QLayout>
 
 CDownload::CDownload(CMainWindow* AParent)
@@ -32,12 +33,6 @@ CDownload::CDownload(CMainWindow* AParent)
   setGitRepoUrl(QString("http://lohrun.net/git/songbook.git"));
   setDownloadPath(QDir::homePath()); // also initialise process working dir
 
-  m_gitRepoLineEdit = new QLineEdit(gitRepoUrl());
-  connect(m_gitRepoLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setGitRepoUrl(QString)));
-
-  m_downloadLineEdit = new QLineEdit(downloadPath());
-  connect(m_downloadLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setDownloadPath(QString)));
-
   setFileName("git");
   setProcessOptions(QStringList() << "clone" << "--quiet" << "--depth" << "1" << gitRepoUrl());
 }
@@ -47,18 +42,21 @@ QWidget* CDownload::mainWidget()
   if(!checkGitDependency())
     return NULL;
 
-  QWidget* widget = new QWidget;
-  QPushButton* button = new QPushButton(tr("Browse"));
-  connect(button, SIGNAL(clicked()), this, SLOT(browse()) );
+  QLineEdit* gitRepoLineEdit = new QLineEdit(gitRepoUrl());
+  connect(gitRepoLineEdit, SIGNAL(textChanged(QString)),
+	  this, SLOT(setGitRepoUrl(QString)));
 
-  QLayout* layout = new QGridLayout;
-  static_cast<QGridLayout*>(layout)->addWidget(new QLabel(tr("Remote repository:")), 0,0,1,1);
-  static_cast<QGridLayout*>(layout)->addWidget(m_gitRepoLineEdit, 0,1,1,2);
-  static_cast<QGridLayout*>(layout)->addWidget(new QLabel(tr("Target directory:")), 1,0,1,1);
-  static_cast<QGridLayout*>(layout)->addWidget(m_downloadLineEdit, 1,1,1,1);
-  static_cast<QGridLayout*>(layout)->addWidget(button, 1,2,1,1);
-  static_cast<QGridLayout*>(layout)->setRowStretch(2,1);
-  static_cast<QGridLayout*>(layout)->setColumnStretch(1,1);
+  CFileChooser *download = new CFileChooser();
+  download->setType(CFileChooser::DirectoryChooser);
+  download->setCaption(tr("Target directory"));
+  download->setPath(downloadPath());
+  connect(download, SIGNAL(pathChanged(QString)),
+	  this, SLOT(setDownloadPath(QString)));
+
+  QWidget* widget = new QWidget;
+  QFormLayout* layout = new QFormLayout;
+  layout->addRow(tr("Remote repository:"), gitRepoLineEdit);
+  layout->addRow(tr("Target directory:"),  download);
   widget->setLayout(layout);
   return widget;
 }
@@ -67,6 +65,8 @@ void CDownload::processExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
   CBuildEngine::processExit(exitCode, exitStatus);
   parent()->setWorkingPath(QString("%1/songbook").arg(downloadPath()));
+  QSettings settings;
+  settings.setValue("workingPath", parent()->workingPath());
 }
 //------------------------------------------------------------------------------
 void CDownload::action()
@@ -136,14 +136,6 @@ bool CDownload::checkGitDependency()
   msgBox.setDefaultButton(QMessageBox::Cancel);
   msgBox.exec();
   return false;
-}
-//------------------------------------------------------------------------------
-void CDownload::browse()
-{
-  QString directory = QFileDialog::getExistingDirectory(this, tr("Target directory"),
-                                                        downloadPath());
-  if (!directory.isEmpty())
-    m_downloadLineEdit->setText(directory);
 }
 //------------------------------------------------------------------------------
 QString CDownload::downloadPath()
