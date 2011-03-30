@@ -138,7 +138,7 @@ CMainWindow::CMainWindow()
   QCompleter *completer = new QCompleter;
   completer->setModel(library());
   completer->setCaseSensitivity(Qt::CaseInsensitive);
-  completer->setCompletionMode(QCompleter::InlineCompletion);
+  completer->setCompletionMode(QCompleter::PopupCompletion);
   filterLineEdit->setCompleter(completer);
 
   addToolBar(m_toolbar);
