@@ -26,12 +26,8 @@ using namespace SbUtils;
 //------------------------------------------------------------------------------
 CLibrary::CLibrary(CMainWindow* AParent)
   : QSqlTableModel()
+  , m_parent(AParent)
 {
-  m_parent = AParent;
-  m_workingPath = parent()->workingPath();
-  connect(parent(), SIGNAL(workingPathChanged(QString)),
-	  this, SLOT(setWorkingPath(QString)));
-  
   setTable("songs");
   setEditStrategy(QSqlTableModel::OnManualSubmit);
   select();
@@ -61,14 +57,13 @@ CLibrary::~CLibrary()
   delete m_pixmap;
 }
 //------------------------------------------------------------------------------
-CMainWindow* CLibrary::parent()
+CMainWindow* CLibrary::parent() const
 {
   return m_parent ;
 }
 //------------------------------------------------------------------------------
 void CLibrary::retrieveSongs()
 {
-  //qDebug() << "CLibrary::retrieveSongs";
   uint count = 0;
   QStringList filter = QStringList() << "*.sg";
   QString path = QString("%1/songs/").arg(workingPath());
@@ -288,11 +283,6 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 //------------------------------------------------------------------------------
 QString CLibrary::workingPath() const
 {
-  return m_workingPath;
-}
-//------------------------------------------------------------------------------
-void CLibrary::setWorkingPath(QString value)
-{
-  m_workingPath = value;
+  return parent()->workingPath();
 }
 //------------------------------------------------------------------------------

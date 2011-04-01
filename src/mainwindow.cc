@@ -555,7 +555,6 @@ void CMainWindow::connectDb()
 
   // Initialize the song library
   m_library = new CLibrary(this);
-  library()->setWorkingPath(workingPath());
 
   m_proxyModel->setSourceModel(library());
   m_proxyModel->setDynamicSortFilter(true);
