@@ -162,7 +162,6 @@ private:
 
   bool m_isToolbarDisplayed;
   bool m_isStatusbarDisplayed;
-  bool m_first;
 
   QPixmap *m_cover;
   QLabel m_coverLabel;

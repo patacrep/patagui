@@ -59,16 +59,16 @@ CMainWindow::CMainWindow()
 
   m_isToolbarDisplayed = true;
   m_isStatusbarDisplayed = true;
-  m_first = true;
 
   readSettings();
 
   // main document and title
-  songbook()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
+  connect(this, SIGNAL(workingPathChanged(const QString&)),
+	  this, SLOT(rebuildLibrary()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -226,7 +226,7 @@ void CMainWindow::readSettings()
 
   resize(settings.value("mainWindow/size", QSize(800,600)).toSize());
 
-  setWorkingPath( settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString() );
+  setWorkingPath(settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString());
 
   settings.beginGroup("display");
   m_displayColumnArtist = settings.value("artist", true).toBool();
@@ -961,26 +961,26 @@ void CMainWindow::updateTitle(const QString &filename)
 //------------------------------------------------------------------------------
 const QString CMainWindow::workingPath()
 {
-  if (!QDir( m_workingPath ).exists())
+  if (!QDir(m_workingPath).exists())
     m_workingPath = QDir::currentPath();
   return m_workingPath;
- }
+}
 //------------------------------------------------------------------------------
 void CMainWindow::setWorkingPath(const QString &path)
 {
-  QString pathname = path;
-  while(pathname.endsWith("/"))
-    pathname.remove(-1,1);
-  
-  if ( pathname != m_workingPath)
-    {
-      m_workingPath = pathname;
-      emit(workingPathChanged(pathname));
+  QString workingPath = QDir::cleanPath(path);
+  if (workingPath.endsWith("/"))
+    workingPath.remove(-1,1);
 
-      if(!m_first)
-	rebuildLibrary();
+  if (workingPath != m_workingPath)
+    {
+      m_workingPath = workingPath;
+      emit(workingPathChanged(workingPath));
+
+      // update the corresponding setting
+      QSettings settings;
+      settings.setValue("workingPath", m_workingPath);
     }
-  m_first = false;
 }
 //------------------------------------------------------------------------------
 QProgressBar * CMainWindow::progressBar() const
