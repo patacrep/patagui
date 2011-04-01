@@ -67,8 +67,8 @@ CMainWindow::CMainWindow()
   songbook()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
-  connect(this, SIGNAL(workingPathChanged(QString)),
-	  songbook(), SLOT(setWorkingPath(QString)));
+  connect(this, SIGNAL(workingPathChanged(const QString&)),
+	  songbook(), SLOT(setWorkingPath(const QString&)));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -966,15 +966,16 @@ const QString CMainWindow::workingPath()
   return m_workingPath;
  }
 //------------------------------------------------------------------------------
-void CMainWindow::setWorkingPath(QString dirname)
+void CMainWindow::setWorkingPath(const QString &path)
 {
-  while(dirname.endsWith("/"))
-    dirname.remove(-1,1);
+  QString pathname = path;
+  while(pathname.endsWith("/"))
+    pathname.remove(-1,1);
   
-  if ( dirname != m_workingPath)
+  if ( pathname != m_workingPath)
     {
-      m_workingPath = dirname;
-      emit(workingPathChanged(dirname));
+      m_workingPath = pathname;
+      emit(workingPathChanged(pathname));
 
       if(!m_first)
 	rebuildLibrary();

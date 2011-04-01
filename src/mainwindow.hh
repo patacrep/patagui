@@ -60,13 +60,13 @@ public slots:
   void updateCover(const QModelIndex & index);
   void rebuildLibrary();
   void refreshLibrary();
-  void setWorkingPath(QString dirname);
+  void setWorkingPath(const QString &path);
   void templateSettings();
   void updateSongbookLabels();
   void updateView();
 
 signals:
-  void workingPathChanged(QString path);
+  void workingPathChanged(const QString &path);
 
 protected:
   void closeEvent(QCloseEvent *event);
