@@ -342,41 +342,31 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-#if QT_VERSION >= 0x040600
   m_newSongAct->setIcon(QIcon::fromTheme("document-new"));
-#endif
   m_newSongAct->setStatusTip(tr("Write a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
-#if QT_VERSION >= 0x040600
   m_newAct->setIcon(QIcon::fromTheme("folder-new"));
-#endif
   m_newAct->setShortcut(QKeySequence::New);
   m_newAct->setStatusTip(tr("Create a new songbook"));
   connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
 
   m_openAct = new QAction(tr("Open..."), this);
-#if QT_VERSION >= 0x040600
   m_openAct->setIcon(QIcon::fromTheme("document-open"));
-#endif
   m_openAct->setShortcut(QKeySequence::Open);
   m_openAct->setStatusTip(tr("Open a songbook"));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   m_saveAct = new QAction(tr("Save"), this);
   m_saveAct->setShortcut(QKeySequence::Save);
-#if QT_VERSION >= 0x040600
   m_saveAct->setIcon(QIcon::fromTheme("document-save"));
-#endif
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   m_saveAsAct = new QAction(tr("Save As..."), this);
   m_saveAsAct->setShortcut(QKeySequence::SaveAs);
-#if QT_VERSION >= 0x040600
   m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as"));
-#endif
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
@@ -387,18 +377,14 @@ void CMainWindow::createActions()
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-#if QT_VERSION >= 0x040600
   m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
-#endif
   m_aboutAct->setStatusTip(tr("About this application"));
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
   m_exitAct->setShortcut(QKeySequence::Close);
-#if QT_VERSION >= 0x040600
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
-#endif
   m_exitAct->setStatusTip(tr("Quit the program"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -455,9 +441,7 @@ void CMainWindow::createActions()
   m_builder = new CDownload(this);
   m_downloadDbAct = new QAction(tr("Download"),this);
   m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
-#if QT_VERSION >= 0x040600
   m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
-#endif
   connect(m_downloadDbAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
   m_toolbarViewAct = new QAction(tr("Toolbar"),this);
@@ -483,9 +467,7 @@ void CMainWindow::createActions()
   connect(m_checkerAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
   m_buildAct = new QAction(tr("Build PDF"), this);
-#if QT_VERSION >= 0x040600
   m_buildAct->setIcon(QIcon::fromTheme("document-export"));
-#endif
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
@@ -495,9 +477,7 @@ void CMainWindow::createActions()
   m_builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
 #endif
   m_cleanAct = new QAction(tr("Clean"), this);
-#if QT_VERSION >= 0x040600
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
-#endif
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), m_builder, SLOT(action()));
 
