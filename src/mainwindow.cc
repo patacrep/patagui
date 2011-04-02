@@ -63,6 +63,7 @@ CMainWindow::CMainWindow()
   readSettings();
 
   // main document and title
+  songbook()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
