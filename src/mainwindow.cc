@@ -491,6 +491,9 @@ void CMainWindow::createActions()
 
   m_builder = new CMakeSongbook(this);
   m_builder->setProcessOptions(QStringList() << "clean");
+#ifdef Q_WS_WIN
+  m_builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#endif
   m_cleanAct = new QAction(tr("Clean"), this);
 #if QT_VERSION >= 0x040600
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
@@ -870,17 +873,23 @@ void CMainWindow::build()
       break;
     }
 
-  QString target = QString("%1.pdf")
-    .arg(QFileInfo(songbook()->filename()).baseName());
+  QString basename = QFileInfo(songbook()->filename()).baseName();
+  QString target = QString("%1.pdf").arg(basename);
   
   m_builder = new CMakeSongbook(this);
 
   //force a make clean
   m_builder->setProcessOptions(QStringList() << "clean");
+#ifdef Q_WS_WIN
+  m_builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#endif
   m_builder->action();
   m_builder->process()->waitForFinished();
   
   m_builder->setProcessOptions(QStringList() << target);
+#ifdef Q_WS_WIN
+  m_builder->setProcessOptions(QStringList() << "/C" << "make.bat" << basename);
+#endif
   m_builder->action();
 }
 //------------------------------------------------------------------------------
@@ -947,7 +956,18 @@ void CMainWindow::updateSongsList()
 {
   QStringList songlist = getSelectedSongs();
   QString path = QString("%1/songs/").arg(workingPath());
+
+#ifdef Q_WS_WIN
+  path = QString("%1\\songs\\").arg(workingPath());
+  songlist.replaceInStrings("/", "\\");
+#endif
+
   songlist.replaceInStrings(path, QString());
+
+#ifdef Q_WS_WIN
+  songlist.replaceInStrings("\\", "/");
+#endif
+
   songbook()->setSongs(songlist);
 }
 //------------------------------------------------------------------------------
