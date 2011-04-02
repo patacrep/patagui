@@ -28,7 +28,7 @@ namespace SbUtils
   //------------------------------------------------------------------------------
   QString latexToUtf8(const QString & AString)
   {
-    QString str(AString);
+    QString str(AString.toUtf8());
     str.replace(QString("\\'e"), QString("é"));
     str.replace(QString("\\`e"), QString("è"));
     str.replace(QString("\\^e"), QString("ê"));
@@ -50,7 +50,7 @@ namespace SbUtils
   //------------------------------------------------------------------------------
   QString filenameToString(const QString AString)
   {
-    QString str(AString);
+    QString str(AString.toUtf8());
     if (str.isEmpty())
       return str;
 
@@ -63,7 +63,7 @@ namespace SbUtils
   //------------------------------------------------------------------------------
   QString stringToFilename(const QString & AString, const QString & sep)
   {
-    QString str(AString);
+    QString str(AString.toUtf8());
     QString item;
   
     QStringList list = QStringList() 
