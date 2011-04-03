@@ -23,7 +23,7 @@ CMakeSongbook::CMakeSongbook(CMainWindow* AParent)
 {
   setProcessName("make");
 #ifdef Q_WS_WIN
-  setFileName("cmd.exe");
+  setProcessName("cmd.exe");
 #endif
   
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
