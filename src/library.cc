@@ -100,6 +100,7 @@ void CLibrary::addSong(const QString & path)
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       QTextStream stream (&file);
+      stream.setCodec("UTF-8");
       QString fileStr = stream.readAll();
       file.close();
 
