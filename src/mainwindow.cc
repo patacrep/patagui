@@ -939,7 +939,7 @@ void CMainWindow::updateSongsList()
 
 #ifdef Q_WS_WIN
   path = QString("%1\\songs\\").arg(workingPath());
-  songlist.replaceInStrings("/", "\\");
+  path.replace("\\", "/");
 #endif
 
   songlist.replaceInStrings(path, QString());
