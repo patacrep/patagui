@@ -22,7 +22,9 @@ CMakeSongbook::CMakeSongbook(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
   setProcessName("make");
-  setProcessOptions(QStringList());
+#ifdef Q_WS_WIN
+  setProcessName("cmd.exe");
+#endif
   
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   env.insert("LATEX_OPTIONS", "-halt-on-error");

@@ -59,7 +59,6 @@ CMainWindow::CMainWindow()
 
   m_isToolbarDisplayed = true;
   m_isStatusbarDisplayed = true;
-  m_first = true;
 
   readSettings();
 
@@ -67,8 +66,10 @@ CMainWindow::CMainWindow()
   songbook()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
           this, SLOT(setWindowModified(bool)));
-  connect(this, SIGNAL(workingPathChanged(QString)),
-	  songbook(), SLOT(setWorkingPath(QString)));
+  connect(this, SIGNAL(workingPathChanged(const QString&)),
+	  songbook(), SLOT(setWorkingPath(const QString&)));
+  connect(this, SIGNAL(workingPathChanged(const QString&)),
+	  this, SLOT(rebuildLibrary()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -138,7 +139,7 @@ CMainWindow::CMainWindow()
   QCompleter *completer = new QCompleter;
   completer->setModel(library());
   completer->setCaseSensitivity(Qt::CaseInsensitive);
-  completer->setCompletionMode(QCompleter::InlineCompletion);
+  completer->setCompletionMode(QCompleter::PopupCompletion);
   filterLineEdit->setCompleter(completer);
 
   addToolBar(m_toolbar);
@@ -226,7 +227,7 @@ void CMainWindow::readSettings()
 
   resize(settings.value("mainWindow/size", QSize(800,600)).toSize());
 
-  setWorkingPath( settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString() );
+  setWorkingPath(settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString());
 
   settings.beginGroup("display");
   m_displayColumnArtist = settings.value("artist", true).toBool();
@@ -341,41 +342,31 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-#if QT_VERSION >= 0x040600
   m_newSongAct->setIcon(QIcon::fromTheme("document-new"));
-#endif
   m_newSongAct->setStatusTip(tr("Write a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
-#if QT_VERSION >= 0x040600
   m_newAct->setIcon(QIcon::fromTheme("folder-new"));
-#endif
   m_newAct->setShortcut(QKeySequence::New);
   m_newAct->setStatusTip(tr("Create a new songbook"));
   connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
 
   m_openAct = new QAction(tr("Open..."), this);
-#if QT_VERSION >= 0x040600
   m_openAct->setIcon(QIcon::fromTheme("document-open"));
-#endif
   m_openAct->setShortcut(QKeySequence::Open);
   m_openAct->setStatusTip(tr("Open a songbook"));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   m_saveAct = new QAction(tr("Save"), this);
   m_saveAct->setShortcut(QKeySequence::Save);
-#if QT_VERSION >= 0x040600
   m_saveAct->setIcon(QIcon::fromTheme("document-save"));
-#endif
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   m_saveAsAct = new QAction(tr("Save As..."), this);
   m_saveAsAct->setShortcut(QKeySequence::SaveAs);
-#if QT_VERSION >= 0x040600
   m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as"));
-#endif
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
@@ -386,18 +377,14 @@ void CMainWindow::createActions()
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-#if QT_VERSION >= 0x040600
   m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
-#endif
   m_aboutAct->setStatusTip(tr("About this application"));
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
   m_exitAct->setShortcut(QKeySequence::Close);
-#if QT_VERSION >= 0x040600
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
-#endif
   m_exitAct->setStatusTip(tr("Quit the program"));
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -454,9 +441,7 @@ void CMainWindow::createActions()
   m_builder = new CDownload(this);
   m_downloadDbAct = new QAction(tr("Download"),this);
   m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
-#if QT_VERSION >= 0x040600
   m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
-#endif
   connect(m_downloadDbAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
   m_toolbarViewAct = new QAction(tr("Toolbar"),this);
@@ -482,18 +467,17 @@ void CMainWindow::createActions()
   connect(m_checkerAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
   m_buildAct = new QAction(tr("Build PDF"), this);
-#if QT_VERSION >= 0x040600
   m_buildAct->setIcon(QIcon::fromTheme("document-export"));
-#endif
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_builder = new CMakeSongbook(this);
   m_builder->setProcessOptions(QStringList() << "clean");
-  m_cleanAct = new QAction(tr("Clean"), this);
-#if QT_VERSION >= 0x040600
-  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
+#ifdef Q_WS_WIN
+  m_builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
 #endif
+  m_cleanAct = new QAction(tr("Clean"), this);
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear"));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), m_builder, SLOT(action()));
 
@@ -555,7 +539,6 @@ void CMainWindow::connectDb()
 
   // Initialize the song library
   m_library = new CLibrary(this);
-  library()->setWorkingPath(workingPath());
 
   m_proxyModel->setSourceModel(library());
   m_proxyModel->setDynamicSortFilter(true);
@@ -870,17 +853,23 @@ void CMainWindow::build()
       break;
     }
 
-  QString target = QString("%1.pdf")
-    .arg(QFileInfo(songbook()->filename()).baseName());
+  QString basename = QFileInfo(songbook()->filename()).baseName();
+  QString target = QString("%1.pdf").arg(basename);
   
   m_builder = new CMakeSongbook(this);
 
   //force a make clean
   m_builder->setProcessOptions(QStringList() << "clean");
+#ifdef Q_WS_WIN
+  m_builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#endif
   m_builder->action();
   m_builder->process()->waitForFinished();
   
   m_builder->setProcessOptions(QStringList() << target);
+#ifdef Q_WS_WIN
+  m_builder->setProcessOptions(QStringList() << "/C" << "make.bat" << basename);
+#endif
   m_builder->action();
 }
 //------------------------------------------------------------------------------
@@ -947,7 +936,18 @@ void CMainWindow::updateSongsList()
 {
   QStringList songlist = getSelectedSongs();
   QString path = QString("%1/songs/").arg(workingPath());
+
+#ifdef Q_WS_WIN
+  path = QString("%1\\songs\\").arg(workingPath());
+  path.replace("\\", "/");
+#endif
+
   songlist.replaceInStrings(path, QString());
+
+#ifdef Q_WS_WIN
+  songlist.replaceInStrings("\\", "/");
+#endif
+
   songbook()->setSongs(songlist);
 }
 //------------------------------------------------------------------------------
@@ -961,25 +961,26 @@ void CMainWindow::updateTitle(const QString &filename)
 //------------------------------------------------------------------------------
 const QString CMainWindow::workingPath()
 {
-  if (!QDir( m_workingPath ).exists())
+  if (!QDir(m_workingPath).exists())
     m_workingPath = QDir::currentPath();
   return m_workingPath;
- }
+}
 //------------------------------------------------------------------------------
-void CMainWindow::setWorkingPath(QString dirname)
+void CMainWindow::setWorkingPath(const QString &path)
 {
-  while(dirname.endsWith("/"))
-    dirname.remove(-1,1);
-  
-  if ( dirname != m_workingPath)
-    {
-      m_workingPath = dirname;
-      emit(workingPathChanged(dirname));
+  QString workingPath = QDir::cleanPath(path);
+  if (workingPath.endsWith("/"))
+    workingPath.remove(-1,1);
 
-      if(!m_first)
-	rebuildLibrary();
+  if (workingPath != m_workingPath)
+    {
+      m_workingPath = workingPath;
+      emit(workingPathChanged(workingPath));
+
+      // update the corresponding setting
+      QSettings settings;
+      settings.setValue("workingPath", m_workingPath);
     }
-  m_first = false;
 }
 //------------------------------------------------------------------------------
 QProgressBar * CMainWindow::progressBar() const

@@ -45,7 +45,7 @@ class CSongbook : public QObject
     
     
 public slots:
-  void setWorkingPath(QString path);
+  void setWorkingPath(const QString &path);
   void setFilename(const QString &filename);
   void setTmpl(const QString &tmpl);
   void setSongs(QStringList songs);

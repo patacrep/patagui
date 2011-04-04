@@ -45,10 +45,9 @@ public:
   void removeSong(const QString & path);
   bool containsSong(const QString & path);
   QVariant data(const QModelIndex &index, int role) const;
-  CMainWindow* parent();
+  CMainWindow* parent() const;
   
 public slots:
-  void setWorkingPath(QString);
   void retrieveSongs();
   void updateSong(const QString & path);
 
@@ -58,7 +57,6 @@ signals:
 private:
   CMainWindow* m_parent;
   QPixmap* m_pixmap;
-  QString m_workingPath;
   QFileSystemWatcher* m_watcher;
 };
 

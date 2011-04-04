@@ -233,7 +233,7 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  m_workingPath->setPath(settings.value("workingPath", QString("%1/songbook/").arg(QDir::home().path())).toString());
+  m_workingPath->setPath(settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString());
 }
 
 void OptionsPage::writeSettings()

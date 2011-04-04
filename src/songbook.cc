@@ -627,7 +627,7 @@ QString CSongbook::workingPath() const
   return m_workingPath;
 }
 
-void CSongbook::setWorkingPath(QString path)
+void CSongbook::setWorkingPath(const QString &path)
 {
   if (m_workingPath != path)
     {
