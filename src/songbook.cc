@@ -75,6 +75,9 @@ QString CSongbook::filename() const
 void CSongbook::setFilename(const QString &filename)
 {
   m_filename = filename;
+  // ensure the .sg extension is present
+  if (!filename.endsWith(".sg"))
+    m_filename += ".sg";
 }
 
 bool CSongbook::isModified()
@@ -205,6 +208,7 @@ void CSongbook::changeTemplate(const QString & filename)
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       QTextStream in(&file);
+      in.setCodec("UTF-8");
       QRegExp jsonFilter("^%%:");
       QString line;
       json = "(";
@@ -411,6 +415,7 @@ void CSongbook::save(const QString & filename)
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream out(&file);
+      out.setCodec("UTF-8");
       out << "{\n";
 
       if (!tmpl().isEmpty())
@@ -528,6 +533,7 @@ void CSongbook::load(const QString & filename)
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       QTextStream in(&file);
+      in.setCodec("UTF-8");
       QString json = QString("(%1)").arg(in.readAll());
       file.close();
 

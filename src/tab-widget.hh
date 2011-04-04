@@ -51,6 +51,7 @@ public:
   void setSelectionBehaviorOnAdd(SelectionBehavior behavior);
 
 public slots:
+  void closeTab();
   void closeTab(int index);
   void prev();
   void next();

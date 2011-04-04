@@ -123,6 +123,7 @@ void CSongEditor::setPath(const QString &path)
   if (file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       QTextStream stream (&file);
+      stream.setCodec("UTF-8");
       text = stream.readAll();
       file.close();
     }
@@ -137,6 +138,7 @@ void CSongEditor::save()
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream stream (&file);
+      stream.setCodec("UTF-8");
       stream << toPlainText();
       file.close();
       document()->setModified(false);

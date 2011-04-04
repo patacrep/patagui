@@ -188,6 +188,7 @@ void CDialogNewSong::addSong()
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream stream (&file);
+      stream.setCodec("UTF-8");
       stream << songTemplate();
       file.close();
     }

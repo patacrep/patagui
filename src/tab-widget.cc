@@ -35,9 +35,17 @@ CTabWidget::CTabWidget()
   action = new QAction(tr("Next tab"), this);
   action->setShortcut(QKeySequence::NextChild);
   connect(action, SIGNAL(triggered()), this, SLOT(next()));
+  addAction(action);
+
   action = new QAction(tr("Previous tab"), this);
   action->setShortcut(QKeySequence::PreviousChild);
   connect(action, SIGNAL(triggered()), this, SLOT(prev()));
+  addAction(action);
+
+  action = new QAction(tr("Close tab"), this);
+  action->setShortcut(QKeySequence::Close);
+  connect(action, SIGNAL(triggered()), this, SLOT(closeTab()));
+  addAction(action);
 }
 
 CTabWidget::~CTabWidget()
@@ -51,6 +59,11 @@ CTabWidget::SelectionBehavior CTabWidget::selectionBehaviorOnAdd() const
 void CTabWidget::setSelectionBehaviorOnAdd(CTabWidget::SelectionBehavior behavior)
 {
   m_selectionBehaviorOnAdd = behavior;
+}
+
+void CTabWidget::closeTab()
+{
+  emit(tabCloseRequested (currentIndex()));
 }
 
 void CTabWidget::closeTab(int index)
