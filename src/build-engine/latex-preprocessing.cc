@@ -39,6 +39,7 @@ QWidget* CLatexPreprocessing::mainWidget()
   if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       QTextStream in(&file);
+      in.setCodec("UTF-8");
       QRegExp filter("^##:");
       QString line;
       bool rule = false;
