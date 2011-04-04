@@ -76,8 +76,8 @@ void CSongbook::setFilename(const QString &filename)
 {
   m_filename = filename;
   // ensure the .sg extension is present
-  if (!filename.endsWith(".sg"))
-    m_filename += ".sg";
+  if (!filename.endsWith(".sb"))
+    m_filename += ".sb";
 }
 
 bool CSongbook::isModified()
