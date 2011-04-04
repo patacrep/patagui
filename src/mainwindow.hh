@@ -36,6 +36,7 @@ class CSongEditor;
 class CBuildEngine;
 class CLabel;
 class CTabWidget;
+class CFilterLineEdit;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
