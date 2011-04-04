@@ -123,16 +123,16 @@ CMainWindow::CMainWindow()
   refreshLibrary();
 
   // filtering related widgets
-  CFilterLineEdit *filterLineEdit = new CFilterLineEdit;
+  m_filterLineEdit = new CFilterLineEdit;
   m_proxyModel->setFilterKeyColumn(-1);
-  filterLineEdit->setVisible(true);
-  connect(filterLineEdit, SIGNAL(textChanged(QString)),
+  m_filterLineEdit->setVisible(true);
+  connect(m_filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
 
   QWidget* stretchWidget = new QWidget;
   stretchWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   m_toolbar->addWidget(stretchWidget);
-  m_toolbar->addWidget(filterLineEdit);
+  m_toolbar->addWidget(m_filterLineEdit);
   m_toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
 
   //artist autocompletion in the filter bar
@@ -140,7 +140,7 @@ CMainWindow::CMainWindow()
   completer->setModel(library());
   completer->setCaseSensitivity(Qt::CaseInsensitive);
   completer->setCompletionMode(QCompleter::PopupCompletion);
-  filterLineEdit->setCompleter(completer);
+  m_filterLineEdit->setCompleter(completer);
 
   addToolBar(m_toolbar);
   
@@ -890,6 +890,7 @@ void CMainWindow::open()
   QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(QRegExp("^"),path);
 
+  m_filterLineEdit->clear();
   view()->clearSelection();
 
   QList<QModelIndex> indexes;

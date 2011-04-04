@@ -147,6 +147,7 @@ private:
   QTableView *m_view;
   QProgressBar* m_progressBar;
   QTextEdit* m_noDataInfo;
+  CFilterLineEdit *m_filterLineEdit;
 
   // Global
   QString m_workingPath;
