@@ -921,15 +921,16 @@ void CMainWindow::save(bool forced)
 //------------------------------------------------------------------------------
 void CMainWindow::saveAs()
 {
-  QFileDialog* dialog = new QFileDialog;
-  QString filename = dialog->getSaveFileName(this, tr("Save as"), workingPath(),
-					     tr("Songbook (*.sb)"));
+  QString filename = QFileDialog::getSaveFileName(this,
+						  tr("Save as"),
+						  workingPath(),
+						  tr("Songbook (*.sb)"));
 
   if (!filename.isEmpty())
-    songbook()->setFilename(filename);
-
-  if(dialog->result())
-    save();
+    {
+      songbook()->setFilename(filename);
+      save();
+    }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongsList()
