@@ -64,6 +64,8 @@ CMainWindow* CLibrary::parent() const
 //------------------------------------------------------------------------------
 void CLibrary::retrieveSongs()
 {
+  QSqlDatabase db = QSqlDatabase::database();
+
   uint count = 0;
   QStringList filter = QStringList() << "*.sg";
   QString path = QString("%1/songs/").arg(workingPath());
@@ -72,6 +74,7 @@ void CLibrary::retrieveSongs()
     m_watcher->removePaths(m_watcher->files());
 
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
+  db.transaction();
   while(it.hasNext())
     {
       parent()->statusBar()->showMessage(QString(tr("Inserting song : %1")).arg(it.fileInfo().fileName()));
@@ -81,6 +84,8 @@ void CLibrary::retrieveSongs()
       parent()->progressBar()->setValue(++count);
       addSong(it.next());
     }
+  submitAll();
+  db.commit();
 
 #ifndef __APPLE__
   m_watcher->addPaths(paths);
@@ -181,7 +186,6 @@ void CLibrary::addSong(const QString & path)
 	  qWarning() << "CLibrary::addSongFromFile : unable to insert song " << path;
 	}
     }
-  submitAll();
 }
 //------------------------------------------------------------------------------
 void CLibrary::removeSong(const QString & path)
