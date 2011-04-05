@@ -62,5 +62,8 @@
 <file>scalable/mimetypes/document-export.svg</file>
 <file>scalable/places/folder-remote.svg</file>
 <file>scalable/status/image-missing.svg</file>
+<file>scalable/places/flag-fr.svg</file>
+<file>scalable/places/flag-es.svg</file>
+<file>scalable/places/flag-en.svg</file>
 </qresource>
 </RCC>
