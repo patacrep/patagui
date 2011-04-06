@@ -125,6 +125,7 @@ CMainWindow::CMainWindow()
   // filtering related widgets
   m_filterLineEdit = new CFilterLineEdit;
   m_proxyModel->setFilterKeyColumn(-1);
+  m_proxyModel->setSortLocaleAware(true);
   m_filterLineEdit->setVisible(true);
   connect(m_filterLineEdit, SIGNAL(textChanged(QString)),
 	  this, SLOT(filterChanged()));
@@ -148,7 +149,6 @@ CMainWindow::CMainWindow()
 						    const QItemSelection & )),
 	  this, SLOT(selectionChanged(const QItemSelection & , const QItemSelection & )));
 
-  
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
   QBoxLayout *dataLayout = new QVBoxLayout;
