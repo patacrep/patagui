@@ -69,7 +69,7 @@ CMainWindow::CMainWindow()
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  this, SLOT(updateLibrary()));
+	  this, SLOT(libraryUpdate()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -120,7 +120,7 @@ CMainWindow::CMainWindow()
 
   //Connection to database
   connectDb();
-  updateLibrary();
+  libraryUpdate();
 
   // filtering related widgets
   m_filterLineEdit = new CFilterLineEdit;
@@ -430,9 +430,9 @@ void CMainWindow::createActions()
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           view(), SLOT(resizeColumnsToContents()));
 
-  m_updateLibraryAct = new QAction(tr("Update"), this);
-  m_updateLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
-  connect(m_updateLibraryAct, SIGNAL(triggered()), this, SLOT(updateLibrary()));
+  m_libraryUpdateAct = new QAction(tr("Update"), this);
+  m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
+  connect(m_libraryUpdateAct, SIGNAL(triggered()), this, SLOT(libraryUpdate()));
   m_builder = new CDownload(this);
   m_downloadDbAct = new QAction(tr("Download"),this);
   m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
@@ -553,7 +553,7 @@ void CMainWindow::connectDb()
           this, SLOT(selectionChanged()));
 }
 //------------------------------------------------------------------------------
-void CMainWindow::updateLibrary()
+void CMainWindow::libraryUpdate()
 {
   //Drop table songs and recreate
   QSqlQuery query("delete from songs");
@@ -608,7 +608,7 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_newSongAct);
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_downloadDbAct);
-  m_dbMenu->addAction(m_updateLibraryAct);
+  m_dbMenu->addAction(m_libraryUpdateAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toolbarViewAct);
