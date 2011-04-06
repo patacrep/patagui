@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011 Romain Goffe, Alexandre Dupas
 //
 // Songbook Creator is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
 #include "filter-lineedit.hh"
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
+#include "library-download.hh"
 
 using namespace SbUtils;
 
@@ -444,6 +445,13 @@ void CMainWindow::createActions()
   m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
   connect(m_downloadDbAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
+  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
+  m_libraryDownloadAct = new QAction(tr("Download NG"), this);
+  m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
+  m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote"));
+  connect(m_libraryDownloadAct, SIGNAL(triggered()),
+	  libraryDownload, SLOT(exec()));
+
   m_toolbarViewAct = new QAction(tr("Toolbar"),this);
   m_toolbarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
   m_toolbarViewAct->setCheckable(true);
@@ -616,6 +624,7 @@ void CMainWindow::createMenus()
   m_dbMenu = menuBar()->addMenu(tr("&Library"));
   m_dbMenu->addAction(m_newSongAct);
   m_dbMenu->addSeparator();
+  m_dbMenu->addAction(m_libraryDownloadAct);
   m_dbMenu->addAction(m_downloadDbAct);
   m_dbMenu->addAction(m_refreshLibraryAct);
   m_dbMenu->addAction(m_rebuildLibraryAct);

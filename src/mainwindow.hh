@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011 Romain Goffe, Alexandre Dupas
 //
 // Songbook Creator is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -209,6 +209,7 @@ private:
   QAction *m_selectFrenchAct;
   QAction *m_selectSpanishAct;
   QAction *m_downloadDbAct;
+  QAction *m_libraryDownloadAct;
   QAction *m_refreshLibraryAct;
   QAction *m_rebuildLibraryAct;
 
