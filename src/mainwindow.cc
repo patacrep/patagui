@@ -30,7 +30,6 @@
 #include "build-engine/resize-covers.hh"
 #include "build-engine/latex-preprocessing.hh"
 #include "build-engine/make-songbook.hh"
-#include "build-engine/download.hh"
 #include "song-editor.hh"
 #include "highlighter.hh"
 #include "dialog-new-song.hh"
@@ -439,14 +438,8 @@ void CMainWindow::createActions()
   m_rebuildLibraryAct->setStatusTip(tr("Rebuild the current song list from \".sg\" files"));
   connect(m_rebuildLibraryAct, SIGNAL(triggered()), this, SLOT(rebuildLibrary()));
 
-  m_builder = new CDownload(this);
-  m_downloadDbAct = new QAction(tr("Download"),this);
-  m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
-  m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
-  connect(m_downloadDbAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
-
   CLibraryDownload *libraryDownload = new CLibraryDownload(this);
-  m_libraryDownloadAct = new QAction(tr("Download NG"), this);
+  m_libraryDownloadAct = new QAction(tr("Download"), this);
   m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
   m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote"));
   connect(m_libraryDownloadAct, SIGNAL(triggered()),
@@ -625,7 +618,6 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_newSongAct);
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_libraryDownloadAct);
-  m_dbMenu->addAction(m_downloadDbAct);
   m_dbMenu->addAction(m_refreshLibraryAct);
   m_dbMenu->addAction(m_rebuildLibraryAct);
 

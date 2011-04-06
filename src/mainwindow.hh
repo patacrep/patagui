@@ -208,7 +208,6 @@ private:
   QAction *m_selectEnglishAct;
   QAction *m_selectFrenchAct;
   QAction *m_selectSpanishAct;
-  QAction *m_downloadDbAct;
   QAction *m_libraryDownloadAct;
   QAction *m_refreshLibraryAct;
   QAction *m_rebuildLibraryAct;
