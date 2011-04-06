@@ -69,7 +69,7 @@ CMainWindow::CMainWindow()
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  this, SLOT(rebuildLibrary()));
+	  this, SLOT(libraryUpdate()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -120,7 +120,7 @@ CMainWindow::CMainWindow()
 
   //Connection to database
   connectDb();
-  refreshLibrary();
+  libraryUpdate();
 
   // filtering related widgets
   m_filterLineEdit = new CFilterLineEdit;
@@ -430,14 +430,9 @@ void CMainWindow::createActions()
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           view(), SLOT(resizeColumnsToContents()));
 
-  m_refreshLibraryAct = new QAction(tr("Update"), this);
-  m_refreshLibraryAct->setStatusTip(tr("Update current song list from \".sg\" files"));
-  connect(m_refreshLibraryAct, SIGNAL(triggered()), this, SLOT(refreshLibrary()));
-
-  m_rebuildLibraryAct = new QAction(tr("Rebuild"), this);
-  m_rebuildLibraryAct->setStatusTip(tr("Rebuild the current song list from \".sg\" files"));
-  connect(m_rebuildLibraryAct, SIGNAL(triggered()), this, SLOT(rebuildLibrary()));
-
+  m_libraryUpdateAct = new QAction(tr("Update"), this);
+  m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
+  connect(m_libraryUpdateAct, SIGNAL(triggered()), this, SLOT(libraryUpdate()));
   m_builder = new CDownload(this);
   m_downloadDbAct = new QAction(tr("Download"),this);
   m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
@@ -558,15 +553,11 @@ void CMainWindow::connectDb()
           this, SLOT(selectionChanged()));
 }
 //------------------------------------------------------------------------------
-void CMainWindow::rebuildLibrary()
+void CMainWindow::libraryUpdate()
 {
   //Drop table songs and recreate
   QSqlQuery query("delete from songs");
-  refreshLibrary();
-}
-//------------------------------------------------------------------------------
-void CMainWindow::refreshLibrary()
-{
+
   QStringList filter = QStringList() << "*.sg";
   QString path = QString("%1/songs/").arg(workingPath());
   
@@ -584,7 +575,7 @@ void CMainWindow::refreshLibrary()
   library()->retrieveSongs();
   progressBar()->setTextVisible(false);
   progressBar()->hide();
-  statusBar()->showMessage(tr("Building database from \".sg\" files completed."));
+  statusBar()->showMessage(tr("Song database updated."));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent *event)
@@ -617,8 +608,7 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_newSongAct);
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_downloadDbAct);
-  m_dbMenu->addAction(m_refreshLibraryAct);
-  m_dbMenu->addAction(m_rebuildLibraryAct);
+  m_dbMenu->addAction(m_libraryUpdateAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toolbarViewAct);
