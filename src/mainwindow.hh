@@ -59,8 +59,7 @@ public:
 
 public slots:
   void updateCover(const QModelIndex & index);
-  void rebuildLibrary();
-  void refreshLibrary();
+  void updateLibrary();
   void setWorkingPath(const QString &path);
   void templateSettings();
   void updateSongbookLabels();
@@ -209,8 +208,7 @@ private:
   QAction *m_selectFrenchAct;
   QAction *m_selectSpanishAct;
   QAction *m_downloadDbAct;
-  QAction *m_refreshLibraryAct;
-  QAction *m_rebuildLibraryAct;
+  QAction *m_updateLibraryAct;
 
   // Tools actions
   QAction *m_resizeCoversAct;
