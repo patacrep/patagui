@@ -27,6 +27,7 @@ class QListWidgetItem;
 class QStackedWidget;
 
 class QLabel;
+class QLineEdit;
 class QCheckBox;
 class CFileChooser;
 
@@ -105,6 +106,28 @@ private:
 
   QLabel *m_lilypondLabel;
   QLabel *m_gitLabel;
+};
+
+/** \brief NetworkPage is the config page used to specify network options
+ */
+class NetworkPage : public QWidget
+{
+  Q_OBJECT
+
+public:
+  NetworkPage(QWidget *parent = 0);
+
+protected:
+  void closeEvent(QCloseEvent *event);
+
+private:
+  void readSettings();
+  void writeSettings();
+
+  QLineEdit *m_hostname;
+  QLineEdit *m_port;
+  QLineEdit *m_user;
+  QLineEdit *m_password;
 };
 
 #endif // __PREFERENCES_HH__
