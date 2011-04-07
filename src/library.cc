@@ -133,9 +133,14 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	}
       return QString();
     }
-
-  //Draws the cover
-  if ( index.column() == 5 )
+  else if (index.column() == 4)
+    {
+      if (role == Qt::DecorationRole || role == Qt::SizeHintRole)
+	{
+	  return data(sibling(index.row(), 5, parentIndex), role);
+	}
+    }
+  else if ( index.column() == 5 )
     {
       QString imgFile = QSqlTableModel::data( index, Qt::DisplayRole ).toString();
       if ( Qt::DisplayRole == role )
