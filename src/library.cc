@@ -42,15 +42,6 @@ CLibrary::CLibrary(CMainWindow *parent)
   setEditStrategy(QSqlTableModel::OnManualSubmit);
   select();
 
-  // defined column titles
-  setHeaderData(0, Qt::Horizontal, tr("Artist"));
-  setHeaderData(1, Qt::Horizontal, tr("Title"));
-  setHeaderData(2, Qt::Horizontal, tr("Lilypond"));
-  setHeaderData(3, Qt::Horizontal, tr("Path"));
-  setHeaderData(4, Qt::Horizontal, tr("Album"));
-  setHeaderData(5, Qt::Horizontal, tr("Cover"));
-  setHeaderData(6, Qt::Horizontal, tr("Language"));
-
   m_pixmap = new QPixmap;
   m_pixmap->load(":/icons/fr.png");
   QPixmapCache::insert("french", *m_pixmap);
@@ -201,7 +192,19 @@ void CLibrary::update()
   	     "cover text,"
   	     "lang text"
   	     ")");
+
   setTable("songs");
+  select();
+
+  // define column titles
+  setHeaderData(0, Qt::Horizontal, tr("Artist"));
+  setHeaderData(1, Qt::Horizontal, tr("Title"));
+  setHeaderData(2, Qt::Horizontal, tr("Lilypond"));
+  setHeaderData(3, Qt::Horizontal, tr("Path"));
+  setHeaderData(4, Qt::Horizontal, tr("Album"));
+  setHeaderData(5, Qt::Horizontal, tr("Cover"));
+  setHeaderData(6, Qt::Horizontal, tr("Language"));
+
 
   // get the path of each song in the library
   QStringList filter = QStringList() << "*.sg";
