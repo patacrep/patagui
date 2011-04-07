@@ -27,6 +27,7 @@
 
 #include <QSqlTableModel>
 #include <QString>
+#include <QDir>
 
 class QPixmap;
 class QFileSystemWatcher;
@@ -36,6 +37,7 @@ class CMainWindow;
 class CLibrary : public QSqlTableModel
 {
   Q_OBJECT
+  Q_PROPERTY(QDir directory READ directory WRITE setDirectory)
 
 public:
   enum Roles {
@@ -52,8 +54,10 @@ public:
   CLibrary(CMainWindow* parent);
   ~CLibrary();
 
-  QString workingPath() const;
-  
+  QDir directory() const;
+  void setDirectory(const QString &directory);
+  void setDirectory(const QDir &directory);
+
   void addSong(const QString & path);
   void removeSong(const QString & path);
   bool containsSong(const QString & path);
@@ -71,6 +75,7 @@ private:
   CMainWindow *parent() const;
 
   CMainWindow *m_parent;
+  QDir m_directory;
   QPixmap* m_pixmap;
   QFileSystemWatcher* m_watcher;
 };

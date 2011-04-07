@@ -309,12 +309,6 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
   return QSqlTableModel::data( index, role );
 }
 //------------------------------------------------------------------------------
-QString CLibrary::workingPath() const
-{
-  return parent()->workingPath();
-}
-//------------------------------------------------------------------------------
-
 void CLibrary::update()
 {
   // recreate the database
@@ -349,4 +343,19 @@ void CLibrary::update()
   parent()->progressBar()->setTextVisible(false);
   parent()->progressBar()->hide();
   parent()->statusBar()->showMessage(tr("Song database updated."));
+}
+
+QDir CLibrary::directory() const
+{
+  return m_directory;
+}
+
+void CLibrary::setDirectory(const QString &directory)
+{
+  m_directory.setPath(directory);
+}
+
+void CLibrary::setDirectory(const QDir &directory)
+{
+  m_directory = directory;
 }

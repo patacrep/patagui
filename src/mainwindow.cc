@@ -895,25 +895,19 @@ void CMainWindow::updateTitle(const QString &filename)
 //------------------------------------------------------------------------------
 const QString CMainWindow::workingPath()
 {
-  if (!QDir(m_workingPath).exists())
-    m_workingPath = QDir::currentPath();
-  return m_workingPath;
+  return library()->directory().canonicalPath();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::setWorkingPath(const QString &path)
 {
-  QString workingPath = QDir::cleanPath(path);
-  if (workingPath.endsWith("/"))
-    workingPath.remove(-1,1);
-
-  if (workingPath != m_workingPath)
+  if (path != workingPath())
     {
-      m_workingPath = workingPath;
-      emit(workingPathChanged(workingPath));
+      library()->setDirectory(path);
+      emit(workingPathChanged(workingPath()));
 
       // update the corresponding setting
       QSettings settings;
-      settings.setValue("workingPath", m_workingPath);
+      settings.setValue("workingPath", workingPath());
     }
 }
 //------------------------------------------------------------------------------
