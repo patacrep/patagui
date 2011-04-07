@@ -59,7 +59,6 @@ public:
 
 public slots:
   void updateCover(const QModelIndex & index);
-  void libraryUpdate();
   void setWorkingPath(const QString &path);
   void templateSettings();
   void updateSongbookLabels();
@@ -97,10 +96,12 @@ private slots:
   void invertSelection();
   void selectLanguage(bool);
   void updateSongsList();
-  void connectDb();
   void filterChanged();
   void selectionChanged();
   void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
+
+  void connectDatabase();
+  void disconnectDatabase();
 
   //application
   void preferences();

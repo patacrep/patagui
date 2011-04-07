@@ -44,13 +44,13 @@ using namespace SbUtils;
 CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
-  , m_proxyModel(new CSongSortFilterProxyModel)
+  , m_proxyModel()
   , m_songbook(new CSongbook())
   , m_sbInfoSelection(new CLabel)
   , m_sbInfoTitle(new CLabel)
   , m_sbInfoAuthors(new CLabel)
   , m_sbInfoStyle(new CLabel)
-  , m_view(new QTableView(this))
+  , m_view()
   , m_progressBar(new QProgressBar(this))
   , m_cover(new QPixmap)
 {
@@ -68,8 +68,6 @@ CMainWindow::CMainWindow()
           this, SLOT(setWindowModified(bool)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
-  connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  this, SLOT(libraryUpdate()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -100,6 +98,33 @@ CMainWindow::CMainWindow()
   m_toolbar->setMovable(false);
   this->setUnifiedTitleAndToolBarOnMac(true);
 
+  connectDatabase();
+
+  // create and load song library and view
+  m_library = new CLibrary(this);
+
+  m_proxyModel = new CSongSortFilterProxyModel();
+  m_proxyModel->setSourceModel(m_library);
+  m_proxyModel->setDynamicSortFilter(true);
+
+  m_view = new QTableView(this);
+  m_view->setModel(m_proxyModel);
+  m_view->setShowGrid(false);
+  m_view->setAlternatingRowColors(true);
+  m_view->setSelectionMode(QAbstractItemView::MultiSelection);
+  m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  m_view->setSortingEnabled(true);
+  m_view->verticalHeader()->setVisible(false);
+
+  connect(m_library, SIGNAL(wasModified()), this, SLOT(updateView()));
+  connect(m_library, SIGNAL(wasModified()), this, SLOT(selectionChanged()));
+
+  m_library->update();
+
+  connect(this, SIGNAL(workingPathChanged(const QString&)),
+	  m_library, SLOT(update()));
+
   createActions();
   createMenus();
 
@@ -117,10 +142,6 @@ CMainWindow::CMainWindow()
   m_toolbar->addAction(m_selectEnglishAct);
   m_toolbar->addAction(m_selectFrenchAct);
   m_toolbar->addAction(m_selectSpanishAct);
-
-  //Connection to database
-  connectDb();
-  libraryUpdate();
 
   // filtering related widgets
   m_filterLineEdit = new CFilterLineEdit;
@@ -201,11 +222,7 @@ CMainWindow::~CMainWindow()
   delete m_library;
   delete m_songbook;
 
-  {  // close db connection
-    QSqlDatabase db = QSqlDatabase::database();
-    db.close();
-  }
-  QSqlDatabase::removeDatabase(QString());
+  disconnectDatabase();
 }
 
 void CMainWindow::switchToolBar(QToolBar * toolbar)
@@ -432,7 +449,7 @@ void CMainWindow::createActions()
 
   m_libraryUpdateAct = new QAction(tr("Update"), this);
   m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
-  connect(m_libraryUpdateAct, SIGNAL(triggered()), this, SLOT(libraryUpdate()));
+  connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
   m_builder = new CDownload(this);
   m_downloadDbAct = new QAction(tr("Download"),this);
   m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
@@ -501,81 +518,6 @@ void CMainWindow::setStatusbarDisplayed( bool value )
 bool CMainWindow::isStatusbarDisplayed( )
 {
   return m_isStatusbarDisplayed;
-}
-//------------------------------------------------------------------------------
-void CMainWindow::connectDb()
-{
-  //Connect to database
-  QString path = QString("%1/.cache/songbook-client").arg(QDir::home().path());
-  QDir dbdir; dbdir.mkpath( path );
-  QString dbpath = QString("%1/patacrep.db").arg(path);
-  bool exist = QFile::exists(dbpath); 
-
-  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName(dbpath);
-  if (!db.open())
-    {
-      QMessageBox::critical(this, tr("Cannot open database"),
-			    tr("Unable to establish a database connection.\n"
-			       "This application needs SQLite support. "
-			       "Click Cancel to exit."), QMessageBox::Cancel);
-    }
-  if (!exist)
-    {
-      QSqlQuery query;
-      query.exec("create table songs ( artist text, "
-		 "title text, "
-		 "lilypond bool, "
-		 "path text, "
-		 "album text, "
-		 "cover text, "
-		 "lang text)");
-    }
-
-  // Initialize the song library
-  m_library = new CLibrary(this);
-
-  m_proxyModel->setSourceModel(library());
-  m_proxyModel->setDynamicSortFilter(true);
-
-  view()->setModel(m_proxyModel);
-  view()->setShowGrid( false );
-  view()->setAlternatingRowColors(true);
-  view()->setSelectionMode(QAbstractItemView::MultiSelection);
-  view()->setSelectionBehavior(QAbstractItemView::SelectRows);
-  view()->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  view()->setSortingEnabled(true);
-  view()->verticalHeader()->setVisible(false);
-
-  connect(library(), SIGNAL(wasModified()),
-          this, SLOT(updateView()));
-  connect(library(), SIGNAL(wasModified()),
-          this, SLOT(selectionChanged()));
-}
-//------------------------------------------------------------------------------
-void CMainWindow::libraryUpdate()
-{
-  //Drop table songs and recreate
-  QSqlQuery query("delete from songs");
-
-  QStringList filter = QStringList() << "*.sg";
-  QString path = QString("%1/songs/").arg(workingPath());
-  
-  QDirIterator i(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
-  uint count = 0;
-  while(i.hasNext())
-    {
-      ++count;
-      i.next();
-    }
-  progressBar()->show();
-  progressBar()->setTextVisible(true);
-  progressBar()->setRange(0, count);
-
-  library()->retrieveSongs();
-  progressBar()->setTextVisible(false);
-  progressBar()->hide();
-  statusBar()->showMessage(tr("Song database updated."));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeEvent(QCloseEvent *event)
@@ -1135,4 +1077,32 @@ void CMainWindow::changeTab(int index)
 QTextEdit* CMainWindow::log() const
 {
   return m_log;
+}
+
+void CMainWindow::connectDatabase()
+{
+  if (!QSqlDatabase::isDriverAvailable("QSQLITE"))
+    {
+      QMessageBox::critical(this,
+			    tr("Cannot open database"),
+			    tr("Unable to establish a database connection.\n"
+			       "This application needs SQLite support."),
+			    QMessageBox::Abort);
+
+    }
+  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+
+  QDir::home().mkpath(".cache/songbook-client");
+  QString databasePath 
+    = QDir::home().filePath(".cache/songbook-client/patacrep.db");
+
+  db.setDatabaseName(databasePath);
+  db.open();
+}
+
+void CMainWindow::disconnectDatabase()
+{
+  QSqlDatabase db = QSqlDatabase::database();
+  db.close();
+  QSqlDatabase::removeDatabase(QString());
 }
