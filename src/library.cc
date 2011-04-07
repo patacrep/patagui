@@ -66,32 +66,25 @@ CMainWindow* CLibrary::parent() const
   return m_parent;
 }
 //------------------------------------------------------------------------------
-void CLibrary::retrieveSongs()
+void CLibrary::addSongs(const QStringList &paths)
 {
   QSqlDatabase db = QSqlDatabase::database();
-
-  uint count = 0;
-  QStringList filter = QStringList() << "*.sg";
-  QString path = QString("%1/songs/").arg(workingPath());
-  QStringList paths;
-  if(!m_watcher->files().isEmpty())
-    m_watcher->removePaths(m_watcher->files());
-
-  QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
   db.transaction();
-  while(it.hasNext())
+
+  // run through the library songs files
+  uint count = 0;
+  QStringListIterator filepath(paths);
+  while (filepath.hasNext())
     {
-      parent()->statusBar()->showMessage(QString(tr("Inserting song : %1")).arg(it.fileInfo().fileName()));
-      QString filePath = it.fileInfo().absoluteFilePath();
-      if(!filePath.isEmpty())
-	paths << filePath;
       parent()->progressBar()->setValue(++count);
-      addSong(it.next());
+      addSong(filepath.next());
     }
   submitAll();
   db.commit();
 
 #ifndef __APPLE__
+  if (!m_watcher->files().isEmpty())
+    m_watcher->removePaths(m_watcher->files());
   m_watcher->addPaths(paths);
 #endif
 
@@ -325,21 +318,20 @@ void CLibrary::update()
   	     ")");
   setTable("songs");
 
+  // get the path of each song in the library
   QStringList filter = QStringList() << "*.sg";
-  QString path = QString("%1/songs/").arg(workingPath());
-  
-  QDirIterator i(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
-  uint count = 0;
-  while(i.hasNext())
-    {
-      ++count;
-      i.next();
-    }
+  QString path = directory().absoluteFilePath("songs/");
+  QStringList paths;
+
+  QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
+  while(it.hasNext())
+    paths.append(it.next());
+
   parent()->progressBar()->show();
   parent()->progressBar()->setTextVisible(true);
-  parent()->progressBar()->setRange(0, count);
+  parent()->progressBar()->setRange(0, paths.size());
 
-  retrieveSongs();
+  addSongs(paths);
 
   parent()->progressBar()->setTextVisible(false);
   parent()->progressBar()->hide();
