@@ -221,6 +221,27 @@ bool CLibrary::containsSong(const QString & path)
 //------------------------------------------------------------------------------
 QVariant CLibrary::data(const QModelIndex &index, int role) const
 {
+  QModelIndex parentIndex = index.parent();
+  switch (role)
+    {
+    case TitleRole:
+      return QSqlTableModel::data(sibling(index.row(), 1, parentIndex));
+    case ArtistRole:
+      return QSqlTableModel::data(sibling(index.row(), 0, parentIndex));
+    case AlbumRole:
+      return QSqlTableModel::data(sibling(index.row(), 4, parentIndex));
+    case CoverRole:
+      return QSqlTableModel::data(sibling(index.row(), 5, parentIndex));
+    case LilypondRole:
+      return QSqlTableModel::data(sibling(index.row(), 2, parentIndex));
+    case LanguageRole:
+      return QSqlTableModel::data(sibling(index.row(), 6, parentIndex));
+    case PathRole:
+      return QSqlTableModel::data(sibling(index.row(), 3, parentIndex));
+    default:
+      break;
+    };
+
   //Draws lilypondcheck
   if ( index.column() == 2 )
     {

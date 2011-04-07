@@ -36,6 +36,17 @@ class CLibrary : public QSqlTableModel
   Q_OBJECT
 
 public:
+  enum Roles {
+    TitleRole = Qt::UserRole + 1,
+    ArtistRole = Qt::UserRole + 2,
+    AlbumRole = Qt::UserRole + 3,
+    CoverRole = Qt::UserRole + 4,
+    LilypondRole = Qt::UserRole + 5,
+    LanguageRole = Qt::UserRole + 6,
+    PathRole = Qt::UserRole + 7,
+    MaxRole = PathRole
+  };
+
   CLibrary(CMainWindow* parent);
   ~CLibrary();
 
