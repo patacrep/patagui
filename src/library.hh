@@ -55,8 +55,8 @@ public:
   void addSong(const QString & path);
   void removeSong(const QString & path);
   bool containsSong(const QString & path);
-  QVariant data(const QModelIndex &index, int role) const;
-  
+  QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
 public slots:
   void retrieveSongs();
   void updateSong(const QString & path);

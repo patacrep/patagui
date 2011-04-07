@@ -238,8 +238,6 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       return QSqlTableModel::data(sibling(index.row(), 6, parentIndex));
     case PathRole:
       return QSqlTableModel::data(sibling(index.row(), 3, parentIndex));
-    default:
-      break;
     };
 
   //Draws lilypondcheck
