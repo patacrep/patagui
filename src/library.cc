@@ -314,3 +314,39 @@ QString CLibrary::workingPath() const
   return parent()->workingPath();
 }
 //------------------------------------------------------------------------------
+
+void CLibrary::update()
+{
+  // recreate the database
+  QSqlQuery query;
+  query.exec("DROP TABLE songs");
+  query.exec("CREATE TABLE songs ("
+  	     "artist text,"
+  	     "title text,"
+  	     "lilypond bool,"
+  	     "path text,"
+  	     "album text,"
+  	     "cover text,"
+  	     "lang text"
+  	     ")");
+
+  QStringList filter = QStringList() << "*.sg";
+  QString path = QString("%1/songs/").arg(workingPath());
+  
+  QDirIterator i(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
+  uint count = 0;
+  while(i.hasNext())
+    {
+      ++count;
+      i.next();
+    }
+  parent()->progressBar()->show();
+  parent()->progressBar()->setTextVisible(true);
+  parent()->progressBar()->setRange(0, count);
+
+  retrieveSongs();
+
+  parent()->progressBar()->setTextVisible(false);
+  parent()->progressBar()->hide();
+  parent()->statusBar()->showMessage(tr("Song database updated."));
+}

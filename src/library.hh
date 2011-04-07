@@ -60,6 +60,7 @@ public:
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 public slots:
+  void update();
   void retrieveSongs();
   void updateSong(const QString & path);
 
