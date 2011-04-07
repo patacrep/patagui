@@ -159,9 +159,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       if ( role == Qt::SizeHintRole )
 	return m_pixmap->size();
     }
-
-  //Draws language flag
-  if ( index.column() == 6 )
+  else if ( index.column() == 6 )
     {
       if ( role == Qt::DisplayRole )
       	return QString();
