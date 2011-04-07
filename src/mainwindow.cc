@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011 Romain Goffe, Alexandre Dupas
 //
 // Songbook Creator is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,13 +30,13 @@
 #include "build-engine/resize-covers.hh"
 #include "build-engine/latex-preprocessing.hh"
 #include "build-engine/make-songbook.hh"
-#include "build-engine/download.hh"
 #include "song-editor.hh"
 #include "highlighter.hh"
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
+#include "library-download.hh"
 
 using namespace SbUtils;
 
@@ -390,14 +390,16 @@ void CMainWindow::createActions()
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           view(), SLOT(resizeColumnsToContents()));
 
+
   m_libraryUpdateAct = new QAction(tr("Update"), this);
   m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
   connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
-  m_builder = new CDownload(this);
-  m_downloadDbAct = new QAction(tr("Download"),this);
-  m_downloadDbAct->setStatusTip(tr("Download songs from remote location"));
-  m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
-  connect(m_downloadDbAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
+
+  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
+  m_libraryDownloadAct = new QAction(tr("Download"), this);
+  m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
+  m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote"));
+  connect(m_libraryDownloadAct, SIGNAL(triggered()), libraryDownload, SLOT(exec()));
 
   m_toolBarViewAct = new QAction(tr("ToolBar"),this);
   m_toolBarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
@@ -492,7 +494,7 @@ void CMainWindow::createMenus()
   m_dbMenu = menuBar()->addMenu(tr("&Library"));
   m_dbMenu->addAction(m_newSongAct);
   m_dbMenu->addSeparator();
-  m_dbMenu->addAction(m_downloadDbAct);
+  m_dbMenu->addAction(m_libraryDownloadAct);
   m_dbMenu->addAction(m_libraryUpdateAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
