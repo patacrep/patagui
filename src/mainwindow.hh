@@ -71,8 +71,6 @@ protected:
   void closeEvent(QCloseEvent *event);
 
 private slots:
-
-  void switchToolBar( QToolBar * toolbar );
   //songbook
   void newSongbook();
   void open();
@@ -96,7 +94,7 @@ private slots:
   void invertSelection();
   void selectLanguage(bool);
   void updateSongsList();
-  void filterChanged();
+  void filterChanged(const QString &filter);
   void selectionChanged();
   void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
 
@@ -106,11 +104,13 @@ private slots:
   //application
   void preferences();
   void applySettings();
-  void setToolbarDisplayed(bool);
+  void setToolBarDisplayed(bool);
   void setStatusbarDisplayed(bool);
   void documentation();
   void about();
+
   void updateTitle(const QString &filename);
+  void switchToolBar(QToolBar *toolBar);
 
 private:
   void readSettings();
@@ -118,13 +118,14 @@ private:
 
   void createActions();
   void createMenus();
+  void createToolBar();
 
   QGridLayout * songInfo();
   QGridLayout * songbookInfo();
 
   QStringList getSelectedSongs();
 
-  bool isToolbarDisplayed();
+  bool isToolBarDisplayed();
   bool isStatusbarDisplayed();
 
   QItemSelectionModel * selectionModel();
@@ -162,7 +163,7 @@ private:
   bool m_displayColumnLang;
   bool m_displayCompilationLog;
 
-  bool m_isToolbarDisplayed;
+  bool m_isToolBarDisplayed;
   bool m_isStatusbarDisplayed;
 
   QPixmap *m_cover;
@@ -180,12 +181,12 @@ private:
   QMenu *m_viewMenu;
   QMenu *m_helpMenu;
 
-  QToolBar *m_toolbar;
-  QToolBar *m_currentToolbar;
+  QToolBar *m_toolBar;
+  QToolBar *m_currentToolBar;
 
   // Application actions
   QAction *m_preferencesAct;
-  QAction *m_toolbarViewAct;
+  QAction *m_toolBarViewAct;
   QAction *m_statusbarViewAct;
   QAction *m_adjustColumnsAct;
   QAction *m_documentationAct;

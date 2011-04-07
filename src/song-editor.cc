@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------
 CSongEditor::CSongEditor()
   : CodeEditor()
-  , m_toolbar(0)
+  , m_toolBar(0)
   , m_path()
 {
   setUndoRedoEnabled(true);
@@ -41,9 +41,9 @@ CSongEditor::CSongEditor()
 
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
-  // toolbar
-  m_toolbar = new QToolBar(this);
-  m_toolbar->setMovable(false);
+  // toolBar
+  m_toolBar = new QToolBar(this);
+  m_toolBar->setMovable(false);
 
   // actions
   QAction* action = new QAction(tr("Save"), this);
@@ -51,9 +51,9 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("document-save"));
   action->setStatusTip(tr("Save modifications"));
   connect(action, SIGNAL(triggered()), SLOT(save()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
   
-  m_toolbar->addSeparator();
+  m_toolBar->addSeparator();
   
   //copy paste
   action = new QAction(tr("Cut"), this);
@@ -61,23 +61,23 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-cut"));
   action->setStatusTip(tr("Cut the selection"));
   connect(action, SIGNAL(triggered()), SLOT(cut()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   action->setIcon(QIcon::fromTheme("edit-copy"));
   action->setStatusTip(tr("Copy the selection"));
   connect(action, SIGNAL(triggered()), SLOT(copy()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   action->setIcon(QIcon::fromTheme("edit-paste"));
   action->setStatusTip(tr("Paste clipboard content"));
   connect(action, SIGNAL(triggered()), SLOT(paste()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
   
-  m_toolbar->addSeparator();
+  m_toolBar->addSeparator();
   
   //undo redo
   action = new QAction(tr("Undo"), this);
@@ -85,27 +85,27 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-undo"));
   action->setStatusTip(tr("Undo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(undo()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
   action->setIcon(QIcon::fromTheme("edit-redo"));
   action->setStatusTip(tr("Redo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(redo()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
 
-  m_toolbar->addSeparator();
+  m_toolBar->addSeparator();
   
   //songbook
   action = new QAction(tr("Verse"), this);
   action->setStatusTip(tr("New verse environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Chorus"), this);
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
-  m_toolbar->addAction(action);
+  m_toolBar->addAction(action);
 }
 //------------------------------------------------------------------------------
 CSongEditor::~CSongEditor()
@@ -172,7 +172,7 @@ void CSongEditor::insertChorus()
   insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
 //------------------------------------------------------------------------------
-QToolBar* CSongEditor::toolbar()
+QToolBar* CSongEditor::toolBar()
 {
-  return m_toolbar;
+  return m_toolBar;
 }

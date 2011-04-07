@@ -57,7 +57,7 @@ CMainWindow::CMainWindow()
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
 
-  m_isToolbarDisplayed = true;
+  m_isToolBarDisplayed = true;
   m_isStatusbarDisplayed = true;
 
   connectDatabase();
@@ -66,7 +66,9 @@ CMainWindow::CMainWindow()
   m_library = new CLibrary(this);
   m_proxyModel = new CSongSortFilterProxyModel();
   m_proxyModel->setSourceModel(m_library);
+  m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
+  m_proxyModel->setFilterKeyColumn(-1);
 
   m_view = new QTableView(this);
   m_view->setModel(m_proxyModel);
@@ -80,15 +82,16 @@ CMainWindow::CMainWindow()
 
   readSettings();
 
+  connect(m_library, SIGNAL(wasModified()), this, SLOT(updateView()));
+
   m_library->update();
 
-  connect(m_library, SIGNAL(wasModified()), this, SLOT(updateView()));
   connect(m_library, SIGNAL(wasModified()), this, SLOT(selectionChanged()));
 
   // main document and title
   songbook()->setWorkingPath(workingPath());
   connect(songbook(), SIGNAL(wasModified(bool)),
-          this, SLOT(setWindowModified(bool)));
+	  this, SLOT(setWindowModified(bool)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
@@ -117,52 +120,9 @@ CMainWindow::CMainWindow()
 	       "</p></td></tr></table>").arg(workingPath()));
   m_noDataInfo->hide();
 
-  // toolbar (for the build button)
-  m_toolbar = new QToolBar;
-  m_currentToolbar = m_toolbar;
-  m_toolbar->setMovable(false);
-  setUnifiedTitleAndToolBarOnMac(true);
-
   createActions();
   createMenus();
-
-  m_toolbar->addAction(m_newAct);
-  m_toolbar->addAction(m_openAct);
-  m_toolbar->addAction(m_saveAct);
-  m_toolbar->addAction(m_saveAsAct);
-  m_toolbar->addSeparator();
-  m_toolbar->addAction(m_buildAct);
-  m_toolbar->addSeparator();
-  m_toolbar->addAction(m_selectAllAct);
-  m_toolbar->addAction(m_unselectAllAct);
-  m_toolbar->addAction(m_invertSelectionAct);
-  m_toolbar->addSeparator();
-  m_toolbar->addAction(m_selectEnglishAct);
-  m_toolbar->addAction(m_selectFrenchAct);
-  m_toolbar->addAction(m_selectSpanishAct);
-
-  // filtering related widgets
-  m_filterLineEdit = new CFilterLineEdit;
-  m_proxyModel->setFilterKeyColumn(-1);
-  m_proxyModel->setSortLocaleAware(true);
-  m_filterLineEdit->setVisible(true);
-  connect(m_filterLineEdit, SIGNAL(textChanged(QString)),
-	  this, SLOT(filterChanged()));
-
-  QWidget* stretchWidget = new QWidget;
-  stretchWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  m_toolbar->addWidget(stretchWidget);
-  m_toolbar->addWidget(m_filterLineEdit);
-  m_toolbar->setContextMenuPolicy(Qt::PreventContextMenu);
-
-  //artist autocompletion in the filter bar
-  QCompleter *completer = new QCompleter;
-  completer->setModel(library());
-  completer->setCaseSensitivity(Qt::CaseInsensitive);
-  completer->setCompletionMode(QCompleter::PopupCompletion);
-  m_filterLineEdit->setCompleter(completer);
-
-  addToolBar(m_toolbar);
+  createToolBar();
   
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection & , 
 						    const QItemSelection & )),
@@ -223,16 +183,16 @@ CMainWindow::~CMainWindow()
   disconnectDatabase();
 }
 
-void CMainWindow::switchToolBar(QToolBar * toolbar)
+void CMainWindow::switchToolBar(QToolBar * toolBar)
 {
-  if (toolbar != m_currentToolbar)
+  if (toolBar != m_currentToolBar)
     {
-      toolbar->setContextMenuPolicy(Qt::PreventContextMenu); // avoid 'jump' on MacOS
-      addToolBar(toolbar);
-      toolbar->setVisible(true);
-      m_currentToolbar->setVisible(false);
-      removeToolBar(m_currentToolbar);
-      m_currentToolbar = toolbar;
+      toolBar->setContextMenuPolicy(Qt::PreventContextMenu); // avoid 'jump' on MacOS
+      addToolBar(toolBar);
+      toolBar->setVisible(isToolBarDisplayed());
+      m_currentToolBar->setVisible(false);
+      removeToolBar(m_currentToolBar);
+      m_currentToolBar = toolBar;
     }
 }
 //------------------------------------------------------------------------------
@@ -318,22 +278,12 @@ void CMainWindow::updateView()
 {
   view()->sortByColumn(1, Qt::AscendingOrder);
   view()->sortByColumn(0, Qt::AscendingOrder);
-  view()->show();
 }
 //------------------------------------------------------------------------------
-void CMainWindow::filterChanged()
+void CMainWindow::filterChanged(const QString &filter)
 {
-  QObject *object = QObject::sender();
-
-  if (QLineEdit *lineEdit = qobject_cast< QLineEdit* >(object))
-    {
-      QRegExp expression = QRegExp(lineEdit->text(), Qt::CaseInsensitive, QRegExp::FixedString);
-      m_proxyModel->setFilterRegExp(expression);
-    }
-  else
-    {
-      qWarning() << "Unknown caller to filterChanged.";
-    }
+  QRegExp expression = QRegExp(filter, Qt::CaseInsensitive, QRegExp::FixedString);
+  m_proxyModel->setFilterRegExp(expression);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::selectionChanged()
@@ -454,11 +404,11 @@ void CMainWindow::createActions()
   m_downloadDbAct->setIcon(QIcon::fromTheme("folder-remote"));
   connect(m_downloadDbAct, SIGNAL(triggered()), m_builder, SLOT(dialog()));
 
-  m_toolbarViewAct = new QAction(tr("Toolbar"),this);
-  m_toolbarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
-  m_toolbarViewAct->setCheckable(true);
-  m_toolbarViewAct->setChecked(m_isToolbarDisplayed);
-  connect(m_toolbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolbarDisplayed(bool)));
+  m_toolBarViewAct = new QAction(tr("ToolBar"),this);
+  m_toolBarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
+  m_toolBarViewAct->setCheckable(true);
+  m_toolBarViewAct->setChecked(m_isToolBarDisplayed);
+  connect(m_toolBarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolBarDisplayed(bool)));
 
   m_statusbarViewAct = new QAction(tr("Statusbar"),this);
   m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
@@ -493,21 +443,21 @@ void CMainWindow::createActions()
 
 }
 //------------------------------------------------------------------------------
-void CMainWindow::setToolbarDisplayed( bool value )
+void CMainWindow::setToolBarDisplayed(bool value)
 {
-  if( m_isToolbarDisplayed != value && m_toolbar )
+  if (m_isToolBarDisplayed != value && m_toolBar)
     {
-      m_isToolbarDisplayed = value;
-      m_toolbar->setVisible(value);
+      m_isToolBarDisplayed = value;
+      m_toolBar->setVisible(value);
     }
 }
 //------------------------------------------------------------------------------
-bool CMainWindow::isToolbarDisplayed( )
+bool CMainWindow::isToolBarDisplayed( )
 {
-  return m_isToolbarDisplayed;
+  return m_isToolBarDisplayed;
 }
 //------------------------------------------------------------------------------
-void CMainWindow::setStatusbarDisplayed( bool value )
+void CMainWindow::setStatusbarDisplayed(bool value)
 {
   m_isStatusbarDisplayed = value;
   statusBar()->setVisible(value);
@@ -551,7 +501,7 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_libraryUpdateAct);
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
-  m_viewMenu->addAction(m_toolbarViewAct);
+  m_viewMenu->addAction(m_toolBarViewAct);
   m_viewMenu->addAction(m_statusbarViewAct);
   m_viewMenu->addAction(m_adjustColumnsAct);
 
@@ -562,6 +512,53 @@ void CMainWindow::createMenus()
   m_helpMenu = menuBar()->addMenu(tr("&Help"));
   m_helpMenu->addAction(m_documentationAct);
   m_helpMenu->addAction(m_aboutAct);
+}
+//------------------------------------------------------------------------------
+void CMainWindow::createToolBar()
+{
+  m_toolBar = new QToolBar;
+  m_toolBar->setMovable(false);
+  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+
+  // filter related objects
+  QCompleter *completer = new QCompleter;
+  completer->setModel(library());
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  completer->setCompletionMode(QCompleter::PopupCompletion);
+
+  m_filterLineEdit = new CFilterLineEdit;
+  m_filterLineEdit->setCompleter(completer);
+
+  connect(m_filterLineEdit, SIGNAL(textChanged(const QString&)),
+	  this, SLOT(filterChanged(const QString&)));
+
+  QWidget* stretch = new QWidget;
+  stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+  // add toolbar actions
+  m_toolBar->addAction(m_newAct);
+  m_toolBar->addAction(m_openAct);
+  m_toolBar->addAction(m_saveAct);
+  m_toolBar->addAction(m_saveAsAct);
+  m_toolBar->addSeparator();
+  m_toolBar->addAction(m_buildAct);
+  m_toolBar->addSeparator();
+  m_toolBar->addAction(m_selectAllAct);
+  m_toolBar->addAction(m_unselectAllAct);
+  m_toolBar->addAction(m_invertSelectionAct);
+  m_toolBar->addSeparator();
+  m_toolBar->addAction(m_selectEnglishAct);
+  m_toolBar->addAction(m_selectFrenchAct);
+  m_toolBar->addAction(m_selectSpanishAct);
+  // add toolbar spacing
+  m_toolBar->addWidget(stretch);
+  // add toolbar filter
+  m_toolBar->addWidget(m_filterLineEdit);
+
+  m_currentToolBar = m_toolBar;
+
+  addToolBar(m_toolBar);
+  setUnifiedTitleAndToolBarOnMac(true);
 }
 //------------------------------------------------------------------------------
 QGridLayout * CMainWindow::songInfo()
@@ -1056,12 +1053,12 @@ void CMainWindow::changeTab(int index)
 
   if (editor)
     {
-      switchToolBar(editor->toolbar());
+      switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
-      switchToolBar(m_toolbar);
+      switchToolBar(m_toolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
 }

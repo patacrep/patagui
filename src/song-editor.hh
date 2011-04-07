@@ -33,7 +33,7 @@ public:
   QString path();
   void setPath(const QString & APath);
 
-  QToolBar* toolbar();
+  QToolBar* toolBar();
 
 signals:
   void labelChanged(const QString &label);
@@ -48,7 +48,7 @@ private slots:
 private:
   QString syntaxicColoration(const QString &);
 
-  QToolBar* m_toolbar;
+  QToolBar* m_toolBar;
   QString m_path;
 };
 
