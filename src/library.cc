@@ -94,23 +94,22 @@ CMainWindow* CLibrary::parent() const
 
 QVariant CLibrary::data(const QModelIndex &index, int role) const
 {
-  QModelIndex parentIndex = index.parent();
   switch (role)
     {
     case TitleRole:
-      return QSqlTableModel::data(sibling(index.row(), 1, parentIndex));
+      return QSqlTableModel::data(sibling(index.row(), 1, index.parent()));
     case ArtistRole:
-      return QSqlTableModel::data(sibling(index.row(), 0, parentIndex));
+      return QSqlTableModel::data(sibling(index.row(), 0, index.parent()));
     case AlbumRole:
-      return QSqlTableModel::data(sibling(index.row(), 4, parentIndex));
+      return QSqlTableModel::data(sibling(index.row(), 4, index.parent()));
     case CoverRole:
-      return QSqlTableModel::data(sibling(index.row(), 5, parentIndex));
+      return QSqlTableModel::data(sibling(index.row(), 5, index.parent()));
     case LilypondRole:
-      return QSqlTableModel::data(sibling(index.row(), 2, parentIndex));
+      return QSqlTableModel::data(sibling(index.row(), 2, index.parent()));
     case LanguageRole:
-      return QSqlTableModel::data(sibling(index.row(), 6, parentIndex));
+      return QSqlTableModel::data(sibling(index.row(), 6, index.parent()));
     case PathRole:
-      return QSqlTableModel::data(sibling(index.row(), 3, parentIndex));
+      return QSqlTableModel::data(sibling(index.row(), 3, index.parent()));
     };
 
   //Draws lilypondcheck
@@ -137,7 +136,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     {
       if (role == Qt::DecorationRole || role == Qt::SizeHintRole)
 	{
-	  return data(sibling(index.row(), 5, parentIndex), role);
+	  return data(sibling(index.row(), 5, index.parent()), role);
 	}
     }
   else if (index.column() == 5)
