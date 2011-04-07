@@ -63,7 +63,7 @@ CLibrary::~CLibrary()
 //------------------------------------------------------------------------------
 CMainWindow* CLibrary::parent() const
 {
-  return m_parent ;
+  return m_parent;
 }
 //------------------------------------------------------------------------------
 void CLibrary::retrieveSongs()
