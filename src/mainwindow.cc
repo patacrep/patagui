@@ -52,13 +52,12 @@ CMainWindow::CMainWindow()
   , m_sbInfoStyle(new CLabel)
   , m_view()
   , m_progressBar(new QProgressBar(this))
+  , m_isToolBarDisplayed(true)
+  , m_isStatusbarDisplayed(true)
   , m_cover(new QPixmap)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
-
-  m_isToolBarDisplayed = true;
-  m_isStatusbarDisplayed = true;
 
   connectDatabase();
 
