@@ -379,6 +379,7 @@ void CMainWindow::createActions()
   m_aboutAct = new QAction(tr("&About"), this);
   m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
   m_aboutAct->setStatusTip(tr("About this application"));
+  m_aboutAct->setMenuRole(QAction::AboutRole);
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
@@ -386,10 +387,12 @@ void CMainWindow::createActions()
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
+  m_exitAct->setMenuRole(QAction::QuitRole);
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
   m_preferencesAct->setStatusTip(tr("Configure the application"));
+  m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
