@@ -121,8 +121,7 @@ CMainWindow::CMainWindow()
   createMenus();
   createToolBar();
 
-  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &,
-   						    const QItemSelection &)),
+  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
 	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
 
   //Layouts
@@ -144,19 +143,15 @@ CMainWindow::CMainWindow()
   mainLayout->addWidget(log());
 
   QWidget* libraryTab = new QWidget;
-  QBoxLayout *libraryLayout = new QVBoxLayout;
-  libraryLayout->addLayout(mainLayout);
-  libraryTab->setLayout(libraryLayout);
+  libraryTab->setLayout(mainLayout);
 
   // place elements into the main window
   m_mainWidget = new CTabWidget;
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
   m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
-  connect( m_mainWidget, SIGNAL(tabCloseRequested(int)),
-	   this, SLOT(closeTab(int)) );
-  connect( m_mainWidget, SIGNAL(currentChanged(int)),
-	   this, SLOT(changeTab(int)) );
+  connect(m_mainWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
+  connect(m_mainWidget, SIGNAL(currentChanged(int)), SLOT(changeTab(int)));
   m_mainWidget->addTab(libraryTab, tr("Library"));
   setCentralWidget(m_mainWidget);
 
