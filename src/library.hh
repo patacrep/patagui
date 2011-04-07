@@ -30,7 +30,10 @@
 #include <QDir>
 
 class QPixmap;
+
+#ifndef __APPLE__
 class QFileSystemWatcher;
+#endif // __APPLE__
 
 class CMainWindow;
 
@@ -58,11 +61,12 @@ public:
   void setDirectory(const QString &directory);
   void setDirectory(const QDir &directory);
 
+  QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
   void addSong(const QString & path);
   void addSongs(const QStringList &paths);
   void removeSong(const QString & path);
   bool containsSong(const QString & path);
-  QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
 public slots:
   void update();
@@ -70,6 +74,7 @@ public slots:
 
 signals:
   void wasModified();
+  void directoryChanged(const QDir &directory);
 
 private:
   CMainWindow *parent() const;
@@ -77,7 +82,10 @@ private:
   CMainWindow *m_parent;
   QDir m_directory;
   QPixmap* m_pixmap;
+
+#ifndef __APPLE__
   QFileSystemWatcher* m_watcher;
+#endif // __APPLE__
 };
 
 #endif // __LIBRARY_HH__
