@@ -15,11 +15,15 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#include <QtGui>
-#include <QtSql>
+#include "library.hh"
+
+#include <QPixmap>
 #include <QFileSystemWatcher>
 
-#include "library.hh"
+#include <QSqlRecord>
+#include <QSqlField>
+#include <QSqlQuery>
+
 #include "mainwindow.hh"
 #include "utils/utils.hh"
 using namespace SbUtils;

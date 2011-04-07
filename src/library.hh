@@ -25,11 +25,13 @@
 #ifndef __LIBRARY_HH__
 #define __LIBRARY_HH__
 
-#include <QString>
 #include <QSqlTableModel>
+#include <QString>
+
+class QPixmap;
+class QFileSystemWatcher;
 
 class CMainWindow;
-class QFileSystemWatcher;
 
 class CLibrary : public QSqlTableModel
 {
