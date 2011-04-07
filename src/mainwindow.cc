@@ -60,7 +60,30 @@ CMainWindow::CMainWindow()
   m_isToolbarDisplayed = true;
   m_isStatusbarDisplayed = true;
 
+  connectDatabase();
+
+  // create and load song library and view
+  m_library = new CLibrary(this);
+  m_proxyModel = new CSongSortFilterProxyModel();
+  m_proxyModel->setSourceModel(m_library);
+  m_proxyModel->setDynamicSortFilter(true);
+
+  m_view = new QTableView(this);
+  m_view->setModel(m_proxyModel);
+  m_view->setShowGrid(false);
+  m_view->setAlternatingRowColors(true);
+  m_view->setSelectionMode(QAbstractItemView::MultiSelection);
+  m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+  m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  m_view->setSortingEnabled(true);
+  m_view->verticalHeader()->setVisible(false);
+
   readSettings();
+
+  m_library->update();
+
+  connect(m_library, SIGNAL(wasModified()), this, SLOT(updateView()));
+  connect(m_library, SIGNAL(wasModified()), this, SLOT(selectionChanged()));
 
   // main document and title
   songbook()->setWorkingPath(workingPath());
@@ -68,6 +91,8 @@ CMainWindow::CMainWindow()
           this, SLOT(setWindowModified(bool)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
+  connect(this, SIGNAL(workingPathChanged(const QString&)),
+	  m_library, SLOT(update()));
   updateTitle(songbook()->filename());
 
   // compilation log
@@ -97,33 +122,6 @@ CMainWindow::CMainWindow()
   current_toolbar = m_toolbar;
   m_toolbar->setMovable(false);
   this->setUnifiedTitleAndToolBarOnMac(true);
-
-  connectDatabase();
-
-  // create and load song library and view
-  m_library = new CLibrary(this);
-
-  m_proxyModel = new CSongSortFilterProxyModel();
-  m_proxyModel->setSourceModel(m_library);
-  m_proxyModel->setDynamicSortFilter(true);
-
-  m_view = new QTableView(this);
-  m_view->setModel(m_proxyModel);
-  m_view->setShowGrid(false);
-  m_view->setAlternatingRowColors(true);
-  m_view->setSelectionMode(QAbstractItemView::MultiSelection);
-  m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-  m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  m_view->setSortingEnabled(true);
-  m_view->verticalHeader()->setVisible(false);
-
-  connect(m_library, SIGNAL(wasModified()), this, SLOT(updateView()));
-  connect(m_library, SIGNAL(wasModified()), this, SLOT(selectionChanged()));
-
-  m_library->update();
-
-  connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  m_library, SLOT(update()));
 
   createActions();
   createMenus();
