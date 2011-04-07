@@ -103,8 +103,8 @@ CMainWindow::CMainWindow()
 
   // no data info widget
   m_noDataInfo = new QTextEdit;
-  m_noDataInfo->setReadOnly(true);
   m_noDataInfo->setMaximumHeight(150);
+  m_noDataInfo->setReadOnly(true);
   m_noDataInfo->
     setHtml(tr("<table><tr><td valign=middle>  "
 	       "<img src=\":/icons/attention.png\" />  </td><td>"
@@ -121,9 +121,9 @@ CMainWindow::CMainWindow()
   createMenus();
   createToolBar();
 
-  // connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &,
-  // 						    const QItemSelection &)),
-  // 	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
+  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &,
+   						    const QItemSelection &)),
+	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
 
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
