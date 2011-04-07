@@ -114,21 +114,21 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     };
 
   //Draws lilypondcheck
-  if ( index.column() == 2 )
+  if (index.column() == 2)
     {
-      if ( role == Qt::DisplayRole )
+      if (role == Qt::DisplayRole)
 	return QString();
 
-      if(QSqlTableModel::data( index, Qt::DisplayRole ).toBool())
+      if (QSqlTableModel::data(index, Qt::DisplayRole).toBool())
 	{
 	  *m_pixmap = QPixmap(QIcon::fromTheme("audio-x-generic").pixmap(24,24));
-	  if ( role == Qt::DecorationRole )
+	  if (role == Qt::DecorationRole)
 	    return *m_pixmap;
 
-	  if( m_pixmap->isNull() )
+	  if (m_pixmap->isNull())
 	    return true;
 
-	  if ( role == Qt::SizeHintRole )
+	  if (role == Qt::SizeHintRole)
 	    return m_pixmap->size();
 	}
       return QString();
@@ -140,45 +140,45 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	  return data(sibling(index.row(), 5, parentIndex), role);
 	}
     }
-  else if ( index.column() == 5 )
+  else if (index.column() == 5)
     {
-      QString imgFile = QSqlTableModel::data( index, Qt::DisplayRole ).toString();
-      if ( Qt::DisplayRole == role )
+      QString imgFile = QSqlTableModel::data(index, Qt::DisplayRole).toString();
+      if (Qt::DisplayRole == role)
 	return QString();
 
       *m_pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
-      if (!imgFile.isEmpty() && QFile::exists( imgFile ) && !QPixmapCache::find(imgFile, m_pixmap))
+      if (!imgFile.isEmpty() && QFile::exists(imgFile) && !QPixmapCache::find(imgFile, m_pixmap))
 	{
 	  *m_pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
 	  QPixmapCache::insert(imgFile, *m_pixmap);
 	}
 
-      if ( role == Qt::DecorationRole )
+      if (role == Qt::DecorationRole)
 	return *m_pixmap;
 
-      if ( role == Qt::SizeHintRole )
+      if (role == Qt::SizeHintRole)
 	return m_pixmap->size();
     }
-  else if ( index.column() == 6 )
+  else if (index.column() == 6)
     {
-      if ( role == Qt::DisplayRole )
+      if (role == Qt::DisplayRole)
       	return QString();
 
-      QString lang = QSqlTableModel::data( index, Qt::DisplayRole ).toString();
+      QString lang = QSqlTableModel::data(index, Qt::DisplayRole).toString();
 
-      if ( role == Qt::ToolTipRole )
+      if (role == Qt::ToolTipRole)
       	return lang;
 
-      if(QPixmapCache::find(lang, m_pixmap))
+      if (QPixmapCache::find(lang, m_pixmap))
 	{
-	  if ( role == Qt::DecorationRole )
+	  if (role == Qt::DecorationRole)
 	    return *m_pixmap;
 
-	  if ( role == Qt::SizeHintRole )
+	  if (role == Qt::SizeHintRole)
 	    return m_pixmap->size();
 	}
     }
-  return QSqlTableModel::data( index, role );
+  return QSqlTableModel::data(index, role);
 }
 
 void CLibrary::update()
@@ -257,7 +257,7 @@ void CLibrary::addSongs(const QStringList &paths)
 void CLibrary::addSong(const QString & path)
 {
   //do not insert if the song is already in the library
-  if(containsSong(path))
+  if (containsSong(path))
     return;
 
   //qDebug() << "CLibrary::addSong " << path;
@@ -306,7 +306,7 @@ void CLibrary::addSong(const QString & path)
       coverName = rx6.cap(1);
       QString coverPath = path;
       //deletes "filename.sg" from string and keep the path
-      coverPath.replace( QRegExp("\\/([^\\/]*).sg"), QString() );
+      coverPath.replace(QRegExp("\\/([^\\/]*).sg"), QString());
 
       // Create the actual item
       QSqlRecord song;
@@ -334,7 +334,7 @@ void CLibrary::addSong(const QString & path)
       song.append(f6);
       song.append(f7);
 
-      if(!insertRecord(-1,song))
+      if (!insertRecord(-1,song))
 	{
 	  qDebug() << "\n artiste = " << artist;
 	  qDebug() << "title = " << title;
