@@ -45,7 +45,7 @@ CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
   , m_proxyModel()
-  , m_songbook(new CSongbook())
+  , m_songbook()
   , m_sbInfoSelection(new CLabel)
   , m_sbInfoTitle(new CLabel)
   , m_sbInfoAuthors(new CLabel)
@@ -59,11 +59,13 @@ CMainWindow::CMainWindow()
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
 
+  // initialize the database connection
   connectDatabase();
 
-  // create and load song library and view
+  // create and load song library
   m_library = new CLibrary(this);
-  m_proxyModel = new CSongSortFilterProxyModel();
+
+  m_proxyModel = new CSongSortFilterProxyModel;
   m_proxyModel->setSourceModel(m_library);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
@@ -81,26 +83,24 @@ CMainWindow::CMainWindow()
 
   readSettings();
 
-  connect(m_library, SIGNAL(wasModified()), this, SLOT(updateView()));
-
   m_library->update();
 
-  connect(m_library, SIGNAL(wasModified()), this, SLOT(selectionChanged()));
+  connect(m_library, SIGNAL(wasModified()), SLOT(updateView()));
+  connect(m_library, SIGNAL(wasModified()), SLOT(selectionChanged()));
 
-  // main document and title
-  songbook()->setWorkingPath(workingPath());
-  connect(songbook(), SIGNAL(wasModified(bool)),
-	  this, SLOT(setWindowModified(bool)));
+  // songbook
+  m_songbook = new CSongbook;
+  m_songbook->setWorkingPath(workingPath());
+  connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
-  updateTitle(songbook()->filename());
 
   // compilation log
   m_log = new QTextEdit;
   m_log->setMaximumHeight(150);
   m_log->setReadOnly(true);
   new CHighlighter(m_log->document());
-  
+
   // no data info widget
   m_noDataInfo = new QTextEdit;
   m_noDataInfo->setReadOnly(true);
@@ -120,10 +120,10 @@ CMainWindow::CMainWindow()
   createActions();
   createMenus();
   createToolBar();
-  
-  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection & , 
-						    const QItemSelection & )),
-	  this, SLOT(selectionChanged(const QItemSelection & , const QItemSelection & )));
+
+  // connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &,
+  // 						    const QItemSelection &)),
+  // 	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
 
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
@@ -167,6 +167,9 @@ CMainWindow::CMainWindow()
   statusBar()->addPermanentWidget(progressBar());
 
   applySettings();
+
+  updateTitle(songbook()->filename());
+  updateView();
   selectionChanged();
   songbook()->panel();
   updateSongbookLabels();
@@ -174,8 +177,8 @@ CMainWindow::CMainWindow()
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
 {
-  delete m_songbook;
   delete m_library;
+  delete m_songbook;
 
   disconnectDatabase();
 }
@@ -244,24 +247,24 @@ void CMainWindow::templateSettings()
   songbookScrollArea->setMinimumWidth(400);
   songbookScrollArea->setWidget(songbook()->panel());
   songbookScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  
+
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
-  
+
   QPushButton *button = new QPushButton(tr("Reset"));
   connect( button, SIGNAL(clicked()), songbook(), SLOT(reset()) );
   buttonBox->addButton(button, QDialogButtonBox::ResetRole);
-  
+
   button = new QPushButton(tr("Ok"));
   button->setDefault(true);
   connect( button, SIGNAL(clicked()), dialog, SLOT(accept()) );
   buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 
   connect( dialog, SIGNAL(accepted()), this, SLOT(updateSongbookLabels()) );
-  
+
   layout->addWidget(songbookScrollArea);
   layout->addWidget(buttonBox);
   dialog->setLayout(layout);
-  dialog->show();  
+  dialog->show();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::updateSongbookLabels()
@@ -569,7 +572,7 @@ QGridLayout * CMainWindow::songInfo()
   CLabel *albumLabel = new CLabel();
   albumLabel->setElideMode(Qt::ElideRight);
   albumLabel->setFixedWidth(175);
-  
+
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
   QPushButton *deleteButton = new QPushButton(tr("Delete"));
@@ -591,7 +594,7 @@ QGridLayout * CMainWindow::songInfo()
   layout->addWidget(albumLabel,2,2,1,1);
   layout->addWidget(buttonBox,3,1,1,2);
   layout->setColumnStretch(2,1);
-  
+
   //Data mapper
   m_mapper = new QDataWidgetMapper();
   m_mapper->setModel(m_proxyModel);
@@ -612,7 +615,7 @@ QGridLayout * CMainWindow::songbookInfo()
 {
   QPushButton* button = new QPushButton(tr("Settings"));
   connect(button, SIGNAL(clicked()), this, SLOT(templateSettings()));
-  
+ 
   QGridLayout* layout = new QGridLayout;
   layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,0,1,1);
   layout->addWidget(m_sbInfoTitle,0,1,1,2);
@@ -682,7 +685,7 @@ void CMainWindow::documentation()
 void CMainWindow::about()
 {
   QString version = tr("0.4 (January 2011)");
-  QMessageBox::about(this, 
+  QMessageBox::about(this,
 		     tr("About Patacrep Songbook Client"),
 		     QString
 		     (tr("<br>This program is a client for building and customizing the songbooks available on"
@@ -728,7 +731,7 @@ void CMainWindow::selectLanguage(bool selection)
   foreach(index, indexes)
     {
       selectionModel()->select(index, flag);
-    }  
+    }
   view()->setFocus();
 }
 //------------------------------------------------------------------------------
@@ -752,19 +755,19 @@ void CMainWindow::build()
 {
   if(getSelectedSongs().isEmpty())
     {
-      if(QMessageBox::question(this, windowTitle(), 
+      if(QMessageBox::question(this, windowTitle(),
 			       QString(tr("You did not select any song. \n "
-					  "Do you want to build the songbook with all songs ?")), 
-			       QMessageBox::Yes, 
-			       QMessageBox::No, 
+					  "Do you want to build the songbook with all songs ?")),
+			       QMessageBox::Yes,
+			       QMessageBox::No,
 			       QMessageBox::NoButton) == QMessageBox::No)
 	return;
       else
 	selectAll();
     }
-  
+
   save(true);
-  
+
   switch(songbook()->checkFilename())
     {
     case WrongDirectory:
@@ -779,7 +782,7 @@ void CMainWindow::build()
 
   QString basename = QFileInfo(songbook()->filename()).baseName();
   QString target = QString("%1.pdf").arg(basename);
-  
+
   m_builder = new CMakeSongbook(this);
 
   //force a make clean
@@ -789,7 +792,7 @@ void CMainWindow::build()
 #endif
   m_builder->action();
   m_builder->process()->waitForFinished();
-  
+
   m_builder->setProcessOptions(QStringList() << target);
 #ifdef Q_WS_WIN
   m_builder->setProcessOptions(QStringList() << "/C" << "make.bat" << basename);
@@ -1079,7 +1082,7 @@ void CMainWindow::connectDatabase()
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 
   QDir::home().mkpath(".cache/songbook-client");
-  QString databasePath 
+  QString databasePath
     = QDir::home().filePath(".cache/songbook-client/patacrep.db");
 
   db.setDatabaseName(databasePath);
