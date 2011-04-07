@@ -59,6 +59,8 @@ CLibrary::CLibrary(CMainWindow *parent)
   m_pixmap->load(":/icons/es.png");
   QPixmapCache::insert("spanish", *m_pixmap);
 
+  connect(this, SIGNAL(directoryChanged(const QDir&)), SLOT(update()));
+
 #ifndef __APPLE__
   m_watcher = new QFileSystemWatcher;
   connect(m_watcher, SIGNAL(fileChanged(const QString &)),

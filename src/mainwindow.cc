@@ -93,8 +93,6 @@ CMainWindow::CMainWindow()
 	  this, SLOT(setWindowModified(bool)));
   connect(this, SIGNAL(workingPathChanged(const QString&)),
 	  songbook(), SLOT(setWorkingPath(const QString&)));
-  connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  m_library, SLOT(update()));
   updateTitle(songbook()->filename());
 
   // compilation log
