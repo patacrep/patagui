@@ -864,19 +864,11 @@ void CMainWindow::saveAs()
 void CMainWindow::updateSongsList()
 {
   QStringList songlist = getSelectedSongs();
-  QString path = QString("%1/songs/").arg(workingPath());
-
-#ifdef Q_WS_WIN
-  path = QString("%1\\songs\\").arg(workingPath());
-  path.replace("\\", "/");
-#endif
-
+  QString path = QString("%1%2songs%2").arg(workingPath()).arg(QDir::separator());
   songlist.replaceInStrings(path, QString());
-
 #ifdef Q_WS_WIN
   songlist.replaceInStrings("\\", "/");
 #endif
-
   songbook()->setSongs(songlist);
 }
 //------------------------------------------------------------------------------

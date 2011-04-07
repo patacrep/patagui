@@ -63,7 +63,7 @@ int main( int argc, char * argv[] )
   else if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
     dir = userDir.absolutePath();
   else
-    dir = "./lang";
+    dir = QString("%1%2lang").arg(QDir::currentPath()).arg(QDir::separator());
 
   QTranslator translator;
   translator.load(QString("songbook_%1").arg(locale), dir);
