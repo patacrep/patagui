@@ -198,6 +198,7 @@ void CLibrary::removeSong(const QString & path)
     removeRows(index.row(), 1);
 
   submitAll();
+  emit(wasModified());
 }
 //------------------------------------------------------------------------------
 void CLibrary::updateSong(const QString & path)

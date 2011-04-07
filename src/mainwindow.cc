@@ -1074,28 +1074,44 @@ void CMainWindow::deleteSong()
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong(const QString &path)
 {
-  if (QMessageBox::question(this, this->windowTitle(),
-			    QString(tr("Are you sure you want to permanently remove the file %1 ?")).arg(path),
-			    QMessageBox::Yes,
-			    QMessageBox::No,
-			    QMessageBox::NoButton) == QMessageBox::Yes)
-    {
-      //remove entry in database
-      library()->removeSong(path);
+  QString qs(tr("You are about to remov a song from the library.\n"
+                "Yes : The song will only be deleted from the library"
+                      "and can be retrieved by rebuilding the library\n"
+                "No  : Nothing will be deleted\n"
+                "Delete file : You will also delete %1 from your hard drive\n"
+                "If you are unsure what to do, click No.").arg(path));
+  QMessageBox msgBox;
+  msgBox.setIcon(QMessageBox::Question);
+  msgBox.setText(tr("Removing song from Library."));
+  msgBox.setInformativeText(tr("Are you sure ?"));
+  msgBox.addButton(QMessageBox::No);
+  QPushButton* yesb = msgBox.addButton(QMessageBox::Yes);
+  QPushButton* delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
+  msgBox.setDefaultButton(QMessageBox::No);
+  msgBox.setDetailedText(qs);
+  msgBox.exec();
 
-      //removal on disk
-      QFile file(path);
-      QFileInfo fileinfo(file);
-      QString tmp = fileinfo.canonicalPath();
-      if (file.remove())
-	{
-	  QDir dir;
-	  dir.rmdir(tmp); //remove dir if empty
-	  //once deleted move selection in the model
-	  updateCover(selectionModel()->currentIndex());
-	  m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
-	}
+  if (msgBox.clickedButton() == yesb || msgBox.clickedButton() == delb)
+  {
+      //remove entry in database in 2 case
+      library()->removeSong(path);
+      //once deleted move selection in the model
+      updateCover(selectionModel()->currentIndex());
+      m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
+  }
+  //don't forget to remove the file if asked
+  if (msgBox.clickedButton() == delb)
+  {
+    //removal on disk only if deletion
+    QFile file(path);
+    QFileInfo fileinfo(file);
+    QString tmp = fileinfo.canonicalPath();
+    if (file.remove())
+    {
+      QDir dir;
+      dir.rmdir(tmp); //remove dir if empty
     }
+  }
 }
 //------------------------------------------------------------------------------
 void CMainWindow::closeTab(int index)
