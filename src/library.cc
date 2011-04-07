@@ -323,6 +323,7 @@ void CLibrary::update()
   	     "cover text,"
   	     "lang text"
   	     ")");
+  setTable("songs");
 
   QStringList filter = QStringList() << "*.sg";
   QString path = QString("%1/songs/").arg(workingPath());
