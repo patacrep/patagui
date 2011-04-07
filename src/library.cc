@@ -24,9 +24,9 @@
 #include "utils/utils.hh"
 using namespace SbUtils;
 //------------------------------------------------------------------------------
-CLibrary::CLibrary(CMainWindow* AParent)
+CLibrary::CLibrary(CMainWindow *parent)
   : QSqlTableModel()
-  , m_parent(AParent)
+  , m_parent(parent)
 {
   setTable("songs");
   setEditStrategy(QSqlTableModel::OnManualSubmit);

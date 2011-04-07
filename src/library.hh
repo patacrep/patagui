@@ -36,7 +36,7 @@ class CLibrary : public QSqlTableModel
   Q_OBJECT
 
 public:
-  CLibrary(CMainWindow* parent=NULL);
+  CLibrary(CMainWindow* parent);
   ~CLibrary();
 
   QString workingPath() const;
@@ -45,7 +45,6 @@ public:
   void removeSong(const QString & path);
   bool containsSong(const QString & path);
   QVariant data(const QModelIndex &index, int role) const;
-  CMainWindow* parent() const;
   
 public slots:
   void retrieveSongs();
@@ -55,7 +54,9 @@ signals:
   void wasModified();
 
 private:
-  CMainWindow* m_parent;
+  CMainWindow *parent() const;
+
+  CMainWindow *m_parent;
   QPixmap* m_pixmap;
   QFileSystemWatcher* m_watcher;
 };
