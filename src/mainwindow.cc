@@ -230,9 +230,9 @@ void CMainWindow::applySettings()
   view()->setColumnHidden(4,!m_displayColumnAlbum);
   view()->setColumnHidden(5,!m_displayColumnCover);
   view()->setColumnHidden(6,!m_displayColumnLang);
-  view()->setColumnWidth(0,250);
-  view()->setColumnWidth(1,350);
-  view()->setColumnWidth(4,250);
+  view()->setColumnWidth(0,200);
+  view()->setColumnWidth(1,200);
+  view()->setColumnWidth(4,200);
   log()->setVisible(m_displayCompilationLog);
 }
 //------------------------------------------------------------------------------
