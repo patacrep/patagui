@@ -106,22 +106,22 @@ CMainWindow::CMainWindow()
   m_noDataInfo->setReadOnly(true);
   m_noDataInfo->setMaximumHeight(150);
   m_noDataInfo->
-    setHtml(QString(tr("<table><tr><td valign=middle>  "
-		       "<img src=\":/icons/attention.png\" />  </td><td>"
-		       "<p>The directory <b>%1</b> does not contain any song file (\".sg\").<br/><br/> "
-		       "You may :<ul><li>select a valid directory in the menu <i>Edit/Preferences</i></li>"
-		       "<li>use the menu <i>Library/Download</i> to get the latest git snapshot</li>"
-		       "<li>manually download the latest tarball on "
-		       "<a href=\"http://www.patacrep.com/static1/downloads\">"
-		       "patacrep.com</a></li></ul>"
-		       "</p></td></tr></table>")).arg(workingPath()));
+    setHtml(tr("<table><tr><td valign=middle>  "
+	       "<img src=\":/icons/attention.png\" />  </td><td>"
+	       "<p>The directory <b>%1</b> does not contain any song file (\".sg\").<br/><br/> "
+	       "You may :<ul><li>select a valid directory in the menu <i>Edit/Preferences</i></li>"
+	       "<li>use the menu <i>Library/Download</i> to get the latest git snapshot</li>"
+	       "<li>manually download the latest tarball on "
+	       "<a href=\"http://www.patacrep.com/static1/downloads\">"
+	       "patacrep.com</a></li></ul>"
+	       "</p></td></tr></table>").arg(workingPath()));
   m_noDataInfo->hide();
 
   // toolbar (for the build button)
   m_toolbar = new QToolBar;
-  current_toolbar = m_toolbar;
+  m_currentToolbar = m_toolbar;
   m_toolbar->setMovable(false);
-  this->setUnifiedTitleAndToolBarOnMac(true);
+  setUnifiedTitleAndToolBarOnMac(true);
 
   createActions();
   createMenus();
@@ -217,22 +217,22 @@ CMainWindow::CMainWindow()
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
 {
-  delete m_library;
   delete m_songbook;
+  delete m_library;
 
   disconnectDatabase();
 }
 
 void CMainWindow::switchToolBar(QToolBar * toolbar)
 {
-  if (toolbar != current_toolbar)
+  if (toolbar != m_currentToolbar)
     {
       toolbar->setContextMenuPolicy(Qt::PreventContextMenu); // avoid 'jump' on MacOS
       addToolBar(toolbar);
       toolbar->setVisible(true);
-      current_toolbar->setVisible(false);
-      removeToolBar(current_toolbar);
-      current_toolbar = toolbar;
+      m_currentToolbar->setVisible(false);
+      removeToolBar(m_currentToolbar);
+      m_currentToolbar = toolbar;
     }
 }
 //------------------------------------------------------------------------------

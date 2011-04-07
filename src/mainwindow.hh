@@ -181,7 +181,7 @@ private:
   QMenu *m_helpMenu;
 
   QToolBar *m_toolbar;
-  QToolBar *current_toolbar;
+  QToolBar *m_currentToolbar;
 
   // Application actions
   QAction *m_preferencesAct;
