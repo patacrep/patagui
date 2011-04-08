@@ -28,6 +28,7 @@
 #include <QSqlTableModel>
 #include <QString>
 #include <QDir>
+#include <QSqlRecord>
 
 class QPixmap;
 
@@ -54,6 +55,17 @@ public:
     MaxRole = PathRole
   };
 
+  struct Song {
+    QString title;
+    QString artist;
+    QString album;
+    QString path;
+    QString coverName;
+    QString coverPath;
+    QString language;
+    bool isLilypond;
+  };
+
   CLibrary(CMainWindow* parent);
   ~CLibrary();
 
@@ -63,10 +75,10 @@ public:
 
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
-  void addSong(const QString & path);
+  void addSong(const QString &path);
   void addSongs(const QStringList &paths);
-  void removeSong(const QString & path);
-  bool containsSong(const QString & path);
+  void removeSong(const QString &path);
+  bool containsSong(const QString &path);
 
 public slots:
   void update();
@@ -76,12 +88,24 @@ signals:
   void wasModified();
   void directoryChanged(const QDir &directory);
 
-private:
+protected:
   CMainWindow *parent() const;
 
+  bool parseSong(const QString &path, Song &song);
+
+  static QRegExp reTitle;
+  static QRegExp reArtist;
+  static QRegExp reAlbum;
+  static QRegExp reLilypond;
+  static QRegExp reLanguage;
+  static QRegExp reCoverName;
+
+private:
   CMainWindow *m_parent;
   QDir m_directory;
   QPixmap* m_pixmap;
+
+  QSqlRecord m_songRecord;
 
 #ifndef __APPLE__
   QFileSystemWatcher* m_watcher;
