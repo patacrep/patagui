@@ -37,6 +37,7 @@
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
 #include "library-download.hh"
+#include "library-completion-model.hh"
 
 using namespace SbUtils;
 
@@ -521,8 +522,11 @@ void CMainWindow::createToolBar()
   m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
   // filter related objects
+  CLibraryCompletionModel *completionModel = new CLibraryCompletionModel;
+  completionModel->setSourceModel(library());
+
   QCompleter *completer = new QCompleter;
-  completer->setModel(library());
+  completer->setModel(completionModel);
   completer->setCaseSensitivity(Qt::CaseInsensitive);
   completer->setCompletionMode(QCompleter::PopupCompletion);
 
