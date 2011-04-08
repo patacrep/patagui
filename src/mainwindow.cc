@@ -83,8 +83,6 @@ CMainWindow::CMainWindow()
 
   readSettings();
 
-  m_library->update();
-
   connect(m_library, SIGNAL(wasModified()), SLOT(updateView()));
   connect(m_library, SIGNAL(wasModified()), SLOT(selectionChanged()));
 
