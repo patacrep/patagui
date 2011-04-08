@@ -38,9 +38,7 @@ CLibrary::CLibrary(CMainWindow *parent)
   , m_watcher()
 #endif // __APPLE__
 {
-  setTable("songs");
   setEditStrategy(QSqlTableModel::OnManualSubmit);
-  select();
 
   m_pixmap = new QPixmap;
   m_pixmap->load(":/icons/fr.png");
@@ -186,10 +184,10 @@ void CLibrary::update()
   QSqlQuery query;
   query.exec("DROP TABLE songs");
   query.exec("CREATE TABLE songs ("
-  	     "artist text,"
-  	     "title text,"
+  	     "artist text NOT NULL,"
+  	     "title text NOT NULL,"
   	     "lilypond bool,"
-  	     "path text,"
+  	     "path text PRIMARY KEY,"
   	     "album text,"
   	     "cover text,"
   	     "lang text"
