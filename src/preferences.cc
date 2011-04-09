@@ -30,9 +30,9 @@ ConfigDialog::ConfigDialog()
 {
   m_contentsWidget = new QListWidget;
   m_contentsWidget->setViewMode(QListView::IconMode);
-  m_contentsWidget->setIconSize(QSize(96, 84));
+  m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
-  m_contentsWidget->setMaximumWidth(128);
+  m_contentsWidget->setMaximumWidth(100);
   m_contentsWidget->setSpacing(12);
 
   m_pagesWidget = new QStackedWidget;
@@ -68,19 +68,19 @@ ConfigDialog::ConfigDialog()
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
-  //optionsButton->setIcon(QIcon::fromTheme("preferences-system"));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system"));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
-  //displayButton->setIcon(QIcon::fromTheme("preferences-columns"));
+  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme"));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
-  //networkButton->setIcon(QIcon::fromTheme("preferences-system"));
+  networkButton->setIcon(QIcon::fromTheme("preferences-system-network"));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

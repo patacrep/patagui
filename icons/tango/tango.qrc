@@ -12,6 +12,8 @@
 <file>16x16/actions/edit-undo.png</file>
 <file>16x16/actions/folder-new.png</file>
 <file>16x16/categories/preferences-system.png</file>
+<file>16x16/categories/preferences-system-network.png</file>
+<file>16x16/categories/preferences-desktop-theme.png</file>
 <file>16x16/mimetypes/audio-x-generic.png</file>
 <file>16x16/places/folder-remote.png</file>
 <file>16x16/status/image-missing.png</file>
@@ -27,6 +29,8 @@
 <file>22x22/actions/edit-undo.png</file>
 <file>22x22/actions/folder-new.png</file>
 <file>22x22/categories/preferences-system.png</file>
+<file>22x22/categories/preferences-system-network.png</file>
+<file>22x22/categories/preferences-desktop-theme.png</file>
 <file>22x22/mimetypes/audio-x-generic.png</file>
 <file>22x22/places/folder-remote.png</file>
 <file>22x22/status/image-missing.png</file>
@@ -42,6 +46,8 @@
 <file>32x32/actions/edit-undo.png</file>
 <file>32x32/actions/folder-new.png</file>
 <file>32x32/categories/preferences-system.png</file>
+<file>32x32/categories/preferences-system-network.png</file>
+<file>32x32/categories/preferences-desktop-theme.png</file>
 <file>32x32/mimetypes/audio-x-generic.png</file>
 <file>32x32/places/folder-remote.png</file>
 <file>32x32/status/image-missing.png</file>
@@ -58,6 +64,8 @@
 <file>scalable/actions/edit-undo.svg</file>
 <file>scalable/actions/folder-new.svg</file>
 <file>scalable/categories/preferences-system.svg</file>
+<file>scalable/categories/preferences-system-network.svg</file>
+<file>scalable/categories/preferences-desktop-theme.svg</file>
 <file>scalable/mimetypes/audio-x-generic.svg</file>
 <file>scalable/mimetypes/document-export.svg</file>
 <file>scalable/places/folder-remote.svg</file>
