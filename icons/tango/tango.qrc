@@ -11,6 +11,7 @@
 <file>16x16/actions/edit-redo.png</file>
 <file>16x16/actions/edit-undo.png</file>
 <file>16x16/actions/folder-new.png</file>
+<file>16x16/actions/view-refresh.png</file>
 <file>16x16/categories/preferences-system.png</file>
 <file>16x16/categories/preferences-system-network.png</file>
 <file>16x16/categories/preferences-desktop-theme.png</file>
@@ -28,6 +29,7 @@
 <file>22x22/actions/edit-redo.png</file>
 <file>22x22/actions/edit-undo.png</file>
 <file>22x22/actions/folder-new.png</file>
+<file>22x22/actions/view-refresh.png</file>
 <file>22x22/categories/preferences-system.png</file>
 <file>22x22/categories/preferences-system-network.png</file>
 <file>22x22/categories/preferences-desktop-theme.png</file>
@@ -45,6 +47,7 @@
 <file>32x32/actions/edit-redo.png</file>
 <file>32x32/actions/edit-undo.png</file>
 <file>32x32/actions/folder-new.png</file>
+<file>32x32/actions/view-refresh.png</file>
 <file>32x32/categories/preferences-system.png</file>
 <file>32x32/categories/preferences-system-network.png</file>
 <file>32x32/categories/preferences-desktop-theme.png</file>
@@ -63,6 +66,7 @@
 <file>scalable/actions/edit-redo.svg</file>
 <file>scalable/actions/edit-undo.svg</file>
 <file>scalable/actions/folder-new.svg</file>
+<file>scalable/actions/view-refresh.svg</file>
 <file>scalable/categories/preferences-system.svg</file>
 <file>scalable/categories/preferences-system-network.svg</file>
 <file>scalable/categories/preferences-desktop-theme.svg</file>

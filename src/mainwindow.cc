@@ -342,7 +342,6 @@ void CMainWindow::createActions()
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
-  m_exitAct->setShortcut(QKeySequence::Close);
   m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
@@ -392,9 +391,10 @@ void CMainWindow::createActions()
   connect(m_adjustColumnsAct, SIGNAL(triggered()),
           view(), SLOT(resizeColumnsToContents()));
 
-
   m_libraryUpdateAct = new QAction(tr("Update"), this);
   m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
+  m_libraryUpdateAct->setIcon(QIcon::fromTheme("view-refresh"));
+  m_libraryUpdateAct->setShortcut(QKeySequence::Refresh);
   connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
 
   CLibraryDownload *libraryDownload = new CLibraryDownload(this);
