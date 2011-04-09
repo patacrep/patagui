@@ -204,8 +204,8 @@ void CMainWindow::readSettings()
   m_displayColumnPath = settings.value("path", false).toBool();
   m_displayColumnAlbum = settings.value("album", true).toBool();
   m_displayColumnLilypond = settings.value("lilypond", false).toBool();
-  m_displayColumnCover = settings.value("cover", true).toBool();
-  m_displayColumnLang = settings.value("lang", false).toBool();
+  m_displayColumnCover = settings.value("cover", false).toBool();
+  m_displayColumnLang = settings.value("lang", true).toBool();
   m_displayCompilationLog = settings.value("log", false).toBool();
   settings.endGroup();
 }
