@@ -678,14 +678,24 @@ void CMainWindow::documentation()
 //------------------------------------------------------------------------------
 void CMainWindow::about()
 {
-  QString version = tr("0.4 (January 2011)");
-  QMessageBox::about(this,
-		     tr("About Patacrep Songbook Client"),
-		     QString
-		     (tr("<br>This program is a client for building and customizing the songbooks available on"
-			 " <a href=\"http::www.patacrep.com\">www.patacrep.com</a> </br>"
-			 "<br><b>Version:</b> %1 </br>"
-			 "<br><b>Authors:</b> Crep (R.Goffe), Lohrun (A.Dupas) </br>")).arg(version));
+  QString title = QString(tr("About Patacrep! Songbook Client"));
+  QString version = QCoreApplication::applicationVersion();
+
+  QString description = QString(tr("This program allows to build customized songbooks from "
+				   "<a href=\"http::www.patacrep.com\">www.patacrep.com</a>"));
+
+  QStringList authorsList = QStringList() << "Crep (R.Goffe)"
+					  << "Lohrun (A.Dupas)"
+					  << "Carreau (M.Bussonnier)";
+  QString author, authors;
+  foreach(author, authorsList)
+    authors += author + ", ";
+  authors.chop(2);
+
+  QMessageBox::about(this, title, QString(tr("%1 <br/>"
+					     "<b>Version:</b> %2 <br/>"
+					     "<b>Authors:</b> %3 <br/>"))
+		     .arg(description).arg(version).arg(authors));
 }
 //------------------------------------------------------------------------------
 void CMainWindow::selectAll()
