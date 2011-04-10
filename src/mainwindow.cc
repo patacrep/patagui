@@ -644,7 +644,7 @@ void CMainWindow::updateCover(const QModelIndex & index)
   if (!selectionModel()->hasSelection())
     {
       m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
-      m_coverLabel.setPixmap(*m_cover);
+      m_coverLabel.setPixmap(m_cover->scaled(128, 128, Qt::IgnoreAspectRatio));
       return;
     }
 
