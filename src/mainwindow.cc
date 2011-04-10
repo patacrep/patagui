@@ -537,18 +537,22 @@ void CMainWindow::createToolBar()
   QWidget* stretch = new QWidget;
   stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-  // add toolbar actions
+  // songbook actions
   m_toolBar->addAction(m_newAct);
   m_toolBar->addAction(m_openAct);
   m_toolBar->addAction(m_saveAct);
   m_toolBar->addAction(m_saveAsAct);
   m_toolBar->addSeparator();
+  // library actions
   m_toolBar->addAction(m_buildAct);
+  m_toolBar->addAction(m_newSongAct);
   m_toolBar->addSeparator();
+  // selection actions
   m_toolBar->addAction(m_selectAllAct);
   m_toolBar->addAction(m_unselectAllAct);
   m_toolBar->addAction(m_invertSelectionAct);
   m_toolBar->addSeparator();
+  // language selection actions
   m_toolBar->addAction(m_selectEnglishAct);
   m_toolBar->addAction(m_selectFrenchAct);
   m_toolBar->addAction(m_selectSpanishAct);
