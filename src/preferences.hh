@@ -29,6 +29,7 @@ class QStackedWidget;
 class QLabel;
 class QLineEdit;
 class QCheckBox;
+class QSpinBox;
 class CFileChooser;
 
 /** \brief ConfigDialog handles the display of the config pages
@@ -125,7 +126,7 @@ private:
   void writeSettings();
 
   QLineEdit *m_hostname;
-  QLineEdit *m_port;
+  QSpinBox *m_port;
   QLineEdit *m_user;
   QLineEdit *m_password;
 };

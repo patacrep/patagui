@@ -370,7 +370,7 @@ NetworkPage::NetworkPage(QWidget *parent)
   , m_password()
 {
   m_hostname = new QLineEdit;
-  m_port = new QLineEdit;
+  m_port = new QSpinBox;
   m_user = new QLineEdit;
   m_password = new QLineEdit;
   m_password->setEchoMode(QLineEdit::Password);
@@ -400,7 +400,7 @@ void NetworkPage::readSettings()
   QSettings settings;
   settings.beginGroup("proxy");
   m_hostname->setText(settings.value("hostname", QString()).toString());
-  m_port->setText(settings.value("port", QString()).toString());
+  m_port->setValue(settings.value("port", 0).toInt());
   m_user->setText(settings.value("user", QString()).toString());
   m_password->setText(settings.value("password", QString()).toString());
   settings.endGroup();
@@ -411,7 +411,7 @@ void NetworkPage::writeSettings()
   QSettings settings;
   settings.beginGroup("proxy");
   settings.setValue("hostname", m_hostname->text());
-  settings.setValue("port", m_port->text());
+  settings.setValue("port", m_port->value());
   settings.setValue("user", m_user->text());
   settings.setValue("password", m_password->text());
   settings.endGroup();
@@ -425,7 +425,7 @@ void NetworkPage::writeSettings()
     {
       proxy.setType(QNetworkProxy::HttpProxy);
       proxy.setHostName(m_hostname->text());
-      proxy.setPort(m_port->text().toInt());
+      proxy.setPort(m_port->value());
       proxy.setUser(m_user->text());
       proxy.setPassword(m_password->text());
     }
