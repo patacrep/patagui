@@ -17,22 +17,22 @@ inherit git autotools eutils
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="git lilypond"
+IUSE="python lilypond texlive"
 
-DEPEND="x11-libs/qt-gui
-       app-text/texlive[linguas_fr,extra]
-       dev-lang/python
-       dev-util/cmake
-       x11-libs/qt-sql[sqlite]
+DEPEND="x11-libs/qt-core-4.6
+	x11-libs/qt-gui
+        x11-libs/qt-script
+        x11-libs/qt-sql[sqlite]
+        dev-util/cmake-2.6
        
-       git? ( dev-vcs/git )
-       lilypond? ( media-sound/lilypond )
-       "
+        python?   ( dev-lang/python )
+        texlive?  ( app-text/texlive[linguas_fr,extra] )
+        lilypond? ( media-sound/lilypond )
+        "
 
 RDEPEND="${DEPEND}"
 
 src_install () {
    emake DESTDIR="$D" install || die
 }
-
 
