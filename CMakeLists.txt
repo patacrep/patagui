@@ -1,4 +1,5 @@
 #-------------------------------------------------------------------------------
+cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
 IF( APPLE )
   SET( PROGNAME Songbook-Client )
@@ -28,7 +29,6 @@ ELSE( APPLE )
 ENDIF( APPLE )
 
 #-------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.6)
 SET( CMAKE_COLOR_MAKEFILE ON )
 #SET( CMAKE_VERBOSE_MAKEFILE ON )
 #SET( CMAKE_INCLUDE_CURRENT_DIR TRUE )
