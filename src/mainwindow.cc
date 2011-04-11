@@ -37,7 +37,6 @@
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
 #include "library-download.hh"
-#include "library-completion-model.hh"
 
 using namespace SbUtils;
 
@@ -520,8 +519,12 @@ void CMainWindow::createToolBar()
   m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
   // filter related objects
-  CLibraryCompletionModel *completionModel = new CLibraryCompletionModel;
-  completionModel->setSourceModel(library());
+  QSqlQueryModel *completionModel = new QSqlQueryModel;
+  completionModel->setQuery("SELECT DISTINCT title FROM songs "
+			    "UNION "
+			    "SELECT DISTINCT artist FROM songs "
+			    "UNION "
+			    "SELECT DISTINCT album FROM songs ");
 
   QCompleter *completer = new QCompleter;
   completer->setModel(completionModel);
