@@ -196,7 +196,7 @@ void CMainWindow::readSettings()
 
   resize(settings.value("mainWindow/size", QSize(800,600)).toSize());
 
-  setWorkingPath(settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString());
+  setWorkingPath(settings.value("workingPath", QDir::home().path()).toString());
 
   settings.beginGroup("display");
   m_displayColumnArtist = settings.value("artist", true).toBool();
