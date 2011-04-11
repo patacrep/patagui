@@ -1,4 +1,4 @@
-// Copyright (C) 2010 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011 Romain Goffe, Alexandre Dupas
 //
 // Songbook Creator is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,41 +15,49 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 // MA  02110-1301, USA.
 //******************************************************************************
-#ifndef __SONG_EDITOR_HH__
-#define __SONG_EDITOR_HH__
 
-#include "code-editor.hh"
+/**
+ * \file library-download.hh
+ */
 
-#include <QToolBar>
+#ifndef __LIBRARY_DOWNLOAD_HH__
+#define __LIBRARY_DOWNLOAD_HH__
 
-class CSongEditor : public CodeEditor
+#include <QDialog>
+#include <QDir>
+
+class QNetworkAccessManager;
+class QNetworkReply;
+class QLineEdit;
+
+class CFileChooser;
+class CMainWindow;
+
+/** \class CLibraryDownload "library-download.hh"
+ * \brief CLibraryDownload is a class.
+ */
+
+class CLibraryDownload : public QDialog
 {
   Q_OBJECT
 
 public:
-  CSongEditor();
-  ~CSongEditor();
+  CLibraryDownload(CMainWindow *parent);
+  ~CLibraryDownload();
 
-  QString path();
-  void setPath(const QString & APath);
+  bool saveToDisk(const QString &filename, QIODevice *data);
+  bool decompress(const QString &filename, QDir &directory);
 
-  QToolBar* toolBar();
-
-signals:
-  void labelChanged(const QString &label);
-
-private slots:
-  //write modifications of the textEdit into sg file.
-  void save();
-  void documentWasModified();
-  void insertVerse();
-  void insertChorus();
+public slots:
+  void downloadFinished();
+  void downloadStart();
 
 private:
-  QString syntaxicColoration(const QString &);
+  CMainWindow * parent();
 
-  QToolBar* m_toolBar;
-  QString m_path;
+  QNetworkAccessManager *m_manager;
+  QLineEdit *m_url;
+  CFileChooser *m_path;
 };
 
-#endif // __SONG_EDITOR_HH__
+#endif  // __LIBRARY_DOWNLOAD_HH_

@@ -25,39 +25,91 @@
 #ifndef __LIBRARY_HH__
 #define __LIBRARY_HH__
 
-#include <QString>
 #include <QSqlTableModel>
+#include <QString>
+#include <QDir>
+#include <QSqlRecord>
+
+class QPixmap;
+
+#ifndef __APPLE__
+class QFileSystemWatcher;
+#endif // __APPLE__
 
 class CMainWindow;
-class QFileSystemWatcher;
 
 class CLibrary : public QSqlTableModel
 {
   Q_OBJECT
+  Q_PROPERTY(QDir directory READ directory WRITE setDirectory)
 
 public:
-  CLibrary(CMainWindow* parent=NULL);
+  enum Roles {
+    TitleRole = Qt::UserRole + 1,
+    ArtistRole = Qt::UserRole + 2,
+    AlbumRole = Qt::UserRole + 3,
+    CoverRole = Qt::UserRole + 4,
+    LilypondRole = Qt::UserRole + 5,
+    LanguageRole = Qt::UserRole + 6,
+    PathRole = Qt::UserRole + 7,
+    MaxRole = PathRole
+  };
+
+  struct Song {
+    QString title;
+    QString artist;
+    QString album;
+    QString path;
+    QString coverName;
+    QString coverPath;
+    QString language;
+    bool isLilypond;
+  };
+
+  CLibrary(CMainWindow* parent);
   ~CLibrary();
 
-  QString workingPath() const;
-  
-  void addSong(const QString & path);
-  void removeSong(const QString & path);
-  bool containsSong(const QString & path);
-  QVariant data(const QModelIndex &index, int role) const;
-  CMainWindow* parent() const;
-  
+  QDir directory() const;
+  void setDirectory(const QString &directory);
+  void setDirectory(const QDir &directory);
+
+  QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+  void addSong(const QString &path);
+  void addSongs(const QStringList &paths);
+  void removeSong(const QString &path);
+  bool containsSong(const QString &path);
+
 public slots:
-  void retrieveSongs();
+  void update();
   void updateSong(const QString & path);
 
 signals:
   void wasModified();
+  void directoryChanged(const QDir &directory);
+
+protected:
+  CMainWindow *parent() const;
+
+  bool parseSong(const QString &path, Song &song);
+
+  static QRegExp reTitle;
+  static QRegExp reArtist;
+  static QRegExp reAlbum;
+  static QRegExp reLilypond;
+  static QRegExp reLanguage;
+  static QRegExp reCoverName;
 
 private:
-  CMainWindow* m_parent;
+  CMainWindow *m_parent;
+  QDir m_directory;
   QPixmap* m_pixmap;
+
+  QSqlRecord m_songRecord;
+
+#ifndef __APPLE__
   QFileSystemWatcher* m_watcher;
+#endif // __APPLE__
 };
 
 #endif // __LIBRARY_HH__

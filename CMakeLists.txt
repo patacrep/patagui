@@ -1,4 +1,5 @@
 #-------------------------------------------------------------------------------
+cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
 IF( APPLE )
   SET( PROGNAME Songbook-Client )
@@ -28,7 +29,6 @@ ELSE( APPLE )
 ENDIF( APPLE )
 
 #-------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.6)
 SET( CMAKE_COLOR_MAKEFILE ON )
 #SET( CMAKE_VERBOSE_MAKEFILE ON )
 #SET( CMAKE_INCLUDE_CURRENT_DIR TRUE )
@@ -38,7 +38,12 @@ if(DEFINED PREFIX)
   set(CMAKE_INSTALL_PREFIX ${PREFIX})
 endif()
 #-------------------------------------------------------------------------------
-find_package(Qt4 COMPONENTS QtCore QtGui QtSql REQUIRED)
+SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+#-------------------------------------------------------------------------------
+find_package(LibArchive REQUIRED)
+include_directories(LibArchive_INCLUDE_DIRS)
+#-------------------------------------------------------------------------------
+find_package(Qt4 COMPONENTS QtCore QtGui QtSql QtNetwork REQUIRED)
 set(QT_USE_QTSQL true)
 set(QT_USE_QTSCRIPT true)
 #-------------------------------------------------------------------------------
@@ -73,6 +78,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/build-engine/download.cc
   src/code-editor.cc
   src/tab-widget.cc
+  src/library-download.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -101,6 +107,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/build-engine/download.hh
   src/code-editor.hh
   src/tab-widget.hh
+  src/library-download.hh
   )
 #-------------------------------------------------------------------------------
 # ressources
@@ -227,6 +234,7 @@ add_executable(${PROGNAME}
 )
 ENDIF( APPLE )
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
+target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
 #-------------------------------------------------------------------------------
 # install instructions
 IF(NOT APPLE)

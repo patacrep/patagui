@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011 Romain Goffe, Alexandre Dupas
 //
 // Songbook Creator is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,7 +33,6 @@ class CLibrary;
 class CTabWidget;
 class CDialogNewSong;
 class CSongEditor;
-class CBuildEngine;
 class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
@@ -59,8 +58,6 @@ public:
 
 public slots:
   void updateCover(const QModelIndex & index);
-  void rebuildLibrary();
-  void refreshLibrary();
   void setWorkingPath(const QString &path);
   void templateSettings();
   void updateSongbookLabels();
@@ -73,8 +70,6 @@ protected:
   void closeEvent(QCloseEvent *event);
 
 private slots:
-
-  void switchToolBar( QToolBar * toolbar );
   //songbook
   void newSongbook();
   void open();
@@ -98,19 +93,23 @@ private slots:
   void invertSelection();
   void selectLanguage(bool);
   void updateSongsList();
-  void connectDb();
-  void filterChanged();
+  void filterChanged(const QString &filter);
   void selectionChanged();
   void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
+
+  void connectDatabase();
+  void disconnectDatabase();
 
   //application
   void preferences();
   void applySettings();
-  void setToolbarDisplayed(bool);
+  void setToolBarDisplayed(bool);
   void setStatusbarDisplayed(bool);
   void documentation();
   void about();
+
   void updateTitle(const QString &filename);
+  void switchToolBar(QToolBar *toolBar);
 
 private:
   void readSettings();
@@ -118,13 +117,14 @@ private:
 
   void createActions();
   void createMenus();
+  void createToolBar();
 
   QGridLayout * songInfo();
   QGridLayout * songbookInfo();
 
   QStringList getSelectedSongs();
 
-  bool isToolbarDisplayed();
+  bool isToolBarDisplayed();
   bool isStatusbarDisplayed();
 
   QItemSelectionModel * selectionModel();
@@ -162,13 +162,12 @@ private:
   bool m_displayColumnLang;
   bool m_displayCompilationLog;
 
-  bool m_isToolbarDisplayed;
+  bool m_isToolBarDisplayed;
   bool m_isStatusbarDisplayed;
 
   QPixmap *m_cover;
   QLabel m_coverLabel;
   CDialogNewSong *m_newSongDialog;
-  CBuildEngine* m_builder;
 
   //Logs
   QTextEdit* m_log;
@@ -180,12 +179,12 @@ private:
   QMenu *m_viewMenu;
   QMenu *m_helpMenu;
 
-  QToolBar *m_toolbar;
-  QToolBar *current_toolbar;
+  QToolBar *m_toolBar;
+  QToolBar *m_currentToolBar;
 
   // Application actions
   QAction *m_preferencesAct;
-  QAction *m_toolbarViewAct;
+  QAction *m_toolBarViewAct;
   QAction *m_statusbarViewAct;
   QAction *m_adjustColumnsAct;
   QAction *m_documentationAct;
@@ -208,9 +207,8 @@ private:
   QAction *m_selectEnglishAct;
   QAction *m_selectFrenchAct;
   QAction *m_selectSpanishAct;
-  QAction *m_downloadDbAct;
-  QAction *m_refreshLibraryAct;
-  QAction *m_rebuildLibraryAct;
+  QAction *m_libraryUpdateAct;
+  QAction *m_libraryDownloadAct;
 
   // Tools actions
   QAction *m_resizeCoversAct;

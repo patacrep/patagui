@@ -21,6 +21,8 @@
 
 #include <QtGui>
 
+#include <QNetworkProxy>
+
 // Config Dialog
 
 ConfigDialog::ConfigDialog()
@@ -28,14 +30,15 @@ ConfigDialog::ConfigDialog()
 {
   m_contentsWidget = new QListWidget;
   m_contentsWidget->setViewMode(QListView::IconMode);
-  m_contentsWidget->setIconSize(QSize(96, 84));
+  m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
-  m_contentsWidget->setMaximumWidth(128);
+  m_contentsWidget->setMaximumWidth(100);
   m_contentsWidget->setSpacing(12);
 
   m_pagesWidget = new QStackedWidget;
   m_pagesWidget->addWidget(new OptionsPage);
   m_pagesWidget->addWidget(new DisplayPage);
+  m_pagesWidget->addWidget(new NetworkPage);
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
 
@@ -65,16 +68,22 @@ ConfigDialog::ConfigDialog()
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
-  //optionsButton->setIcon(QIcon::fromTheme("preferences-system"));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system"));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
-  //displayButton->setIcon(QIcon::fromTheme("preferences-columns"));
+  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme"));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+  QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
+  networkButton->setIcon(QIcon::fromTheme("preferences-system-network"));
+  networkButton->setText(tr("Network"));
+  networkButton->setTextAlignment(Qt::AlignHCenter);
+  networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   connect(m_contentsWidget,
           SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
@@ -148,7 +157,7 @@ void DisplayPage::readSettings()
   m_pathCheckBox->setChecked(settings.value("path", false).toBool());
   m_albumCheckBox->setChecked(settings.value("album", true).toBool());
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
-  m_coverCheckBox->setChecked(settings.value("cover", true).toBool());
+  m_coverCheckBox->setChecked(settings.value("cover", false).toBool());
   m_langCheckBox->setChecked(settings.value("lang", false).toBool());
   m_compilationLogCheckBox->setChecked(settings.value("log", false).toBool());
   settings.endGroup();
@@ -233,7 +242,7 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  m_workingPath->setPath(settings.value("workingPath", QString("%1/songbook").arg(QDir::home().path())).toString());
+  m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
 }
 
 void OptionsPage::writeSettings()
@@ -349,4 +358,83 @@ void OptionsPage::processError(QProcess::ProcessError error)
       if (label)
         label->setText(label->text().arg("not found"));
     }
+}
+
+// Network Page
+
+NetworkPage::NetworkPage(QWidget *parent)
+  : QWidget(parent)
+  , m_hostname()
+  , m_port()
+  , m_user()
+  , m_password()
+{
+  m_hostname = new QLineEdit;
+  m_port = new QSpinBox;
+  m_port->setRange(0, 65535);
+  m_user = new QLineEdit;
+  m_password = new QLineEdit;
+  m_password->setEchoMode(QLineEdit::Password);
+
+  readSettings();
+
+  // check application
+  QGroupBox *proxyGroupBox
+    = new QGroupBox(tr("Proxy settings"));
+
+  QFormLayout *proxyLayout = new QFormLayout;
+  proxyLayout->addRow(tr("Hostname:"), m_hostname);
+  proxyLayout->addRow(tr("Port:"), m_port);
+  proxyLayout->addRow(tr("User:"), m_user);
+  proxyLayout->addRow(tr("Password:"), m_password);
+  proxyGroupBox->setLayout(proxyLayout);
+
+  // main layout
+  QVBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(proxyGroupBox);
+  mainLayout->addStretch(1);
+  setLayout(mainLayout);
+}
+
+void NetworkPage::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("proxy");
+  m_hostname->setText(settings.value("hostname", QString()).toString());
+  m_port->setValue(settings.value("port", 0).toInt());
+  m_user->setText(settings.value("user", QString()).toString());
+  m_password->setText(settings.value("password", QString()).toString());
+  settings.endGroup();
+}
+
+void NetworkPage::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup("proxy");
+  settings.setValue("hostname", m_hostname->text());
+  settings.setValue("port", m_port->value());
+  settings.setValue("user", m_user->text());
+  settings.setValue("password", m_password->text());
+  settings.endGroup();
+
+  QNetworkProxy proxy;
+  if (m_hostname->text().isEmpty())
+    {
+      proxy.setType(QNetworkProxy::NoProxy);
+    }
+  else
+    {
+      proxy.setType(QNetworkProxy::HttpProxy);
+      proxy.setHostName(m_hostname->text());
+      proxy.setPort(m_port->value());
+      proxy.setUser(m_user->text());
+      proxy.setPassword(m_password->text());
+    }
+  QNetworkProxy::setApplicationProxy(proxy);
+}
+
+void NetworkPage::closeEvent(QCloseEvent *event)
+{
+  writeSettings();
+  event->accept();
 }

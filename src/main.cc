@@ -36,10 +36,12 @@ int main( int argc, char * argv[] )
     QIcon::setThemeName(FALLBACK_ICON_THEME);
   }
 
-
+  QString version = QString("0.5 (%1)")
+    .arg(QDate::currentDate().toString(Qt::SystemLocaleLongDate));
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");
   QCoreApplication::setApplicationName("songbook-client");
+  QCoreApplication::setApplicationVersion(version);
 
   // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
@@ -63,7 +65,7 @@ int main( int argc, char * argv[] )
   else if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
     dir = userDir.absolutePath();
   else
-    dir = "./lang";
+    dir = QString("%1%2lang").arg(QDir::currentPath()).arg(QDir::separator());
 
   QTranslator translator;
   translator.load(QString("songbook_%1").arg(locale), dir);

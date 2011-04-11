@@ -2,14 +2,14 @@ Source: songbook-client
 Section: text
 Priority: optional
 Maintainer: Romain Goffe <romain.goffe@gmail.com>
-Build-Depends: debhelper (>= 7), cmake (>=2.6.2), libqt4-dev (>= 4.6), qt4-qmake
+Build-Depends: debhelper (>= 7), cmake (>=2.6.2), libqt4-dev (>= 4.6), qt4-qmake, libarchive-dev
 Standards-Version: 3.8.3
 Homepage: http://www.patacrep.com
 
 Package: songbook-client
 Architecture: any
-Depends: libqt4-sql-sqlite (>= 4.3), texlive-base, texlive-lang-french, texlive-latex-extra, texlive-fonts-recommended, python, libqtscript4-core, libqtgui4
-Recommends: git-core, lilypond, texlive-xetex 
+Depends: libqt4-sql-sqlite (>= 4.3), libqtscript4-core, libqtgui4, ${shlibs:Depends}
+Recommends: lilypond, python, texlive-base, texlive-latex-extra, texlive-lang-french, texlive-fonts-recommended
 Description: Client for patacrep songbooks
  The songbook-client is an interface to build
  customized PDF songbooks with lyrics, guitar 
