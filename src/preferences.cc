@@ -371,6 +371,7 @@ NetworkPage::NetworkPage(QWidget *parent)
 {
   m_hostname = new QLineEdit;
   m_port = new QSpinBox;
+  m_port->setRange(0, 65535);
   m_user = new QLineEdit;
   m_password = new QLineEdit;
   m_password->setEchoMode(QLineEdit::Password);
