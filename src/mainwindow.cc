@@ -176,7 +176,7 @@ CMainWindow::~CMainWindow()
   disconnectDatabase();
 }
 
-void CMainWindow::switchToolBar(QToolBar * toolBar)
+void CMainWindow::switchToolBar(QToolBar *toolBar)
 {
   if (toolBar != m_currentToolBar)
     {
