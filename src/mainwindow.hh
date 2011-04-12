@@ -211,10 +211,6 @@ private:
   QAction *m_libraryUpdateAct;
   QAction *m_libraryDownloadAct;
 
-  // Tools actions
-  QAction *m_resizeCoversAct;
-  QAction *m_checkerAct;
-
   // Editors
   QMap< QString, CSongEditor* > m_editors;
 };

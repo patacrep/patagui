@@ -21,15 +21,12 @@
 #include <QtAlgorithms>
 #include <QDebug>
 
-#include <assert.h>
 #include "utils/utils.hh"
 #include "label.hh"
 #include "mainwindow.hh"
 #include "preferences.hh"
 #include "library.hh"
 #include "songbook.hh"
-#include "build-engine/resize-covers.hh"
-#include "build-engine/latex-preprocessing.hh"
 #include "build-engine/make-songbook.hh"
 #include "song-editor.hh"
 #include "highlighter.hh"
@@ -415,22 +412,12 @@ void CMainWindow::createActions()
   m_statusbarViewAct->setChecked(m_isStatusbarDisplayed);
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
-  CBuildEngine* builder = new CResizeCovers(this);
-  m_resizeCoversAct = new QAction( tr("Resize covers"), this);
-  m_resizeCoversAct->setStatusTip(tr("Ensure that covers are correctly resized"));
-  connect(m_resizeCoversAct, SIGNAL(triggered()), builder, SLOT(dialog()));
-
-  builder = new CLatexPreprocessing(this);
-  m_checkerAct = new QAction( tr("LaTeX Preprocessing"), this);
-  m_checkerAct->setStatusTip(tr("Check for common mistakes in songs (e.g spelling, chords, LaTeX typo ...)"));
-  connect(m_checkerAct, SIGNAL(triggered()), builder, SLOT(dialog()));
-
   m_buildAct = new QAction(tr("Build PDF"), this);
   m_buildAct->setIcon(QIcon::fromTheme("document-export"));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  builder = new CMakeSongbook(this);
+  CBuildEngine* builder = new CMakeSongbook(this);
   builder->setProcessOptions(QStringList() << "clean");
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
@@ -505,10 +492,6 @@ void CMainWindow::createMenus()
   m_viewMenu->addAction(m_toolBarViewAct);
   m_viewMenu->addAction(m_statusbarViewAct);
   m_viewMenu->addAction(m_adjustColumnsAct);
-
-  m_viewMenu = menuBar()->addMenu(tr("&Tools"));
-  m_viewMenu->addAction(m_resizeCoversAct);
-  m_viewMenu->addAction(m_checkerAct);
 
   m_helpMenu = menuBar()->addMenu(tr("&Help"));
   m_helpMenu->addAction(m_documentationAct);

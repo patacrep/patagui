@@ -72,10 +72,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/utils/lineedit.cc
   src/utils/lineedit.cc
   src/utils/utils.cc
-  src/build-engine/resize-covers.cc
-  src/build-engine/latex-preprocessing.cc
   src/build-engine/make-songbook.cc
-  src/build-engine/download.cc
   src/code-editor.cc
   src/tab-widget.cc
   src/library-download.cc
@@ -101,10 +98,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/filter-lineedit.hh
   src/utils/lineedit.hh
   src/utils/lineedit_p.hh
-  src/build-engine/resize-covers.hh
-  src/build-engine/latex-preprocessing.hh
   src/build-engine/make-songbook.hh
-  src/build-engine/download.hh
   src/code-editor.hh
   src/tab-widget.hh
   src/library-download.hh
