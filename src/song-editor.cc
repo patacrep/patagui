@@ -42,7 +42,7 @@ CSongEditor::CSongEditor()
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   // toolBar
-  m_toolBar = new QToolBar(this);
+  m_toolBar = new QToolBar(tr("Song edition tools"), this);
   m_toolBar->setMovable(false);
 
   // actions

@@ -514,7 +514,7 @@ void CMainWindow::createMenus()
 //------------------------------------------------------------------------------
 void CMainWindow::createToolBar()
 {
-  m_toolBar = new QToolBar;
+  m_toolBar = new QToolBar(tr("Library tools"), this);
   m_toolBar->setMovable(false);
   m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
