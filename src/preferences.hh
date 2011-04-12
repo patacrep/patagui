@@ -20,7 +20,6 @@
 
 #include <QDialog>
 #include <QWidget>
-#include <QProcess>
 
 class QListWidget;
 class QListWidgetItem;
@@ -95,18 +94,12 @@ protected:
 private slots:
   void checkWorkingPath(const QString &path);
 
-  void checkApplication();
-  void processError(QProcess::ProcessError error);
-
 private:
   void readSettings();
   void writeSettings();
 
   CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
-
-  QLabel *m_lilypondLabel;
-  QLabel *m_gitLabel;
 };
 
 /** \brief NetworkPage is the config page used to specify network options
