@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------
 CSongEditor::CSongEditor()
   : CodeEditor()
-  , m_toolBar(0)
+  , m_toolBar()
   , m_path()
 {
   setUndoRedoEnabled(true);
@@ -44,6 +44,7 @@ CSongEditor::CSongEditor()
   // toolBar
   m_toolBar = new QToolBar(tr("Song edition tools"), this);
   m_toolBar->setMovable(false);
+  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
   // actions
   QAction* action = new QAction(tr("Save"), this);
