@@ -442,10 +442,10 @@ void CMainWindow::createActions()
 //------------------------------------------------------------------------------
 void CMainWindow::setToolBarDisplayed(bool value)
 {
-  if (m_isToolBarDisplayed != value && m_toolBar)
+  if (m_isToolBarDisplayed != value && m_currentToolBar)
     {
       m_isToolBarDisplayed = value;
-      m_toolBar->setVisible(value);
+      m_currentToolBar->setVisible(value);
     }
 }
 //------------------------------------------------------------------------------
