@@ -474,6 +474,8 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 //------------------------------------------------------------------------------
 void CMainWindow::createMenus()
 {
+  menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
+
   m_fileMenu = menuBar()->addMenu(tr("&Songbook"));
   m_fileMenu->addAction(m_newAct);
   m_fileMenu->addAction(m_openAct);
