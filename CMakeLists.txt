@@ -41,7 +41,7 @@ endif()
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 #-------------------------------------------------------------------------------
 find_package(LibArchive REQUIRED)
-include_directories(LibArchive_INCLUDE_DIRS)
+include_directories(${LibArchive_INCLUDE_DIRS})
 #-------------------------------------------------------------------------------
 find_package(Qt4 COMPONENTS QtCore QtGui QtSql QtNetwork REQUIRED)
 set(QT_USE_QTSQL true)
