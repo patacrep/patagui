@@ -1,26 +1,26 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011, Romain Goffe <romain.goffe@gmail.com>
+// Copyright (C) 2009-2011, Alexandre Dupas <alexandre.dupas@gmail.com>
 //
-// Songbook Creator is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// Songbook Creator is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-// MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
 //******************************************************************************
 #ifndef __PREFERENCES_HH__
 #define __PREFERENCES_HH__
 
 #include <QDialog>
 #include <QWidget>
-#include <QProcess>
 
 class QListWidget;
 class QListWidgetItem;
@@ -95,18 +95,12 @@ protected:
 private slots:
   void checkWorkingPath(const QString &path);
 
-  void checkApplication();
-  void processError(QProcess::ProcessError error);
-
 private:
   void readSettings();
   void writeSettings();
 
   CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
-
-  QLabel *m_lilypondLabel;
-  QLabel *m_gitLabel;
 };
 
 /** \brief NetworkPage is the config page used to specify network options

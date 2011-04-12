@@ -1,19 +1,20 @@
-// Copyright (C) 2009-2011 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011, Romain Goffe <romain.goffe@gmail.com>
+// Copyright (C) 2009-2011, Alexandre Dupas <alexandre.dupas@gmail.com>
 //
-// Songbook Creator is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// Songbook Creator is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-// MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
 //******************************************************************************
 #include <QtGui>
 #include <QtSql>
@@ -80,6 +81,7 @@ CMainWindow::CMainWindow()
   m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
   m_view->setSortingEnabled(true);
   m_view->verticalHeader()->setVisible(false);
+  m_view->horizontalHeader()->setStretchLastSection(true);
 
   readSettings();
 
@@ -176,11 +178,10 @@ CMainWindow::~CMainWindow()
   disconnectDatabase();
 }
 
-void CMainWindow::switchToolBar(QToolBar * toolBar)
+void CMainWindow::switchToolBar(QToolBar *toolBar)
 {
   if (toolBar != m_currentToolBar)
     {
-      toolBar->setContextMenuPolicy(Qt::PreventContextMenu); // avoid 'jump' on MacOS
       addToolBar(toolBar);
       toolBar->setVisible(isToolBarDisplayed());
       m_currentToolBar->setVisible(false);
@@ -443,10 +444,10 @@ void CMainWindow::createActions()
 //------------------------------------------------------------------------------
 void CMainWindow::setToolBarDisplayed(bool value)
 {
-  if (m_isToolBarDisplayed != value && m_toolBar)
+  if (m_isToolBarDisplayed != value && m_currentToolBar)
     {
       m_isToolBarDisplayed = value;
-      m_toolBar->setVisible(value);
+      m_currentToolBar->setVisible(value);
     }
 }
 //------------------------------------------------------------------------------
@@ -474,6 +475,8 @@ void CMainWindow::closeEvent(QCloseEvent *event)
 //------------------------------------------------------------------------------
 void CMainWindow::createMenus()
 {
+  menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
+
   m_fileMenu = menuBar()->addMenu(tr("&Songbook"));
   m_fileMenu->addAction(m_newAct);
   m_fileMenu->addAction(m_openAct);
@@ -514,7 +517,7 @@ void CMainWindow::createMenus()
 //------------------------------------------------------------------------------
 void CMainWindow::createToolBar()
 {
-  m_toolBar = new QToolBar;
+  m_toolBar = new QToolBar(tr("Library tools"), this);
   m_toolBar->setMovable(false);
   m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 

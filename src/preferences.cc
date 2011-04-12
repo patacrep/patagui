@@ -1,19 +1,20 @@
-// Copyright (C) 2009 Romain Goffe, Alexandre Dupas
+// Copyright (C) 2009-2011, Romain Goffe <romain.goffe@gmail.com>
+// Copyright (C) 2009-2011, Alexandre Dupas <alexandre.dupas@gmail.com>
 //
-// Songbook Creator is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// Songbook Creator is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License as
+// published by the Free Software Foundation; either version 2 of the
+// License, or (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-// MA  02110-1301, USA.
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+// 02110-1301, USA.
 //******************************************************************************
 
 #include "preferences.hh"
@@ -213,30 +214,11 @@ OptionsPage::OptionsPage(QWidget *parent)
   workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
-  // check application
-  QGroupBox *checkApplicationGroupBox
-    = new QGroupBox(tr("Check application dependencies"));
-
-  QPushButton *checkApplicationButton = new QPushButton(tr("Check"));
-  connect(checkApplicationButton, SIGNAL(clicked()),
-          this, SLOT(checkApplication()));
-  m_lilypondLabel = new QLabel(tr("<a href=\"http://lilypond.org/\">lilypond</a>: <font color=orange>%1</font>"));
-  m_gitLabel = new QLabel(tr("<a href=\"http://git-scm.com/\">git</a>: <font color=orange>%1</font>"));
-
-  QBoxLayout *checkApplicationLayout = new QVBoxLayout;
-  checkApplicationLayout->addWidget(m_lilypondLabel);
-  checkApplicationLayout->addWidget(m_gitLabel);
-  checkApplicationLayout->addWidget(checkApplicationButton);
-  checkApplicationGroupBox->setLayout(checkApplicationLayout);
-
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
-  mainLayout->addWidget(checkApplicationGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
-
-  checkApplication();
 }
 
 void OptionsPage::readSettings()
@@ -317,47 +299,6 @@ void OptionsPage::checkWorkingPath(const QString &path)
       mask = mask.arg("green").arg("");
     }
   m_workingPathValid->setText(mask.arg(message));
-}
-
-
-void OptionsPage::checkApplication()
-{
-  QProcess *process;
-
-  process = new QProcess(m_gitLabel);
-  connect(process, SIGNAL(error(QProcess::ProcessError)),
-          this, SLOT(processError(QProcess::ProcessError)));
-
-  process->start("git", QStringList() << "--version");
-  if (process->waitForFinished())
-    {
-      QRegExp rx("git version ([^\n]+)");
-      rx.indexIn(process->readAllStandardOutput().data());
-      m_gitLabel->setText(m_gitLabel->text().replace("orange","green").arg(rx.cap(1)));
-    }
-
-  process = new QProcess(m_lilypondLabel);
-  connect(process, SIGNAL(error(QProcess::ProcessError)),
-          this, SLOT(processError(QProcess::ProcessError)));
-
-  process->start("lilypond", QStringList() << "--version");
-  if (process->waitForFinished())
-    {
-      QRegExp rx("GNU LilyPond ([^\n]+)");
-      rx.indexIn(process->readAllStandardOutput().data());
-      m_lilypondLabel->setText(m_lilypondLabel->text().replace("orange","green").arg(rx.cap(1)));
-    }
-}
-
-void OptionsPage::processError(QProcess::ProcessError error)
-{
-  QProcess *process = qobject_cast< QProcess* >(QObject::sender());
-  if (process)
-    {
-      QLabel *label =  qobject_cast< QLabel* >(process->parent());
-      if (label)
-        label->setText(label->text().arg("not found"));
-    }
 }
 
 // Network Page
