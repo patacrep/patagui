@@ -141,7 +141,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     }
   else if (index.column() == 4)
     {
-      if (role == Qt::DecorationRole || role == Qt::SizeHintRole)
+      if (role == Qt::DecorationRole)
 	{
 	  return data(sibling(index.row(), 5, index.parent()), role);
 	}
