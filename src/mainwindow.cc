@@ -180,7 +180,6 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
 {
   if (toolBar != m_currentToolBar)
     {
-      toolBar->setContextMenuPolicy(Qt::PreventContextMenu); // avoid 'jump' on MacOS
       addToolBar(toolBar);
       toolBar->setVisible(isToolBarDisplayed());
       m_currentToolBar->setVisible(false);
