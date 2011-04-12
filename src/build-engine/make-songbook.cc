@@ -22,14 +22,14 @@
 CMakeSongbook::CMakeSongbook(CMainWindow* AParent)
   : CBuildEngine(AParent)
 {
-  setProcessName("make");
 #ifdef Q_WS_WIN
   setProcessName("cmd.exe");
-#endif
-  
+#else
+  setProcessName("make");
   QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
   env.insert("LATEX_OPTIONS", "-halt-on-error");
   process()->setProcessEnvironment(env);
+#endif
 }
 
 QWidget* CMakeSongbook::mainWidget()
@@ -39,7 +39,7 @@ QWidget* CMakeSongbook::mainWidget()
 
 void CMakeSongbook::setProcessOptions(const QStringList & value)
 {
-  if(value.contains("clean") || value.contains("cleanall"))
+  if(value.contains("clean") || value.contains("cleanall") || value.contains("clean.bat"))
     {
       setStatusActionMessage(tr("Removing temporary LaTeX files. Please wait..."));
       setStatusSuccessMessage(tr("Cleaning completed."));
@@ -60,7 +60,13 @@ void CMakeSongbook::processExit(int exitCode, QProcess::ExitStatus exitStatus)
 {
   if (exitStatus == QProcess::NormalExit && exitCode==0)
     {
-      QString target = QString("file:///%1/%2").arg(workingPath()).arg(processOptions().at(0)) ;
+      QString target;
+#ifdef Q_WS_WIN
+      if(processOptions().at(1).startsWith("make"))
+        target = QString("file:///%1/%2.pdf").arg(workingPath()).arg(processOptions().at(2));
+#else
+      target = QString("file:///%1/%2").arg(workingPath()).arg(processOptions().at(0));
+#endif
       if(target.endsWith("pdf"))
 	QDesktopServices::openUrl(QUrl(target));
     }
