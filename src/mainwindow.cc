@@ -80,6 +80,7 @@ CMainWindow::CMainWindow()
   m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
   m_view->setSortingEnabled(true);
   m_view->verticalHeader()->setVisible(false);
+  m_view->horizontalHeader()->setStretchLastSection(true);
 
   readSettings();
 
