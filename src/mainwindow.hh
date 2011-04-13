@@ -120,7 +120,6 @@ private:
   void createMenus();
   void createToolBar();
 
-  QGridLayout * songInfo();
   QGridLayout * songbookInfo();
 
   QStringList getSelectedSongs();

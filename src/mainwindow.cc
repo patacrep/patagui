@@ -35,6 +35,7 @@
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
 #include "library-download.hh"
+#include "song-panel.hh"
 
 using namespace SbUtils;
 
@@ -121,13 +122,29 @@ CMainWindow::CMainWindow()
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
 	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
 
+  CSongPanel *songPanel = new CSongPanel(this);
+  songPanel->setLibrary(view()->model());
+  songPanel->setCurrentIndex(QModelIndex());
+  connect(view(), SIGNAL(clicked(const QModelIndex &)),
+          songPanel, SLOT(setCurrentIndex(const QModelIndex &)));
+
+  QDialogButtonBox *buttonBox = new QDialogButtonBox;
+  QPushButton *editButton = new QPushButton(tr("Edit"));
+  QPushButton *deleteButton = new QPushButton(tr("Delete"));
+  editButton->setDefault(true);
+  buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
+  buttonBox->addButton(deleteButton, QDialogButtonBox::NoRole);
+  connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
+  connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
+
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
   QBoxLayout *dataLayout = new QVBoxLayout;
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
   leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
-  leftLayout->addLayout(songInfo());
+  leftLayout->addWidget(songPanel);
+  leftLayout->addWidget(buttonBox);
   leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
   leftLayout->addLayout(songbookInfo());
   leftLayout->addStretch();
@@ -554,56 +571,6 @@ void CMainWindow::createToolBar()
 
   addToolBar(m_toolBar);
   setUnifiedTitleAndToolBarOnMac(true);
-}
-//------------------------------------------------------------------------------
-QGridLayout * CMainWindow::songInfo()
-{
-  CLabel *artistLabel = new CLabel();
-  artistLabel->setElideMode(Qt::ElideRight);
-  artistLabel->setFixedWidth(175);
-  CLabel *titleLabel = new CLabel();
-  titleLabel->setElideMode(Qt::ElideRight);
-  titleLabel->setFixedWidth(175);
-  CLabel *albumLabel = new CLabel();
-  albumLabel->setElideMode(Qt::ElideRight);
-  albumLabel->setFixedWidth(175);
-
-  QDialogButtonBox *buttonBox = new QDialogButtonBox;
-  QPushButton *editButton = new QPushButton(tr("Edit"));
-  QPushButton *deleteButton = new QPushButton(tr("Delete"));
-  editButton->setDefault(true);
-  buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
-  buttonBox->addButton(deleteButton, QDialogButtonBox::NoRole);
-
-  connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
-  connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
-
-  QGridLayout *layout = new QGridLayout;
-  m_coverLabel.setAlignment(Qt::AlignTop);
-  layout->addWidget(&m_coverLabel,0,0,4,1);
-  layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,1,1,1,Qt::AlignLeft);
-  layout->addWidget(titleLabel,0,2,1,1);
-  layout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,1,1,1,Qt::AlignLeft);
-  layout->addWidget(artistLabel,1,2,1,1);
-  layout->addWidget(new QLabel(tr("<i>Album:</i>")),2,1,1,1,Qt::AlignLeft);
-  layout->addWidget(albumLabel,2,2,1,1);
-  layout->addWidget(buttonBox,3,1,1,2);
-  layout->setColumnStretch(2,1);
-
-  //Data mapper
-  m_mapper = new QDataWidgetMapper();
-  m_mapper->setModel(m_proxyModel);
-  m_mapper->addMapping(artistLabel, 0, QByteArray("text"));
-  m_mapper->addMapping(titleLabel, 1, QByteArray("text"));
-  m_mapper->addMapping(albumLabel, 4, QByteArray("text"));
-  updateCover(QModelIndex());
-
-  connect(view(), SIGNAL(clicked(const QModelIndex &)),
-          m_mapper, SLOT(setCurrentModelIndex(const QModelIndex &)));
-  connect(view(), SIGNAL(clicked(const QModelIndex &)),
-          SLOT(updateCover(const QModelIndex &)));
-
-  return layout;
 }
 //------------------------------------------------------------------------------
 QGridLayout * CMainWindow::songbookInfo()
