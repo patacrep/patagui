@@ -619,17 +619,14 @@ void CMainWindow::about()
   QString description = QString(tr("This program allows to build customized songbooks from "
 				   "<a href=\"http::www.patacrep.com\">www.patacrep.com</a>"));
 
-  QStringList authorsList = QStringList() << "Crep (R.Goffe)"
-					  << "Lohrun (A.Dupas)"
-					  << "Carreau (M.Bussonnier)";
-  QString author, authors;
-  foreach(author, authorsList)
-    authors += author + ", ";
-  authors.chop(2);
+  QStringList authorsList = QStringList() << "Crep (R. Goffe)"
+                                          << "Lohrun (A. Dupas)"
+                                          << "Carreau (M. Bussonnier)";
+  QString authors = authorsList.join(", ");
 
-  QMessageBox::about(this, title, QString(tr("%1 <br/>"
-					     "<b>Version:</b> %2 <br/>"
-					     "<b>Authors:</b> %3 <br/>"))
+  QMessageBox::about(this, title, QString(tr("<p>%1</p>"
+					     "<p><b>Version:</b> %2</p>"
+					     "<p><b>Authors:</b> %3</p>"))
 		     .arg(description).arg(version).arg(authors));
 }
 //------------------------------------------------------------------------------
@@ -933,8 +930,8 @@ void CMainWindow::deleteSong()
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong(const QString &path)
 {
-  QString qs(tr("You are about to remov a song from the library.\n"
-                "Yes : The song will only be deleted from the library"
+  QString qs(tr("You are about to remove a song from the library.\n"
+                "Yes : The song will only be deleted from the library "
                       "and can be retrieved by rebuilding the library\n"
                 "No  : Nothing will be deleted\n"
                 "Delete file : You will also delete %1 from your hard drive\n"
