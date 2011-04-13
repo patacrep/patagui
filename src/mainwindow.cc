@@ -990,8 +990,8 @@ void CMainWindow::deleteSong()
 //------------------------------------------------------------------------------
 void CMainWindow::deleteSong(const QString &path)
 {
-  QString qs(tr("You are about to remov a song from the library.\n"
-                "Yes : The song will only be deleted from the library"
+  QString qs(tr("You are about to remove a song from the library.\n"
+                "Yes : The song will only be deleted from the library "
                       "and can be retrieved by rebuilding the library\n"
                 "No  : Nothing will be deleted\n"
                 "Delete file : You will also delete %1 from your hard drive\n"
