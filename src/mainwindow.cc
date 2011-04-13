@@ -875,10 +875,8 @@ void CMainWindow::songEditor()
       return;
     }
 
-  int row = m_proxyModel->mapToSource(selectionModel()->currentIndex()).row();
-  QSqlRecord record = library()->record(row);
-  QString path = record.field("path").value().toString();
-  QString title = record.field("title").value().toString();
+  QString path = view()->model()->data(selectionModel()->currentIndex(), CLibrary::PathRole).toString();
+  QString title = view()->model()->data(selectionModel()->currentIndex(), CLibrary::TitleRole).toString();
 
   songEditor(path, title);
 }
@@ -928,7 +926,7 @@ void CMainWindow::deleteSong()
       return;
     }
 
-  QString path = library()->record(m_proxyModel->mapToSource(selectionModel()->currentIndex()).row()).field("path").value().toString();
+  QString path = view()->model()->data(selectionModel()->currentIndex(), CLibrary::PathRole).toString();
 
   deleteSong(path);
 }
