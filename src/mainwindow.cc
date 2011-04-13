@@ -125,7 +125,7 @@ CMainWindow::CMainWindow()
   CSongPanel *songPanel = new CSongPanel(this);
   songPanel->setLibrary(view()->model());
   songPanel->setCurrentIndex(QModelIndex());
-  connect(view(), SIGNAL(clicked(const QModelIndex &)),
+  connect(selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
           songPanel, SLOT(setCurrentIndex(const QModelIndex &)));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
