@@ -53,6 +53,8 @@ public:
     LilypondRole = Qt::UserRole + 5,
     LanguageRole = Qt::UserRole + 6,
     PathRole = Qt::UserRole + 7,
+    CoverSmallRole = Qt::UserRole + 8,
+    CoverFullRole = Qt::UserRole + 9,
     MaxRole = PathRole
   };
 
@@ -104,7 +106,6 @@ protected:
 private:
   CMainWindow *m_parent;
   QDir m_directory;
-  QPixmap* m_pixmap;
 
   QSqlRecord m_songRecord;
 

@@ -34,7 +34,6 @@ CLibrary::CLibrary(CMainWindow *parent)
   : QSqlTableModel()
   , m_parent(parent)
   , m_directory()
-  , m_pixmap()
   , m_songRecord()
 #ifndef __APPLE__
   , m_watcher()
@@ -42,13 +41,15 @@ CLibrary::CLibrary(CMainWindow *parent)
 {
   setEditStrategy(QSqlTableModel::OnManualSubmit);
 
-  m_pixmap = new QPixmap;
-  m_pixmap->load(":/icons/fr.png");
-  QPixmapCache::insert("french", *m_pixmap);
-  m_pixmap->load(":/icons/en.png");
-  QPixmapCache::insert("english", *m_pixmap);
-  m_pixmap->load(":/icons/es.png");
-  QPixmapCache::insert("spanish", *m_pixmap);
+  QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing").pixmap(24, 24));
+  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing").pixmap(128, 128));
+
+  QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic").pixmap(24,24));
+
+  QPixmapCache::insert("french", QPixmap(":/icons/fr.png"));
+  QPixmapCache::insert("english", QPixmap(":/icons/en.png"));
+  QPixmapCache::insert("spanish", QPixmap(":/icons/es.png"));
+
 
   m_songRecord.append(QSqlField("artist", QVariant::String));
   m_songRecord.append(QSqlField("title", QVariant::String));
@@ -69,8 +70,6 @@ CLibrary::CLibrary(CMainWindow *parent)
 
 CLibrary::~CLibrary()
 {
-  delete m_pixmap;
-
 #ifndef __APPLE__
   delete m_watcher;
 #endif // __APPLE__
@@ -118,7 +117,33 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       return QSqlTableModel::data(sibling(index.row(), 6, index.parent()));
     case PathRole:
       return QSqlTableModel::data(sibling(index.row(), 3, index.parent()));
-    };
+    case CoverSmallRole:
+      {
+	QPixmap pixmap;
+	QPixmapCache::find("cover-missing-small", &pixmap);
+	QFileInfo file = QFileInfo(data(index, CoverRole).toString());
+	if (file.exists()
+	    && !QPixmapCache::find(file.baseName()+"-small", &pixmap))
+	  {
+	    pixmap = QPixmap::fromImage(QImage(file.filePath()).scaledToWidth(24));
+	    QPixmapCache::insert(file.baseName()+"-small", pixmap);
+	  }
+	return pixmap;
+      }
+    case CoverFullRole:
+      {
+	QPixmap pixmap;
+	QPixmapCache::find("cover-missing-full", &pixmap);
+	QFileInfo file = QFileInfo(data(index, CoverRole).toString());
+	if (file.exists()
+	    && !QPixmapCache::find(file.baseName()+"-full", &pixmap))
+	  {
+	    pixmap = QPixmap::fromImage(QImage(file.filePath()).scaled(128,128));
+	    QPixmapCache::insert(file.baseName()+"-full", pixmap);
+	  }
+	return pixmap;
+      }
+    }
 
   //Draws lilypondcheck
   if (index.column() == 2)
@@ -126,65 +151,68 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       if (role == Qt::DisplayRole)
 	return QString();
 
-      if (QSqlTableModel::data(index, Qt::DisplayRole).toBool())
+      if (QSqlTableModel::data(index).toBool())
 	{
-	  *m_pixmap = QPixmap(QIcon::fromTheme("audio-x-generic").pixmap(24,24));
-	  if (role == Qt::DecorationRole)
-	    return *m_pixmap;
+	  QPixmap pixmap;
+	  QPixmapCache::find("lilypond-checked", &pixmap);
 
-	  if (m_pixmap->isNull())
-	    return true;
+	  if (role == Qt::DecorationRole)
+	    return pixmap;
 
 	  if (role == Qt::SizeHintRole)
-	    return m_pixmap->size();
+	    return pixmap.size();
+
+	  if (role == Qt::ToolTipRole)
+	    return tr("Lilypond music sheet");
 	}
-      return QString();
     }
   else if (index.column() == 4)
     {
       if (role == Qt::DecorationRole)
 	{
-	  return data(sibling(index.row(), 5, index.parent()), role);
+	  return data(index, CoverSmallRole);
 	}
     }
   else if (index.column() == 5)
     {
-      QString imgFile = QSqlTableModel::data(index, Qt::DisplayRole).toString();
       if (Qt::DisplayRole == role)
 	return QString();
 
-      *m_pixmap = QIcon::fromTheme("image-missing").pixmap(24,24);;
-      if (!imgFile.isEmpty() && QFile::exists(imgFile) && !QPixmapCache::find(imgFile, m_pixmap))
+      if (role == Qt::DecorationRole)
 	{
-	  *m_pixmap = QPixmap::fromImage(QImage(imgFile).scaledToWidth(24));
-	  QPixmapCache::insert(imgFile, *m_pixmap);
+	  return data(index, CoverSmallRole);
 	}
 
-      if (role == Qt::DecorationRole)
-	return *m_pixmap;
-
       if (role == Qt::SizeHintRole)
-	return m_pixmap->size();
+	{
+	  return data(index, CoverSmallRole).value< QPixmap >().size();
+	}
     }
   else if (index.column() == 6)
     {
-      if (role == Qt::DisplayRole)
-      	return QString();
-
-      QString lang = QSqlTableModel::data(index, Qt::DisplayRole).toString();
-
-      if (role == Qt::ToolTipRole)
-      	return lang;
-
-      if (QPixmapCache::find(lang, m_pixmap))
+      QString language = data(index, LanguageRole).toString();
+      QPixmap pixmap;
+      if (QPixmapCache::find(language, &pixmap))
 	{
 	  if (role == Qt::DecorationRole)
-	    return *m_pixmap;
+	    return pixmap;
 
 	  if (role == Qt::SizeHintRole)
-	    return m_pixmap->size();
+	    return pixmap.size();
+
+	  if (role == Qt::ToolTipRole)
+	    return language;
+
+	  if (role == Qt::DisplayRole)
+	    return QString();
+	}
+      else
+	{
+	  if (role == Qt::DisplayRole)
+	    return language;
 	}
     }
+
   return QSqlTableModel::data(index, role);
 }
 
