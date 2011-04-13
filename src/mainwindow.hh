@@ -34,7 +34,6 @@ class CLibrary;
 class CTabWidget;
 class CDialogNewSong;
 class CSongEditor;
-class CBuildEngine;
 class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
@@ -170,7 +169,6 @@ private:
   QPixmap *m_cover;
   QLabel m_coverLabel;
   CDialogNewSong *m_newSongDialog;
-  CBuildEngine* m_builder;
 
   //Logs
   QTextEdit* m_log;
@@ -212,10 +210,6 @@ private:
   QAction *m_selectSpanishAct;
   QAction *m_libraryUpdateAct;
   QAction *m_libraryDownloadAct;
-
-  // Tools actions
-  QAction *m_resizeCoversAct;
-  QAction *m_checkerAct;
 
   // Editors
   QMap< QString, CSongEditor* > m_editors;

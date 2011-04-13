@@ -1,4 +1,5 @@
 #-------------------------------------------------------------------------------
+cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
 IF( APPLE )
   SET( PROGNAME Songbook-Client )
@@ -28,7 +29,6 @@ ELSE( APPLE )
 ENDIF( APPLE )
 
 #-------------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.6)
 SET( CMAKE_COLOR_MAKEFILE ON )
 #SET( CMAKE_VERBOSE_MAKEFILE ON )
 #SET( CMAKE_INCLUDE_CURRENT_DIR TRUE )
@@ -41,7 +41,7 @@ endif()
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 #-------------------------------------------------------------------------------
 find_package(LibArchive REQUIRED)
-include_directories(LibArchive_INCLUDE_DIRS)
+include_directories(${LibArchive_INCLUDE_DIRS})
 #-------------------------------------------------------------------------------
 find_package(Qt4 COMPONENTS QtCore QtGui QtSql QtNetwork REQUIRED)
 set(QT_USE_QTSQL true)
@@ -72,10 +72,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/utils/lineedit.cc
   src/utils/lineedit.cc
   src/utils/utils.cc
-  src/build-engine/resize-covers.cc
-  src/build-engine/latex-preprocessing.cc
   src/build-engine/make-songbook.cc
-  src/build-engine/download.cc
   src/code-editor.cc
   src/tab-widget.cc
   src/library-download.cc
@@ -101,10 +98,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/filter-lineedit.hh
   src/utils/lineedit.hh
   src/utils/lineedit_p.hh
-  src/build-engine/resize-covers.hh
-  src/build-engine/latex-preprocessing.hh
   src/build-engine/make-songbook.hh
-  src/build-engine/download.hh
   src/code-editor.hh
   src/tab-widget.hh
   src/library-download.hh

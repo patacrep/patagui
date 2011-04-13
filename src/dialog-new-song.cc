@@ -23,6 +23,7 @@
 #include "library.hh"
 #include "file-chooser.hh"
 #include <QLayout>
+#include <QImage>
 
 CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   : QDialog()
@@ -175,10 +176,21 @@ void CDialogNewSong::addSong()
   if (!dir.exists())
     dir.mkpath(dirpath);
 
-  //handle album and cover
+  //handle album art
   if(SbUtils::copyFile(cover(), dirpath) && !album().isEmpty() )
     { 
       QFile copy(QString("%1/%2").arg(dirpath).arg(QFileInfo(cover()).fileName()));
+
+      //resize cover
+      QImage image;
+      if(!image.load(copy.fileName(), "JPG"))
+	qWarning() << "CDialogNewSong::addSong() failed to load " << copy.fileName();
+
+      image = image.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+      if(!image.save(copy.fileName(),"JPG"))
+	qWarning() << "CDialogNewSong::addSong() failed to save " << copy.fileName();
+
       QString convertedFileName(QString("%1.jpg").arg(SbUtils::stringToFilename(album(),"-")));
       if( !copy.rename(QString("%1/%2").arg(dirpath).arg(convertedFileName)) )
 	copy.remove(); //file already exists
