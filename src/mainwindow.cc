@@ -53,7 +53,6 @@ CMainWindow::CMainWindow()
   , m_progressBar(new QProgressBar(this))
   , m_isToolBarDisplayed(true)
   , m_isStatusbarDisplayed(true)
-  , m_cover(new QPixmap)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/patacrep.png"));
@@ -599,30 +598,6 @@ QGridLayout * CMainWindow::songbookInfo()
   return layout;
 }
 //------------------------------------------------------------------------------
-void CMainWindow::updateCover(const QModelIndex & index)
-{
-  if (!selectionModel()->hasSelection())
-    {
-      m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
-      m_coverLabel.setPixmap(m_cover->scaled(128, 128, Qt::IgnoreAspectRatio));
-      return;
-    }
-
-  // do not retrieve last clicked item but last selected item
-  QModelIndex lastIndex = selectionModel()->selectedRows().last();
-  selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::NoUpdate);
-  if (lastIndex != index)
-    m_mapper->setCurrentModelIndex(lastIndex);
-
-  QString coverpath = library()->record(m_proxyModel->mapToSource(lastIndex).row()).field("cover").value().toString();
-  if (QFile::exists(coverpath))
-    m_cover->load(coverpath);
-  else
-    m_cover = new QPixmap(QIcon::fromTheme("image-missing").pixmap(128,128));
-
-  m_coverLabel.setPixmap(m_cover->scaled(128, 128, Qt::IgnoreAspectRatio));
-}
-//------------------------------------------------------------------------------
 void CMainWindow::preferences()
 {
   ConfigDialog dialog;
@@ -981,9 +956,6 @@ void CMainWindow::deleteSong(const QString &path)
   {
       //remove entry in database in 2 case
       library()->removeSong(path);
-      //once deleted move selection in the model
-      updateCover(selectionModel()->currentIndex());
-      m_mapper->setCurrentModelIndex(selectionModel()->currentIndex());
   }
   //don't forget to remove the file if asked
   if (msgBox.clickedButton() == delb)

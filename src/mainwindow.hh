@@ -58,7 +58,6 @@ public:
   const QString workingPath();
 
 public slots:
-  void updateCover(const QModelIndex & index);
   void setWorkingPath(const QString &path);
   void templateSettings();
   void updateSongbookLabels();
@@ -128,7 +127,6 @@ private:
   bool isStatusbarDisplayed();
 
   QItemSelectionModel * selectionModel();
-  QDataWidgetMapper* m_mapper;
 
   // Song library and view
   CLibrary *m_library;
@@ -165,8 +163,6 @@ private:
   bool m_isToolBarDisplayed;
   bool m_isStatusbarDisplayed;
 
-  QPixmap *m_cover;
-  QLabel m_coverLabel;
   CDialogNewSong *m_newSongDialog;
 
   //Logs
