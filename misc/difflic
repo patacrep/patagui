@@ -66,12 +66,12 @@ done
 if [[ $rvalue != 0 ]]
 then 
 	echo -e $ROUGE "********************************************"
-	echo -e $ROUGE "* Some files seems to have a wrong licence *"
+	echo -e $ROUGE "* Some files are not properly licenced *"
 	echo -e $ROUGE "********************************************"
 	echo -e $BLEU  "** $rvalue file(s) need to be manually checked **"
 else
 	echo -e $VERT "********************************************"
-	echo -e $VERT "*         Everything seems allwright       *"
+	echo -e $VERT "*         Everything seems alright       *"
 	echo -e $VERT "********************************************"
 fi
 exit $rvalue
