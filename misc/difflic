@@ -1,4 +1,8 @@
 #!/bin/bash
+
+#Author: M. Bussonnier
+#Date: 15/04/2011
+
 VERT="\\033[0;32m"
 JAUNE="\\033[1;33m"
 NORMAL="\\033[0;39m"
