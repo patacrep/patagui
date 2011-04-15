@@ -12,30 +12,41 @@ CYAN="\\033[1;36m"
 
 LICFILE="misc/lic.txt"
 NL=$(cat $LICFILE |wc -l)
-
+function includefile {
+ return  $(diff $1 $2 |grep '^>' | wc -l)
+}
 function checklicence {
-	if [[ $(head -n$NL "$1") = $(head -n$NL "misc/lic.txt") ]]
-	then 
-		echo -e "$VERT" "ok   : $1"
-		return 0
+	if $(includefile $1 misc/headcopyright.txt)
+	then
+		echo -en $VERT  'copyright...ok'
+	else
+		echo -en $ROUGE 'bad copyright?'
 	fi
-	
-	
-	NL=$(cat misc/nokia.txt |wc -l)
-	if [[ $(head -n$NL "$1") = $(head -n$NL "misc/nokia.txt") ]]
-	then 
-		echo -e "$BLEU" "nokia: $1"
-		return 0
-	fi
-	
-	NL=$(cat misc/bsd.txt |wc -l)
-	if [[ $(head -n$NL "$1") = $(head -n$NL "misc/bsd.txt") ]]
-	then 
-		echo -e "$ROSE" "bsd  : $1"
+
+		echo -en '\t|\t'
+
+	if $(includefile $1  misc/lic.txt)
+	then
+		echo -e "$VERT" "ok \t: $1"
 		return 0
 	fi
 
-	echo -e "$ROUGE" "fail : $1"
+
+	if $(includefile $1 misc/nokia.txt)
+	then
+		echo -en "$BLEU" "nokia"
+		echo -e "$VERT" "\t: $1"
+		return 0
+	fi
+
+	if $(includefile $1 misc/bsd.txt)
+	then
+		echo -en "$ROSE" "bsd"
+		echo -e "$VERT" "\t: $1"
+		return 0
+	fi
+
+	echo -e "$ROUGE" "fail\t: $1"
 	return 1
 }
 
@@ -52,7 +63,7 @@ for i in $self $cc $hh ; do
 done
 
 if [[ $rvalue != 0 ]]
-then 
+then
 	echo -e $ROUGE "********************************************"
 	echo -e $ROUGE "* Some files seems to have a wrong licence *"
 	echo -e $ROUGE "********************************************"
