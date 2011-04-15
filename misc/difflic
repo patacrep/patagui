@@ -11,6 +11,8 @@ then
     exit 1
 fi;
 
+BASEDIR=`dirname $0` 
+
 VERT="\\033[0;32m"
 JAUNE="\\033[1;33m"
 NORMAL="\\033[0;39m"
@@ -22,26 +24,26 @@ BLANCLAIR="\\033[1;08m"
 JAUNE="\\033[1;33m"
 CYAN="\\033[1;36m"
 
-LICFILE="misc/lic.txt"
+LICFILE="$BASEDIR/lic.txt"
 NL=$(cat $LICFILE |wc -l)
 
 function checklicence {
-	if [[ $(head -n$NL "$1") = $(head -n$NL "misc/lic.txt") ]]
+	if [[ $(head -n$NL "$1") = $(head -n$NL "$BASEDIR/lic.txt") ]]
 	then 
 		echo -e "$VERT" "ok   : $1"
 		return 0
 	fi
 	
 	
-	NL=$(cat misc/nokia.txt |wc -l)
-	if [[ $(head -n$NL "$1") = $(head -n$NL "misc/nokia.txt") ]]
+	NL=$(cat $BASEDIR/nokia.txt |wc -l)
+	if [[ $(head -n$NL "$1") = $(head -n$NL "$BASEDIR/nokia.txt") ]]
 	then 
 		echo -e "$BLEU" "nokia: $1"
 		return 0
 	fi
 	
-	NL=$(cat misc/bsd.txt |wc -l)
-	if [[ $(head -n$NL "$1") = $(head -n$NL "misc/bsd.txt") ]]
+	NL=$(cat $BASEDIR/bsd.txt |wc -l)
+	if [[ $(head -n$NL "$1") = $(head -n$NL "$BASEDIR/bsd.txt") ]]
 	then 
 		echo -e "$ROSE" "bsd  : $1"
 		return 0
