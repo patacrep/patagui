@@ -67,6 +67,10 @@ do
              ;;
      esac
 done
+if [ -z $SDIR ]
+then 
+	SDIR='.'
+fi
 BASEDIR=`dirname $0` 
 
 VERT="\\033[0;32m"
