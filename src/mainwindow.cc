@@ -734,8 +734,6 @@ void CMainWindow::build()
   builder->setProcessOptions(QStringList() << "/C" << "make.bat" << basename);
 #endif
   builder->action();
-  builder->process()->waitForFinished();
-  delete builder;
 }
 //------------------------------------------------------------------------------
 void CMainWindow::newSongbook()
