@@ -40,10 +40,11 @@ function checklicence {
 }
 
 rvalue=0
+self=$0
 cc=$(find src/ -name '*.cc' -type f )
 hh=$(find src/ -name '*.hh' -type f )
 
-for i in $cc $hh ; do
+for i in $self $cc $hh ; do
 	if !(checklicence $i)
 	then
 		rvalue=$(expr $rvalue + 1)
