@@ -101,7 +101,7 @@ function echor {
 function includefile {
  return  $(diff $1 $2 |grep '^>' | wc -l)
 }
-function checklicence {
+function checklicense {
 	cp=0
 	if $(includefile $1 $BASEDIR/headcopyright.txt)
 	then
@@ -155,7 +155,7 @@ cc=$(find $SDIR/src/ -name '*.cc' -type f )
 hh=$(find $SDIR/src/ -name '*.hh' -type f )
 
 for i in $self $cc $hh ; do
-	if !(checklicence $i)
+	if !(checklicense $i)
 	then
 		badtextfiles=$(expr $badtextfiles + 1)
 	fi
@@ -164,7 +164,7 @@ done
 if [[ $badtextfiles != 0 ]]
 then
 	echor '********************************************'
-	echor '*   Some files are not properly licenced   *'
+	echor '*   Some files are not properly licensed   *'
 	echor '********************************************'
 else
 	echov '********************************************'
@@ -177,12 +177,12 @@ echo -en $NORMAL
 badbinaryfiles=0
 
 cd $SDIR
-# some check that the liscence file is correct:
+# some check that the license file is correct:
 # first no white space
 j=$(egrep ' ' $BINCOPYRIGHT |grep -v '#'|wc -l)
 if [[ $j != 0 ]]
 then 
-	echor "le fichier de définition de licence contient des espace, assrez vous qu'il ne contien que des tabulations !"
+	echor "le fichier de définition de license contient des espace, assrez vous qu'il ne contien que des tabulations !"
 	egrep ' ' $BINCOPYRIGHT|grep -v '#'
 	exit -1;
 fi
@@ -191,18 +191,18 @@ fi
 j=$(egrep '\s\s' $BINCOPYRIGHT |grep -v '#'|wc -l)
 if [[ $j != 0 ]]
 then 
-	echo -e $ROUGE "le fichier de définition de licence contient des doubles tabulations ! merci de les retirés! vérifiez les lignes suiventes :" $NORMAL
+	echo -e $ROUGE "le fichier de définition de license contient des doubles tabulations ! merci de les retirés! vérifiez les lignes suiventes :" $NORMAL
 	egrep '\s\s' $BINCOPYRIGHT |grep -v '#'
 	exit -1;
 fi
 
-# let's check if the file is in the liscence file 
+# let's check if the file is in the license file 
 icns=$(find icons -name '*' -type f)
 
 for i in $icns ; do 
 	j=$(grep $i $BINCOPYRIGHT|wc -l)
 	str=$(grep $i $BINCOPYRIGHT|cut -f1)
-	if [[ $j == 0 || $str == 'Licence' || $str == 'Nothing' || $str == 'Inconnu' ]]
+	if [[ $j == 0 || $str == 'License' || $str == 'Nothing' || $str == 'Inconnu' ]]
 	then 
 		echor "Nothing : $i"
 		badbinaryfiles=$(expr $badbinaryfiles + 1 );
@@ -212,7 +212,7 @@ for i in $icns ; do
 done
 
 nexfile=0
-# let's check that every file in the liscence file exist
+# let's check that every file in the license file exist
 tf=$(cat $BINCOPYRIGHT|grep -v '#'|cut -f3)
 for i in $tf ; do 
 	if [ ! -e $i ]
@@ -228,8 +228,8 @@ for i in $tf ; do
 done
 cd - > /dev/null
 echo -e $BLEU "you have"
-echo -e $BLEU "$badtextfiles source file(s) witt an issue on the copyright and/or liscence"
-echo -e $BLEU "$badbinaryfiles binary file(s) with no liscence or not appearing in the copyright file"
-echo -e $BLEU "$nexfile non existant files repertoried in the copyright file"
+echo -e $BLEU "$badtextfiles source file(s) with an issue on the copyright and/or license"
+echo -e $BLEU "$badbinaryfiles binary file(s) with no license or not appearing in the copyright file"
+echo -e $BLEU "$nexfile non existing files listed in the copyright file"
 sum=$(expr $badtextfiles + $badbinaryfiles + $nexfile)
 exit $sum
