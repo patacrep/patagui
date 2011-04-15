@@ -1,4 +1,37 @@
 #!/bin/bash
+#
+# Author: M. Bussonnier
+# Date: 15/04/2011
+# Descritpion: This script looks for *.cc and *.hh files in SRC_DIRECTORY and checks their licenses
+#
+# Copyright (C) 2009-2011, Romain Goffe <romain.goffe@gmail.com>
+# Copyright (C) 2009-2011, Alexandre Dupas <alexandre.dupas@gmail.com>
+# Copyright (C) 2009-2011, Matthias Bussonnier <bussonniermatthias@gmail.com>
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
+if [ $# -ne 1 ];
+then
+    echo "Usage: $0 SRC_DIRECTORY"
+    echo "Description: check licenses for *.cc and *.hh in SRC_DIRECTORY"
+    exit 1
+fi;
+
+BASEDIR=`dirname $0` 
+
 VERT="\\033[0;32m"
 JAUNE="\\033[1;33m"
 NORMAL="\\033[0;39m"
@@ -10,14 +43,14 @@ BLANCLAIR="\\033[1;08m"
 JAUNE="\\033[1;33m"
 CYAN="\\033[1;36m"
 
-LICFILE="misc/lic.txt"
 BINCOPYRIGHT=debian/copy.bin
-NL=$(cat $LICFILE |wc -l)
+LICFILE="$BASEDIR/lic.txt"
+
 function includefile {
  return  $(diff $1 $2 |grep '^>' | wc -l)
 }
 function checklicence {
-	if $(includefile $1 misc/headcopyright.txt)
+	if $(includefile $1 $BASEDIR/headcopyright.txt)
 	then
 		echo -en $VERT  'copyright...ok'
 	else
@@ -26,21 +59,21 @@ function checklicence {
 
 		echo -en '\t|\t'
 
-	if $(includefile $1  misc/lic.txt)
+	if $(includefile $1  $LICFILE)
 	then
 		echo -e "$VERT" "ok \t: $1"
 		return 0
 	fi
 
 
-	if $(includefile $1 misc/nokia.txt)
+	if $(includefile $1 $BASEDIR/nokia.txt)
 	then
 		echo -en "$BLEU" "nokia"
 		echo -e "$VERT" "\t: $1"
 		return 0
 	fi
 
-	if $(includefile $1 misc/bsd.txt)
+	if $(includefile $1 $BASEDIR/bsd.txt)
 	then
 		echo -en "$ROSE" "bsd"
 		echo -e "$VERT" "\t: $1"
@@ -53,8 +86,8 @@ function checklicence {
 
 badtextfiles=0
 self=$0
-cc=$(find src/ -name '*.cc' -type f )
-hh=$(find src/ -name '*.hh' -type f )
+cc=$(find $1 -name '*.cc' -type f )
+hh=$(find $1 -name '*.hh' -type f )
 
 for i in $self $cc $hh ; do
 	if !(checklicence $i)
@@ -66,12 +99,12 @@ done
 if [[ $badtextfiles != 0 ]]
 then
 	echo -e $ROUGE "********************************************"
-	echo -e $ROUGE "* Some files seems to have a wrong licence *"
+	echo -e $ROUGE "*   Some files are not properly licenced   *"
 	echo -e $ROUGE "********************************************"
 	echo -e $BLEU  "** $badtextfiles file(s) need to be manually checked **"
 else
 	echo -e $VERT "********************************************"
-	echo -e $VERT "*         Everything seems allwright       *"
+	echo -e $VERT "*         Everything seems alright         *"
 	echo -e $VERT "********************************************"
 fi
 echo -en $NORMAL
@@ -99,12 +132,13 @@ then
 fi
 
 # let's check if the file is in the liscence file 
+cd $1
 icns=$(find icons -name '*' -type f)
 
 for i in $icns ; do 
 	j=$(grep $i $BINCOPYRIGHT|wc -l)
 	str=$(grep $i $BINCOPYRIGHT|cut -f1)
-	if [[ $j == 0 || $str == 'Licence' || $str == 'Nothing' ]]
+	if [[ $j == 0 || $str == 'Licence' || $str == 'Nothing' || $str == 'Inconnu' ]]
 	then 
 		echo -e $ROUGE "Nothing : $i"
 		badbinaryfiles=$(expr $badbinaryfiles + 1 );
@@ -128,10 +162,10 @@ for i in $tf ; do
 	fi
 	
 done
-
+cd -
 echo -e $BLEU "you have"
-echo -e $BLEU "$badtextfiles source file(s) witt an issue on the copiright and/or liscence"
-echo -e $BLEU "$badbinaryfiles binaru file(s) with no liscence or not appearing in the copyright file"
+echo -e $BLEU "$badtextfiles source file(s) witt an issue on the copyright and/or liscence"
+echo -e $BLEU "$badbinaryfiles binary file(s) with no liscence or not appearing in the copyright file"
 echo -e $BLEU "$nexfile non existant files repertoried in the copyright file"
 sum=$(expr $badtextfiles + $badbinaryfiles + $nexfile)
 exit $sum
