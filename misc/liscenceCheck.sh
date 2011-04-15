@@ -22,14 +22,51 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA.
+args=`getopt hvqs: $*`
+set -- $args
 
-if [ $# -ne 1 ];
-then
-    echo "Usage: $0 SRC_DIRECTORY"
-    echo "Description: check licenses for *.cc and *.hh in SRC_DIRECTORY"
-    exit 1
-fi;
+usage()
+{
+cat << EOF
+Usage: $0 SRC_DIRECTORY
+Description: check licenses for *.cc and *.hh in SRC_DIRECTORY"
 
+This script run the test1 or test2 over a machine.
+
+OPTIONS:
+   -h      Show this message
+   -q      quiet silence red output
+   -v      Verbose print  files who passed test
+   -s      root of project
+
+default value will print partially passed test
+
+EOF
+}
+VERBOSE=0
+QUIET=0
+while getopts “hvqs:” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+		 s)
+			 SDIR=$OPTARG
+			;;
+         v)
+             VERBOSE=1
+             ;;
+         q)
+             QUIET=1
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
 BASEDIR=`dirname $0` 
 
 VERT="\\033[0;32m"
@@ -45,49 +82,73 @@ CYAN="\\033[1;36m"
 
 BINCOPYRIGHT=debian/binaryCopyright
 LICFILE="$BASEDIR/lic.txt"
-
+function echov {
+	if [[ $VERBOSE == 1 ]]
+	then 
+		echo -e $VERT $1 $NORMAL
+	fi
+}
+function echor {
+	if [[ $QUIET == 0 ]]
+	then 
+		echo -e "$ROUGE" "$1" "$NORMAL"
+	fi
+}
 function includefile {
  return  $(diff $1 $2 |grep '^>' | wc -l)
 }
 function checklicence {
+	cp=0
 	if $(includefile $1 $BASEDIR/headcopyright.txt)
 	then
-		echo -en $VERT  'copyright...ok'
+		str=$VERT' copyright...ok'
+		cp=1
 	else
-		echo -en $ROUGE 'bad copyright?'
+		str=$ROUGE' bad copyright?'
+		cp=0
 	fi
-
-		echo -en '\t|\t'
+		str=${str}'\t|\t'
 
 	if $(includefile $1  $LICFILE)
 	then
-		echo -e "$VERT" "ok \t: $1"
+		if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
+		then
+			echo -e ${str}$VERT"ok \t: $1"$NORMAL
+		fi
 		return 0
 	fi
 
 
 	if $(includefile $1 $BASEDIR/nokia.txt)
 	then
-		echo -en "$BLEU" "nokia"
-		echo -e "$VERT" "\t: $1"
+		if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
+		then
+			echo -en ${str}"$BLEU""nokia"
+			echo -e "$VERT" "\t: $1"
+		fi
 		return 0
 	fi
 
 	if $(includefile $1 $BASEDIR/bsd.txt)
 	then
-		echo -en "$ROSE" "bsd"
-		echo -e "$VERT" "\t: $1"
+		if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
+		then
+			echo -en ${str}"$ROSE""bsd"
+			echo -e "$VERT" "\t: $1"
+		fi
 		return 0
 	fi
-
-	echo -e "$ROUGE" "fail\t: $1"
+	if [[ $QUIET != 1 ]]
+	then 
+		echo -e ${str}$ROUGE"fail\t: $1"
+	fi
 	return 1
 }
 
 badtextfiles=0
 self=$0
-cc=$(find $1 -name '*.cc' -type f )
-hh=$(find $1 -name '*.hh' -type f )
+cc=$(find $SDIR/src/ -name '*.cc' -type f )
+hh=$(find $SDIR/src/ -name '*.hh' -type f )
 
 for i in $self $cc $hh ; do
 	if !(checklicence $i)
@@ -98,26 +159,26 @@ done
 
 if [[ $badtextfiles != 0 ]]
 then
-	echo -e $ROUGE "********************************************"
-	echo -e $ROUGE "*   Some files are not properly licenced   *"
-	echo -e $ROUGE "********************************************"
-	echo -e $BLEU  "** $badtextfiles file(s) need to be manually checked **"
+	echor '********************************************'
+	echor '*   Some files are not properly licenced   *'
+	echor '********************************************'
 else
-	echo -e $VERT "********************************************"
-	echo -e $VERT "*         Everything seems alright         *"
-	echo -e $VERT "********************************************"
+	echov '********************************************'
+	echov '*         Everything seems alright         *'
+	echov '********************************************'
 fi
 echo -en $NORMAL
 
 ###### fin du check pour les fichiers de code ######
 badbinaryfiles=0
 
+cd $SDIR
 # some check that the liscence file is correct:
 # first no white space
 j=$(egrep ' ' $BINCOPYRIGHT |grep -v '#'|wc -l)
 if [[ $j != 0 ]]
 then 
-	echo -e $ROUGE "le fichier de définition de licence contient des espace, assrez vous qu'il ne contien que des tabulations !"
+	echor "le fichier de définition de licence contient des espace, assrez vous qu'il ne contien que des tabulations !"
 	egrep ' ' $BINCOPYRIGHT|grep -v '#'
 	exit -1;
 fi
@@ -132,7 +193,6 @@ then
 fi
 
 # let's check if the file is in the liscence file 
-cd $1
 icns=$(find icons -name '*' -type f)
 
 for i in $icns ; do 
@@ -140,10 +200,10 @@ for i in $icns ; do
 	str=$(grep $i $BINCOPYRIGHT|cut -f1)
 	if [[ $j == 0 || $str == 'Licence' || $str == 'Nothing' || $str == 'Inconnu' ]]
 	then 
-		echo -e $ROUGE "Nothing : $i"
+		echor "Nothing : $i"
 		badbinaryfiles=$(expr $badbinaryfiles + 1 );
 	else
-		echo -e $VERT $(grep $i $BINCOPYRIGHT)
+		echov "$(grep $i $BINCOPYRIGHT)"
 	fi
 done
 
@@ -153,7 +213,7 @@ tf=$(cat $BINCOPYRIGHT|grep -v '#'|cut -f3)
 for i in $tf ; do 
 	if [ ! -e $i ]
 	then
-		echo -e $ROUGE "fichier non existant : $i"
+		echor "fichier non existant : $i"
 		nexfile=$(expr $nexfile + 1);
 	fi
 	if [ -d $i ]
@@ -162,7 +222,7 @@ for i in $tf ; do
 	fi
 	
 done
-cd -
+cd - > /dev/null
 echo -e $BLEU "you have"
 echo -e $BLEU "$badtextfiles source file(s) witt an issue on the copyright and/or liscence"
 echo -e $BLEU "$badbinaryfiles binary file(s) with no liscence or not appearing in the copyright file"
