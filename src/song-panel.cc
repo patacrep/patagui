@@ -1,5 +1,5 @@
-// Copyright (C) 2011, Romain Goffe <romain.goffe@gmail.com>
-// Copyright (C) 2011, Alexandre Dupas <alexandre.dupas@gmail.com>
+// Copyright (C) 2009-2011, Romain Goffe <romain.goffe@gmail.com>
+// Copyright (C) 2009-2011, Alexandre Dupas <alexandre.dupas@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
