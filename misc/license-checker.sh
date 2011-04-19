@@ -22,6 +22,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA.
+
 args=`getopt hvqs: $*`
 set -- $args
 
@@ -40,7 +41,6 @@ OPTIONS:
    -s      root of project
 
 default value will print partially passed test
-
 EOF
 }
 VERBOSE=0
@@ -85,7 +85,7 @@ JAUNE="\\033[1;33m"
 CYAN="\\033[1;36m"
 
 BINCOPYRIGHT=debian/binaryCopyright
-LICFILE="$BASEDIR/lic.txt"
+LICFILE="$BASEDIR/lics/lic.txt"
 function echov {
 	if [[ $VERBOSE == 1 ]]
 	then 
@@ -101,9 +101,26 @@ function echor {
 function includefile {
  return  $(diff $1 $2 |grep '^>' | wc -l)
 }
+
+function chf
+{
+	BD='misc/lics/'
+	LICS=$(ls $BD)
+	for LIC in $LICS ; do 
+		if $(includefile $1  $BD$LIC)
+		then
+			if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
+			then
+				echo -e ${str}$VERT$(basename $LIC .txt)" \t: "$1$NORMAL
+			fi
+			return 0
+		fi
+	done
+	return 1
+}
 function checklicense {
 	cp=0
-	if $(includefile $1 $BASEDIR/headcopyright.txt)
+	if $(includefile $1 $BASEDIR/header.txt)
 	then
 		str=$VERT' copyright...ok'
 		cp=1
@@ -113,36 +130,10 @@ function checklicense {
 	fi
 		str=${str}'\t|\t'
 
-	if $(includefile $1  $LICFILE)
-	then
-		if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
-		then
-			echo -e ${str}$VERT"ok \t: $1"$NORMAL
-		fi
-		return 0
-	fi
+	chf $1
+	x=$?
 
-
-	if $(includefile $1 $BASEDIR/nokia.txt)
-	then
-		if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
-		then
-			echo -en ${str}"$BLEU""nokia"
-			echo -e "$VERT" "\t: $1"
-		fi
-		return 0
-	fi
-
-	if $(includefile $1 $BASEDIR/bsd.txt)
-	then
-		if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
-		then
-			echo -en ${str}"$ROSE""bsd"
-			echo -e "$VERT" "\t: $1"
-		fi
-		return 0
-	fi
-	if [[ $QUIET != 1 ]]
+	if [[ $QUIET != 1 && $x != 0 ]]
 	then 
 		echo -e ${str}$ROUGE"fail\t: $1"
 	fi
@@ -180,7 +171,7 @@ cd $SDIR
 # some check that the license file is correct:
 # first no white space
 j=$(egrep ' ' $BINCOPYRIGHT |grep -v '#'|wc -l)
-if [[ $j != 0 ]]
+if [ $j != 0 ]
 then 
 	echor "le fichier de définition de license contient des espace, assrez vous qu'il ne contien que des tabulations !"
 	egrep ' ' $BINCOPYRIGHT|grep -v '#'
@@ -188,11 +179,11 @@ then
 fi
 
 #second non double tbulation 
-j=$(egrep '\s\s' $BINCOPYRIGHT |grep -v '#'|wc -l)
+j=$(egrep '[[:blank:]][[:blank:]]' $BINCOPYRIGHT |grep -v '#'|wc -l)
 if [[ $j != 0 ]]
 then 
 	echo -e $ROUGE "le fichier de définition de license contient des doubles tabulations ! merci de les retirés! vérifiez les lignes suiventes :" $NORMAL
-	egrep '\s\s' $BINCOPYRIGHT |grep -v '#'
+	egrep '[[:blank:]][[:blank:]]' $BINCOPYRIGHT |grep -v '#'
 	exit -1;
 fi
 

@@ -46,6 +46,20 @@ private:
   QImage m_icon;
 };
 
+class CMagButton : public QAbstractButton
+{
+  Q_OBJECT
+  
+public:
+  CMagButton(QWidget *parent = 0);
+
+protected:
+  void paintEvent(QPaintEvent *event);
+
+private:
+  QImage m_icon;
+};
+
 class CFilterLineEdit : public LineEdit
 {
   Q_OBJECT

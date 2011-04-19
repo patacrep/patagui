@@ -81,14 +81,91 @@ void CClearButton::paintEvent(QPaintEvent *event)
   painter.drawLine(padding, height() - padding, width() - padding, padding);
 }
 
+CMagButton::CMagButton(QWidget *parent)
+  : QAbstractButton(parent)
+{
+  setCursor(Qt::ArrowCursor);
+  setFocusPolicy(Qt::NoFocus);
+  setToolTip(tr("Nothing Yet"));
+  setMinimumSize(22, 22);
+  setVisible(true);
+
+}
+void CMagButton::paintEvent(QPaintEvent *event)
+{
+  Q_UNUSED(event);
+  QPainter painter(this);
+
+  if (!m_icon.isNull()) {
+  int x = (width() - m_icon.width()) / 2 - 1;
+  int y = (height() - m_icon.height()) / 2 - 1;
+  painter.drawImage(x, y, m_icon);
+  return;
+  }
+
+  // Fall back to boring circle X
+  painter.setRenderHint(QPainter::Antialiasing, true);
+
+  QPalette p = palette();
+  QColor circleColor = isDown() ? p.color(QPalette::Dark) : p.color(QPalette::Mid);
+  QColor xColor = p.color(QPalette::Window);
+
+  QPen pen(QColor::fromRgb(85,85,85));
+  pen.setWidth(2.9);
+
+  // draw circle
+  //painter.setBrush(circleColor);
+  painter.setPen(pen);
+  int padding = width() / 4;
+  int circleRadius = (width() - (padding * 2))*3/4;
+  painter.drawEllipse(padding, padding, circleRadius, circleRadius);
+
+  // draw
+  //painter.setPen(xColor);
+  //padding *= 2;
+  painter.drawLine(padding+circleRadius, padding+circleRadius, width() - padding, width() - padding);
+  //painter.drawLine(padding, height() - padding, width() - padding, padding);
+}
+
 CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   : LineEdit(parent)
 {
   CClearButton* clearButton = new CClearButton(this);
+  CMagButton* magButton = new CMagButton(this);
+  QString style("QListView, QLineEdit {"
+  "selection-color: white; "
+  "border: 2px groove gray;"
+  "border-radius: 13px;"
+  "padding: 2px 2px;"
+  "background-image: url(:/icons/xxx.png);"
+  "background-position: top right;"
+  "padding-right: 0px;"
+  "}"
+  "QLineEdit:focus {"
+  "selection-color: white;   "
+  "border: 2px groove gray;"
+  "border-radius: 13px;"
+  "padding: 2px 2px;"
+  "background-image: url(:/icons/xxx.png);"
+  "padding-right: 0px;"
+  "}"
+  ""
+  "QLineEdit:edit-focus {"
+  "selection-color: white;   "
+  "border: 2px groove gray;"
+  "border-radius: 13px;"
+  "padding: 2px 2px;"
+  "background-image: url(:/icons/xxx.png);"
+  "padding-right: 0px;"
+  "}"
+);
+  this->setStyleSheet(style);
+  this->setAttribute(Qt::WA_MacShowFocusRect, 0);
   connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
   connect(this, SIGNAL(textChanged(const QString&)),
 	  clearButton, SLOT(textChanged(const QString&)));
   addWidget(clearButton, RightSide);
+  addWidget(magButton, LeftSide);
 
   updateTextMargins();
   setInactiveText(tr("Filter"));
