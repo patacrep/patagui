@@ -131,36 +131,39 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   : LineEdit(parent)
 {
   CClearButton* clearButton = new CClearButton(this);
+  #ifdef __APPLE__
   CMagButton* magButton = new CMagButton(this);
-  QString style("QListView, QLineEdit {"
-  "selection-color: white; "
-  "border: 2px groove gray;"
-  "border-radius: 13px;"
-  "padding: 2px 2px;"
-  "background-image: url(:/icons/xxx.png);"
-  "background-position: top right;"
-  "padding-right: 0px;"
+  QString style(
+  "QListView, QLineEdit {"
+    "selection-color: white; "
+    "border: 2px groove gray;"
+    "border-radius: 13px;"
+    "padding: 2px 2px;"
+    "background-image: url(:/icons/xxx.png);"
+    "background-position: top right;"
+    "padding-right: 0px;"
   "}"
-  "QLineEdit:focus {"
-  "selection-color: white;   "
-  "border: 2px groove gray;"
-  "border-radius: 13px;"
-  "padding: 2px 2px;"
-  "background-image: url(:/icons/xxx.png);"
-  "padding-right: 0px;"
+    "QLineEdit:focus {"
+    "selection-color: white;   "
+    "border: 2px groove gray;"
+    "border-radius: 13px;"
+    "padding: 2px 2px;"
+    "background-image: url(:/icons/xxx.png);"
+    "padding-right: 0px;"
   "}"
-  ""
-  "QLineEdit:edit-focus {"
-  "selection-color: white;   "
-  "border: 2px groove gray;"
-  "border-radius: 13px;"
-  "padding: 2px 2px;"
-  "background-image: url(:/icons/xxx.png);"
-  "padding-right: 0px;"
+    "QLineEdit:edit-focus {"
+    "selection-color: white;   "
+    "border: 2px groove gray;"
+    "border-radius: 13px;"
+    "padding: 2px 2px;"
+    "background-image: url(:/icons/xxx.png);"
+    "padding-right: 0px;"
   "}"
-);
+  );
   this->setStyleSheet(style);
   this->setAttribute(Qt::WA_MacShowFocusRect, 0);
+  addWidget(magButton, LeftSide);
+  #endif
   connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
   connect(this, SIGNAL(textChanged(const QString&)),
 	  clearButton, SLOT(textChanged(const QString&)));

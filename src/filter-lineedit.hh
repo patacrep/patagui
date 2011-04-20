@@ -46,10 +46,11 @@ private:
   QImage m_icon;
 };
 
+//this is not yet really a button, but we might add a drop down menu for search option
 class CMagButton : public QAbstractButton
 {
   Q_OBJECT
-  
+
 public:
   CMagButton(QWidget *parent = 0);
 
