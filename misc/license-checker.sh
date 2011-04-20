@@ -7,17 +7,17 @@
 # Copyright (C) 2009-2011, Romain Goffe <romain.goffe@gmail.com>
 # Copyright (C) 2009-2011, Alexandre Dupas <alexandre.dupas@gmail.com>
 # Copyright (C) 2009-2011, Matthias Bussonnier <bussonniermatthias@gmail.com>
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 2 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -68,10 +68,10 @@ do
      esac
 done
 if [ -z $SDIR ]
-then 
+then
 	SDIR='.'
 fi
-BASEDIR=`dirname $0` 
+BASEDIR=`dirname $0`
 
 VERT="\\033[0;32m"
 JAUNE="\\033[1;33m"
@@ -88,14 +88,14 @@ BINCOPYRIGHT=debian/binaryCopyright
 LICFILE="$BASEDIR/lics/lic.txt"
 function echov {
 	if [[ $VERBOSE == 1 ]]
-	then 
-		echo -e $VERT $1 $NORMAL
+	then
+		echo -e $VERT$1$NORMAL
 	fi
 }
 function echor {
 	if [[ $QUIET == 0 ]]
-	then 
-		echo -e "$ROUGE" "$1" "$NORMAL"
+	then
+		echo -e "$ROUGE""$1""$NORMAL"
 	fi
 }
 function includefile {
@@ -104,46 +104,41 @@ function includefile {
 
 function chf
 {
-	BD='misc/lics/'
+	BD=$2
 	LICS=$(ls $BD)
-	for LIC in $LICS ; do 
+	for LIC in $LICS ; do
 		if $(includefile $1  $BD$LIC)
 		then
-			if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
-			then
-				echo -e ${str}$VERT$(basename $LIC .txt)" \t: "$1$NORMAL
-			fi
+			ftype=$(basename $LIC .txt)
+			echo -en $VERT${ftype}" \t:"$NORMAL
 			return 0
 		fi
 	done
+
+	echor "fail\t:"$NORMAL
 	return 1
 }
 function checklicense {
-	cp=0
-	if $(includefile $1 $BASEDIR/header.txt)
-	then
-		str=$VERT' copyright...ok'
-		cp=1
-	else
-		str=$ROUGE' bad copyright?'
-		cp=0
-	fi
-		str=${str}'\t|\t'
-
-	chf $1
+	str=$(chf $1 'misc/copyr/')
+	y=$?
+	str=${str}$(chf $1 'misc/lics/')
 	x=$?
 
-	if [[ $QUIET != 1 && $x != 0 ]]
-	then 
-		echo -e ${str}$ROUGE"fail\t: $1"
+	#		if [[ $VERBOSE == 1 || ($cp == 0 && $QUIET != 1) ]]
+	notok=$(( $x || $y ))
+
+	if [[ (( $VERBOSE == 1 && $notok == 0 )) || ($QUIET != 1 && $notok == 1) ]]
+	then
+		echo -e ${str}"$1"
 	fi
-	return 1
+
+	return $notok
 }
 
 badtextfiles=0
 self=$0
-cc=$(find $SDIR/src/ -name '*.cc' -type f )
-hh=$(find $SDIR/src/ -name '*.hh' -type f )
+cc=$(find $SDIR/src -name '*.cc' -type f )
+hh=$(find $SDIR/src -name '*.hh' -type f )
 
 for i in $self $cc $hh ; do
 	if !(checklicense $i)
@@ -172,29 +167,29 @@ cd $SDIR
 # first no white space
 j=$(egrep ' ' $BINCOPYRIGHT |grep -v '#'|wc -l)
 if [ $j != 0 ]
-then 
+then
 	echor "le fichier de définition de license contient des espace, assrez vous qu'il ne contien que des tabulations !"
 	egrep ' ' $BINCOPYRIGHT|grep -v '#'
 	exit -1;
 fi
 
-#second non double tbulation 
+#second non double tbulation
 j=$(egrep '[[:blank:]][[:blank:]]' $BINCOPYRIGHT |grep -v '#'|wc -l)
-if [[ $j != 0 ]]
-then 
+if [ $j != 0 ]
+then
 	echo -e $ROUGE "le fichier de définition de license contient des doubles tabulations ! merci de les retirés! vérifiez les lignes suiventes :" $NORMAL
 	egrep '[[:blank:]][[:blank:]]' $BINCOPYRIGHT |grep -v '#'
 	exit -1;
 fi
 
-# let's check if the file is in the license file 
+# let's check if the file is in the license file
 icns=$(find icons -name '*' -type f)
 
-for i in $icns ; do 
+for i in $icns ; do
 	j=$(grep $i $BINCOPYRIGHT|wc -l)
 	str=$(grep $i $BINCOPYRIGHT|cut -f1)
-	if [[ $j == 0 || $str == 'License' || $str == 'Nothing' || $str == 'Inconnu' ]]
-	then 
+	if [[ $j -eq 0 || $str == 'License' || $str == 'Nothing' || $str == 'Inconnu' ]]
+	then
 		echor "Nothing : $i"
 		badbinaryfiles=$(expr $badbinaryfiles + 1 );
 	else
@@ -205,22 +200,22 @@ done
 nexfile=0
 # let's check that every file in the license file exist
 tf=$(cat $BINCOPYRIGHT|grep -v '#'|cut -f3)
-for i in $tf ; do 
+for i in $tf ; do
 	if [ ! -e $i ]
 	then
 		echor "fichier non existant : $i"
 		nexfile=$(expr $nexfile + 1);
 	fi
 	if [ -d $i ]
-	then 
-		echo -e $BLEU "dou you really think you can copyright a directory ?" $i 
+	then
+		echo -e $BLEU "dou you really think you can copyright a directory ?" $i
 	fi
-	
+
 done
 cd - > /dev/null
 echo -e $BLEU "you have"
 echo -e $BLEU "$badtextfiles source file(s) with an issue on the copyright and/or license"
 echo -e $BLEU "$badbinaryfiles binary file(s) with no license or not appearing in the copyright file"
-echo -e $BLEU "$nexfile non existing files listed in the copyright file"
+echo -e $BLEU "$nexfile non existing files listed in the copyright file" $NORMAL
 sum=$(expr $badtextfiles + $badbinaryfiles + $nexfile)
 exit $sum
