@@ -69,19 +69,19 @@ ConfigDialog::ConfigDialog()
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
-  optionsButton->setIcon(QIcon::fromTheme("preferences-system"));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/tango/preferences-system")));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
-  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme"));
+  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/tango/preferences-desktop-theme")));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
-  networkButton->setIcon(QIcon::fromTheme("preferences-system-network"));
+  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/tango/preferences-system-network")));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

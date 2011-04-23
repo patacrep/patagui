@@ -1,12 +1,87 @@
 <!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>icons/patacrep.png</file>
-    <file>icons/attention.png</file>
-    <file>icons/en.png</file>
-    <file>icons/fr.png</file>
-    <file>icons/es.png</file>
-    <file>icons/select-all.png</file>
-    <file>icons/unselect-all.png</file>
-    <file>icons/invert-selection.png</file>
-</qresource>
+ <qresource>
+    <file alias="songbook-client">icons/songbook-client.png</file>
+    <file alias="select-all">icons/select-all.png</file>
+    <file alias="unselect-all">icons/unselect-all.png</file>
+    <file alias="invert-selection">icons/invert-selection.png</file>
+ </qresource>
+ <qresource prefix="tango">
+    <file>icons/tango/16x16/actions/document-new.png</file>
+    <file>icons/tango/16x16/actions/document-open.png</file>
+    <file>icons/tango/16x16/actions/document-save-as.png</file>
+    <file>icons/tango/16x16/actions/document-save.png</file>
+    <file>icons/tango/16x16/actions/edit-clear.png</file>
+    <file>icons/tango/16x16/actions/edit-copy.png</file>
+    <file>icons/tango/16x16/actions/edit-cut.png</file>
+    <file>icons/tango/16x16/actions/edit-paste.png</file>
+    <file>icons/tango/16x16/actions/edit-redo.png</file>
+    <file>icons/tango/16x16/actions/edit-undo.png</file>
+    <file>icons/tango/16x16/actions/folder-new.png</file>
+    <file>icons/tango/16x16/actions/view-refresh.png</file>
+    <file>icons/tango/16x16/categories/preferences-system.png</file>
+    <file>icons/tango/16x16/categories/preferences-system-network.png</file>
+    <file>icons/tango/16x16/categories/preferences-desktop-theme.png</file>
+    <file>icons/tango/16x16/mimetypes/audio-x-generic.png</file>
+    <file>icons/tango/16x16/places/folder-remote.png</file>
+    <file>icons/tango/16x16/status/image-missing.png</file>
+    <file>icons/tango/22x22/actions/document-new.png</file>
+    <file>icons/tango/22x22/actions/document-open.png</file>
+    <file>icons/tango/22x22/actions/document-save-as.png</file>
+    <file>icons/tango/22x22/actions/document-save.png</file>
+    <file>icons/tango/22x22/actions/edit-clear.png</file>
+    <file>icons/tango/22x22/actions/edit-copy.png</file>
+    <file>icons/tango/22x22/actions/edit-cut.png</file>
+    <file>icons/tango/22x22/actions/edit-paste.png</file>
+    <file>icons/tango/22x22/actions/edit-redo.png</file>
+    <file>icons/tango/22x22/actions/edit-undo.png</file>
+    <file>icons/tango/22x22/actions/folder-new.png</file>
+    <file>icons/tango/22x22/actions/view-refresh.png</file>
+    <file>icons/tango/22x22/categories/preferences-system.png</file>
+    <file>icons/tango/22x22/categories/preferences-system-network.png</file>
+    <file>icons/tango/22x22/categories/preferences-desktop-theme.png</file>
+    <file>icons/tango/22x22/mimetypes/audio-x-generic.png</file>
+    <file>icons/tango/22x22/places/folder-remote.png</file>
+    <file>icons/tango/22x22/status/image-missing.png</file>
+    <file>icons/tango/32x32/actions/document-new.png</file>
+    <file>icons/tango/32x32/actions/document-open.png</file>
+    <file>icons/tango/32x32/actions/document-save-as.png</file>
+    <file>icons/tango/32x32/actions/document-save.png</file>
+    <file>icons/tango/32x32/actions/edit-clear.png</file>
+    <file>icons/tango/32x32/actions/edit-copy.png</file>
+    <file>icons/tango/32x32/actions/edit-cut.png</file>
+    <file>icons/tango/32x32/actions/edit-paste.png</file>
+    <file>icons/tango/32x32/actions/edit-redo.png</file>
+    <file>icons/tango/32x32/actions/edit-undo.png</file>
+    <file>icons/tango/32x32/actions/folder-new.png</file>
+    <file>icons/tango/32x32/actions/view-refresh.png</file>
+    <file>icons/tango/32x32/categories/preferences-system.png</file>
+    <file>icons/tango/32x32/categories/preferences-system-network.png</file>
+    <file>icons/tango/32x32/categories/preferences-desktop-theme.png</file>
+    <file>icons/tango/32x32/mimetypes/audio-x-generic.png</file>
+    <file>icons/tango/32x32/places/folder-remote.png</file>
+    <file>icons/tango/32x32/status/image-missing.png</file>
+    <file>icons/tango/index.theme</file>
+    <file alias="document-new">icons/tango/scalable/actions/document-new.svg</file>
+    <file alias="document-open">icons/tango/scalable/actions/document-open.svg</file>
+    <file alias="document-save-as">icons/tango/scalable/actions/document-save-as.svg</file>
+    <file alias="document-save">icons/tango/scalable/actions/document-save.svg</file>
+    <file alias="edit-clear">icons/tango/scalable/actions/edit-clear.svg</file>
+    <file alias="edit-copy">icons/tango/scalable/actions/edit-copy.svg</file>
+    <file alias="edit-cut">icons/tango/scalable/actions/edit-cut.svg</file>
+    <file alias="edit-paste">icons/tango/scalable/actions/edit-paste.svg</file>
+    <file alias="edit-redo">icons/tango/scalable/actions/edit-redo.svg</file>
+    <file alias="edit-undo">icons/tango/scalable/actions/edit-undo.svg</file>
+    <file alias="folder-new">icons/tango/scalable/actions/folder-new.svg</file>
+    <file alias="view-refresh">icons/tango/scalable/actions/view-refresh.svg</file>
+    <file alias="preferences-system">icons/tango/scalable/categories/preferences-system.svg</file>
+    <file alias="preferences-system-network">icons/tango/scalable/categories/preferences-system-network.svg</file>
+    <file alias="preferences-desktop-theme">icons/tango/scalable/categories/preferences-desktop-theme.svg</file>
+    <file alias="audio-x-generic">icons/tango/scalable/mimetypes/audio-x-generic.svg</file>
+    <file alias="document-export">icons/tango/scalable/mimetypes/document-export.svg</file>
+    <file alias="folder-remote">icons/tango/scalable/places/folder-remote.svg</file>
+    <file alias="image-missing">icons/tango/scalable/status/image-missing.svg</file>
+    <file alias="flag-fr">icons/tango/scalable/places/flag-fr.svg</file>
+    <file alias="flag-es">icons/tango/scalable/places/flag-es.svg</file>
+    <file alias="flag-en">icons/tango/scalable/places/flag-en.svg</file>
+  </qresource>
 </RCC>

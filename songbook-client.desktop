@@ -5,6 +5,6 @@ Name=Patacrep Songbook Client
 Comment=Build Patacrep LaTeX Songbooks for Guitar Tabs
 TryExec=songbook-client
 Exec=songbook-client
-Icon=patacrep.png
+Icon=songbook-client.png
 Terminal=false
 Categories=Application;Utility;

@@ -27,23 +27,17 @@ int main( int argc, char * argv[] )
 
   Q_INIT_RESOURCE(songbook);
 
-  static const char * GENERIC_ICON_TO_CHECK = "document-open";
-  static const char * FALLBACK_ICON_THEME = "tango";
-  if (!QIcon::hasThemeIcon(GENERIC_ICON_TO_CHECK)) {
-    //If there is no default working icon theme then we should
-    //use an icon theme that we provide via a .qrc file
-    //This case happens under Windows and Mac OS X
-    //This does not happen under GNOME or KDE
-    QIcon::setThemeName(FALLBACK_ICON_THEME);
-  }
-
+#ifndef Q_WS_X11
+  QIcon::setThemeName("tango");
+#endif
+    
   QString version = QString("0.5 (%1)")
     .arg(QDate::currentDate().toString(Qt::SystemLocaleLongDate));
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");
   QCoreApplication::setApplicationName("songbook-client");
   QCoreApplication::setApplicationVersion(version);
-
+  
   // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
   QString locale = QLocale::system().name().section('_', 0, 0);

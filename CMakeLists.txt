@@ -107,10 +107,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   )
 #-------------------------------------------------------------------------------
 # ressources
-set(SONGBOOK_CLIENT_RCS
-  songbook.qrc
-  icons/tango/tango.qrc
-  )
+set(SONGBOOK_CLIENT_RCS songbook.qrc songbook.rc)
 #-------------------------------------------------------------------------------
 # process Qt special files
 include(${QT_USE_FILE})
@@ -236,6 +233,6 @@ target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
 IF(NOT APPLE)
   install(TARGETS ${PROGNAME} RUNTIME DESTINATION bin)
   install(FILES ${PROGNAME}.desktop DESTINATION share/applications)
-  install(FILES icons/patacrep.png DESTINATION share/icons)
+  install(FILES icons/songbook-client.png DESTINATION share/icons)
   install(FILES ${COMPILED_TRANSLATIONS} DESTINATION share/${PROGNAME}/translations)
 ENDIF(NOT APPLE)
