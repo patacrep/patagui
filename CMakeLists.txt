@@ -77,6 +77,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/tab-widget.cc
   src/library-download.cc
   src/song-panel.cc
+  src/notification.cc
   )
 #-------------------------------------------------------------------------------
 # header (moc)
@@ -104,6 +105,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/tab-widget.hh
   src/library-download.hh
   src/song-panel.hh
+  src/notification.hh
   )
 #-------------------------------------------------------------------------------
 # ressources

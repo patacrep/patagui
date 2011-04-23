@@ -37,6 +37,7 @@ class CSongEditor;
 class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
+class CNotify;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -145,7 +146,7 @@ private:
   CTabWidget* m_mainWidget;
   QTableView *m_view;
   QProgressBar* m_progressBar;
-  QTextEdit* m_noDataInfo;
+  CNotify* m_noDataInfo;
   CFilterLineEdit *m_filterLineEdit;
 
   // Global

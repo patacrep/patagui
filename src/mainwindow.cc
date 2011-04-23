@@ -36,6 +36,7 @@
 #include "tab-widget.hh"
 #include "library-download.hh"
 #include "song-panel.hh"
+#include "notification.hh"
 
 using namespace SbUtils;
 
@@ -98,29 +99,19 @@ CMainWindow::CMainWindow()
   m_log->setReadOnly(true);
   new CHighlighter(m_log->document());
 
-  //TODO: rework
-  // no data info widget
-  m_noDataInfo = new QTextEdit;
-  m_noDataInfo->setMaximumHeight(150);
-  m_noDataInfo->setReadOnly(true);
-  m_noDataInfo->
-    setHtml(tr("<table><tr><td valign=middle>  "
-	       "<img src=\":/icons/attention.png\" />  </td><td>"
-	       "<p>The directory <b>%1</b> does not contain any song file (\".sg\").<br/><br/> "
-	       "You may :<ul><li>select a valid directory in the menu <i>Edit/Preferences</i></li>"
-	       "<li>use the menu <i>Library/Download</i> to get the latest git snapshot</li>"
-	       "<li>manually download the latest tarball on "
-	       "<a href=\"http://www.patacrep.com/static1/downloads\">"
-	       "patacrep.com</a></li></ul>"
-	       "</p></td></tr></table>").arg(workingPath()));
-  m_noDataInfo->hide();
-
   createActions();
   createMenus();
   createToolBar();
 
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
 	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
+
+  // no data info widget
+  m_noDataInfo = new CNotify(this);
+  m_noDataInfo->setMessage
+    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.<strong/><br/>"
+		"Do you want to download the latest songs library ?").arg(workingPath())));
+  m_noDataInfo->addAction(m_libraryDownloadAct);
 
   CSongPanel *songPanel = new CSongPanel(this);
   songPanel->setLibrary(view()->model());
@@ -149,7 +140,6 @@ CMainWindow::CMainWindow()
   leftLayout->addLayout(songbookInfo());
   leftLayout->addStretch();
   dataLayout->addWidget(view());
-  dataLayout->addWidget(m_noDataInfo);
   centerLayout->addLayout(leftLayout);
   centerLayout->addLayout(dataLayout);
   centerLayout->setStretch(1,2);
