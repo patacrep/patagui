@@ -113,6 +113,7 @@ void CBuildEngine::action()
     m_dialog->close();
 
   parent()->statusBar()->showMessage(statusActionMessage());
+  parent()->progressBar()->setRange(0,0);
   parent()->progressBar()->show();
   parent()->log()->clear();
   
