@@ -131,7 +131,6 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   : LineEdit(parent)
 {
   CClearButton* clearButton = new CClearButton(this);
-  #ifdef __APPLE__
   CMagButton* magButton = new CMagButton(this);
   QString style(
   "QListView, QLineEdit {"
@@ -163,7 +162,7 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   this->setStyleSheet(style);
   this->setAttribute(Qt::WA_MacShowFocusRect, 0);
   addWidget(magButton, LeftSide);
-  #endif
+
   connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
   connect(this, SIGNAL(textChanged(const QString&)),
 	  clearButton, SLOT(textChanged(const QString&)));
