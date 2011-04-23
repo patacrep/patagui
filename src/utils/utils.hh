@@ -23,6 +23,7 @@
 #include <QString>
 
 enum SbError { WrongDirectory, WrongExtension, Invalid };
+enum SbPriority { LowPriority, MediumPriority, HighPriority };
 
 namespace SbUtils
 {
