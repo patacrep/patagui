@@ -47,7 +47,6 @@ CSongPanel::CSongPanel(QWidget *parent)
   m_albumLabel->setFixedWidth(175);
   m_coverLabel = new QLabel;
   m_coverLabel->setAlignment(Qt::AlignTop);
-  m_coverLabel->setText("blah");
   QGridLayout *layout = new QGridLayout;
   layout->addWidget(m_coverLabel,0,0,3,1);
   layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,1,1,1, Qt::AlignLeft);
