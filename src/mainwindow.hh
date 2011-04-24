@@ -38,6 +38,7 @@ class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
 class CNotify;
+class QFileSystemWatcher;
 
 /** \class CMainWindow "mainWindow.hh"
  * \brief CMainWindow is the base class of the application
@@ -87,6 +88,7 @@ private slots:
 
   void songEditor(const QString &filename, const QString &title = QString());
   void deleteSong(const QString &filename);
+  void updateNotification(const QString &);
 
   //model
   void selectAll();
@@ -111,6 +113,8 @@ private slots:
 
   void updateTitle(const QString &filename);
   void switchToolBar(QToolBar *toolBar);
+
+  void monitorDirectories(const QString &);
 
 private:
   void readSettings();
@@ -147,7 +151,9 @@ private:
   QTableView *m_view;
   QProgressBar* m_progressBar;
   CNotify* m_noDataInfo;
+  CNotify* m_updateAvailable;
   CFilterLineEdit *m_filterLineEdit;
+  QFileSystemWatcher* m_watcher;
 
   // Global
   QString m_workingPath;

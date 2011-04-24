@@ -20,6 +20,7 @@
 #include <QtSql>
 #include <QtAlgorithms>
 #include <QDebug>
+#include <QFileSystemWatcher>
 
 #include "utils/utils.hh"
 #include "label.hh"
@@ -106,12 +107,21 @@ CMainWindow::CMainWindow()
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
 	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
 
-  // no data info widget
+  // notifications
   m_noDataInfo = new CNotify(this);
   m_noDataInfo->setMessage
     (QString(tr("<strong>The directory <b>%1</b> does not contain any song.<strong/><br/>"
 		"Do you want to download the latest songs library ?").arg(workingPath())));
   m_noDataInfo->addAction(m_libraryDownloadAct);
+
+  m_watcher = new QFileSystemWatcher;
+  monitorDirectories(QString("%1/songs").arg(workingPath()));
+
+  connect(this, SIGNAL(workingPathChanged(const QString&)),
+	  this, SLOT(monitorDirectories(const QString&)));
+
+  connect(m_watcher, SIGNAL(directoryChanged(const QString &)),
+	  this, SLOT(updateNotification(const QString &)));
 
   CSongPanel *songPanel = new CSongPanel(this);
   songPanel->setLibrary(view()->model());
@@ -1024,4 +1034,30 @@ void CMainWindow::disconnectDatabase()
   QSqlDatabase db = QSqlDatabase::database();
   db.close();
   QSqlDatabase::removeDatabase(QString());
+}
+
+void CMainWindow::monitorDirectories(const QString& path)
+{
+  //qDebug()<<"[start] monitor";
+  if(!m_watcher->directories().empty())
+    m_watcher->removePaths(m_watcher->directories());
+
+  QDirIterator it(QString("%1/songs").arg(path), QDir::Dirs | QDir::NoDotAndDotDot,
+		  QDirIterator::Subdirectories);
+
+  while(it.hasNext())
+    m_watcher->addPath(it.next());
+  //qDebug()<<"[end] monitor";
+}
+
+void CMainWindow::updateNotification(const QString& path)
+{
+  //qDebug()<<"[start] updatenotification";
+  delete m_updateAvailable;
+  m_updateAvailable = new CNotify(this);
+  m_updateAvailable->setMessage
+    (QString(tr("<strong>The songs directory has been modified.<strong/><br/>"
+		"Do you want to update the library to reflect these changes ?")).arg(path));
+  m_updateAvailable->addAction(m_libraryUpdateAct);
+  //qDebug()<<"[end] updatenotification";
 }
