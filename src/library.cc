@@ -38,9 +38,9 @@ CLibrary::CLibrary(CMainWindow *parent)
 
   QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic").pixmap(24,24));
 
-  QPixmapCache::insert("french", QPixmap(":/icons/fr.png"));
-  QPixmapCache::insert("english", QPixmap(":/icons/en.png"));
-  QPixmapCache::insert("spanish", QPixmap(":/icons/es.png"));
+  QPixmapCache::insert("french",  QIcon::fromTheme("flag-fr", QIcon(":/tango/flag-fr")).pixmap(24,24));
+  QPixmapCache::insert("english", QIcon::fromTheme("flag-en", QIcon(":/tango/flag-en")).pixmap(24,24));
+  QPixmapCache::insert("spanish", QIcon::fromTheme("flag-es", QIcon(":/tango/flag-es")).pixmap(24,24));
 
   m_songRecord.append(QSqlField("artist", QVariant::String));
   m_songRecord.append(QSqlField("title", QVariant::String));
