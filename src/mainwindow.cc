@@ -53,6 +53,8 @@ CMainWindow::CMainWindow()
   , m_sbInfoStyle(new CLabel)
   , m_view()
   , m_progressBar(new QProgressBar(this))
+  , m_noDataInfo(NULL)
+  , m_updateAvailable(NULL)
   , m_isToolBarDisplayed(true)
   , m_isStatusbarDisplayed(true)
 {
@@ -110,8 +112,8 @@ CMainWindow::CMainWindow()
   // notifications
   m_noDataInfo = new CNotify(this);
   m_noDataInfo->setMessage
-    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.<strong/><br/>"
-		"Do you want to download the latest songs library ?").arg(workingPath())));
+    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
+		"Do you want to download the latest songs library?").arg(workingPath())));
   m_noDataInfo->addAction(m_libraryDownloadAct);
 
   m_watcher = new QFileSystemWatcher;
@@ -694,7 +696,7 @@ void CMainWindow::build()
     {
       if(QMessageBox::question(this, windowTitle(),
 			       QString(tr("You did not select any song. \n "
-					  "Do you want to build the songbook with all songs ?")),
+					  "Do you want to build the songbook with all songs?")),
 			       QMessageBox::Yes,
 			       QMessageBox::No,
 			       QMessageBox::NoButton) == QMessageBox::No)
@@ -938,7 +940,7 @@ void CMainWindow::deleteSong(const QString &path)
   QMessageBox msgBox;
   msgBox.setIcon(QMessageBox::Question);
   msgBox.setText(tr("Removing song from Library."));
-  msgBox.setInformativeText(tr("Are you sure ?"));
+  msgBox.setInformativeText(tr("Are you sure?"));
   msgBox.addButton(QMessageBox::No);
   QPushButton* yesb = msgBox.addButton(QMessageBox::Yes);
   QPushButton* delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
@@ -1038,26 +1040,25 @@ void CMainWindow::disconnectDatabase()
 
 void CMainWindow::monitorDirectories(const QString& path)
 {
-  //qDebug()<<"[start] monitor";
   if(!m_watcher->directories().empty())
     m_watcher->removePaths(m_watcher->directories());
 
-  QDirIterator it(QString("%1/songs").arg(path), QDir::Dirs | QDir::NoDotAndDotDot,
+  QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot,
 		  QDirIterator::Subdirectories);
 
   while(it.hasNext())
     m_watcher->addPath(it.next());
-  //qDebug()<<"[end] monitor";
 }
 
 void CMainWindow::updateNotification(const QString& path)
 {
-  //qDebug()<<"[start] updatenotification";
-  delete m_updateAvailable;
+  if(m_updateAvailable)
+    delete m_updateAvailable;
+
   m_updateAvailable = new CNotify(this);
   m_updateAvailable->setMessage
-    (QString(tr("<strong>The songs directory has been modified.<strong/><br/>"
-		"Do you want to update the library to reflect these changes ?")).arg(path));
+    (QString(tr("<strong>The following directory has been modified:</strong><br/>"
+		"  %1 <br/>"
+		"Do you want to update the library to reflect these changes?")).arg(path));
   m_updateAvailable->addAction(m_libraryUpdateAct);
-  //qDebug()<<"[end] updatenotification";
 }
