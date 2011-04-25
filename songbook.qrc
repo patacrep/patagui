@@ -6,6 +6,7 @@
     <file alias="invert-selection">icons/invert-selection.png</file>
  </qresource>
  <qresource prefix="tango">
+    <file>icons/index.theme</file>
     <file>icons/tango/16x16/actions/document-new.png</file>
     <file>icons/tango/16x16/actions/document-open.png</file>
     <file>icons/tango/16x16/actions/document-save-as.png</file>
@@ -60,7 +61,6 @@
     <file>icons/tango/32x32/mimetypes/audio-x-generic.png</file>
     <file>icons/tango/32x32/places/folder-remote.png</file>
     <file>icons/tango/32x32/status/image-missing.png</file>
-    <file>icons/tango/index.theme</file>
     <file alias="document-new">icons/tango/scalable/actions/document-new.svg</file>
     <file alias="document-open">icons/tango/scalable/actions/document-open.svg</file>
     <file alias="document-save-as">icons/tango/scalable/actions/document-save-as.svg</file>
