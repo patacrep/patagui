@@ -1048,6 +1048,8 @@ void CMainWindow::monitorDirectories(const QString& path)
 
   while(it.hasNext())
     m_watcher->addPath(it.next());
+
+  m_watcher->addPath(path);
 }
 
 void CMainWindow::updateNotification(const QString& path)
