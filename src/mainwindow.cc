@@ -908,7 +908,9 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 //------------------------------------------------------------------------------
 void CMainWindow::newSong()
 {
+  watcher()->blockSignals(true);
   CDialogNewSong *dialog = new CDialogNewSong(this);
+
   if (dialog->exec() == QDialog::Accepted)
     {
       songEditor(dialog->path(), dialog->title());
@@ -986,6 +988,7 @@ void CMainWindow::closeTab(int index)
 	}
       m_editors.remove(editor->path());
       m_mainWidget->closeTab(index);
+      watcher()->blockSignals(false);
     }
 }
 //------------------------------------------------------------------------------
@@ -1063,4 +1066,9 @@ void CMainWindow::updateNotification(const QString& path)
 		"  %1 <br/>"
 		"Do you want to update the library to reflect these changes?")).arg(path));
   m_updateAvailable->addAction(m_libraryUpdateAct);
+}
+
+QFileSystemWatcher * CMainWindow::watcher() const
+{
+  return m_watcher;
 }

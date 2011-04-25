@@ -58,6 +58,7 @@ public:
   CLibrary * library() const;
   CSongbook * songbook() const;
   const QString workingPath();
+  QFileSystemWatcher* watcher() const;
 
 public slots:
   void setWorkingPath(const QString &path);
