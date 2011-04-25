@@ -22,6 +22,11 @@
 #include <QSqlRecord>
 #include <QSqlField>
 #include <QSqlQuery>
+
+#ifndef __APPLE__
+#include <QFileSystemWatcher>
+#endif // __APPLE__
+
 #include "mainwindow.hh"
 #include "utils/utils.hh"
 
@@ -30,6 +35,9 @@ CLibrary::CLibrary(CMainWindow *parent)
   , m_parent(parent)
   , m_directory()
   , m_songRecord()
+#ifndef __APPLE__
+  , m_watcher()
+#endif // __APPLE__
 {
   setEditStrategy(QSqlTableModel::OnManualSubmit);
 
@@ -42,6 +50,7 @@ CLibrary::CLibrary(CMainWindow *parent)
   QPixmapCache::insert("english", QIcon::fromTheme("flag-en", QIcon(":/tango/flag-en")).pixmap(24,24));
   QPixmapCache::insert("spanish", QIcon::fromTheme("flag-es", QIcon(":/tango/flag-es")).pixmap(24,24));
 
+
   m_songRecord.append(QSqlField("artist", QVariant::String));
   m_songRecord.append(QSqlField("title", QVariant::String));
   m_songRecord.append(QSqlField("lilypond", QVariant::Bool));
@@ -49,6 +58,21 @@ CLibrary::CLibrary(CMainWindow *parent)
   m_songRecord.append(QSqlField("album", QVariant::String));
   m_songRecord.append(QSqlField("cover", QVariant::String));
   m_songRecord.append(QSqlField("lang", QVariant::String));
+
+  connect(this, SIGNAL(directoryChanged(const QDir&)), SLOT(update()));
+
+#ifndef __APPLE__
+  m_watcher = new QFileSystemWatcher;
+  connect(m_watcher, SIGNAL(fileChanged(const QString &)),
+	  this, SLOT(updateSong(const QString &)));
+#endif // __APPLE__
+}
+
+CLibrary::~CLibrary()
+{
+#ifndef __APPLE__
+  delete m_watcher;
+#endif // __APPLE__
 }
 
 QDir CLibrary::directory() const
@@ -254,6 +278,13 @@ void CLibrary::addSongs(const QStringList &paths)
     }
   submitAll();
   db.commit();
+
+#ifndef __APPLE__
+  if (!m_watcher->files().isEmpty())
+    m_watcher->removePaths(m_watcher->files());
+  m_watcher->addPaths(paths);
+#endif // __APPLE__
+
   emit(wasModified());
 }
 
@@ -350,4 +381,3 @@ bool CLibrary::containsSong(const QString &path)
   QModelIndexList list = match(index, PathRole, path, -1, Qt::MatchExactly);
   return !list.isEmpty();
 }
-
