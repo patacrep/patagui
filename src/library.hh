@@ -32,11 +32,6 @@
 #include <QSqlRecord>
 
 class QPixmap;
-
-#ifndef __APPLE__
-class QFileSystemWatcher;
-#endif // __APPLE__
-
 class CMainWindow;
 
 class CLibrary : public QSqlTableModel
@@ -108,10 +103,6 @@ private:
   QDir m_directory;
 
   QSqlRecord m_songRecord;
-
-#ifndef __APPLE__
-  QFileSystemWatcher* m_watcher;
-#endif // __APPLE__
 };
 
 #endif // __LIBRARY_HH__

@@ -23,10 +23,6 @@
 #include <QSqlField>
 #include <QSqlQuery>
 
-#ifndef __APPLE__
-#include <QFileSystemWatcher>
-#endif // __APPLE__
-
 #include "mainwindow.hh"
 #include "utils/utils.hh"
 
@@ -35,9 +31,6 @@ CLibrary::CLibrary(CMainWindow *parent)
   , m_parent(parent)
   , m_directory()
   , m_songRecord()
-#ifndef __APPLE__
-  , m_watcher()
-#endif // __APPLE__
 {
   setEditStrategy(QSqlTableModel::OnManualSubmit);
 
@@ -57,20 +50,10 @@ CLibrary::CLibrary(CMainWindow *parent)
   m_songRecord.append(QSqlField("lang", QVariant::String));
 
   connect(this, SIGNAL(directoryChanged(const QDir&)), SLOT(update()));
-
-#ifndef __APPLE__
-  m_watcher = new QFileSystemWatcher;
-  connect(m_watcher, SIGNAL(fileChanged(const QString &)),
-	  this, SLOT(updateSong(const QString &)));
-#endif // __APPLE__
 }
 
 CLibrary::~CLibrary()
-{
-#ifndef __APPLE__
-  delete m_watcher;
-#endif // __APPLE__
-}
+{}
 
 QDir CLibrary::directory() const
 {
@@ -275,13 +258,6 @@ void CLibrary::addSongs(const QStringList &paths)
     }
   submitAll();
   db.commit();
-
-#ifndef __APPLE__
-  if (!m_watcher->files().isEmpty())
-    m_watcher->removePaths(m_watcher->files());
-  m_watcher->addPaths(paths);
-#endif // __APPLE__
-
   emit(wasModified());
 }
 
