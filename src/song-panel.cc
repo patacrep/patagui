@@ -93,5 +93,8 @@ void CSongPanel::update()
   m_titleLabel->setText(library()->data(currentIndex(), CLibrary::TitleRole).toString());
   m_artistLabel->setText(library()->data(currentIndex(), CLibrary::ArtistRole).toString());
   m_albumLabel->setText(library()->data(currentIndex(), CLibrary::AlbumRole).toString());
-  m_coverLabel->setPixmap(library()->data(currentIndex(), CLibrary::CoverFullRole).value< QPixmap >());
+  
+  QPixmap pixmap = library()->data(currentIndex(), CLibrary::CoverFullRole).value< QPixmap >();
+  pixmap = pixmap.scaled(128,128,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+  m_coverLabel->setPixmap(pixmap);
 }
