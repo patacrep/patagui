@@ -22,6 +22,7 @@
 #include "mainwindow.hh"
 #include "library.hh"
 #include "file-chooser.hh"
+#include "notification.hh"
 #include <QLayout>
 #include <QImage>
 
@@ -174,7 +175,10 @@ void CDialogNewSong::addSong()
   QDir dir(dirpath);
 
   if (!dir.exists())
-    dir.mkpath(dirpath);
+    {
+      dir.mkpath(dirpath);
+      parent()->watcher()->addPath(dirpath);
+    }
 
   //handle album art
   if(SbUtils::copyFile(cover(), dirpath) && !album().isEmpty() )
