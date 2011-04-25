@@ -81,6 +81,7 @@ void CNotify::addAction(QAction* action)
 {
   QPushButton* button = new QPushButton(action->text());
   connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
+  connect(button, SIGNAL(clicked()), this, SLOT(hide()));
   m_layout->insertWidget(0, button);
 }
 
