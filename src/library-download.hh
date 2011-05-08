@@ -47,7 +47,11 @@ public:
   ~CLibraryDownload();
 
   bool saveToDisk(const QString &filename, QIODevice *data);
+<<<<<<< .merge_file_ydZmZa
   bool decompress(const QString &filename, QDir &directory);
+=======
+  QDir decompress(const QString &filename);
+>>>>>>> .merge_file_IKy5q7
 
 public slots:
   void downloadFinished();
