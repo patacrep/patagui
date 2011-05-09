@@ -1,6 +1,7 @@
 #-------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
+set( PROGNAME songbook-client )
 if( APPLE )
   set( PROGNAME Songbook-Client )
   set( MACOSX_BUNDLE_ICON_FILE livre.icns )
@@ -10,13 +11,6 @@ if( APPLE )
   set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.3 )
   set( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.3 )
 
-  #set( CMAKE_OSX_ARCHITECTURES ppc;i386 ) #Comment out if not universal binary
-  #other variable tha can be set for mac os
-  #MACOSX_BUNDLE_INFO_STRING
-  #MACOSX_BUNDLE_COPYRIGHT
-  #MACOSX_BUNDLE_BUNDLE_VERSION
-  #MACOSX_BUNDLE_BUNDLE_NAME
-
   #name of the preference file, usefull if we need to keep the same preference file
   #upgrade after upgrade without loosing preferences
   set(MACOSX_BUNDLE_GUI_IDENTIFIER com.patacrep.songbook-client)
@@ -24,8 +18,6 @@ if( APPLE )
   #need to copy the icns (icon) file in the buils dir
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
     ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
-else( APPLE )
-  set( PROGNAME songbook-client )
 endif( APPLE )
 
 #-------------------------------------------------------------------------------
