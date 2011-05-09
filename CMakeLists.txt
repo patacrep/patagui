@@ -1,16 +1,16 @@
 #-------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
-IF( APPLE )
-  SET( PROGNAME Songbook-Client )
-  SET( MACOSX_BUNDLE_ICON_FILE livre.icns )
-  SET( CPACK_BUNDLE_NAME Sonbook Client With Space)
+if( APPLE )
+  set( PROGNAME Songbook-Client )
+  set( MACOSX_BUNDLE_ICON_FILE livre.icns )
+  set( CPACK_BUNDLE_NAME Sonbook Client With Space)
   #versions
-  SET( MACOSX_BUNDLE_VERSION 0.3 )
-  SET( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.3 )
-  SET( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.3 )
+  set( MACOSX_BUNDLE_VERSION 0.3 )
+  set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.3 )
+  set( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.3 )
 
-  #SET( CMAKE_OSX_ARCHITECTURES ppc;i386 ) #Comment out if not universal binary
+  #set( CMAKE_OSX_ARCHITECTURES ppc;i386 ) #Comment out if not universal binary
   #other variable tha can be set for mac os
   #MACOSX_BUNDLE_INFO_STRING
   #MACOSX_BUNDLE_COPYRIGHT
@@ -24,21 +24,21 @@ IF( APPLE )
   #need to copy the icns (icon) file in the buils dir
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
     ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
-ELSE( APPLE )
-  SET( PROGNAME songbook-client )
-ENDIF( APPLE )
+else( APPLE )
+  set( PROGNAME songbook-client )
+endif( APPLE )
 
 #-------------------------------------------------------------------------------
-SET( CMAKE_COLOR_MAKEFILE ON )
-#SET( CMAKE_VERBOSE_MAKEFILE ON )
-#SET( CMAKE_INCLUDE_CURRENT_DIR TRUE )
+set( CMAKE_COLOR_MAKEFILE ON )
+#set( CMAKE_VERBOSE_MAKEFILE ON )
+#set( CMAKE_INCLUDE_CURRENT_DIR TRUE )
 #-------------------------------------------------------------------------------
 # process options and parameters
 if(DEFINED PREFIX)
   set(CMAKE_INSTALL_PREFIX ${PREFIX})
 endif()
 #-------------------------------------------------------------------------------
-SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 #-------------------------------------------------------------------------------
 find_package(LibArchive REQUIRED)
 include_directories(${LibArchive_INCLUDE_DIRS})
@@ -152,18 +152,18 @@ set(
   )
 
 # Process MOC on QtPropertyEditor headers
-FOREACH(file ${qtpropertyeditor_HEADER_NEED_MOCS})
-  STRING(REGEX REPLACE "${qpe_DIR}/(.*)\\.h" "${qpe_BUILD_DIR}/moc_\\1.cpp" moc_file "${file}" )
-  QT4_GENERATE_MOC(${file} ${moc_file})
-  SET(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
-ENDFOREACH(file)
+foreach(file ${qtpropertyeditor_HEADER_NEED_MOCS})
+  string(REGEX REPLACE "${qpe_DIR}/(.*)\\.h" "${qpe_BUILD_DIR}/moc_\\1.cpp" moc_file "${file}" )
+  qt4_generate_moc(${file} ${moc_file})
+  set(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
+endforeach(file)
 
 # Process MOC on QtPropertyEditor srcs
-FOREACH(file ${qtpropertyeditor_SRCS_NEED_MOCS})
-  STRING(REGEX REPLACE "${qpe_DIR}/(.*)\\.cpp" "${qpe_BUILD_DIR}/\\1.moc" moc_file "${file}" )
-  QT4_GENERATE_MOC(${file} ${moc_file})
-  SET(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
-ENDFOREACH(file)
+foreach(file ${qtpropertyeditor_SRCS_NEED_MOCS})
+  string(REGEX REPLACE "${qpe_DIR}/(.*)\\.cpp" "${qpe_BUILD_DIR}/\\1.moc" moc_file "${file}" )
+  qt4_generate_moc(${file} ${moc_file})
+  set(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
+endforeach(file)
 
 set_source_files_properties(${qtpropertyeditor_MOC}
   PROPERTIES
@@ -172,17 +172,17 @@ set_source_files_properties(${qtpropertyeditor_MOC}
 
 # qtpropertybrowserutils_p.h is a special file, do not treat him as the other
 # header files.
-QT4_GENERATE_MOC(
+qt4_generate_moc(
   ${qpe_DIR}/qtpropertybrowserutils_p.h
   ${qpe_BUILD_DIR}/moc_qtpropertybrowserutils_p.cpp
 )
 
-SET(qtpropertyeditor_MOC
+set(qtpropertyeditor_MOC
   ${qtpropertyeditor_MOC} 
   ${qpe_BUILD_DIR}/moc_qtpropertybrowserutils_p.cpp
 )
 
-QT4_ADD_RESOURCES(qtpropertyeditor_RESOURCES ${qpe_DIR}/qtpropertybrowser.qrc)
+qt4_add_resources(qtpropertyeditor_RESOURCES ${qpe_DIR}/qtpropertybrowser.qrc)
 #-------------------------------------------------------------------------------
 #internationalization
 set (TRANSLATIONS
@@ -204,9 +204,9 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 #qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
 #-------------------------------------------------------------------------------
 # generating executable
-ADD_DEFINITIONS("-g -Wall")
-IF( APPLE )
-    ADD_EXECUTABLE( ${PROGNAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
+add_definitions("-g -Wall")
+if( APPLE )
+    add_executable( ${PROGNAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
       ${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
       ${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
       )
@@ -217,7 +217,7 @@ IF( APPLE )
       COMMAND cp ARGS ../lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
       )
 
-ELSE( APPLE )
+else( APPLE )
 add_executable(${PROGNAME}
   ${SONGBOOK_CLIENT_SOURCES} 
   ${SONGBOOK_CLIENT_MOCS} 
@@ -227,7 +227,7 @@ add_executable(${PROGNAME}
   ${qtpropertyeditor_MOC}
   ${qtpropertyeditor_RESOURCES}
 )
-ENDIF( APPLE )
+endif( APPLE )
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
 
 if(WIN32)
@@ -237,9 +237,9 @@ endif(WIN32)
 target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
 #-------------------------------------------------------------------------------
 # install instructions
-IF(NOT APPLE)
+if(NOT APPLE)
   install(TARGETS ${PROGNAME} RUNTIME DESTINATION bin)
   install(FILES ${PROGNAME}.desktop DESTINATION share/applications)
   install(FILES icons/songbook-client.png DESTINATION share/icons)
   install(FILES ${COMPILED_TRANSLATIONS} DESTINATION share/${PROGNAME}/translations)
-ENDIF(NOT APPLE)
+endif(NOT APPLE)
