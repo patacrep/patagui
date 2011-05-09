@@ -229,7 +229,11 @@ add_executable(${PROGNAME}
 )
 ENDIF( APPLE )
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
+
+if(WIN32)
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
+endif(WIN32)
+
 target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
 #-------------------------------------------------------------------------------
 # install instructions
