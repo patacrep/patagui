@@ -27,6 +27,7 @@
 #include "mainwindow.hh"
 #include "preferences.hh"
 #include "library.hh"
+#include "songbook-model.hh"
 #include "songbook.hh"
 #include "build-engine/make-songbook.hh"
 #include "song-editor.hh"
@@ -45,6 +46,7 @@ using namespace SbUtils;
 CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
+  , m_songbookModel()
   , m_proxyModel()
   , m_songbook()
   , m_sbInfoSelection(new CLabel)
@@ -67,8 +69,11 @@ CMainWindow::CMainWindow()
   // create and load song library
   m_library = new CLibrary(this);
 
+  m_songbookModel = new CSongbookModel(this);
+  m_songbookModel->setSourceModel(m_library);
+
   m_proxyModel = new CSongSortFilterProxyModel;
-  m_proxyModel->setSourceModel(m_library);
+  m_proxyModel->setSourceModel(m_songbookModel);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
   m_proxyModel->setFilterKeyColumn(-1);
