@@ -147,7 +147,6 @@ void CLibraryDownload::downloadFinished()
       abort = true;
     }
 
-  QUrl url = reply->url();
   QString filename = QFileInfo(url.path()).fileName();
   if (filename.isEmpty())
     {
@@ -163,7 +162,6 @@ void CLibraryDownload::downloadFinished()
 	filename = QString("songbook.tar.gz");
     }
 
-<<<<<<< .merge_file_FCEUl6
   if (QDir().exists(filename))
     {
       QMessageBox *warning
@@ -180,20 +178,12 @@ void CLibraryDownload::downloadFinished()
     }
 
   if (!abort)
-=======
-  if (reply->error())
-    {
-      parent()->statusBar()->showMessage(tr("Download of %1 failed: %2").arg(url.toEncoded().constData()).arg(qPrintable(reply->errorString())));
-    }
-  else
->>>>>>> .merge_file_zRRvvY
     {
       QDir libraryDir;
       QDir dir = m_path->directory();
       QDir oldCurrent = QDir::currentPath();
       QString filepath = dir.filePath(filename);
       if (saveToDisk(filepath, reply))
-<<<<<<< .merge_file_FCEUl6
 	{
 	  QDir::setCurrent(dir.absolutePath());
 	  if (decompress(filepath, libraryDir))
@@ -203,47 +193,26 @@ void CLibraryDownload::downloadFinished()
       // remove the downloaded archive after decompressing
       dir.remove(filename);
     }
-=======
-        {
-          QDir::setCurrent(dir.absolutePath());
-          libraryDir = decompress(filepath);
-          QDir::setCurrent(oldCurrent.absolutePath());
->>>>>>> .merge_file_zRRvvY
 
-	  parent()->setWorkingPath(libraryDir.absolutePath());
-        }
-    }
   parent()->progressBar()->hide();
   reply->deleteLater();
 }
 
 // Uses the code sample proposed in the libarchive documentation
 // http://code.google.com/p/libarchive/wiki/Examples#A_Complete_Extractor
-<<<<<<< .merge_file_FCEUl6
 bool CLibraryDownload::decompress(const QString &filename, QDir &directory)
-=======
-QDir CLibraryDownload::decompress(const QString &filename)
->>>>>>> .merge_file_zRRvvY
 {
   QDir dir;
   struct archive *archive;
   struct archive_entry *entry;
   int flags;
-<<<<<<< .merge_file_FCEUl6
 
-=======
-  
->>>>>>> .merge_file_zRRvvY
   /* Select which attributes we want to restore. */
   flags = ARCHIVE_EXTRACT_TIME;
   flags |= ARCHIVE_EXTRACT_PERM;
   flags |= ARCHIVE_EXTRACT_ACL;
   flags |= ARCHIVE_EXTRACT_FFLAGS;
-<<<<<<< .merge_file_FCEUl6
 
-=======
-  
->>>>>>> .merge_file_zRRvvY
   archive = archive_read_new();
   archive_read_support_format_all(archive);
   archive_read_support_compression_all(archive);
@@ -253,7 +222,6 @@ QDir CLibraryDownload::decompress(const QString &filename)
       parent()->statusBar()->showMessage(tr("CLibraryDownload::decompress: unable to open the archive"));
       return false;
     }
-<<<<<<< .merge_file_FCEUl6
 
   bool first = true;
   while (archive_read_next_header(archive, &entry) == ARCHIVE_OK)
@@ -282,23 +250,6 @@ QDir CLibraryDownload::decompress(const QString &filename)
     }
   archive_read_finish(archive);
   return true;
-=======
-  else
-    {
-      while (archive_read_next_header(archive, &entry) == ARCHIVE_OK)
-        {
-          archive_read_extract(archive, entry, flags);
-          // update the directory
-          if (dir == QDir())
-            {
-              // the first entry is supposed to be the main directory
-              dir = QDir().absoluteFilePath(archive_entry_pathname(entry));
-            }
-        }
-      archive_read_finish(archive);
-    }
-  return dir;
->>>>>>> .merge_file_zRRvvY
 }
 
 CMainWindow * CLibraryDownload::parent()

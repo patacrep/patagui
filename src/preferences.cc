@@ -69,19 +69,19 @@ ConfigDialog::ConfigDialog()
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
-  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/tango/preferences-system")));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/preferences-system")));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
-  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/tango/preferences-desktop-theme")));
+  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/preferences-desktop-theme")));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
-  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/tango/preferences-system-network")));
+  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/preferences-system-network")));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -380,79 +380,3 @@ void NetworkPage::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-// Network Page
-
-NetworkPage::NetworkPage(QWidget *parent)
-  : QWidget(parent)
-  , m_hostname()
-  , m_port()
-  , m_user()
-  , m_password()
-{
-  m_hostname = new QLineEdit;
-  m_port = new QLineEdit;
-  m_user = new QLineEdit;
-  m_password = new QLineEdit;
-
-  readSettings();
-
-  // check application
-  QGroupBox *proxyGroupBox
-    = new QGroupBox(tr("Proxy settings"));
-
-  QFormLayout *proxyLayout = new QFormLayout;
-  proxyLayout->addRow(tr("Hostname:"), m_hostname);
-  proxyLayout->addRow(tr("Port:"), m_port);
-  proxyLayout->addRow(tr("User:"), m_user);
-  proxyLayout->addRow(tr("Password:"), m_password);
-  proxyGroupBox->setLayout(proxyLayout);
-
-  // main layout
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(proxyGroupBox);
-  mainLayout->addStretch(1);
-  setLayout(mainLayout);
-}
-
-void NetworkPage::readSettings()
-{
-  QSettings settings;
-  settings.beginGroup("proxy");
-  m_hostname->setText(settings.value("hostname", QString()).toString());
-  m_port->setText(settings.value("port", QString()).toString());
-  m_user->setText(settings.value("user", QString()).toString());
-  m_password->setText(settings.value("password", QString()).toString());
-  settings.endGroup();
-}
-
-void NetworkPage::writeSettings()
-{
-  QSettings settings;
-  settings.beginGroup("proxy");
-  settings.setValue("hostname", m_hostname->text());
-  settings.setValue("port", m_port->text());
-  settings.setValue("user", m_user->text());
-  settings.setValue("password", m_password->text());
-  settings.endGroup();
-
-  QNetworkProxy proxy;
-  if (m_hostname->text().isEmpty())
-    {
-      proxy.setType(QNetworkProxy::NoProxy);
-    }
-  else
-    {
-      proxy.setType(QNetworkProxy::HttpProxy);
-      proxy.setHostName(m_hostname->text());
-      proxy.setPort(m_port->text().toInt());
-      proxy.setUser(m_user->text());
-      proxy.setPassword(m_password->text());
-    }
-  QNetworkProxy::setApplicationProxy(proxy);
-}
-
-void NetworkPage::closeEvent(QCloseEvent *event)
-{
-  writeSettings();
-  event->accept();
-}
