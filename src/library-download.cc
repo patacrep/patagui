@@ -37,6 +37,7 @@
 #include "mainwindow.hh"
 
 #include <QDebug>
+#include <QString>
 
 CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   : QDialog(parent)
@@ -247,7 +248,7 @@ QDir CLibraryDownload::decompress(const QString &filename)
   archive_read_support_format_all(archive);
   archive_read_support_compression_all(archive);
 
-  if (archive_read_open_filename(archive, filename.toStdString().c_str(), 10240))
+  if (archive_read_open_filename(archive, qPrintable( filename ), 10240))
     {
       parent()->statusBar()->showMessage(tr("CLibraryDownload::decompress: unable to open the archive"));
       return false;
