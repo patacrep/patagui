@@ -1,4 +1,3 @@
-#-------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
 if( APPLE )
@@ -9,13 +8,6 @@ if( APPLE )
   set( MACOSX_BUNDLE_VERSION 0.3 )
   set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.3 )
   SET( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.3 )
-
-  #SET( CMAKE_OSX_ARCHITECTURES ppc;i386 ) #Comment out if not universal binary
-  #other variable tha can be set for mac os
-  #MACOSX_BUNDLE_INFO_STRING
-  #MACOSX_BUNDLE_COPYRIGHT
-  #MACOSX_BUNDLE_BUNDLE_VERSION
-  #MACOSX_BUNDLE_BUNDLE_NAME
 
   #name of the preference file, usefull if we need to keep the same preference file
   #upgrade after upgrade without loosing preferences
@@ -28,28 +20,25 @@ else( APPLE )
   set( PROGNAME songbook-client )
 endif( APPLE )
 
-#-------------------------------------------------------------------------------
 set( CMAKE_COLOR_MAKEFILE ON )
-#SET( CMAKE_VERBOSE_MAKEFILE ON )
-#SET( CMAKE_INCLUDE_CURRENT_DIR TRUE )
-#-------------------------------------------------------------------------------
+
 # process options and parameters
 if(DEFINED PREFIX)
   set(CMAKE_INSTALL_PREFIX ${PREFIX})
 endif()
-#-------------------------------------------------------------------------------
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
-#-------------------------------------------------------------------------------
+
 find_package(LibArchive REQUIRED)
 include_directories(${LibArchive_INCLUDE_DIRS})
-#-------------------------------------------------------------------------------
+
 find_package(Qt4 COMPONENTS QtCore QtGui QtSql QtNetwork REQUIRED)
 set(QT_USE_QTSQL true)
 set(QT_USE_QTSCRIPT true)
-#-------------------------------------------------------------------------------
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#-------------------------------------------------------------------------------
+
 # sources
 set(SONGBOOK_CLIENT_SOURCES
   src/main.cc
@@ -80,7 +69,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/notification.cc
   src/songbook-model.cc
   )
-#-------------------------------------------------------------------------------
+
 # header (moc)
 set(SONGBOOK_CLIENT_QT_HEADER
   src/mainwindow.hh
@@ -109,16 +98,16 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/notification.hh
   src/songbook-model.hh
   )
-#-------------------------------------------------------------------------------
+
 # ressources
 set(SONGBOOK_CLIENT_RCS songbook.qrc songbook.rc)
-#-------------------------------------------------------------------------------
+
 # process Qt special files
 include(${QT_USE_FILE})
 qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
 include_directories (${CMAKE_CURRENT_BINARY_DIR} src)
-#-------------------------------------------------------------------------------
+
 # Support for qtpropertybrowser
 set(qpe_DIR src/qtpropertybrowser)
 set(qpe_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/src)
@@ -185,7 +174,7 @@ set(qtpropertyeditor_MOC
 )
 
 qt4_add_resources(qtpropertyeditor_RESOURCES ${qpe_DIR}/qtpropertybrowser.qrc)
-#-------------------------------------------------------------------------------
+
 #internationalization
 set (TRANSLATIONS
 lang/songbook_en.ts
@@ -204,7 +193,7 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 #uncomment and run make to update translations ts files from sources
 #warning, if uncommented, running make clean will remove ts files
 #qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
-#-------------------------------------------------------------------------------
+
 # generating executable
 add_definitions("-g -Wall")
 if( APPLE )
@@ -233,7 +222,7 @@ endif( APPLE )
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
-#-------------------------------------------------------------------------------
+
 # install instructions
 if(NOT APPLE)
   install(TARGETS ${PROGNAME} RUNTIME DESTINATION bin)
