@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
+set( PROGNAME songbook-client )
+
 if( APPLE )
-  set( PROGNAME Songbook-Client )
   set( MACOSX_BUNDLE_ICON_FILE livre.icns )
   set( CPACK_BUNDLE_NAME Sonbook Client With Space)
   #versions
@@ -16,11 +17,12 @@ if( APPLE )
   #need to copy the icns (icon) file in the buils dir
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
     ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
-else( APPLE )
-  set( PROGNAME songbook-client )
 endif( APPLE )
 
-set( CMAKE_COLOR_MAKEFILE ON )
+if( WIN32 )
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
+endif( WIN32 )
+
 
 # process options and parameters
 if(DEFINED PREFIX)
@@ -220,7 +222,6 @@ add_executable(${PROGNAME}
 )
 endif( APPLE )
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
 
 # install instructions
