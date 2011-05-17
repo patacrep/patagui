@@ -34,12 +34,12 @@ CLibrary::CLibrary(CMainWindow *parent)
 {
   setEditStrategy(QSqlTableModel::OnManualSubmit);
 
-  QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/tango/image-missing")).pixmap(24, 24));
-  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/tango/image-missing")).pixmap(128, 128));
-  QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic", QIcon(":/tango/audio-x-generic")).pixmap(24,24));
-  QPixmapCache::insert("french", QIcon::fromTheme("flag-fr", QIcon(":/tango/flag-fr")).pixmap(24,24));
-  QPixmapCache::insert("english", QIcon::fromTheme("flag-en", QIcon(":/tango/flag-en")).pixmap(24,24));
-  QPixmapCache::insert("spanish", QIcon::fromTheme("flag-es", QIcon(":/tango/flag-es")).pixmap(24,24));
+  QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(24, 24));
+  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(128, 128));
+  QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic", QIcon(":/icons/tango/audio-x-generic")).pixmap(24,24));
+  QPixmapCache::insert("french", QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/flag-fr")).pixmap(24,24));
+  QPixmapCache::insert("english", QIcon::fromTheme("flag-en", QIcon(":/icons/tango/flag-en")).pixmap(24,24));
+  QPixmapCache::insert("spanish", QIcon::fromTheme("flag-es", QIcon(":/icons/tango/flag-es")).pixmap(24,24));
 
   m_songRecord.append(QSqlField("artist", QVariant::String));
   m_songRecord.append(QSqlField("title", QVariant::String));
