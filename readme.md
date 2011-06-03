@@ -5,8 +5,8 @@ This is a Qt4/C++ client that allows to pick up songs from the patacrep songbook
 ![SbClient](http://www.patacrep.com/data/images/songbook-client2-small.png)
 
 # Songbook-client
-* required packages: cmake, libqt4-dev, libqt4-sql-sqlite, python, texlive-base, texlive-lang-french, texlive-latex-extra, texlive-fonts-recommended
-* recommended packages: git-core, lilypond
+* required packages: cmake, libqt4-dev, libqt4-sql-sqlite, libarchive-dev
+* recommended packages: python, lilypond, texlive-base, texlive-lang-french, texlive-latex-extra, texlive-fonts-recommended
 * build and run:
 
 >     git clone git://github.com/crep4ever/songbook-client.git
