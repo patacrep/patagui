@@ -50,7 +50,7 @@ CSongEditor::CSongEditor()
   // actions
   QAction* action = new QAction(tr("Save"), this);
   action->setShortcut(QKeySequence::Save);
-  action->setIcon(QIcon::fromTheme("document-save", QIcon(":/tango/document-save")));
+  action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/document-save")));
   action->setStatusTip(tr("Save modifications"));
   connect(action, SIGNAL(triggered()), SLOT(save()));
   m_toolBar->addAction(action);
@@ -60,21 +60,21 @@ CSongEditor::CSongEditor()
   //copy paste
   action = new QAction(tr("Cut"), this);
   action->setShortcut(QKeySequence::Cut);
-  action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/tango/edit-cut")));
+  action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/edit-cut")));
   action->setStatusTip(tr("Cut the selection"));
   connect(action, SIGNAL(triggered()), SLOT(cut()));
   m_toolBar->addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
-  action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/tango/edit-copy")));
+  action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/edit-copy")));
   action->setStatusTip(tr("Copy the selection"));
   connect(action, SIGNAL(triggered()), SLOT(copy()));
   m_toolBar->addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
-  action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/tango/edit-paste")));
+  action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/edit-paste")));
   action->setStatusTip(tr("Paste clipboard content"));
   connect(action, SIGNAL(triggered()), SLOT(paste()));
   m_toolBar->addAction(action);
@@ -84,14 +84,14 @@ CSongEditor::CSongEditor()
   //undo redo
   action = new QAction(tr("Undo"), this);
   action->setShortcut(QKeySequence::Undo);
-  action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/tango/edit-undo")));
+  action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/edit-undo")));
   action->setStatusTip(tr("Undo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(undo()));
   m_toolBar->addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
-  action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/tango/edit-redo")));
+  action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/edit-redo")));
   action->setStatusTip(tr("Redo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(redo()));
   m_toolBar->addAction(action);

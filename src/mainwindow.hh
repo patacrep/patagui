@@ -31,6 +31,7 @@
 
 class CSongbook;
 class CLibrary;
+class CSongbookModel;
 class CTabWidget;
 class CDialogNewSong;
 class CSongEditor;
@@ -136,6 +137,7 @@ private:
 
   // Song library and view
   CLibrary *m_library;
+  CSongbookModel *m_songbookModel;
   QSortFilterProxyModel *m_proxyModel;
 
   // Songbook widget

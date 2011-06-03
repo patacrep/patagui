@@ -202,6 +202,7 @@ void CLibraryDownload::downloadFinished()
 // http://code.google.com/p/libarchive/wiki/Examples#A_Complete_Extractor
 bool CLibraryDownload::decompress(const QString &filename, QDir &directory)
 {
+  QDir dir;
   struct archive *archive;
   struct archive_entry *entry;
   int flags;

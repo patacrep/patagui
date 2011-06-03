@@ -1,4 +1,3 @@
-#-------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
 set( PROGNAME songbook-client )
@@ -34,14 +33,14 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 #-------------------------------------------------------------------------------
 find_package(LibArchive REQUIRED)
 include_directories(${LibArchive_INCLUDE_DIRS})
-#-------------------------------------------------------------------------------
+
 find_package(Qt4 COMPONENTS QtCore QtGui QtSql QtNetwork REQUIRED)
 set(QT_USE_QTSQL true)
 set(QT_USE_QTSCRIPT true)
-#-------------------------------------------------------------------------------
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#-------------------------------------------------------------------------------
+
 # sources
 set(SONGBOOK_CLIENT_SOURCES
   src/main.cc
@@ -70,8 +69,9 @@ set(SONGBOOK_CLIENT_SOURCES
   src/library-download.cc
   src/song-panel.cc
   src/notification.cc
+  src/songbook-model.cc
   )
-#-------------------------------------------------------------------------------
+
 # header (moc)
 set(SONGBOOK_CLIENT_QT_HEADER
   src/mainwindow.hh
@@ -98,17 +98,18 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/library-download.hh
   src/song-panel.hh
   src/notification.hh
+  src/songbook-model.hh
   )
-#-------------------------------------------------------------------------------
+
 # ressources
-set(SONGBOOK_CLIENT_RCS songbook.qrc songbook.rc)
-#-------------------------------------------------------------------------------
+set(SONGBOOK_CLIENT_RCS songbook.qrc icons/tango/tango.qrc songbook.rc)
+
 # process Qt special files
 include(${QT_USE_FILE})
 qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
 include_directories (${CMAKE_CURRENT_BINARY_DIR} src)
-#-------------------------------------------------------------------------------
+
 # Support for qtpropertybrowser
 set(qpe_DIR src/qtpropertybrowser)
 set(qpe_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/src)
@@ -194,7 +195,7 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 #uncomment and run make to update translations ts files from sources
 #warning, if uncommented, running make clean will remove ts files
 #qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
-#-------------------------------------------------------------------------------
+
 # generating executable
 add_definitions("-g -Wall")
 if( APPLE )
@@ -202,7 +203,7 @@ if( APPLE )
       ${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
       ${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
       )
-    ADD_CUSTOM_COMMAND( TARGET ${PROGNAME} POST_BUILD
+    add_custom_command( TARGET ${PROGNAME} POST_BUILD
       COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
       COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
@@ -221,13 +222,11 @@ add_executable(${PROGNAME}
 )
 endif( APPLE )
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
-
 if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
-
 target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
-#-------------------------------------------------------------------------------
+
 # install instructions
 if(NOT APPLE)
   install(TARGETS ${PROGNAME} RUNTIME DESTINATION bin)

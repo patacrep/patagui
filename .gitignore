@@ -1,3 +1,3 @@
 /lang/*.qm
 build
-buildpackage
+buildpackage.sh
