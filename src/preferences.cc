@@ -33,7 +33,7 @@ ConfigDialog::ConfigDialog()
   m_contentsWidget->setViewMode(QListView::IconMode);
   m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
-  m_contentsWidget->setMaximumWidth(100);
+  m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
 
   m_pagesWidget = new QStackedWidget;
