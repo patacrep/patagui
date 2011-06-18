@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource prefix="icons/tango">
+    <file>index.theme</file>
     <file>16x16/actions/document-new.png</file>
     <file>16x16/actions/document-open.png</file>
     <file>16x16/actions/document-save-as.png</file>
@@ -54,27 +55,27 @@
     <file>32x32/mimetypes/audio-x-generic.png</file>
     <file>32x32/places/folder-remote.png</file>
     <file>32x32/status/image-missing.png</file>
-    <file alias="document-new">scalable/actions/document-new.svg</file>
-    <file alias="document-open">scalable/actions/document-open.svg</file>
-    <file alias="document-save-as">scalable/actions/document-save-as.svg</file>
-    <file alias="document-save">scalable/actions/document-save.svg</file>
-    <file alias="edit-clear">scalable/actions/edit-clear.svg</file>
-    <file alias="edit-copy">scalable/actions/edit-copy.svg</file>
-    <file alias="edit-cut">scalable/actions/edit-cut.svg</file>
-    <file alias="edit-paste">scalable/actions/edit-paste.svg</file>
-    <file alias="edit-redo">scalable/actions/edit-redo.svg</file>
-    <file alias="edit-undo">scalable/actions/edit-undo.svg</file>
-    <file alias="folder-new">scalable/actions/folder-new.svg</file>
-    <file alias="view-refresh">scalable/actions/view-refresh.svg</file>
-    <file alias="preferences-system">scalable/categories/preferences-system.svg</file>
-    <file alias="preferences-system-network">scalable/categories/preferences-system-network.svg</file>
-    <file alias="preferences-desktop-theme">scalable/categories/preferences-desktop-theme.svg</file>
-    <file alias="audio-x-generic">scalable/mimetypes/audio-x-generic.svg</file>
-    <file alias="document-export">scalable/mimetypes/document-export.svg</file>
-    <file alias="folder-remote">scalable/places/folder-remote.svg</file>
-    <file alias="image-missing">scalable/status/image-missing.svg</file>
-    <file alias="flag-fr">scalable/places/flag-fr.svg</file>
-    <file alias="flag-es">scalable/places/flag-es.svg</file>
-    <file alias="flag-en">scalable/places/flag-en.svg</file>
+    <file>scalable/actions/document-new.svg</file>
+    <file>scalable/actions/document-open.svg</file>
+    <file>scalable/actions/document-save-as.svg</file>
+    <file>scalable/actions/document-save.svg</file>
+    <file>scalable/actions/edit-clear.svg</file>
+    <file>scalable/actions/edit-copy.svg</file>
+    <file>scalable/actions/edit-cut.svg</file>
+    <file>scalable/actions/edit-paste.svg</file>
+    <file>scalable/actions/edit-redo.svg</file>
+    <file>scalable/actions/edit-undo.svg</file>
+    <file>scalable/actions/folder-new.svg</file>
+    <file>scalable/actions/view-refresh.svg</file>
+    <file>scalable/categories/preferences-system.svg</file>
+    <file>scalable/categories/preferences-system-network.svg</file>
+    <file>scalable/categories/preferences-desktop-theme.svg</file>
+    <file>scalable/mimetypes/audio-x-generic.svg</file>
+    <file>scalable/mimetypes/document-export.svg</file>
+    <file>scalable/places/folder-remote.svg</file>
+    <file>scalable/status/image-missing.svg</file>
+    <file>scalable/places/flag-fr.svg</file>
+    <file>scalable/places/flag-es.svg</file>
+    <file>scalable/places/flag-en.svg</file>
   </qresource>
 </RCC>

@@ -375,17 +375,17 @@ void CMainWindow::createActions()
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
-  m_selectAllAct->setIcon(QIcon(":/icons/select-all"));
+  m_selectAllAct->setIcon(QIcon(":/icons/select-all.png"));
   m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
-  m_unselectAllAct->setIcon(QIcon(":/icons/unselect-all"));
+  m_unselectAllAct->setIcon(QIcon(":/icons/unselect-all.png"));
   m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
   connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  m_invertSelectionAct->setIcon(QIcon(":/icons/invert-selection"));
+  m_invertSelectionAct->setIcon(QIcon(":/icons/invert-selection.png"));
   m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
@@ -437,7 +437,7 @@ void CMainWindow::createActions()
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
   m_buildAct = new QAction(tr("Build PDF"), this);
-  m_buildAct->setIcon(QIcon(":/icons/tango/document-export"));
+  m_buildAct->setIcon(QIcon::fromTheme("document-export", QIcon(":/icons/tango/document-export")));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
