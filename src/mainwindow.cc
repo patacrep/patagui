@@ -125,10 +125,10 @@ CMainWindow::CMainWindow()
   monitorDirectories(QString("%1/songs").arg(workingPath()));
 
   connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  this, SLOT(monitorDirectories(const QString&)));
+          this, SLOT(monitorDirectories(const QString&)));
 
   connect(m_watcher, SIGNAL(directoryChanged(const QString &)),
-	  this, SLOT(updateNotification(const QString &)));
+          this, SLOT(updateNotification(const QString &)));
 
   CSongPanel *songPanel = new CSongPanel(this);
   songPanel->setLibrary(view()->model());
@@ -186,6 +186,9 @@ CMainWindow::CMainWindow()
 
   updateTitle(songbook()->filename());
   updateView();
+  while (library()->canFetchMore())
+    library()->fetchMore();
+
   selectionChanged();
   songbook()->panel();
   updateSongbookLabels();
@@ -864,9 +867,6 @@ CLibrary * CMainWindow::library() const
 //------------------------------------------------------------------------------
 QItemSelectionModel * CMainWindow::selectionModel()
 {
-  while (library()->canFetchMore())
-    library()->fetchMore();
-
   return view()->selectionModel();
 }
 //------------------------------------------------------------------------------
