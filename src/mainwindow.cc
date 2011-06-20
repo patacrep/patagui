@@ -122,7 +122,8 @@ CMainWindow::CMainWindow()
   m_noDataInfo->addAction(m_libraryDownloadAct);
 
   m_watcher = new QFileSystemWatcher;
-  monitorDirectories(QString("%1/songs").arg(workingPath()));
+  if(!workingPath().isEmpty() && QDir(QString("%1/songs").arg(workingPath())).exists() )
+     monitorDirectories(QString("%1/songs").arg(workingPath()));
 
   connect(this, SIGNAL(workingPathChanged(const QString&)),
           this, SLOT(monitorDirectories(const QString&)));
@@ -394,19 +395,19 @@ void CMainWindow::createActions()
 
   m_selectEnglishAct = new QAction(tr("english"), this);
   m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
-  m_selectEnglishAct->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/flag-en")));
+  m_selectEnglishAct->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")));
   m_selectEnglishAct->setCheckable(true);
   connect(m_selectEnglishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectFrenchAct = new QAction(tr("french"), this);
   m_selectFrenchAct->setStatusTip(tr("Select/Unselect songs in french"));
-  m_selectFrenchAct->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/flag-fr")));
+  m_selectFrenchAct->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")));
   m_selectFrenchAct->setCheckable(true);
   connect(m_selectFrenchAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectSpanishAct = new QAction(tr("spanish"), this);
   m_selectSpanishAct->setStatusTip(tr("Select/Unselect songs in spanish"));
-  m_selectSpanishAct->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/flag-es")));
+  m_selectSpanishAct->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")));
   m_selectSpanishAct->setCheckable(true);
   connect(m_selectSpanishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
@@ -1048,8 +1049,11 @@ void CMainWindow::disconnectDatabase()
 
 void CMainWindow::monitorDirectories(const QString& path)
 {
-  if(!m_watcher->directories().empty())
-    m_watcher->removePaths(m_watcher->directories());
+  QDir directory(path);
+  if (path.isEmpty() || !directory.exists())
+    return;
+
+  m_watcher->removePaths(m_watcher->directories());
 
   QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot,
 		  QDirIterator::Subdirectories);
