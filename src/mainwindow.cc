@@ -1053,7 +1053,8 @@ void CMainWindow::monitorDirectories(const QString& path)
   if (path.isEmpty() || !directory.exists())
     return;
 
-  m_watcher->removePaths(m_watcher->directories());
+  if(!m_watcher->directories().isEmpty())
+    m_watcher->removePaths(m_watcher->directories());
 
   QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot,
 		  QDirIterator::Subdirectories);
