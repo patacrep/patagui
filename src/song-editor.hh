@@ -36,6 +36,8 @@ public:
 
   QToolBar* toolBar();
 
+  virtual void keyPressEvent(QKeyEvent *event);
+
 signals:
   void labelChanged(const QString &label);
 
@@ -48,6 +50,9 @@ private slots:
 
 private:
   QString syntaxicColoration(const QString &);
+  void indentSelection();
+  void indentLine(const QTextCursor & cursor);
+  void trimLine(const QTextCursor & cursor);
 
   QToolBar* m_toolBar;
   QString m_path;
