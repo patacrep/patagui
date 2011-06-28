@@ -37,6 +37,11 @@ CSongEditor::CSongEditor()
 {
   setUndoRedoEnabled(true);
 
+  //Monospace font
+  QFont font("Monospace",10);
+  font.setStyleHint(QFont::Monospace, QFont::PreferAntialias);
+  setFont(font);
+
   CHighlighter *highlighter = new CHighlighter(document());
   Q_UNUSED(highlighter);
 
