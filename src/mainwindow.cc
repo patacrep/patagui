@@ -88,6 +88,8 @@ CMainWindow::CMainWindow()
   m_view->setSortingEnabled(true);
   m_view->verticalHeader()->setVisible(false);
   m_view->horizontalHeader()->setStretchLastSection(true);
+  connect(m_view, SIGNAL(doubleClicked(const QModelIndex &)),
+	  this, SLOT(songEditor(const QModelIndex &)));
 
   readSettings();
 
@@ -871,7 +873,7 @@ QItemSelectionModel * CMainWindow::selectionModel()
   return view()->selectionModel();
 }
 //------------------------------------------------------------------------------
-void CMainWindow::songEditor()
+void CMainWindow::songEditor(const QModelIndex & index)
 {
   if (!selectionModel()->hasSelection())
     {
