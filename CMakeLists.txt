@@ -6,9 +6,9 @@ if( APPLE )
   set( MACOSX_BUNDLE_ICON_FILE livre.icns )
   set( CPACK_BUNDLE_NAME Sonbook Client With Space)
   #versions
-  set( MACOSX_BUNDLE_VERSION 0.3 )
-  set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.3 )
-  set( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.3 )
+  set( MACOSX_BUNDLE_VERSION 0.5 )
+  set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.5 )
+  set( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.5 )
 
   #name of the preference file, usefull if we need to keep the same preference file
   #upgrade after upgrade without loosing preferences
