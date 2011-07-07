@@ -37,7 +37,7 @@
 #include <QDebug>
 
 #include "qtpropertymanager.h"
-#include "mainwindow.hh"
+#include "main-window.hh"
 #include "unit-property-manager.hh"
 #include "unit-factory.hh"
 #include "file-property-manager.hh"

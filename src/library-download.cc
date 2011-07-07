@@ -34,7 +34,7 @@
 #include <QProgressBar>
 
 #include "file-chooser.hh"
-#include "mainwindow.hh"
+#include "main-window.hh"
 
 #include <QDebug>
 #include <QString>

@@ -18,7 +18,7 @@
 //******************************************************************************
 
 #include "build-engine.hh"
-#include "mainwindow.hh"
+#include "main-window.hh"
 #include "highlighter.hh"
 
 CBuildEngine::CBuildEngine(CMainWindow* AParent)

@@ -41,7 +41,7 @@ class CFilterLineEdit;
 class CNotify;
 class QFileSystemWatcher;
 
-/** \class CMainWindow "mainWindow.hh"
+/** \class CMainWindow "main-window.hh"
  * \brief CMainWindow is the base class of the application
  */
 

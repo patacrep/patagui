@@ -18,7 +18,7 @@
 //******************************************************************************
 #include <QApplication>
 #include <QTextCodec>
-#include "mainwindow.hh"
+#include "main-window.hh"
 //******************************************************************************
 int main( int argc, char * argv[] )
 {

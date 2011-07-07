@@ -24,7 +24,7 @@
 
 #include "utils/utils.hh"
 #include "label.hh"
-#include "mainwindow.hh"
+#include "main-window.hh"
 #include "preferences.hh"
 #include "library.hh"
 #include "songbook-model.hh"

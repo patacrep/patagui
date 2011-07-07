@@ -44,7 +44,7 @@ message(${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 # sources
 set(SONGBOOK_CLIENT_SOURCES
   src/main.cc
-  src/mainwindow.cc
+  src/main-window.cc
   src/preferences.cc
   src/library.cc
   src/songbook.cc
@@ -74,7 +74,7 @@ set(SONGBOOK_CLIENT_SOURCES
 
 # header (moc)
 set(SONGBOOK_CLIENT_QT_HEADER
-  src/mainwindow.hh
+  src/main-window.hh
   src/preferences.hh
   src/library.hh
   src/build-engine.hh

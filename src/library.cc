@@ -23,7 +23,7 @@
 #include <QSqlField>
 #include <QSqlQuery>
 
-#include "mainwindow.hh"
+#include "main-window.hh"
 #include "utils/utils.hh"
 
 CLibrary::CLibrary(CMainWindow *parent)

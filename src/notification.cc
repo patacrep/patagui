@@ -23,7 +23,7 @@
 #include <QPalette>
 
 #include "notification.hh"
-#include "mainwindow.hh"
+#include "main-window.hh"
 
 CNotify::CNotify(QWidget* p)
   : QDockWidget(p)

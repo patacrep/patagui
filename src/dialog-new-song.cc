@@ -19,7 +19,7 @@
 
 #include "dialog-new-song.hh"
 #include "utils/utils.hh"
-#include "mainwindow.hh"
+#include "main-window.hh"
 #include "library.hh"
 #include "file-chooser.hh"
 #include "notification.hh"
