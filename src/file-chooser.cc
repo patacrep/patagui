@@ -18,23 +18,19 @@
 //******************************************************************************
 #include "file-chooser.hh"
 
-#include <QFileDialog>
-
+#include <QApplication>
 #include <QFileInfo>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QBoxLayout>
-
-#include <QDebug>
+#include <QSettings>
 
 CFileChooser::CFileChooser()
   : QWidget()
-  , m_type(CFileChooser::OpenFileChooser)
-  , m_filter()
-  , m_caption()
-  , m_directory(QDir::currentPath())
   , m_lineEdit(0)
   , m_button(0)
+  , m_dialog(new QFileDialog)
+  , m_caption(QCoreApplication::applicationName())
 {
   m_lineEdit = new QLineEdit();
   connect(m_lineEdit, SIGNAL(textChanged(const QString &)),
@@ -49,85 +45,105 @@ CFileChooser::CFileChooser()
   // disable layout's margin to have a proper "one widget" appeareance
   layout->setContentsMargins(0, 0, 0, 0);
   setLayout(layout);
+
+  readSettings();
 }
 
 CFileChooser::~CFileChooser()
-{}
+{
+  writeSettings();
+}
+
+void CFileChooser::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("dialog");
+  QByteArray state = settings.value("state", QByteArray()).toByteArray();
+  QString dir  = settings.value("directory", QDir::currentPath()).toString();
+  QString path  = settings.value("path", QString()).toString();
+  settings.endGroup();
+
+  dialog()->restoreState(state);
+  setDirectory(dir);
+  setPath(path);
+}
+
+void CFileChooser::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup(tr("dialog"));
+  settings.setValue("state", dialog()->saveState());
+  settings.setValue("directory", directory().absolutePath());
+  settings.setValue("path", path());
+  settings.endGroup();
+}
 
 void CFileChooser::browse()
 {
-  QString path;
-  switch (type())
-    {
-    case CFileChooser::OpenFileChooser:
-      path = QFileDialog::getOpenFileName(NULL,
-					  caption(),
-					  directory().path(),
-					  filter());
-      break;
-    case CFileChooser::SaveFileChooser:
-      path = QFileDialog::getSaveFileName(NULL,
-					  caption(),
-					  directory().path(),
-					  filter());
-      break;
-    case CFileChooser::DirectoryChooser:
-      path = QFileDialog::getExistingDirectory(NULL,
-					       caption(),
-					       directory().path());
-      break;
-    default:
-      qWarning() << "CFileChooser::browse : unknow type";
-      break;
-    }
-  
-  if (!path.isEmpty())
-    setPath(path);
+  dialog()->exec();
+  QStringList pathList = dialog()->selectedFiles();
+  if (!pathList.isEmpty())
+    setPath(pathList[0]);
 }
 
-CFileChooser::TypeChooser CFileChooser::type() const
+QFileDialog::AcceptMode CFileChooser::acceptMode() const
 {
-  return m_type;
+  return dialog()->acceptMode();
 }
 
-void CFileChooser::setType(const CFileChooser::TypeChooser &type)
+void CFileChooser::setAcceptMode(const QFileDialog::AcceptMode &mode)
 {
-  m_type = type;
+  dialog()->setAcceptMode(mode);
 }
 
-QString CFileChooser::filter() const
+QFileDialog::Options CFileChooser::options() const
 {
-  return m_filter;
+  return dialog()->options();
+}
+
+void CFileChooser::setOptions(const QFileDialog::Options &opts)
+{
+  dialog()->setOptions(opts);
+}
+
+QFileDialog::FileMode CFileChooser::fileMode() const
+{
+  return dialog()->fileMode();
+}
+
+void CFileChooser::setFileMode(const QFileDialog::FileMode &mode)
+{
+  dialog()->setFileMode(mode);
 }
 
 void CFileChooser::setFilter(const QString &filter)
 {
-  m_filter = filter;
+  dialog()->setNameFilter(filter);
 }
 
 QString CFileChooser::caption() const
 {
-  return m_caption;
+  return dialog()->windowTitle();
 }
 
 void CFileChooser::setCaption(const QString &caption)
 {
-  m_caption = caption;
+  dialog()->setWindowTitle(caption);
 }
 
 QDir CFileChooser::directory() const
 {
-  return m_directory;
+  return dialog()->directory();
 }
 
 void CFileChooser::setDirectory(const QString &directory)
 {
-  m_directory = QDir(directory);
+  dialog()->setDirectory(directory);
 }
 
 void CFileChooser::setDirectory(const QDir &directory)
 {
-  m_directory = directory;
+  dialog()->setDirectory(directory);
 }
 
 QString CFileChooser::path() const
@@ -146,4 +162,9 @@ void CFileChooser::setPath(const QString &path)
     setDirectory(fileInfo.dir());
 
   emit(pathChanged(path));
+}
+
+QFileDialog * CFileChooser::dialog() const
+{
+  return m_dialog;
 }

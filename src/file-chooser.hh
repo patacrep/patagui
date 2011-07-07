@@ -27,6 +27,7 @@
 #include <QWidget>
 #include <QString>
 #include <QDir>
+#include <QFileDialog>
 
 /** \class CFileChooser "file-chooser-widget.hh"
  *  \brief CFileChooser is a small widget composed
@@ -35,22 +36,28 @@
 
 class QLineEdit;
 class QPushButton;
+class QFileDialog;
 
 class CFileChooser : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(TypeChooser)
 
 public:
-  enum TypeChooser { OpenFileChooser, SaveFileChooser, DirectoryChooser };
-
   CFileChooser();
   ~CFileChooser();
 
-  TypeChooser type() const;
-  void setType(const TypeChooser &type);
+  void readSettings();
+  void writeSettings();
 
-  QString filter() const;
+  QFileDialog::AcceptMode acceptMode() const;
+  void setAcceptMode(const QFileDialog::AcceptMode &);
+
+  QFileDialog::Options options() const;
+  void setOptions(const QFileDialog::Options &);
+
+  QFileDialog::FileMode fileMode() const;
+  void setFileMode(const QFileDialog::FileMode &);
+
   void setFilter(const QString &filter);
 
   QString caption() const;
@@ -61,6 +68,8 @@ public:
   void setDirectory(const QDir &directory);
 
   QString path() const;
+
+  QFileDialog* dialog() const;
 
 public slots:
   void setPath(const QString &path);
@@ -73,13 +82,10 @@ private slots:
 
 
 private:
-  TypeChooser m_type;
-  QString m_filter;
-  QString m_caption;
-  QDir m_directory;
-
   QLineEdit* m_lineEdit;
   QPushButton* m_button;
+  QFileDialog* m_dialog;
+  QString m_caption;
 };
 
 #endif  // __FILE_CHOOSER_HH__

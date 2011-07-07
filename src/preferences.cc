@@ -195,7 +195,8 @@ OptionsPage::OptionsPage(QWidget *parent)
   m_workingPathValid = new QLabel;
 
   m_workingPath = new CFileChooser();
-  m_workingPath->setType(CFileChooser::DirectoryChooser);
+  m_workingPath->setFileMode(QFileDialog::Directory);
+  m_workingPath->setOptions(QFileDialog::ShowDirsOnly);
   m_workingPath->setCaption(tr("Songbook path"));
 
   connect(m_workingPath, SIGNAL(pathChanged(const QString&)),

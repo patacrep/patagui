@@ -79,9 +79,9 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   m_url->setText("http://git.lohrun.net/?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
 
   m_path = new CFileChooser();
-  m_path->setType(CFileChooser::DirectoryChooser);
+  m_path->setFileMode(QFileDialog::Directory);
+  m_path->setOptions(QFileDialog::ShowDirsOnly);
   m_path->setCaption(tr("Install directroy"));
-  m_path->setPath(QDir::homePath());
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
   buttonBox->addButton(tr("Download"),QDialogButtonBox::AcceptRole);

@@ -46,7 +46,8 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   QLineEdit* albumEdit = new QLineEdit;
 
   CFileChooser* coverEdit = new CFileChooser();
-  coverEdit->setType(CFileChooser::OpenFileChooser);
+  coverEdit->setAcceptMode(QFileDialog::AcceptOpen);
+  coverEdit->setFileMode(QFileDialog::ExistingFile);
   coverEdit->setCaption(tr("Select cover image"));
   coverEdit->setFilter(tr("Images (*.jpg)"));
 
