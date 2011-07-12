@@ -167,6 +167,11 @@ void DisplayPage::readSettings()
 void DisplayPage::writeSettings()
 {
   QSettings settings;
+  
+  settings.beginGroup("general");
+  settings.setValue("log", m_compilationLogCheckBox->isChecked());
+  settings.endGroup();
+
   settings.beginGroup("display");
   settings.setValue("artist", m_artistCheckBox->isChecked());
   settings.setValue("title", m_titleCheckBox->isChecked());
@@ -175,7 +180,6 @@ void DisplayPage::writeSettings()
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
   settings.setValue("cover", m_coverCheckBox->isChecked());
   settings.setValue("lang", m_langCheckBox->isChecked());
-  settings.setValue("log", m_compilationLogCheckBox->isChecked());
   settings.endGroup();
 }
 
@@ -225,13 +229,17 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::readSettings()
 {
   QSettings settings;
+  settings.beginGroup("general");
   m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
+  settings.endGroup();
 }
 
 void OptionsPage::writeSettings()
 {
   QSettings settings;
+  settings.beginGroup("general");
   settings.setValue("workingPath", m_workingPath->path());
+  settings.endGroup();
 }
 
 void OptionsPage::closeEvent(QCloseEvent *event)
