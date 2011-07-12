@@ -27,6 +27,7 @@
 #include "main-window.hh"
 #include "preferences.hh"
 #include "library.hh"
+#include "library-view.hh"
 #include "songbook-model.hh"
 #include "songbook.hh"
 #include "build-engine/make-songbook.hh"
@@ -78,16 +79,11 @@ CMainWindow::CMainWindow()
   m_proxyModel->setDynamicSortFilter(true);
   m_proxyModel->setFilterKeyColumn(-1);
 
-  m_view = new QTableView(this);
+  m_view = new CLibraryView(this);
+  //m_view = new QTableView(this);
   m_view->setModel(m_proxyModel);
-  m_view->setShowGrid(false);
-  m_view->setAlternatingRowColors(true);
-  m_view->setSelectionMode(QAbstractItemView::MultiSelection);
-  m_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-  m_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  m_view->setSortingEnabled(true);
-  m_view->verticalHeader()->setVisible(false);
-  m_view->horizontalHeader()->setStretchLastSection(true);
+  
+  
   connect(m_view, SIGNAL(doubleClicked(const QModelIndex &)),
 	  this, SLOT(songEditor(const QModelIndex &)));
 
@@ -150,20 +146,7 @@ CMainWindow::CMainWindow()
 
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
-  QBoxLayout *dataLayout = new QVBoxLayout;
-  QBoxLayout *centerLayout = new QHBoxLayout;
-  QBoxLayout *leftLayout = new QVBoxLayout;
-  //leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
-  //leftLayout->addWidget(songPanel);
-  //leftLayout->addWidget(buttonBox);
-  //leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
-  //leftLayout->addLayout(songbookInfo());
-  leftLayout->addStretch();
-  dataLayout->addWidget(view());
-  centerLayout->addLayout(leftLayout);
-  centerLayout->addLayout(dataLayout);
-  centerLayout->setStretch(1,2);
-  mainLayout->addLayout(centerLayout);
+  mainLayout->addWidget(view());
   mainLayout->addWidget(log());
 
   QWidget* libraryTab = new QWidget;
