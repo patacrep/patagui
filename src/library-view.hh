@@ -37,6 +37,12 @@ public:
   CLibraryView(CMainWindow* parent);
   ~CLibraryView();
 
+  void readSettings();
+  void writeSettings();
+
+public slots:
+  void update();
+
 private:
   void createActions();
   CMainWindow* parent() const;
