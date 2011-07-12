@@ -102,7 +102,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   )
 
 # ressources
-set(SONGBOOK_CLIENT_RCS songbook.qrc icons/tango/tango.qrc songbook.rc)
+set(SONGBOOK_CLIENT_RCS songbook.qrc icons/macos/macos.qrc icons/tango/tango.qrc songbook.rc)
 
 # process Qt special files
 include(${QT_USE_FILE})

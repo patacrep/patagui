@@ -28,7 +28,11 @@ int main( int argc, char * argv[] )
   Q_INIT_RESOURCE(songbook);
 
   static const char * GENERIC_ICON_TO_CHECK = "document-open";
-  static const char * FALLBACK_ICON_THEME = "tango";
+  #ifdef __APPLE__
+    static const char * FALLBACK_ICON_THEME = "macos";
+  #else
+    static const char * FALLBACK_ICON_THEME = "tango";
+  #endif
   if (!QIcon::hasThemeIcon(GENERIC_ICON_TO_CHECK))
     {
       //If there is no default working icon theme then we should
