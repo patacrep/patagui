@@ -56,6 +56,8 @@ public slots:
   void load(const QString &filename);
   void setModified(bool modified);
 
+  void info();
+
 public:
   CSongbook();
   ~CSongbook();

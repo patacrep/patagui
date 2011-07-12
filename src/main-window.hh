@@ -65,7 +65,6 @@ public:
 public slots:
   void setWorkingPath(const QString &path);
   void templateSettings();
-  void updateSongbookLabels();
 
 signals:
   void workingPathChanged(const QString &path);
@@ -134,28 +133,21 @@ private:
 
   QItemSelectionModel * selectionModel();
 
-  // Song library and view
+  // Models and views
   CLibrary *m_library;
+  CLibraryView *m_view;
+  CSongbook *m_songbook;
   CSongbookModel *m_songbookModel;
   QSortFilterProxyModel *m_proxyModel;
 
-  // Songbook widget
-  CSongbook *m_songbook;
-  uint m_sbNbSelected;
-  uint m_sbNbTotal;
-  CLabel* m_sbInfoSelection;
-  CLabel* m_sbInfoTitle;
-  CLabel* m_sbInfoAuthors;
-  CLabel* m_sbInfoStyle;
-
   // Widgets
   CTabWidget* m_mainWidget;
-  CLibraryView *m_view;
   QProgressBar* m_progressBar;
   CNotify* m_noDataInfo;
   CNotify* m_updateAvailable;
   CFilterLineEdit *m_filterLineEdit;
   QFileSystemWatcher* m_watcher;
+  QTextEdit* m_log;
 
   // Settings
   QString m_workingPath;
@@ -164,9 +156,6 @@ private:
   bool m_isStatusbarDisplayed;
 
   CDialogNewSong *m_newSongDialog;
-
-  //Logs
-  QTextEdit* m_log;
 
   // Menus
   QMenu *m_fileMenu;
@@ -194,6 +183,7 @@ private:
   QAction *m_saveAsAct;
   QAction *m_buildAct;
   QAction *m_cleanAct;
+  QAction *m_sbInfoAct;
 
   // Library action
   QAction *m_newSongAct;

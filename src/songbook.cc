@@ -660,3 +660,15 @@ SbError CSongbook::checkFilename() const
   
   return Invalid;
 }
+
+void CSongbook::info()
+{
+  QMessageBox dialog;
+  QFormLayout* layout = new QFormLayout;
+  layout->addRow(tr("<b>Title:</b>"), new QLabel(title()));
+  layout->addRow(tr("<b>Authors:</b>"), new QLabel(authors()));
+  layout->addRow(tr("<b>Style:</b>"), new QLabel(style()));
+  layout->addRow(tr("<b>Number of songs:</b>"), new QLabel(QString(songs().size())));
+  dialog.setLayout(layout);
+  dialog.exec();
+}

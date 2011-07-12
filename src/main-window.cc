@@ -46,14 +46,10 @@ using namespace SbUtils;
 CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
+  , m_view()
+  , m_songbook()
   , m_songbookModel()
   , m_proxyModel()
-  , m_songbook()
-  , m_sbInfoSelection(new CLabel)
-  , m_sbInfoTitle(new CLabel)
-  , m_sbInfoAuthors(new CLabel)
-  , m_sbInfoStyle(new CLabel)
-  , m_view()
   , m_progressBar(new QProgressBar(this))
   , m_noDataInfo(NULL)
   , m_updateAvailable(NULL)
@@ -161,7 +157,6 @@ CMainWindow::CMainWindow()
 
   selectionChanged();
   songbook()->panel();
-  updateSongbookLabels();
 
   readSettings();
 }
@@ -243,13 +238,6 @@ void CMainWindow::templateSettings()
   dialog->show();
 }
 
-void CMainWindow::updateSongbookLabels()
-{
-  m_sbInfoTitle->setText(songbook()->title());
-  m_sbInfoAuthors->setText(songbook()->authors());
-  m_sbInfoStyle->setText(songbook()->style());
-}
-
 void CMainWindow::filterChanged(const QString &filter)
 {
   QRegExp expression = QRegExp(filter, Qt::CaseInsensitive, QRegExp::FixedString);
@@ -264,11 +252,7 @@ void CMainWindow::selectionChanged()
 
 void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
 {
-  m_sbNbSelected = selectionModel()->selectedRows().size();
-  m_sbNbTotal = library()->rowCount();
-  m_sbInfoSelection->setText(QString(tr("%1/%2"))
-			     .arg(m_sbNbSelected).arg(m_sbNbTotal) );
-  if(m_sbNbTotal==0)
+  if(library()->rowCount()==0)
     m_noDataInfo->show();
   else
     m_noDataInfo->hide();
@@ -304,6 +288,11 @@ void CMainWindow::createActions()
   m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/document-save-as")));
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+  m_sbInfoAct = new QAction(tr("Properties"), this);
+  m_sbInfoAct->setShortcut(tr("Meta+Enter"));
+  m_sbInfoAct->setStatusTip(tr("Show the properties of the selected songbook"));
+  connect(m_sbInfoAct, SIGNAL(triggered()), songbook(), SLOT(info()));
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
@@ -448,6 +437,8 @@ void CMainWindow::createMenus()
   m_fileMenu->addAction(m_openAct);
   m_fileMenu->addAction(m_saveAct);
   m_fileMenu->addAction(m_saveAsAct);
+  m_fileMenu->addSeparator();
+  m_fileMenu->addAction(m_sbInfoAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_buildAct);
   m_fileMenu->addAction(m_cleanAct);
