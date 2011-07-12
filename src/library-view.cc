@@ -18,6 +18,7 @@
 #include "library-view.hh"
 
 #include "main-window.hh"
+#include "song-panel.hh"
 
 CLibraryView::CLibraryView(CMainWindow *parent)
   : QTableView()
@@ -108,8 +109,23 @@ void CLibraryView::createActions()
 	  parent(), SLOT(deleteSong()));
   addAction(action);
 
-  //  action = new QAction(tr("Information"), this);
-  //  connect(action, SIGNAL(triggered()),
-  //	  this, SLOT(songInfo()));
-  // addAction(action);
+  action = new QAction(tr("Information"), this);
+  connect(action, SIGNAL(triggered()),
+  	  this, SLOT(songInfo()));
+  addAction(action);
+}
+
+void CLibraryView::songInfo()
+{
+  QDialog dialog;
+
+  CSongPanel songPanel(this);
+  songPanel.setLibrary(model());
+  songPanel.setCurrentIndex(currentIndex());
+
+  QLayout* layout = new QFormLayout;
+  layout->addWidget(&songPanel);
+
+  dialog.setLayout(layout);
+  dialog.exec();
 }

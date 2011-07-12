@@ -42,6 +42,7 @@ public:
 
 public slots:
   void update();
+  void songInfo();
 
 private:
   void createActions();
