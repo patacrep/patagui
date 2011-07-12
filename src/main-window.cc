@@ -43,7 +43,6 @@
 
 using namespace SbUtils;
 
-//******************************************************************************
 CMainWindow::CMainWindow()
   : QMainWindow()
   , m_library()
@@ -166,7 +165,7 @@ CMainWindow::CMainWindow()
 
   readSettings();
 }
-//------------------------------------------------------------------------------
+
 CMainWindow::~CMainWindow()
 {
   delete m_library;
@@ -186,7 +185,7 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
       m_currentToolBar = toolBar;
     }
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::readSettings()
 {
   QSettings settings;
@@ -202,7 +201,7 @@ void CMainWindow::readSettings()
 
   view()->readSettings();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::writeSettings()
 {
   QSettings settings;
@@ -213,7 +212,7 @@ void CMainWindow::writeSettings()
 
   view()->writeSettings();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::templateSettings()
 {
   QDialog *dialog = new QDialog;
@@ -243,26 +242,26 @@ void CMainWindow::templateSettings()
   dialog->setLayout(layout);
   dialog->show();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::updateSongbookLabels()
 {
   m_sbInfoTitle->setText(songbook()->title());
   m_sbInfoAuthors->setText(songbook()->authors());
   m_sbInfoStyle->setText(songbook()->style());
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::filterChanged(const QString &filter)
 {
   QRegExp expression = QRegExp(filter, Qt::CaseInsensitive, QRegExp::FixedString);
   m_proxyModel->setFilterRegExp(expression);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::selectionChanged()
 {
   QItemSelection invalid;
   selectionChanged(invalid, invalid);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
 {
   m_sbNbSelected = selectionModel()->selectedRows().size();
@@ -274,7 +273,7 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
   else
     m_noDataInfo->hide();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
@@ -408,7 +407,7 @@ void CMainWindow::createActions()
   connect(m_cleanAct, SIGNAL(triggered()), builder, SLOT(action()));
 
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::setToolBarDisplayed(bool value)
 {
   if (m_isToolBarDisplayed != value && m_currentToolBar)
@@ -417,29 +416,29 @@ void CMainWindow::setToolBarDisplayed(bool value)
       m_currentToolBar->setVisible(value);
     }
 }
-//------------------------------------------------------------------------------
+
 bool CMainWindow::isToolBarDisplayed( )
 {
   return m_isToolBarDisplayed;
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::setStatusbarDisplayed(bool value)
 {
   m_isStatusbarDisplayed = value;
   statusBar()->setVisible(value);
 }
-//------------------------------------------------------------------------------
+
 bool CMainWindow::isStatusbarDisplayed( )
 {
   return m_isStatusbarDisplayed;
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::closeEvent(QCloseEvent *event)
 {
   writeSettings();
   event->accept();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::createMenus()
 {
   menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
@@ -477,7 +476,7 @@ void CMainWindow::createMenus()
   m_helpMenu->addAction(m_documentationAct);
   m_helpMenu->addAction(m_aboutAct);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::createToolBar()
 {
   m_toolBar = new QToolBar(tr("Library tools"), this);
@@ -535,19 +534,19 @@ void CMainWindow::createToolBar()
   addToolBar(m_toolBar);
   setUnifiedTitleAndToolBarOnMac(true);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::preferences()
 {
   ConfigDialog dialog;
   dialog.exec();
   readSettings();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::documentation()
 {
   QDesktopServices::openUrl(QUrl(QString("http://www.patacrep.com/data/documents/doc.pdf")));
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::about()
 {
   QString title = QString(tr("About Patacrep! Songbook Client"));
@@ -566,18 +565,18 @@ void CMainWindow::about()
 					     "<p><b>Authors:</b> %3</p>"))
 		     .arg(description).arg(version).arg(authors));
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::selectAll()
 {
   view()->selectAll();
   view()->setFocus();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::unselectAll()
 {
   view()->clearSelection();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::invertSelection()
 {
   QModelIndexList indexes = selectionModel()->selectedRows();
@@ -590,7 +589,7 @@ void CMainWindow::invertSelection()
       selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
     }
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::selectLanguage(bool selection)
 {
   QString language = qobject_cast< QAction* >(QObject::sender())->text();
@@ -607,7 +606,7 @@ void CMainWindow::selectLanguage(bool selection)
     }
   view()->setFocus();
 }
-//------------------------------------------------------------------------------
+
 QStringList CMainWindow::getSelectedSongs()
 {
   QStringList songsPath;
@@ -623,7 +622,7 @@ QStringList CMainWindow::getSelectedSongs()
 
   return songsPath;
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::build()
 {
   if(getSelectedSongs().isEmpty())
@@ -672,13 +671,13 @@ void CMainWindow::build()
 #endif
   builder->action();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::newSongbook()
 {
   songbook()->reset();
   updateTitle(songbook()->filename());
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::open()
 {
   QString filename = QFileDialog::getOpenFileName(this,
@@ -704,7 +703,7 @@ void CMainWindow::open()
 
   updateTitle(songbook()->filename());
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::save(bool forced)
 {
   if(songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
@@ -719,7 +718,7 @@ void CMainWindow::save(bool forced)
   songbook()->save(songbook()->filename());
   updateTitle(songbook()->filename());
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::saveAs()
 {
   QString filename = QFileDialog::getSaveFileName(this,
@@ -733,7 +732,7 @@ void CMainWindow::saveAs()
       save();
     }
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::updateSongsList()
 {
   QStringList songlist = getSelectedSongs();
@@ -744,7 +743,7 @@ void CMainWindow::updateSongsList()
 #endif
   songbook()->setSongs(songlist);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::updateTitle(const QString &filename)
 {
   QString text = filename.isEmpty() ? tr("New songbook") : filename;
@@ -752,12 +751,12 @@ void CMainWindow::updateTitle(const QString &filename)
                  .arg(QCoreApplication::applicationName())
                  .arg(text));
 }
-//------------------------------------------------------------------------------
+
 const QString CMainWindow::workingPath()
 {
   return library()->directory().canonicalPath();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::setWorkingPath(const QString &path)
 {
   if (path != workingPath())
@@ -770,32 +769,32 @@ void CMainWindow::setWorkingPath(const QString &path)
       settings.setValue("workingPath", workingPath());
     }
 }
-//------------------------------------------------------------------------------
+
 QProgressBar * CMainWindow::progressBar() const
 {
   return m_progressBar;
 }
-//------------------------------------------------------------------------------
+
 CSongbook * CMainWindow::songbook() const
 {
   return m_songbook;
 }
-//------------------------------------------------------------------------------
+
 CLibraryView * CMainWindow::view() const
 {
   return m_view;
 }
-//------------------------------------------------------------------------------
+
 CLibrary * CMainWindow::library() const
 {
   return m_library;
 }
-//------------------------------------------------------------------------------
+
 QItemSelectionModel * CMainWindow::selectionModel()
 {
   return view()->selectionModel();
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::songEditor(const QModelIndex & index)
 {
   if (!selectionModel()->hasSelection())
@@ -809,7 +808,7 @@ void CMainWindow::songEditor(const QModelIndex & index)
 
   songEditor(path, title);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::songEditor(const QString &path, const QString &title)
 {
   if (m_editors.contains(path))
@@ -836,7 +835,7 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
   m_mainWidget->addTab(editor);
   m_editors.insert(path, editor);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::newSong()
 {
   watcher()->blockSignals(true);
@@ -848,7 +847,7 @@ void CMainWindow::newSong()
     }
   delete dialog;
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::deleteSong()
 {
   if (!selectionModel()->hasSelection())
@@ -861,7 +860,7 @@ void CMainWindow::deleteSong()
 
   deleteSong(path);
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::deleteSong(const QString &path)
 {
   QString qs(tr("You are about to remove a song from the library.\n"
@@ -900,7 +899,7 @@ void CMainWindow::deleteSong(const QString &path)
     }
   }
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::closeTab(int index)
 {
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
@@ -922,7 +921,7 @@ void CMainWindow::closeTab(int index)
       watcher()->blockSignals(false);
     }
 }
-//------------------------------------------------------------------------------
+
 void CMainWindow::changeTab(int index)
 {
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
@@ -938,7 +937,7 @@ void CMainWindow::changeTab(int index)
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
 }
-//------------------------------------------------------------------------------
+
 QTextEdit* CMainWindow::log() const
 {
   return m_log;
