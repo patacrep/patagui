@@ -152,8 +152,8 @@ CMainWindow::CMainWindow()
 
   updateTitle(songbook()->filename());
 
-  while (library()->canFetchMore())
-    library()->fetchMore();
+  //  while (library()->canFetchMore())
+  //library()->fetchMore();
 
   selectionChanged();
   songbook()->panel();
