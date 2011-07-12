@@ -663,12 +663,12 @@ SbError CSongbook::checkFilename() const
 
 void CSongbook::info()
 {
-  QMessageBox dialog;
+  QDialog dialog;
   QFormLayout* layout = new QFormLayout;
   layout->addRow(tr("<b>Title:</b>"), new QLabel(title()));
   layout->addRow(tr("<b>Authors:</b>"), new QLabel(authors()));
   layout->addRow(tr("<b>Style:</b>"), new QLabel(style()));
-  layout->addRow(tr("<b>Number of songs:</b>"), new QLabel(QString(songs().size())));
+  layout->addRow(tr("<b>Number of songs:</b>"), new QLabel(QString::number(songs().size())));
   dialog.setLayout(layout);
   dialog.exec();
 }
