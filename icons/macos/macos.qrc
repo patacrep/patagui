@@ -77,5 +77,8 @@
     <file>scalable/places/flag-fr.svg</file>
     <file>scalable/places/flag-es.svg</file>
     <file>scalable/places/flag-en.svg</file>
+    <file>scalable/songbook/select_invert.svg</file>
+    <file>scalable/songbook/select_none.svg</file>
+    <file>scalable/songbook/select_all.svg</file>
   </qresource>
 </RCC>

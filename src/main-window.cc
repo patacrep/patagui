@@ -381,17 +381,17 @@ void CMainWindow::createActions()
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
-  m_selectAllAct->setIcon(QIcon(":/icons/select-all.png"));
+  m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/select-all.png")));
   m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
-  m_unselectAllAct->setIcon(QIcon(":/icons/unselect-all.png"));
+  m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/unselect-all.png")));
   m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
   connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  m_invertSelectionAct->setIcon(QIcon(":/icons/invert-selection.png"));
+  m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/invert-selection.png")));
   m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 
