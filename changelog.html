@@ -10,13 +10,64 @@
   <body>
     <h3>0.5</h3>
     
+    <h4>Cross-platform</h4>
+    <ul>
+      <li><strong>Windows:</strong> initial support. Note that a LaTeX distribution and a Python installation is required to produce pdf</li>
+      <li><strong>Mac:</strong> bug fixes and better integration</li>
+      <li><strong>Debian:</strong> move songbook dependencies from required to recommended</li>
+      <li><strong>Gentoo:</strong> update ebuild dependencies</li>
+    </ul>
+
+    <h4>Appearance</h4>
+
+    <ul>
+      <li>new icons</li>
+      <li>tango icon theme for Mac and Windows</li>
+      <li>better integration for toolbars</li>
+      <li>improved form based dialogs</li>
+      <li>better placement of elements in menus</li>
+      <li>fewer message box to simplify user experience</li>
+      <li>improved columns view</li>
+      <li>new icon+text view for the library's album column</li>
+    </ul>
+
+
+    <h4>Features</h4>
+    <ul>
+      <li>rewrite the download process of a library. It now uses libarchive instead of an external system call to git</li>
+      <li>it is now possible to configure a proxy for downloading a library</li>
+      <li>auto-completion in the filter bar</li>
+      <li>several keyshortcuts have been corrected</li>
+      <li>new indentation mode in the song editor which now behaves like emacs: when "Tab" is pressed, the current line is correctly indented instead of inserting a tabulation</li>
+      <li>remove "Tools" menu since these actions were not relevant in the gui</li>
+      <li>auto resize cover when starting a new song</li>
+    </ul>
+
+    <h4>Performances</h4>
+    <ul>
+      <li>library rebuild operation drastically improved (30x faster!)</li>
+      <li>startup time reduced</li>
+      <li>improved sql queries</li>
+    </ul>
+
+    <h4>Bugs</h4>
+    <ul>
+      <li>many bugs have been fixed</li>
+      <li>use the github issues tracker tool</li>
+    </ul>
+
+    <h4>In progress</h4>
+    <ul>
+      <li>start working on separating the logic and appearance in the application</li>
+      <li>start evolving the library model</li>
+    </ul>
 
 
     <h3>0.4</h3>
 
     <ul>
       <li>songs selection depending on language</li>
-      <li>imporved song editor with numbered lines and highlighting of current line</li>
+      <li>improved song editor with numbered lines and highlighting of current line</li>
       <li>rewrite external system calls mechanisms such as <i>make songbook.pdf</i> or <i>git clone</i></li>
       <li>search bar is much more efficient and only look for title/artist/album fields</li>
       <li>monitoring of the songs/ directory to keep database in sync</li>
