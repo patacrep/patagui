@@ -126,7 +126,7 @@ private:
   void createMenus();
   void createToolBar();
 
-  QGridLayout * songbookInfo();
+  //QGridLayout * songbookInfo();
 
   QStringList getSelectedSongs();
 

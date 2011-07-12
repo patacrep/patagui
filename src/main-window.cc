@@ -133,11 +133,11 @@ CMainWindow::CMainWindow()
   connect(m_watcher, SIGNAL(directoryChanged(const QString &)),
           this, SLOT(updateNotification(const QString &)));
 
-  CSongPanel *songPanel = new CSongPanel(this);
-  songPanel->setLibrary(view()->model());
-  songPanel->setCurrentIndex(QModelIndex());
-  connect(selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
-          songPanel, SLOT(setCurrentIndex(const QModelIndex &)));
+  //CSongPanel *songPanel = new CSongPanel(this);
+  //songPanel->setLibrary(view()->model());
+  //songPanel->setCurrentIndex(QModelIndex());
+  //connect(selectionModel(), SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
+  //        songPanel, SLOT(setCurrentIndex(const QModelIndex &)));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
@@ -153,11 +153,11 @@ CMainWindow::CMainWindow()
   QBoxLayout *dataLayout = new QVBoxLayout;
   QBoxLayout *centerLayout = new QHBoxLayout;
   QBoxLayout *leftLayout = new QVBoxLayout;
-  leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
-  leftLayout->addWidget(songPanel);
-  leftLayout->addWidget(buttonBox);
-  leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
-  leftLayout->addLayout(songbookInfo());
+  //leftLayout->addWidget(new QLabel(tr("<b>Song</b>")));
+  //leftLayout->addWidget(songPanel);
+  //leftLayout->addWidget(buttonBox);
+  //leftLayout->addWidget(new QLabel(tr("<b>Songbook</b>")));
+  //leftLayout->addLayout(songbookInfo());
   leftLayout->addStretch();
   dataLayout->addWidget(view());
   centerLayout->addLayout(leftLayout);
@@ -586,31 +586,31 @@ void CMainWindow::createToolBar()
   setUnifiedTitleAndToolBarOnMac(true);
 }
 //------------------------------------------------------------------------------
-QGridLayout * CMainWindow::songbookInfo()
-{
-  QPushButton* button = new QPushButton(tr("Settings"));
-  connect(button, SIGNAL(clicked()), this, SLOT(templateSettings()));
- 
-  QGridLayout* layout = new QGridLayout;
-  layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,0,1,1);
-  layout->addWidget(m_sbInfoTitle,0,1,1,2);
-  layout->addWidget(new QLabel(tr("<i>Authors:</i>")),1,0,1,1);
-  layout->addWidget(m_sbInfoAuthors,1,1,1,2);
-  layout->addWidget(new QLabel(tr("<i>Style:</i>")),2,0,1,1);
-  layout->addWidget(m_sbInfoStyle,2,1,1,2);
-  layout->addWidget(new QLabel(tr("<i>Selection:</i>")),3,0,1,1);
-  layout->addWidget(m_sbInfoSelection,3,1,1,2);
-  layout->addWidget(button,4,2,1,1);
-
-  m_sbInfoTitle->setElideMode(Qt::ElideRight);
-  m_sbInfoTitle->setFixedWidth(250);
-  m_sbInfoAuthors->setElideMode(Qt::ElideRight);
-  m_sbInfoAuthors->setFixedWidth(250);
-  m_sbInfoStyle->setElideMode(Qt::ElideRight);
-  m_sbInfoStyle->setFixedWidth(250);
-
-  return layout;
-}
+//QGridLayout * CMainWindow::songbookInfo()
+//{
+//  QPushButton* button = new QPushButton(tr("Settings"));
+//  connect(button, SIGNAL(clicked()), this, SLOT(templateSettings()));
+// 
+//  QGridLayout* layout = new QGridLayout;
+//  layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,0,1,1);
+//  layout->addWidget(m_sbInfoTitle,0,1,1,2);
+//  layout->addWidget(new QLabel(tr("<i>Authors:</i>")),1,0,1,1);
+//  layout->addWidget(m_sbInfoAuthors,1,1,1,2);
+//  layout->addWidget(new QLabel(tr("<i>Style:</i>")),2,0,1,1);
+//  layout->addWidget(m_sbInfoStyle,2,1,1,2);
+//  layout->addWidget(new QLabel(tr("<i>Selection:</i>")),3,0,1,1);
+//  layout->addWidget(m_sbInfoSelection,3,1,1,2);
+//  layout->addWidget(button,4,2,1,1);
+//
+//  m_sbInfoTitle->setElideMode(Qt::ElideRight);
+//  m_sbInfoTitle->setFixedWidth(250);
+//  m_sbInfoAuthors->setElideMode(Qt::ElideRight);
+//  m_sbInfoAuthors->setFixedWidth(250);
+//  m_sbInfoStyle->setElideMode(Qt::ElideRight);
+//  m_sbInfoStyle->setFixedWidth(250);
+//
+//  return layout;
+//}
 //------------------------------------------------------------------------------
 void CMainWindow::preferences()
 {
