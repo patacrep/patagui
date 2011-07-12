@@ -31,6 +31,7 @@
 
 class CSongbook;
 class CLibrary;
+class CLibraryView;
 class CSongbookModel;
 class CTabWidget;
 class CDialogNewSong;
@@ -55,7 +56,7 @@ public:
 
   QProgressBar * progressBar() const;
   QTextEdit * log() const;
-  QTableView * view() const;
+  CLibraryView * view() const;
   CLibrary * library() const;
   CSongbook * songbook() const;
   const QString workingPath();
@@ -65,7 +66,6 @@ public slots:
   void setWorkingPath(const QString &path);
   void templateSettings();
   void updateSongbookLabels();
-  void updateView();
 
 signals:
   void workingPathChanged(const QString &path);
@@ -107,7 +107,6 @@ private slots:
 
   //application
   void preferences();
-  void applySettings();
   void setToolBarDisplayed(bool);
   void setStatusbarDisplayed(bool);
   void documentation();
@@ -151,25 +150,16 @@ private:
 
   // Widgets
   CTabWidget* m_mainWidget;
-  QTableView *m_view;
+  CLibraryView *m_view;
   QProgressBar* m_progressBar;
   CNotify* m_noDataInfo;
   CNotify* m_updateAvailable;
   CFilterLineEdit *m_filterLineEdit;
   QFileSystemWatcher* m_watcher;
 
-  // Global
+  // Settings
   QString m_workingPath;
-
-  bool m_displayColumnArtist;
-  bool m_displayColumnTitle;
-  bool m_displayColumnPath;
-  bool m_displayColumnAlbum;
-  bool m_displayColumnLilypond;
-  bool m_displayColumnCover;
-  bool m_displayColumnLang;
   bool m_displayCompilationLog;
-
   bool m_isToolBarDisplayed;
   bool m_isStatusbarDisplayed;
 

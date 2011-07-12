@@ -80,16 +80,9 @@ CMainWindow::CMainWindow()
   m_proxyModel->setFilterKeyColumn(-1);
 
   m_view = new CLibraryView(this);
-  //m_view = new QTableView(this);
   m_view->setModel(m_proxyModel);
   
-  
-  connect(m_view, SIGNAL(doubleClicked(const QModelIndex &)),
-	  this, SLOT(songEditor(const QModelIndex &)));
-
-  readSettings();
-
-  connect(m_library, SIGNAL(wasModified()), SLOT(updateView()));
+  connect(m_library, SIGNAL(wasModified()), view(), SLOT(update()));
   connect(m_library, SIGNAL(wasModified()), SLOT(selectionChanged()));
 
   // songbook
@@ -168,16 +161,16 @@ CMainWindow::CMainWindow()
   progressBar()->hide();
   statusBar()->addPermanentWidget(progressBar());
 
-  applySettings();
-
   updateTitle(songbook()->filename());
-  updateView();
-  while (library()->canFetchMore())
-    library()->fetchMore();
+
+  //  while (library()->canFetchMore())
+  //library()->fetchMore();
 
   selectionChanged();
   songbook()->panel();
   updateSongbookLabels();
+
+  readSettings();
 }
 //------------------------------------------------------------------------------
 CMainWindow::~CMainWindow()
@@ -203,42 +196,28 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
 void CMainWindow::readSettings()
 {
   QSettings settings;
-
-  resize(settings.value("mainWindow/size", QSize(800,600)).toSize());
-
-  setWorkingPath(settings.value("workingPath", QDir::home().path()).toString());
-
-  settings.beginGroup("display");
-  m_displayColumnArtist = settings.value("artist", true).toBool();
-  m_displayColumnTitle = settings.value("title", true).toBool();
-  m_displayColumnPath = settings.value("path", false).toBool();
-  m_displayColumnAlbum = settings.value("album", true).toBool();
-  m_displayColumnLilypond = settings.value("lilypond", false).toBool();
-  m_displayColumnCover = settings.value("cover", false).toBool();
-  m_displayColumnLang = settings.value("lang", true).toBool();
-  m_displayCompilationLog = settings.value("log", false).toBool();
+  settings.beginGroup("general");
+  QSize size    = settings.value("size", QSize(800,600)).toSize();
+  QString path  = settings.value("workingPath", QDir::home().path()).toString();
+  m_displayCompilationLog = settings.value("displayLog", false).toBool();
   settings.endGroup();
+
+  resize(size);
+  setWorkingPath(path);
+  log()->setVisible(m_displayCompilationLog);
+
+  view()->readSettings();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::writeSettings()
 {
   QSettings settings;
-  settings.setValue("mainWindow/size", size());
-}
-//------------------------------------------------------------------------------
-void CMainWindow::applySettings()
-{
-  view()->setColumnHidden(0,!m_displayColumnArtist);
-  view()->setColumnHidden(1,!m_displayColumnTitle);
-  view()->setColumnHidden(2,!m_displayColumnLilypond);
-  view()->setColumnHidden(3,!m_displayColumnPath);
-  view()->setColumnHidden(4,!m_displayColumnAlbum);
-  view()->setColumnHidden(5,!m_displayColumnCover);
-  view()->setColumnHidden(6,!m_displayColumnLang);
-  view()->setColumnWidth(0,200);
-  view()->setColumnWidth(1,200);
-  view()->setColumnWidth(4,200);
-  log()->setVisible(m_displayCompilationLog);
+  settings.beginGroup("general");
+  settings.setValue("size", size());
+  settings.setValue("displayLogs", m_displayCompilationLog);
+  settings.endGroup();
+
+  view()->writeSettings();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::templateSettings()
@@ -276,12 +255,6 @@ void CMainWindow::updateSongbookLabels()
   m_sbInfoTitle->setText(songbook()->title());
   m_sbInfoAuthors->setText(songbook()->authors());
   m_sbInfoStyle->setText(songbook()->style());
-}
-//------------------------------------------------------------------------------
-void CMainWindow::updateView()
-{
-  view()->sortByColumn(1, Qt::AscendingOrder);
-  view()->sortByColumn(0, Qt::AscendingOrder);
 }
 //------------------------------------------------------------------------------
 void CMainWindow::filterChanged(const QString &filter)
@@ -600,7 +573,6 @@ void CMainWindow::preferences()
   ConfigDialog dialog;
   dialog.exec();
   readSettings();
-  applySettings();
 }
 //------------------------------------------------------------------------------
 void CMainWindow::documentation()
@@ -841,7 +813,7 @@ CSongbook * CMainWindow::songbook() const
   return m_songbook;
 }
 //------------------------------------------------------------------------------
-QTableView * CMainWindow::view() const
+CLibraryView * CMainWindow::view() const
 {
   return m_view;
 }
