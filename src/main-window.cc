@@ -290,7 +290,6 @@ void CMainWindow::createActions()
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   m_sbInfoAct = new QAction(tr("Properties"), this);
-  m_sbInfoAct->setShortcut(tr("Meta+Enter"));
   m_sbInfoAct->setStatusTip(tr("Show the properties of the selected songbook"));
   connect(m_sbInfoAct, SIGNAL(triggered()), songbook(), SLOT(info()));
 
