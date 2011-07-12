@@ -71,7 +71,7 @@ void CFileChooser::readSettings()
 void CFileChooser::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup(tr("dialog"));
+  settings.beginGroup("dialog");
   settings.setValue("state", dialog()->saveState());
   settings.setValue("directory", directory().absolutePath());
   settings.setValue("path", path());
