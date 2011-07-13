@@ -53,8 +53,6 @@ CMainWindow::CMainWindow()
   , m_progressBar(new QProgressBar(this))
   , m_noDataInfo(NULL)
   , m_updateAvailable(NULL)
-  , m_isToolBarDisplayed(true)
-  , m_isStatusbarDisplayed(true)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook-client.png"));
@@ -185,13 +183,13 @@ void CMainWindow::readSettings()
 {
   QSettings settings;
   settings.beginGroup("general");
-  QSize size    = settings.value("size", QSize(800,600)).toSize();
-  QString path  = settings.value("workingPath", QDir::home().path()).toString();
+  resize(settings.value("size", QSize(800,600)).toSize());
+  setWorkingPath(settings.value("workingPath", QDir::homePath()).toString());
   m_displayCompilationLog = settings.value("displayLog", false).toBool();
+  setStatusbarDisplayed(settings.value("statusBar", true).toBool());
+  setToolBarDisplayed(settings.value("toolBar", true).toBool());
   settings.endGroup();
 
-  resize(size);
-  setWorkingPath(path);
   log()->setVisible(m_displayCompilationLog);
 
   view()->readSettings();
@@ -203,6 +201,8 @@ void CMainWindow::writeSettings()
   settings.beginGroup("general");
   settings.setValue("size", size());
   settings.setValue("displayLogs", m_displayCompilationLog);
+  settings.setValue("statusBar", isStatusbarDisplayed());
+  settings.setValue("toolBar", isToolBarDisplayed());
   settings.endGroup();
 
   view()->writeSettings();
@@ -367,17 +367,20 @@ void CMainWindow::createActions()
   m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/folder-remote")));
   connect(m_libraryDownloadAct, SIGNAL(triggered()), libraryDownload, SLOT(exec()));
 
+  QSettings settings;
+  settings.beginGroup("general");
   m_toolBarViewAct = new QAction(tr("ToolBar"),this);
   m_toolBarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
   m_toolBarViewAct->setCheckable(true);
-  m_toolBarViewAct->setChecked(m_isToolBarDisplayed);
+  m_toolBarViewAct->setChecked(settings.value("toolBar", true).toBool());
   connect(m_toolBarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolBarDisplayed(bool)));
 
   m_statusbarViewAct = new QAction(tr("Statusbar"),this);
   m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
   m_statusbarViewAct->setCheckable(true);
-  m_statusbarViewAct->setChecked(m_isStatusbarDisplayed);
+  m_statusbarViewAct->setChecked(settings.value("statusBar", true).toBool());
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
+  settings.endGroup();
 
   m_buildAct = new QAction(tr("Build PDF"), this);
   m_buildAct->setIcon(QIcon(":/icons/tango/scalable/mimetypes/document-export.svg"));
