@@ -328,31 +328,31 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-  m_newSongAct->setIcon(QIcon::fromTheme("document-new", QIcon(":/icons/tango/document-new")));
+  m_newSongAct->setIcon(QIcon::fromTheme("document-new", QIcon(":/icons/tango/32x32/actions/document-new")));
   m_newSongAct->setStatusTip(tr("Write a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
-  m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/folder-new")));
+  m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new")));
   m_newAct->setShortcut(QKeySequence::New);
   m_newAct->setStatusTip(tr("Create a new songbook"));
   connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
 
   m_openAct = new QAction(tr("Open..."), this);
-  m_openAct->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/tango/document-open")));
+  m_openAct->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/tango/32x32/actions/document-open")));
   m_openAct->setShortcut(QKeySequence::Open);
   m_openAct->setStatusTip(tr("Open a songbook"));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   m_saveAct = new QAction(tr("Save"), this);
   m_saveAct->setShortcut(QKeySequence::Save);
-  m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/document-save")));
+  m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save")));
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   m_saveAsAct = new QAction(tr("Save As..."), this);
   m_saveAsAct->setShortcut(QKeySequence::SaveAs);
-  m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/document-save-as")));
+  m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/32x32/actions/document-save-as")));
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
@@ -381,17 +381,17 @@ void CMainWindow::createActions()
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Select all"), this);
-  m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/select-all.png")));
+  m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
   m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
   connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
-  m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/unselect-all.png")));
+  m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
   m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
   connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
-  m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/invert-selection.png")));
+  m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
 

@@ -55,6 +55,9 @@
     <file>32x32/mimetypes/audio-x-generic.png</file>
     <file>32x32/places/folder-remote.png</file>
     <file>32x32/status/image-missing.png</file>
+    <file>48x48/songbook/select_all.png</file>
+    <file>48x48/songbook/select_none.png</file>
+    <file>48x48/songbook/select_invert.png</file>
     <file>scalable/actions/document-new.svg</file>
     <file>scalable/actions/document-open.svg</file>
     <file>scalable/actions/document-save-as.svg</file>

@@ -1,8 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
     <file>icons/songbook-client.png</file>
-    <file>icons/select-all.png</file>
-    <file>icons/unselect-all.png</file>
-    <file>icons/invert-selection.png</file>
  </qresource>
 </RCC>
