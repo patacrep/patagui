@@ -144,6 +144,18 @@ QString CSongbook::style() const
     QString("patacrep"):tmpl().replace(".tmpl","");
 }
 
+QPixmap* CSongbook::picture() const
+{
+  if(!m_parameters.value("picture"))
+    return new QPixmap;
+  QtProperty* property = m_parameters.find("picture").value();
+  QString basename = m_fileManager->value( property );
+  qDebug() << "name = " << m_fileManager->value(property);
+  QPixmap * px = new QPixmap(QString("%1/img/%2.jpg").arg(workingPath()).arg(basename));
+  QPixmap  fallback = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(128, 128);
+  return px->isNull()? &fallback:px;
+}
+
 QWidget * CSongbook::panel()
 {
   if (!m_panel)
@@ -663,12 +675,26 @@ SbError CSongbook::checkFilename() const
 
 void CSongbook::info()
 {
-  QDialog dialog;
-  QFormLayout* layout = new QFormLayout;
-  layout->addRow(tr("<b>Title:</b>"), new QLabel(title()));
-  layout->addRow(tr("<b>Authors:</b>"), new QLabel(authors()));
-  layout->addRow(tr("<b>Style:</b>"), new QLabel(style()));
-  layout->addRow(tr("<b>Number of songs:</b>"), new QLabel(QString::number(songs().size())));
-  dialog.setLayout(layout);
-  dialog.exec();
+  QDialog* dialog = new QDialog;
+  QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
+  connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
+
+  QWidget* form = new QWidget;
+  QFormLayout* formLayout = new QFormLayout;
+  formLayout->addRow(tr("<b>Title:</b>"), new QLabel(title()));
+  formLayout->addRow(tr("<b>Authors:</b>"), new QLabel(authors()));
+  formLayout->addRow(tr("<b>Style:</b>"), new QLabel(style()));
+  formLayout->addRow(tr("<b>Number of songs:</b>"), new QLabel(QString::number(songs().size())));
+  form->setLayout(formLayout);
+
+  QLabel* pic = new QLabel;
+  pic->setPixmap(picture()->scaled(256,256,Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+  QGridLayout* mainLayout = new QGridLayout;
+  mainLayout->addWidget(pic,0,0,1,1);
+  mainLayout->addWidget(form,0,1,1,1);
+  mainLayout->addWidget(buttons,1,0,1,2);
+
+  dialog->setLayout(mainLayout);
+  dialog->exec();
 }

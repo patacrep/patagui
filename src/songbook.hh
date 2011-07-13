@@ -68,6 +68,7 @@ public:
   QString title() const;
   QString authors() const;
   QString style() const;
+  QPixmap* picture() const;
   SbError checkFilename() const;
   
   QStringList songs();
