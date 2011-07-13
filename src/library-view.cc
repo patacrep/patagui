@@ -117,15 +117,18 @@ void CLibraryView::createActions()
 
 void CLibraryView::songInfo()
 {
-  QDialog dialog;
+  QDialog* dialog = new QDialog;
+  QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
+  connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
 
   CSongPanel songPanel(this);
   songPanel.setLibrary(model());
   songPanel.setCurrentIndex(currentIndex());
 
-  QLayout* layout = new QFormLayout;
+  QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(&songPanel);
+  layout->addWidget(buttons);
 
-  dialog.setLayout(layout);
-  dialog.exec();
+  dialog->setLayout(layout);
+  dialog->exec();
 }
