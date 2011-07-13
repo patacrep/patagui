@@ -19,13 +19,30 @@
 #include <QApplication>
 #include <QTextCodec>
 #include "main-window.hh"
+
+#ifdef __APPLE__
+#include "../macos_specific/sparkle/src/CocoaInitializer.h"
+#include "../macos_specific/sparkle/src/SparkleAutoUpdater.h"
+#endif
+
 //******************************************************************************
 int main( int argc, char * argv[] )
 {
-  //mac os, need to instanciate aplpication fist to get it's path
+  //mac os, need to instanciate application fist to get it's path
   QApplication app(argc, argv);
 
   Q_INIT_RESOURCE(songbook);
+  
+  // this is the code needed to check for update on startup on mac os
+  // we might plan to move it and also check for beta.
+  #ifdef Q_WS_MAC
+    AutoUpdater* updater;
+    CocoaInitializer initializer;
+    updater = new SparkleAutoUpdater("http://lmdb.jben.info/collatinus/appcast.xml");
+    if (updater) {
+        updater->checkForUpdates();
+    }
+  #endif
 
   static const char * GENERIC_ICON_TO_CHECK = "document-open";
   #ifdef __APPLE__

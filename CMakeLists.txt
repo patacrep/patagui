@@ -17,6 +17,13 @@ if( APPLE )
   #need to copy the icns (icon) file in the buils dir
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
     ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
+
+  #need to check a few things for autoupdate
+  # this will set the UPPERCASE Variable to the right path 
+  # for soft/Hard linknig of the framwork.
+  find_library(SPARKLE_FRAMEWORK Sparkle)# ${ADD_FRAMEWORK_PATH})
+  find_library(APPKIT_FRAMEWORK AppKit)# ${ADD_FRAMEWORK_PATH})
+
 endif( APPLE )
 
 #-------------------------------------------------------------------------------
@@ -100,7 +107,22 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/notification.hh
   src/songbook-model.hh
   )
-
+# add header for binding between C/C++ and objective-C
+# to be able to call Sparkle (Autoupdate) on Mac os
+if(APPLE)
+  LIST(
+    APPEND SONGBOOK_CLIENT_QT_HEADER
+    macos_specific/sparkle/src/AutoUpdater.h
+    macos_specific/sparkle/src/CocoaInitializer.h
+    macos_specific/sparkle/src/SparkleAutoUpdater.h
+    )
+  LIST(
+    APPEND SONGBOOK_CLIENT_SOURCES
+    macos_specific/sparkle/src/AutoUpdater.cpp
+    macos_specific/sparkle/src/CocoaInitializer.mm
+    macos_specific/sparkle/src/SparkleAutoUpdater.mm
+    )
+endif(APPLE)
 # ressources
 set(SONGBOOK_CLIENT_RCS songbook.qrc icons/macos/macos.qrc icons/tango/tango.qrc songbook.rc)
 
@@ -209,18 +231,21 @@ if( APPLE )
       COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       COMMAND cp ARGS ../lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
       )
-
+    # we need to add SPARKLE and APPKIT as '-framework'
+    target_link_libraries(${PROGNAME} ${APPKIT_FRAMEWORK})
+    target_link_libraries(${PROGNAME} ${SPARKLE_FRAMEWORK})
 else( APPLE )
-add_executable(${PROGNAME}
-  ${SONGBOOK_CLIENT_SOURCES} 
-  ${SONGBOOK_CLIENT_MOCS} 
-  ${SONGBOOK_CLIENT_RESSOURCES} 
-  ${COMPILED_TRANSLATIONS}
-  ${qtpropertyeditor_SRCS}
-  ${qtpropertyeditor_MOC}
-  ${qtpropertyeditor_RESOURCES}
-)
+    add_executable(${PROGNAME}
+      ${SONGBOOK_CLIENT_SOURCES} 
+      ${SONGBOOK_CLIENT_MOCS} 
+      ${SONGBOOK_CLIENT_RESSOURCES} 
+      ${COMPILED_TRANSLATIONS}
+      ${qtpropertyeditor_SRCS}
+      ${qtpropertyeditor_MOC}
+      ${qtpropertyeditor_RESOURCES}
+    )
 endif( APPLE )
+
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
 if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
