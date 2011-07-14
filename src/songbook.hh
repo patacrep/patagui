@@ -31,7 +31,7 @@
 class QWidget;
 class QComboBox;
 class QtGroupPropertyManager;
-class CMainWindow;
+//class CMainWindow;
 class CUnitPropertyManager;
 class CFilePropertyManager;
 
@@ -56,8 +56,6 @@ public slots:
   void load(const QString &filename);
   void setModified(bool modified);
 
-  void info();
-
 public:
   CSongbook();
   ~CSongbook();
@@ -69,6 +67,8 @@ public:
   QString authors() const;
   QString style() const;
   QPixmap* picture() const;
+  QStringList templates() const;
+  QtGroupBoxPropertyBrowser * propertyEditor() const;
   SbError checkFilename() const;
   
   QStringList songs();
@@ -81,7 +81,7 @@ signals:
   void wasModified(bool modified);
   void songsChanged();
 
-private slots:
+public slots:
   void changeTemplate(const QString &filename = QString());
 
 private:
@@ -92,11 +92,6 @@ private:
   QStringList m_songs;
 
   bool m_modified;
-
-  // panel widgets
-  QWidget *m_panel;
-
-  QComboBox *m_templateComboBox;
 
   QtVariantPropertyManager *m_propertyManager;
   CUnitPropertyManager *m_unitManager;

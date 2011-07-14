@@ -24,7 +24,6 @@
 #include <QSettings>
 #include <QWidget>
 #include <QLabel>
-#include <QComboBox>
 
 #include <QScriptEngine>
 #include <QScriptValue>
@@ -49,21 +48,23 @@ CSongbook::CSongbook()
   , m_tmpl()
   , m_songs()
   , m_modified()
-  , m_panel()
-  , m_templateComboBox()
   , m_propertyManager(new QtVariantPropertyManager())
   , m_unitManager(new CUnitPropertyManager())
   , m_fileManager(new CFilePropertyManager())
-  , m_propertyEditor()
+  , m_propertyEditor(new QtGroupBoxPropertyBrowser())
   , m_templates()
   , m_parameters()
   , m_groupManager()
   , m_advancedParameters()
-{}
+{
+  m_propertyEditor->setFactoryForManager(m_propertyManager,
+					 new QtVariantEditorFactory());
+  m_propertyEditor->setFactoryForManager(m_unitManager, new CUnitFactory());
+  m_propertyEditor->setFactoryForManager(m_fileManager, new CFileFactory());
+}
 
 CSongbook::~CSongbook()
 {
-  delete m_panel;
   delete m_propertyManager;
   delete m_unitManager;
 }
@@ -104,7 +105,6 @@ void CSongbook::setTmpl(const QString &tmpl)
   if (m_tmpl != tmpl && -1 != index)
     {
       m_tmpl = tmpl;
-      m_templateComboBox->setCurrentIndex(index);
       changeTemplate(tmpl);
       setModified(true);
     }
@@ -154,41 +154,6 @@ QPixmap* CSongbook::picture() const
   QPixmap * px = new QPixmap(QString("%1/img/%2.jpg").arg(workingPath()).arg(basename));
   QPixmap  fallback = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(128, 128);
   return px->isNull()? &fallback:px;
-}
-
-QWidget * CSongbook::panel()
-{
-  if (!m_panel)
-    {
-      m_panel = new QWidget;
-      m_panel->setMinimumWidth(300);
-
-      m_propertyEditor = new QtGroupBoxPropertyBrowser();
-      m_propertyEditor->setFactoryForManager(m_propertyManager,
-					     new QtVariantEditorFactory());
-
-      m_propertyEditor->setFactoryForManager(m_unitManager, new CUnitFactory());
-      m_propertyEditor->setFactoryForManager(m_fileManager, new CFileFactory());
-
-      QBoxLayout *templateLayout = new QHBoxLayout;
-      m_templateComboBox = new QComboBox(m_panel);
-      m_templateComboBox->addItems(m_templates);
-      m_templateComboBox->setCurrentIndex(m_templates.indexOf("patacrep.tmpl"));
-      connect(m_templateComboBox, SIGNAL(currentIndexChanged(const QString &)),
-              this, SLOT(setTmpl(const QString &)));
-      templateLayout->addWidget(new QLabel(tr("Template:")));
-      templateLayout->addWidget(m_templateComboBox);
-      templateLayout->setStretch(1,1);
-
-      changeTemplate();
-
-      QBoxLayout *mainLayout = new QVBoxLayout;
-      mainLayout->addLayout(templateLayout);
-      mainLayout->addWidget(m_propertyEditor,1);
-
-      m_panel->setLayout(mainLayout);
-    }
-  return m_panel;
 }
 
 void CSongbook::reset()
@@ -653,12 +618,6 @@ void CSongbook::setWorkingPath(const QString &path)
       m_workingPath = path;
       QDir templatesDirectory(QString("%1/templates").arg(workingPath()));
       m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
-      if (m_panel)
-	{
-	  m_templateComboBox->clear();
-	  m_templateComboBox->addItems(m_templates);
-	  m_templateComboBox->setCurrentIndex(m_templates.indexOf("patacrep.tmpl"));
-	}
     }
 }
 
@@ -673,28 +632,12 @@ SbError CSongbook::checkFilename() const
   return Invalid;
 }
 
-void CSongbook::info()
+QStringList CSongbook::templates() const
 {
-  QDialog* dialog = new QDialog;
-  QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
-  connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
+  return m_templates;
+}
 
-  QWidget* form = new QWidget;
-  QFormLayout* formLayout = new QFormLayout;
-  formLayout->addRow(tr("<b>Title:</b>"), new QLabel(title()));
-  formLayout->addRow(tr("<b>Authors:</b>"), new QLabel(authors()));
-  formLayout->addRow(tr("<b>Style:</b>"), new QLabel(style()));
-  formLayout->addRow(tr("<b>Number of songs:</b>"), new QLabel(QString::number(songs().size())));
-  form->setLayout(formLayout);
-
-  QLabel* pic = new QLabel;
-  pic->setPixmap(picture()->scaled(256,256,Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
-  QGridLayout* mainLayout = new QGridLayout;
-  mainLayout->addWidget(pic,0,0,1,1);
-  mainLayout->addWidget(form,0,1,1,1);
-  mainLayout->addWidget(buttons,1,0,1,2);
-
-  dialog->setLayout(mainLayout);
-  dialog->exec();
+QtGroupBoxPropertyBrowser * CSongbook::propertyEditor() const
+{
+  return m_propertyEditor;
 }
