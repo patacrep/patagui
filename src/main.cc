@@ -38,7 +38,7 @@ int main( int argc, char * argv[] )
   #ifdef Q_WS_MAC
     AutoUpdater* updater;
     CocoaInitializer initializer;
-    updater = new SparkleAutoUpdater("http://lmdb.jben.info/collatinus/appcast.xml");
+    updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
     if (updater) {
         updater->checkForUpdates();
     }
@@ -59,7 +59,7 @@ int main( int argc, char * argv[] )
       QIcon::setThemeName(FALLBACK_ICON_THEME);
     }
 
-  QString version = QString("0.5 (%1)")
+  QString version = QString("0.5.1 (%1)")
     .arg(QDate::currentDate().toString(Qt::SystemLocaleLongDate));
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");
