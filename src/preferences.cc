@@ -19,6 +19,7 @@
 
 #include "preferences.hh"
 #include "file-chooser.hh"
+#include "songbook.hh"
 
 #include <QtGui>
 
@@ -219,9 +220,23 @@ OptionsPage::OptionsPage(QWidget *parent)
   workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
+  // songbook template
+  QGroupBox *songbookTemplateGroupBox
+    = new QGroupBox(tr("Songbook Template"));
+
+  CSongbook* songbook = new CSongbook;
+  songbook->setWorkingPath(m_workingPath->path());
+  connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
+	  songbook, SLOT(setWorkingPath(const QString&)));
+
+  QLayout *songbookTemplateLayout = new QVBoxLayout;
+  songbookTemplateLayout->addWidget(songbook->panel());
+  songbookTemplateGroupBox->setLayout(songbookTemplateLayout);
+
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
+  mainLayout->addWidget(songbookTemplateGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 }
