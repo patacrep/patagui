@@ -39,6 +39,7 @@
 #include "tab-widget.hh"
 #include "library-download.hh"
 #include "song-panel.hh"
+#include "songbook-panel.hh"
 #include "notification.hh"
 
 using namespace SbUtils;
@@ -155,7 +156,7 @@ CMainWindow::CMainWindow()
   //ensure that first selection is empty
   //to avoid infinite loop in library()->fetchmore()
   selectionModel()->clearSelection();
-  songbook()->panel();
+  //songbook()->panel();
 
   readSettings();
 }
@@ -207,31 +208,6 @@ void CMainWindow::writeSettings()
   settings.endGroup();
 
   view()->writeSettings();
-}
-
-void CMainWindow::templateSettings()
-{
-  QDialog *dialog = new QDialog;
-  dialog->setWindowTitle(tr("Songbook settings"));
-  QVBoxLayout *layout = new QVBoxLayout;
-
-  QScrollArea *songbookScrollArea = new QScrollArea();
-  songbookScrollArea->setMinimumWidth(400);
-  songbookScrollArea->setWidget(songbook()->panel());
-  songbookScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
-  connect( buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()) );
-
-  QPushButton *button =buttonBox->addButton(QDialogButtonBox::Reset);
-  connect( button, SIGNAL(clicked()), songbook(), SLOT(reset()) );
-
-  connect( dialog, SIGNAL(accepted()), this, SLOT(updateSongbookLabels()) );
-
-  layout->addWidget(songbookScrollArea);
-  layout->addWidget(buttonBox);
-  dialog->setLayout(layout);
-  dialog->show();
 }
 
 void CMainWindow::filterChanged(const QString &filter)
@@ -291,7 +267,7 @@ void CMainWindow::createActions()
 
   m_sbInfoAct = new QAction(tr("Properties"), this);
   m_sbInfoAct->setStatusTip(tr("Show the properties of the selected songbook"));
-  connect(m_sbInfoAct, SIGNAL(triggered()), songbook(), SLOT(info()));
+  connect(m_sbInfoAct, SIGNAL(triggered()), this, SLOT(songbookInfo()));
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
@@ -397,6 +373,20 @@ void CMainWindow::createActions()
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), builder, SLOT(action()));
 
+}
+
+void CMainWindow::songbookInfo()
+{
+  QDialog* dialog = new QDialog;
+  QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
+  connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
+
+  QVBoxLayout * layout = new QVBoxLayout;
+  layout->addWidget(new CSongbookPanel(songbook()));
+  layout->addWidget(buttons);
+  dialog->setLayout(layout);
+
+  dialog->exec();
 }
 
 void CMainWindow::setToolBarDisplayed(bool value)
@@ -530,7 +520,7 @@ void CMainWindow::createToolBar()
 
 void CMainWindow::preferences()
 {
-  ConfigDialog dialog;
+  ConfigDialog dialog(this);
   dialog.exec();
   readSettings();
 }

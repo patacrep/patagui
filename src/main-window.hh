@@ -64,8 +64,7 @@ public:
 
 public slots:
   void setWorkingPath(const QString &path);
-  void templateSettings();
-
+  
 signals:
   void workingPathChanged(const QString &path);
 
@@ -81,6 +80,7 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
+  void songbookInfo();
 
   //library
   void newSong();

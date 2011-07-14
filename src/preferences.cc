@@ -19,7 +19,8 @@
 
 #include "preferences.hh"
 #include "file-chooser.hh"
-#include "songbook.hh"
+#include "songbook-panel.hh"
+#include "main-window.hh"
 
 #include <QtGui>
 
@@ -27,8 +28,9 @@
 
 // Config Dialog
 
-ConfigDialog::ConfigDialog()
-  : QDialog()
+ConfigDialog::ConfigDialog(CMainWindow* parent)
+  : QDialog(parent)
+  , m_parent(parent)
 {
   m_contentsWidget = new QListWidget;
   m_contentsWidget->setViewMode(QListView::IconMode);
@@ -38,9 +40,9 @@ ConfigDialog::ConfigDialog()
   m_contentsWidget->setSpacing(12);
 
   m_pagesWidget = new QStackedWidget;
-  m_pagesWidget->addWidget(new OptionsPage);
-  m_pagesWidget->addWidget(new DisplayPage);
-  m_pagesWidget->addWidget(new NetworkPage);
+  m_pagesWidget->addWidget(new OptionsPage(this));
+  m_pagesWidget->addWidget(new DisplayPage(this));
+  m_pagesWidget->addWidget(new NetworkPage(this));
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
 
@@ -65,6 +67,11 @@ ConfigDialog::ConfigDialog()
   setLayout(mainLayout);
 
   setWindowTitle(tr("Preferences"));
+}
+
+CMainWindow* ConfigDialog::parent() const
+{
+  return m_parent;
 }
 
 void ConfigDialog::createIcons()
@@ -192,8 +199,9 @@ void DisplayPage::closeEvent(QCloseEvent *event)
 
 // Option Page
 
-OptionsPage::OptionsPage(QWidget *parent)
-  : QWidget(parent)
+OptionsPage::OptionsPage(ConfigDialog *p)
+  : QWidget(p)
+  , m_parent(p)
   , m_workingPath(0)
   , m_workingPathValid(0)
 {
@@ -221,16 +229,24 @@ OptionsPage::OptionsPage(QWidget *parent)
   workingPathGroupBox->setLayout(workingPathLayout);
 
   // songbook template
-  QGroupBox *songbookTemplateGroupBox
-    = new QGroupBox(tr("Songbook Template"));
+  QWidget* sbSettings = new QWidget;
+  
+  CSongbookPanel* panel = new CSongbookPanel(parent()->parent()->songbook());
+  
+  QDialogButtonBox * buttons = new QDialogButtonBox;
+  buttons->addButton(new QPushButton(tr("Change settings")), QDialogButtonBox::AcceptRole);
+  connect(buttons, SIGNAL(accepted()), panel, SLOT(settingsDialog()));
 
-  CSongbook* songbook = new CSongbook;
-  songbook->setWorkingPath(m_workingPath->path());
-  connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
-	  songbook, SLOT(setWorkingPath(const QString&)));
+  QVBoxLayout * layout = new QVBoxLayout;
+  layout->addWidget(panel);
+  layout->addWidget(buttons);
+  sbSettings->setLayout(layout);
+
+  QGroupBox *songbookTemplateGroupBox
+    = new QGroupBox(tr("Songbook PDF"));
 
   QLayout *songbookTemplateLayout = new QVBoxLayout;
-  songbookTemplateLayout->addWidget(songbook->panel());
+  songbookTemplateLayout->addWidget(sbSettings);
   songbookTemplateGroupBox->setLayout(songbookTemplateLayout);
 
   // main layout
@@ -239,6 +255,11 @@ OptionsPage::OptionsPage(QWidget *parent)
   mainLayout->addWidget(songbookTemplateGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
+}
+
+ConfigDialog* OptionsPage::parent() const
+{
+  return m_parent;
 }
 
 void OptionsPage::readSettings()
