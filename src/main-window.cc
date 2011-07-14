@@ -700,7 +700,7 @@ void CMainWindow::saveAs()
 void CMainWindow::updateSongsList()
 {
   QStringList songlist = getSelectedSongs();
-  QString path = QString("%1/songs/").arg(workingPath()).arg(QDir::separator());
+  QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(path, QString());
 #ifdef Q_WS_WIN
   songlist.replaceInStrings("\\", "/");
