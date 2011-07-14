@@ -220,16 +220,11 @@ void CMainWindow::templateSettings()
   songbookScrollArea->setWidget(songbook()->panel());
   songbookScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-  QDialogButtonBox *buttonBox = new QDialogButtonBox;
+  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
+  connect( buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()) );
 
-  QPushButton *button = new QPushButton(tr("Reset"));
+  QPushButton *button =buttonBox->addButton(QDialogButtonBox::Reset);
   connect( button, SIGNAL(clicked()), songbook(), SLOT(reset()) );
-  buttonBox->addButton(button, QDialogButtonBox::ResetRole);
-
-  button = new QPushButton(tr("Ok"));
-  button->setDefault(true);
-  connect( button, SIGNAL(clicked()), dialog, SLOT(accept()) );
-  buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 
   connect( dialog, SIGNAL(accepted()), this, SLOT(updateSongbookLabels()) );
 
