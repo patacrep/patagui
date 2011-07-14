@@ -621,17 +621,6 @@ void CSongbook::setWorkingPath(const QString &path)
     }
 }
 
-SbError CSongbook::checkFilename() const
-{
-  if (!filename().startsWith(workingPath()))
-    return WrongDirectory;
-  
-  if (!filename().endsWith(QString(".sb")))
-    return WrongExtension;
-  
-  return Invalid;
-}
-
 QStringList CSongbook::templates() const
 {
   return m_templates;

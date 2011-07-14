@@ -622,18 +622,10 @@ void CMainWindow::build()
     }
 
   save(true);
-
-  switch(songbook()->checkFilename())
-    {
-    case WrongDirectory:
-      statusBar()->showMessage(tr("The songbook is not in the working directory. Build aborted."));
-      return;
-    case WrongExtension:
-      statusBar()->showMessage(tr("Wrong filename: songbook does not have \".sb\" extension. Build aborted."));
-      return;
-    default:
-      break;
-    }
+  
+  if(!QFile(songbook()->filename()).exists())
+    statusBar()->showMessage(QString(tr("The songbook file %1 is invalid. Build aborted."))
+			     .arg(songbook()->filename()));
 
   QString basename = QFileInfo(songbook()->filename()).baseName();
   QString target = QString("%1.pdf").arg(basename);

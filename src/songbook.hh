@@ -69,7 +69,6 @@ public:
   QPixmap* picture() const;
   QStringList templates() const;
   QtGroupBoxPropertyBrowser * propertyEditor() const;
-  SbError checkFilename() const;
   
   QStringList songs();
 
