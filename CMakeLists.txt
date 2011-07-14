@@ -69,6 +69,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/tab-widget.cc
   src/library-download.cc
   src/song-panel.cc
+  src/songbook-panel.cc
   src/notification.cc
   src/songbook-model.cc
   )
@@ -99,6 +100,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/tab-widget.hh
   src/library-download.hh
   src/song-panel.hh
+  src/songbook-panel.hh
   src/notification.hh
   src/songbook-model.hh
   )
