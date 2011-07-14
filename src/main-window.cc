@@ -53,6 +53,7 @@ CMainWindow::CMainWindow()
   , m_progressBar(new QProgressBar(this))
   , m_noDataInfo(NULL)
   , m_updateAvailable(NULL)
+  , m_infoSelection(new QLabel)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook-client.png"));
@@ -146,14 +147,14 @@ CMainWindow::CMainWindow()
   progressBar()->setTextVisible(false);
   progressBar()->setRange(0, 0);
   progressBar()->hide();
+  statusBar()->addPermanentWidget(m_infoSelection);
   statusBar()->addPermanentWidget(progressBar());
 
   updateTitle(songbook()->filename());
 
-  //  while (library()->canFetchMore())
-  //library()->fetchMore();
-
-  selectionChanged();
+  //ensure that first selection is empty
+  //to avoid infinite loop in library()->fetchmore()
+  selectionModel()->clearSelection();
   songbook()->panel();
 
   readSettings();
@@ -252,6 +253,10 @@ void CMainWindow::selectionChanged()
 
 void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
 {
+  m_infoSelection->setText(QString(tr("Selection: %1/%2"))
+			   .arg(selectionModel()->selectedRows().size())
+			   .arg(library()->rowCount()));
+
   if(library()->rowCount()==0)
     m_noDataInfo->show();
   else

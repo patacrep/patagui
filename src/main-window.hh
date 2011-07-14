@@ -145,6 +145,7 @@ private:
   QProgressBar* m_progressBar;
   CNotify* m_noDataInfo;
   CNotify* m_updateAvailable;
+  QLabel* m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
   QFileSystemWatcher* m_watcher;
   QTextEdit* m_log;
