@@ -20,7 +20,6 @@
 #include <QtSql>
 #include <QtAlgorithms>
 #include <QDebug>
-#include <QFileSystemWatcher>
 
 #include "utils/utils.hh"
 #include "label.hh"
@@ -106,16 +105,6 @@ CMainWindow::CMainWindow()
     (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
 		"Do you want to download the latest songs library?").arg(workingPath())));
   m_noDataInfo->addAction(m_libraryDownloadAct);
-
-  m_watcher = new QFileSystemWatcher;
-  if(!workingPath().isEmpty() && QDir(QString("%1/songs").arg(workingPath())).exists() )
-     monitorDirectories(QString("%1/songs").arg(workingPath()));
-
-  connect(this, SIGNAL(workingPathChanged(const QString&)),
-          this, SLOT(monitorDirectories(const QString&)));
-
-  connect(m_watcher, SIGNAL(directoryChanged(const QString &)),
-          this, SLOT(updateNotification(const QString &)));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
@@ -813,7 +802,6 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 
 void CMainWindow::newSong()
 {
-  watcher()->blockSignals(true);
   CDialogNewSong *dialog = new CDialogNewSong(this);
 
   if (dialog->exec() == QDialog::Accepted)
@@ -893,7 +881,6 @@ void CMainWindow::closeTab(int index)
 	}
       m_editors.remove(editor->path());
       m_mainWidget->closeTab(index);
-      watcher()->blockSignals(false);
     }
 }
 
@@ -946,24 +933,6 @@ void CMainWindow::disconnectDatabase()
   QSqlDatabase::removeDatabase(QString());
 }
 
-void CMainWindow::monitorDirectories(const QString& path)
-{
-  QDir directory(path);
-  if (path.isEmpty() || !directory.exists())
-    return;
-
-  if(!m_watcher->directories().isEmpty())
-    m_watcher->removePaths(m_watcher->directories());
-
-  QDirIterator it(path, QDir::Dirs | QDir::NoDotAndDotDot,
-		  QDirIterator::Subdirectories);
-
-  while(it.hasNext())
-    m_watcher->addPath(it.next());
-
-  m_watcher->addPath(path);
-}
-
 void CMainWindow::updateNotification(const QString& path)
 {
   if(m_updateAvailable)
@@ -975,9 +944,4 @@ void CMainWindow::updateNotification(const QString& path)
 		"  %1 <br/>"
 		"Do you want to update the library to reflect these changes?")).arg(path));
   m_updateAvailable->addAction(m_libraryUpdateAct);
-}
-
-QFileSystemWatcher * CMainWindow::watcher() const
-{
-  return m_watcher;
 }

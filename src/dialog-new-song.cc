@@ -176,10 +176,7 @@ void CDialogNewSong::addSong()
   QDir dir(dirpath);
 
   if (!dir.exists())
-    {
-      dir.mkpath(dirpath);
-      parent()->watcher()->addPath(dirpath);
-    }
+    dir.mkpath(dirpath);
 
   //handle album art
   if(SbUtils::copyFile(cover(), dirpath) && !album().isEmpty() )

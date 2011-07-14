@@ -40,7 +40,6 @@ class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
 class CNotify;
-class QFileSystemWatcher;
 
 /** \class CMainWindow "main-window.hh"
  * \brief CMainWindow is the base class of the application
@@ -60,7 +59,6 @@ public:
   CLibrary * library() const;
   CSongbook * songbook() const;
   const QString workingPath();
-  QFileSystemWatcher* watcher() const;
 
 public slots:
   void setWorkingPath(const QString &path);
@@ -114,8 +112,6 @@ private slots:
   void updateTitle(const QString &filename);
   void switchToolBar(QToolBar *toolBar);
 
-  void monitorDirectories(const QString &);
-
 private:
   void readSettings();
   void writeSettings();
@@ -147,7 +143,6 @@ private:
   CNotify* m_updateAvailable;
   QLabel* m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
-  QFileSystemWatcher* m_watcher;
   QTextEdit* m_log;
 
   // Settings
