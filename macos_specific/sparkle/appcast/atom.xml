@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"> 
+<channel> 
+    <title>Songbook Client!</title> 
+    <link>http://songbookclient.lmdb.eu/</link> 
+    <language>fr</language> 
+    <description>LaTeX Songbook for Guitar tabs</description> 
+	<atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" type="application/rss+xml" href="http://lmdb.jben.info/feed/atom.xml" /> 
+    <item> 
+        <title>Songbook 5.1 (mac)</title> 
+            <sparkle:releaseNotesLink> 
+                http://songbookclient.lmdb.eu/5.1.mac.html
+            </sparkle:releaseNotesLink>
+        <enclosure url="dmgurl" sparkle:version="5.1" length="in octet" type="application/octet-stream" sparkle:dsaSignature="" /> 
+		<enclosure url="http://songbookclient.lmdb.eu/Songbook-Client-0.5.1.dmg" sparkle:version="0.5.1" length="55632" type="application/octet-stream" sparkle:dsaSignature="MEUCIClpGbzcsWV8EQeWc2zeALunNI9121WvLo6fDivL3kXnAiEAnTVH1eaIxt+9 w62LLlhAoeOUbfypTmf/g7f6wUthZVY=" />
+    </item> 
+</channel> 
+</rss>
+
