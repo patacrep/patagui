@@ -1,3 +1,4 @@
 /lang/*.qm
 build
 buildpackage.sh
+macos_specific/*priv*
