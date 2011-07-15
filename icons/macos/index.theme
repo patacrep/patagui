@@ -20,7 +20,7 @@ PanelDefault=32
 PanelSizes=16,22,32,48,64,72,96,128
 
 # Directory list
-Directories=16x16/actions,16x16/categories,16x16/mimetypes,16x16/places,16x16/status,22x22/actions,22x22/categories,22x22/mimetypes,22x22/places,22x22/status,24x24/actions,24x24/categories,24x24/mimetypes,24x24/places,24x24/status,32x32/actions,32x32/categories,32x32/mimetypes,32x32/places,32x32/status,scalable/actions,scalable/categories,scalable/mimetypes,scalable/places,scalable/status,scalable/songbook
+Directories=16x16/actions,16x16/categories,16x16/mimetypes,16x16/places,16x16/status,22x22/actions,22x22/categories,22x22/mimetypes,22x22/places,22x22/status,24x24/actions,24x24/categories,24x24/mimetypes,24x24/places,24x24/status,32x32/actions,32x32/categories,32x32/mimetypes,32x32/places,32x32/status,scalable/actions,scalable/categories,scalable/mimetypes,scalable/places,scalable/status,scalable/songbook,48x48/songbook,128x128/status
 
 
 [16x16/actions]
@@ -120,6 +120,16 @@ Type=Fixed
 
 [32x32/status]
 Size=32
+Context=Status
+Type=Fixed
+
+[48x48/status]
+Size=48
+Context=Status
+Type=Fixed
+
+[128x128/status]
+Size=128
 Context=Status
 Type=Fixed
 

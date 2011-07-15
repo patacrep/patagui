@@ -122,6 +122,9 @@ Type=Fixed
 Size=48
 Context=Songbook
 Type=Fixed
+Type=Scalable
+MinSize=22
+MaxSize=56
 
 [32x32/status]
 Size=32

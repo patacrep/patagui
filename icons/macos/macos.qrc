@@ -74,11 +74,15 @@
     <file>scalable/mimetypes/document-export.svg</file>
     <file>scalable/places/folder-remote.svg</file>
     <file>scalable/status/image-missing.svg</file>
+    <file>128x128/status/image-missing.png</file>
     <file>scalable/places/flag-fr.svg</file>
     <file>scalable/places/flag-es.svg</file>
     <file>scalable/places/flag-en.svg</file>
     <file>scalable/songbook/select_invert.svg</file>
     <file>scalable/songbook/select_none.svg</file>
     <file>scalable/songbook/select_all.svg</file>
+    <file>48x48/songbook/select_invert.png</file>
+    <file>48x48/songbook/select_none.png</file>
+    <file>48x48/songbook/select_all.png</file>
   </qresource>
 </RCC>
