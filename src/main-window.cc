@@ -443,7 +443,7 @@ void CMainWindow::createActions()
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
 
   m_buildAct = new QAction(tr("Build PDF"), this);
-  m_buildAct->setIcon(QIcon(":/icons/tango/scalable/mimetypes/document-export.svg"));
+  m_buildAct->setIcon(QIcon::fromTheme("document-export",QIcon(":/icons/tango/48x48/mimetypes/document-export.png")));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
