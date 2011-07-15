@@ -15,6 +15,9 @@ Notes:
 
 EOF
 }
+
+OPENSSL=/usr/bin/openssl
+echo "using" $(${OPENSSL} version)
 VERBOSE=0
 QUIET=0
 DMG=""
@@ -71,8 +74,8 @@ done
 #fi
 if [ $CHECK == 1 ] && [ -e $PUB_KEY ];
 then
-  $(echo $VSIG | openssl enc -d -base64 > uusig.sig)
-  echo $(openssl dgst -sha1 -binary  $DMG | openssl dgst -dss1 -verify $PUB_KEY -signature uusig.sig )
+  $(echo $VSIG | ${OPENSSL} enc -d -base64 > uusig.sig)
+  echo $(${OPENSSL} dgst -sha1 -binary  $DMG | ${OPENSSL} dgst -dss1 -verify $PUB_KEY -signature uusig.sig )
   exit 
 fi
 
@@ -112,16 +115,16 @@ if [[ $VERBOSE == 0 ]];
 then 
 	echo $SIG
 	#echo $("$SIGNUTIL" "$DMG" "$PRIV_KEY");
-	#XX=$(openssl dgst -sha1 -binary $DMG | openssl dgst -dss1 -sign $PRIV_KEY | openssl enc -base64)
+	#XX=$(${OPENSSL} dgst -sha1 -binary $DMG | ${OPENSSL} dgst -dss1 -sign $PRIV_KEY | ${OPENSSL} enc -base64)
 	#echo $XX
-	#echo $(echo $XX|openssl enc -base64|openssl enc -d -base64)
+	#echo $(echo $XX|${OPENSSL} enc -base64|${OPENSSL} enc -d -base64)
 	#echo $XX
-	#$(echo $XX |openssl enc -d -base64 > uud64.sig)
-	#$(echo $SIG |openssl enc -d -base64 > uud63.sig)
-	#echo $(openssl dgst -sha1 -binary  $DMG | openssl dgst -dss1 -verify MacOS/dsa_pub_collatinus.pem -signature uud64.sig )
-	#echo $(openssl dgst -sha1 -binary  $DMG | openssl dgst -dss1 -verify MacOS/dsa_pub_collatinus.pem -signature uud63.sig )
+	#$(echo $XX |${OPENSSL} enc -d -base64 > uud64.sig)
+	#$(echo $SIG |${OPENSSL} enc -d -base64 > uud63.sig)
+	#echo $(${OPENSSL} dgst -sha1 -binary  $DMG | ${OPENSSL} dgst -dss1 -verify MacOS/dsa_pub_collatinus.pem -signature uud64.sig )
+	#echo $(${OPENSSL} dgst -sha1 -binary  $DMG | ${OPENSSL} dgst -dss1 -verify MacOS/dsa_pub_collatinus.pem -signature uud63.sig )
 	
-	#echo $(openssl dgst -sha1 -binary $DMG | openssl dgst -dss1 -sign $PRIV_KEY)
+	#echo $(${OPENSSL} dgst -sha1 -binary $DMG | ${OPENSSL} dgst -dss1 -sign $PRIV_KEY)
 else
 
 	SIZE=$(du "$DMG"|cut -f 1)
