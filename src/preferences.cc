@@ -35,6 +35,7 @@ ConfigDialog::ConfigDialog()
   m_contentsWidget->setMovement(QListView::Static);
   m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
+  m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
 
   m_pagesWidget = new QStackedWidget;
   m_pagesWidget->addWidget(new OptionsPage);
@@ -58,7 +59,6 @@ ConfigDialog::ConfigDialog()
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addLayout(horizontalLayout);
-  mainLayout->addStretch(1);
   mainLayout->addSpacing(12);
   mainLayout->addLayout(buttonsLayout);
   setLayout(mainLayout);

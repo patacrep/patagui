@@ -1,0 +1,16 @@
+Instruction pour le buil du songbook-vlient sur mac.
+
+ ne pas ou blier de faire une fois la compilation réussie.
+	changer le numero de version 
+	"macdeployqt Songbook-client.app" pour installer les framework Qt
+	Copier le framework sparkle à la main (/Library/Framework)
+	Vérifier la présenc de la clé publique dans contents ressources
+
+	...creer le dmg..
+
+	monter le dmg, 
+	verifier le background
+
+	generer la signture, la mettre dans le fichier appcast, uploader le tout
+
+	
