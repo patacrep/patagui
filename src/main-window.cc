@@ -226,8 +226,9 @@ void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-  m_newSongAct->setIcon(QIcon::fromTheme("document-new", QIcon(":/icons/tango/32x32/actions/document-new")));
+  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/document-new")));
   m_newSongAct->setStatusTip(tr("Write a new song"));
+  m_newSongAct->setIconText(tr("Add"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
@@ -451,9 +452,12 @@ void CMainWindow::createMenus()
 
 void CMainWindow::createToolBar()
 {
-  m_toolBar = new QToolBar(tr("Library tools"), this);
-  m_toolBar->setMovable(false);
-  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+  QToolBar* tool = new QToolBar(tr("Song tools"), this);
+  tool->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  tool->addAction(m_newSongAct);
+  tool->addAction(m_buildAct);
+  tool->addSeparator();
+  addToolBar(tool);
 
   // filter related objects
   QSqlQueryModel *completionModel = new QSqlQueryModel;
@@ -480,28 +484,19 @@ void CMainWindow::createToolBar()
   QWidget* stretch = new QWidget;
   stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-  // songbook actions
-  m_toolBar->addAction(m_newAct);
-  m_toolBar->addAction(m_openAct);
-  m_toolBar->addAction(m_saveAct);
-  m_toolBar->addAction(m_saveAsAct);
-  m_toolBar->addSeparator();
-  // library actions
-  m_toolBar->addAction(m_buildAct);
-  m_toolBar->addAction(m_newSongAct);
-  m_toolBar->addSeparator();
+  m_toolBar = new QToolBar(tr("Library tools"), this);
+  m_toolBar->setMovable(false);
+  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
   // selection actions
   m_toolBar->addAction(m_selectAllAct);
   m_toolBar->addAction(m_unselectAllAct);
   m_toolBar->addAction(m_invertSelectionAct);
-  m_toolBar->addSeparator();
   // add toolbar spacing
   m_toolBar->addWidget(stretch);
   // add toolbar filter
   m_toolBar->addWidget(m_filterLineEdit);
 
   m_currentToolBar = m_toolBar;
-
   addToolBar(m_toolBar);
   setUnifiedTitleAndToolBarOnMac(true);
 }
