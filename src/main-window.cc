@@ -301,18 +301,21 @@ void CMainWindow::createActions()
   m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
   m_selectEnglishAct->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")));
   m_selectEnglishAct->setCheckable(true);
+  m_selectEnglishAct->setIconVisibleInMenu(true);
   connect(m_selectEnglishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectFrenchAct = new QAction(tr("french"), this);
   m_selectFrenchAct->setStatusTip(tr("Select/Unselect songs in french"));
   m_selectFrenchAct->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")));
   m_selectFrenchAct->setCheckable(true);
+  m_selectFrenchAct->setIconVisibleInMenu(true);
   connect(m_selectFrenchAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_selectSpanishAct = new QAction(tr("spanish"), this);
   m_selectSpanishAct->setStatusTip(tr("Select/Unselect songs in spanish"));
   m_selectSpanishAct->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")));
   m_selectSpanishAct->setCheckable(true);
+  m_selectSpanishAct->setIconVisibleInMenu(true);
   connect(m_selectSpanishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
@@ -470,6 +473,9 @@ void CMainWindow::createToolBar()
 
   m_filterLineEdit = new CFilterLineEdit;
   m_filterLineEdit->setCompleter(completer);
+  m_filterLineEdit->addAction(m_selectEnglishAct);
+  m_filterLineEdit->addAction(m_selectFrenchAct);
+  m_filterLineEdit->addAction(m_selectSpanishAct);
 
   connect(m_filterLineEdit, SIGNAL(textChanged(const QString&)),
 	  this, SLOT(filterChanged(const QString&)));
@@ -492,10 +498,6 @@ void CMainWindow::createToolBar()
   m_toolBar->addAction(m_unselectAllAct);
   m_toolBar->addAction(m_invertSelectionAct);
   m_toolBar->addSeparator();
-  // language selection actions
-  m_toolBar->addAction(m_selectEnglishAct);
-  m_toolBar->addAction(m_selectFrenchAct);
-  m_toolBar->addAction(m_selectSpanishAct);
   // add toolbar spacing
   m_toolBar->addWidget(stretch);
   // add toolbar filter
