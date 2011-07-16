@@ -300,23 +300,20 @@ void CMainWindow::createActions()
   m_selectEnglishAct = new QAction(tr("english"), this);
   m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
   m_selectEnglishAct->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")));
-  m_selectEnglishAct->setCheckable(true);
   m_selectEnglishAct->setIconVisibleInMenu(true);
-  connect(m_selectEnglishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
+  connect(m_selectEnglishAct, SIGNAL(triggered()), SLOT(selectLanguage()));
 
   m_selectFrenchAct = new QAction(tr("french"), this);
   m_selectFrenchAct->setStatusTip(tr("Select/Unselect songs in french"));
   m_selectFrenchAct->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")));
-  m_selectFrenchAct->setCheckable(true);
   m_selectFrenchAct->setIconVisibleInMenu(true);
-  connect(m_selectFrenchAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
+  connect(m_selectFrenchAct, SIGNAL(triggered()), SLOT(selectLanguage()));
 
   m_selectSpanishAct = new QAction(tr("spanish"), this);
   m_selectSpanishAct->setStatusTip(tr("Select/Unselect songs in spanish"));
   m_selectSpanishAct->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")));
-  m_selectSpanishAct->setCheckable(true);
   m_selectSpanishAct->setIconVisibleInMenu(true);
-  connect(m_selectSpanishAct, SIGNAL(triggered(bool)), SLOT(selectLanguage(bool)));
+  connect(m_selectSpanishAct, SIGNAL(triggered()), SLOT(selectLanguage()));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
   m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
@@ -564,21 +561,21 @@ void CMainWindow::invertSelection()
     }
 }
 
-void CMainWindow::selectLanguage(bool selection)
+void CMainWindow::selectLanguage()
 {
   QString language = qobject_cast< QAction* >(QObject::sender())->text();
-  QList<QModelIndex> indexes;
-  QModelIndex index;
+  QRegExp expression = QRegExp(language, Qt::CaseSensitive, QRegExp::FixedString);
 
-  indexes = m_proxyModel->match(m_proxyModel->index(0,6), Qt::ToolTipRole, language, -1);
-
-  QItemSelectionModel::SelectionFlags flag = (selection ? QItemSelectionModel::Select : QItemSelectionModel::Deselect) | QItemSelectionModel::Rows;
-
-  foreach(index, indexes)
-    {
-      selectionModel()->select(index, flag);
-    }
+  //Switch proxy settings to language filtering
+  static_cast<CSongSortFilterProxyModel*>(m_proxyModel)->setFilterMode(CSongSortFilterProxyModel::LanguageMode);
+  m_proxyModel->setFilterKeyColumn(6);
+  m_proxyModel->setFilterRole(Qt::ToolTipRole);
+  m_proxyModel->setFilterRegExp(expression);
   view()->setFocus();
+
+  //Restore proxy settings to standard filtering
+  m_proxyModel->setFilterKeyColumn(-1);
+  static_cast<CSongSortFilterProxyModel*>(m_proxyModel)->setFilterMode(CSongSortFilterProxyModel::StandardMode);
 }
 
 QStringList CMainWindow::getSelectedSongs()

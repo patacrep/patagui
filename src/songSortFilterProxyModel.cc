@@ -19,6 +19,7 @@
 
 CSongSortFilterProxyModel::CSongSortFilterProxyModel(QObject *parent)
   : QSortFilterProxyModel(parent)
+  , m_filterMode(CSongSortFilterProxyModel::StandardMode)
 {}
 
 CSongSortFilterProxyModel::~CSongSortFilterProxyModel()
@@ -26,11 +27,29 @@ CSongSortFilterProxyModel::~CSongSortFilterProxyModel()
 
 bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-  QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
-  QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
-  QModelIndex index2 = sourceModel()->index(sourceRow, 4, sourceParent);
-  
-  return sourceModel()->data(index0).toString().contains(filterRegExp())
-    || sourceModel()->data(index1).toString().contains(filterRegExp())
-    || sourceModel()->data(index2).toString().contains(filterRegExp());
+  if(filterMode() == CSongSortFilterProxyModel::StandardMode)
+    {
+      QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+      QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
+      QModelIndex index2 = sourceModel()->index(sourceRow, 4, sourceParent);
+
+      return sourceModel()->data(index0).toString().contains(filterRegExp())
+	|| sourceModel()->data(index1).toString().contains(filterRegExp())
+	|| sourceModel()->data(index2).toString().contains(filterRegExp());
+    }
+  else if(filterMode() == CSongSortFilterProxyModel::LanguageMode)
+    {
+      return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
+    }
+  return false;
+}
+
+CSongSortFilterProxyModel::FilterMode CSongSortFilterProxyModel::filterMode() const
+{
+  return m_filterMode;
+}
+
+void CSongSortFilterProxyModel::setFilterMode(CSongSortFilterProxyModel::FilterMode mode)
+{
+  m_filterMode = mode;
 }

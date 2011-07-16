@@ -93,7 +93,7 @@ private slots:
   void selectAll();
   void unselectAll();
   void invertSelection();
-  void selectLanguage(bool);
+  void selectLanguage();
   void updateSongsList();
   void filterChanged(const QString &filter);
   void selectionChanged();
