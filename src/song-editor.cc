@@ -60,8 +60,6 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(save()));
   m_toolBar->addAction(action);
   
-  m_toolBar->addSeparator();
-  
   //copy paste
   action = new QAction(tr("Cut"), this);
   action->setShortcut(QKeySequence::Cut);

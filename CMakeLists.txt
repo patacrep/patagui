@@ -6,9 +6,9 @@ if( APPLE )
   set( MACOSX_BUNDLE_ICON_FILE livre.icns )
   set( CPACK_BUNDLE_NAME Sonbook Client With Space)
   #versions
-  set( MACOSX_BUNDLE_VERSION 0.5 )
-  set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.5 )
-  set( MACOSX_BUNDLE_LONG_VERSION_STRING Version 0.5 )
+  set( MACOSX_BUNDLE_VERSION 0.5.1 )
+  set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.5.1 )
+  set( MACOSX_BUNDLE_LONG_VERSION_STRING "Version 0.5.1" )
 
   #name of the preference file, usefull if we need to keep the same preference file
   #upgrade after upgrade without loosing preferences
@@ -17,6 +17,20 @@ if( APPLE )
   #need to copy the icns (icon) file in the buils dir
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
     ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
+
+  #need to check a few things for autoupdate
+  # this will set the UPPERCASE Variable to the right path 
+  # for soft/Hard linknig of the framwork.
+  find_library(SPARKLE_FRAMEWORK Sparkle)
+  find_library(APPKIT_FRAMEWORK AppKit)
+
+  # we need to copy the public key to check the updates
+  set(PUBLIC_KEY "${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/dsa_pub_songbookclient.pem")
+  SET_SOURCE_FILES_PROPERTIES(
+     ${PUBLIC_KEY}
+     PROPERTIES
+     MACOSX_PACKAGE_LOCATION Resources
+   )
 endif( APPLE )
 
 #-------------------------------------------------------------------------------
@@ -47,6 +61,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/main-window.cc
   src/preferences.cc
   src/library.cc
+  src/library-view.cc
   src/songbook.cc
   src/build-engine.cc
   src/song-editor.cc
@@ -68,6 +83,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/tab-widget.cc
   src/library-download.cc
   src/song-panel.cc
+  src/songbook-panel.cc
   src/notification.cc
   src/songbook-model.cc
   )
@@ -77,6 +93,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/main-window.hh
   src/preferences.hh
   src/library.hh
+  src/library-view.hh
   src/build-engine.hh
   src/songbook.hh
   src/song-editor.hh
@@ -97,12 +114,28 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/tab-widget.hh
   src/library-download.hh
   src/song-panel.hh
+  src/songbook-panel.hh
   src/notification.hh
   src/songbook-model.hh
   )
-
+# add header for binding between C/C++ and objective-C
+# to be able to call Sparkle (Autoupdate) on Mac os
+if(APPLE)
+  LIST(
+    APPEND SONGBOOK_CLIENT_QT_HEADER
+    macos_specific/sparkle/src/AutoUpdater.h
+    macos_specific/sparkle/src/CocoaInitializer.h
+    macos_specific/sparkle/src/SparkleAutoUpdater.h
+    )
+  LIST(
+    APPEND SONGBOOK_CLIENT_SOURCES
+    macos_specific/sparkle/src/AutoUpdater.cpp
+    macos_specific/sparkle/src/CocoaInitializer.mm
+    macos_specific/sparkle/src/SparkleAutoUpdater.mm
+    )
+endif(APPLE)
 # ressources
-set(SONGBOOK_CLIENT_RCS songbook.qrc icons/tango/tango.qrc songbook.rc)
+set(SONGBOOK_CLIENT_RCS songbook.qrc icons/macos/macos.qrc icons/tango/tango.qrc songbook.rc)
 
 # process Qt special files
 include(${QT_USE_FILE})
@@ -202,25 +235,32 @@ if( APPLE )
     add_executable( ${PROGNAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
       ${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
       ${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
+      ${PUBLIC_KEY}
       )
     add_custom_command( TARGET ${PROGNAME} POST_BUILD
-      COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
+      #COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
       COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       COMMAND cp ARGS ../lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
       )
+    # we need to add SPARKLE and APPKIT as '-framework'
+    target_link_libraries(${PROGNAME} ${APPKIT_FRAMEWORK})
+    target_link_libraries(${PROGNAME} ${SPARKLE_FRAMEWORK})
 
+	#genération d'une plist custom pour sparkle from a plist.in whete @VARAIBLE@ are replaces by the content of VARAIBLE
+    set_target_properties( ${PROGNAME}  PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/Info.plist.in )
 else( APPLE )
-add_executable(${PROGNAME}
-  ${SONGBOOK_CLIENT_SOURCES} 
-  ${SONGBOOK_CLIENT_MOCS} 
-  ${SONGBOOK_CLIENT_RESSOURCES} 
-  ${COMPILED_TRANSLATIONS}
-  ${qtpropertyeditor_SRCS}
-  ${qtpropertyeditor_MOC}
-  ${qtpropertyeditor_RESOURCES}
-)
+    add_executable(${PROGNAME}
+      ${SONGBOOK_CLIENT_SOURCES} 
+      ${SONGBOOK_CLIENT_MOCS} 
+      ${SONGBOOK_CLIENT_RESSOURCES} 
+      ${COMPILED_TRANSLATIONS}
+      ${qtpropertyeditor_SRCS}
+      ${qtpropertyeditor_MOC}
+      ${qtpropertyeditor_RESOURCES}
+    )
 endif( APPLE )
+
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
 if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")

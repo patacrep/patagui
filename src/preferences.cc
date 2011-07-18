@@ -19,6 +19,8 @@
 
 #include "preferences.hh"
 #include "file-chooser.hh"
+#include "songbook-panel.hh"
+#include "main-window.hh"
 
 #include <QtGui>
 
@@ -26,8 +28,9 @@
 
 // Config Dialog
 
-ConfigDialog::ConfigDialog()
-  : QDialog()
+ConfigDialog::ConfigDialog(CMainWindow* parent)
+  : QDialog(parent)
+  , m_parent(parent)
 {
   m_contentsWidget = new QListWidget;
   m_contentsWidget->setViewMode(QListView::IconMode);
@@ -35,11 +38,12 @@ ConfigDialog::ConfigDialog()
   m_contentsWidget->setMovement(QListView::Static);
   m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
+  m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
 
   m_pagesWidget = new QStackedWidget;
-  m_pagesWidget->addWidget(new OptionsPage);
-  m_pagesWidget->addWidget(new DisplayPage);
-  m_pagesWidget->addWidget(new NetworkPage);
+  m_pagesWidget->addWidget(new OptionsPage(this));
+  m_pagesWidget->addWidget(new DisplayPage(this));
+  m_pagesWidget->addWidget(new NetworkPage(this));
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
 
@@ -58,12 +62,16 @@ ConfigDialog::ConfigDialog()
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addLayout(horizontalLayout);
-  mainLayout->addStretch(1);
   mainLayout->addSpacing(12);
   mainLayout->addLayout(buttonsLayout);
   setLayout(mainLayout);
 
   setWindowTitle(tr("Preferences"));
+}
+
+CMainWindow* ConfigDialog::parent() const
+{
+  return m_parent;
 }
 
 void ConfigDialog::createIcons()
@@ -167,6 +175,11 @@ void DisplayPage::readSettings()
 void DisplayPage::writeSettings()
 {
   QSettings settings;
+  
+  settings.beginGroup("general");
+  settings.setValue("log", m_compilationLogCheckBox->isChecked());
+  settings.endGroup();
+
   settings.beginGroup("display");
   settings.setValue("artist", m_artistCheckBox->isChecked());
   settings.setValue("title", m_titleCheckBox->isChecked());
@@ -175,7 +188,6 @@ void DisplayPage::writeSettings()
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
   settings.setValue("cover", m_coverCheckBox->isChecked());
   settings.setValue("lang", m_langCheckBox->isChecked());
-  settings.setValue("log", m_compilationLogCheckBox->isChecked());
   settings.endGroup();
 }
 
@@ -187,8 +199,9 @@ void DisplayPage::closeEvent(QCloseEvent *event)
 
 // Option Page
 
-OptionsPage::OptionsPage(QWidget *parent)
-  : QWidget(parent)
+OptionsPage::OptionsPage(ConfigDialog *p)
+  : QWidget(p)
+  , m_parent(p)
   , m_workingPath(0)
   , m_workingPathValid(0)
 {
@@ -215,23 +228,54 @@ OptionsPage::OptionsPage(QWidget *parent)
   workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
+  // songbook template
+  QWidget* sbSettings = new QWidget;
+  
+  CSongbookPanel* panel = new CSongbookPanel(parent()->parent()->songbook());
+  
+  QDialogButtonBox * buttons = new QDialogButtonBox;
+  buttons->addButton(new QPushButton(tr("Change settings")), QDialogButtonBox::AcceptRole);
+  connect(buttons, SIGNAL(accepted()), panel, SLOT(settingsDialog()));
+
+  QVBoxLayout * layout = new QVBoxLayout;
+  layout->addWidget(panel);
+  layout->addWidget(buttons);
+  sbSettings->setLayout(layout);
+
+  QGroupBox *songbookTemplateGroupBox
+    = new QGroupBox(tr("Songbook PDF"));
+
+  QLayout *songbookTemplateLayout = new QVBoxLayout;
+  songbookTemplateLayout->addWidget(sbSettings);
+  songbookTemplateGroupBox->setLayout(songbookTemplateLayout);
+
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
+  mainLayout->addWidget(songbookTemplateGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
+}
+
+ConfigDialog* OptionsPage::parent() const
+{
+  return m_parent;
 }
 
 void OptionsPage::readSettings()
 {
   QSettings settings;
+  settings.beginGroup("general");
   m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
+  settings.endGroup();
 }
 
 void OptionsPage::writeSettings()
 {
   QSettings settings;
+  settings.beginGroup("general");
   settings.setValue("workingPath", m_workingPath->path());
+  settings.endGroup();
 }
 
 void OptionsPage::closeEvent(QCloseEvent *event)

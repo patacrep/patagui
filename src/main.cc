@@ -19,16 +19,37 @@
 #include <QApplication>
 #include <QTextCodec>
 #include "main-window.hh"
+
+#ifdef __APPLE__
+#include "../macos_specific/sparkle/src/CocoaInitializer.h"
+#include "../macos_specific/sparkle/src/SparkleAutoUpdater.h"
+#endif
+
 //******************************************************************************
 int main( int argc, char * argv[] )
 {
-  //mac os, need to instanciate aplpication fist to get it's path
+  //mac os, need to instanciate application fist to get it's path
   QApplication app(argc, argv);
 
   Q_INIT_RESOURCE(songbook);
+  
+  // this is the code needed to check for update on startup on mac os
+  // we might plan to move it and also check for beta.
+  #ifdef Q_WS_MAC
+    AutoUpdater* updater;
+    CocoaInitializer initializer;
+    updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
+    if (updater) {
+        updater->checkForUpdates();
+    }
+  #endif
 
   static const char * GENERIC_ICON_TO_CHECK = "document-open";
-  static const char * FALLBACK_ICON_THEME = "tango";
+  #ifdef __APPLE__
+    static const char * FALLBACK_ICON_THEME = "macos";
+  #else
+    static const char * FALLBACK_ICON_THEME = "tango";
+  #endif
   if (!QIcon::hasThemeIcon(GENERIC_ICON_TO_CHECK))
     {
       //If there is no default working icon theme then we should
@@ -38,7 +59,7 @@ int main( int argc, char * argv[] )
       QIcon::setThemeName(FALLBACK_ICON_THEME);
     }
 
-  QString version = QString("0.5 (%1)")
+  QString version = QString("0.5.1 (%1)")
     .arg(QDate::currentDate().toString(Qt::SystemLocaleLongDate));
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");

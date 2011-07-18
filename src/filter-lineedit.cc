@@ -19,6 +19,10 @@
 #include "filter-lineedit.hh"
 
 #include <QPainter>
+#include <QListWidget>
+#include <QHeaderView>
+#include <QAction>
+#include <QMenu>
 
 CClearButton::CClearButton(QWidget *parent)
   : QAbstractButton(parent)
@@ -82,14 +86,14 @@ void CClearButton::paintEvent(QPaintEvent *event)
 }
 
 CMagButton::CMagButton(QWidget *parent)
-  : QAbstractButton(parent)
+  : QToolButton(parent)
 {
   setCursor(Qt::ArrowCursor);
   setFocusPolicy(Qt::NoFocus);
-  setToolTip(tr("Nothing Yet"));
+  setToolTip(tr("Filter by language"));
   setMinimumSize(22, 22);
   setVisible(true);
-
+  setPopupMode(QToolButton::InstantPopup);
 }
 void CMagButton::paintEvent(QPaintEvent *event)
 {
@@ -129,6 +133,7 @@ void CMagButton::paintEvent(QPaintEvent *event)
 
 CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   : LineEdit(parent)
+  , m_menu(new QMenu)
 {
   CClearButton* clearButton = new CClearButton(this);
   CMagButton* magButton = new CMagButton(this);
@@ -159,8 +164,8 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
     "padding-right: 0px;"
   "}"
   );
-  this->setStyleSheet(style);
-  this->setAttribute(Qt::WA_MacShowFocusRect, 0);
+  setStyleSheet(style);
+  setAttribute(Qt::WA_MacShowFocusRect, 0);
   addWidget(magButton, LeftSide);
 
   connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
@@ -169,9 +174,17 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   addWidget(clearButton, RightSide);
   addWidget(magButton, LeftSide);
 
+  magButton->setMenu(m_menu);
+  connect(magButton, SIGNAL(clicked()), magButton, SLOT(showMenu()));
+
   updateTextMargins();
   setInactiveText(tr("Filter"));
 }
 
 CFilterLineEdit::~CFilterLineEdit()
 {}
+
+void CFilterLineEdit::addAction(QAction* action)
+{
+  m_menu->addAction(action);
+}

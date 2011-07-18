@@ -36,10 +36,15 @@ namespace SbUtils
     str.replace(QString("\\¨e"), QString("ë"));
     str.replace(QString("\\¨i"), QString("ï"));
     str.replace(QString("\\^i"), QString("î"));
+    str.replace(QString("\\'i"), QString("í"));
     str.replace(QString("\\^o"), QString("ô"));
+    str.replace(QString("\\'o"), QString("ó"));
     str.replace(QString("\\`u"), QString("ù"));
+    str.replace(QString("\\'u"), QString("ú"));
     str.replace(QString("\\`a"), QString("à"));
     str.replace(QString("\\^a"), QString("â"));
+    str.replace(QString("\\'a"), QString("á"));
+    str.replace(QString("\\~n"), QString("ñ"));
     str.replace(QString("\\&"), QString("&"));
     str.replace(QString("\\~"), QString("~"));
     str.replace(QString("\\,"), QString(" "));

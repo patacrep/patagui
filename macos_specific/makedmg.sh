@@ -10,7 +10,7 @@ test -f Songbook-Client.dmg && rm Songbook-Client.dmg
 	--window-pos 413 295  \
 	--window-size 770 367  \
 	--icon Applications 527 187 \
-	--volname "Songbook Client v0.4"   \
+	--volname "Songbook Client v0.5.1"   \
 	--icon "Songbook-Client.app" 201 187  \
 	--background ./macos_specific/image_disque_backgroud.png  \
 	Songbook-Client.dmg ~/songbook-client/build/Songbook-Client.app

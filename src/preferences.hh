@@ -31,6 +31,7 @@ class QLineEdit;
 class QCheckBox;
 class QSpinBox;
 class CFileChooser;
+class CMainWindow;
 
 /** \brief ConfigDialog handles the display of the config pages
  */
@@ -39,7 +40,8 @@ class ConfigDialog : public QDialog
   Q_OBJECT
 
 public:
-  ConfigDialog();
+  ConfigDialog(CMainWindow* parent);
+  CMainWindow* parent() const;				   
 
 public slots:
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
@@ -50,6 +52,7 @@ protected:
 private:
   void createIcons();
 
+  CMainWindow *m_parent;
   QListWidget *m_contentsWidget;
   QStackedWidget *m_pagesWidget;
 };
@@ -87,8 +90,10 @@ class OptionsPage : public QWidget
   Q_OBJECT
 
 public:
-  OptionsPage(QWidget *parent = 0);
-
+  OptionsPage(ConfigDialog *parent);
+  
+  ConfigDialog* parent() const;
+  
 protected:
   void closeEvent(QCloseEvent *event);
 
@@ -99,6 +104,7 @@ private:
   void readSettings();
   void writeSettings();
 
+  ConfigDialog* m_parent;
   CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
 };
