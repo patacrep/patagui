@@ -168,18 +168,13 @@ void DisplayPage::readSettings()
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   m_coverCheckBox->setChecked(settings.value("cover", false).toBool());
   m_langCheckBox->setChecked(settings.value("lang", false).toBool());
-  m_compilationLogCheckBox->setChecked(settings.value("log", false).toBool());
+  m_compilationLogCheckBox->setChecked(settings.value("logs", false).toBool());
   settings.endGroup();
 }
 
 void DisplayPage::writeSettings()
 {
   QSettings settings;
-  
-  settings.beginGroup("general");
-  settings.setValue("log", m_compilationLogCheckBox->isChecked());
-  settings.endGroup();
-
   settings.beginGroup("display");
   settings.setValue("artist", m_artistCheckBox->isChecked());
   settings.setValue("title", m_titleCheckBox->isChecked());
@@ -188,6 +183,7 @@ void DisplayPage::writeSettings()
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
   settings.setValue("cover", m_coverCheckBox->isChecked());
   settings.setValue("lang", m_langCheckBox->isChecked());
+  settings.setValue("logs", m_compilationLogCheckBox->isChecked());
   settings.endGroup();
 }
 

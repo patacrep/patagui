@@ -147,7 +147,6 @@ private:
 
   // Settings
   QString m_workingPath;
-  bool m_displayCompilationLog;
   bool m_isToolBarDisplayed;
   bool m_isStatusbarDisplayed;
 

@@ -176,12 +176,13 @@ void CMainWindow::readSettings()
   settings.beginGroup("general");
   resize(settings.value("size", QSize(800,600)).toSize());
   setWorkingPath(settings.value("workingPath", QDir::homePath()).toString());
-  m_displayCompilationLog = settings.value("displayLog", false).toBool();
   setStatusbarDisplayed(settings.value("statusBar", true).toBool());
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
   settings.endGroup();
 
-  log()->setVisible(m_displayCompilationLog);
+  settings.beginGroup("display");
+  log()->setVisible(settings.value("logs", false).toBool());
+  settings.endGroup();
 
   view()->readSettings();
 }
@@ -191,7 +192,7 @@ void CMainWindow::writeSettings()
   QSettings settings;
   settings.beginGroup("general");
   settings.setValue("size", size());
-  settings.setValue("displayLogs", m_displayCompilationLog);
+  settings.value("workingPath", workingPath());
   settings.setValue("statusBar", isStatusbarDisplayed());
   settings.setValue("toolBar", isToolBarDisplayed());
   settings.endGroup();
