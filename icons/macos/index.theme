@@ -123,26 +123,6 @@ Size=32
 Context=Status
 Type=Fixed
 
-[48x48/mimetypes]
-Size=48
-Context=Status
-Type=Scalable
-MinSize=32
-MaxSize=48
-
-[48x48/places]
-Size=48
-Context=Status
-Type=Scalable
-MinSize=32
-MaxSize=48
-
-[48x48/status]
-Size=48
-Context=Status
-Type=Scalable
-MinSize=32
-MaxSize=48
 
 [128x128/status]
 Size=128
@@ -186,7 +166,7 @@ MaxSize=256
 
 [scalable/songbook]
 Size=48
-Context=Status
+Context=Songbook
 Type=Scalable
 MinSize=32
 MaxSize=256
