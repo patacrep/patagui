@@ -6,6 +6,8 @@
 	<string>EmptyString</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub_songbookclient.pem</string>
+	<key>SUFeedURL</key>
+	<string>http://songbookclient.lmdb.eu/atom.xml</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
