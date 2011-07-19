@@ -50,6 +50,7 @@ include_directories(${LibArchive_INCLUDE_DIRS})
 
 find_package(Qt4 COMPONENTS QtCore QtGui QtSql QtNetwork REQUIRED)
 set(QT_USE_QTSQL true)
+set(QT_USE_QTSVG true)
 set(QT_USE_QTSCRIPT true)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
