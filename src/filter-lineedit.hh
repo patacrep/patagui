@@ -27,6 +27,7 @@
 #define __FILTER_LINEEDIT_HH__
 
 #include <QAbstractButton>
+#include <QToolButton>
 #include "utils/lineedit.hh"
 
 class CClearButton : public QAbstractButton
@@ -46,8 +47,7 @@ private:
   QImage m_icon;
 };
 
-//this is not yet really a button, but we might add a drop down menu for search option
-class CMagButton : public QAbstractButton
+class CMagButton : public QToolButton
 {
   Q_OBJECT
 
@@ -61,6 +61,8 @@ private:
   QImage m_icon;
 };
 
+class QAction;
+
 class CFilterLineEdit : public LineEdit
 {
   Q_OBJECT
@@ -68,6 +70,12 @@ class CFilterLineEdit : public LineEdit
 public:
   CFilterLineEdit(QWidget *parent = 0);
   ~CFilterLineEdit();
+
+  void addAction(QAction* action);
+
+private:
+  QMenu* m_menu;
+
 };
 
 #endif // __FILTER_LINEEDIT_HH__

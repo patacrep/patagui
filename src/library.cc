@@ -354,3 +354,10 @@ bool CLibrary::containsSong(const QString &path)
   QModelIndexList list = match(index, PathRole, path, -1, Qt::MatchExactly);
   return !list.isEmpty();
 }
+
+int CLibrary::rowCount()
+{
+  while (canFetchMore())
+    fetchMore();
+  return QSqlTableModel::rowCount();
+}

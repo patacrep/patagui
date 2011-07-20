@@ -77,6 +77,7 @@ public:
   void addSongs(const QStringList &paths);
   void removeSong(const QString &path);
   bool containsSong(const QString &path);
+  int rowCount();
 
 public slots:
   void update();
