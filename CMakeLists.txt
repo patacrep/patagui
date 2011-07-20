@@ -235,16 +235,21 @@ if( APPLE )
       ${PUBLIC_KEY}
       )
     add_custom_command( TARGET ${PROGNAME} POST_BUILD
-      #COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
       COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       COMMAND cp ARGS ../lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
+      COMMAND echo "Note : Having the message : ERROR: no file at \"/usr/lib/@loader_path@loader_path\" is normal"
+      COMMAND echo "It is due to Qt encountering references to Sparkle Framwork."
+      COMMAND mkdir  ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Frameworks
+      COMMAND cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Frameworks/Sparkle.framework
+      COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app
       )
-    # we need to add SPARKLE and APPKIT as '-framework'
+    # we need to add SPARKLE and APPKIT as '-framework' at link time
     target_link_libraries(${PROGNAME} ${APPKIT_FRAMEWORK})
     target_link_libraries(${PROGNAME} ${SPARKLE_FRAMEWORK})
 
-	#genération d'une plist custom pour sparkle from a plist.in whete @VARAIBLE@ are replaces by the content of VARAIBLE
+	# genération d'une plist custom pour sparkle from a plist.in where @VARAIBLE@ are replaces by the content of VARAIBLE
+	# we need this for having the default url to check updates
     set_target_properties( ${PROGNAME}  PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/Info.plist.in )
 else( APPLE )
     add_executable(${PROGNAME}
