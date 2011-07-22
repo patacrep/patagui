@@ -29,7 +29,6 @@
 
 #include <QDebug>
 
-//------------------------------------------------------------------------------
 CSongEditor::CSongEditor()
   : CodeEditor()
   , m_toolBar()
@@ -112,15 +111,15 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
   m_toolBar->addAction(action);
 }
-//------------------------------------------------------------------------------
+
 CSongEditor::~CSongEditor()
 {}
-//------------------------------------------------------------------------------
+
 QString CSongEditor::path()
 {
   return m_path;
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::setPath(const QString &path)
 {
   QString text;
@@ -135,7 +134,7 @@ void CSongEditor::setPath(const QString &path)
   setPlainText(text);
   m_path = path;
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::save()
 {
   //open file in write mode
@@ -155,7 +154,7 @@ void CSongEditor::save()
       qWarning() << "Mainwindow::songEditorSave warning: unable to open file in write mode";
     }
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::documentWasModified()
 {
   if (!windowTitle().contains(" *") && document()->isModified())
@@ -164,24 +163,24 @@ void CSongEditor::documentWasModified()
       emit(labelChanged(windowTitle()));
     }
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::insertVerse()
 {
   QString selection = textCursor().selectedText();
   insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::insertChorus()
 {
   QString selection = textCursor().selectedText();
   insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
-//------------------------------------------------------------------------------
+
 QToolBar* CSongEditor::toolBar()
 {
   return m_toolBar;
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::keyPressEvent(QKeyEvent *event)
 {
   if (event->key() == Qt::Key_Tab) 
@@ -189,7 +188,7 @@ void CSongEditor::keyPressEvent(QKeyEvent *event)
   else 
     QPlainTextEdit::keyPressEvent(event);
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::indentSelection()
 {
   QTextCursor cursor = textCursor();
@@ -215,7 +214,7 @@ void CSongEditor::indentSelection()
 	break;
     }
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::indentLine(const QTextCursor & cur)
 {
   //if line is only contains whitespaces, remove them and exit
@@ -259,7 +258,7 @@ void CSongEditor::indentLine(const QTextCursor & cur)
   for(int i=0; i < index; ++i)
     cursor.insertText("  ");
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::trimLine(const QTextCursor & cur)
 {
   QTextCursor cursor(cur);
