@@ -441,6 +441,15 @@ void CMainWindow::createMenus()
   m_dbMenu->addAction(m_libraryDownloadAct);
   m_dbMenu->addAction(m_libraryUpdateAct);
 
+  m_editorMenu = menuBar()->addMenu(tr("&Editor"));
+  CSongEditor* editor = new CSongEditor();
+  QAction* action;
+  foreach(action, editor->actions())
+    {
+      action->setDisabled(true);
+      m_editorMenu->addAction(action);
+    }
+
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toolBarViewAct);
   m_viewMenu->addAction(m_statusbarViewAct);
@@ -882,14 +891,24 @@ void CMainWindow::closeTab(int index)
 void CMainWindow::changeTab(int index)
 {
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-
+  QAction* action;
   if (editor)
     {
+      m_editorMenu->clear();
+      foreach(action, editor->actions())
+	{
+	  m_editorMenu->addAction(action);
+	  action->setEnabled(true);
+	}
+
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
+      foreach(action, m_editorMenu->actions())
+	action->setEnabled(false);
+
       switchToolBar(m_toolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }

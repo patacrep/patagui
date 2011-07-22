@@ -31,7 +31,7 @@
 
 CSongEditor::CSongEditor()
   : CodeEditor()
-  , m_toolBar()
+  , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
 {
   setUndoRedoEnabled(true);
@@ -47,9 +47,8 @@ CSongEditor::CSongEditor()
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   // toolBar
-  m_toolBar = new QToolBar(tr("Song edition tools"), this);
-  m_toolBar->setMovable(false);
-  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+  toolBar()->setMovable(false);
+  toolBar()->setContextMenuPolicy(Qt::PreventContextMenu);
 
   // actions
   QAction* action = new QAction(tr("Save"), this);
@@ -57,7 +56,7 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/document-save")));
   action->setStatusTip(tr("Save modifications"));
   connect(action, SIGNAL(triggered()), SLOT(save()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   //copy paste
   action = new QAction(tr("Cut"), this);
@@ -65,23 +64,23 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/edit-cut")));
   action->setStatusTip(tr("Cut the selection"));
   connect(action, SIGNAL(triggered()), SLOT(cut()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/edit-copy")));
   action->setStatusTip(tr("Copy the selection"));
   connect(action, SIGNAL(triggered()), SLOT(copy()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/edit-paste")));
   action->setStatusTip(tr("Paste clipboard content"));
   connect(action, SIGNAL(triggered()), SLOT(paste()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
-  m_toolBar->addSeparator();
+  toolBar()->addSeparator();
   
   //undo redo
   action = new QAction(tr("Undo"), this);
@@ -89,27 +88,27 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/edit-undo")));
   action->setStatusTip(tr("Undo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(undo()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
   action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/edit-redo")));
   action->setStatusTip(tr("Redo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(redo()));
-  m_toolBar->addAction(action);
+  addAction(action);
 
-  m_toolBar->addSeparator();
+  toolBar()->addSeparator();
   
   //songbook
   action = new QAction(tr("Verse"), this);
   action->setStatusTip(tr("New verse environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Chorus"), this);
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
-  m_toolBar->addAction(action);
+  addAction(action);
 }
 
 CSongEditor::~CSongEditor()
@@ -269,4 +268,15 @@ void CSongEditor::trimLine(const QTextCursor & cur)
       cursor.deleteChar();
       str  = cursor.block().text();
     }
+}
+
+QList<QAction*> CSongEditor::actions() const
+{
+  return m_actions;
+}
+
+void CSongEditor::addAction(QAction* action)
+{
+  toolBar()->addAction(action);
+  m_actions.append(action);
 }

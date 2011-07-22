@@ -156,6 +156,7 @@ private:
   QMenu *m_fileMenu;
   QMenu *m_editMenu;
   QMenu *m_dbMenu;
+  QMenu *m_editorMenu;
   QMenu *m_viewMenu;
   QMenu *m_helpMenu;
 
