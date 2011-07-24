@@ -44,6 +44,9 @@ public:
   void addAction(QAction*);
   QList<QAction*> actions() const;
 
+  void readSettings();
+  void writeSettings();
+
 signals:
   void labelChanged(const QString &label);
 

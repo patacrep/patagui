@@ -43,6 +43,7 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_pagesWidget = new QStackedWidget;
   m_pagesWidget->addWidget(new OptionsPage(this));
   m_pagesWidget->addWidget(new DisplayPage(this));
+  m_pagesWidget->addWidget(new EditorPage(this));
   m_pagesWidget->addWidget(new NetworkPage(this));
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
@@ -87,6 +88,12 @@ void ConfigDialog::createIcons()
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+  QListWidgetItem *editorButton = new QListWidgetItem(m_contentsWidget);
+  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor"));
+  editorButton->setText(tr("Editor"));
+  editorButton->setTextAlignment(Qt::AlignHCenter);
+  editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
   networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/preferences-system-network")));
@@ -341,6 +348,69 @@ void OptionsPage::checkWorkingPath(const QString &path)
     }
   m_workingPathValid->setText(mask.arg(message));
 }
+
+
+// Editor Page
+
+EditorPage::EditorPage(QWidget *parent)
+  : QWidget(parent)
+{
+  m_font = QFont("Monospace",10);
+  m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+
+  m_numberLinesCheckBox = new QCheckBox(tr("Display line numbers"));
+  m_highlightCurrentLineCheckBox = new QCheckBox(tr("Highlight current line"));
+  m_fontButton  = new QPushButton(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())), this);
+  connect(m_fontButton, SIGNAL(clicked()), this, SLOT(selectFont()));
+
+  QFormLayout* layout = new QFormLayout;
+  layout->addRow(m_numberLinesCheckBox);
+  layout->addRow(m_highlightCurrentLineCheckBox);
+  layout->addRow(tr("Editor font:"), m_fontButton);
+  setLayout(layout);
+
+  readSettings();
+}
+
+void EditorPage::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("editor");
+  //m_langCheckBox->setChecked(settings.value("lang", false).toBool());
+  //m_compilationLogCheckBox->setChecked(settings.value("logs", false).toBool());
+  settings.endGroup();
+}
+
+void EditorPage::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup("editor");
+  //settings.setValue("lang", m_langCheckBox->isChecked());
+  //settings.setValue("logs", m_compilationLogCheckBox->isChecked());
+  settings.endGroup();
+}
+
+void EditorPage::selectFont()
+{
+  bool ok;
+  m_font = QFontDialog::getFont(&ok, QFont("Monospace", 10), this);
+  if(ok)
+    {
+      m_fontButton->setText(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())));
+    }
+}
+
+void EditorPage::closeEvent(QCloseEvent *event)
+{
+  writeSettings();
+  event->accept();
+}
+
+ConfigDialog* EditorPage::parent() const
+{
+  return m_parent;
+}
+
 
 // Network Page
 

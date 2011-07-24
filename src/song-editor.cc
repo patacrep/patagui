@@ -26,6 +26,7 @@
 #include <QTextDocumentFragment>
 #include <QFile>
 #include <QTextStream>
+#include <QSettings>
 
 #include <QDebug>
 
@@ -109,6 +110,8 @@ CSongEditor::CSongEditor()
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
   addAction(action);
+
+  readSettings();
 }
 
 CSongEditor::~CSongEditor()
@@ -117,6 +120,20 @@ CSongEditor::~CSongEditor()
 QString CSongEditor::path()
 {
   return m_path;
+}
+
+void CSongEditor::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("editor");
+  settings.endGroup();
+}
+
+void CSongEditor::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup("editor");
+  settings.endGroup();
 }
 
 void CSongEditor::setPath(const QString &path)
