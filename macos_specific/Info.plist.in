@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CustomKey</key>
-	<string>EmptyString</string>
+	<key>CFBundleDisplayName</key>
+	<string>Songbook-Client</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.patacrep.songbook-client</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub_songbookclient.pem</string>
 	<key>SUFeedURL</key>
@@ -23,13 +25,13 @@
 	<key>CFBundleLongVersionString</key>
 	<string>@MACOSX_BUNDLE_LONG_VERSION_STRING@</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string>Songbook-client</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>@MACOSX_BUNDLE_SHORT_VERSION_STRING@</string>
 	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>sbcl</string>
 	<key>CFBundleVersion</key>
 	<string>@MACOSX_BUNDLE_VERSION@</string>
 	<key>CSResourcesFileMapped</key>
@@ -38,5 +40,62 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Unknown document</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>NSDocumentClass</key>
+			<string>Document</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>sb_icon.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Songbook file</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sb</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>sg_icon.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Songbook file</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sg</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>sg_icon.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>NSRTFPboardType</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.sg</string>
+			</array>
+			<key>NSDocumentClass</key>
+			<string>Document</string>
+		</dict>
+	</array>
 </dict>
 </plist>

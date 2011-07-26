@@ -14,7 +14,15 @@ if( APPLE )
   #upgrade after upgrade without loosing preferences
   set(MACOSX_BUNDLE_GUI_IDENTIFIER com.patacrep.songbook-client)
 
-  #need to copy the icns (icon) file in the buils dir
+  # need to copy the icns (icon) file in the buils dir
+  # also copy the icons for the .sg and .sb files
+  SET_SOURCE_FILES_PROPERTIES(
+	${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sb_icon.icns
+	${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sg_icon.icns
+	PROPERTIES
+	MACOSX_PACKAGE_LOCATION Resources
+	)
+  
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
     ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
 
@@ -233,6 +241,8 @@ if( APPLE )
       ${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
       ${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
       ${PUBLIC_KEY}
+	  ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sb_icon.icns
+	  ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sg_icon.icns
       )
     add_custom_command( TARGET ${PROGNAME} POST_BUILD
       COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
