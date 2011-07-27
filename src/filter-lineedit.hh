@@ -37,8 +37,8 @@ class CClearButton : public QAbstractButton
 public:
   CClearButton(QWidget *parent = 0);
 
-public slots:
-  void textChanged(const QString &text);
+protected slots:
+  void textChanged(const QString&);
 
 protected:
   void paintEvent(QPaintEvent *event);
