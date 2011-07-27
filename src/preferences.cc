@@ -376,8 +376,9 @@ void EditorPage::readSettings()
 {
   QSettings settings;
   settings.beginGroup("editor");
-  //m_langCheckBox->setChecked(settings.value("lang", false).toBool());
-  //m_compilationLogCheckBox->setChecked(settings.value("logs", false).toBool());
+  m_numberLinesCheckBox->setChecked(settings.value("lines", true).toBool());
+  m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
+  m_font.fromString(settings.value("font", QString()).toString());
   settings.endGroup();
 }
 
@@ -385,8 +386,9 @@ void EditorPage::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("editor");
-  //settings.setValue("lang", m_langCheckBox->isChecked());
-  //settings.setValue("logs", m_compilationLogCheckBox->isChecked());
+  settings.value("lines", m_numberLinesCheckBox->isChecked());
+  settings.value("highlight", m_highlightCurrentLineCheckBox->isChecked());
+  settings.value("font", m_font.toString());
   settings.endGroup();
 }
 

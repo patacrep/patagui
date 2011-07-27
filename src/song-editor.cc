@@ -37,11 +37,6 @@ CSongEditor::CSongEditor()
 {
   setUndoRedoEnabled(true);
 
-  //Monospace font
-  QFont font("Monospace",10);
-  font.setStyleHint(QFont::Monospace, QFont::PreferAntialias);
-  setFont(font);
-
   CHighlighter *highlighter = new CHighlighter(document());
   Q_UNUSED(highlighter);
 
@@ -124,16 +119,20 @@ QString CSongEditor::path()
 
 void CSongEditor::readSettings()
 {
+   
   QSettings settings;
   settings.beginGroup("editor");
+  QFont font;
+  font.fromString(settings.value("font", QString()).toString());
+  setFont(font);
   settings.endGroup();
 }
 
 void CSongEditor::writeSettings()
 {
-  QSettings settings;
-  settings.beginGroup("editor");
-  settings.endGroup();
+  //QSettings settings;
+  //settings.beginGroup("editor");
+  //settings.endGroup();
 }
 
 void CSongEditor::setPath(const QString &path)
