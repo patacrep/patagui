@@ -48,8 +48,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 find_package(LibArchive REQUIRED)
 include_directories(${LibArchive_INCLUDE_DIRS})
 
-find_package(Qt4 COMPONENTS QtCore QtGui QtSql QtNetwork REQUIRED)
-set(QT_USE_QTSQL true)
+find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
 set(QT_USE_QTSVG true)
 set(QT_USE_QTSCRIPT true)
 

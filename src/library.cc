@@ -19,21 +19,16 @@
 #include "library.hh"
 
 #include <QPixmap>
-#include <QSqlRecord>
-#include <QSqlField>
-#include <QSqlQuery>
 
 #include "main-window.hh"
 #include "utils/utils.hh"
 
 CLibrary::CLibrary(CMainWindow *parent)
-  : QSqlTableModel()
+  : QAbstractTableModel()
   , m_parent(parent)
   , m_directory()
-  , m_songRecord()
+  , m_songs()
 {
-  setEditStrategy(QSqlTableModel::OnManualSubmit);
-
   QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(24, 24));
   QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(128, 128));
   QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic", QIcon(":/icons/tango/audio-x-generic")).pixmap(24,24));
@@ -41,19 +36,13 @@ CLibrary::CLibrary(CMainWindow *parent)
   QPixmapCache::insert("english", QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")).pixmap(24,24));
   QPixmapCache::insert("spanish", QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")).pixmap(24,24));
 
-  m_songRecord.append(QSqlField("artist", QVariant::String));
-  m_songRecord.append(QSqlField("title", QVariant::String));
-  m_songRecord.append(QSqlField("lilypond", QVariant::Bool));
-  m_songRecord.append(QSqlField("path", QVariant::String));
-  m_songRecord.append(QSqlField("album", QVariant::String));
-  m_songRecord.append(QSqlField("cover", QVariant::String));
-  m_songRecord.append(QSqlField("lang", QVariant::String));
-
   connect(this, SIGNAL(directoryChanged(const QDir&)), SLOT(update()));
 }
 
 CLibrary::~CLibrary()
-{}
+{
+  m_songs.clear();
+}
 
 QDir CLibrary::directory() const
 {
@@ -79,24 +68,66 @@ CMainWindow* CLibrary::parent() const
   return m_parent;
 }
 
+QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int role) const
+{
+  if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    {
+      switch (section)
+	{
+	case 0:
+	  return tr("Artist");
+	case 1:
+	  return tr("Title");
+	case 2:
+	  return tr("Lilypond");
+	case 3:
+	  return tr("Path");
+	case 4:
+	  return tr("Album");
+	case 5:
+	  return tr("Language");
+	}
+    }
+  return QVariant();
+}
+
 QVariant CLibrary::data(const QModelIndex &index, int role) const
 {
+  if (!index.isValid())
+    return QVariant();
+
   switch (role)
     {
+    case Qt::DisplayRole:
+      switch (index.column())
+	{
+	case 0:
+	  return data(index, ArtistRole);
+	case 1:
+	  return data(index, TitleRole);
+	case 2:
+	  return QVariant();
+	case 3:
+	  return data(index, PathRole);
+	case 4:
+	  return data(index, AlbumRole);
+	}
     case TitleRole:
-      return QSqlTableModel::data(sibling(index.row(), 1, index.parent()));
+      return m_songs[index.row()].title;
     case ArtistRole:
-      return QSqlTableModel::data(sibling(index.row(), 0, index.parent()));
+      return m_songs[index.row()].artist;
     case AlbumRole:
-      return QSqlTableModel::data(sibling(index.row(), 4, index.parent()));
+      return m_songs[index.row()].album;
     case CoverRole:
-      return QSqlTableModel::data(sibling(index.row(), 5, index.parent()));
+      return QString("%1/%2.jpg")
+	.arg(m_songs[index.row()].coverPath)
+	.arg(m_songs[index.row()].coverName);
     case LilypondRole:
-      return QSqlTableModel::data(sibling(index.row(), 2, index.parent()));
+      return m_songs[index.row()].isLilypond;
     case LanguageRole:
-      return QSqlTableModel::data(sibling(index.row(), 6, index.parent()));
+      return m_songs[index.row()].language;
     case PathRole:
-      return QSqlTableModel::data(sibling(index.row(), 3, index.parent()));
+      return m_songs[index.row()].path;
     case CoverSmallRole:
       {
 	QPixmap pixmap;
@@ -125,13 +156,10 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       }
     }
 
-  //Draws lilypondcheck
-  if (index.column() == 2)
+  switch (index.column())
     {
-      if (role == Qt::DisplayRole)
-	return QString();
-
-      if (QSqlTableModel::data(index).toBool())
+    case 2:
+      if (data(index, LilypondRole).toBool())
 	{
 	  QPixmap pixmap;
 	  QPixmapCache::find("lilypond-checked", &pixmap);
@@ -141,87 +169,47 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 
 	  if (role == Qt::SizeHintRole)
 	    return pixmap.size();
-
+	  
 	  if (role == Qt::ToolTipRole)
 	    return tr("Lilypond music sheet");
 	}
-    }
-  else if (index.column() == 4)
-    {
+      break;
+    case 4:
       if (role == Qt::DecorationRole)
-	{
-	  return data(index, CoverSmallRole);
-	}
+	return data(index, CoverSmallRole);
+      break;
+    case 5:
+      {
+	QString language = data(index, LanguageRole).toString();
+	QPixmap pixmap;
+	if (QPixmapCache::find(language, &pixmap))
+	  {
+	    if (role == Qt::DecorationRole)
+	      return pixmap;
+	    
+	    if (role == Qt::SizeHintRole)
+	      return pixmap.size();
+	    
+	    if (role == Qt::ToolTipRole)
+	      return language;
+	    
+	    if (role == Qt::DisplayRole)
+	      return QString();
+	  }
+	else
+	  {
+	    if (role == Qt::DisplayRole)
+	      return language;
+	  }
+      break;
+      }
     }
-  else if (index.column() == 5)
-    {
-      if (Qt::DisplayRole == role)
-	return QString();
-
-      if (role == Qt::DecorationRole)
-	{
-	  return data(index, CoverSmallRole);
-	}
-
-      if (role == Qt::SizeHintRole)
-	{
-	  return data(index, CoverSmallRole).value< QPixmap >().size();
-	}
-    }
-  else if (index.column() == 6)
-    {
-      QString language = data(index, LanguageRole).toString();
-      QPixmap pixmap;
-      if (QPixmapCache::find(language, &pixmap))
-	{
-	  if (role == Qt::DecorationRole)
-	    return pixmap;
-
-	  if (role == Qt::SizeHintRole)
-	    return pixmap.size();
-
-	  if (role == Qt::ToolTipRole)
-	    return language;
-
-	  if (role == Qt::DisplayRole)
-	    return QString();
-	}
-      else
-	{
-	  if (role == Qt::DisplayRole)
-	    return language;
-	}
-    }
-
-  return QSqlTableModel::data(index, role);
+  return QVariant();
 }
 
 void CLibrary::update()
 {
-  // recreate the database
-  QSqlQuery query;
-  query.exec("DROP TABLE songs");
-  query.exec("CREATE TABLE songs ("
-  	     "artist text NOT NULL,"
-  	     "title text NOT NULL,"
-  	     "lilypond bool,"
-  	     "path text PRIMARY KEY,"
-  	     "album text,"
-  	     "cover text,"
-  	     "lang text"
-  	     ")");
-
-  setTable("songs");
-  select();
-
-  // define column titles
-  setHeaderData(0, Qt::Horizontal, tr("Artist"));
-  setHeaderData(1, Qt::Horizontal, tr("Title"));
-  setHeaderData(2, Qt::Horizontal, tr("Lilypond"));
-  setHeaderData(3, Qt::Horizontal, tr("Path"));
-  setHeaderData(4, Qt::Horizontal, tr("Album"));
-  setHeaderData(5, Qt::Horizontal, tr("Cover"));
-  setHeaderData(6, Qt::Horizontal, tr("Language"));
+  m_songs.clear();
 
   // get the path of each song in the library
   QStringList filter = QStringList() << "*.sg";
@@ -245,9 +233,6 @@ void CLibrary::update()
 
 void CLibrary::addSongs(const QStringList &paths)
 {
-  QSqlDatabase db = QSqlDatabase::database();
-  db.transaction();
-
   // run through the library songs files
   uint count = 0;
   QStringListIterator filepath(paths);
@@ -256,8 +241,7 @@ void CLibrary::addSongs(const QStringList &paths)
       parent()->progressBar()->setValue(++count);
       addSong(filepath.next());
     }
-  submitAll();
-  db.commit();
+  reset();
   emit(wasModified());
 }
 
@@ -311,33 +295,16 @@ void CLibrary::addSong(const QString &path)
 {
   Song song;
   parseSong(path, song);
-
-  m_songRecord.setValue(0, song.artist);
-  m_songRecord.setValue(1, song.title);
-  m_songRecord.setValue(2, song.isLilypond);
-  m_songRecord.setValue(3, song.path);
-  m_songRecord.setValue(4, song.album);
-  m_songRecord.setValue(5, QString("%1/%2.jpg")
-				    .arg(song.coverPath)
-				    .arg(song.coverName));
-  m_songRecord.setValue(6, song.language);
-
-  if (!insertRecord(-1, m_songRecord))
-    {
-      qWarning() << "CLibrary::addSongFromFile: unable to insert song " << path;
-    }
-  m_songRecord.clearValues();
+  m_songs << song;
 }
 
 void CLibrary::removeSong(const QString &path)
 {
-  QModelIndex index = createIndex(0,3); //column 3 stores the path
-  QModelIndexList list = match(index, Qt::DisplayRole, path, -1, Qt::MatchExactly);
-
-  foreach(index, list)
-    removeRows(index.row(), 1);
-
-  submitAll();
+  for (int i = 0; i < m_songs.size(); ++i)
+    {
+      if (m_songs[i].path == path)
+	m_songs.removeAt(i);
+    }
   emit(wasModified());
 }
 
@@ -350,14 +317,20 @@ void CLibrary::updateSong(const QString &path)
 
 bool CLibrary::containsSong(const QString &path)
 {
-  QModelIndex index = createIndex(0,3);
-  QModelIndexList list = match(index, PathRole, path, -1, Qt::MatchExactly);
-  return !list.isEmpty();
+  for (int i = 0; i < m_songs.size(); ++i)
+    {
+      if (m_songs[i].path == path)
+	return true;
+    }
+  return false;
 }
 
-int CLibrary::rowCount()
+int CLibrary::rowCount(const QModelIndex &) const
 {
-  while (canFetchMore())
-    fetchMore();
-  return QSqlTableModel::rowCount();
+  return m_songs.size();
+}
+
+int CLibrary::columnCount(const QModelIndex &) const
+{
+  return 6;
 }
