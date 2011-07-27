@@ -578,7 +578,7 @@ QStringList CMainWindow::getSelectedSongs()
 
   foreach(index, indexes)
     {
-      songsPath << m_songbookModel->data(index, CLibrary::PathRole).toString();
+      songsPath << m_proxyModel->data(index, CLibrary::PathRole).toString();
     }
 
   return songsPath;
