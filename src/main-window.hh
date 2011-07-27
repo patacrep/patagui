@@ -99,9 +99,6 @@ private slots:
   void selectionChanged();
   void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
 
-  void connectDatabase();
-  void disconnectDatabase();
-
   //application
   void preferences();
   void setToolBarDisplayed(bool);

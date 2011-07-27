@@ -17,7 +17,6 @@
 // 02110-1301, USA.
 //******************************************************************************
 #include <QtGui>
-#include <QtSql>
 #include <QtAlgorithms>
 #include <QDebug>
 
@@ -57,9 +56,6 @@ CMainWindow::CMainWindow()
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook-client.png"));
-
-  // initialize the database connection
-  connectDatabase();
 
   // create and load song library
   m_library = new CLibrary(this);
@@ -154,8 +150,6 @@ CMainWindow::~CMainWindow()
 {
   delete m_library;
   delete m_songbook;
-
-  disconnectDatabase();
 }
 
 void CMainWindow::switchToolBar(QToolBar *toolBar)
@@ -470,20 +464,20 @@ void CMainWindow::createToolBar()
   addToolBar(tool);
 
   // filter related objects
-  QSqlQueryModel *completionModel = new QSqlQueryModel;
-  completionModel->setQuery("SELECT DISTINCT title FROM songs "
-			    "UNION "
-			    "SELECT DISTINCT artist FROM songs "
-			    "UNION "
-			    "SELECT DISTINCT album FROM songs ");
+  // QSqlQueryModel *completionModel = new QSqlQueryModel;
+  // completionModel->setQuery("SELECT DISTINCT title FROM songs "
+  // 			    "UNION "
+  // 			    "SELECT DISTINCT artist FROM songs "
+  // 			    "UNION "
+  // 			    "SELECT DISTINCT album FROM songs ");
 
-  QCompleter *completer = new QCompleter;
-  completer->setModel(completionModel);
-  completer->setCaseSensitivity(Qt::CaseInsensitive);
-  completer->setCompletionMode(QCompleter::PopupCompletion);
+  // QCompleter *completer = new QCompleter;
+  // completer->setModel(completionModel);
+  // completer->setCaseSensitivity(Qt::CaseInsensitive);
+  // completer->setCompletionMode(QCompleter::PopupCompletion);
 
   m_filterLineEdit = new CFilterLineEdit;
-  m_filterLineEdit->setCompleter(completer);
+  // m_filterLineEdit->setCompleter(completer);
   m_filterLineEdit->addAction(m_selectEnglishAct);
   m_filterLineEdit->addAction(m_selectFrenchAct);
   m_filterLineEdit->addAction(m_selectSpanishAct);
@@ -593,7 +587,7 @@ QStringList CMainWindow::getSelectedSongs()
 
   foreach(index, indexes)
     {
-      songsPath << library()->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString();
+      songsPath << m_proxyModel->data(index, CLibrary::PathRole).toString();
     }
 
   return songsPath;
@@ -917,34 +911,6 @@ void CMainWindow::changeTab(int index)
 QTextEdit* CMainWindow::log() const
 {
   return m_log;
-}
-
-void CMainWindow::connectDatabase()
-{
-  if (!QSqlDatabase::isDriverAvailable("QSQLITE"))
-    {
-      QMessageBox::critical(this,
-			    tr("Cannot open database"),
-			    tr("Unable to establish a database connection.\n"
-			       "This application needs SQLite support."),
-			    QMessageBox::Abort);
-
-    }
-  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-
-  QDir::home().mkpath(".cache/songbook-client");
-  QString databasePath
-    = QDir::home().filePath(".cache/songbook-client/patacrep.db");
-
-  db.setDatabaseName(databasePath);
-  db.open();
-}
-
-void CMainWindow::disconnectDatabase()
-{
-  QSqlDatabase db = QSqlDatabase::database();
-  db.close();
-  QSqlDatabase::removeDatabase(QString());
 }
 
 void CMainWindow::updateNotification(const QString& path)
