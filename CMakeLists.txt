@@ -1,45 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(songbook-client)
 set( PROGNAME songbook-client )
-if( APPLE )
-  set( PROGNAME Songbook-Client )
-  set( MACOSX_BUNDLE_ICON_FILE livre.icns )
-  set( CPACK_BUNDLE_NAME Sonbook Client With Space)
-  #versions
-  set( MACOSX_BUNDLE_VERSION 0.5.1 )
-  set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.5.1 )
-  set( MACOSX_BUNDLE_LONG_VERSION_STRING "Version 0.5.1" )
-
-  #name of the preference file, usefull if we need to keep the same preference file
-  #upgrade after upgrade without loosing preferences
-  set(MACOSX_BUNDLE_GUI_IDENTIFIER com.patacrep.songbook-client)
-
-  # need to copy the icns (icon) file in the buils dir
-  # also copy the icons for the .sg and .sb files
-  SET_SOURCE_FILES_PROPERTIES(
-	${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sb_icon.icns
-	${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sg_icon.icns
-	PROPERTIES
-	MACOSX_PACKAGE_LOCATION Resources
-	)
-  
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
-    ${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
-
-  #need to check a few things for autoupdate
-  # this will set the UPPERCASE Variable to the right path 
-  # for soft/Hard linknig of the framwork.
-  find_library(SPARKLE_FRAMEWORK Sparkle)
-  find_library(APPKIT_FRAMEWORK AppKit)
-
-  # we need to copy the public key to check the updates
-  set(PUBLIC_KEY "${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/dsa_pub_songbookclient.pem")
-  SET_SOURCE_FILES_PROPERTIES(
-     ${PUBLIC_KEY}
-     PROPERTIES
-     MACOSX_PACKAGE_LOCATION Resources
-   )
-endif( APPLE )
 
 #-------------------------------------------------------------------------------
 set( CMAKE_COLOR_MAKEFILE ON )
@@ -125,21 +86,8 @@ set(SONGBOOK_CLIENT_QT_HEADER
   )
 # add header for binding between C/C++ and objective-C
 # to be able to call Sparkle (Autoupdate) on Mac os
-if(APPLE)
-  LIST(
-    APPEND SONGBOOK_CLIENT_QT_HEADER
-    macos_specific/sparkle/src/AutoUpdater.h
-    macos_specific/sparkle/src/CocoaInitializer.h
-    macos_specific/sparkle/src/SparkleAutoUpdater.h
-    )
-  LIST(
-    APPEND SONGBOOK_CLIENT_SOURCES
-    macos_specific/sparkle/src/AutoUpdater.cpp
-    macos_specific/sparkle/src/CocoaInitializer.mm
-    macos_specific/sparkle/src/SparkleAutoUpdater.mm
-    )
-endif(APPLE)
 # ressources
+#should be moved in mac only and use 'LIST' to append
 set(SONGBOOK_CLIENT_RCS songbook.qrc icons/macos/macos.qrc icons/tango/tango.qrc songbook.rc)
 
 # process Qt special files
@@ -236,31 +184,8 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 
 # generating executable
 add_definitions("-g -Wall")
-if( APPLE )
-    add_executable( ${PROGNAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
-      ${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
-      ${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
-      ${PUBLIC_KEY}
-	  ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sb_icon.icns
-	  ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sg_icon.icns
-      )
-    add_custom_command( TARGET ${PROGNAME} POST_BUILD
-      COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
-      COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
-      COMMAND cp ARGS ../lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
-      COMMAND echo "Note : Having the message : ERROR: no file at \"/usr/lib/@loader_path@loader_path\" is normal"
-      COMMAND echo "It is due to Qt encountering references to Sparkle Framwork."
-      COMMAND mkdir  ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Frameworks
-      COMMAND cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Frameworks/Sparkle.framework
-      COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app
-      )
-    # we need to add SPARKLE and APPKIT as '-framework' at link time
-    target_link_libraries(${PROGNAME} ${APPKIT_FRAMEWORK})
-    target_link_libraries(${PROGNAME} ${SPARKLE_FRAMEWORK})
-
-	# genération d'une plist custom pour sparkle from a plist.in where @VARAIBLE@ are replaces by the content of VARAIBLE
-	# we need this for having the default url to check updates
-    set_target_properties( ${PROGNAME}  PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/Info.plist.in )
+if(APPLE)
+  include(CMakeLists-Mac.cmake)
 else( APPLE )
     add_executable(${PROGNAME}
       ${SONGBOOK_CLIENT_SOURCES} 
@@ -272,6 +197,11 @@ else( APPLE )
       ${qtpropertyeditor_RESOURCES}
     )
 endif( APPLE )
+
+# Generate configure.h for now it contain information only for mac source, 
+# but include will fail if not generated.
+# I intend to but a centralized Version Number, Major/Minor/String in this file 
+CONFIGURE_FILE( ${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/config.h )
 
 target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
 if(WIN32)
