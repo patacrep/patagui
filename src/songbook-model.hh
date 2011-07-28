@@ -18,6 +18,7 @@
 #define __SONGBOOK_MODEL_HH__
 
 #include <QAbstractProxyModel>
+#include <QStringList>
 
 // Class based on the identity proxy model from Qt 4.8
 
@@ -25,11 +26,23 @@ class CSongbookModel : public QAbstractProxyModel
 {
   Q_OBJECT
 
+public slots:
+  void selectAll();
+  void unselectAll();
+  void invertSelection();
+
 public:
   CSongbookModel(QObject *parent = 0);
   ~CSongbookModel();
 
+  int selectedCount() const;
+  QStringList selectedPaths() const;
+  void selectLanguages(const QStringList &languages);
+  bool selectPaths(QStringList &paths);
+
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+  virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+  virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
   virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
   virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
@@ -41,6 +54,10 @@ public:
   virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
 
   virtual void setSourceModel(QAbstractItemModel *sourceModel);
+
+protected:
+  QList< bool > m_selectedSongs;
+  QStringList m_selectedPaths;
 
 private slots:
   void sourceColumnsAboutToBeInserted(const QModelIndex &parent, int start, int end);
