@@ -31,6 +31,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/main-window.cc
   src/preferences.cc
   src/library.cc
+  src/library-view.cc
   src/songbook.cc
   src/build-engine.cc
   src/song-editor.cc
@@ -52,6 +53,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/tab-widget.cc
   src/library-download.cc
   src/song-panel.cc
+  src/songbook-panel.cc
   src/notification.cc
   src/songbook-model.cc
   )
@@ -61,6 +63,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/main-window.hh
   src/preferences.hh
   src/library.hh
+  src/library-view.hh
   src/build-engine.hh
   src/songbook.hh
   src/song-editor.hh
@@ -81,6 +84,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/tab-widget.hh
   src/library-download.hh
   src/song-panel.hh
+  src/songbook-panel.hh
   src/notification.hh
   src/songbook-model.hh
   )

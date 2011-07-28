@@ -19,6 +19,8 @@
 
 #include "preferences.hh"
 #include "file-chooser.hh"
+#include "songbook-panel.hh"
+#include "main-window.hh"
 
 #include <QtGui>
 
@@ -26,8 +28,9 @@
 
 // Config Dialog
 
-ConfigDialog::ConfigDialog()
-  : QDialog()
+ConfigDialog::ConfigDialog(CMainWindow* parent)
+  : QDialog(parent)
+  , m_parent(parent)
 {
   m_contentsWidget = new QListWidget;
   m_contentsWidget->setViewMode(QListView::IconMode);
@@ -38,9 +41,10 @@ ConfigDialog::ConfigDialog()
   m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
 
   m_pagesWidget = new QStackedWidget;
-  m_pagesWidget->addWidget(new OptionsPage);
-  m_pagesWidget->addWidget(new DisplayPage);
-  m_pagesWidget->addWidget(new NetworkPage);
+  m_pagesWidget->addWidget(new OptionsPage(this));
+  m_pagesWidget->addWidget(new DisplayPage(this));
+  m_pagesWidget->addWidget(new EditorPage(this));
+  m_pagesWidget->addWidget(new NetworkPage(this));
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
 
@@ -66,6 +70,11 @@ ConfigDialog::ConfigDialog()
   setWindowTitle(tr("Preferences"));
 }
 
+CMainWindow* ConfigDialog::parent() const
+{
+  return m_parent;
+}
+
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
@@ -79,6 +88,12 @@ void ConfigDialog::createIcons()
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+  QListWidgetItem *editorButton = new QListWidgetItem(m_contentsWidget);
+  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor"));
+  editorButton->setText(tr("Editor"));
+  editorButton->setTextAlignment(Qt::AlignHCenter);
+  editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
   networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/preferences-system-network")));
@@ -160,7 +175,7 @@ void DisplayPage::readSettings()
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   m_coverCheckBox->setChecked(settings.value("cover", false).toBool());
   m_langCheckBox->setChecked(settings.value("lang", false).toBool());
-  m_compilationLogCheckBox->setChecked(settings.value("log", false).toBool());
+  m_compilationLogCheckBox->setChecked(settings.value("logs", false).toBool());
   settings.endGroup();
 }
 
@@ -175,7 +190,7 @@ void DisplayPage::writeSettings()
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
   settings.setValue("cover", m_coverCheckBox->isChecked());
   settings.setValue("lang", m_langCheckBox->isChecked());
-  settings.setValue("log", m_compilationLogCheckBox->isChecked());
+  settings.setValue("logs", m_compilationLogCheckBox->isChecked());
   settings.endGroup();
 }
 
@@ -187,8 +202,9 @@ void DisplayPage::closeEvent(QCloseEvent *event)
 
 // Option Page
 
-OptionsPage::OptionsPage(QWidget *parent)
-  : QWidget(parent)
+OptionsPage::OptionsPage(ConfigDialog *p)
+  : QWidget(p)
+  , m_parent(p)
   , m_workingPath(0)
   , m_workingPathValid(0)
 {
@@ -215,23 +231,54 @@ OptionsPage::OptionsPage(QWidget *parent)
   workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
+  // songbook template
+  QWidget* sbSettings = new QWidget;
+  
+  CSongbookPanel* panel = new CSongbookPanel(parent()->parent()->songbook());
+  
+  QDialogButtonBox * buttons = new QDialogButtonBox;
+  buttons->addButton(new QPushButton(tr("Change settings")), QDialogButtonBox::AcceptRole);
+  connect(buttons, SIGNAL(accepted()), panel, SLOT(settingsDialog()));
+
+  QVBoxLayout * layout = new QVBoxLayout;
+  layout->addWidget(panel);
+  layout->addWidget(buttons);
+  sbSettings->setLayout(layout);
+
+  QGroupBox *songbookTemplateGroupBox
+    = new QGroupBox(tr("Songbook PDF"));
+
+  QLayout *songbookTemplateLayout = new QVBoxLayout;
+  songbookTemplateLayout->addWidget(sbSettings);
+  songbookTemplateGroupBox->setLayout(songbookTemplateLayout);
+
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
+  mainLayout->addWidget(songbookTemplateGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
+}
+
+ConfigDialog* OptionsPage::parent() const
+{
+  return m_parent;
 }
 
 void OptionsPage::readSettings()
 {
   QSettings settings;
+  settings.beginGroup("general");
   m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
+  settings.endGroup();
 }
 
 void OptionsPage::writeSettings()
 {
   QSettings settings;
+  settings.beginGroup("general");
   settings.setValue("workingPath", m_workingPath->path());
+  settings.endGroup();
 }
 
 void OptionsPage::closeEvent(QCloseEvent *event)
@@ -301,6 +348,71 @@ void OptionsPage::checkWorkingPath(const QString &path)
     }
   m_workingPathValid->setText(mask.arg(message));
 }
+
+
+// Editor Page
+
+EditorPage::EditorPage(QWidget *parent)
+  : QWidget(parent)
+{
+  m_font = QFont("Monospace",10);
+  m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+
+  m_numberLinesCheckBox = new QCheckBox(tr("Display line numbers"));
+  m_highlightCurrentLineCheckBox = new QCheckBox(tr("Highlight current line"));
+  m_fontButton  = new QPushButton(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())), this);
+  connect(m_fontButton, SIGNAL(clicked()), this, SLOT(selectFont()));
+
+  QFormLayout* layout = new QFormLayout;
+  layout->addRow(m_numberLinesCheckBox);
+  layout->addRow(m_highlightCurrentLineCheckBox);
+  layout->addRow(tr("Editor font:"), m_fontButton);
+  setLayout(layout);
+
+  readSettings();
+}
+
+void EditorPage::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("editor");
+  m_numberLinesCheckBox->setChecked(settings.value("lines", true).toBool());
+  m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
+  m_font.fromString(settings.value("font", QString()).toString());
+  settings.endGroup();
+}
+
+void EditorPage::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup("editor");
+  settings.value("lines", m_numberLinesCheckBox->isChecked());
+  settings.value("highlight", m_highlightCurrentLineCheckBox->isChecked());
+  settings.value("font", m_font.toString());
+  settings.endGroup();
+}
+
+void EditorPage::selectFont()
+{
+  bool ok;
+  m_font = QFontDialog::getFont(&ok, QFont("Monospace", 10), this);
+  if(ok)
+    {
+      m_fontButton->setText(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())));
+    }
+}
+
+void EditorPage::closeEvent(QCloseEvent *event)
+{
+  writeSettings();
+  event->accept();
+}
+
+ConfigDialog* EditorPage::parent() const
+{
+  return m_parent;
+}
+
 
 // Network Page
 

@@ -22,6 +22,9 @@
 #include "code-editor.hh"
 
 #include <QToolBar>
+#include <QList>
+
+class QAction;
 
 class CSongEditor : public CodeEditor
 {
@@ -37,6 +40,12 @@ public:
   QToolBar* toolBar();
 
   virtual void keyPressEvent(QKeyEvent *event);
+
+  void addAction(QAction*);
+  QList<QAction*> actions() const;
+
+  void readSettings();
+  void writeSettings();
 
 signals:
   void labelChanged(const QString &label);
@@ -56,6 +65,7 @@ private:
 
   QToolBar* m_toolBar;
   QString m_path;
+  QList<QAction*> m_actions;
 };
 
 #endif // __SONG_EDITOR_HH__

@@ -15,35 +15,44 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
-#ifndef __SONG_SORT_FILTER_PROXY_MODEL_HH__
-#define __SONG_SORT_FILTER_PROXY_MODEL_HH__
+//******************************************************************************
+#ifndef __SONGBOOK_PANEL_HH__
+#define __SONGBOOK_PANEL_HH__
 
-#include <QSortFilterProxyModel>
+#include <QWidget>
 
-class CSongSortFilterProxyModel : public QSortFilterProxyModel
+class CSongbook;
+class QLabel;
+class QPixmap;
+
+class CSongbookPanel : public QWidget
 {
   Q_OBJECT
-  Q_ENUMS(FilterMode)
-  Q_PROPERTY(FilterMode filterMode
-	     READ filterMode
-	     WRITE setFilterMode)
 
 public:
-  enum FilterMode { StandardMode, LanguageMode };
+  CSongbookPanel(CSongbook *parent);
+  ~CSongbookPanel();
 
-public:
-  CSongSortFilterProxyModel(QObject *parent = 0);
-  ~CSongSortFilterProxyModel();
+  CSongbook * songbook() const;
+  void setSongbook(CSongbook *songbook);
 
-  FilterMode filterMode() const;
-  void setFilterMode(FilterMode mode);
+  void update();
 
+public slots:
+  void settingsDialog();
 
-protected:
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+signals:
+  void songbookChanged();
 
 private:
-  FilterMode m_filterMode;
+  QWidget* settingsWidget();
+  
+  CSongbook *m_songbook;
+
+  QLabel* m_titleLabel;
+  QLabel* m_authorsLabel;
+  QLabel* m_styleLabel;
+  QPixmap* m_picture;
 };
 
-#endif // __SONG_SORT_FILTER_PROXY_MODEL_HH__
+#endif // __SONGBOOK_PANEL_HH__

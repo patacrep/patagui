@@ -49,11 +49,11 @@ CSongPanel::CSongPanel(QWidget *parent)
   m_coverLabel->setAlignment(Qt::AlignTop);
   QGridLayout *layout = new QGridLayout;
   layout->addWidget(m_coverLabel,0,0,3,1);
-  layout->addWidget(new QLabel(tr("<i>Title:</i>")),0,1,1,1, Qt::AlignLeft);
+  layout->addWidget(new QLabel(tr("<b>Title:</b>")),0,1,1,1, Qt::AlignLeft);
   layout->addWidget(m_titleLabel,0,2,1,1);
-  layout->addWidget(new QLabel(tr("<i>Artist:</i>")),1,1,1,1, Qt::AlignLeft);
+  layout->addWidget(new QLabel(tr("<b>Artist:</b>")),1,1,1,1, Qt::AlignLeft);
   layout->addWidget(m_artistLabel,1,2,1,1);
-  layout->addWidget(new QLabel(tr("<i>Album:</i>")),2,1,1,1, Qt::AlignLeft);
+  layout->addWidget(new QLabel(tr("<b>Album:</b>")),2,1,1,1, Qt::AlignLeft);
   layout->addWidget(m_albumLabel,2,2,1,1);
   layout->setColumnStretch(2,1);
 

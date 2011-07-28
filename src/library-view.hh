@@ -1,5 +1,4 @@
 // Copyright (C) 2009-2011, Romain Goffe <romain.goffe@gmail.com>
-// Copyright (C) 2009-2011, Alexandre Dupas <alexandre.dupas@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
@@ -15,35 +14,41 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
-#ifndef __SONG_SORT_FILTER_PROXY_MODEL_HH__
-#define __SONG_SORT_FILTER_PROXY_MODEL_HH__
+//******************************************************************************
 
-#include <QSortFilterProxyModel>
+/**
+ * \file library-view.hh
+ *
+ * Class for displaying the songlibrary.
+ *
+ */
+#ifndef __LIBRARY_VIEW_HH__
+#define __LIBRARY_VIEW_HH__
 
-class CSongSortFilterProxyModel : public QSortFilterProxyModel
+#include <QTableView>
+
+class CMainWindow;
+
+class CLibraryView : public QTableView
 {
   Q_OBJECT
-  Q_ENUMS(FilterMode)
-  Q_PROPERTY(FilterMode filterMode
-	     READ filterMode
-	     WRITE setFilterMode)
 
 public:
-  enum FilterMode { StandardMode, LanguageMode };
+  CLibraryView(CMainWindow* parent);
+  ~CLibraryView();
 
-public:
-  CSongSortFilterProxyModel(QObject *parent = 0);
-  ~CSongSortFilterProxyModel();
+  void readSettings();
+  void writeSettings();
 
-  FilterMode filterMode() const;
-  void setFilterMode(FilterMode mode);
-
-
-protected:
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+public slots:
+  void update();
+  void songInfo();
 
 private:
-  FilterMode m_filterMode;
+  void createActions();
+  CMainWindow* parent() const;
+
+  CMainWindow* m_parent;
 };
 
-#endif // __SONG_SORT_FILTER_PROXY_MODEL_HH__
+#endif // __LIBRARY_VIEW_HH__

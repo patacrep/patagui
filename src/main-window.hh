@@ -31,6 +31,7 @@
 
 class CSongbook;
 class CLibrary;
+class CLibraryView;
 class CSongbookModel;
 class CTabWidget;
 class CDialogNewSong;
@@ -39,7 +40,6 @@ class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
 class CNotify;
-class QFileSystemWatcher;
 
 /** \class CMainWindow "main-window.hh"
  * \brief CMainWindow is the base class of the application
@@ -55,18 +55,14 @@ public:
 
   QProgressBar * progressBar() const;
   QTextEdit * log() const;
-  QTableView * view() const;
+  CLibraryView * view() const;
   CLibrary * library() const;
   CSongbook * songbook() const;
   const QString workingPath();
-  QFileSystemWatcher* watcher() const;
 
 public slots:
   void setWorkingPath(const QString &path);
-  void templateSettings();
-  void updateSongbookLabels();
-  void updateView();
-
+  
 signals:
   void workingPathChanged(const QString &path);
 
@@ -82,6 +78,7 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
+  void songbookInfo();
 
   //library
   void newSong();
@@ -96,7 +93,7 @@ private slots:
   void selectAll();
   void unselectAll();
   void invertSelection();
-  void selectLanguage(bool);
+  void selectLanguage();
   void updateSongsList();
   void filterChanged(const QString &filter);
   void selectionChanged();
@@ -107,7 +104,6 @@ private slots:
 
   //application
   void preferences();
-  void applySettings();
   void setToolBarDisplayed(bool);
   void setStatusbarDisplayed(bool);
   void documentation();
@@ -115,8 +111,6 @@ private slots:
 
   void updateTitle(const QString &filename);
   void switchToolBar(QToolBar *toolBar);
-
-  void monitorDirectories(const QString &);
 
 private:
   void readSettings();
@@ -126,7 +120,7 @@ private:
   void createMenus();
   void createToolBar();
 
-  QGridLayout * songbookInfo();
+  //QGridLayout * songbookInfo();
 
   QStringList getSelectedSongs();
 
@@ -135,53 +129,34 @@ private:
 
   QItemSelectionModel * selectionModel();
 
-  // Song library and view
+  // Models and views
   CLibrary *m_library;
+  CLibraryView *m_view;
+  CSongbook *m_songbook;
   CSongbookModel *m_songbookModel;
   QSortFilterProxyModel *m_proxyModel;
 
-  // Songbook widget
-  CSongbook *m_songbook;
-  uint m_sbNbSelected;
-  uint m_sbNbTotal;
-  CLabel* m_sbInfoSelection;
-  CLabel* m_sbInfoTitle;
-  CLabel* m_sbInfoAuthors;
-  CLabel* m_sbInfoStyle;
-
   // Widgets
   CTabWidget* m_mainWidget;
-  QTableView *m_view;
   QProgressBar* m_progressBar;
   CNotify* m_noDataInfo;
   CNotify* m_updateAvailable;
+  QLabel* m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
-  QFileSystemWatcher* m_watcher;
+  QTextEdit* m_log;
 
-  // Global
+  // Settings
   QString m_workingPath;
-
-  bool m_displayColumnArtist;
-  bool m_displayColumnTitle;
-  bool m_displayColumnPath;
-  bool m_displayColumnAlbum;
-  bool m_displayColumnLilypond;
-  bool m_displayColumnCover;
-  bool m_displayColumnLang;
-  bool m_displayCompilationLog;
-
   bool m_isToolBarDisplayed;
   bool m_isStatusbarDisplayed;
 
   CDialogNewSong *m_newSongDialog;
 
-  //Logs
-  QTextEdit* m_log;
-
   // Menus
   QMenu *m_fileMenu;
   QMenu *m_editMenu;
   QMenu *m_dbMenu;
+  QMenu *m_editorMenu;
   QMenu *m_viewMenu;
   QMenu *m_helpMenu;
 
@@ -204,6 +179,7 @@ private:
   QAction *m_saveAsAct;
   QAction *m_buildAct;
   QAction *m_cleanAct;
+  QAction *m_sbInfoAct;
 
   // Library action
   QAction *m_newSongAct;
