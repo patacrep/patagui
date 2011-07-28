@@ -94,10 +94,9 @@ CMainWindow::CMainWindow()
 
   // notifications
   m_noDataInfo = new CNotify(this);
-  m_noDataInfo->setMessage
-    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
-		"Do you want to download the latest songs library?").arg(workingPath())));
   m_noDataInfo->addAction(m_libraryDownloadAct);
+  connect(library(), SIGNAL(directoryChanged(const QDir &)),
+	  this, SLOT(noDataNotification(const QDir &)));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
@@ -614,11 +613,6 @@ const QString CMainWindow::workingPath()
 void CMainWindow::setWorkingPath(const QString &path)
 {
   library()->setDirectory(path);
-
-  if (library()->rowCount() > 0)
-    m_noDataInfo->hide();
-  else
-    m_noDataInfo->show();
 }
 
 QProgressBar * CMainWindow::progressBar() const
@@ -818,4 +812,18 @@ void CMainWindow::updateNotification(const QString& path)
 		"  %1 <br/>"
 		"Do you want to update the library to reflect these changes?")).arg(path));
   m_updateAvailable->addAction(m_libraryUpdateAct);
+}
+
+void CMainWindow::noDataNotification(const QDir & directory)
+{
+  if (library()->rowCount() > 0)
+    {
+      m_noDataInfo->hide();
+      return;
+    }
+
+  m_noDataInfo->setMessage
+    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
+		"Do you want to download the latest songs library?").arg(directory.canonicalPath())));
+  m_noDataInfo->show();
 }
