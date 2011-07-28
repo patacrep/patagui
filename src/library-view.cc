@@ -26,7 +26,7 @@ CLibraryView::CLibraryView(CMainWindow *parent)
 {
   setShowGrid(false);
   setAlternatingRowColors(true);
-  setSelectionMode(QAbstractItemView::SingleSelection);
+  setSelectionMode(QAbstractItemView::MultiSelection);
   setSelectionBehavior(QAbstractItemView::SelectRows);
   setEditTriggers(QAbstractItemView::NoEditTriggers);
   setSortingEnabled(true);
