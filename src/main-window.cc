@@ -99,7 +99,6 @@ CMainWindow::CMainWindow()
     (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
 		"Do you want to download the latest songs library?").arg(workingPath())));
   m_noDataInfo->addAction(m_libraryDownloadAct);
-  m_noDataInfo->hide();
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
@@ -644,6 +643,11 @@ void CMainWindow::setWorkingPath(const QString &path)
     {
       library()->setDirectory(path);
       emit(workingPathChanged(workingPath()));
+
+      if (m_library->rowCount() > 0)
+	m_noDataInfo->hide();
+      else
+	m_noDataInfo->show();
 
       // update the corresponding setting
       QSettings settings;
