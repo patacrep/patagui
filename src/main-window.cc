@@ -16,13 +16,13 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
+#include "main-window.hh"
+
 #include <QtGui>
 #include <QtAlgorithms>
-#include <QDebug>
 
 #include "utils/utils.hh"
 #include "label.hh"
-#include "main-window.hh"
 #include "preferences.hh"
 #include "library.hh"
 #include "library-view.hh"
@@ -36,9 +36,10 @@
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
 #include "library-download.hh"
-#include "song-panel.hh"
 #include "songbook-panel.hh"
 #include "notification.hh"
+
+#include <QDebug>
 
 using namespace SbUtils;
 
@@ -63,7 +64,7 @@ CMainWindow::CMainWindow()
   m_songbookModel = new CSongbookModel(this);
   m_songbookModel->setSourceModel(m_library);
 
-  m_proxyModel = new CSongSortFilterProxyModel;
+  m_proxyModel = new CSongSortFilterProxyModel(this);
   m_proxyModel->setSourceModel(m_songbookModel);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
@@ -573,7 +574,7 @@ void CMainWindow::open()
   songbook()->load(filename);
   QStringList songlist = songbook()->songs();
   QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(QRegExp("^"),path);
+  songlist.replaceInStrings(QRegExp("^"), path);
 
   songbookModel()->selectPaths(songlist);
 
