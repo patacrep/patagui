@@ -62,6 +62,12 @@ class CodeEditor : public QPlainTextEdit
   void lineNumberAreaPaintEvent(QPaintEvent *event);
   int lineNumberAreaWidth();
 
+  bool highlightMode() const;
+  void setHighlightMode(bool);
+
+  bool lineNumberMode() const;
+  void setLineNumberMode(bool);
+
 protected:
   void resizeEvent(QResizeEvent *event);
 
@@ -72,6 +78,8 @@ private slots:
 
 private:
   QWidget *lineNumberArea;
+  bool m_highlightMode;
+  bool m_lineNumberMode;
 };
 
 

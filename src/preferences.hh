@@ -123,8 +123,12 @@ public:
 protected:
   void closeEvent(QCloseEvent *event);
 
+signals:
+  void fontChanged();
+
 private slots:
   void selectFont();
+  void updateFontButton();
 
 private:
   void readSettings();

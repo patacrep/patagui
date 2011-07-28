@@ -358,6 +358,7 @@ EditorPage::EditorPage(QWidget *parent)
   m_highlightCurrentLineCheckBox = new QCheckBox(tr("Highlight current line"));
   m_fontButton  = new QPushButton(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())), this);
   connect(m_fontButton, SIGNAL(clicked()), this, SLOT(selectFont()));
+  connect(this, SIGNAL(fontChanged()), this, SLOT(updateFontButton()));
 
   QFormLayout* layout = new QFormLayout;
   layout->addRow(m_numberLinesCheckBox);
@@ -376,15 +377,17 @@ void EditorPage::readSettings()
   m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
   m_font.fromString(settings.value("font", QString()).toString());
   settings.endGroup();
+
+  emit(fontChanged());
 }
 
 void EditorPage::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("editor");
-  settings.value("lines", m_numberLinesCheckBox->isChecked());
-  settings.value("highlight", m_highlightCurrentLineCheckBox->isChecked());
-  settings.value("font", m_font.toString());
+  settings.setValue("lines", m_numberLinesCheckBox->isChecked());
+  settings.setValue("highlight", m_highlightCurrentLineCheckBox->isChecked());
+  settings.setValue("font", m_font.toString());
   settings.endGroup();
 }
 
@@ -392,10 +395,15 @@ void EditorPage::selectFont()
 {
   bool ok;
   m_font = QFontDialog::getFont(&ok, QFont("Monospace", 10), this);
-  if(ok)
-    {
-      m_fontButton->setText(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())));
-    }
+
+  if(ok) emit(fontChanged());
+}
+
+void EditorPage::updateFontButton()
+{
+  m_fontButton->setText(QString("%1 %2")
+			.arg(m_font.family())
+			.arg(QString::number(m_font.pointSize())));
 }
 
 void EditorPage::closeEvent(QCloseEvent *event)
