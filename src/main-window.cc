@@ -136,11 +136,6 @@ CMainWindow::CMainWindow()
 
   updateTitle(songbook()->filename());
 
-  //ensure that first selection is empty
-  //to avoid infinite loop in library()->fetchmore()
-  selectionModel()->clearSelection();
-  //songbook()->panel();
-
   readSettings();
 }
 
