@@ -73,12 +73,11 @@ private:
   void readSettings();
   void writeSettings();
 
-  QCheckBox *m_artistCheckBox;
   QCheckBox *m_titleCheckBox;
+  QCheckBox *m_artistCheckBox;
   QCheckBox *m_pathCheckBox;
   QCheckBox *m_albumCheckBox;
   QCheckBox *m_lilypondCheckBox;
-  QCheckBox *m_coverCheckBox;
   QCheckBox *m_langCheckBox;
   QCheckBox *m_compilationLogCheckBox;
 };

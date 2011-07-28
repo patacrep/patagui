@@ -57,6 +57,7 @@ public:
   QTextEdit * log() const;
   CLibraryView * view() const;
   CLibrary * library() const;
+  CSongbookModel * songbookModel() const;
   CSongbook * songbook() const;
   const QString workingPath();
 
@@ -90,14 +91,10 @@ private slots:
   void updateNotification(const QString &);
 
   //model
-  void selectAll();
-  void unselectAll();
-  void invertSelection();
   void selectLanguage();
   void updateSongsList();
   void filterChanged(const QString &filter);
-  void selectionChanged();
-  void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
+  void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
   //application
   void preferences();
@@ -118,8 +115,6 @@ private:
   void createToolBar();
 
   //QGridLayout * songbookInfo();
-
-  QStringList getSelectedSongs();
 
   bool isToolBarDisplayed();
   bool isStatusbarDisplayed();

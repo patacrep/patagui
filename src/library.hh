@@ -30,6 +30,9 @@
 #include <QString>
 #include <QDir>
 
+class QAbstractListModel;
+class QStringListModel;
+
 class QPixmap;
 class CMainWindow;
 
@@ -70,6 +73,8 @@ public:
   void setDirectory(const QString &directory);
   void setDirectory(const QDir &directory);
 
+  QAbstractListModel * completionModel();
+
   QVariant headerData (int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
@@ -103,6 +108,8 @@ protected:
 private:
   CMainWindow *m_parent;
   QDir m_directory;
+
+  QStringListModel *m_completionModel;
 
   QList< Song > m_songs;
 };

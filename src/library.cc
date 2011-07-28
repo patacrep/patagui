@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "library.hh"
 
+#include <QStringListModel>
 #include <QPixmap>
 
 #include "main-window.hh"
@@ -27,6 +28,7 @@ CLibrary::CLibrary(CMainWindow *parent)
   : QAbstractTableModel()
   , m_parent(parent)
   , m_directory()
+  , m_completionModel(new QStringListModel(this))
   , m_songs()
 {
   QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(24, 24));
@@ -63,6 +65,12 @@ void CLibrary::setDirectory(const QDir &directory)
     }
 }
 
+QAbstractListModel * CLibrary::completionModel()
+{
+  return m_completionModel;
+}
+
+
 CMainWindow* CLibrary::parent() const
 {
   return m_parent;
@@ -75,9 +83,9 @@ QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int rol
       switch (section)
 	{
 	case 0:
-	  return tr("Artist");
-	case 1:
 	  return tr("Title");
+	case 1:
+	  return tr("Artist");
 	case 2:
 	  return tr("Lilypond");
 	case 3:
@@ -102,9 +110,9 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       switch (index.column())
 	{
 	case 0:
-	  return data(index, ArtistRole);
-	case 1:
 	  return data(index, TitleRole);
+	case 1:
+	  return data(index, ArtistRole);
 	case 2:
 	  return QVariant();
 	case 3:
@@ -112,6 +120,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	case 4:
 	  return data(index, AlbumRole);
 	}
+      break;
     case TitleRole:
       return m_songs[index.row()].title;
     case ArtistRole:
@@ -225,6 +234,16 @@ void CLibrary::update()
   parent()->progressBar()->setRange(0, paths.size());
 
   addSongs(paths);
+
+  QStringList wordList;
+  for (int i = 0; i < rowCount(); ++i)
+    {
+      wordList << data(index(i,0),CLibrary::TitleRole).toString()
+	       << data(index(i,0),CLibrary::ArtistRole).toString()
+	       << data(index(i,0),CLibrary::PathRole).toString();
+    }
+  wordList.removeDuplicates();
+  m_completionModel->setStringList(wordList);
 
   parent()->progressBar()->setTextVisible(false);
   parent()->progressBar()->hide();
