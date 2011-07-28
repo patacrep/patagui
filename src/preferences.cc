@@ -123,16 +123,16 @@ DisplayPage::DisplayPage(QWidget *parent)
 {
   QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
 
-  m_artistCheckBox = new QCheckBox(tr("Artist"));
   m_titleCheckBox = new QCheckBox(tr("Title"));
+  m_artistCheckBox = new QCheckBox(tr("Artist"));
   m_pathCheckBox = new QCheckBox(tr("Path"));
   m_albumCheckBox = new QCheckBox(tr("Album"));
   m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
   m_langCheckBox = new QCheckBox(tr("Language"));
 
   QVBoxLayout *displayColumnsLayout = new QVBoxLayout;
-  displayColumnsLayout->addWidget(m_artistCheckBox);
   displayColumnsLayout->addWidget(m_titleCheckBox);
+  displayColumnsLayout->addWidget(m_artistCheckBox);
   displayColumnsLayout->addWidget(m_pathCheckBox);
   displayColumnsLayout->addWidget(m_albumCheckBox);
   displayColumnsLayout->addWidget(m_lilypondCheckBox);
@@ -159,8 +159,8 @@ void DisplayPage::readSettings()
 {
   QSettings settings;
   settings.beginGroup("display");
-  m_artistCheckBox->setChecked(settings.value("artist", true).toBool());
   m_titleCheckBox->setChecked(settings.value("title", true).toBool());
+  m_artistCheckBox->setChecked(settings.value("artist", true).toBool());
   m_pathCheckBox->setChecked(settings.value("path", false).toBool());
   m_albumCheckBox->setChecked(settings.value("album", true).toBool());
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
@@ -173,8 +173,8 @@ void DisplayPage::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("display");
-  settings.setValue("artist", m_artistCheckBox->isChecked());
   settings.setValue("title", m_titleCheckBox->isChecked());
+  settings.setValue("artist", m_artistCheckBox->isChecked());
   settings.setValue("path", m_pathCheckBox->isChecked());
   settings.setValue("album", m_albumCheckBox->isChecked());
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());

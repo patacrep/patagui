@@ -26,7 +26,7 @@ CLibraryView::CLibraryView(CMainWindow *parent)
 {
   setShowGrid(false);
   setAlternatingRowColors(true);
-  setSelectionMode(QAbstractItemView::MultiSelection);
+  setSelectionMode(QAbstractItemView::SingleSelection);
   setSelectionBehavior(QAbstractItemView::SelectRows);
   setEditTriggers(QAbstractItemView::NoEditTriggers);
   setSortingEnabled(true);
@@ -53,15 +53,15 @@ void CLibraryView::readSettings()
 {
   QSettings settings;
   settings.beginGroup("display");
-  setColumnHidden(0, !settings.value("artist", true).toBool());
-  setColumnHidden(1, !settings.value("title", true).toBool());
+  setColumnHidden(0, !settings.value("title", true).toBool());
+  setColumnHidden(1, !settings.value("artist", true).toBool());
   setColumnHidden(2, !settings.value("lilypond", false).toBool());
   setColumnHidden(3, !settings.value("path", false).toBool());
   setColumnHidden(4, !settings.value("album", true).toBool());
   setColumnHidden(5, !settings.value("lang", true).toBool());
 
-  setColumnWidth(0, settings.value("artistWidth", 200).toInt());
-  setColumnWidth(1, settings.value("titleWidth", 200).toInt());
+  setColumnWidth(0, settings.value("titleWidth", 200).toInt());
+  setColumnWidth(1, settings.value("artistWidth", 200).toInt());
   setColumnWidth(2, settings.value("lilypondWidth", 40).toInt());
   setColumnWidth(3, settings.value("pathWidth", 200).toInt());
   setColumnWidth(4, settings.value("albumWidth", 200).toInt());
@@ -74,8 +74,8 @@ void CLibraryView::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("display");
-  settings.setValue("artistWidth", columnWidth(0));
-  settings.setValue("titleWidth", columnWidth(1));
+  settings.setValue("titleWidth", columnWidth(0));
+  settings.setValue("artistWidth", columnWidth(1));
   settings.setValue("lilypondWidth", columnWidth(2));
   settings.setValue("pathWidth", columnWidth(3));
   settings.setValue("albumWidth", columnWidth(4));
@@ -86,8 +86,8 @@ void CLibraryView::writeSettings()
 
 void CLibraryView::update()
 {
-  sortByColumn(1, Qt::AscendingOrder);
   sortByColumn(0, Qt::AscendingOrder);
+  sortByColumn(1, Qt::AscendingOrder);
 }
 
 

@@ -75,9 +75,9 @@ QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int rol
       switch (section)
 	{
 	case 0:
-	  return tr("Artist");
-	case 1:
 	  return tr("Title");
+	case 1:
+	  return tr("Artist");
 	case 2:
 	  return tr("Lilypond");
 	case 3:
@@ -102,9 +102,9 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       switch (index.column())
 	{
 	case 0:
-	  return data(index, ArtistRole);
-	case 1:
 	  return data(index, TitleRole);
+	case 1:
+	  return data(index, ArtistRole);
 	case 2:
 	  return QVariant();
 	case 3:
