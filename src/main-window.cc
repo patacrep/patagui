@@ -396,22 +396,19 @@ void CMainWindow::createMenus()
   m_fileMenu->addAction(m_saveAct);
   m_fileMenu->addAction(m_saveAsAct);
   m_fileMenu->addSeparator();
-  m_fileMenu->addAction(m_sbInfoAct);
+  m_fileMenu->addAction(m_preferencesAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_buildAct);
   m_fileMenu->addAction(m_cleanAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_exitAct);
 
-  m_editMenu = menuBar()->addMenu(tr("&Edit"));
-  m_editMenu->addAction(m_selectAllAct);
-  m_editMenu->addAction(m_unselectAllAct);
-  m_editMenu->addAction(m_invertSelectionAct);
-  m_editMenu->addSeparator();
-  m_editMenu->addAction(m_preferencesAct);
-
   m_dbMenu = menuBar()->addMenu(tr("&Library"));
   m_dbMenu->addAction(m_newSongAct);
+  m_dbMenu->addSeparator();
+  m_dbMenu->addAction(m_selectAllAct);
+  m_dbMenu->addAction(m_unselectAllAct);
+  m_dbMenu->addAction(m_invertSelectionAct);
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_libraryDownloadAct);
   m_dbMenu->addAction(m_libraryUpdateAct);

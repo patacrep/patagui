@@ -143,7 +143,6 @@ private:
 
   // Menus
   QMenu *m_fileMenu;
-  QMenu *m_editMenu;
   QMenu *m_dbMenu;
   QMenu *m_editorMenu;
   QMenu *m_viewMenu;
