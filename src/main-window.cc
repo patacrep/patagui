@@ -436,21 +436,13 @@ void CMainWindow::createToolBar()
   tool->addSeparator();
   addToolBar(tool);
 
-  // filter related objects
-  // QSqlQueryModel *completionModel = new QSqlQueryModel;
-  // completionModel->setQuery("SELECT DISTINCT title FROM songs "
-  // 			    "UNION "
-  // 			    "SELECT DISTINCT artist FROM songs "
-  // 			    "UNION "
-  // 			    "SELECT DISTINCT album FROM songs ");
-
-  // QCompleter *completer = new QCompleter;
-  // completer->setModel(completionModel);
-  // completer->setCaseSensitivity(Qt::CaseInsensitive);
-  // completer->setCompletionMode(QCompleter::PopupCompletion);
+  QCompleter *completer = new QCompleter;
+  completer->setModel(library()->completionModel());
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  completer->setCompletionMode(QCompleter::PopupCompletion);
 
   m_filterLineEdit = new CFilterLineEdit;
-  // m_filterLineEdit->setCompleter(completer);
+  m_filterLineEdit->setCompleter(completer);
   m_filterLineEdit->addAction(m_selectEnglishAct);
   m_filterLineEdit->addAction(m_selectFrenchAct);
   m_filterLineEdit->addAction(m_selectSpanishAct);
