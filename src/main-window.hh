@@ -64,9 +64,6 @@ public:
 public slots:
   void setWorkingPath(const QString &path);
   
-signals:
-  void workingPathChanged(const QString &path);
-
 protected:
   void closeEvent(QCloseEvent *event);
 

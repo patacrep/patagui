@@ -264,7 +264,7 @@ ConfigDialog* OptionsPage::parent() const
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("library");
   m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
   settings.endGroup();
 }
@@ -272,7 +272,7 @@ void OptionsPage::readSettings()
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("library");
   settings.setValue("workingPath", m_workingPath->path());
   settings.endGroup();
 }

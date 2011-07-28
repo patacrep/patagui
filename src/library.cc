@@ -29,6 +29,7 @@ CLibrary::CLibrary(CMainWindow *parent)
   , m_parent(parent)
   , m_directory()
   , m_completionModel(new QStringListModel(this))
+  , m_templates()
   , m_songs()
 {
   QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(24, 24));
@@ -46,6 +47,22 @@ CLibrary::~CLibrary()
   m_songs.clear();
 }
 
+void CLibrary::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("library");
+  setDirectory(settings.value("workingPath", QDir::homePath()).toString());
+  settings.endGroup();
+}
+
+void CLibrary::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup("library");
+  settings.setValue("workingPath", directory().canonicalPath());
+  settings.endGroup();
+}
+
 QDir CLibrary::directory() const
 {
   return m_directory;
@@ -61,8 +78,15 @@ void CLibrary::setDirectory(const QDir &directory)
   if (m_directory != directory)
     {
       m_directory = directory;
+      QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
+      m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
       emit(directoryChanged(m_directory));
     }
+}
+
+QStringList CLibrary::templates() const
+{
+  return m_templates;
 }
 
 QAbstractListModel * CLibrary::completionModel()

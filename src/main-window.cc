@@ -77,10 +77,8 @@ CMainWindow::CMainWindow()
 
   // songbook
   m_songbook = new CSongbook;
-  m_songbook->setWorkingPath(workingPath());
+  m_songbook->setLibrary(m_library);
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
-  connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  songbook(), SLOT(setWorkingPath(const QString&)));
   connect(m_songbookModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
 	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
 
@@ -163,7 +161,6 @@ void CMainWindow::readSettings()
   QSettings settings;
   settings.beginGroup("general");
   resize(settings.value("size", QSize(800,600)).toSize());
-  setWorkingPath(settings.value("workingPath", QDir::homePath()).toString());
   setStatusbarDisplayed(settings.value("statusBar", true).toBool());
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
   settings.endGroup();
@@ -172,6 +169,7 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  library()->readSettings();
   view()->readSettings();
 }
 
@@ -180,11 +178,11 @@ void CMainWindow::writeSettings()
   QSettings settings;
   settings.beginGroup("general");
   settings.setValue("size", size());
-  settings.value("workingPath", workingPath());
   settings.setValue("statusBar", isStatusbarDisplayed());
   settings.setValue("toolBar", isToolBarDisplayed());
   settings.endGroup();
 
+  library()->writeSettings();
   view()->writeSettings();
 }
 
@@ -636,20 +634,12 @@ const QString CMainWindow::workingPath()
 
 void CMainWindow::setWorkingPath(const QString &path)
 {
-  if (path != workingPath())
-    {
-      library()->setDirectory(path);
-      emit(workingPathChanged(workingPath()));
+  library()->setDirectory(path);
 
-      if (m_library->rowCount() > 0)
-	m_noDataInfo->hide();
-      else
-	m_noDataInfo->show();
-
-      // update the corresponding setting
-      QSettings settings;
-      settings.setValue("workingPath", workingPath());
-    }
+  if (library()->rowCount() > 0)
+    m_noDataInfo->hide();
+  else
+    m_noDataInfo->show();
 }
 
 QProgressBar * CMainWindow::progressBar() const

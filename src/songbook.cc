@@ -33,8 +33,6 @@
 #include <QtIntPropertyManager>
 #include <QtAbstractPropertyManager>
 
-#include <QDebug>
-
 #include "qtpropertymanager.h"
 #include "main-window.hh"
 #include "unit-property-manager.hh"
@@ -42,8 +40,13 @@
 #include "file-property-manager.hh"
 #include "file-factory.hh"
 
+#include "library.hh"
+
+#include <QDebug>
+
 CSongbook::CSongbook()
   : QObject()
+  , m_library()
   , m_filename()
   , m_tmpl()
   , m_songs()
@@ -52,7 +55,6 @@ CSongbook::CSongbook()
   , m_unitManager(new CUnitPropertyManager())
   , m_fileManager(new CFilePropertyManager())
   , m_propertyEditor(new QtGroupBoxPropertyBrowser())
-  , m_templates()
   , m_parameters()
   , m_groupManager()
   , m_advancedParameters()
@@ -67,6 +69,17 @@ CSongbook::~CSongbook()
 {
   delete m_propertyManager;
   delete m_unitManager;
+}
+
+CLibrary * CSongbook::library() const
+{
+  return m_library;
+}
+
+void CSongbook::setLibrary(CLibrary *library)
+{
+  if (library && library != m_library)
+    m_library = library;
 }
 
 QString CSongbook::filename() const
@@ -101,7 +114,7 @@ QString CSongbook::tmpl() const
 
 void CSongbook::setTmpl(const QString &tmpl)
 {
-  int index =  m_templates.indexOf(tmpl);
+  int index =  library()->templates().indexOf(tmpl);
   if (m_tmpl != tmpl && -1 != index)
     {
       m_tmpl = tmpl;
@@ -608,22 +621,7 @@ void CSongbook::load(const QString & filename)
 
 QString CSongbook::workingPath() const
 {
-  return m_workingPath;
-}
-
-void CSongbook::setWorkingPath(const QString &path)
-{
-  if (m_workingPath != path)
-    {
-      m_workingPath = path;
-      QDir templatesDirectory(QString("%1/templates").arg(workingPath()));
-      m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
-    }
-}
-
-QStringList CSongbook::templates() const
-{
-  return m_templates;
+  return library()->directory().canonicalPath();
 }
 
 QtGroupBoxPropertyBrowser * CSongbook::propertyEditor() const

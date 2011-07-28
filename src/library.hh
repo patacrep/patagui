@@ -69,9 +69,14 @@ public:
   CLibrary(CMainWindow* parent);
   ~CLibrary();
 
+  void readSettings();
+  void writeSettings();
+
   QDir directory() const;
   void setDirectory(const QString &directory);
   void setDirectory(const QDir &directory);
+
+  QStringList templates() const;
 
   QAbstractListModel * completionModel();
 
@@ -111,6 +116,7 @@ private:
 
   QStringListModel *m_completionModel;
 
+  QStringList m_templates;
   QList< Song > m_songs;
 };
 
