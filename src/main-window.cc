@@ -231,10 +231,6 @@ void CMainWindow::createActions()
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-  m_sbInfoAct = new QAction(tr("Properties"), this);
-  m_sbInfoAct->setStatusTip(tr("Show the properties of the selected songbook"));
-  connect(m_sbInfoAct, SIGNAL(triggered()), this, SLOT(songbookInfo()));
-
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
   m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/help-contents")));
@@ -339,20 +335,6 @@ void CMainWindow::createActions()
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), builder, SLOT(action()));
 
-}
-
-void CMainWindow::songbookInfo()
-{
-  QDialog* dialog = new QDialog;
-  QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
-  connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
-
-  QVBoxLayout * layout = new QVBoxLayout;
-  layout->addWidget(new CSongbookPanel(songbook()));
-  layout->addWidget(buttons);
-  dialog->setLayout(layout);
-
-  dialog->exec();
 }
 
 void CMainWindow::setToolBarDisplayed(bool value)

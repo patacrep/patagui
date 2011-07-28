@@ -76,7 +76,6 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
-  void songbookInfo();
 
   //library
   void newSong();
