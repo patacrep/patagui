@@ -112,6 +112,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	case 4:
 	  return data(index, AlbumRole);
 	}
+      break;
     case TitleRole:
       return m_songs[index.row()].title;
     case ArtistRole:
