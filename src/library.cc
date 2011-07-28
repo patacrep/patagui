@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "library.hh"
 
+#include <QStringListModel>
 #include <QPixmap>
 
 #include "main-window.hh"
@@ -27,6 +28,7 @@ CLibrary::CLibrary(CMainWindow *parent)
   : QAbstractTableModel()
   , m_parent(parent)
   , m_directory()
+  , m_completionModel(new QStringListModel(this))
   , m_songs()
 {
   QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(24, 24));
@@ -62,6 +64,12 @@ void CLibrary::setDirectory(const QDir &directory)
       emit(directoryChanged(m_directory));
     }
 }
+
+QAbstractListModel * CLibrary::completionModel()
+{
+  return m_completionModel;
+}
+
 
 CMainWindow* CLibrary::parent() const
 {
@@ -226,6 +234,16 @@ void CLibrary::update()
   parent()->progressBar()->setRange(0, paths.size());
 
   addSongs(paths);
+
+  QStringList wordList;
+  for (int i = 0; i < rowCount(); ++i)
+    {
+      wordList << data(index(i,0),CLibrary::TitleRole).toString()
+	       << data(index(i,0),CLibrary::ArtistRole).toString()
+	       << data(index(i,0),CLibrary::PathRole).toString();
+    }
+  wordList.removeDuplicates();
+  m_completionModel->setStringList(wordList);
 
   parent()->progressBar()->setTextVisible(false);
   parent()->progressBar()->hide();
