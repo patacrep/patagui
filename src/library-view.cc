@@ -58,16 +58,14 @@ void CLibraryView::readSettings()
   setColumnHidden(2, !settings.value("lilypond", false).toBool());
   setColumnHidden(3, !settings.value("path", false).toBool());
   setColumnHidden(4, !settings.value("album", true).toBool());
-  setColumnHidden(5, !settings.value("cover", false).toBool());
-  setColumnHidden(6, !settings.value("lang", true).toBool());
+  setColumnHidden(5, !settings.value("lang", true).toBool());
 
   setColumnWidth(0, settings.value("artistWidth", 200).toInt());
   setColumnWidth(1, settings.value("titleWidth", 200).toInt());
   setColumnWidth(2, settings.value("lilypondWidth", 40).toInt());
   setColumnWidth(3, settings.value("pathWidth", 200).toInt());
   setColumnWidth(4, settings.value("albumWidth", 200).toInt());
-  setColumnWidth(5, settings.value("coverWidth", 40).toInt());
-  setColumnWidth(6, settings.value("langWidth", 40).toInt());
+  setColumnWidth(5, settings.value("langWidth", 40).toInt());
 
   settings.endGroup();
 }
@@ -76,13 +74,12 @@ void CLibraryView::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("display");
-  settings.setValue("artistWidth",   columnWidth(0));
-  settings.setValue("titleWidth",    columnWidth(1));
+  settings.setValue("artistWidth", columnWidth(0));
+  settings.setValue("titleWidth", columnWidth(1));
   settings.setValue("lilypondWidth", columnWidth(2));
-  settings.setValue("pathWidth",     columnWidth(3));
-  settings.setValue("albumWidth",    columnWidth(4));
-  settings.setValue("coverWidth",    columnWidth(5));
-  settings.setValue("langWidth",     columnWidth(6));
+  settings.setValue("pathWidth", columnWidth(3));
+  settings.setValue("albumWidth", columnWidth(4));
+  settings.setValue("langWidth", columnWidth(5));
   settings.endGroup();
 
 }
