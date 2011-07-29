@@ -127,13 +127,13 @@ private:
   QSortFilterProxyModel *m_proxyModel;
 
   // Widgets
-  CTabWidget* m_mainWidget;
-  QProgressBar* m_progressBar;
-  CNotification* m_noDataInfo;
-  CNotification* m_updateAvailable;
-  QLabel* m_infoSelection;
+  CTabWidget *m_mainWidget;
+  QProgressBar *m_progressBar;
+  CNotification *m_noDataInfo;
+  CNotification *m_updateAvailable;
+  QLabel *m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
-  QTextEdit* m_log;
+  QTextEdit *m_log;
 
   // Settings
   QString m_workingPath;
