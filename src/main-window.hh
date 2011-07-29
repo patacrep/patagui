@@ -32,7 +32,6 @@
 class CSongbook;
 class CLibrary;
 class CLibraryView;
-class CSongbookModel;
 class CTabWidget;
 class CDialogNewSong;
 class CSongEditor;
@@ -57,7 +56,6 @@ public:
   QTextEdit * log() const;
   CLibraryView * view() const;
   CLibrary * library() const;
-  CSongbookModel * songbookModel() const;
   CSongbook * songbook() const;
   const QString workingPath();
 
@@ -122,7 +120,6 @@ private:
   CLibrary *m_library;
   CLibraryView *m_view;
   CSongbook *m_songbook;
-  CSongbookModel *m_songbookModel;
   QSortFilterProxyModel *m_proxyModel;
 
   // Widgets

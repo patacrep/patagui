@@ -26,7 +26,6 @@
 #include "preferences.hh"
 #include "library.hh"
 #include "library-view.hh"
-#include "songbook-model.hh"
 #include "songbook.hh"
 #include "build-engine/make-songbook.hh"
 #include "song-editor.hh"
@@ -48,7 +47,6 @@ CMainWindow::CMainWindow()
   , m_library(0)
   , m_view(0)
   , m_songbook(0)
-  , m_songbookModel(0)
   , m_proxyModel(0)
   , m_progressBar(0)
   , m_noDataInfo(0)
@@ -64,22 +62,18 @@ CMainWindow::CMainWindow()
   connect(m_library, SIGNAL(directoryChanged(const QDir &)),
 	  SLOT(noDataNotification(const QDir &)));
 
-  // songbook model (song selection in the library)
-  m_songbookModel = new CSongbookModel(this);
-  m_songbookModel->setSourceModel(m_library);
-
-  connect(m_songbookModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
-
-  // songbook (title & co)
-  m_songbook = new CSongbook;
+  // songbook (title, authors, song list)
+  m_songbook = new CSongbook(this);
   m_songbook->setLibrary(m_library);
+  m_songbook->setSourceModel(m_library);
 
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
+  connect(m_songbook, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
 
   // proxy model (sorting & filtering)
   m_proxyModel = new CSongSortFilterProxyModel(this);
-  m_proxyModel->setSourceModel(m_songbookModel);
+  m_proxyModel->setSourceModel(m_songbook);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
   m_proxyModel->setFilterKeyColumn(-1);
@@ -189,8 +183,8 @@ void CMainWindow::filterChanged(const QString &filter)
 void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 {
   m_infoSelection->setText(QString(tr("Selection: %1/%2"))
-			   .arg(songbookModel()->selectedCount())
-			   .arg(songbookModel()->rowCount()));
+			   .arg(songbook()->selectedCount())
+			   .arg(songbook()->rowCount()));
 }
 
 void CMainWindow::createActions()
@@ -252,17 +246,17 @@ void CMainWindow::createActions()
   m_selectAllAct = new QAction(tr("Select all"), this);
   m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
   m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
-  connect(m_selectAllAct, SIGNAL(triggered()), songbookModel(), SLOT(selectAll()));
+  connect(m_selectAllAct, SIGNAL(triggered()), songbook(), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
   m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
   m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
-  connect(m_unselectAllAct, SIGNAL(triggered()), songbookModel(), SLOT(unselectAll()));
+  connect(m_unselectAllAct, SIGNAL(triggered()), songbook(), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
   m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
-  connect(m_invertSelectionAct, SIGNAL(triggered()), songbookModel(), SLOT(invertSelection()));
+  connect(m_invertSelectionAct, SIGNAL(triggered()), songbook(), SLOT(invertSelection()));
 
   m_selectEnglishAct = new QAction(tr("english"), this);
   m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
@@ -486,12 +480,12 @@ void CMainWindow::selectLanguage()
 {
   QStringList languages;
   languages << (qobject_cast< QAction* >(QObject::sender())->text());
-  songbookModel()->selectLanguages(languages);
+  songbook()->selectLanguages(languages);
 }
 
 void CMainWindow::build()
 {
-  if (songbookModel()->selectedPaths().isEmpty())
+  if (songbook()->selectedPaths().isEmpty())
     {
       if (QMessageBox::question(this, windowTitle(),
 				QString(tr("You did not select any song. \n "
@@ -501,7 +495,7 @@ void CMainWindow::build()
 				QMessageBox::NoButton) == QMessageBox::No)
 	return;
       else
-	songbookModel()->selectAll();
+	songbook()->selectAll();
     }
 
   save(true);
@@ -547,7 +541,7 @@ void CMainWindow::open()
   QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(QRegExp("^"), path);
 
-  songbookModel()->selectPaths(songlist);
+  songbook()->selectPaths(songlist);
 
   updateTitle(songbook()->filename());
 }
@@ -583,7 +577,7 @@ void CMainWindow::saveAs()
 
 void CMainWindow::updateSongsList()
 {
-  QStringList songlist = songbookModel()->selectedPaths();
+  QStringList songlist = songbook()->selectedPaths();
   QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(path, QString());
 #ifdef Q_WS_WIN
@@ -628,11 +622,6 @@ CLibraryView * CMainWindow::view() const
 CLibrary * CMainWindow::library() const
 {
   return m_library;
-}
-
-CSongbookModel * CMainWindow::songbookModel() const
-{
-  return m_songbookModel;
 }
 
 QItemSelectionModel * CMainWindow::selectionModel()

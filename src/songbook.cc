@@ -44,8 +44,10 @@
 
 #include <QDebug>
 
-CSongbook::CSongbook()
-  : QObject()
+CSongbook::CSongbook(QObject *parent)
+  : CIdentityProxyModel(parent)
+  , m_selectedSongs()
+  , m_selectedPaths()
   , m_library()
   , m_filename()
   , m_tmpl()
@@ -627,4 +629,128 @@ QString CSongbook::workingPath() const
 QtGroupBoxPropertyBrowser * CSongbook::propertyEditor() const
 {
   return m_propertyEditor;
+}
+
+void CSongbook::selectAll()
+{
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      m_selectedSongs[i] = true;
+    }
+  emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+}
+
+void CSongbook::unselectAll()
+{
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      m_selectedSongs[i] = false;
+    }
+  emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+}
+
+void CSongbook::invertSelection()
+{
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      m_selectedSongs[i] = !m_selectedSongs[i];
+    }
+  emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+}
+
+int CSongbook::selectedCount() const
+{
+  int count = 0;
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      if (m_selectedSongs[i])
+	count++;
+    }
+  return count;
+}
+
+QStringList CSongbook::selectedPaths() const
+{
+  QStringList songPaths;
+
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      if (m_selectedSongs[i])
+	songPaths << data(index(i,0), CLibrary::PathRole).toString();
+    }
+  return songPaths;
+}
+
+void CSongbook::selectLanguages(const QStringList &languages)
+{
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      m_selectedSongs[i] = false;
+      if (languages.contains(data(index(i,0), CLibrary::LanguageRole).toString()))
+	m_selectedSongs[i] = true;
+    }
+  emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+}
+
+bool CSongbook::selectPaths(QStringList &paths)
+{
+  bool ok = true;
+  
+  if (paths.count() == 0)
+    unselectAll();
+
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      m_selectedSongs[i] = false;
+      if (paths.contains(data(index(i,0), CLibrary::PathRole).toString()))
+	m_selectedSongs[i] = true;
+      else
+	ok = false;
+    }
+  emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+  return ok;
+}
+
+QVariant CSongbook::data(const QModelIndex &index, int role) const
+{
+  if (index.column() == 0 && role == Qt::CheckStateRole)
+    {
+      return (m_selectedSongs[index.row()] ? Qt::Checked : Qt::Unchecked);
+    }
+  return CIdentityProxyModel::data(index, role);
+}
+
+Qt::ItemFlags CSongbook::flags(const QModelIndex &index) const
+{
+  if (!index.isValid())
+    return Qt::NoItemFlags;
+  return Qt::ItemIsUserCheckable | CIdentityProxyModel::flags(index);
+}
+
+bool CSongbook::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+  if (index.column() == 0 && role == Qt::CheckStateRole)
+    {
+      m_selectedSongs[index.row()] = value.toBool();
+      emit(dataChanged(index, index));
+      return true;
+    }
+  return CIdentityProxyModel::setData(index, value, role);
+}
+
+void CSongbook::sourceModelAboutToBeReset()
+{
+  m_selectedPaths = selectedPaths();
+  beginResetModel();
+}
+
+void CSongbook::sourceModelReset()
+{
+  m_selectedSongs.clear();
+  for (int i = 0; i < sourceModel()->rowCount(); ++i)
+    {
+      m_selectedSongs << false;
+    }
+  selectPaths(m_selectedPaths);
+  endResetModel();
 }

@@ -19,7 +19,7 @@
 #ifndef __SONGBOOK_HH__
 #define __SONGBOOK_HH__
 
-#include <QObject>
+#include "identity-proxy-model.hh"
 
 #include <QDir>
 #include <QString>
@@ -38,7 +38,7 @@ class QtGroupPropertyManager;
 class CUnitPropertyManager;
 class CFilePropertyManager;
 
-class CSongbook : public QObject
+class CSongbook : public CIdentityProxyModel
 {
   Q_OBJECT
   Q_PROPERTY(bool modified READ isModified WRITE setModified NOTIFY wasModified)
@@ -56,8 +56,14 @@ public slots:
   void load(const QString &filename);
   void setModified(bool modified);
 
+  void changeTemplate(const QString &filename = QString());
+
+  void selectAll();
+  void unselectAll();
+  void invertSelection();
+
 public:
-  CSongbook();
+  CSongbook(QObject *parent);
   ~CSongbook();
 
   QString workingPath() const;
@@ -73,18 +79,32 @@ public:
   QPixmap* picture() const;
   QtGroupBoxPropertyBrowser * propertyEditor() const;
   
+  int selectedCount() const;
+  QStringList selectedPaths() const;
+  void selectLanguages(const QStringList &languages);
+  bool selectPaths(QStringList &paths);
+
   QStringList songs();
 
   bool isModified();
 
   QWidget *panel();
 
+  virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+  virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+  virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+
 signals:
   void wasModified(bool modified);
   void songsChanged();
 
-public slots:
-  void changeTemplate(const QString &filename = QString());
+protected:
+  QList< bool > m_selectedSongs;
+  QStringList m_selectedPaths;
+
+private slots:
+  void sourceModelAboutToBeReset();
+  void sourceModelReset();
 
 private:
   CLibrary *m_library;
