@@ -54,6 +54,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/song-panel.cc
   src/songbook-panel.cc
   src/notification.cc
+  src/identity-proxy-model.cc
   src/songbook-model.cc
   )
 
@@ -85,6 +86,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/song-panel.hh
   src/songbook-panel.hh
   src/notification.hh
+  src/identity-proxy-model.hh
   src/songbook-model.hh
   )
 # add header for binding between C/C++ and objective-C
