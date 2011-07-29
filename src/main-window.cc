@@ -45,43 +45,50 @@ using namespace SbUtils;
 
 CMainWindow::CMainWindow()
   : QMainWindow()
-  , m_library()
-  , m_view()
-  , m_songbook()
-  , m_songbookModel()
-  , m_proxyModel()
-  , m_progressBar(new QProgressBar(this))
-  , m_noDataInfo(NULL)
-  , m_updateAvailable(NULL)
-  , m_infoSelection(new QLabel)
+  , m_library(0)
+  , m_view(0)
+  , m_songbook(0)
+  , m_songbookModel(0)
+  , m_proxyModel(0)
+  , m_progressBar(0)
+  , m_noDataInfo(0)
+  , m_updateAvailable(0)
+  , m_infoSelection(0)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook-client.png"));
 
-  // create and load song library
+  // song library
   m_library = new CLibrary(this);
 
+  connect(m_library, SIGNAL(directoryChanged(const QDir &)),
+	  SLOT(noDataNotification(const QDir &)));
+
+  // songbook model (song selection in the library)
   m_songbookModel = new CSongbookModel(this);
   m_songbookModel->setSourceModel(m_library);
 
+  connect(m_songbookModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
+
+  // songbook (title & co)
+  m_songbook = new CSongbook;
+  m_songbook->setLibrary(m_library);
+
+  connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
+
+  // proxy model (sorting & filtering)
   m_proxyModel = new CSongSortFilterProxyModel(this);
   m_proxyModel->setSourceModel(m_songbookModel);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
   m_proxyModel->setFilterKeyColumn(-1);
 
+  // view
   m_view = new CLibraryView(this);
   m_view->setModel(m_proxyModel);
+  connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
   
-  connect(m_library, SIGNAL(wasModified()), view(), SLOT(update()));
-
-  // songbook
-  m_songbook = new CSongbook;
-  m_songbook->setLibrary(m_library);
-  connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
-  connect(m_songbookModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
-
   // compilation log
   m_log = new QTextEdit;
   m_log->setMaximumHeight(150);
@@ -92,16 +99,10 @@ CMainWindow::CMainWindow()
   createMenus();
   createToolBar();
 
-  // notifications
-  m_noDataInfo = new CNotify(this);
-  m_noDataInfo->addAction(m_libraryDownloadAct);
-  connect(library(), SIGNAL(directoryChanged(const QDir &)),
-	  this, SLOT(noDataNotification(const QDir &)));
-
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(view());
-  mainLayout->addWidget(log());
+  mainLayout->addWidget(m_view);
+  mainLayout->addWidget(m_log);
 
   QWidget* libraryTab = new QWidget;
   libraryTab->setLayout(mainLayout);
@@ -116,12 +117,15 @@ CMainWindow::CMainWindow()
   m_mainWidget->addTab(libraryTab, tr("Library"));
   setCentralWidget(m_mainWidget);
 
-  // status bar with an embedded progress bar on the right
-  progressBar()->setTextVisible(false);
-  progressBar()->setRange(0, 0);
-  progressBar()->hide();
+  // status bar with an embedded label and progress bar
+  m_infoSelection = new QLabel(this);
   statusBar()->addPermanentWidget(m_infoSelection);
-  statusBar()->addPermanentWidget(progressBar());
+
+  m_progressBar = new QProgressBar(this);
+  m_progressBar->setTextVisible(false);
+  m_progressBar->setRange(0, 0);
+  m_progressBar->hide();
+  statusBar()->addPermanentWidget(m_progressBar);
 
   updateTitle(songbook()->filename());
 
@@ -487,14 +491,14 @@ void CMainWindow::selectLanguage()
 
 void CMainWindow::build()
 {
-  if(songbookModel()->selectedPaths().isEmpty())
+  if (songbookModel()->selectedPaths().isEmpty())
     {
-      if(QMessageBox::question(this, windowTitle(),
-			       QString(tr("You did not select any song. \n "
-					  "Do you want to build the songbook with all songs?")),
-			       QMessageBox::Yes,
-			       QMessageBox::No,
-			       QMessageBox::NoButton) == QMessageBox::No)
+      if (QMessageBox::question(this, windowTitle(),
+				QString(tr("You did not select any song. \n "
+					   "Do you want to build the songbook with all songs?")),
+				QMessageBox::Yes,
+				QMessageBox::No,
+				QMessageBox::NoButton) == QMessageBox::No)
 	return;
       else
 	songbookModel()->selectAll();
@@ -502,7 +506,7 @@ void CMainWindow::build()
 
   save(true);
   
-  if(!QFile(songbook()->filename()).exists())
+  if (!QFile(songbook()->filename()).exists())
     statusBar()->showMessage(QString(tr("The songbook file %1 is invalid. Build aborted."))
 			     .arg(songbook()->filename()));
 
@@ -550,11 +554,11 @@ void CMainWindow::open()
 
 void CMainWindow::save(bool forced)
 {
-  if(songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
+  if (songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
     {
-      if(forced)
+      if (forced)
 	songbook()->setFilename(QString("%1/default.sb").arg(workingPath()));
-      else if(!songbook()->filename().isEmpty())
+      else if (!songbook()->filename().isEmpty())
 	saveAs();
     }
 
@@ -705,7 +709,7 @@ void CMainWindow::deleteSong(const QString &path)
 {
   QString qs(tr("You are about to remove a song from the library.\n"
                 "Yes : The song will only be deleted from the library "
-                      "and can be retrieved by rebuilding the library\n"
+		"and can be retrieved by rebuilding the library\n"
                 "No  : Nothing will be deleted\n"
                 "Delete file : You will also delete %1 from your hard drive\n"
                 "If you are unsure what to do, click No.").arg(path));
@@ -721,23 +725,23 @@ void CMainWindow::deleteSong(const QString &path)
   msgBox.exec();
 
   if (msgBox.clickedButton() == yesb || msgBox.clickedButton() == delb)
-  {
+    {
       //remove entry in database in 2 case
       library()->removeSong(path);
-  }
+    }
   //don't forget to remove the file if asked
   if (msgBox.clickedButton() == delb)
-  {
-    //removal on disk only if deletion
-    QFile file(path);
-    QFileInfo fileinfo(file);
-    QString tmp = fileinfo.canonicalPath();
-    if (file.remove())
     {
-      QDir dir;
-      dir.rmdir(tmp); //remove dir if empty
+      //removal on disk only if deletion
+      QFile file(path);
+      QFileInfo fileinfo(file);
+      QString tmp = fileinfo.canonicalPath();
+      if (file.remove())
+	{
+	  QDir dir;
+	  dir.rmdir(tmp); //remove dir if empty
+	}
     }
-  }
 }
 
 void CMainWindow::closeTab(int index)
@@ -768,7 +772,7 @@ void CMainWindow::changeTab(int index)
   if (editor)
     {
       m_editorMenu->clear();
-      foreach(action, editor->actions())
+      foreach (action, editor->actions())
 	{
 	  m_editorMenu->addAction(action);
 	  action->setEnabled(true);
@@ -779,8 +783,10 @@ void CMainWindow::changeTab(int index)
     }
   else
     {
-      foreach(action, m_editorMenu->actions())
-	action->setEnabled(false);
+      foreach (action, m_editorMenu->actions())
+	{
+	  action->setEnabled(false);
+	}
 
       switchToolBar(m_toolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
@@ -792,29 +798,37 @@ QTextEdit* CMainWindow::log() const
   return m_log;
 }
 
-void CMainWindow::updateNotification(const QString& path)
+void CMainWindow::updateNotification(const QString &path)
 {
-  if(m_updateAvailable)
-    delete m_updateAvailable;
+  if (!m_updateAvailable)
+    {
+      m_updateAvailable = new CNotify(this);
+      m_updateAvailable->addAction(m_libraryUpdateAct);
+    }
 
-  m_updateAvailable = new CNotify(this);
   m_updateAvailable->setMessage
     (QString(tr("<strong>The following directory has been modified:</strong><br/>"
 		"  %1 <br/>"
 		"Do you want to update the library to reflect these changes?")).arg(path));
-  m_updateAvailable->addAction(m_libraryUpdateAct);
 }
 
-void CMainWindow::noDataNotification(const QDir & directory)
+void CMainWindow::noDataNotification(const QDir &directory)
 {
+  if (!m_noDataInfo)
+    {
+      m_noDataInfo = new CNotify(this);
+      m_noDataInfo->addAction(m_libraryDownloadAct);
+    }
+
   if (library()->rowCount() > 0)
     {
       m_noDataInfo->hide();
-      return;
     }
-
-  m_noDataInfo->setMessage
-    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
-		"Do you want to download the latest songs library?").arg(directory.canonicalPath())));
-  m_noDataInfo->show();
+  else
+    {
+      m_noDataInfo->setMessage
+	(QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
+		    "Do you want to download the latest songs library?").arg(directory.canonicalPath())));
+      m_noDataInfo->show();
+    }
 }
