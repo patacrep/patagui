@@ -87,7 +87,6 @@ private slots:
 
   //model
   void selectLanguage();
-  void updateSongsList();
   void filterChanged(const QString &filter);
   void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 

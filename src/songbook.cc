@@ -711,6 +711,18 @@ bool CSongbook::selectPaths(QStringList &paths)
   return ok;
 }
 
+
+void CSongbook::setSongsFromSelectedPaths()
+{
+  QStringList songlist = selectedPaths();
+  QString path = QString("%1/songs/").arg(workingPath());
+  songlist.replaceInStrings(path, QString());
+#ifdef Q_WS_WIN
+  songlist.replaceInStrings("\\", "/");
+#endif
+  setSongs(songlist);
+}
+
 QVariant CSongbook::data(const QModelIndex &index, int role) const
 {
   if (index.column() == 0 && role == Qt::CheckStateRole)

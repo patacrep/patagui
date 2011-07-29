@@ -556,7 +556,7 @@ void CMainWindow::save(bool forced)
 	saveAs();
     }
 
-  updateSongsList();
+  songbook()->setSongsFromSelectedPaths();
   songbook()->save(songbook()->filename());
   updateTitle(songbook()->filename());
 }
@@ -573,17 +573,6 @@ void CMainWindow::saveAs()
       songbook()->setFilename(filename);
       save();
     }
-}
-
-void CMainWindow::updateSongsList()
-{
-  QStringList songlist = songbook()->selectedPaths();
-  QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(path, QString());
-#ifdef Q_WS_WIN
-  songlist.replaceInStrings("\\", "/");
-#endif
-  songbook()->setSongs(songlist);
 }
 
 void CMainWindow::updateTitle(const QString &filename)
