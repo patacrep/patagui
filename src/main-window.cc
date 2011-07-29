@@ -96,7 +96,7 @@ CMainWindow::CMainWindow()
   mainLayout->addWidget(m_view);
   mainLayout->addWidget(m_log);
 
-  QWidget* libraryTab = new QWidget;
+  QWidget *libraryTab = new QWidget;
   libraryTab->setLayout(mainLayout);
 
   // place elements into the main window
@@ -311,7 +311,7 @@ void CMainWindow::createActions()
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  CBuildEngine* builder = new CMakeSongbook(this);
+  CBuildEngine *builder = new CMakeSongbook(this);
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
 #else
@@ -383,8 +383,8 @@ void CMainWindow::createMenus()
   libraryMenu->addAction(m_libraryUpdateAct);
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
-  CSongEditor* editor = new CSongEditor();
-  QAction* action;
+  CSongEditor *editor = new CSongEditor();
+  QAction *action;
   foreach (action, editor->actions())
     {
       action->setDisabled(true);
@@ -403,7 +403,7 @@ void CMainWindow::createMenus()
 
 void CMainWindow::createToolBar()
 {
-  QToolBar* tool = new QToolBar(tr("Song tools"), this);
+  QToolBar *tool = new QToolBar(tr("Song tools"), this);
   tool->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   tool->addAction(m_newSongAct);
   tool->addAction(m_buildAct);
@@ -424,7 +424,7 @@ void CMainWindow::createToolBar()
   connect(m_filterLineEdit, SIGNAL(textChanged(const QString&)),
 	  this, SLOT(filterChanged(const QString&)));
 
-  QWidget* stretch = new QWidget;
+  QWidget *stretch = new QWidget;
   stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   m_toolBar = new QToolBar(tr("Library tools"), this);
@@ -507,7 +507,7 @@ void CMainWindow::build()
   QString basename = QFileInfo(songbook()->filename()).baseName();
   QString target = QString("%1.pdf").arg(basename);
 
-  CBuildEngine* builder = new CMakeSongbook(this);
+  CBuildEngine *builder = new CMakeSongbook(this);
 
   //force a make clean
 #ifdef Q_WS_WIN
@@ -613,7 +613,7 @@ QItemSelectionModel * CMainWindow::selectionModel()
   return view()->selectionModel();
 }
 
-void CMainWindow::songEditor(const QModelIndex & index)
+void CMainWindow::songEditor(const QModelIndex &index)
 {
   if (!selectionModel()->hasSelection())
     {
@@ -635,7 +635,7 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
       return;
     }
 
-  CSongEditor* editor = new CSongEditor();
+  CSongEditor *editor = new CSongEditor();
   editor->setPath(path);
   if (title == QString())
     {
@@ -691,8 +691,8 @@ void CMainWindow::deleteSong(const QString &path)
   msgBox.setText(tr("Removing song from Library."));
   msgBox.setInformativeText(tr("Are you sure?"));
   msgBox.addButton(QMessageBox::No);
-  QPushButton* yesb = msgBox.addButton(QMessageBox::Yes);
-  QPushButton* delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
+  QPushButton *yesb = msgBox.addButton(QMessageBox::Yes);
+  QPushButton *delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
   msgBox.setDefaultButton(QMessageBox::No);
   msgBox.setDetailedText(qs);
   msgBox.exec();
@@ -741,7 +741,7 @@ void CMainWindow::closeTab(int index)
 void CMainWindow::changeTab(int index)
 {
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  QAction* action;
+  QAction *action;
   if (editor)
     {
       m_editorMenu->clear();

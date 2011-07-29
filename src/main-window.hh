@@ -90,7 +90,7 @@ private slots:
 
   //library
   void newSong();
-  void songEditor(const QModelIndex & index = QModelIndex());
+  void songEditor(const QModelIndex &index = QModelIndex());
   void deleteSong();
 
   void songEditor(const QString &filename, const QString &title = QString());
