@@ -84,8 +84,8 @@ private slots:
 
   void songEditor(const QString &filename, const QString &title = QString());
   void deleteSong(const QString &filename);
-  void updateNotification(const QString &);
-  void noDataNotification(const QDir &);
+  void updateNotification(const QString &path);
+  void noDataNotification(const QDir &directory);
 
   //model
   void selectLanguage();
