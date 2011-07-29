@@ -98,15 +98,6 @@ CMainWindow::CMainWindow()
   connect(library(), SIGNAL(directoryChanged(const QDir &)),
 	  this, SLOT(noDataNotification(const QDir &)));
 
-  QDialogButtonBox *buttonBox = new QDialogButtonBox;
-  QPushButton *editButton = new QPushButton(tr("Edit"));
-  QPushButton *deleteButton = new QPushButton(tr("Delete"));
-  editButton->setDefault(true);
-  buttonBox->addButton(editButton, QDialogButtonBox::ActionRole);
-  buttonBox->addButton(deleteButton, QDialogButtonBox::NoRole);
-  connect(editButton, SIGNAL(clicked()), SLOT(songEditor()));
-  connect(deleteButton, SIGNAL(clicked()), SLOT(deleteSong()));
-
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(view());
