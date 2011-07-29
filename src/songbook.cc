@@ -81,7 +81,10 @@ CLibrary * CSongbook::library() const
 void CSongbook::setLibrary(CLibrary *library)
 {
   if (library && library != m_library)
-    m_library = library;
+    {
+      m_library = library;
+      setSourceModel(library);
+    }
 }
 
 QString CSongbook::filename() const
@@ -710,7 +713,6 @@ bool CSongbook::selectPaths(QStringList &paths)
   emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
   return ok;
 }
-
 
 void CSongbook::setSongsFromSelectedPaths()
 {

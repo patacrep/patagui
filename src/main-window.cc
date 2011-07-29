@@ -65,7 +65,6 @@ CMainWindow::CMainWindow()
   // songbook (title, authors, song list)
   m_songbook = new CSongbook(this);
   m_songbook->setLibrary(m_library);
-  m_songbook->setSourceModel(m_library);
 
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
   connect(m_songbook, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
