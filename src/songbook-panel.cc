@@ -32,12 +32,13 @@
 #include <QComboBox>
 #include <QDebug>
 
-CSongbookPanel::CSongbookPanel(CSongbook* parent)
+CSongbookPanel::CSongbookPanel()
   : QWidget()
-  , m_songbook(parent)
+  , m_songbook(0)
   , m_titleLabel(new QLabel)
   , m_authorsLabel(new QLabel)
   , m_styleLabel(new QLabel)
+  , m_pictureLabel(new QLabel)
   , m_picture(new QPixmap)
 {
   QWidget* form = new QWidget;
@@ -47,12 +48,8 @@ CSongbookPanel::CSongbookPanel(CSongbook* parent)
   formLayout->addRow(tr("<b>Style:</b>"), m_styleLabel);
   form->setLayout(formLayout);
 
-  QLabel* pic = new QLabel;
-  if(!m_picture->isNull())
-    pic->setPixmap(m_picture->scaled(256,256,Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
   QHBoxLayout* mainLayout = new QHBoxLayout;
-  mainLayout->addWidget(pic);
+  mainLayout->addWidget(m_pictureLabel);
   mainLayout->addWidget(form);
   
   setLayout(mainLayout);
@@ -63,12 +60,17 @@ CSongbookPanel::CSongbookPanel(CSongbook* parent)
 CSongbookPanel::~CSongbookPanel()
 {}
 
-void CSongbookPanel::update()
+void CSongbookPanel::update(bool invalid)
 {
+  if(!songbook())
+    return;
+
   m_titleLabel->setText(songbook()->title());
   m_authorsLabel->setText(songbook()->authors());
   m_styleLabel->setText(songbook()->style());
   m_picture = songbook()->picture();
+  if(!m_picture->isNull())
+    m_pictureLabel->setPixmap(m_picture->scaled(128,128,Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 CSongbook * CSongbookPanel::songbook() const
@@ -78,14 +80,17 @@ CSongbook * CSongbookPanel::songbook() const
 
 void CSongbookPanel::setSongbook(CSongbook *songbook)
 {
+  if(m_songbook)
+    disconnect(m_songbook, 0, this, 0);
+
   m_songbook = songbook;
+
+  connect(m_songbook, SIGNAL(wasModified(bool)), this, SLOT(update(bool)));
   emit(songbookChanged());
 }
 
-
 void CSongbookPanel::settingsDialog()
 {
-  qDebug() << "settingsDialog";
   QDialog *dialog = new QDialog(this);
   dialog->setWindowTitle(tr("Songbook settings"));
   QVBoxLayout *layout = new QVBoxLayout;

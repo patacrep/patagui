@@ -229,10 +229,12 @@ OptionsPage::OptionsPage(ConfigDialog *p)
   workingPathGroupBox->setLayout(workingPathLayout);
 
   // songbook template
+  qDebug() << "create songbook template widget";
   QWidget* sbSettings = new QWidget;
   
-  CSongbookPanel* panel = new CSongbookPanel(parent()->parent()->songbook());
-  
+  CSongbookPanel* panel = new CSongbookPanel;
+  panel->setSongbook(parent()->parent()->songbook());
+
   QDialogButtonBox * buttons = new QDialogButtonBox;
   buttons->addButton(new QPushButton(tr("Change settings")), QDialogButtonBox::AcceptRole);
   connect(buttons, SIGNAL(accepted()), panel, SLOT(settingsDialog()));
@@ -243,7 +245,7 @@ OptionsPage::OptionsPage(ConfigDialog *p)
   sbSettings->setLayout(layout);
 
   QGroupBox *songbookTemplateGroupBox
-    = new QGroupBox(tr("Songbook PDF"));
+    = new QGroupBox(tr("Songbook Template"));
 
   QLayout *songbookTemplateLayout = new QVBoxLayout;
   songbookTemplateLayout->addWidget(sbSettings);

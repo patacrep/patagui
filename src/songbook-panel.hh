@@ -30,28 +30,27 @@ class CSongbookPanel : public QWidget
   Q_OBJECT
 
 public:
-  CSongbookPanel(CSongbook *parent);
+  CSongbookPanel();
   ~CSongbookPanel();
 
   CSongbook * songbook() const;
-  void setSongbook(CSongbook *songbook);
-
-  void update();
+  QWidget* settingsWidget();
 
 public slots:
   void settingsDialog();
+  void setSongbook(CSongbook *songbook);
+  void update(bool invalid = false);
 
 signals:
   void songbookChanged();
 
 private:
-  QWidget* settingsWidget();
-  
   CSongbook *m_songbook;
 
   QLabel* m_titleLabel;
   QLabel* m_authorsLabel;
   QLabel* m_styleLabel;
+  QLabel* m_pictureLabel;
   QPixmap* m_picture;
 };
 
