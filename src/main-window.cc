@@ -536,12 +536,6 @@ void CMainWindow::open()
                                                   workingPath(),
                                                   tr("Songbook (*.sb)"));
   songbook()->load(filename);
-  QStringList songlist = songbook()->songs();
-  QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(QRegExp("^"), path);
-
-  songbook()->selectPaths(songlist);
-
   updateTitle(songbook()->filename());
 }
 

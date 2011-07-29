@@ -83,6 +83,7 @@ public:
   QStringList selectedPaths() const;
   void selectLanguages(const QStringList &languages);
   bool selectPaths(QStringList &paths);
+  void selectPathsFromSongs();
   void setSongsFromSelectedPaths();
 
   QStringList songs();

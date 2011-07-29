@@ -615,6 +615,7 @@ void CSongbook::load(const QString & filename)
               setSongs(items);
             }
         }
+      selectPathsFromSongs();
       setModified(false);
       setFilename(filename);
     }
@@ -723,6 +724,14 @@ void CSongbook::setSongsFromSelectedPaths()
   songlist.replaceInStrings("\\", "/");
 #endif
   setSongs(songlist);
+}
+
+void CSongbook::selectPathsFromSongs()
+{
+  QStringList songlist = songs();
+  QString path = QString("%1/songs/").arg(workingPath());
+  songlist.replaceInStrings(QRegExp("^"), path);
+  selectPaths(songlist);
 }
 
 QVariant CSongbook::data(const QModelIndex &index, int role) const
