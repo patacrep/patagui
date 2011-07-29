@@ -677,6 +677,7 @@ void CMainWindow::newSong()
 
   if (dialog->exec() == QDialog::Accepted)
     {
+      library()->update();
       songEditor(dialog->path(), dialog->title());
     }
   delete dialog;
