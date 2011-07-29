@@ -121,8 +121,6 @@ private:
   void createMenus();
   void createToolBar();
 
-  //QGridLayout * songbookInfo();
-
   bool isToolBarDisplayed();
   bool isStatusbarDisplayed();
 
