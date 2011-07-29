@@ -18,8 +18,12 @@
 //******************************************************************************
 
 #include "build-engine.hh"
+
+#include <QtGui>
+
 #include "main-window.hh"
-#include "highlighter.hh"
+
+#include <QDebug>
 
 CBuildEngine::CBuildEngine(CMainWindow* AParent)
   : QWidget()

@@ -18,11 +18,12 @@
 //******************************************************************************
 #include "library.hh"
 
-#include <QStringListModel>
-#include <QPixmap>
+#include <QtGui>
 
 #include "main-window.hh"
 #include "utils/utils.hh"
+
+#include <QDebug>
 
 CLibrary::CLibrary(CMainWindow *parent)
   : QAbstractTableModel()

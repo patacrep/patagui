@@ -27,7 +27,12 @@
 #ifndef __MAIN_WINDOW_HH__
 #define __MAIN_WINDOW_HH__
 
-#include <QtGui>
+#include <QMainWindow>
+
+#include <QModelIndex>
+#include <QDir>
+#include <QDate>
+#include <QLocale>
 
 class CSongbook;
 class CLibrary;
@@ -39,6 +44,14 @@ class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
 class CNotification;
+
+class QProgressBar;
+class QTextEdit;
+class QItemSelectionModel;
+class QSortFilterProxyModel;
+class QLabel;
+//class ;
+
 
 /** \class CMainWindow "main-window.hh"
  * \brief CMainWindow is the base class of the application

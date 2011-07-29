@@ -19,7 +19,6 @@
 #include "main-window.hh"
 
 #include <QtGui>
-#include <QtAlgorithms>
 
 #include "utils/utils.hh"
 #include "label.hh"

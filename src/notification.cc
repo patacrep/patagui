@@ -19,12 +19,11 @@
 
 #include "notification.hh"
 
-#include <QTextEdit>
-#include <QLayout>
-#include <QPushButton>
-#include <QPalette>
+#include <QtGui>
 
 #include "main-window.hh"
+
+#include <QDebug>
 
 CNotification::CNotification(QWidget* p)
   : QDockWidget(p)

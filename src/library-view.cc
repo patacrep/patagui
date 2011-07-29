@@ -17,8 +17,12 @@
 //******************************************************************************
 #include "library-view.hh"
 
+#include <QtGui>
+
 #include "main-window.hh"
 #include "song-panel.hh"
+
+#include <QDebug>
 
 CLibraryView::CLibraryView(CMainWindow *parent)
   : QTableView()

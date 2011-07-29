@@ -19,9 +19,11 @@
 #ifndef __DIALOG_NEW_SONG_HH__
 #define __DIALOG_NEW_SONG_HH__
 
-#include <QtGui>
+#include <QDialog>
+#include <QString>
 
 class CMainWindow;
+class QLineEdit;
 
 class CDialogNewSong : public QDialog
 {

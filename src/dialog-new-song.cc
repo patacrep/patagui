@@ -18,13 +18,16 @@
 //******************************************************************************
 
 #include "dialog-new-song.hh"
+
+#include <QtGui>
+
 #include "utils/utils.hh"
 #include "main-window.hh"
 #include "library.hh"
 #include "file-chooser.hh"
 #include "notification.hh"
-#include <QLayout>
-#include <QImage>
+
+#include <QDebug>
 
 CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   : QDialog()
