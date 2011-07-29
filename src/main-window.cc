@@ -331,6 +331,7 @@ void CMainWindow::setToolBarDisplayed(bool value)
     {
       m_isToolBarDisplayed = value;
       m_currentToolBar->setVisible(value);
+      m_mainToolBar->setVisible(value);
     }
 }
 
@@ -404,12 +405,12 @@ void CMainWindow::createMenus()
 
 void CMainWindow::createToolBar()
 {
-  QToolBar* tool = new QToolBar(tr("Song tools"), this);
-  tool->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  tool->addAction(m_newSongAct);
-  tool->addAction(m_buildAct);
-  tool->addSeparator();
-  addToolBar(tool);
+  m_mainToolBar = new QToolBar(tr("Song tools"), this);
+  m_mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+  m_mainToolBar->addAction(m_newSongAct);
+  m_mainToolBar->addAction(m_buildAct);
+  m_mainToolBar->addSeparator();
+  addToolBar(m_mainToolBar);
 
   QCompleter *completer = new QCompleter;
   completer->setModel(library()->completionModel());
@@ -428,20 +429,20 @@ void CMainWindow::createToolBar()
   QWidget* stretch = new QWidget;
   stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-  m_toolBar = new QToolBar(tr("Library tools"), this);
-  m_toolBar->setMovable(false);
-  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+  m_libraryToolBar = new QToolBar(tr("Library tools"), this);
+  m_libraryToolBar->setMovable(false);
+  m_libraryToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
   // selection actions
-  m_toolBar->addAction(m_selectAllAct);
-  m_toolBar->addAction(m_unselectAllAct);
-  m_toolBar->addAction(m_invertSelectionAct);
+  m_libraryToolBar->addAction(m_selectAllAct);
+  m_libraryToolBar->addAction(m_unselectAllAct);
+  m_libraryToolBar->addAction(m_invertSelectionAct);
   // add toolbar spacing
-  m_toolBar->addWidget(stretch);
+  m_libraryToolBar->addWidget(stretch);
   // add toolbar filter
-  m_toolBar->addWidget(m_filterLineEdit);
+  m_libraryToolBar->addWidget(m_filterLineEdit);
 
-  m_currentToolBar = m_toolBar;
-  addToolBar(m_toolBar);
+  m_currentToolBar = m_libraryToolBar;
+  addToolBar(m_libraryToolBar);
   setUnifiedTitleAndToolBarOnMac(true);
 }
 
@@ -777,7 +778,7 @@ void CMainWindow::changeTab(int index)
 	  action->setEnabled(false);
 	}
 
-      switchToolBar(m_toolBar);
+      switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
 }

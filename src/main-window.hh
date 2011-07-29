@@ -141,8 +141,9 @@ private:
   // Menus
   QMenu *m_editorMenu;
 
-  QToolBar *m_toolBar;
+  QToolBar *m_libraryToolBar;
   QToolBar *m_currentToolBar;
+  QToolBar *m_mainToolBar;
 
   // Application actions
   QAction *m_preferencesAct;
