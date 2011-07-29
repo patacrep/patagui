@@ -29,19 +29,14 @@
 CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   : QDialog()
   ,m_parent(AParent)
-  ,m_workingPath()
   ,m_title()
   ,m_artist()
   ,m_nbColumns(2)
   ,m_capo(0)
-  , m_path()
+  ,m_path()
   ,m_titleEdit(new QLineEdit)
   ,m_artistEdit(new QLineEdit)
 {
-  m_workingPath = parent()->workingPath();
-  connect(parent(), SIGNAL(workingPathChanged(QString)),
-	  this, SLOT(setWorkingPath(QString)));
-
   //Optional fields
   QLineEdit* albumEdit = new QLineEdit;
 
@@ -104,15 +99,15 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   setWindowTitle(tr("New song"));
   show();
 }
-//------------------------------------------------------------------------------
+
 CDialogNewSong::~CDialogNewSong()
 {}
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::accept()
 {
   addSong();
 }
-//------------------------------------------------------------------------------
+
 bool CDialogNewSong::checkRequiredFields()
 {
   bool result = true;
@@ -136,7 +131,7 @@ bool CDialogNewSong::checkRequiredFields()
     }
   return result;
 }
-//------------------------------------------------------------------------------
+
 QString CDialogNewSong::songTemplate()
 {
   QString text;;
@@ -164,15 +159,19 @@ QString CDialogNewSong::songTemplate()
 
   return text;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::addSong()
 {
   if ( !checkRequiredFields() )
     return;
 
   //make new dir
-  QString dirpath = QString("%1/songs/%2").arg(workingPath()).arg(SbUtils::stringToFilename(artist(),"_"));
-  QString filepath = QString("%1/%2.sg").arg(dirpath).arg(SbUtils::stringToFilename(title(),"_"));
+  QString dirpath = QString("%1/songs/%2")
+    .arg(parent()->library()->directory().canonicalPath())
+    .arg(SbUtils::stringToFilename(artist(),"_"));
+  QString filepath = QString("%1/%2.sg")
+    .arg(dirpath)
+    .arg(SbUtils::stringToFilename(title(),"_"));
   QDir dir(dirpath);
 
   if (!dir.exists())
@@ -219,95 +218,83 @@ void CDialogNewSong::addSong()
 
   QDialog::accept();
 }
-//------------------------------------------------------------------------------
+
 QString CDialogNewSong::title() const
 {
   return m_title;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::setTitle(const QString &ATitle)
 {
   m_title = ATitle;
 }
-//------------------------------------------------------------------------------
+
 QString CDialogNewSong::artist() const
 {
   return m_artist;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::setArtist(const QString &AArtist)
 {
   m_artist = AArtist;
 }
 
-//------------------------------------------------------------------------------
 int CDialogNewSong::nbColumns() const
 {
   return m_nbColumns;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::setNbColumns(int ANbColumns)
 {
   m_nbColumns = ANbColumns;
 }
-//------------------------------------------------------------------------------
+
 int CDialogNewSong::capo() const
 {
   return m_capo;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::setCapo(int ACapo)
 {
   m_capo = ACapo;
 }
-//------------------------------------------------------------------------------
+
 QString CDialogNewSong::album() const
 {
   return m_album;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::setAlbum(const QString &AAlbum)
 {
   m_album = AAlbum;
 }
-//------------------------------------------------------------------------------
+
 QString CDialogNewSong::cover() const
 {
   return m_cover;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::setCover(const QString &ACover)
 {
   m_cover = ACover;
 }
-//------------------------------------------------------------------------------
+
 QString CDialogNewSong::lang() const
 {
   return m_lang;
 }
-//------------------------------------------------------------------------------
+
 void CDialogNewSong::setLang(const QString & ALang)
 {
   m_lang = ALang;
 }
-//------------------------------------------------------------------------------
-QString CDialogNewSong::workingPath() const
-{
-  return m_workingPath;
-}
-//------------------------------------------------------------------------------
-void CDialogNewSong::setWorkingPath(const QString &path)
-{
-  m_workingPath = path;
-}
-//------------------------------------------------------------------------------
+
 CMainWindow* CDialogNewSong::parent() const
 {
   return m_parent ;
 }
-//------------------------------------------------------------------------------
+
 QString CDialogNewSong::path() const
 {
   return m_path;
 }
-//------------------------------------------------------------------------------

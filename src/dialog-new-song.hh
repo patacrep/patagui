@@ -42,7 +42,6 @@ private slots:
   void setAlbum(const QString &album);
   void setCover(const QString &cover);
   void setLang(const QString &lang);
-  void setWorkingPath(const QString &path);
   void addSong();
   void accept();
 
@@ -54,12 +53,10 @@ private:
   QString album() const;
   QString cover() const;
   QString lang() const;
-  QString workingPath() const;
   bool checkRequiredFields();
   QString songTemplate();
 
   CMainWindow* m_parent;
-  QString m_workingPath;
   QString m_title;
   QString m_artist;
   QString m_album;
