@@ -50,13 +50,10 @@ class QTextEdit;
 class QItemSelectionModel;
 class QSortFilterProxyModel;
 class QLabel;
-//class ;
-
 
 /** \class CMainWindow "main-window.hh"
  * \brief CMainWindow is the base class of the application
  */
-
 class CMainWindow : public QMainWindow
 {
   Q_OBJECT
