@@ -20,6 +20,9 @@
 
 #include <QTranslator>
 #include <QTextCodec>
+#include <QDate>
+#include <QLocale>
+#include <QDir>
 
 #include "main-window.hh"
 #include "config.h"

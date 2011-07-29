@@ -31,8 +31,6 @@
 
 #include <QModelIndex>
 #include <QDir>
-#include <QDate>
-#include <QLocale>
 
 class CSongbook;
 class CLibrary;
