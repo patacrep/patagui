@@ -52,6 +52,8 @@ private:
   QLabel* m_styleLabel;
   QLabel* m_pictureLabel;
   QPixmap* m_picture;
+
+  QWidget* m_settingsWidget;
 };
 
 #endif // __SONGBOOK_PANEL_HH__

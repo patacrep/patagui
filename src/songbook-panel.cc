@@ -40,6 +40,7 @@ CSongbookPanel::CSongbookPanel()
   , m_styleLabel(new QLabel)
   , m_pictureLabel(new QLabel)
   , m_picture(new QPixmap)
+  , m_settingsWidget(0)
 {
   QWidget* form = new QWidget;
   QFormLayout* formLayout = new QFormLayout;
@@ -58,7 +59,9 @@ CSongbookPanel::CSongbookPanel()
 }
 
 CSongbookPanel::~CSongbookPanel()
-{}
+{
+  delete m_settingsWidget;
+}
 
 void CSongbookPanel::update(bool invalid)
 {
@@ -117,7 +120,10 @@ QWidget* CSongbookPanel::settingsWidget()
   if(!songbook())
     return new QLabel(tr("No songbook found"));
 
-  QWidget * settings = new QWidget;
+  if(m_settingsWidget)
+    return m_settingsWidget;
+
+  m_settingsWidget = new QWidget;
 
   QBoxLayout *templateLayout = new QHBoxLayout;
 
@@ -136,6 +142,6 @@ QWidget* CSongbookPanel::settingsWidget()
   mainLayout->addLayout(templateLayout);
   mainLayout->addWidget(songbook()->propertyEditor());
 
-  settings->setLayout(mainLayout);
-  return settings;
+  m_settingsWidget->setLayout(mainLayout);
+  return m_settingsWidget;
 }
