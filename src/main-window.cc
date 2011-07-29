@@ -371,46 +371,46 @@ void CMainWindow::createMenus()
 {
   menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
 
-  m_fileMenu = menuBar()->addMenu(tr("&Songbook"));
-  m_fileMenu->addAction(m_newAct);
-  m_fileMenu->addAction(m_openAct);
-  m_fileMenu->addAction(m_saveAct);
-  m_fileMenu->addAction(m_saveAsAct);
-  m_fileMenu->addSeparator();
-  m_fileMenu->addAction(m_preferencesAct);
-  m_fileMenu->addSeparator();
-  m_fileMenu->addAction(m_buildAct);
-  m_fileMenu->addAction(m_cleanAct);
-  m_fileMenu->addSeparator();
-  m_fileMenu->addAction(m_exitAct);
+  QMenu *fileMenu = menuBar()->addMenu(tr("&Songbook"));
+  fileMenu->addAction(m_newAct);
+  fileMenu->addAction(m_openAct);
+  fileMenu->addAction(m_saveAct);
+  fileMenu->addAction(m_saveAsAct);
+  fileMenu->addSeparator();
+  fileMenu->addAction(m_preferencesAct);
+  fileMenu->addSeparator();
+  fileMenu->addAction(m_buildAct);
+  fileMenu->addAction(m_cleanAct);
+  fileMenu->addSeparator();
+  fileMenu->addAction(m_exitAct);
 
-  m_dbMenu = menuBar()->addMenu(tr("&Library"));
-  m_dbMenu->addAction(m_newSongAct);
-  m_dbMenu->addSeparator();
-  m_dbMenu->addAction(m_selectAllAct);
-  m_dbMenu->addAction(m_unselectAllAct);
-  m_dbMenu->addAction(m_invertSelectionAct);
-  m_dbMenu->addSeparator();
-  m_dbMenu->addAction(m_libraryDownloadAct);
-  m_dbMenu->addAction(m_libraryUpdateAct);
+  QMenu *libraryMenu = menuBar()->addMenu(tr("&Library"));
+  libraryMenu->addAction(m_newSongAct);
+  libraryMenu->addSeparator();
+  libraryMenu->addAction(m_selectAllAct);
+  libraryMenu->addAction(m_unselectAllAct);
+  libraryMenu->addAction(m_invertSelectionAct);
+  libraryMenu->addSeparator();
+  libraryMenu->addAction(m_libraryDownloadAct);
+  libraryMenu->addAction(m_libraryUpdateAct);
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor* editor = new CSongEditor();
   QAction* action;
-  foreach(action, editor->actions())
+  foreach (action, editor->actions())
     {
       action->setDisabled(true);
       m_editorMenu->addAction(action);
     }
 
-  m_viewMenu = menuBar()->addMenu(tr("&View"));
-  m_viewMenu->addAction(m_toolBarViewAct);
-  m_viewMenu->addAction(m_statusbarViewAct);
-  m_viewMenu->addAction(m_adjustColumnsAct);
+  QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
+  viewMenu->addAction(m_toolBarViewAct);
+  viewMenu->addAction(m_statusbarViewAct);
+  viewMenu->addAction(m_adjustColumnsAct);
 
-  m_helpMenu = menuBar()->addMenu(tr("&Help"));
-  m_helpMenu->addAction(m_documentationAct);
-  m_helpMenu->addAction(m_aboutAct);
+  QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+  helpMenu->addAction(m_documentationAct);
+  helpMenu->addAction(m_aboutAct);
 }
 
 void CMainWindow::createToolBar()
