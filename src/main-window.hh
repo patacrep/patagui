@@ -69,9 +69,6 @@ public:
   CSongbook * songbook() const;
   const QString workingPath();
 
-public slots:
-  void setWorkingPath(const QString &path);
-  
 protected:
   void closeEvent(QCloseEvent *event);
 

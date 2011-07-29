@@ -31,6 +31,7 @@
 
 #include "file-chooser.hh"
 #include "main-window.hh"
+#include "library.hh"
 
 #include <QDebug>
 
@@ -182,7 +183,7 @@ void CLibraryDownload::downloadFinished()
 	{
 	  QDir::setCurrent(dir.absolutePath());
 	  if (decompress(filepath, libraryDir))
-	    parent()->setWorkingPath(libraryDir.absolutePath());
+	    parent()->library()->setDirectory(libraryDir);
 	  QDir::setCurrent(oldCurrent.absolutePath());
 	}
       // remove the downloaded archive after decompressing

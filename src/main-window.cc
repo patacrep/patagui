@@ -583,11 +583,6 @@ const QString CMainWindow::workingPath()
   return library()->directory().canonicalPath();
 }
 
-void CMainWindow::setWorkingPath(const QString &path)
-{
-  library()->setDirectory(path);
-}
-
 QProgressBar * CMainWindow::progressBar() const
 {
   return m_progressBar;
