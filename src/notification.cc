@@ -17,15 +17,16 @@
 // 02110-1301, USA.
 //******************************************************************************
 
+#include "notification.hh"
+
 #include <QTextEdit>
 #include <QLayout>
 #include <QPushButton>
 #include <QPalette>
 
-#include "notification.hh"
 #include "main-window.hh"
 
-CNotify::CNotify(QWidget* p)
+CNotification::CNotification(QWidget* p)
   : QDockWidget(p)
   , m_textEdit(new QTextEdit)
   , m_layout(new QVBoxLayout)
@@ -62,23 +63,23 @@ CNotify::CNotify(QWidget* p)
   hide();
 }
 
-CMainWindow* CNotify::parent() const
+CMainWindow* CNotification::parent() const
 {
   return  static_cast<CMainWindow*>(QDockWidget::parent());
 }
 
-QString CNotify::message() const
+QString CNotification::message() const
 {
   return  m_textEdit->toPlainText();
 }
 
-void CNotify::setMessage(const QString & str)
+void CNotification::setMessage(const QString & str)
 {
   m_textEdit->setHtml(str);
 }
 
 
-void CNotify::addAction(QAction* action)
+void CNotification::addAction(QAction* action)
 {
   QPushButton* button = new QPushButton(action->text());
   connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
@@ -86,18 +87,18 @@ void CNotify::addAction(QAction* action)
   m_layout->insertWidget(0, button);
 }
 
-SbPriority CNotify::priority() const
+SbPriority CNotification::priority() const
 {
   return  m_priority;
 }
 
-void CNotify::setPriority(const SbPriority & value)
+void CNotification::setPriority(const SbPriority & value)
 {
   m_priority = value;
   changeBackground();
 }
 
-void CNotify::changeBackground()
+void CNotification::changeBackground()
 {
   QColor color;
   switch(priority())
@@ -113,5 +114,4 @@ void CNotify::changeBackground()
       break;
     }
   setStyleSheet(QString(" QTextEdit, .QWidget { border: 0px; background-color: %1; }").arg(color.name()));
-
 }

@@ -776,7 +776,7 @@ void CMainWindow::updateNotification(const QString &path)
 {
   if (!m_updateAvailable)
     {
-      m_updateAvailable = new CNotify(this);
+      m_updateAvailable = new CNotification(this);
       m_updateAvailable->addAction(m_libraryUpdateAct);
     }
 
@@ -790,7 +790,7 @@ void CMainWindow::noDataNotification(const QDir &directory)
 {
   if (!m_noDataInfo)
     {
-      m_noDataInfo = new CNotify(this);
+      m_noDataInfo = new CNotification(this);
       m_noDataInfo->addAction(m_libraryDownloadAct);
     }
 
