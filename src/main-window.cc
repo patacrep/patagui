@@ -313,9 +313,10 @@ void CMainWindow::createActions()
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   CBuildEngine* builder = new CMakeSongbook(this);
-  builder->setProcessOptions(QStringList() << "clean");
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#else
+  builder->setProcessOptions(QStringList() << "clean");
 #endif
   m_cleanAct = new QAction(tr("Clean"), this);
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/edit-clear")));
@@ -510,16 +511,18 @@ void CMainWindow::build()
   CBuildEngine* builder = new CMakeSongbook(this);
 
   //force a make clean
-  builder->setProcessOptions(QStringList() << "clean");
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#else
+  builder->setProcessOptions(QStringList() << "clean");
 #endif
   builder->action();
   builder->process()->waitForFinished();
 
-  builder->setProcessOptions(QStringList() << target);
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "make.bat" << basename);
+#else
+  builder->setProcessOptions(QStringList() << target);
 #endif
   builder->action();
 }
