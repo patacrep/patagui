@@ -549,7 +549,6 @@ void CMainWindow::save(bool forced)
 	saveAs();
     }
 
-  songbook()->setSongsFromSelectedPaths();
   songbook()->save(songbook()->filename());
   updateTitle(songbook()->filename());
 }

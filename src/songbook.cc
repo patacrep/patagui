@@ -407,6 +407,9 @@ void CSongbook::changeTemplate(const QString & filename)
 
 void CSongbook::save(const QString & filename)
 {
+  // get the song list in the correct format from the selected songs
+  setSongsFromSelectedPaths();
+  // write the songbook
   QFile file(filename);
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
