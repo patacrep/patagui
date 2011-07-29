@@ -52,7 +52,8 @@ public:
     PathRole = Qt::UserRole + 7,
     CoverSmallRole = Qt::UserRole + 8,
     CoverFullRole = Qt::UserRole + 9,
-    MaxRole = CoverFullRole
+    RelativePathRole = Qt::UserRole + 10,
+    MaxRole = RelativePathRole
   };
 
   struct Song {

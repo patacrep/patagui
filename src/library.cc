@@ -161,6 +161,8 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       return m_songs[index.row()].language;
     case PathRole:
       return m_songs[index.row()].path;
+    case RelativePathRole:
+      return QDir(QString("%1/songs").arg(directory().canonicalPath())).relativeFilePath(m_songs[index.row()].path);
     case CoverSmallRole:
       {
 	QPixmap pixmap;
