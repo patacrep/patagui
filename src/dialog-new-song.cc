@@ -97,9 +97,9 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   connect(m_titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)));
   connect(m_artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)));
 
-  connect(langComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLang(const QString&)) ;
-	  connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)));
-	  connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int))));
+  connect(langComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLang(const QString&)));
+  connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)));
+  connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)));
   connect(albumEdit, SIGNAL(textChanged(QString)), this, SLOT(setAlbum(QString)));
   connect(coverEdit, SIGNAL(pathChanged(const QString&)), this, SLOT(setCover(const QString&)));
 
