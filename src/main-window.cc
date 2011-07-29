@@ -484,7 +484,8 @@ void CMainWindow::selectLanguage()
 
 void CMainWindow::build()
 {
-  if (songbook()->selectedPaths().isEmpty())
+  songbook()->songsFromSelection();
+  if (songbook()->songs().isEmpty())
     {
       if (QMessageBox::question(this, windowTitle(),
 				QString(tr("You did not select any song. \n "

@@ -80,11 +80,10 @@ public:
   QtGroupBoxPropertyBrowser * propertyEditor() const;
   
   int selectedCount() const;
-  QStringList selectedPaths() const;
   void selectLanguages(const QStringList &languages);
-  bool selectPaths(QStringList &paths);
-  void selectPathsFromSongs();
-  void setSongsFromSelectedPaths();
+
+  void songsFromSelection();
+  void songsToSelection();
 
   QStringList songs();
 
@@ -100,10 +99,6 @@ signals:
   void wasModified(bool modified);
   void songsChanged();
 
-protected:
-  QList< bool > m_selectedSongs;
-  QStringList m_selectedPaths;
-
 private slots:
   void sourceModelAboutToBeReset();
   void sourceModelReset();
@@ -113,6 +108,7 @@ private:
   QString m_filename;
   QString m_tmpl;
 
+  QList< bool > m_selectedSongs;
   QStringList m_songs;
 
   bool m_modified;

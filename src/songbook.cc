@@ -46,11 +46,10 @@
 
 CSongbook::CSongbook(QObject *parent)
   : CIdentityProxyModel(parent)
-  , m_selectedSongs()
-  , m_selectedPaths()
   , m_library()
   , m_filename()
   , m_tmpl()
+  , m_selectedSongs()
   , m_songs()
   , m_modified()
   , m_propertyManager(new QtVariantPropertyManager())
@@ -408,7 +407,7 @@ void CSongbook::changeTemplate(const QString & filename)
 void CSongbook::save(const QString & filename)
 {
   // get the song list in the correct format from the selected songs
-  setSongsFromSelectedPaths();
+  songsFromSelection();
   // write the songbook
   QFile file(filename);
   if (file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -618,7 +617,7 @@ void CSongbook::load(const QString & filename)
               setSongs(items);
             }
         }
-      selectPathsFromSongs();
+      songsToSelection();
       setModified(false);
       setFilename(filename);
     }
@@ -676,16 +675,35 @@ int CSongbook::selectedCount() const
   return count;
 }
 
-QStringList CSongbook::selectedPaths() const
+void CSongbook::songsFromSelection()
 {
-  QStringList songPaths;
-
+  m_songs.clear();
+  QString song;
   for (int i = 0; i < m_selectedSongs.size(); ++i)
     {
       if (m_selectedSongs[i])
-	songPaths << data(index(i,0), CLibrary::PathRole).toString();
+	{
+	  song = data(index(i,0), CLibrary::RelativePathRole).toString();
+#ifdef Q_WS_WIN
+	  song.replace("\\", "/");
+#endif
+	  m_songs << song;
+	}
     }
-  return songPaths;
+}
+
+void CSongbook::songsToSelection()
+{
+  if (m_songs.isEmpty())
+    unselectAll();
+
+  for (int i = 0; i < m_selectedSongs.size(); ++i)
+    {
+      m_selectedSongs[i] = false;
+      if (m_songs.contains(data(index(i,0), CLibrary::RelativePathRole).toString()))
+	m_selectedSongs[i] = true;
+    }
+  emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
 }
 
 void CSongbook::selectLanguages(const QStringList &languages)
@@ -697,44 +715,6 @@ void CSongbook::selectLanguages(const QStringList &languages)
 	m_selectedSongs[i] = true;
     }
   emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
-}
-
-bool CSongbook::selectPaths(QStringList &paths)
-{
-  bool ok = true;
-  
-  if (paths.count() == 0)
-    unselectAll();
-
-  for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
-      m_selectedSongs[i] = false;
-      if (paths.contains(data(index(i,0), CLibrary::PathRole).toString()))
-	m_selectedSongs[i] = true;
-      else
-	ok = false;
-    }
-  emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
-  return ok;
-}
-
-void CSongbook::setSongsFromSelectedPaths()
-{
-  QStringList songlist = selectedPaths();
-  QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(path, QString());
-#ifdef Q_WS_WIN
-  songlist.replaceInStrings("\\", "/");
-#endif
-  setSongs(songlist);
-}
-
-void CSongbook::selectPathsFromSongs()
-{
-  QStringList songlist = songs();
-  QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(QRegExp("^"), path);
-  selectPaths(songlist);
 }
 
 QVariant CSongbook::data(const QModelIndex &index, int role) const
@@ -766,7 +746,7 @@ bool CSongbook::setData(const QModelIndex &index, const QVariant &value, int rol
 
 void CSongbook::sourceModelAboutToBeReset()
 {
-  m_selectedPaths = selectedPaths();
+  songsFromSelection();
   beginResetModel();
 }
 
@@ -777,6 +757,6 @@ void CSongbook::sourceModelReset()
     {
       m_selectedSongs << false;
     }
-  selectPaths(m_selectedPaths);
+  songsToSelection();
   endResetModel();
 }
