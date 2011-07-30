@@ -33,13 +33,6 @@ CLibrary::CLibrary(CMainWindow *parent)
   , m_templates()
   , m_songs()
 {
-  QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(24, 24));
-  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(128, 128));
-  QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic", QIcon(":/icons/tango/audio-x-generic")).pixmap(24,24));
-  QPixmapCache::insert("french", QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")).pixmap(24,24));
-  QPixmapCache::insert("english", QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")).pixmap(24,24));
-  QPixmapCache::insert("spanish", QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")).pixmap(24,24));
-
   connect(this, SIGNAL(directoryChanged(const QDir&)), SLOT(update()));
 }
 
@@ -139,12 +132,25 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	case 1:
 	  return data(index, ArtistRole);
 	case 2:
-	  return QVariant();
+	  return data(index, LilypondRole);
 	case 3:
 	  return data(index, PathRole);
 	case 4:
 	  return data(index, AlbumRole);
+        case 5:
+          return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
 	}
+      break;
+    case Qt::ToolTipRole:
+      switch (index.column())
+        {
+        case 2:
+          return tr("Lilypond music sheet");
+        case 5:
+          return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
+        default:
+          return QVariant();
+        }
       break;
     case TitleRole:
       return m_songs[index.row()].title;
@@ -159,86 +165,41 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     case LilypondRole:
       return m_songs[index.row()].isLilypond;
     case LanguageRole:
-      return m_songs[index.row()].language;
+      return qVariantFromValue(m_songs[index.row()].language);
     case PathRole:
       return m_songs[index.row()].path;
     case RelativePathRole:
       return QDir(QString("%1/songs").arg(directory().canonicalPath())).relativeFilePath(m_songs[index.row()].path);
     case CoverSmallRole:
       {
-	QPixmap pixmap;
-	QPixmapCache::find("cover-missing-small", &pixmap);
+        QPixmap pixmap;
 	QFileInfo file = QFileInfo(data(index, CoverRole).toString());
-	if (file.exists()
-	    && !QPixmapCache::find(file.baseName()+"-small", &pixmap))
-	  {
-	    pixmap = QPixmap::fromImage(QImage(file.filePath()).scaledToWidth(24));
-	    QPixmapCache::insert(file.baseName()+"-small", pixmap);
-	  }
-	return pixmap;
+	if (file.exists())
+          {
+            if (!QPixmapCache::find(file.baseName()+"-small", &pixmap))
+              {
+                pixmap = QPixmap::fromImage(QImage(file.filePath()).scaledToWidth(24));
+                QPixmapCache::insert(file.baseName()+"-small", pixmap);
+              }
+            return pixmap;
+          }
       }
+      return QVariant();
     case CoverFullRole:
       {
 	QPixmap pixmap;
-	QPixmapCache::find("cover-missing-full", &pixmap);
 	QFileInfo file = QFileInfo(data(index, CoverRole).toString());
-	if (file.exists()
-	    && !QPixmapCache::find(file.baseName()+"-full", &pixmap))
-	  {
-	    pixmap = QPixmap::fromImage(QImage(file.filePath()).scaled(128,128));
-	    QPixmapCache::insert(file.baseName()+"-full", pixmap);
-	  }
-	return pixmap;
+	if (file.exists())
+          {
+            if (!QPixmapCache::find(file.baseName()+"-full", &pixmap))
+              {
+                pixmap = QPixmap::fromImage(QImage(file.filePath()).scaled(128,128));
+                QPixmapCache::insert(file.baseName()+"-full", pixmap);
+              }
+            return pixmap;
+          }
       }
-    }
-
-  switch (index.column())
-    {
-    case 2:
-      if (data(index, LilypondRole).toBool())
-	{
-	  QPixmap pixmap;
-	  QPixmapCache::find("lilypond-checked", &pixmap);
-
-	  if (role == Qt::DecorationRole)
-	    return pixmap;
-
-	  if (role == Qt::SizeHintRole)
-	    return pixmap.size();
-	  
-	  if (role == Qt::ToolTipRole)
-	    return tr("Lilypond music sheet");
-	}
-      break;
-    case 4:
-      if (role == Qt::DecorationRole)
-	return data(index, CoverSmallRole);
-      break;
-    case 5:
-      {
-	QString language = data(index, LanguageRole).toString();
-	QPixmap pixmap;
-	if (QPixmapCache::find(language, &pixmap))
-	  {
-	    if (role == Qt::DecorationRole)
-	      return pixmap;
-	    
-	    if (role == Qt::SizeHintRole)
-	      return pixmap.size();
-	    
-	    if (role == Qt::ToolTipRole)
-	      return language;
-	    
-	    if (role == Qt::DisplayRole)
-	      return QString();
-	  }
-	else
-	  {
-	    if (role == Qt::DisplayRole)
-	      return language;
-	  }
-      break;
-      }
+      return QVariant();
     }
   return QVariant();
 }
@@ -332,7 +293,7 @@ bool CLibrary::parseSong(const QString &path, Song &song)
   song.coverPath = QFileInfo(path).absolutePath();
 
   reLanguage.indexIn(fileStr);
-  song.language = reLanguage.cap(1);
+  song.language = languageFromString(reLanguage.cap(1));
     
   return true;
 }
@@ -379,4 +340,16 @@ int CLibrary::rowCount(const QModelIndex &) const
 int CLibrary::columnCount(const QModelIndex &) const
 {
   return 6;
+}
+
+QLocale::Language CLibrary::languageFromString(const QString &languageName)
+{
+  if (languageName == "french")
+    return QLocale::French;
+  else if (languageName == "english")
+    return QLocale::English;
+  else if (languageName == "spanish")
+    return QLocale::Spanish;
+
+  return QLocale::system().language();
 }
