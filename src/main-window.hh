@@ -74,7 +74,9 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
-
+  void cleanDialog();
+  void updateTempFilesView();
+  
   //library
   void newSong();
   void songEditor(const QModelIndex & index = QModelIndex());
@@ -121,6 +123,7 @@ private:
   CLibraryView *m_view;
   CSongbook *m_songbook;
   QSortFilterProxyModel *m_proxyModel;
+  QFileSystemModel* m_tempFilesmodel;
 
   // Widgets
   CTabWidget* m_mainWidget;

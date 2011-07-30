@@ -321,8 +321,7 @@ void CMainWindow::createActions()
   m_cleanAct = new QAction(tr("Clean"), this);
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/edit-clear")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
-  connect(m_cleanAct, SIGNAL(triggered()), builder, SLOT(action()));
-
+  connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
 }
 
 void CMainWindow::setToolBarDisplayed(bool value)
@@ -822,4 +821,60 @@ void CMainWindow::noDataNotification(const QDir &directory)
 		    "Do you want to download the latest songs library?").arg(directory.canonicalPath())));
       m_noDataInfo->show();
     }
+}
+
+void CMainWindow::cleanDialog()
+{
+  QDialog *dialog = new QDialog(this);
+  dialog->setWindowTitle(tr("Remove temporary files"));
+
+  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
+						     QDialogButtonBox::Cancel);
+  connect( buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()) );
+  connect( buttonBox, SIGNAL(rejected()), dialog, SLOT(close()) );
+
+  m_tempFilesmodel = new QFileSystemModel;
+  m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());
+  m_tempFilesmodel->setNameFilters(QStringList()
+			<< "*.aux" << "*.d" << "*.toc" << "*.out"
+			<< "*.log" << "*.nav" << "*.snm" << "*.sbx" << "*.sxd");
+
+  QListView* view = new QListView;
+  view->setModel(m_tempFilesmodel);
+  view->setRootIndex(m_tempFilesmodel->index(library()->directory().canonicalPath()));
+
+  QCheckBox* cleanAllButton = new QCheckBox("Also remove pdf files", this);
+  connect(cleanAllButton, SIGNAL(toggle()), this, SLOT(updateTempFilesView()));
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(view);
+  layout->addWidget(cleanAllButton);
+  layout->addWidget(buttonBox);
+  dialog->setLayout(layout);
+
+  if (dialog->exec() == QDialog::Accepted)
+    {
+      CBuildEngine* builder = new CMakeSongbook(this);
+      if(cleanAllButton->isChecked())
+	{
+	  builder->setProcessOptions(QStringList() << "cleanall");
+	}
+      else
+	{
+	  builder->setProcessOptions(QStringList() << "clean");
+	}
+#ifdef Q_WS_WIN
+      builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#endif
+      builder->action();
+    }
+  delete dialog;
+  delete m_tempFilesmodel;
+}
+
+void CMainWindow::updateTempFilesView()
+{
+  QCheckBox* button = qobject_cast< QCheckBox* >(QObject::sender());
+  if(button->isChecked())
+    m_tempFilesmodel->setNameFilters(m_tempFilesmodel->nameFilters() << "*.pdf");
 }
