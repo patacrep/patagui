@@ -34,8 +34,8 @@ CBuildEngine::CBuildEngine(CMainWindow* AParent)
   m_process = new QProcess(AParent);
   process()->setWorkingDirectory(parent()->workingPath());
 
-  connect(parent(), SIGNAL(workingPathChanged(QString)),
-	  this, SLOT(setWorkingPath(QString)));
+  // connect(parent()->library(), SIGNAL(directoryChanged(QString)),
+  // 	  this, SLOT(setWorkingPath(QString)));
   
   connect(process(), SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this, SLOT(processExit(int,QProcess::ExitStatus)));

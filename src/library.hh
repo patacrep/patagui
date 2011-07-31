@@ -26,15 +26,17 @@
 #ifndef __LIBRARY_HH__
 #define __LIBRARY_HH__
 
-#include <QSqlTableModel>
+#include <QAbstractTableModel>
 #include <QString>
 #include <QDir>
-#include <QSqlRecord>
+
+class QAbstractListModel;
+class QStringListModel;
 
 class QPixmap;
 class CMainWindow;
 
-class CLibrary : public QSqlTableModel
+class CLibrary : public QAbstractTableModel
 {
   Q_OBJECT
   Q_PROPERTY(QDir directory READ directory WRITE setDirectory)
@@ -50,7 +52,7 @@ public:
     PathRole = Qt::UserRole + 7,
     CoverSmallRole = Qt::UserRole + 8,
     CoverFullRole = Qt::UserRole + 9,
-    MaxRole = PathRole
+    MaxRole = CoverFullRole
   };
 
   struct Song {
@@ -67,17 +69,26 @@ public:
   CLibrary(CMainWindow* parent);
   ~CLibrary();
 
+  void readSettings();
+  void writeSettings();
+
   QDir directory() const;
   void setDirectory(const QString &directory);
   void setDirectory(const QDir &directory);
 
+  QStringList templates() const;
+
+  QAbstractListModel * completionModel();
+
+  QVariant headerData (int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
   void addSong(const QString &path);
   void addSongs(const QStringList &paths);
   void removeSong(const QString &path);
   bool containsSong(const QString &path);
-  int rowCount();
+  virtual int rowCount(const QModelIndex &index = QModelIndex()) const;
+  virtual int columnCount(const QModelIndex &index = QModelIndex()) const;
 
 public slots:
   void update();
@@ -103,7 +114,10 @@ private:
   CMainWindow *m_parent;
   QDir m_directory;
 
-  QSqlRecord m_songRecord;
+  QStringListModel *m_completionModel;
+
+  QStringList m_templates;
+  QList< Song > m_songs;
 };
 
 #endif // __LIBRARY_HH__

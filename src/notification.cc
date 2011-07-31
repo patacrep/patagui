@@ -59,6 +59,7 @@ CNotify::CNotify(QWidget* p)
   setWidget(mainWidget);
   changeBackground();
   parent()->addDockWidget(Qt::TopDockWidgetArea, this, Qt::Horizontal);
+  hide();
 }
 
 CMainWindow* CNotify::parent() const

@@ -20,6 +20,8 @@
 #define __SONGBOOK_HH__
 
 #include <QObject>
+
+#include <QDir>
 #include <QString>
 #include <QStringList>
 
@@ -28,10 +30,11 @@
 
 #include "utils/utils.hh"
 
+class CLibrary;
+
 class QWidget;
 class QComboBox;
 class QtGroupPropertyManager;
-//class CMainWindow;
 class CUnitPropertyManager;
 class CFilePropertyManager;
 
@@ -39,14 +42,11 @@ class CSongbook : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(bool modified READ isModified WRITE setModified NOTIFY wasModified)
-  Q_PROPERTY(QString workingPath READ workingPath WRITE setWorkingPath)
   Q_PROPERTY(QString filename READ filename WRITE setFilename)
   Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
   Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
-    
-    
+
 public slots:
-  void setWorkingPath(const QString &path);
   void setFilename(const QString &filename);
   void setTmpl(const QString &tmpl);
   void setSongs(QStringList songs);
@@ -61,13 +61,16 @@ public:
   ~CSongbook();
 
   QString workingPath() const;
+
+  void setLibrary(CLibrary *library);
+  CLibrary * library() const;
+
   QString filename() const;
   QString tmpl() const;
   QString title() const;
   QString authors() const;
   QString style() const;
   QPixmap* picture() const;
-  QStringList templates() const;
   QtGroupBoxPropertyBrowser * propertyEditor() const;
   
   QStringList songs();
@@ -84,7 +87,7 @@ public slots:
   void changeTemplate(const QString &filename = QString());
 
 private:
-  QString m_workingPath;
+  CLibrary *m_library;
   QString m_filename;
   QString m_tmpl;
 
@@ -97,7 +100,6 @@ private:
   CFilePropertyManager *m_fileManager;
   QtGroupBoxPropertyBrowser *m_propertyEditor;
 
-  QStringList m_templates;
   QMap< QString, QtVariantProperty* > m_parameters;
 
   QtGroupPropertyManager *m_groupManager;

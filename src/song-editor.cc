@@ -119,21 +119,21 @@ QString CSongEditor::path()
 
 void CSongEditor::readSettings()
 {
-   
   QSettings settings;
   settings.beginGroup("editor");
+
   QFont font;
   font.fromString(settings.value("font", QString()).toString());
   setFont(font);
+
+  setHighlightMode(settings.value("highlight", true).toBool());
+  setLineNumberMode(settings.value("lines", true).toBool());
+
   settings.endGroup();
 }
 
 void CSongEditor::writeSettings()
-{
-  //QSettings settings;
-  //settings.beginGroup("editor");
-  //settings.endGroup();
-}
+{}
 
 void CSongEditor::setPath(const QString &path)
 {

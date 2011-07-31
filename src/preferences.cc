@@ -36,6 +36,7 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_contentsWidget->setViewMode(QListView::IconMode);
   m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
+  m_contentsWidget->setMinimumHeight(400);
   m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
   m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
@@ -130,21 +131,19 @@ DisplayPage::DisplayPage(QWidget *parent)
 {
   QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
 
-  m_artistCheckBox = new QCheckBox(tr("Artist"));
   m_titleCheckBox = new QCheckBox(tr("Title"));
+  m_artistCheckBox = new QCheckBox(tr("Artist"));
   m_pathCheckBox = new QCheckBox(tr("Path"));
   m_albumCheckBox = new QCheckBox(tr("Album"));
   m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
-  m_coverCheckBox = new QCheckBox(tr("Cover"));
   m_langCheckBox = new QCheckBox(tr("Language"));
 
   QVBoxLayout *displayColumnsLayout = new QVBoxLayout;
-  displayColumnsLayout->addWidget(m_artistCheckBox);
   displayColumnsLayout->addWidget(m_titleCheckBox);
+  displayColumnsLayout->addWidget(m_artistCheckBox);
   displayColumnsLayout->addWidget(m_pathCheckBox);
   displayColumnsLayout->addWidget(m_albumCheckBox);
   displayColumnsLayout->addWidget(m_lilypondCheckBox);
-  displayColumnsLayout->addWidget(m_coverCheckBox);
   displayColumnsLayout->addWidget(m_langCheckBox);
   displayColumnsGroupBox->setLayout(displayColumnsLayout);
 
@@ -168,12 +167,11 @@ void DisplayPage::readSettings()
 {
   QSettings settings;
   settings.beginGroup("display");
-  m_artistCheckBox->setChecked(settings.value("artist", true).toBool());
   m_titleCheckBox->setChecked(settings.value("title", true).toBool());
+  m_artistCheckBox->setChecked(settings.value("artist", true).toBool());
   m_pathCheckBox->setChecked(settings.value("path", false).toBool());
   m_albumCheckBox->setChecked(settings.value("album", true).toBool());
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
-  m_coverCheckBox->setChecked(settings.value("cover", false).toBool());
   m_langCheckBox->setChecked(settings.value("lang", false).toBool());
   m_compilationLogCheckBox->setChecked(settings.value("logs", false).toBool());
   settings.endGroup();
@@ -183,12 +181,11 @@ void DisplayPage::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("display");
-  settings.setValue("artist", m_artistCheckBox->isChecked());
   settings.setValue("title", m_titleCheckBox->isChecked());
+  settings.setValue("artist", m_artistCheckBox->isChecked());
   settings.setValue("path", m_pathCheckBox->isChecked());
   settings.setValue("album", m_albumCheckBox->isChecked());
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
-  settings.setValue("cover", m_coverCheckBox->isChecked());
   settings.setValue("lang", m_langCheckBox->isChecked());
   settings.setValue("logs", m_compilationLogCheckBox->isChecked());
   settings.endGroup();
@@ -268,7 +265,7 @@ ConfigDialog* OptionsPage::parent() const
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("library");
   m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
   settings.endGroup();
 }
@@ -276,7 +273,7 @@ void OptionsPage::readSettings()
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("library");
   settings.setValue("workingPath", m_workingPath->path());
   settings.endGroup();
 }
@@ -362,6 +359,7 @@ EditorPage::EditorPage(QWidget *parent)
   m_highlightCurrentLineCheckBox = new QCheckBox(tr("Highlight current line"));
   m_fontButton  = new QPushButton(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())), this);
   connect(m_fontButton, SIGNAL(clicked()), this, SLOT(selectFont()));
+  connect(this, SIGNAL(fontChanged()), this, SLOT(updateFontButton()));
 
   QFormLayout* layout = new QFormLayout;
   layout->addRow(m_numberLinesCheckBox);
@@ -380,15 +378,17 @@ void EditorPage::readSettings()
   m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
   m_font.fromString(settings.value("font", QString()).toString());
   settings.endGroup();
+
+  emit(fontChanged());
 }
 
 void EditorPage::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("editor");
-  settings.value("lines", m_numberLinesCheckBox->isChecked());
-  settings.value("highlight", m_highlightCurrentLineCheckBox->isChecked());
-  settings.value("font", m_font.toString());
+  settings.setValue("lines", m_numberLinesCheckBox->isChecked());
+  settings.setValue("highlight", m_highlightCurrentLineCheckBox->isChecked());
+  settings.setValue("font", m_font.toString());
   settings.endGroup();
 }
 
@@ -396,10 +396,15 @@ void EditorPage::selectFont()
 {
   bool ok;
   m_font = QFontDialog::getFont(&ok, QFont("Monospace", 10), this);
-  if(ok)
-    {
-      m_fontButton->setText(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())));
-    }
+
+  if(ok) emit(fontChanged());
+}
+
+void EditorPage::updateFontButton()
+{
+  m_fontButton->setText(QString("%1 %2")
+			.arg(m_font.family())
+			.arg(QString::number(m_font.pointSize())));
 }
 
 void EditorPage::closeEvent(QCloseEvent *event)

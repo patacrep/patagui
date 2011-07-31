@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "songbook-panel.hh"
 #include "songbook.hh"
+#include "library.hh"
 #include "label.hh"
 
 #include <QDialog>
@@ -116,8 +117,8 @@ QWidget* CSongbookPanel::settingsWidget()
   QBoxLayout *templateLayout = new QHBoxLayout;
 
   QComboBox* combobox = new QComboBox;
-  combobox->addItems(songbook()->templates());
-  combobox->setCurrentIndex(songbook()->templates().indexOf("patacrep.tmpl"));
+  combobox->addItems(songbook()->library()->templates());
+  combobox->setCurrentIndex(songbook()->library()->templates().indexOf("patacrep.tmpl"));
   connect(combobox, SIGNAL(currentIndexChanged(const QString &)),
 	  songbook(), SLOT(setTmpl(const QString &)));
 

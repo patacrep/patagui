@@ -57,15 +57,13 @@ public:
   QTextEdit * log() const;
   CLibraryView * view() const;
   CLibrary * library() const;
+  CSongbookModel * songbookModel() const;
   CSongbook * songbook() const;
   const QString workingPath();
 
 public slots:
   void setWorkingPath(const QString &path);
   
-signals:
-  void workingPathChanged(const QString &path);
-
 protected:
   void closeEvent(QCloseEvent *event);
 
@@ -78,7 +76,6 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
-  void songbookInfo();
 
   //library
   void newSong();
@@ -88,19 +85,13 @@ private slots:
   void songEditor(const QString &filename, const QString &title = QString());
   void deleteSong(const QString &filename);
   void updateNotification(const QString &);
+  void noDataNotification(const QDir &);
 
   //model
-  void selectAll();
-  void unselectAll();
-  void invertSelection();
   void selectLanguage();
   void updateSongsList();
   void filterChanged(const QString &filter);
-  void selectionChanged();
-  void selectionChanged(const QItemSelection &selected , const QItemSelection & deselected );
-
-  void connectDatabase();
-  void disconnectDatabase();
+  void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
   //application
   void preferences();
@@ -121,8 +112,6 @@ private:
   void createToolBar();
 
   //QGridLayout * songbookInfo();
-
-  QStringList getSelectedSongs();
 
   bool isToolBarDisplayed();
   bool isStatusbarDisplayed();
@@ -154,7 +143,6 @@ private:
 
   // Menus
   QMenu *m_fileMenu;
-  QMenu *m_editMenu;
   QMenu *m_dbMenu;
   QMenu *m_editorMenu;
   QMenu *m_viewMenu;

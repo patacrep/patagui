@@ -16,14 +16,13 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
+#include "main-window.hh"
+
 #include <QtGui>
-#include <QtSql>
 #include <QtAlgorithms>
-#include <QDebug>
 
 #include "utils/utils.hh"
 #include "label.hh"
-#include "main-window.hh"
 #include "preferences.hh"
 #include "library.hh"
 #include "library-view.hh"
@@ -37,9 +36,10 @@
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
 #include "library-download.hh"
-#include "song-panel.hh"
 #include "songbook-panel.hh"
 #include "notification.hh"
+
+#include <QDebug>
 
 using namespace SbUtils;
 
@@ -58,16 +58,13 @@ CMainWindow::CMainWindow()
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook-client.png"));
 
-  // initialize the database connection
-  connectDatabase();
-
   // create and load song library
   m_library = new CLibrary(this);
 
   m_songbookModel = new CSongbookModel(this);
   m_songbookModel->setSourceModel(m_library);
 
-  m_proxyModel = new CSongSortFilterProxyModel;
+  m_proxyModel = new CSongSortFilterProxyModel(this);
   m_proxyModel->setSourceModel(m_songbookModel);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
@@ -77,14 +74,13 @@ CMainWindow::CMainWindow()
   m_view->setModel(m_proxyModel);
   
   connect(m_library, SIGNAL(wasModified()), view(), SLOT(update()));
-  connect(m_library, SIGNAL(wasModified()), SLOT(selectionChanged()));
 
   // songbook
   m_songbook = new CSongbook;
-  m_songbook->setWorkingPath(workingPath());
+  m_songbook->setLibrary(m_library);
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
-  connect(this, SIGNAL(workingPathChanged(const QString&)),
-	  songbook(), SLOT(setWorkingPath(const QString&)));
+  connect(m_songbookModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
 
   // compilation log
   m_log = new QTextEdit;
@@ -96,15 +92,11 @@ CMainWindow::CMainWindow()
   createMenus();
   createToolBar();
 
-  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-	  this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
-
   // notifications
   m_noDataInfo = new CNotify(this);
-  m_noDataInfo->setMessage
-    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
-		"Do you want to download the latest songs library?").arg(workingPath())));
   m_noDataInfo->addAction(m_libraryDownloadAct);
+  connect(library(), SIGNAL(directoryChanged(const QDir &)),
+	  this, SLOT(noDataNotification(const QDir &)));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox;
   QPushButton *editButton = new QPushButton(tr("Edit"));
@@ -142,11 +134,6 @@ CMainWindow::CMainWindow()
 
   updateTitle(songbook()->filename());
 
-  //ensure that first selection is empty
-  //to avoid infinite loop in library()->fetchmore()
-  selectionModel()->clearSelection();
-  //songbook()->panel();
-
   readSettings();
 }
 
@@ -154,8 +141,6 @@ CMainWindow::~CMainWindow()
 {
   delete m_library;
   delete m_songbook;
-
-  disconnectDatabase();
 }
 
 void CMainWindow::switchToolBar(QToolBar *toolBar)
@@ -175,7 +160,6 @@ void CMainWindow::readSettings()
   QSettings settings;
   settings.beginGroup("general");
   resize(settings.value("size", QSize(800,600)).toSize());
-  setWorkingPath(settings.value("workingPath", QDir::homePath()).toString());
   setStatusbarDisplayed(settings.value("statusBar", true).toBool());
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
   settings.endGroup();
@@ -184,6 +168,7 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  library()->readSettings();
   view()->readSettings();
 }
 
@@ -192,11 +177,11 @@ void CMainWindow::writeSettings()
   QSettings settings;
   settings.beginGroup("general");
   settings.setValue("size", size());
-  settings.value("workingPath", workingPath());
   settings.setValue("statusBar", isStatusbarDisplayed());
   settings.setValue("toolBar", isToolBarDisplayed());
   settings.endGroup();
 
+  library()->writeSettings();
   view()->writeSettings();
 }
 
@@ -206,22 +191,11 @@ void CMainWindow::filterChanged(const QString &filter)
   m_proxyModel->setFilterRegExp(expression);
 }
 
-void CMainWindow::selectionChanged()
-{
-  QItemSelection invalid;
-  selectionChanged(invalid, invalid);
-}
-
-void CMainWindow::selectionChanged(const QItemSelection & , const QItemSelection & )
+void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 {
   m_infoSelection->setText(QString(tr("Selection: %1/%2"))
-			   .arg(selectionModel()->selectedRows().size())
-			   .arg(library()->rowCount()));
-
-  if(library()->rowCount()==0)
-    m_noDataInfo->show();
-  else
-    m_noDataInfo->hide();
+			   .arg(songbookModel()->selectedCount())
+			   .arg(songbookModel()->rowCount()));
 }
 
 void CMainWindow::createActions()
@@ -256,10 +230,6 @@ void CMainWindow::createActions()
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-  m_sbInfoAct = new QAction(tr("Properties"), this);
-  m_sbInfoAct->setStatusTip(tr("Show the properties of the selected songbook"));
-  connect(m_sbInfoAct, SIGNAL(triggered()), this, SLOT(songbookInfo()));
-
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
   m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/help-contents")));
@@ -287,17 +257,17 @@ void CMainWindow::createActions()
   m_selectAllAct = new QAction(tr("Select all"), this);
   m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
   m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
-  connect(m_selectAllAct, SIGNAL(triggered()), SLOT(selectAll()));
+  connect(m_selectAllAct, SIGNAL(triggered()), songbookModel(), SLOT(selectAll()));
 
   m_unselectAllAct = new QAction(tr("Unselect all"), this);
   m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
   m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
-  connect(m_unselectAllAct, SIGNAL(triggered()), SLOT(unselectAll()));
+  connect(m_unselectAllAct, SIGNAL(triggered()), songbookModel(), SLOT(unselectAll()));
 
   m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
   m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
-  connect(m_invertSelectionAct, SIGNAL(triggered()), SLOT(invertSelection()));
+  connect(m_invertSelectionAct, SIGNAL(triggered()), songbookModel(), SLOT(invertSelection()));
 
   m_selectEnglishAct = new QAction(tr("english"), this);
   m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
@@ -366,20 +336,6 @@ void CMainWindow::createActions()
 
 }
 
-void CMainWindow::songbookInfo()
-{
-  QDialog* dialog = new QDialog;
-  QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
-  connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
-
-  QVBoxLayout * layout = new QVBoxLayout;
-  layout->addWidget(new CSongbookPanel(songbook()));
-  layout->addWidget(buttons);
-  dialog->setLayout(layout);
-
-  dialog->exec();
-}
-
 void CMainWindow::setToolBarDisplayed(bool value)
 {
   if (m_isToolBarDisplayed != value && m_currentToolBar)
@@ -421,22 +377,19 @@ void CMainWindow::createMenus()
   m_fileMenu->addAction(m_saveAct);
   m_fileMenu->addAction(m_saveAsAct);
   m_fileMenu->addSeparator();
-  m_fileMenu->addAction(m_sbInfoAct);
+  m_fileMenu->addAction(m_preferencesAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_buildAct);
   m_fileMenu->addAction(m_cleanAct);
   m_fileMenu->addSeparator();
   m_fileMenu->addAction(m_exitAct);
 
-  m_editMenu = menuBar()->addMenu(tr("&Edit"));
-  m_editMenu->addAction(m_selectAllAct);
-  m_editMenu->addAction(m_unselectAllAct);
-  m_editMenu->addAction(m_invertSelectionAct);
-  m_editMenu->addSeparator();
-  m_editMenu->addAction(m_preferencesAct);
-
   m_dbMenu = menuBar()->addMenu(tr("&Library"));
   m_dbMenu->addAction(m_newSongAct);
+  m_dbMenu->addSeparator();
+  m_dbMenu->addAction(m_selectAllAct);
+  m_dbMenu->addAction(m_unselectAllAct);
+  m_dbMenu->addAction(m_invertSelectionAct);
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_libraryDownloadAct);
   m_dbMenu->addAction(m_libraryUpdateAct);
@@ -469,16 +422,8 @@ void CMainWindow::createToolBar()
   tool->addSeparator();
   addToolBar(tool);
 
-  // filter related objects
-  QSqlQueryModel *completionModel = new QSqlQueryModel;
-  completionModel->setQuery("SELECT DISTINCT title FROM songs "
-			    "UNION "
-			    "SELECT DISTINCT artist FROM songs "
-			    "UNION "
-			    "SELECT DISTINCT album FROM songs ");
-
   QCompleter *completer = new QCompleter;
-  completer->setModel(completionModel);
+  completer->setModel(library()->completionModel());
   completer->setCaseSensitivity(Qt::CaseInsensitive);
   completer->setCompletionMode(QCompleter::PopupCompletion);
 
@@ -542,66 +487,16 @@ void CMainWindow::about()
 		     .arg(description).arg(version).arg(authors));
 }
 
-void CMainWindow::selectAll()
-{
-  view()->selectAll();
-  view()->setFocus();
-}
-
-void CMainWindow::unselectAll()
-{
-  view()->clearSelection();
-}
-
-void CMainWindow::invertSelection()
-{
-  QModelIndexList indexes = selectionModel()->selectedRows();
-  QModelIndex index;
-
-  view()->selectAll();
-
-  foreach(index, indexes)
-    {
-      selectionModel()->select(index, QItemSelectionModel::Deselect | QItemSelectionModel::Rows);
-    }
-}
-
 void CMainWindow::selectLanguage()
 {
-  QString language = qobject_cast< QAction* >(QObject::sender())->text();
-  QRegExp expression = QRegExp(language, Qt::CaseSensitive, QRegExp::FixedString);
-
-  //Switch proxy settings to language filtering
-  static_cast<CSongSortFilterProxyModel*>(m_proxyModel)->setFilterMode(CSongSortFilterProxyModel::LanguageMode);
-  m_proxyModel->setFilterKeyColumn(6);
-  m_proxyModel->setFilterRole(Qt::ToolTipRole);
-  m_proxyModel->setFilterRegExp(expression);
-  view()->setFocus();
-
-  //Restore proxy settings to standard filtering
-  m_proxyModel->setFilterKeyColumn(-1);
-  static_cast<CSongSortFilterProxyModel*>(m_proxyModel)->setFilterMode(CSongSortFilterProxyModel::StandardMode);
-}
-
-QStringList CMainWindow::getSelectedSongs()
-{
-  QStringList songsPath;
-  QModelIndexList indexes = selectionModel()->selectedRows();
-  QModelIndex index;
-
-  qSort(indexes.begin(), indexes.end());
-
-  foreach(index, indexes)
-    {
-      songsPath << library()->record(m_proxyModel->mapToSource(index).row()).field("path").value().toString();
-    }
-
-  return songsPath;
+  QStringList languages;
+  languages << (qobject_cast< QAction* >(QObject::sender())->text());
+  songbookModel()->selectLanguages(languages);
 }
 
 void CMainWindow::build()
 {
-  if(getSelectedSongs().isEmpty())
+  if(songbookModel()->selectedPaths().isEmpty())
     {
       if(QMessageBox::question(this, windowTitle(),
 			       QString(tr("You did not select any song. \n "
@@ -611,7 +506,7 @@ void CMainWindow::build()
 			       QMessageBox::NoButton) == QMessageBox::No)
 	return;
       else
-	selectAll();
+	songbookModel()->selectAll();
     }
 
   save(true);
@@ -655,19 +550,9 @@ void CMainWindow::open()
   songbook()->load(filename);
   QStringList songlist = songbook()->songs();
   QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(QRegExp("^"),path);
+  songlist.replaceInStrings(QRegExp("^"), path);
 
-  m_filterLineEdit->clear();
-  view()->clearSelection();
-
-  QList<QModelIndex> indexes;
-  QString str;
-  foreach(str, songlist)
-    {
-      indexes = m_proxyModel->match( m_proxyModel->index(0,3), Qt::MatchExactly, str );
-      if (!indexes.isEmpty())
-        selectionModel()->select(indexes[0], QItemSelectionModel::Select | QItemSelectionModel::Rows);
-    }
+  songbookModel()->selectPaths(songlist);
 
   updateTitle(songbook()->filename());
 }
@@ -703,7 +588,7 @@ void CMainWindow::saveAs()
 
 void CMainWindow::updateSongsList()
 {
-  QStringList songlist = getSelectedSongs();
+  QStringList songlist = songbookModel()->selectedPaths();
   QString path = QString("%1/songs/").arg(workingPath());
   songlist.replaceInStrings(path, QString());
 #ifdef Q_WS_WIN
@@ -727,15 +612,7 @@ const QString CMainWindow::workingPath()
 
 void CMainWindow::setWorkingPath(const QString &path)
 {
-  if (path != workingPath())
-    {
-      library()->setDirectory(path);
-      emit(workingPathChanged(workingPath()));
-
-      // update the corresponding setting
-      QSettings settings;
-      settings.setValue("workingPath", workingPath());
-    }
+  library()->setDirectory(path);
 }
 
 QProgressBar * CMainWindow::progressBar() const
@@ -756,6 +633,11 @@ CLibraryView * CMainWindow::view() const
 CLibrary * CMainWindow::library() const
 {
   return m_library;
+}
+
+CSongbookModel * CMainWindow::songbookModel() const
+{
+  return m_songbookModel;
 }
 
 QItemSelectionModel * CMainWindow::selectionModel()
@@ -919,34 +801,6 @@ QTextEdit* CMainWindow::log() const
   return m_log;
 }
 
-void CMainWindow::connectDatabase()
-{
-  if (!QSqlDatabase::isDriverAvailable("QSQLITE"))
-    {
-      QMessageBox::critical(this,
-			    tr("Cannot open database"),
-			    tr("Unable to establish a database connection.\n"
-			       "This application needs SQLite support."),
-			    QMessageBox::Abort);
-
-    }
-  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-
-  QDir::home().mkpath(".cache/songbook-client");
-  QString databasePath
-    = QDir::home().filePath(".cache/songbook-client/patacrep.db");
-
-  db.setDatabaseName(databasePath);
-  db.open();
-}
-
-void CMainWindow::disconnectDatabase()
-{
-  QSqlDatabase db = QSqlDatabase::database();
-  db.close();
-  QSqlDatabase::removeDatabase(QString());
-}
-
 void CMainWindow::updateNotification(const QString& path)
 {
   if(m_updateAvailable)
@@ -958,4 +812,18 @@ void CMainWindow::updateNotification(const QString& path)
 		"  %1 <br/>"
 		"Do you want to update the library to reflect these changes?")).arg(path));
   m_updateAvailable->addAction(m_libraryUpdateAct);
+}
+
+void CMainWindow::noDataNotification(const QDir & directory)
+{
+  if (library()->rowCount() > 0)
+    {
+      m_noDataInfo->hide();
+      return;
+    }
+
+  m_noDataInfo->setMessage
+    (QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
+		"Do you want to download the latest songs library?").arg(directory.canonicalPath())));
+  m_noDataInfo->show();
 }

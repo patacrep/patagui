@@ -43,7 +43,10 @@
 #include "code-editor.hh"
 
 
-CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
+CodeEditor::CodeEditor(QWidget *parent) : 
+  QPlainTextEdit(parent)
+  , m_highlightMode(false)
+  , m_lineNumberMode(false)
 {
   lineNumberArea = new LineNumberArea(this);
 
@@ -52,13 +55,13 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
   connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
   updateLineNumberAreaWidth(0);
-  highlightCurrentLine();
 }
-
-
 
 int CodeEditor::lineNumberAreaWidth()
 {
+  if(!m_lineNumberMode)
+    return 0;
+
   int digits = 1;
   int max = qMax(1, blockCount());
   while (max >= 10) {
@@ -71,14 +74,10 @@ int CodeEditor::lineNumberAreaWidth()
   return space;
 }
 
-
-
 void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
   setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
-
-
 
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
@@ -91,8 +90,6 @@ void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
     updateLineNumberAreaWidth(0);
 }
 
-
-
 void CodeEditor::resizeEvent(QResizeEvent *e)
 {
   QPlainTextEdit::resizeEvent(e);
@@ -101,10 +98,11 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
   lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
-
-
 void CodeEditor::highlightCurrentLine()
 {
+  if(!highlightMode())
+    return;
+
   QList<QTextEdit::ExtraSelection> extraSelections;
 
   if (!isReadOnly()) {
@@ -122,13 +120,10 @@ void CodeEditor::highlightCurrentLine()
   setExtraSelections(extraSelections);
 }
 
-
-
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
   QPainter painter(lineNumberArea);
   painter.fillRect(event->rect(), Qt::lightGray);
-
 
   QTextBlock block = firstVisibleBlock();
   int blockNumber = block.blockNumber();
@@ -148,4 +143,24 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     bottom = top + (int) blockBoundingRect(block).height();
     ++blockNumber;
   }
+}
+
+void CodeEditor::setHighlightMode(bool value)
+{
+  m_highlightMode = value;
+}
+
+bool CodeEditor::highlightMode() const
+{
+  return m_highlightMode;
+}
+
+void CodeEditor::setLineNumberMode(bool value)
+{
+  m_lineNumberMode = value;
+}
+
+bool CodeEditor::lineNumberMode() const
+{
+  return m_lineNumberMode;
 }
