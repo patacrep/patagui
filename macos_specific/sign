@@ -26,7 +26,7 @@ PUB_KEY=0
 #unofficail way to acces last argument
 DMG="${@: -1}"
 PRIV_KEY='MacOS/dsa_priv_collatinus.pem'
-BASEURL="http://songbookclient.lmdb.eu"
+BASEURL="http://songbookclient.lmdb.eu/"
 SIGNUTIL="/Users/matthiasbussonnier/Downloads/Sparkle 1.5b6/Extras/Signing Tools/sign_update.rb"
 VERSION=0
 while getopts “d:hxv:p:s:c:g:” OPTION

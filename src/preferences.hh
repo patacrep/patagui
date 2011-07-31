@@ -109,6 +109,35 @@ private:
   QLabel *m_workingPathValid;
 };
 
+/** \brief Editor is the config page used to specify options related
+    to the song editor
+ */
+class EditorPage : public QWidget
+{
+  Q_OBJECT
+
+public:
+  EditorPage(QWidget *parent = 0);
+
+  ConfigDialog* parent() const;
+
+protected:
+  void closeEvent(QCloseEvent *event);
+
+private slots:
+  void selectFont();
+
+private:
+  void readSettings();
+  void writeSettings();
+
+  ConfigDialog* m_parent;
+  QCheckBox *m_numberLinesCheckBox;
+  QCheckBox *m_highlightCurrentLineCheckBox;
+  QPushButton *m_fontButton;
+  QFont m_font;
+};
+
 /** \brief NetworkPage is the config page used to specify network options
  */
 class NetworkPage : public QWidget

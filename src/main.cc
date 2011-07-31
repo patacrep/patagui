@@ -19,8 +19,9 @@
 #include <QApplication>
 #include <QTextCodec>
 #include "main-window.hh"
+#include "config.h"
 
-#ifdef __APPLE__
+#ifdef USE_SPARKLE
 #include "../macos_specific/sparkle/src/CocoaInitializer.h"
 #include "../macos_specific/sparkle/src/SparkleAutoUpdater.h"
 #endif
@@ -35,7 +36,7 @@ int main( int argc, char * argv[] )
   
   // this is the code needed to check for update on startup on mac os
   // we might plan to move it and also check for beta.
-  #ifdef Q_WS_MAC
+  #ifdef USE_SPARKLE
     AutoUpdater* updater;
     CocoaInitializer initializer;
     updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");

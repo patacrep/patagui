@@ -11,7 +11,7 @@
             <sparkle:releaseNotesLink> 
                 http://songbookclient.lmdb.eu/0.5.1.mac.html
             </sparkle:releaseNotesLink>
-		<enclosure url="file://localhost/Users/matthiasbussonnier/songbook-client/Songbook-Client.dmg" sparkle:version="0.5.2" length="55632" type="application/octet-stream" sparkle:dsaSignature="MC0CFCOdyMs8iHhtiVab34r0xZtFKoc3AhUAkg/QfKb5KgHt8PKivr90elQ3O+E=" />
+		<enclosure url="http://songbookclient.lmdb.eu/Songbook-Client-0.5.1.dmg" sparkle:version="0.5.1" length="57072" type="application/octet-stream" sparkle:dsaSignature="MCwCFD8OEX4RPqgsGnUkOntV7R89GeL8AhRuUDU9AqlcosTBsZfqfcMzOjnAVQ==" />
     </item> 
 </channel> 
 </rss>

@@ -26,21 +26,16 @@
 #include <QTextDocumentFragment>
 #include <QFile>
 #include <QTextStream>
+#include <QSettings>
 
 #include <QDebug>
 
-//------------------------------------------------------------------------------
 CSongEditor::CSongEditor()
   : CodeEditor()
-  , m_toolBar()
+  , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
 {
   setUndoRedoEnabled(true);
-
-  //Monospace font
-  QFont font("Monospace",10);
-  font.setStyleHint(QFont::Monospace, QFont::PreferAntialias);
-  setFont(font);
 
   CHighlighter *highlighter = new CHighlighter(document());
   Q_UNUSED(highlighter);
@@ -48,9 +43,8 @@ CSongEditor::CSongEditor()
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   // toolBar
-  m_toolBar = new QToolBar(tr("Song edition tools"), this);
-  m_toolBar->setMovable(false);
-  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+  toolBar()->setMovable(false);
+  toolBar()->setContextMenuPolicy(Qt::PreventContextMenu);
 
   // actions
   QAction* action = new QAction(tr("Save"), this);
@@ -58,7 +52,7 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/document-save")));
   action->setStatusTip(tr("Save modifications"));
   connect(action, SIGNAL(triggered()), SLOT(save()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   //copy paste
   action = new QAction(tr("Cut"), this);
@@ -66,23 +60,23 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/edit-cut")));
   action->setStatusTip(tr("Cut the selection"));
   connect(action, SIGNAL(triggered()), SLOT(cut()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/edit-copy")));
   action->setStatusTip(tr("Copy the selection"));
   connect(action, SIGNAL(triggered()), SLOT(copy()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/edit-paste")));
   action->setStatusTip(tr("Paste clipboard content"));
   connect(action, SIGNAL(triggered()), SLOT(paste()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
-  m_toolBar->addSeparator();
+  toolBar()->addSeparator();
   
   //undo redo
   action = new QAction(tr("Undo"), this);
@@ -90,37 +84,57 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/edit-undo")));
   action->setStatusTip(tr("Undo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(undo()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
   action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/edit-redo")));
   action->setStatusTip(tr("Redo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(redo()));
-  m_toolBar->addAction(action);
+  addAction(action);
 
-  m_toolBar->addSeparator();
+  toolBar()->addSeparator();
   
   //songbook
   action = new QAction(tr("Verse"), this);
   action->setStatusTip(tr("New verse environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
-  m_toolBar->addAction(action);
+  addAction(action);
   
   action = new QAction(tr("Chorus"), this);
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
-  m_toolBar->addAction(action);
+  addAction(action);
+
+  readSettings();
 }
-//------------------------------------------------------------------------------
+
 CSongEditor::~CSongEditor()
 {}
-//------------------------------------------------------------------------------
+
 QString CSongEditor::path()
 {
   return m_path;
 }
-//------------------------------------------------------------------------------
+
+void CSongEditor::readSettings()
+{
+   
+  QSettings settings;
+  settings.beginGroup("editor");
+  QFont font;
+  font.fromString(settings.value("font", QString()).toString());
+  setFont(font);
+  settings.endGroup();
+}
+
+void CSongEditor::writeSettings()
+{
+  //QSettings settings;
+  //settings.beginGroup("editor");
+  //settings.endGroup();
+}
+
 void CSongEditor::setPath(const QString &path)
 {
   QString text;
@@ -135,7 +149,7 @@ void CSongEditor::setPath(const QString &path)
   setPlainText(text);
   m_path = path;
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::save()
 {
   //open file in write mode
@@ -155,7 +169,7 @@ void CSongEditor::save()
       qWarning() << "Mainwindow::songEditorSave warning: unable to open file in write mode";
     }
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::documentWasModified()
 {
   if (!windowTitle().contains(" *") && document()->isModified())
@@ -164,24 +178,24 @@ void CSongEditor::documentWasModified()
       emit(labelChanged(windowTitle()));
     }
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::insertVerse()
 {
   QString selection = textCursor().selectedText();
   insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::insertChorus()
 {
   QString selection = textCursor().selectedText();
   insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
-//------------------------------------------------------------------------------
+
 QToolBar* CSongEditor::toolBar()
 {
   return m_toolBar;
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::keyPressEvent(QKeyEvent *event)
 {
   if (event->key() == Qt::Key_Tab) 
@@ -189,7 +203,7 @@ void CSongEditor::keyPressEvent(QKeyEvent *event)
   else 
     QPlainTextEdit::keyPressEvent(event);
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::indentSelection()
 {
   QTextCursor cursor = textCursor();
@@ -215,7 +229,7 @@ void CSongEditor::indentSelection()
 	break;
     }
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::indentLine(const QTextCursor & cur)
 {
   //if line is only contains whitespaces, remove them and exit
@@ -259,7 +273,7 @@ void CSongEditor::indentLine(const QTextCursor & cur)
   for(int i=0; i < index; ++i)
     cursor.insertText("  ");
 }
-//------------------------------------------------------------------------------
+
 void CSongEditor::trimLine(const QTextCursor & cur)
 {
   QTextCursor cursor(cur);
@@ -270,4 +284,15 @@ void CSongEditor::trimLine(const QTextCursor & cur)
       cursor.deleteChar();
       str  = cursor.block().text();
     }
+}
+
+QList<QAction*> CSongEditor::actions() const
+{
+  return m_actions;
+}
+
+void CSongEditor::addAction(QAction* action)
+{
+  toolBar()->addAction(action);
+  m_actions.append(action);
 }

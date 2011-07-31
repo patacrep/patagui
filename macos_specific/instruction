@@ -1,9 +1,26 @@
-Instruction pour le buil du songbook-vlient sur mac.
+Instruction pour le build du songbook-client sur mac.
 
- ne pas ou blier de faire une fois la compilation réussie.
+project compilation on mac need Qt to be build from souce.
+Downloable Qt framework are made to work with Objective-C, not C/C++ directly.
+
+You need to have Cmake installed.
+
+An option is to have the Sparkle framwork in /Library/Framework.if it's the case, the application is build with support for autoupdate
+
+There might pe a dependency to libarchive (macport ?)
+
+The "./configure" step is directly handled by Cmake. 
+
+$ make
+sould be sufficient to have a working application created in the "build" subdirectory
+
+there is no Xcode project.
+The application have only been tested on OS X 10.6.x
+
+
+
+Ne pas ou blier de faire une fois la compilation réussie.
 	changer le numero de version 
-	"macdeployqt Songbook-client.app" pour installer les framework Qt
-	Copier le framework sparkle à la main (/Library/Framework)
 	Vérifier la présenc de la clé publique dans contents ressources
 
 	...creer le dmg..

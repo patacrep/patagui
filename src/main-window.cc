@@ -350,7 +350,7 @@ void CMainWindow::createActions()
   settings.endGroup();
 
   m_buildAct = new QAction(tr("Build PDF"), this);
-  m_buildAct->setIcon(QIcon(":/icons/tango/scalable/mimetypes/document-export.svg"));
+  m_buildAct->setIcon(QIcon::fromTheme("document-export",QIcon(":/icons/tango/48x48/mimetypes/document-export.png")));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
@@ -440,6 +440,15 @@ void CMainWindow::createMenus()
   m_dbMenu->addSeparator();
   m_dbMenu->addAction(m_libraryDownloadAct);
   m_dbMenu->addAction(m_libraryUpdateAct);
+
+  m_editorMenu = menuBar()->addMenu(tr("&Editor"));
+  CSongEditor* editor = new CSongEditor();
+  QAction* action;
+  foreach(action, editor->actions())
+    {
+      action->setDisabled(true);
+      m_editorMenu->addAction(action);
+    }
 
   m_viewMenu = menuBar()->addMenu(tr("&View"));
   m_viewMenu->addAction(m_toolBarViewAct);
@@ -882,14 +891,24 @@ void CMainWindow::closeTab(int index)
 void CMainWindow::changeTab(int index)
 {
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-
+  QAction* action;
   if (editor)
     {
+      m_editorMenu->clear();
+      foreach(action, editor->actions())
+	{
+	  m_editorMenu->addAction(action);
+	  action->setEnabled(true);
+	}
+
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
+      foreach(action, m_editorMenu->actions())
+	action->setEnabled(false);
+
       switchToolBar(m_toolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }

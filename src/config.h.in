@@ -1,0 +1,16 @@
+// fichier config.h.in
+// it is used to generate config.h from cmake.
+// @VARIABLE@ will be replaced by their equivalent 
+//
+// #cmakedefine will be converted either to
+//    #define
+// or /* #define */ (commented define)
+// 
+// We will use this to 
+// - have a common place to look for the version number
+// - link to sparkle framework if present (mac)
+// - some other stuff
+
+#cmakedefine USE_SPARKLE
+#cmakedefine USE_PROUT
+
