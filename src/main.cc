@@ -17,7 +17,13 @@
 // 02110-1301, USA.
 //******************************************************************************
 #include <QApplication>
+
+#include <QTranslator>
 #include <QTextCodec>
+#include <QDate>
+#include <QLocale>
+#include <QDir>
+
 #include "main-window.hh"
 #include "config.h"
 

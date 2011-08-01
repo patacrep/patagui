@@ -27,7 +27,10 @@
 #ifndef __MAIN_WINDOW_HH__
 #define __MAIN_WINDOW_HH__
 
-#include <QtGui>
+#include <QMainWindow>
+
+#include <QModelIndex>
+#include <QDir>
 
 class CSongbook;
 class CLibrary;
@@ -38,12 +41,17 @@ class CSongEditor;
 class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
-class CNotify;
+class CNotification;
+
+class QProgressBar;
+class QTextEdit;
+class QItemSelectionModel;
+class QSortFilterProxyModel;
+class QLabel;
 
 /** \class CMainWindow "main-window.hh"
  * \brief CMainWindow is the base class of the application
  */
-
 class CMainWindow : public QMainWindow
 {
   Q_OBJECT
@@ -59,9 +67,6 @@ public:
   CSongbook * songbook() const;
   const QString workingPath();
 
-public slots:
-  void setWorkingPath(const QString &path);
-  
 protected:
   void closeEvent(QCloseEvent *event);
 
@@ -69,7 +74,7 @@ private slots:
   //songbook
   void newSongbook();
   void open();
-  void save(bool forced=false);
+  void save(bool forced = false);
   void saveAs();
   void build();
   void closeTab(int index);
@@ -79,7 +84,7 @@ private slots:
   
   //library
   void newSong();
-  void songEditor(const QModelIndex & index = QModelIndex());
+  void songEditor(const QModelIndex &index = QModelIndex());
   void deleteSong();
 
   void songEditor(const QString &filename, const QString &title = QString());
@@ -89,7 +94,6 @@ private slots:
 
   //model
   void selectLanguage();
-  void updateSongsList();
   void filterChanged(const QString &filter);
   void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
@@ -111,8 +115,6 @@ private:
   void createMenus();
   void createToolBar();
 
-  //QGridLayout * songbookInfo();
-
   bool isToolBarDisplayed();
   bool isStatusbarDisplayed();
 
@@ -126,13 +128,13 @@ private:
   QFileSystemModel* m_tempFilesmodel;
 
   // Widgets
-  CTabWidget* m_mainWidget;
-  QProgressBar* m_progressBar;
-  CNotify* m_noDataInfo;
-  CNotify* m_updateAvailable;
-  QLabel* m_infoSelection;
+  CTabWidget *m_mainWidget;
+  QProgressBar *m_progressBar;
+  CNotification *m_noDataInfo;
+  CNotification *m_updateAvailable;
+  QLabel *m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
-  QTextEdit* m_log;
+  QTextEdit *m_log;
 
   // Settings
   QString m_workingPath;

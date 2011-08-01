@@ -29,12 +29,12 @@ class QBoxLayout;
 
 /** \brief Notification is a temporary widget to provide information
  */
-class CNotify : public QDockWidget
+class CNotification : public QDockWidget
 {
   Q_OBJECT
 
 public:
-  CNotify(QWidget* parent);
+  CNotification(QWidget* parent);
   
   QString message() const;
   void setMessage(const QString &);

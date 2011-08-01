@@ -18,13 +18,16 @@
 //******************************************************************************
 
 #include "dialog-new-song.hh"
+
+#include <QtGui>
+
 #include "utils/utils.hh"
 #include "main-window.hh"
 #include "library.hh"
 #include "file-chooser.hh"
 #include "notification.hh"
-#include <QLayout>
-#include <QImage>
+
+#include <QDebug>
 
 CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   : QDialog()
@@ -56,7 +59,7 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   nbColumnsEdit->setValue(m_nbColumns);
   nbColumnsEdit->setRange(0,10);
 
-  QSpinBox* capoEdit      = new QSpinBox;
+  QSpinBox* capoEdit = new QSpinBox;
   capoEdit->setRange(0,20);
 
   // Action buttons
@@ -74,11 +77,11 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
 
   QGroupBox* optionalFieldsBox = new QGroupBox(tr("Optional fields"));
   QFormLayout* optionalLayout = new QFormLayout;
-  optionalLayout->addRow(tr("A&lbum:"),     albumEdit);
-  optionalLayout->addRow(tr("&Cover:"),     coverEdit);
+  optionalLayout->addRow(tr("A&lbum:"), albumEdit);
+  optionalLayout->addRow(tr("&Cover:"), coverEdit);
   optionalLayout->addRow(tr("&Language: "), langComboBox);
-  optionalLayout->addRow(tr("C&olumns: "),  nbColumnsEdit);
-  optionalLayout->addRow(tr("Ca&po: "),     capoEdit);
+  optionalLayout->addRow(tr("C&olumns: "), nbColumnsEdit);
+  optionalLayout->addRow(tr("Ca&po: "), capoEdit);
   optionalFieldsBox->setLayout(optionalLayout);
 
   QBoxLayout* layout = new QVBoxLayout;
@@ -86,14 +89,14 @@ CDialogNewSong::CDialogNewSong(CMainWindow* AParent)
   layout->addWidget(optionalFieldsBox);
   layout->addWidget(buttonBox);
 
-  connect(m_titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)) );
-  connect(m_artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)) );
+  connect(m_titleEdit,  SIGNAL(textChanged(QString)), this, SLOT(setTitle(QString)));
+  connect(m_artistEdit, SIGNAL(textChanged(QString)), this, SLOT(setArtist(QString)));
 
-  connect(langComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLang(const QString&)) );
-  connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)) );
-  connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)) );
-  connect(albumEdit, SIGNAL(textChanged(QString)), this, SLOT(setAlbum(QString)) );
-  connect(coverEdit, SIGNAL(pathChanged(const QString&)), this, SLOT(setCover(const QString&)) );
+  connect(langComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setLang(const QString&)));
+  connect(nbColumnsEdit, SIGNAL(valueChanged(int)), this, SLOT(setNbColumns(int)));
+  connect(capoEdit, SIGNAL(valueChanged(int)), this, SLOT(setCapo(int)));
+  connect(albumEdit, SIGNAL(textChanged(QString)), this, SLOT(setAlbum(QString)));
+  connect(coverEdit, SIGNAL(pathChanged(const QString&)), this, SLOT(setCover(const QString&)));
 
   setLayout(layout);
   setWindowTitle(tr("New song"));
@@ -116,10 +119,10 @@ bool CDialogNewSong::checkRequiredFields()
   map.insert(m_artistEdit, artist());
   QMapIterator<QLineEdit*, QString> it(map);
     
-  while(it.hasNext())
+  while (it.hasNext())
     {
       it.next();
-      if(it.value().isEmpty())
+      if (it.value().isEmpty())
 	{
 	  it.key()->setStyleSheet("border: 1px solid red;border-radius: 3px;");
 	  result = false;
@@ -141,15 +144,15 @@ QString CDialogNewSong::songTemplate()
   
   text.append(QString("\\beginsong{%1}[by=%2").arg(title()).arg(artist()));
   
-  if(!cover().isEmpty())
+  if (!cover().isEmpty())
     text.append(QString(",cov=%1").arg(SbUtils::stringToFilename(album(),"-")));
 
-  if(!album().isEmpty())
+  if (!album().isEmpty())
     text.append(QString(",album=%1").arg(album()));
  
   text.append(QString("]\n\n"));
   
-  if(!cover().isEmpty())
+  if (!cover().isEmpty())
     text.append(QString("\\cover\n"));
 
   if (capo() > 0)
@@ -162,7 +165,7 @@ QString CDialogNewSong::songTemplate()
 
 void CDialogNewSong::addSong()
 {
-  if ( !checkRequiredFields() )
+  if (!checkRequiredFields())
     return;
 
   //make new dir
@@ -178,22 +181,22 @@ void CDialogNewSong::addSong()
     dir.mkpath(dirpath);
 
   //handle album art
-  if(SbUtils::copyFile(cover(), dirpath) && !album().isEmpty() )
+  if (SbUtils::copyFile(cover(), dirpath) && !album().isEmpty())
     { 
       QFile copy(QString("%1/%2").arg(dirpath).arg(QFileInfo(cover()).fileName()));
 
       //resize cover
       QImage image;
-      if(!image.load(copy.fileName(), "JPG"))
+      if (!image.load(copy.fileName(), "JPG"))
 	qWarning() << "CDialogNewSong::addSong() failed to load " << copy.fileName();
 
       image = image.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-      if(!image.save(copy.fileName(),"JPG"))
+      if (!image.save(copy.fileName(),"JPG"))
 	qWarning() << "CDialogNewSong::addSong() failed to save " << copy.fileName();
 
       QString convertedFileName(QString("%1.jpg").arg(SbUtils::stringToFilename(album(),"-")));
-      if( !copy.rename(QString("%1/%2").arg(dirpath).arg(convertedFileName)) )
+      if (!copy.rename(QString("%1/%2").arg(dirpath).arg(convertedFileName)))
 	copy.remove(); //file already exists
     }
 

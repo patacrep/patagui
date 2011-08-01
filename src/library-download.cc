@@ -22,22 +22,18 @@
 #include <archive.h>
 #include <archive_entry.h>
 
+#include <QtGui>
+
 #include <QNetworkProxy>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QFileInfo>
-#include <QFile>
-#include <QFormLayout>
-#include <QLineEdit>
-#include <QDialogButtonBox>
-#include <QProgressBar>
 
 #include "file-chooser.hh"
 #include "main-window.hh"
+#include "library.hh"
 
 #include <QDebug>
-#include <QString>
 
 CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   : QDialog(parent)
@@ -187,7 +183,7 @@ void CLibraryDownload::downloadFinished()
 	{
 	  QDir::setCurrent(dir.absolutePath());
 	  if (decompress(filepath, libraryDir))
-	    parent()->setWorkingPath(libraryDir.absolutePath());
+	    parent()->library()->setDirectory(libraryDir);
 	  QDir::setCurrent(oldCurrent.absolutePath());
 	}
       // remove the downloaded archive after decompressing

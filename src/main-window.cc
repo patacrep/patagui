@@ -19,7 +19,6 @@
 #include "main-window.hh"
 
 #include <QtGui>
-#include <QtAlgorithms>
 
 #include "utils/utils.hh"
 #include "label.hh"
@@ -65,7 +64,6 @@ CMainWindow::CMainWindow()
   // songbook (title, authors, song list)
   m_songbook = new CSongbook(this);
   m_songbook->setLibrary(m_library);
-  m_songbook->setSourceModel(m_library);
 
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
   connect(m_songbook, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
@@ -98,7 +96,7 @@ CMainWindow::CMainWindow()
   mainLayout->addWidget(m_view);
   mainLayout->addWidget(m_log);
 
-  QWidget* libraryTab = new QWidget;
+  QWidget *libraryTab = new QWidget;
   libraryTab->setLayout(mainLayout);
 
   // place elements into the main window
@@ -313,10 +311,11 @@ void CMainWindow::createActions()
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  CBuildEngine* builder = new CMakeSongbook(this);
-  builder->setProcessOptions(QStringList() << "clean");
+  CBuildEngine *builder = new CMakeSongbook(this);
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#else
+  builder->setProcessOptions(QStringList() << "clean");
 #endif
   m_cleanAct = new QAction(tr("Clean"), this);
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/edit-clear")));
@@ -384,8 +383,8 @@ void CMainWindow::createMenus()
   libraryMenu->addAction(m_libraryUpdateAct);
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
-  CSongEditor* editor = new CSongEditor();
-  QAction* action;
+  CSongEditor *editor = new CSongEditor();
+  QAction *action;
   foreach (action, editor->actions())
     {
       action->setDisabled(true);
@@ -425,7 +424,7 @@ void CMainWindow::createToolBar()
   connect(m_filterLineEdit, SIGNAL(textChanged(const QString&)),
 	  this, SLOT(filterChanged(const QString&)));
 
-  QWidget* stretch = new QWidget;
+  QWidget *stretch = new QWidget;
   stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   m_libraryToolBar = new QToolBar(tr("Library tools"), this);
@@ -485,7 +484,8 @@ void CMainWindow::selectLanguage()
 
 void CMainWindow::build()
 {
-  if (songbook()->selectedPaths().isEmpty())
+  songbook()->songsFromSelection();
+  if (songbook()->songs().isEmpty())
     {
       if (QMessageBox::question(this, windowTitle(),
 				QString(tr("You did not select any song. \n "
@@ -507,19 +507,21 @@ void CMainWindow::build()
   QString basename = QFileInfo(songbook()->filename()).baseName();
   QString target = QString("%1.pdf").arg(basename);
 
-  CBuildEngine* builder = new CMakeSongbook(this);
+  CBuildEngine *builder = new CMakeSongbook(this);
 
   //force a make clean
-  builder->setProcessOptions(QStringList() << "clean");
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
+#else
+  builder->setProcessOptions(QStringList() << "clean");
 #endif
   builder->action();
   builder->process()->waitForFinished();
 
-  builder->setProcessOptions(QStringList() << target);
 #ifdef Q_WS_WIN
   builder->setProcessOptions(QStringList() << "/C" << "make.bat" << basename);
+#else
+  builder->setProcessOptions(QStringList() << target);
 #endif
   builder->action();
 }
@@ -537,12 +539,6 @@ void CMainWindow::open()
                                                   workingPath(),
                                                   tr("Songbook (*.sb)"));
   songbook()->load(filename);
-  QStringList songlist = songbook()->songs();
-  QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(QRegExp("^"), path);
-
-  songbook()->selectPaths(songlist);
-
   updateTitle(songbook()->filename());
 }
 
@@ -556,7 +552,6 @@ void CMainWindow::save(bool forced)
 	saveAs();
     }
 
-  updateSongsList();
   songbook()->save(songbook()->filename());
   updateTitle(songbook()->filename());
 }
@@ -575,17 +570,6 @@ void CMainWindow::saveAs()
     }
 }
 
-void CMainWindow::updateSongsList()
-{
-  QStringList songlist = songbook()->selectedPaths();
-  QString path = QString("%1/songs/").arg(workingPath());
-  songlist.replaceInStrings(path, QString());
-#ifdef Q_WS_WIN
-  songlist.replaceInStrings("\\", "/");
-#endif
-  songbook()->setSongs(songlist);
-}
-
 void CMainWindow::updateTitle(const QString &filename)
 {
   QString text = filename.isEmpty() ? tr("New songbook") : filename;
@@ -597,11 +581,6 @@ void CMainWindow::updateTitle(const QString &filename)
 const QString CMainWindow::workingPath()
 {
   return library()->directory().canonicalPath();
-}
-
-void CMainWindow::setWorkingPath(const QString &path)
-{
-  library()->setDirectory(path);
 }
 
 QProgressBar * CMainWindow::progressBar() const
@@ -629,7 +608,7 @@ QItemSelectionModel * CMainWindow::selectionModel()
   return view()->selectionModel();
 }
 
-void CMainWindow::songEditor(const QModelIndex & index)
+void CMainWindow::songEditor(const QModelIndex &index)
 {
   if (!selectionModel()->hasSelection())
     {
@@ -651,7 +630,7 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
       return;
     }
 
-  CSongEditor* editor = new CSongEditor();
+  CSongEditor *editor = new CSongEditor();
   editor->setPath(path);
   if (title == QString())
     {
@@ -708,8 +687,8 @@ void CMainWindow::deleteSong(const QString &path)
   msgBox.setText(tr("Removing song from Library."));
   msgBox.setInformativeText(tr("Are you sure?"));
   msgBox.addButton(QMessageBox::No);
-  QPushButton* yesb = msgBox.addButton(QMessageBox::Yes);
-  QPushButton* delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
+  QPushButton *yesb = msgBox.addButton(QMessageBox::Yes);
+  QPushButton *delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
   msgBox.setDefaultButton(QMessageBox::No);
   msgBox.setDetailedText(qs);
   msgBox.exec();
@@ -758,7 +737,7 @@ void CMainWindow::closeTab(int index)
 void CMainWindow::changeTab(int index)
 {
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  QAction* action;
+  QAction *action;
   if (editor)
     {
       m_editorMenu->clear();
@@ -792,7 +771,7 @@ void CMainWindow::updateNotification(const QString &path)
 {
   if (!m_updateAvailable)
     {
-      m_updateAvailable = new CNotify(this);
+      m_updateAvailable = new CNotification(this);
       m_updateAvailable->addAction(m_libraryUpdateAct);
     }
 
@@ -806,7 +785,7 @@ void CMainWindow::noDataNotification(const QDir &directory)
 {
   if (!m_noDataInfo)
     {
-      m_noDataInfo = new CNotify(this);
+      m_noDataInfo = new CNotification(this);
       m_noDataInfo->addAction(m_libraryDownloadAct);
     }
 
