@@ -47,6 +47,7 @@ class QProgressBar;
 class QTextEdit;
 class QItemSelectionModel;
 class QSortFilterProxyModel;
+class QFileSystemModel;
 class QLabel;
 
 /** \class CMainWindow "main-window.hh"
