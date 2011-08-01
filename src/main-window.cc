@@ -36,6 +36,7 @@
 #include "library-download.hh"
 #include "songbook-panel.hh"
 #include "notification.hh"
+#include "song-item-delegate.hh"
 
 #include <QDebug>
 
@@ -79,6 +80,7 @@ CMainWindow::CMainWindow()
   // view
   m_view = new CLibraryView(this);
   m_view->setModel(m_proxyModel);
+  m_view->setItemDelegate(new CSongItemDelegate);
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
   
   // compilation log
