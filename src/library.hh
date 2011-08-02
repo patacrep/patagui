@@ -29,6 +29,8 @@
 #include <QAbstractTableModel>
 #include <QString>
 #include <QDir>
+#include <QLocale>
+#include <QMetaType>
 
 class QAbstractListModel;
 class QStringListModel;
@@ -63,7 +65,7 @@ public:
     QString path;
     QString coverName;
     QString coverPath;
-    QString language;
+    QLocale::Language language;
     bool isLilypond;
   };
 
@@ -81,7 +83,7 @@ public:
 
   QAbstractListModel * completionModel();
 
-  QVariant headerData (int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
   void addSong(const QString &path);
@@ -104,6 +106,8 @@ protected:
 
   bool parseSong(const QString &path, Song &song);
 
+  static QLocale::Language languageFromString(const QString &languageName = QString());
+
   static QRegExp reTitle;
   static QRegExp reArtist;
   static QRegExp reAlbum;
@@ -120,5 +124,7 @@ private:
   QStringList m_templates;
   QList< Song > m_songs;
 };
+
+Q_DECLARE_METATYPE(QLocale::Language)
 
 #endif // __LIBRARY_HH__

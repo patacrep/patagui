@@ -37,6 +37,7 @@ public:
   ~CSongItemDelegate();
 
   virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+  virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif // __SONG_ITEM_DELEGATE_HH__
