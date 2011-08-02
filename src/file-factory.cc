@@ -93,8 +93,8 @@ void CFileFactory::browse()
 void CFileFactory::disconnectPropertyManager(CFilePropertyManager *manager)
 {
   originalFactory->removePropertyManager(manager);
-  disconnect(manager, SIGNAL(filterChanged(QtProperty *, const QString &)), 
-	     this, SLOT(slotFilterChanged(QtProperty *, const QString &)));
+  // disconnect(manager, SIGNAL(filterChanged(QtProperty *, const QString &)), 
+  //  	     this, SLOT(slotFilterChanged(QtProperty *, const QString &)));
 }
 
 void CFileFactory::slotFilenameChanged(QtProperty *property, const QString &filename)
