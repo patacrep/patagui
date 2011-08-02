@@ -26,7 +26,6 @@
 #include <QStringList>
 
 #include <QtVariantProperty>
-#include <QtGroupBoxPropertyBrowser>
 
 #include "utils/utils.hh"
 
@@ -34,6 +33,7 @@ class CLibrary;
 
 class QWidget;
 class QComboBox;
+class QtGroupBoxPropertyBrowser;
 class QtGroupPropertyManager;
 class CUnitPropertyManager;
 class CFilePropertyManager;
@@ -73,11 +73,6 @@ public:
 
   QString filename() const;
   QString tmpl() const;
-  QString title() const;
-  QString authors() const;
-  QString style() const;
-  QPixmap* picture() const;
-  QtGroupBoxPropertyBrowser * propertyEditor() const;
   
   int selectedCount() const;
   void selectLanguages(const QStringList &languages);
@@ -89,7 +84,7 @@ public:
 
   bool isModified();
 
-  QWidget *panel();
+  void initializeEditor(QtGroupBoxPropertyBrowser *editor);
 
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -116,11 +111,11 @@ private:
   QtVariantPropertyManager *m_propertyManager;
   CUnitPropertyManager *m_unitManager;
   CFilePropertyManager *m_fileManager;
-  QtGroupBoxPropertyBrowser *m_propertyEditor;
+  QtGroupPropertyManager *m_groupManager;
 
   QMap< QString, QtVariantProperty* > m_parameters;
 
-  QtGroupPropertyManager *m_groupManager;
+  QList< QtProperty*> m_mandatoryParameters;
   QtProperty *m_advancedParameters;
 };
 

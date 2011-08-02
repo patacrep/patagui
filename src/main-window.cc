@@ -34,7 +34,6 @@
 #include "songSortFilterProxyModel.hh"
 #include "tab-widget.hh"
 #include "library-download.hh"
-#include "songbook-panel.hh"
 #include "notification.hh"
 #include "song-item-delegate.hh"
 

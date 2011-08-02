@@ -33,6 +33,8 @@ class QSpinBox;
 class CFileChooser;
 class CMainWindow;
 
+class QtGroupBoxPropertyBrowser;
+
 /** \brief ConfigDialog handles the display of the config pages
  */
 class ConfigDialog : public QDialog
@@ -57,17 +59,32 @@ private:
   QStackedWidget *m_pagesWidget;
 };
 
+/** \brief Page is the base class for config page
+ */
+class Page : public QWidget
+{
+  Q_OBJECT
+public:
+  Page(ConfigDialog *parent);
+
+  ConfigDialog * parent() const;
+
+protected:
+  void closeEvent(QCloseEvent *event);
+
+private:
+  virtual void readSettings();
+  virtual void writeSettings();
+};
+
 /** \brief DisplayPage is the config page used to specify display options
  */
-class DisplayPage : public QWidget
+class DisplayPage : public Page
 {
   Q_OBJECT
 
 public:
-  DisplayPage(QWidget *parent = 0);
-
-protected:
-  void closeEvent(QCloseEvent *event);
+  DisplayPage(ConfigDialog *parent = 0);
 
 private:
   void readSettings();
@@ -82,19 +99,14 @@ private:
   QCheckBox *m_compilationLogCheckBox;
 };
 
-/** \brief OptionPage is the config page used to specify general options
+/** \brief OptionsPage is the config page used to specify general options
  */
-class OptionsPage : public QWidget
+class OptionsPage : public Page
 {
   Q_OBJECT
 
 public:
   OptionsPage(ConfigDialog *parent);
-  
-  ConfigDialog* parent() const;
-  
-protected:
-  void closeEvent(QCloseEvent *event);
 
 private slots:
   void checkWorkingPath(const QString &path);
@@ -103,7 +115,6 @@ private:
   void readSettings();
   void writeSettings();
 
-  ConfigDialog* m_parent;
   CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
 };
@@ -111,17 +122,12 @@ private:
 /** \brief Editor is the config page used to specify options related
     to the song editor
  */
-class EditorPage : public QWidget
+class EditorPage : public Page
 {
   Q_OBJECT
 
 public:
-  EditorPage(QWidget *parent = 0);
-
-  ConfigDialog* parent() const;
-
-protected:
-  void closeEvent(QCloseEvent *event);
+  EditorPage(ConfigDialog *parent);
 
 signals:
   void fontChanged();
@@ -134,7 +140,6 @@ private:
   void readSettings();
   void writeSettings();
 
-  ConfigDialog* m_parent;
   QCheckBox *m_numberLinesCheckBox;
   QCheckBox *m_highlightCurrentLineCheckBox;
   QPushButton *m_fontButton;
@@ -143,15 +148,12 @@ private:
 
 /** \brief NetworkPage is the config page used to specify network options
  */
-class NetworkPage : public QWidget
+class NetworkPage : public Page
 {
   Q_OBJECT
 
 public:
-  NetworkPage(QWidget *parent = 0);
-
-protected:
-  void closeEvent(QCloseEvent *event);
+  NetworkPage(ConfigDialog *parent);
 
 private:
   void readSettings();
@@ -161,6 +163,22 @@ private:
   QSpinBox *m_port;
   QLineEdit *m_user;
   QLineEdit *m_password;
+};
+
+/** \brief SongbookPage is the config page used to specify general songbooks
+ */
+class SongbookPage : public Page
+{
+  Q_OBJECT
+
+public:
+  SongbookPage(ConfigDialog *parent);
+  
+private slots:
+  void updatePropertyEditor();
+
+private:
+  QtGroupBoxPropertyBrowser * m_propertyEditor;
 };
 
 #endif // __PREFERENCES_HH__

@@ -16,15 +16,18 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
-
 #include "preferences.hh"
-#include "file-chooser.hh"
-#include "songbook-panel.hh"
-#include "main-window.hh"
 
 #include <QtGui>
-
 #include <QNetworkProxy>
+#include <QtGroupBoxPropertyBrowser>
+
+#include "main-window.hh"
+#include "songbook.hh"
+#include "library.hh"
+#include "file-chooser.hh"
+
+#include <QDebug>
 
 // Config Dialog
 
@@ -43,6 +46,7 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
 
   m_pagesWidget = new QStackedWidget;
   m_pagesWidget->addWidget(new OptionsPage(this));
+  m_pagesWidget->addWidget(new SongbookPage(this));
   m_pagesWidget->addWidget(new DisplayPage(this));
   m_pagesWidget->addWidget(new EditorPage(this));
   m_pagesWidget->addWidget(new NetworkPage(this));
@@ -84,6 +88,12 @@ void ConfigDialog::createIcons()
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
+  QListWidgetItem *songbookButton = new QListWidgetItem(m_contentsWidget);
+  //songbookButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/preferences-desktop-theme")));
+  songbookButton->setText(tr("Songbook"));
+  songbookButton->setTextAlignment(Qt::AlignHCenter);
+  songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
   displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/preferences-desktop-theme")));
   displayButton->setText(tr("Display"));
@@ -124,10 +134,35 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
     }
 }
 
+
+// Page
+
+Page::Page(ConfigDialog *parent)
+  : QWidget(parent)
+{}
+
+ConfigDialog * Page::parent() const
+{
+  return qobject_cast< ConfigDialog* >(QWidget::parent());
+}
+
+void Page::closeEvent(QCloseEvent *event)
+{
+  writeSettings();
+  event->accept();
+}
+
+void Page::readSettings()
+{}
+
+void Page::writeSettings()
+{}
+
+
 // Display Page
 
-DisplayPage::DisplayPage(QWidget *parent)
-  : QWidget(parent)
+DisplayPage::DisplayPage(ConfigDialog *parent)
+  : Page(parent)
 {
   QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
 
@@ -191,17 +226,11 @@ void DisplayPage::writeSettings()
   settings.endGroup();
 }
 
-void DisplayPage::closeEvent(QCloseEvent *event)
-{
-  writeSettings();
-  event->accept();
-}
 
 // Option Page
 
 OptionsPage::OptionsPage(ConfigDialog *p)
-  : QWidget(p)
-  , m_parent(p)
+  : Page(p)
   , m_workingPath(0)
   , m_workingPathValid(0)
 {
@@ -228,40 +257,11 @@ OptionsPage::OptionsPage(ConfigDialog *p)
   workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
-  // songbook template
-  qDebug() << "create songbook template widget";
-  QWidget* sbSettings = new QWidget;
-  
-  CSongbookPanel* panel = new CSongbookPanel;
-  panel->setSongbook(parent()->parent()->songbook());
-
-  QDialogButtonBox * buttons = new QDialogButtonBox;
-  buttons->addButton(new QPushButton(tr("Change settings")), QDialogButtonBox::AcceptRole);
-  connect(buttons, SIGNAL(accepted()), panel, SLOT(settingsDialog()));
-
-  QVBoxLayout * layout = new QVBoxLayout;
-  layout->addWidget(panel);
-  layout->addWidget(buttons);
-  sbSettings->setLayout(layout);
-
-  QGroupBox *songbookTemplateGroupBox
-    = new QGroupBox(tr("Songbook Template"));
-
-  QLayout *songbookTemplateLayout = new QVBoxLayout;
-  songbookTemplateLayout->addWidget(sbSettings);
-  songbookTemplateGroupBox->setLayout(songbookTemplateLayout);
-
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
-  mainLayout->addWidget(songbookTemplateGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
-}
-
-ConfigDialog* OptionsPage::parent() const
-{
-  return m_parent;
 }
 
 void OptionsPage::readSettings()
@@ -278,12 +278,6 @@ void OptionsPage::writeSettings()
   settings.beginGroup("library");
   settings.setValue("workingPath", m_workingPath->path());
   settings.endGroup();
-}
-
-void OptionsPage::closeEvent(QCloseEvent *event)
-{
-  writeSettings();
-  event->accept();
 }
 
 void OptionsPage::checkWorkingPath(const QString &path)
@@ -351,8 +345,8 @@ void OptionsPage::checkWorkingPath(const QString &path)
 
 // Editor Page
 
-EditorPage::EditorPage(QWidget *parent)
-  : QWidget(parent)
+EditorPage::EditorPage(ConfigDialog *parent)
+  : Page(parent)
 {
   m_font = QFont("Monospace",10);
   m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
@@ -409,22 +403,11 @@ void EditorPage::updateFontButton()
 			.arg(QString::number(m_font.pointSize())));
 }
 
-void EditorPage::closeEvent(QCloseEvent *event)
-{
-  writeSettings();
-  event->accept();
-}
-
-ConfigDialog* EditorPage::parent() const
-{
-  return m_parent;
-}
-
 
 // Network Page
 
-NetworkPage::NetworkPage(QWidget *parent)
-  : QWidget(parent)
+NetworkPage::NetworkPage(ConfigDialog *parent)
+  : Page(parent)
   , m_hostname()
   , m_port()
   , m_user()
@@ -494,9 +477,45 @@ void NetworkPage::writeSettings()
   QNetworkProxy::setApplicationProxy(proxy);
 }
 
-void NetworkPage::closeEvent(QCloseEvent *event)
+
+// Songbook Page
+
+SongbookPage::SongbookPage(ConfigDialog *p)
+  : Page(p)
+  , m_propertyEditor(new QtGroupBoxPropertyBrowser)
 {
-  writeSettings();
-  event->accept();
+  CSongbook *songbook = parent()->parent()->songbook();
+
+  QComboBox* templateComboBox = new QComboBox;
+  templateComboBox->addItems(songbook->library()->templates());
+  templateComboBox->setCurrentIndex(songbook->library()->templates().indexOf("patacrep.tmpl"));
+
+  connect(templateComboBox, SIGNAL(currentIndexChanged(const QString &)),
+	  songbook, SLOT(setTmpl(const QString &)));
+  connect(songbook, SIGNAL(wasModified(bool)), SLOT(updatePropertyEditor()));
+
+  songbook->changeTemplate();
+  songbook->initializeEditor(m_propertyEditor);
+
+  QGroupBox *songbookGroupBox = new QGroupBox(tr("Songbook"));
+
+  QBoxLayout *templateLayout = new QHBoxLayout;
+  templateLayout->addWidget(new QLabel(tr("Template:")));
+  templateLayout->addWidget(templateComboBox);
+
+  QBoxLayout *songbookLayout = new QVBoxLayout;
+  songbookLayout->addLayout(templateLayout);
+  songbookLayout->addWidget(m_propertyEditor);
+  songbookGroupBox->setLayout(songbookLayout);
+
+  // main layout
+  QVBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(songbookGroupBox);
+  mainLayout->addStretch(1);
+  setLayout(mainLayout);
 }
 
+void SongbookPage::updatePropertyEditor()
+{
+  parent()->parent()->songbook()->initializeEditor(m_propertyEditor);
+}

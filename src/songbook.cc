@@ -20,21 +20,15 @@
 
 #include <QDir>
 #include <QFile>
-#include <QTextStream>
-#include <QSettings>
-#include <QWidget>
-#include <QLabel>
 
 #include <QScriptEngine>
 #include <QScriptValue>
 #include <QScriptValueIterator>
 
-#include <QtSliderFactory>
-#include <QtIntPropertyManager>
+#include <QtGroupBoxPropertyBrowser>
 #include <QtAbstractPropertyManager>
 
 #include "qtpropertymanager.h"
-#include "main-window.hh"
 #include "unit-property-manager.hh"
 #include "unit-factory.hh"
 #include "file-property-manager.hh"
@@ -55,16 +49,11 @@ CSongbook::CSongbook(QObject *parent)
   , m_propertyManager(new QtVariantPropertyManager())
   , m_unitManager(new CUnitPropertyManager())
   , m_fileManager(new CFilePropertyManager())
-  , m_propertyEditor(new QtGroupBoxPropertyBrowser())
-  , m_parameters()
   , m_groupManager()
+  , m_parameters()
+  , m_mandatoryParameters()
   , m_advancedParameters()
-{
-  m_propertyEditor->setFactoryForManager(m_propertyManager,
-					 new QtVariantEditorFactory());
-  m_propertyEditor->setFactoryForManager(m_unitManager, new CUnitFactory());
-  m_propertyEditor->setFactoryForManager(m_fileManager, new CFileFactory());
-}
+{}
 
 CSongbook::~CSongbook()
 {
@@ -115,7 +104,6 @@ QString CSongbook::tmpl() const
   return m_tmpl;
 }
 
-
 void CSongbook::setTmpl(const QString &tmpl)
 {
   int index =  library()->templates().indexOf(tmpl);
@@ -140,37 +128,6 @@ void CSongbook::setSongs(QStringList songs)
       m_songs = songs;
       emit(songsChanged());
     }
-}
-
-QString CSongbook::title() const
-{
-  return m_parameters.value("title") ?
-    m_parameters.value("title")->value().toString():QString();
-}
-
-QString CSongbook::authors() const
-{
-  return m_parameters.value("author") ?
-    m_parameters.value("author")->value().toString()
-    .replace("\\and","&"):QString();
-}
-
-QString CSongbook::style() const
-{
-  return tmpl().isEmpty() ? 
-    QString("patacrep"):tmpl().replace(".tmpl","");
-}
-
-QPixmap* CSongbook::picture() const
-{
-  if(!m_parameters.value("picture"))
-    return new QPixmap;
-  QtProperty* property = m_parameters.find("picture").value();
-  QString basename = m_fileManager->value( property );
-  qDebug() << "name = " << m_fileManager->value(property);
-  QPixmap * px = new QPixmap(QString("%1/img/%2.jpg").arg(workingPath()).arg(basename));
-  QPixmap  fallback = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/image-missing")).pixmap(128, 128);
-  return px->isNull()? &fallback:px;
 }
 
 void CSongbook::reset()
@@ -259,7 +216,9 @@ void CSongbook::changeTemplate(const QString & filename)
 	    else if( it.key() == "picture")
 	      oldValues.insert(it.key(),m_fileManager->value(it.value()));
 	    else
-	      oldValues.insert(it.key(),it.value()->value());
+	      {
+		oldValues.insert(it.key(), it.value()->value());
+	      }
             it++;
           }
         m_parameters.clear();
@@ -270,8 +229,9 @@ void CSongbook::changeTemplate(const QString & filename)
       QScriptValueIterator it(parameters);
       bool advancedParameters = false;
 
-      delete m_groupManager;
+      m_mandatoryParameters.clear();
 
+      delete m_groupManager;
       m_groupManager = new QtGroupPropertyManager(this);
       m_advancedParameters = m_groupManager->addProperty(tr("Advanced Parameters"));
 
@@ -319,7 +279,7 @@ void CSongbook::changeTemplate(const QString & filename)
                 {
                   oldValue = oldValues.value(svName.toString());
                 }
-              if (svDefault.isValid())
+              else if (svDefault.isValid())
                 {
                   oldValue = svDefault.toVariant();
                 }
@@ -369,9 +329,6 @@ void CSongbook::changeTemplate(const QString & filename)
 		  item = static_cast<QtVariantProperty*>(m_fileManager->addProperty(svDescription.toString()));
 		  if (oldValue.isValid())
 		    m_fileManager->setFilename(item, oldValue.toString());
-		  //m_fileManager->setFilename(static_cast<QtProperty*>(item), oldValue.toString());
-		  //m_fileManager->setFilter(item, ".jpg");
-		  //m_unitManager->setRange(item, 10, 12);
 		}
 
               // set the existing or default value
@@ -387,20 +344,33 @@ void CSongbook::changeTemplate(const QString & filename)
 
               // handle the mandatory boolean parameter
 	      if (svMandatory.isValid() && svMandatory.toBool())
-                {
-		  m_propertyEditor->addProperty(item);
+		{
+		  m_mandatoryParameters << item;
 		}
 	      else
-		{
-		  advancedParameters = true;
-		  m_advancedParameters->addSubProperty(item);
-		}
+	      	{
+	       	  advancedParameters = true;
+	      	  m_advancedParameters->addSubProperty(item);
+	      	}
             }
         }
       if (advancedParameters)
 	{
-	  m_propertyEditor->addProperty(m_advancedParameters);
+	  m_mandatoryParameters << m_advancedParameters;
 	}
+    }
+}
+
+void CSongbook::initializeEditor(QtGroupBoxPropertyBrowser *editor)
+{
+  editor->setFactoryForManager(m_propertyManager, new QtVariantEditorFactory());
+  editor->setFactoryForManager(m_unitManager, new CUnitFactory());
+  editor->setFactoryForManager(m_fileManager, new CFileFactory());
+
+  QtProperty *item;
+  foreach(item, m_mandatoryParameters)
+    {
+      editor->addProperty(item);
     }
 }
 
@@ -630,11 +600,6 @@ void CSongbook::load(const QString & filename)
 QString CSongbook::workingPath() const
 {
   return library()->directory().canonicalPath();
-}
-
-QtGroupBoxPropertyBrowser * CSongbook::propertyEditor() const
-{
-  return m_propertyEditor;
 }
 
 void CSongbook::selectAll()
