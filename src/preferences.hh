@@ -21,6 +21,7 @@
 
 #include <QDialog>
 #include <QWidget>
+#include <QScrollArea>
 
 class QListWidget;
 class QListWidgetItem;
@@ -61,7 +62,7 @@ private:
 
 /** \brief Page is the base class for config page
  */
-class Page : public QWidget
+class Page : public QScrollArea
 {
   Q_OBJECT
 public:
@@ -69,12 +70,16 @@ public:
 
   ConfigDialog * parent() const;
 
+  void setLayout(QLayout *layout);
+
 protected:
   void closeEvent(QCloseEvent *event);
 
 private:
   virtual void readSettings();
   virtual void writeSettings();
+
+  QWidget *m_content;
 };
 
 /** \brief DisplayPage is the config page used to specify display options

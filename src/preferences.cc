@@ -138,8 +138,11 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
 // Page
 
 Page::Page(ConfigDialog *parent)
-  : QWidget(parent)
-{}
+  : QScrollArea(parent)
+  , m_content(new QWidget)
+{
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
 
 ConfigDialog * Page::parent() const
 {
@@ -157,6 +160,12 @@ void Page::readSettings()
 
 void Page::writeSettings()
 {}
+
+void Page::setLayout(QLayout *layout)
+{
+  m_content->setLayout(layout);
+  setWidget(m_content);
+}
 
 
 // Display Page
