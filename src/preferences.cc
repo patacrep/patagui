@@ -137,16 +137,17 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
 
 // Page
 
-Page::Page(ConfigDialog *parent)
-  : QScrollArea(parent)
+Page::Page(ConfigDialog *configDialog)
+  : QScrollArea(configDialog)
   , m_content(new QWidget)
+  , m_configDialog(configDialog)
 {
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-ConfigDialog * Page::parent() const
+ConfigDialog * Page::configDialog() const
 {
-  return qobject_cast< ConfigDialog* >(QWidget::parent());
+  return m_configDialog;
 }
 
 void Page::closeEvent(QCloseEvent *event)
@@ -170,8 +171,8 @@ void Page::setLayout(QLayout *layout)
 
 // Display Page
 
-DisplayPage::DisplayPage(ConfigDialog *parent)
-  : Page(parent)
+DisplayPage::DisplayPage(ConfigDialog *configDialog)
+  : Page(configDialog)
 {
   QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
 
@@ -238,8 +239,8 @@ void DisplayPage::writeSettings()
 
 // Option Page
 
-OptionsPage::OptionsPage(ConfigDialog *p)
-  : Page(p)
+OptionsPage::OptionsPage(ConfigDialog *configDialog)
+  : Page(configDialog)
   , m_workingPath(0)
   , m_workingPathValid(0)
 {
@@ -354,8 +355,8 @@ void OptionsPage::checkWorkingPath(const QString &path)
 
 // Editor Page
 
-EditorPage::EditorPage(ConfigDialog *parent)
-  : Page(parent)
+EditorPage::EditorPage(ConfigDialog *configDialog)
+  : Page(configDialog)
 {
   m_font = QFont("Monospace",10);
   m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
@@ -415,8 +416,8 @@ void EditorPage::updateFontButton()
 
 // Network Page
 
-NetworkPage::NetworkPage(ConfigDialog *parent)
-  : Page(parent)
+NetworkPage::NetworkPage(ConfigDialog *configDialog)
+  : Page(configDialog)
   , m_hostname()
   , m_port()
   , m_user()
@@ -489,11 +490,11 @@ void NetworkPage::writeSettings()
 
 // Songbook Page
 
-SongbookPage::SongbookPage(ConfigDialog *p)
-  : Page(p)
+SongbookPage::SongbookPage(ConfigDialog *configDialog)
+  : Page(configDialog)
   , m_propertyEditor(new QtGroupBoxPropertyBrowser)
 {
-  CSongbook *songbook = parent()->parent()->songbook();
+  CSongbook *songbook = configDialog->parent()->songbook();
 
   QComboBox* templateComboBox = new QComboBox;
   templateComboBox->addItems(songbook->library()->templates());
@@ -526,5 +527,5 @@ SongbookPage::SongbookPage(ConfigDialog *p)
 
 void SongbookPage::updatePropertyEditor()
 {
-  parent()->parent()->songbook()->initializeEditor(m_propertyEditor);
+  configDialog()->parent()->songbook()->initializeEditor(m_propertyEditor);
 }

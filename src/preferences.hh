@@ -66,9 +66,9 @@ class Page : public QScrollArea
 {
   Q_OBJECT
 public:
-  Page(ConfigDialog *parent);
+  Page(ConfigDialog *configDialog);
 
-  ConfigDialog * parent() const;
+  ConfigDialog * configDialog() const;
 
   void setLayout(QLayout *layout);
 
@@ -80,6 +80,7 @@ private:
   virtual void writeSettings();
 
   QWidget *m_content;
+  ConfigDialog *m_configDialog;
 };
 
 /** \brief DisplayPage is the config page used to specify display options
@@ -89,7 +90,7 @@ class DisplayPage : public Page
   Q_OBJECT
 
 public:
-  DisplayPage(ConfigDialog *parent = 0);
+  DisplayPage(ConfigDialog *configDialog);
 
 private:
   void readSettings();
@@ -111,7 +112,7 @@ class OptionsPage : public Page
   Q_OBJECT
 
 public:
-  OptionsPage(ConfigDialog *parent);
+  OptionsPage(ConfigDialog *configDialog);
 
 private slots:
   void checkWorkingPath(const QString &path);
@@ -132,7 +133,7 @@ class EditorPage : public Page
   Q_OBJECT
 
 public:
-  EditorPage(ConfigDialog *parent);
+  EditorPage(ConfigDialog *configDialog);
 
 signals:
   void fontChanged();
@@ -158,7 +159,7 @@ class NetworkPage : public Page
   Q_OBJECT
 
 public:
-  NetworkPage(ConfigDialog *parent);
+  NetworkPage(ConfigDialog *configDialog);
 
 private:
   void readSettings();
@@ -177,7 +178,7 @@ class SongbookPage : public Page
   Q_OBJECT
 
 public:
-  SongbookPage(ConfigDialog *parent);
+  SongbookPage(ConfigDialog *configDialog);
   
 private slots:
   void updatePropertyEditor();
