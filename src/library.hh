@@ -108,12 +108,12 @@ protected:
 
   static QLocale::Language languageFromString(const QString &languageName = QString());
 
-  static QRegExp reTitle;
+  static QRegExp reSong;
   static QRegExp reArtist;
   static QRegExp reAlbum;
+  static QRegExp reCoverName;
   static QRegExp reLilypond;
   static QRegExp reLanguage;
-  static QRegExp reCoverName;
 
 private:
   CMainWindow *m_parent;

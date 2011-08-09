@@ -252,12 +252,13 @@ void CLibrary::addSongs(const QStringList &paths)
   emit(wasModified());
 }
 
-QRegExp CLibrary::reTitle = QRegExp("beginsong\\{([^[\\}]+)");
-QRegExp CLibrary::reArtist("by=([^[,|\\]]+)");
-QRegExp CLibrary::reAlbum(",album=([^[\\]]+)");
+QRegExp CLibrary::reSong("begin\\{?song\\}?\\{([^[\\}]+)\\}[^[]*\\[([^]]*)\\]");
+QRegExp CLibrary::reArtist("by=([^,]+)");
+QRegExp CLibrary::reAlbum("album=([^,]+)");
+QRegExp CLibrary::reCoverName("cov=([^,]+)");
 QRegExp CLibrary::reLilypond("\\\\lilypond");
-QRegExp CLibrary::reLanguage("selectlanguage\\{([^[\\}]+)");
-QRegExp CLibrary::reCoverName(",cov=([^[,]+)");
+QRegExp CLibrary::reLanguage("selectlanguage\\{([^\\}]+)");
+
 
 bool CLibrary::parseSong(const QString &path, Song &song)
 {
@@ -276,25 +277,25 @@ bool CLibrary::parseSong(const QString &path, Song &song)
 
   song.path = path;
 
-  reArtist.indexIn(fileStr);
+  reSong.indexIn(fileStr);
+  song.title = SbUtils::latexToUtf8(reSong.cap(1));
+
+  reArtist.indexIn(reSong.cap(2));
   song.artist = SbUtils::latexToUtf8(reArtist.cap(1));
 
-  reTitle.indexIn(fileStr);
-  song.title = SbUtils::latexToUtf8(reTitle.cap(1));
-  
-  reAlbum.indexIn(fileStr);
+  reAlbum.indexIn(reSong.cap(2));
   song.album = SbUtils::latexToUtf8(reAlbum.cap(1));
 
   song.isLilypond = QBool(reLilypond.indexIn(fileStr) > -1);
 
-  reCoverName.indexIn(fileStr);
+  reCoverName.indexIn(reSong.cap(2));
   song.coverName = reCoverName.cap(1);
 
   song.coverPath = QFileInfo(path).absolutePath();
 
   reLanguage.indexIn(fileStr);
   song.language = languageFromString(reLanguage.cap(1));
-    
+
   return true;
 }
 
