@@ -1,19 +1,21 @@
 cmake_minimum_required(VERSION 2.6)
-project(songbook-client)
-set( PROGNAME songbook-client )
 
-#-------------------------------------------------------------------------------
-set( CMAKE_COLOR_MAKEFILE ON )
-#set( CMAKE_VERBOSE_MAKEFILE ON )
-#set( CMAKE_INCLUDE_CURRENT_DIR TRUE )
-#-------------------------------------------------------------------------------
-# process options and parameters
-if(DEFINED PREFIX)
-  set(CMAKE_INSTALL_PREFIX ${PREFIX})
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
+if(NOT EXISTS ${SOURCE_DIR}/songbookClientConfig.cmake)
+    message(FATAL_ERROR "songbookClientConfig.cmake")
 endif()
-#-------------------------------------------------------------------------------
+
+include(songbookClientConfig.cmake)
+
+set(CMAKE_COLOR_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+
+#set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
-#-------------------------------------------------------------------------------
+
 find_package(LibArchive REQUIRED)
 include_directories(${LibArchive_INCLUDE_DIRS})
 
@@ -190,7 +192,7 @@ add_definitions("-g -Wall")
 if(APPLE)
   include(CMakeLists-Mac.cmake)
 else( APPLE )
-    add_executable(${PROGNAME}
+    add_executable(${SONGBOOK_CLIENT_APPLICATION_NAME}
       ${SONGBOOK_CLIENT_SOURCES} 
       ${SONGBOOK_CLIENT_MOCS} 
       ${SONGBOOK_CLIENT_RESSOURCES} 
@@ -201,21 +203,16 @@ else( APPLE )
     )
 endif( APPLE )
 
-# Generate configure.h for now it contain information only for mac source, 
-# but include will fail if not generated.
-# I intend to but a centralized Version Number, Major/Minor/String in this file 
-CONFIGURE_FILE( ${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/config.h )
-
-target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
+target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${QT_LIBRARIES})
 if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
-target_link_libraries(${PROGNAME} ${LibArchive_LIBRARIES})
+target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LibArchive_LIBRARIES})
 
 # install instructions
 if(NOT APPLE)
-  install(TARGETS ${PROGNAME} RUNTIME DESTINATION bin)
-  install(FILES ${PROGNAME}.desktop DESTINATION share/applications)
+  install(TARGETS ${SONGBOOK_CLIENT_APPLICATION_NAME} RUNTIME DESTINATION bin)
+  install(FILES ${SONGBOOK_CLIENT_APPLICATION_NAME}.desktop DESTINATION share/applications)
   install(FILES icons/songbook-client.png DESTINATION share/icons)
-  install(FILES ${COMPILED_TRANSLATIONS} DESTINATION share/${PROGNAME}/translations)
+  install(FILES ${COMPILED_TRANSLATIONS} DESTINATION share/${SONGBOOK_CLIENT_APPLICATION_NAME}/translations)
 endif(NOT APPLE)

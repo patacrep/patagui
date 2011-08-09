@@ -1,0 +1,131 @@
+set(PROJECT_NAME songbook-client)
+
+# If ${SOURCE_DIR} is a git repository VERSION is set to
+# `git describe` later.
+set(VERSION devel)
+
+set(CODENAME "")
+
+project(${PROJECT_NAME} C)
+
+# TODO
+#option(GENERATE_MANPAGES "generate manpages" ON)
+#option(COMPRESS_MANPAGES "compress manpages" ON)
+
+# {{{ CFLAGS
+#add_definitions(-ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
+#    -Wchar-subscripts -Wundef -Wshadow -Wcast-align -Wwrite-strings
+#    -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
+#    -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
+#    -Wmissing-format-attribute)
+# }}}
+
+# {{{ Find external utilities
+macro(a_find_program var prg req)
+    set(required ${req})
+    find_program(${var} ${prg})
+    if(NOT ${var})
+        message(STATUS "${prg} not found.")
+        if(required)
+            message(FATAL_ERROR "${prg} is required to build ${PROJECT_NAME}")
+        endif()
+    else()
+        message(STATUS "${prg} -> ${${var}}")
+    endif()
+endmacro()
+
+a_find_program(HOSTNAME_EXECUTABLE hostname FALSE)
+# TODO
+# programs needed for man pages
+#a_find_program(ASCIIDOC_EXECUTABLE asciidoc FALSE)
+#a_find_program(XMLTO_EXECUTABLE xmlto FALSE)
+#a_find_program(GZIP_EXECUTABLE gzip FALSE)
+
+# pkg-config
+include(FindPkgConfig)
+# }}}
+
+## {{{ Check if documentation can be build
+#if(GENERATE_MANPAGES)
+#    if(NOT ASCIIDOC_EXECUTABLE OR NOT XMLTO_EXECUTABLE OR (COMPRESS_MANPAGES AND NOT GZIP_EXECUTABLE))
+#        if(NOT ASCIIDOC_EXECUTABLE)
+#            SET(missing "asciidoc")
+#        endif()
+#        if(NOT XMLTO_EXECUTABLE)
+#            SET(missing ${missing} " xmlto")
+#        endif()
+#        if(COMPRESS_MANPAGES AND NOT GZIP_EXECUTABLE)
+#            SET(missing ${missing} " gzip")
+#        endif()
+#
+#        message(STATUS "Not generating manpages. Missing: " ${missing})
+#        set(GENERATE_MANPAGES OFF)
+#    endif()
+#endif()
+# }}}
+
+# {{{ Version stamp
+if(EXISTS ${SOURCE_DIR}/.git/HEAD AND GIT_EXECUTABLE)
+    # get current version
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe
+        WORKING_DIRECTORY ${SOURCE_DIR}
+        OUTPUT_VARIABLE VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(BUILD_FROM_GIT TRUE)
+endif()
+# }}}
+
+# {{{ Get hostname
+execute_process(
+    COMMAND ${HOSTNAME_EXECUTABLE}
+    WORKING_DIRECTORY ${SOURCE_DIR}
+    OUTPUT_VARIABLE BUILDHOSTNAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+# }}}
+
+# {{{ Install path and configuration variables
+if(DEFINED PREFIX)
+    set(PREFIX ${PREFIX} CACHE PATH "install prefix")
+    set(CMAKE_INSTALL_PREFIX ${PREFIX})
+else()
+    set(PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "install prefix")
+endif()
+
+## set man path
+#if(DEFINED AWESOME_MAN_PATH)
+#   set(AWESOME_MAN_PATH ${AWESOME_MAN_PATH} CACHE PATH "awesome manpage directory")
+#else()
+#   set(AWESOME_MAN_PATH ${PREFIX}/share/man CACHE PATH "awesome manpage directory")
+#endif()
+
+# Hide to avoid confusion
+mark_as_advanced(CMAKE_INSTALL_PREFIX)
+
+set(SONGBOOK_CLIENT_APPLICATION_NAME ${PROJECT_NAME})
+set(SONGBOOK_CLIENT_VERSION          ${VERSION})
+set(SONGBOOK_CLIENT_COMPILE_MACHINE  ${CMAKE_SYSTEM_PROCESSOR})
+set(SONGBOOK_CLIENT_COMPILE_HOSTNAME ${BUILDHOSTNAME})
+set(SONGBOOK_CLIENT_COMPILE_BY       $ENV{USER})
+set(SONGBOOK_CLIENT_RELEASE          ${CODENAME})
+set(SONGBOOK_CLIENT_DATA_PATH        ${PREFIX}/share/${SONGBOOK_CLIENT_APPLICATION_NAME})
+# }}}
+
+# {{{ Configure files
+set(SONGBOOK_CLIENT_CONFIGURE_FILES 
+    config.hh.in
+)
+
+macro(a_configure_file file)
+    string(REGEX REPLACE ".in\$" "" outfile ${file})
+    message(STATUS "Configuring ${outfile}")
+    configure_file(${SOURCE_DIR}/${file}
+                   ${BUILD_DIR}/${outfile}
+                   ESCAPE_QUOTE
+                   @ONLY)
+endmacro()
+
+foreach(file ${SONGBOOK_CLIENT_CONFIGURE_FILES})
+    a_configure_file(${file})
+endforeach()
+#}}}

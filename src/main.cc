@@ -25,18 +25,17 @@
 #include <QDir>
 
 #include "main-window.hh"
-#include "config.h"
+#include "config.hh"
 
 #ifdef USE_SPARKLE
 #include "../macos_specific/sparkle/src/CocoaInitializer.h"
 #include "../macos_specific/sparkle/src/SparkleAutoUpdater.h"
 #endif
 
-//******************************************************************************
-int main( int argc, char * argv[] )
+int main(int argc, char *argv[])
 {
   //mac os, need to instanciate application fist to get it's path
-  QApplication app(argc, argv);
+  QApplication application(argc, argv);
 
   Q_INIT_RESOURCE(songbook);
   
@@ -66,46 +65,35 @@ int main( int argc, char * argv[] )
       QIcon::setThemeName(FALLBACK_ICON_THEME);
     }
 
-  QString version = QString("0.5.1 (%1)")
-    .arg(QDate::currentDate().toString(Qt::SystemLocaleLongDate));
   QCoreApplication::setOrganizationName("Patacrep");
   QCoreApplication::setOrganizationDomain("patacrep.com");
-  QCoreApplication::setApplicationName("songbook-client");
-  QCoreApplication::setApplicationVersion(version);
+  QCoreApplication::setApplicationName(SONGBOOK_CLIENT_APPLICATION_NAME);
+  QCoreApplication::setApplicationVersion(SONGBOOK_CLIENT_VERSION);
   
   // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
-  QString locale = QLocale::system().name().section('_', 0, 0);
-  QString filename = QString("songbook_%1").arg(locale) + ".qm";
-  QString dir;
+  QDir translationDirectory;
+  QString translationFilename = QString("songbook_%1.qm").arg(QLocale::system().name());
+  QString directory;
 
 #ifdef __APPLE__
-  QDir cdir(app.applicationDirPath());
-  cdir.cdUp();
-  cdir.cd("Resources/lang");
-  const QDir systemDir(cdir.absolutePath());
-  const QDir userDir(cdir.absolutePath());
+  translationDirectory = application.applicationDirPath();
+  translationDirectory.cd("../Resources/lang");
 #else
-  const QDir systemDir("/usr/share/songbook-client/translations", "*.qm");
-  const QDir userDir("/usr/local/share/songbook-client/translations", "*.qm");
+  translationDirectory = QDir(SONGBOOK_CLIENT_DATA_PATH);
+  translationDirectory.cd("translations");
 #endif
 
-  if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
-    dir = systemDir.absolutePath();
-  else if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
-    dir = userDir.absolutePath();
+  if (translationDirectory.exists())
+    directory = translationDirectory.absolutePath();
   else
-    dir = QString("%1%2lang").arg(QDir::currentPath()).arg(QDir::separator());
+    directory = QDir::current().absoluteFilePath("lang");
 
   QTranslator translator;
-  translator.load(QString("songbook_%1").arg(locale), dir);
-
-  // Main application
-  // move app creation to beggining
-  app.installTranslator(&translator);
+  translator.load(translationFilename, directory);
+  application.installTranslator(&translator);
 
   CMainWindow mainWindow;
   mainWindow.show();
-  return app.exec();
+  return application.exec();
 }
-//******************************************************************************
