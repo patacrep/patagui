@@ -34,6 +34,7 @@ macro(a_find_program var prg req)
     endif()
 endmacro()
 
+a_find_program(GIT_EXECUTABLE git FALSE)
 a_find_program(HOSTNAME_EXECUTABLE hostname FALSE)
 # TODO
 # programs needed for man pages
