@@ -24,9 +24,9 @@ GUI interface.
 OPTIONS
 -------
 *--version*::
-    Print version information to standard output, then exit.
+    Display version information.
 *-h*, *--help*::
-    Print help information, then exit.
+    Print a help message and exit.
 
 BUGS
 ----
