@@ -12,7 +12,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg3055"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.1 r9760"
    width="438"
    height="438"
    sodipodi:docname="patacrep.svg"
@@ -27,7 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -108,28 +108,6 @@
          stdDeviation="3.6650878"
          id="feGaussianBlur3879-1" />
     </filter>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3069-7"
-       id="radialGradient3077-2"
-       cx="311.16309"
-       cy="352.64078"
-       fx="311.16309"
-       fy="352.64078"
-       r="114.65639"
-       gradientTransform="matrix(-0.37172337,0.12188712,-0.05640209,-0.17201144,366.993,378.09839)"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       id="linearGradient3069-7">
-      <stop
-         style="stop-color:#4e9a06;stop-opacity:0.26573426;"
-         offset="0"
-         id="stop3071-1" />
-      <stop
-         style="stop-color:#4e9a06;stop-opacity:1;"
-         offset="1"
-         id="stop3073-9" />
-    </linearGradient>
     <filter
        inkscape:collect="always"
        id="filter3967"

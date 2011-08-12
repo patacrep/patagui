@@ -14,67 +14,13 @@
    height="448.29282"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.1 r9760"
    sodipodi:docname="livre.svg"
    inkscape:export-filename="/Users/matthiasbussonnier/Desktop/livre.png"
    inkscape:export-xdpi="199.95859"
    inkscape:export-ydpi="199.95859">
   <defs
      id="defs4">
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath4104">
-      <g
-         id="g4106"
-         transform="translate(-337.48984,-514.16239)">
-        <path
-           style="fill:#d5c27a;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="M 291.42858,661.32311 484.28572,525.60883 452.85715,337.0374 271.42858,482.75168 l -15.71429,-1.42857 -192.85714,-30 20,187.14286 194.28571,22.85714 z"
-           id="path4108"
-           inkscape:connector-curvature="0" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4110"
-           d="M 290.97051,651.32312 463.45192,529.95748 435.34384,361.32312 273.08355,491.63148 259.0295,490.35395 86.5481,463.52576 104.43506,630.88259 278.1941,651.32312 z"
-           style="fill:#f0e9d3;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      </g>
-    </clipPath>
-    <filter
-       inkscape:collect="always"
-       id="filter4116"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.2811862"
-         id="feGaussianBlur4118" />
-    </filter>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath4244">
-      <g
-         id="g4246"
-         transform="translate(-394.11566,-110.98659)">
-        <path
-           style="fill:#d5c27a;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           d="M 291.42858,661.32311 484.28572,525.60883 452.85715,337.0374 271.42858,482.75168 l -15.71429,-1.42857 -192.85714,-30 20,187.14286 194.28571,22.85714 z"
-           id="path4248"
-           inkscape:connector-curvature="0" />
-        <path
-           inkscape:connector-curvature="0"
-           id="path4250"
-           d="M 290.97051,651.32312 463.45192,529.95748 435.34384,361.32312 273.08355,491.63148 259.0295,490.35395 86.5481,463.52576 104.43506,630.88259 278.1941,651.32312 z"
-           style="fill:#f0e9d3;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      </g>
-    </clipPath>
-    <filter
-       inkscape:collect="always"
-       id="filter4264"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="6.3801471"
-         id="feGaussianBlur4266" />
-    </filter>
     <filter
        id="filter4347"
        inkscape:label="Drop shadow"
@@ -169,28 +115,6 @@
          stdDeviation="15.051906"
          inkscape:collect="always" />
     </filter>
-    <linearGradient
-       id="linearGradient3069-7">
-      <stop
-         id="stop3071-1"
-         offset="0"
-         style="stop-color:#4e9a06;stop-opacity:0.26573426;" />
-      <stop
-         id="stop3073-9"
-         offset="1"
-         style="stop-color:#4e9a06;stop-opacity:1;" />
-    </linearGradient>
-    <radialGradient
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.37172337,0.12188712,-0.05640209,-0.17201144,366.993,378.09839)"
-       r="114.65639"
-       fy="352.64078"
-       fx="311.16309"
-       cy="352.64078"
-       cx="311.16309"
-       id="radialGradient3077-2"
-       xlink:href="#linearGradient3069-7"
-       inkscape:collect="always" />
     <filter
        height="1.2533144"
        y="-0.12665722"
@@ -243,17 +167,6 @@
          stdDeviation="6.0892352"
          inkscape:collect="always" />
     </filter>
-    <radialGradient
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.37172337,0.12188712,-0.05640209,-0.17201144,324.36323,364.72434)"
-       r="114.65639"
-       fy="352.64078"
-       fx="311.16309"
-       cy="352.64078"
-       cx="311.16309"
-       id="radialGradient3077"
-       xlink:href="#linearGradient3069"
-       inkscape:collect="always" />
     <linearGradient
        id="linearGradient3069">
       <stop
@@ -269,28 +182,6 @@
          offset="1"
          style="stop-color:#4e9a06;stop-opacity:1;" />
     </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3069"
-       id="radialGradient4801"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.37172337,0.12188712,-0.05640209,-0.17201144,324.36323,364.72434)"
-       cx="311.16309"
-       cy="352.64078"
-       fx="311.16309"
-       fy="352.64078"
-       r="114.65639" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3069"
-       id="radialGradient4811"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-0.37172337,0.12188712,-0.05640209,-0.17201144,400.99233,292.35972)"
-       cx="311.16309"
-       cy="352.64078"
-       fx="311.16309"
-       fy="352.64078"
-       r="114.65639" />
     <filter
        id="filter4824"
        inkscape:label="Drop shadow"
@@ -377,19 +268,6 @@
     </filter>
     <filter
        inkscape:collect="always"
-       id="filter4928"
-       x="-0.73124999"
-       width="2.4625001"
-       y="-0.40344828"
-       height="1.8068966"
-       color-interpolation-filters="sRGB">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="33.126099"
-         id="feGaussianBlur4930" />
-    </filter>
-    <filter
-       inkscape:collect="always"
        id="filter4978"
        color-interpolation-filters="sRGB">
       <feGaussianBlur
@@ -437,7 +315,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
