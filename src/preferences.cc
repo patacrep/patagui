@@ -39,7 +39,7 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_contentsWidget->setViewMode(QListView::IconMode);
   m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
-  m_contentsWidget->setMinimumHeight(400);
+  m_contentsWidget->setMinimumHeight(476);
   m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
   m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
@@ -89,7 +89,7 @@ void ConfigDialog::createIcons()
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *songbookButton = new QListWidgetItem(m_contentsWidget);
-  //songbookButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/preferences-desktop-theme")));
+  songbookButton->setIcon(QIcon(":/icons/book.png"));
   songbookButton->setText(tr("Songbook"));
   songbookButton->setTextAlignment(Qt::AlignHCenter);
   songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
