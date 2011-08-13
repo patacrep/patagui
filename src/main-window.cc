@@ -818,13 +818,15 @@ void CMainWindow::cleanDialog()
   m_tempFilesmodel->setNameFilters(QStringList()
 			<< "*.aux" << "*.d" << "*.toc" << "*.out"
 			<< "*.log" << "*.nav" << "*.snm" << "*.sbx" << "*.sxd");
+  m_tempFilesmodel->setNameFilterDisables(false);
+  m_tempFilesmodel->setFilter(QDir::Files);
 
   QListView* view = new QListView;
   view->setModel(m_tempFilesmodel);
   view->setRootIndex(m_tempFilesmodel->index(library()->directory().canonicalPath()));
 
   QCheckBox* cleanAllButton = new QCheckBox("Also remove pdf files", this);
-  connect(cleanAllButton, SIGNAL(toggle()), this, SLOT(updateTempFilesView()));
+  connect(cleanAllButton, SIGNAL(stateChanged(int)), this, SLOT(updateTempFilesView(int)));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(view);
@@ -852,9 +854,16 @@ void CMainWindow::cleanDialog()
   delete m_tempFilesmodel;
 }
 
-void CMainWindow::updateTempFilesView()
+void CMainWindow::updateTempFilesView(int state)
 {
-  QCheckBox* button = qobject_cast< QCheckBox* >(QObject::sender());
-  if(button->isChecked())
-    m_tempFilesmodel->setNameFilters(m_tempFilesmodel->nameFilters() << "*.pdf");
+  if(state == Qt::Checked)
+    {
+      m_tempFilesmodel->setNameFilters(m_tempFilesmodel->nameFilters() << "*.pdf");
+    }
+  else if(m_tempFilesmodel->nameFilters().contains("*.pdf"))
+    {
+      QStringList list  = m_tempFilesmodel->nameFilters();
+      list.removeLast();
+      m_tempFilesmodel->setNameFilters(list);
+    }
 }

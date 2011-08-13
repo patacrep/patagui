@@ -81,7 +81,7 @@ private slots:
   void closeTab(int index);
   void changeTab(int index);
   void cleanDialog();
-  void updateTempFilesView();
+  void updateTempFilesView(int state);
   
   //library
   void newSong();
