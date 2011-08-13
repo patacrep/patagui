@@ -26,6 +26,18 @@ CHighlighter::CHighlighter(QTextDocument *parent)
 {
   HighlightingRule rule;
 
+  //LaTeX options (overrided by chords)
+  optionFormat.setFontItalic(true);
+  rule.pattern = QRegExp("\\[([^\\]]+)\\]");
+  rule.format = optionFormat;
+  highlightingRules.append(rule);
+
+  //LaTeX args (bold)
+  argumentFormat.setFontWeight(QFont::Bold);
+  rule.pattern = QRegExp("\\{([^}]+)\\}");
+  rule.format = argumentFormat;
+  highlightingRules.append(rule);
+
   // Keywords1 (orange)
   keywordFormat.setForeground(QColor(206,92,0));
   keywordFormat.setFontWeight(QFont::Bold);
@@ -146,23 +158,11 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   rule.format = quotationFormat;
   highlightingRules.append(rule);
 
-  //LaTeX options (overrided by chords)
-  optionFormat.setFontItalic(true);
-  rule.pattern = QRegExp("\\[([^\\]]+)\\]");
-  rule.format = optionFormat;
-  highlightingRules.append(rule);
-
   //Chords (blue)
   chordFormat.setForeground(QColor(32,74,135));
   chordFormat.setFontWeight(QFont::Bold);
   rule.pattern = QRegExp("\\\\\\[([^\\]]+)\\]");
   rule.format = chordFormat;
-  highlightingRules.append(rule);
-
-  //LaTeX args (bold)
-  argumentFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\{([^}]+)\\}");
-  rule.format = argumentFormat;
   highlightingRules.append(rule);
 
   //todo: remove
