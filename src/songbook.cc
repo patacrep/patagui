@@ -59,6 +59,7 @@ CSongbook::~CSongbook()
 {
   delete m_propertyManager;
   delete m_unitManager;
+  delete m_fileManager;
 }
 
 CLibrary * CSongbook::library() const
