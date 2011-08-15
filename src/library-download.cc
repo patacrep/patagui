@@ -77,7 +77,7 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   m_path = new CFileChooser();
   m_path->setFileMode(QFileDialog::Directory);
   m_path->setOptions(QFileDialog::ShowDirsOnly);
-  m_path->setCaption(tr("Install directroy"));
+  m_path->setCaption(tr("Install directory"));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
   buttonBox->addButton(tr("Download"),QDialogButtonBox::AcceptRole);
@@ -103,7 +103,7 @@ bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
   QFile file(filename);
   if (!file.open(QIODevice::WriteOnly))
     {
-      parent()->statusBar()->showMessage(tr("Could not open %1 for writting: %2").arg(qPrintable(filename)).arg(qPrintable(file.errorString())));
+      parent()->statusBar()->showMessage(tr("Could not open %1 to write: %2").arg(qPrintable(filename)).arg(qPrintable(file.errorString())));
       return false;
     }
   file.write(data->readAll());
