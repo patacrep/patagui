@@ -406,6 +406,7 @@ void CMainWindow::createMenus()
 void CMainWindow::createToolBar()
 {
   m_mainToolBar = new QToolBar(tr("Song tools"), this);
+  m_mainToolBar->setMovable(false);
   m_mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   m_mainToolBar->addAction(m_newSongAct);
   m_mainToolBar->addAction(m_buildAct);
