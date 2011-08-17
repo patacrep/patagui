@@ -40,6 +40,8 @@ public:
   void readSettings();
   void writeSettings();
 
+  void resizeColumns();
+
 public slots:
   void update();
   void songInfo();

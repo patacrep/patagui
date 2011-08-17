@@ -217,7 +217,7 @@ void DisplayPage::readSettings()
   m_pathCheckBox->setChecked(settings.value("path", false).toBool());
   m_albumCheckBox->setChecked(settings.value("album", true).toBool());
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
-  m_langCheckBox->setChecked(settings.value("lang", false).toBool());
+  m_langCheckBox->setChecked(settings.value("lang", true).toBool());
   m_compilationLogCheckBox->setChecked(settings.value("logs", false).toBool());
   settings.endGroup();
 }

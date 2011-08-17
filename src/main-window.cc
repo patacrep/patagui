@@ -80,13 +80,15 @@ CMainWindow::CMainWindow()
   m_view = new CLibraryView(this);
   m_view->setModel(m_proxyModel);
   m_view->setItemDelegate(new CSongItemDelegate);
+  m_view->resizeColumns();
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
   
   // compilation log
-  m_log = new QTextEdit;
-  m_log->setMaximumHeight(150);
+  m_log = new QPlainTextEdit;
+  m_log->setMinimumHeight(150);
+  m_log->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
   m_log->setReadOnly(true);
-  new CHighlighter(m_log->document());
+  Q_UNUSED(new CHighlighter(m_log->document()));
 
   createActions();
   createMenus();
@@ -405,6 +407,7 @@ void CMainWindow::createMenus()
 void CMainWindow::createToolBar()
 {
   m_mainToolBar = new QToolBar(tr("Song tools"), this);
+  m_mainToolBar->setMovable(false);
   m_mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   m_mainToolBar->addAction(m_newSongAct);
   m_mainToolBar->addAction(m_buildAct);
@@ -763,7 +766,7 @@ void CMainWindow::changeTab(int index)
     }
 }
 
-QTextEdit* CMainWindow::log() const
+QPlainTextEdit* CMainWindow::log() const
 {
   return m_log;
 }

@@ -35,12 +35,8 @@ CLibraryView::CLibraryView(CMainWindow *parent)
   setEditTriggers(QAbstractItemView::NoEditTriggers);
   setSortingEnabled(true);
   verticalHeader()->setVisible(false);
-  horizontalHeader()->setStretchLastSection(true);
-  setContextMenuPolicy(Qt::ActionsContextMenu);
 
-  setColumnWidth(0,200);
-  setColumnWidth(1,200);
-  setColumnWidth(4,200);
+  setContextMenuPolicy(Qt::ActionsContextMenu);
 
   createActions();
 }
@@ -63,29 +59,11 @@ void CLibraryView::readSettings()
   setColumnHidden(3, !settings.value("path", false).toBool());
   setColumnHidden(4, !settings.value("album", true).toBool());
   setColumnHidden(5, !settings.value("lang", true).toBool());
-
-  setColumnWidth(0, settings.value("titleWidth", 200).toInt());
-  setColumnWidth(1, settings.value("artistWidth", 200).toInt());
-  setColumnWidth(2, settings.value("lilypondWidth", 40).toInt());
-  setColumnWidth(3, settings.value("pathWidth", 200).toInt());
-  setColumnWidth(4, settings.value("albumWidth", 200).toInt());
-  setColumnWidth(5, settings.value("langWidth", 40).toInt());
-
   settings.endGroup();
 }
 
 void CLibraryView::writeSettings()
 {
-  QSettings settings;
-  settings.beginGroup("display");
-  settings.setValue("titleWidth", columnWidth(0));
-  settings.setValue("artistWidth", columnWidth(1));
-  settings.setValue("lilypondWidth", columnWidth(2));
-  settings.setValue("pathWidth", columnWidth(3));
-  settings.setValue("albumWidth", columnWidth(4));
-  settings.setValue("langWidth", columnWidth(5));
-  settings.endGroup();
-
 }
 
 void CLibraryView::update()
@@ -93,7 +71,6 @@ void CLibraryView::update()
   sortByColumn(0, Qt::AscendingOrder);
   sortByColumn(1, Qt::AscendingOrder);
 }
-
 
 void CLibraryView::createActions()
 {
@@ -132,4 +109,14 @@ void CLibraryView::songInfo()
 
   dialog->setLayout(layout);
   dialog->exec();
+}
+
+void CLibraryView::resizeColumns()
+{
+  horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
+  horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
+  horizontalHeader()->setResizeMode(2, QHeaderView::ResizeToContents);
+  horizontalHeader()->setResizeMode(3, QHeaderView::Stretch);
+  horizontalHeader()->setResizeMode(4, QHeaderView::Stretch);
+  horizontalHeader()->setResizeMode(5, QHeaderView::ResizeToContents);
 }

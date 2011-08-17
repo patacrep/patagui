@@ -85,7 +85,7 @@ void CBuildEngine::processError(QProcess::ProcessError error)
 
 void CBuildEngine::readProcessOut()
 {
-  parent()->log()->append(process()->readAllStandardOutput().data());
+  parent()->log()->appendPlainText(process()->readAllStandardOutput().data());
 }
 
 void CBuildEngine::dialog()
