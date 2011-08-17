@@ -80,6 +80,7 @@ CMainWindow::CMainWindow()
   m_view = new CLibraryView(this);
   m_view->setModel(m_proxyModel);
   m_view->setItemDelegate(new CSongItemDelegate);
+  m_view->resizeColumns();
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
   
   // compilation log
