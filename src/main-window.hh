@@ -44,7 +44,7 @@ class CFilterLineEdit;
 class CNotification;
 
 class QProgressBar;
-class QTextEdit;
+class QPlainTextEdit;
 class QItemSelectionModel;
 class QSortFilterProxyModel;
 class QFileSystemModel;
@@ -62,7 +62,7 @@ public:
   ~CMainWindow();
 
   QProgressBar * progressBar() const;
-  QTextEdit * log() const;
+  QPlainTextEdit * log() const;
   CLibraryView * view() const;
   CLibrary * library() const;
   CSongbook * songbook() const;
@@ -135,7 +135,7 @@ private:
   CNotification *m_updateAvailable;
   QLabel *m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
-  QTextEdit *m_log;
+  QPlainTextEdit *m_log;
 
   // Settings
   QString m_workingPath;
