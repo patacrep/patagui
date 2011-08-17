@@ -15,11 +15,11 @@ DESCRIPTION
 -----------
 
 *songbook-client* est une interface graphique pour l'application du
-carnet de chant de patacrep qui permet de manipuler la sélection de
+carnet de chant Patacrep! qui permet de manipuler la sélection de
 chansons et de personnaliser l'apparence d'un carnet de
 chant. L'éditeur intégré permet d'ajouter, de supprimer et de modifier
-des chansons dans la librarie disponible. Enfin une option de création
-permet de produire de joli pdf de carnets de chant directement depuis
+des chansons dans la bibliothèque disponible. Enfin une option de création
+permet de produire des recueils de chansons de qualité directement depuis
 l'interface.
 
 OPTIONS
@@ -31,13 +31,14 @@ OPTIONS
 
 BUGS
 ----
-Pas que nous sachions, mais n'hésitez pas à nous les faire connaître.
+Reportez les bugs à l'adresse suivante : 
+http://github.com/crep4ever/songbook-client/issues
 
 AUTHORS
 -------
-Romain Goffe <crep4ever@gmail.com>,
+Romain Goffe <romain.goffe@gmail.com>,
 Alexandre Dupas <alexandre.dupas@gmail.com>, et d'autres.
 
 WWW
 ---
-http://patacrep.com
+http://www.patacrep.com

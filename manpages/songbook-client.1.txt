@@ -14,11 +14,11 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-*songbook-client* is a graphical frontend to the patacrep songbook
+*songbook-client* is a graphical frontend to the Patacrep! songbook
 application that allows to handle the song selection and appearance
 customization of a songbook. The embedded editor allows to add, remove
-and modify the songs in the available library. Finnally a build option
-allow to create nice pdf output from the songbook directly from the
+and modify the songs in the available library. Finally a build option
+allows to create nice high quality pdf documents, directly from the
 GUI interface.
 
 OPTIONS
@@ -34,9 +34,9 @@ Not that we know of, but feel free to make us
 
 AUTHORS
 -------
-Romain Goffe <crep4ever@gmail.com>,
+Romain Goffe <romain.goffe@gmail.com>,
 Alexandre Dupas <alexandre.dupas@gmail.com>, and others.
 
 WWW
 ---
-http://patacrep.com
+http://www.patacrep.com
