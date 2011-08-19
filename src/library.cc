@@ -64,7 +64,8 @@ QDir CLibrary::directory() const
 
 void CLibrary::setDirectory(const QString &directory)
 {
-  setDirectory(QDir(directory));
+  if(!directory.isEmpty())
+    setDirectory(QDir(directory));
 }
 
 void CLibrary::setDirectory(const QDir &directory)
@@ -74,6 +75,7 @@ void CLibrary::setDirectory(const QDir &directory)
       m_directory = directory;
       QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
       m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
+      writeSettings();
       emit(directoryChanged(m_directory));
     }
 }
