@@ -125,6 +125,7 @@ void CLibraryDownload::downloadStart()
       QNetworkReply *reply = m_manager->get(request);
       connect(reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
+      parent()->statusBar()->showMessage(tr("Download in progress ..."));
       parent()->progressBar()->show();
       QDialog::accept();
     }
@@ -188,6 +189,7 @@ void CLibraryDownload::downloadFinished()
 	}
       // remove the downloaded archive after decompressing
       dir.remove(filename);
+      parent()->statusBar()->showMessage(tr("Download completed"));
     }
 
   parent()->progressBar()->hide();
