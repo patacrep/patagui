@@ -236,6 +236,7 @@ void CLibrary::update()
   parent()->progressBar()->setTextVisible(false);
   parent()->progressBar()->hide();
   parent()->statusBar()->showMessage(tr("Song database updated."));
+  emit(wasModified());
 }
 
 void CLibrary::addSongs(const QStringList &paths)
