@@ -22,8 +22,8 @@ IUSE="python lilypond texlive"
 DEPEND="x11-libs/qt-core-4.6
 	x11-libs/qt-gui
         x11-libs/qt-script
-        x11-libs/qt-sql[sqlite]
         dev-util/cmake-2.6
+	app-arch/libarchive
        
         python?   ( dev-lang/python )
         texlive?  ( app-text/texlive[linguas_fr,extra] )
