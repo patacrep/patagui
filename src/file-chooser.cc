@@ -60,7 +60,7 @@ void CFileChooser::readSettings()
   settings.beginGroup("dialog");
   QByteArray state = settings.value("state", QByteArray()).toByteArray();
   QString dir  = settings.value("directory", QDir::currentPath()).toString();
-  QString path  = settings.value("path", QString()).toString();
+  QString path  = settings.value("path", dir).toString();
   settings.endGroup();
 
   dialog()->restoreState(state);
@@ -80,10 +80,12 @@ void CFileChooser::writeSettings()
 
 void CFileChooser::browse()
 {
-  dialog()->exec();
-  QStringList pathList = dialog()->selectedFiles();
-  if (!pathList.isEmpty())
-    setPath(pathList[0]);
+  if(dialog()->exec() == QDialog::Accepted)
+    {
+      QStringList pathList = dialog()->selectedFiles();
+      if (!pathList.isEmpty())
+	setPath(pathList[0]);
+    }
 }
 
 QFileDialog::AcceptMode CFileChooser::acceptMode() const
@@ -153,7 +155,8 @@ QString CFileChooser::path() const
 
 void CFileChooser::setPath(const QString &path)
 {
-  m_lineEdit->setText(path);
+  if( QString::compare(this->path(), path, Qt::CaseSensitive) )
+    m_lineEdit->setText(path);
 
   QFileInfo fileInfo(path);
   if (fileInfo.isDir())
