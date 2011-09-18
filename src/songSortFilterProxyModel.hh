@@ -25,9 +25,9 @@ class CSongSortFilterProxyModel : public QSortFilterProxyModel
   Q_OBJECT
 
 public slots:
-  void selectAll();
-  void unselectAll();
-  void invertSelection();
+  void checkAll();
+  void uncheckAll();
+  void toggleAll();
 
 public:
   CSongSortFilterProxyModel(QObject *parent = 0);

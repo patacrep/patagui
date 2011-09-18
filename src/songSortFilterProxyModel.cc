@@ -40,7 +40,7 @@ bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     || sourceModel()->data(index2).toString().contains(filterRegExp());
 }
 
-void CSongSortFilterProxyModel::selectAll()
+void CSongSortFilterProxyModel::checkAll()
 {
   int rows = rowCount();
   CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
@@ -50,7 +50,7 @@ void CSongSortFilterProxyModel::selectAll()
     }
 }
 
-void CSongSortFilterProxyModel::unselectAll()
+void CSongSortFilterProxyModel::uncheckAll()
 {
   int rows = rowCount();
   CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
@@ -60,7 +60,7 @@ void CSongSortFilterProxyModel::unselectAll()
     }
 }
 
-void CSongSortFilterProxyModel::invertSelection()
+void CSongSortFilterProxyModel::toggleAll()
 {
   int rows = rowCount();
   CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
