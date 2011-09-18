@@ -244,19 +244,19 @@ void CMainWindow::createActions()
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
-  m_selectAllAct = new QAction(tr("Select all"), this);
+  m_selectAllAct = new QAction(tr("Check all"), this);
   m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
-  m_selectAllAct->setStatusTip(tr("Select all songs in the library"));
+  m_selectAllAct->setStatusTip(tr("Check all songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(checkAll()));
 
-  m_unselectAllAct = new QAction(tr("Unselect all"), this);
+  m_unselectAllAct = new QAction(tr("Uncheck all"), this);
   m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
-  m_unselectAllAct->setStatusTip(tr("Unselect all songs in the library"));
+  m_unselectAllAct->setStatusTip(tr("Uncheck all songs"));
   connect(m_unselectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(uncheckAll()));
 
-  m_invertSelectionAct = new QAction(tr("Invert Selection"), this);
+  m_invertSelectionAct = new QAction(tr("Toggle all"), this);
   m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
-  m_invertSelectionAct->setStatusTip(tr("Invert currently selected songs in the library"));
+  m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
 
   m_selectEnglishAct = new QAction(tr("english"), this);
