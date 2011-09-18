@@ -58,9 +58,12 @@ public slots:
 
   void changeTemplate(const QString &filename = QString());
 
-  void selectAll();
-  void unselectAll();
-  void invertSelection();
+  void checkAll();
+  void uncheckAll();
+  void toggleAll();
+
+  void setChecked(const QModelIndex &index, bool checked);
+  void toggle(const QModelIndex &index);
 
 public:
   CSongbook(QObject *parent);
@@ -89,6 +92,8 @@ public:
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
   virtual Qt::ItemFlags flags(const QModelIndex &index) const;
   virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+
+  bool isChecked(const QModelIndex &index);
 
 signals:
   void wasModified(bool modified);

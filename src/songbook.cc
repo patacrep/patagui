@@ -599,7 +599,27 @@ QString CSongbook::workingPath() const
   return library()->directory().canonicalPath();
 }
 
-void CSongbook::selectAll()
+bool CSongbook::isChecked(const QModelIndex &index)
+{
+  return m_selectedSongs[index.row()];
+}
+
+void CSongbook::setChecked(const QModelIndex &index, bool checked)
+{
+  if (isChecked(index) != checked)
+    {
+      m_selectedSongs[index.row()] = checked;
+      emit(dataChanged(index, index));
+    }
+}
+
+void CSongbook::toggle(const QModelIndex &index)
+{
+  m_selectedSongs[index.row()] = !m_selectedSongs[index.row()];
+  emit(dataChanged(index, index));
+}
+
+void CSongbook::checkAll()
 {
   for (int i = 0; i < m_selectedSongs.size(); ++i)
     {
@@ -608,7 +628,7 @@ void CSongbook::selectAll()
   emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
 }
 
-void CSongbook::unselectAll()
+void CSongbook::uncheckAll()
 {
   for (int i = 0; i < m_selectedSongs.size(); ++i)
     {
@@ -617,7 +637,7 @@ void CSongbook::unselectAll()
   emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
 }
 
-void CSongbook::invertSelection()
+void CSongbook::toggleAll()
 {
   for (int i = 0; i < m_selectedSongs.size(); ++i)
     {
@@ -657,7 +677,7 @@ void CSongbook::songsFromSelection()
 void CSongbook::songsToSelection()
 {
   if (m_songs.isEmpty())
-    unselectAll();
+    uncheckAll();
 
   for (int i = 0; i < m_selectedSongs.size(); ++i)
     {
