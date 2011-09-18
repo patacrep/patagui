@@ -15,11 +15,15 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
+
 #include "songSortFilterProxyModel.hh"
+
+#include "songbook.hh"
+
+#include <QDebug>
 
 CSongSortFilterProxyModel::CSongSortFilterProxyModel(QObject *parent)
   : QSortFilterProxyModel(parent)
-  , m_filterMode(CSongSortFilterProxyModel::StandardMode)
 {}
 
 CSongSortFilterProxyModel::~CSongSortFilterProxyModel()
@@ -27,29 +31,41 @@ CSongSortFilterProxyModel::~CSongSortFilterProxyModel()
 
 bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
-  if(filterMode() == CSongSortFilterProxyModel::StandardMode)
-    {
-      QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
-      QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
-      QModelIndex index2 = sourceModel()->index(sourceRow, 4, sourceParent);
+  QModelIndex index0 = sourceModel()->index(sourceRow, 0, sourceParent);
+  QModelIndex index1 = sourceModel()->index(sourceRow, 1, sourceParent);
+  QModelIndex index2 = sourceModel()->index(sourceRow, 4, sourceParent);
 
-      return sourceModel()->data(index0).toString().contains(filterRegExp())
-	|| sourceModel()->data(index1).toString().contains(filterRegExp())
-	|| sourceModel()->data(index2).toString().contains(filterRegExp());
-    }
-  else if(filterMode() == CSongSortFilterProxyModel::LanguageMode)
-    {
-      return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
-    }
-  return false;
+  return sourceModel()->data(index0).toString().contains(filterRegExp())
+    || sourceModel()->data(index1).toString().contains(filterRegExp())
+    || sourceModel()->data(index2).toString().contains(filterRegExp());
 }
 
-CSongSortFilterProxyModel::FilterMode CSongSortFilterProxyModel::filterMode() const
+void CSongSortFilterProxyModel::selectAll()
 {
-  return m_filterMode;
+  int rows = rowCount();
+  CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
+  for (int i = 0; i < rows; ++i)
+    {
+      songbook->setChecked(mapToSource(index(i,0)), true);
+    }
 }
 
-void CSongSortFilterProxyModel::setFilterMode(CSongSortFilterProxyModel::FilterMode mode)
+void CSongSortFilterProxyModel::unselectAll()
 {
-  m_filterMode = mode;
+  int rows = rowCount();
+  CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
+  for (int i = 0; i < rows; ++i)
+    {
+      songbook->setChecked(mapToSource(index(i,0)), false);
+    }
+}
+
+void CSongSortFilterProxyModel::invertSelection()
+{
+  int rows = rowCount();
+  CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
+  for (int i = 0; i < rows; ++i)
+    {
+      songbook->toggle(mapToSource(index(i,0)));
+    }
 }

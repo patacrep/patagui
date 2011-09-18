@@ -23,27 +23,18 @@
 class CSongSortFilterProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
-  Q_ENUMS(FilterMode)
-  Q_PROPERTY(FilterMode filterMode
-	     READ filterMode
-	     WRITE setFilterMode)
 
-public:
-  enum FilterMode { StandardMode, LanguageMode };
+public slots:
+  void selectAll();
+  void unselectAll();
+  void invertSelection();
 
 public:
   CSongSortFilterProxyModel(QObject *parent = 0);
   ~CSongSortFilterProxyModel();
 
-  FilterMode filterMode() const;
-  void setFilterMode(FilterMode mode);
-
-
 protected:
   bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-
-private:
-  FilterMode m_filterMode;
 };
 
 #endif // __SONG_SORT_FILTER_PROXY_MODEL_HH__
