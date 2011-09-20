@@ -42,7 +42,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/file-property-manager.cc
   src/file-factory.cc
   src/file-chooser.cc
-  src/songSortFilterProxyModel.cc
+  src/song-sort-filter-proxy-model.cc
   src/filter-lineedit.cc
   src/utils/lineedit.cc
   src/utils/lineedit.cc
@@ -74,7 +74,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/file-property-manager.hh
   src/file-factory.hh
   src/file-chooser.hh
-  src/songSortFilterProxyModel.hh
+  src/song-sort-filter-proxy-model.hh
   src/filter-lineedit.hh
   src/utils/lineedit.hh
   src/utils/lineedit_p.hh

@@ -26,11 +26,10 @@
 #ifndef __FILTER_LINEEDIT_HH__
 #define __FILTER_LINEEDIT_HH__
 
-#include <QAbstractButton>
 #include <QToolButton>
 #include "utils/lineedit.hh"
 
-class CClearButton : public QAbstractButton
+class CClearButton : public QToolButton
 {
   Q_OBJECT
   
@@ -38,7 +37,7 @@ public:
   CClearButton(QWidget *parent = 0);
 
 protected slots:
-  void textChanged(const QString&);
+  void textChanged(const QString &text);
 
 protected:
   void paintEvent(QPaintEvent *event);
@@ -62,20 +61,29 @@ private:
 };
 
 class QAction;
+class CSongSortFilterProxyModel;
 
 class CFilterLineEdit : public LineEdit
 {
   Q_OBJECT
 
+public slots:
+  void filterLanguageEnglish();
+  void filterLanguageFrench();
+  void filterLanguageSpanish();
+
 public:
   CFilterLineEdit(QWidget *parent = 0);
   ~CFilterLineEdit();
 
-  void addAction(QAction* action);
+  void addAction(QAction *action);
+
+  void setFilterModel(CSongSortFilterProxyModel *filterModel);
 
 private:
   QMenu* m_menu;
 
+  CSongSortFilterProxyModel *m_filterModel;
 };
 
 #endif // __FILTER_LINEEDIT_HH__

@@ -31,7 +31,7 @@
 #include "highlighter.hh"
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
-#include "songSortFilterProxyModel.hh"
+#include "song-sort-filter-proxy-model.hh"
 #include "tab-widget.hh"
 #include "library-download.hh"
 #include "notification.hh"
@@ -175,12 +175,6 @@ void CMainWindow::writeSettings()
   view()->writeSettings();
 }
 
-void CMainWindow::filterChanged(const QString &filter)
-{
-  QRegExp expression = QRegExp(filter, Qt::CaseInsensitive, QRegExp::FixedString);
-  m_proxyModel->setFilterRegExp(expression);
-}
-
 void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 {
   m_infoSelection->setText(QString(tr("Selection: %1/%2"))
@@ -258,24 +252,6 @@ void CMainWindow::createActions()
   m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
-
-  m_selectEnglishAct = new QAction(tr("english"), this);
-  m_selectEnglishAct->setStatusTip(tr("Select/Unselect songs in english"));
-  m_selectEnglishAct->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")));
-  m_selectEnglishAct->setIconVisibleInMenu(true);
-  connect(m_selectEnglishAct, SIGNAL(triggered()), SLOT(selectLanguage()));
-
-  m_selectFrenchAct = new QAction(tr("french"), this);
-  m_selectFrenchAct->setStatusTip(tr("Select/Unselect songs in french"));
-  m_selectFrenchAct->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")));
-  m_selectFrenchAct->setIconVisibleInMenu(true);
-  connect(m_selectFrenchAct, SIGNAL(triggered()), SLOT(selectLanguage()));
-
-  m_selectSpanishAct = new QAction(tr("spanish"), this);
-  m_selectSpanishAct->setStatusTip(tr("Select/Unselect songs in spanish"));
-  m_selectSpanishAct->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")));
-  m_selectSpanishAct->setIconVisibleInMenu(true);
-  connect(m_selectSpanishAct, SIGNAL(triggered()), SLOT(selectLanguage()));
 
   m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
   m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
@@ -421,12 +397,7 @@ void CMainWindow::createToolBar()
 
   m_filterLineEdit = new CFilterLineEdit;
   m_filterLineEdit->setCompleter(completer);
-  m_filterLineEdit->addAction(m_selectEnglishAct);
-  m_filterLineEdit->addAction(m_selectFrenchAct);
-  m_filterLineEdit->addAction(m_selectSpanishAct);
-
-  connect(m_filterLineEdit, SIGNAL(textChanged(const QString&)),
-	  this, SLOT(filterChanged(const QString&)));
+  m_filterLineEdit->setFilterModel(qobject_cast< CSongSortFilterProxyModel* >(m_proxyModel));
 
   QWidget *stretch = new QWidget;
   stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -477,13 +448,6 @@ void CMainWindow::about()
 					     "<p><b>Version:</b> %2</p>"
 					     "<p><b>Authors:</b> %3</p>"))
 		     .arg(description).arg(version).arg(authors));
-}
-
-void CMainWindow::selectLanguage()
-{
-  QStringList languages;
-  languages << (qobject_cast< QAction* >(QObject::sender())->text());
-  songbook()->selectLanguages(languages);
 }
 
 void CMainWindow::build()
