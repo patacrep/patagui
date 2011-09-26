@@ -63,7 +63,7 @@ void CSongSortFilterProxyModel::setFilterString(const QString &filterString)
   QString filter = m_filterString;
   filter.remove(langFilter);
   m_keywordFilter << filter.split(" ");
-  invalidate();
+  invalidateFilter();
 }
 
 QString CSongSortFilterProxyModel::filterString() const
@@ -141,19 +141,16 @@ void CSongSortFilterProxyModel::toggleAll()
 void CSongSortFilterProxyModel::insertLanguageFilter(const QLocale::Language &language)
 {
   m_languageFilter.insert(language);
-  invalidate();
 }
 
 void CSongSortFilterProxyModel::removeLanguageFilter(const QLocale::Language &language)
 {
   m_languageFilter.remove(language);
-  invalidate();
 }
 
 void CSongSortFilterProxyModel::clearLanguageFilter()
 {
   m_languageFilter.clear();
-  invalidate();
 }
 
 const QSet< QLocale::Language > & CSongSortFilterProxyModel::languageFilter() const
@@ -164,19 +161,16 @@ const QSet< QLocale::Language > & CSongSortFilterProxyModel::languageFilter() co
 void CSongSortFilterProxyModel::insertNegativeLanguageFilter(const QLocale::Language &language)
 {
   m_negativeLanguageFilter.insert(language);
-  invalidate();
 }
 
 void CSongSortFilterProxyModel::removeNegativeLanguageFilter(const QLocale::Language &language)
 {
   m_negativeLanguageFilter.remove(language);
-  invalidate();
 }
 
 void CSongSortFilterProxyModel::clearNegativeLanguageFilter()
 {
   m_negativeLanguageFilter.clear();
-  invalidate();
 }
 
 const QSet< QLocale::Language > & CSongSortFilterProxyModel::negativeLanguageFilter() const
@@ -187,7 +181,6 @@ const QSet< QLocale::Language > & CSongSortFilterProxyModel::negativeLanguageFil
 void CSongSortFilterProxyModel::clearKeywordFilter()
 {
   m_keywordFilter.clear();
-  invalidate();
 }
 
 const QStringList & CSongSortFilterProxyModel::keywordFilter() const
