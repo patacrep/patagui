@@ -188,7 +188,7 @@ WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 # generating executable
 add_definitions("-g -Wall")
 if(APPLE)
-  include(CMakeLists-Mac.cmake)
+  include(${CMAKE_MODULE_PATH}/CMakeLists-Mac.cmake)
 else( APPLE )
     add_executable(${PROGNAME}
       ${SONGBOOK_CLIENT_SOURCES} 
