@@ -96,6 +96,7 @@ CMainWindow::CMainWindow()
 
   //Layouts
   QBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->setContentsMargins(0,0,0,0);
   mainLayout->addWidget(m_view);
   mainLayout->addWidget(m_log);
 

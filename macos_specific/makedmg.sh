@@ -3,7 +3,8 @@
 # https://github.com/Carreau/yoursway-create-dmg
 # to correctly create a .dmg
 rm -rf .tmp
-test -f Songbook-Client.dmg && rm Songbook-Client.dmg
+IMGNAME="Songbook-Client-$(git describe).dmg"
+test -f $IMGNAME && rm $IMGNAME
 ~/yoursway-create-dmg/create-dmg   \
 	--icon-size 96  \
 	--linktoappfolder \
@@ -13,4 +14,4 @@ test -f Songbook-Client.dmg && rm Songbook-Client.dmg
 	--volname "Songbook Client v0.5.1"   \
 	--icon "Songbook-Client.app" 201 187  \
 	--background ./macos_specific/image_disque_backgroud.png  \
-	Songbook-Client.dmg ~/songbook-client/build/Songbook-Client.app
+	$IMGNAME ~/songbook-client/build/Songbook-Client.app
