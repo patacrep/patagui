@@ -8,7 +8,7 @@ Homepage: http://www.patacrep.com
 
 Package: songbook-client
 Architecture: any
-Depends: libqtscript4-core, libqtgui4, libarchive1, ${shlibs:Depends}
+Depends: ${shlibs:Depends}
 Recommends: lilypond, python, texlive-base, texlive-latex-extra, texlive-lang-french, texlive-fonts-recommended
 Description: Client for patacrep songbooks
  The songbook-client is an interface to build
