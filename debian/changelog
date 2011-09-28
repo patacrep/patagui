@@ -1,3 +1,10 @@
+songbook-client (0.5-1ubuntu2) maverick; urgency=low
+
+  * Add an improved build system
+  * Add manpages
+
+ -- Alexandre Dupas <alexandre.dupas@gmail.com>  Thu, 29 Sep 2011 00:53:57 +0200
+
 songbook-client (0.5-1ubuntu1) maverick; urgency=low
 
   * Correct a few lintian warnings
