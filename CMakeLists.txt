@@ -17,7 +17,6 @@ find_package(LibArchive REQUIRED)
 
 find_package(Qt4 REQUIRED)
 set(QT_USE_QTNETWORK true)
-set(QT_USE_QTSVG true)
 set(QT_USE_QTSCRIPT true)
 
 include(${QT_USE_FILE})
