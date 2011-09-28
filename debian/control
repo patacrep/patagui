@@ -2,13 +2,13 @@ Source: songbook-client
 Section: text
 Priority: optional
 Maintainer: Romain Goffe <romain.goffe@gmail.com>
-Build-Depends: debhelper (>= 7), cmake (>=2.6.2), libqt4-dev (>= 4.6), qt4-qmake, libarchive-dev
-Standards-Version: 3.8.3
+Build-Depends: debhelper (>= 7.0.50~), cmake (>=2.6.2), libqt4-dev (>= 4.6), libarchive-dev
+Standards-Version: 3.9.1
 Homepage: http://www.patacrep.com
 
 Package: songbook-client
 Architecture: any
-Depends: libqtscript4-core, libqtgui4, libarchive1, ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: lilypond, python, texlive-base, texlive-latex-extra, texlive-lang-french, texlive-fonts-recommended
 Description: Client for patacrep songbooks
  The songbook-client is an interface to build
