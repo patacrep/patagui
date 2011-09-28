@@ -1,3 +1,9 @@
+songbook-client (0.5-1ubuntu1) maverick; urgency=low
+
+  * Correct a few lintian warnings
+
+ -- Alexandre Dupas <alexandre.dupas@gmail.com>  Thu, 29 Sep 2011 00:27:24 +0200
+
 songbook-client (0.5-1) natty; urgency=low
 
   * New upstream version
