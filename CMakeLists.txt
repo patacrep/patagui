@@ -115,13 +115,6 @@ set(SONGBOOK_CLIENT_MAN_LANGS fr)
 qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
 
-
-# {{{ Apple specific stuff
-#if(APPLE)
-#  include(macos-config.cmake)
-#endif(APPLE)
-# }}}
-
 # generating executable
 add_definitions("-g -Wall")
 if(APPLE)
