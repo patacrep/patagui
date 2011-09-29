@@ -1,4 +1,4 @@
-	set( PROGNAME Songbook-Client )
+	set( SONGBOOK_CLIENT_APPLICATION_NAME Songbook-Client )
 	set( MACOSX_BUNDLE_ICON_FILE livre.icns )
 	set( CPACK_BUNDLE_NAME Sonbook Client With Space)
 	#versions
@@ -64,8 +64,8 @@
 			macos_specific/sparkle/src/SparkleAutoUpdater.mm
 			)
 		# Hack Custom command to copy sparkle framwork
-		set(CCS1 mkdir   ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Frameworks)
-		set(CCS2 cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Frameworks/Sparkle.framework)
+		set(CCS1 mkdir   ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks)
+		set(CCS2 cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/Sparkle.framework)
 		set(CCS3 echo "Note : Having the message : ERROR: no file at '/usr/lib/@loader_path@loader_path' is normal")
 		set(CCS4 echo "It is due to Qt encountering references to Sparkle Framwork.")
 		
@@ -74,34 +74,34 @@
 		set(CCS1 echo "The application has been compiled without support for auto-updating, you will have to check for it manually")
 	ENDIF(EXISTS "/Library/Frameworks/Sparkle.framework")
 	
-	add_executable( ${PROGNAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
+	add_executable( ${SONGBOOK_CLIENT_APPLICATION_NAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
 		${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
 		${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
 		${PUBLIC_KEY}
 		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sb_icon.icns
 		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sg_icon.icns
 		)
-	add_custom_command( TARGET ${PROGNAME} POST_BUILD
-		COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
-		COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
-		COMMAND cp ARGS ../lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources/lang
+	add_custom_command( TARGET ${SONGBOOK_CLIENT_APPLICATION_NAME} POST_BUILD
+		COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
+		COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources
+		COMMAND cp ARGS ../lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
 		# this for command are set if sparkle is activated and are ment to copy the framwork inside the bundle
 		# and warn the user about some error message that might be printed afterward
 		COMMAND ${CCS1}
 		COMMAND ${CCS2}
 		COMMAND ${CCS3}
 		COMMAND ${CCS4}
-		COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app
+		COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
 		)
 
 	if(USE_SPARKLE)
 		# we need to add SPARKLE and APPKIT as '-framework' at link time
-		target_link_libraries(${PROGNAME} ${APPKIT_FRAMEWORK})
-		target_link_libraries(${PROGNAME} ${SPARKLE_FRAMEWORK})
+		target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${APPKIT_FRAMEWORK})
+		target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${SPARKLE_FRAMEWORK})
 	endif(USE_SPARKLE)
 
 
 	# genération d'une plist custom pour sparkle from a plist.in where @VARAIBLE@ are replaces by the content of VARAIBLE
 	# we need this for having the default url to check updates
-	set_target_properties( ${PROGNAME}	PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/Info.plist.in )
+	set_target_properties( ${SONGBOOK_CLIENT_APPLICATION_NAME}	PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/Info.plist.in )
 

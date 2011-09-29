@@ -94,8 +94,6 @@ private slots:
   void noDataNotification(const QDir &directory);
 
   //model
-  void selectLanguage();
-  void filterChanged(const QString &filter);
   void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
   //application
@@ -174,9 +172,6 @@ private:
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;
-  QAction *m_selectEnglishAct;
-  QAction *m_selectFrenchAct;
-  QAction *m_selectSpanishAct;
   QAction *m_libraryUpdateAct;
   QAction *m_libraryDownloadAct;
 

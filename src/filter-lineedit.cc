@@ -18,14 +18,16 @@
 //******************************************************************************
 #include "filter-lineedit.hh"
 
+#include "song-sort-filter-proxy-model.hh"
+
 #include <QPainter>
-#include <QListWidget>
-#include <QHeaderView>
-#include <QAction>
 #include <QMenu>
+#include <QAction>
+
+#include <QDebug>
 
 CClearButton::CClearButton(QWidget *parent)
-  : QAbstractButton(parent)
+  : QToolButton(parent)
 {
   setCursor(Qt::ArrowCursor);
   setFocusPolicy(Qt::NoFocus);
@@ -57,12 +59,13 @@ void CClearButton::paintEvent(QPaintEvent *event)
   Q_UNUSED(event);
   QPainter painter(this);
   
-  if (!m_icon.isNull()) {
-    int x = (width() - m_icon.width()) / 2 - 1;
-    int y = (height() - m_icon.height()) / 2 - 1;
-    painter.drawImage(x, y, m_icon);
-    return;
-  }
+  if (!m_icon.isNull())
+    {
+      int x = (width() - m_icon.width()) / 2 - 1;
+      int y = (height() - m_icon.height()) / 2 - 1;
+      painter.drawImage(x, y, m_icon);
+      return;
+    }
   
   // Fall back to boring circle X
   painter.setRenderHint(QPainter::Antialiasing, true);
@@ -95,17 +98,19 @@ CMagButton::CMagButton(QWidget *parent)
   setVisible(true);
   setPopupMode(QToolButton::InstantPopup);
 }
+
 void CMagButton::paintEvent(QPaintEvent *event)
 {
   Q_UNUSED(event);
   QPainter painter(this);
 
-  if (!m_icon.isNull()) {
-  int x = (width() - m_icon.width()) / 2 - 1;
-  int y = (height() - m_icon.height()) / 2 - 1;
-  painter.drawImage(x, y, m_icon);
-  return;
-  }
+  if (!m_icon.isNull())
+    {
+      int x = (width() - m_icon.width()) / 2 - 1;
+      int y = (height() - m_icon.height()) / 2 - 1;
+      painter.drawImage(x, y, m_icon);
+      return;
+    }
 
   // Fall back to boring circle X
   painter.setRenderHint(QPainter::Antialiasing, true);
@@ -118,52 +123,48 @@ void CMagButton::paintEvent(QPaintEvent *event)
   pen.setWidth(2.9);
 
   // draw circle
-  //painter.setBrush(circleColor);
   painter.setPen(pen);
   int padding = width() / 4;
   int circleRadius = (width() - (padding * 2))*3/4;
   painter.drawEllipse(padding, padding, circleRadius, circleRadius);
-
+  
   // draw
-  //painter.setPen(xColor);
-  //padding *= 2;
   painter.drawLine(padding+circleRadius, padding+circleRadius, width() - padding, width() - padding);
-  //painter.drawLine(padding, height() - padding, width() - padding, padding);
 }
 
 CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   : LineEdit(parent)
   , m_menu(new QMenu)
+  , m_filterModel(0)
 {
-  CClearButton* clearButton = new CClearButton(this);
-  CMagButton* magButton = new CMagButton(this);
-  QString style(
-  "QListView, QLineEdit {"
-    "selection-color: white; "
-    "border: 2px groove gray;"
-    "border-radius: 13px;"
-    "padding: 2px 2px;"
-    "background-image: url(:/icons/xxx.png);"
-    "background-position: top right;"
-    "padding-right: 0px;"
-  "}"
-    "QLineEdit:focus {"
-    "selection-color: white;   "
-    "border: 2px groove gray;"
-    "border-radius: 13px;"
-    "padding: 2px 2px;"
-    "background-image: url(:/icons/xxx.png);"
-    "padding-right: 0px;"
-  "}"
-    "QLineEdit:edit-focus {"
-    "selection-color: white;   "
-    "border: 2px groove gray;"
-    "border-radius: 13px;"
-    "padding: 2px 2px;"
-    "background-image: url(:/icons/xxx.png);"
-    "padding-right: 0px;"
-  "}"
-  );
+  CClearButton *clearButton = new CClearButton(this);
+  CMagButton *magButton = new CMagButton(this);
+  QString style("QListView, QLineEdit {"
+                "selection-color: white; "
+                "border: 2px groove gray;"
+                "border-radius: 13px;"
+                "padding: 2px 2px;"
+                "background-image: url(:/icons/xxx.png);"
+                "background-position: top right;"
+                "padding-right: 0px;"
+                "}"
+                "QLineEdit:focus {"
+                "selection-color: white;   "
+                "border: 2px groove gray;"
+                "border-radius: 13px;"
+                "padding: 2px 2px;"
+                "background-image: url(:/icons/xxx.png);"
+                "padding-right: 0px;"
+                "}"
+                "QLineEdit:edit-focus {"
+                "selection-color: white;   "
+                "border: 2px groove gray;"
+                "border-radius: 13px;"
+                "padding: 2px 2px;"
+                "background-image: url(:/icons/xxx.png);"
+                "padding-right: 0px;"
+                "}");
+
   setStyleSheet(style);
   setAttribute(Qt::WA_MacShowFocusRect, 0);
   addWidget(magButton, LeftSide);
@@ -177,6 +178,27 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   magButton->setMenu(m_menu);
   connect(magButton, SIGNAL(clicked()), magButton, SLOT(showMenu()));
 
+  QAction *action = new QAction(tr("english"), this);
+  action->setStatusTip(tr("Select/Unselect songs in english"));
+  action->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")));
+  action->setIconVisibleInMenu(true);
+  connect(action, SIGNAL(triggered()), SLOT(filterLanguageEnglish()));
+  addAction(action);
+
+  action = new QAction(tr("french"), this);
+  action->setStatusTip(tr("Select/Unselect songs in french"));
+  action->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")));
+  action->setIconVisibleInMenu(true);
+  connect(action, SIGNAL(triggered()), SLOT(filterLanguageFrench()));
+  addAction(action);
+
+  action = new QAction(tr("spanish"), this);
+  action->setStatusTip(tr("Select/Unselect songs in spanish"));
+  action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")));
+  action->setIconVisibleInMenu(true);
+  connect(action, SIGNAL(triggered()), SLOT(filterLanguageSpanish()));
+  addAction(action);
+
   updateTextMargins();
   setInactiveText(tr("Filter"));
 }
@@ -187,4 +209,26 @@ CFilterLineEdit::~CFilterLineEdit()
 void CFilterLineEdit::addAction(QAction* action)
 {
   m_menu->addAction(action);
+}
+
+void CFilterLineEdit::setFilterModel(CSongSortFilterProxyModel *filterModel)
+{
+  m_filterModel = filterModel;
+  connect(this, SIGNAL(textChanged(const QString&)),
+	  filterModel, SLOT(setFilterString(const QString&)));
+}
+
+void CFilterLineEdit::filterLanguageEnglish()
+{
+  setText(text() + " :en");
+}
+
+void CFilterLineEdit::filterLanguageFrench()
+{
+  setText(text() + " :fr");
+}
+
+void CFilterLineEdit::filterLanguageSpanish()
+{
+  setText(text() + " :es");
 }

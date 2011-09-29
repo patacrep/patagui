@@ -19,31 +19,49 @@
 #define __SONG_SORT_FILTER_PROXY_MODEL_HH__
 
 #include <QSortFilterProxyModel>
+#include <QString>
+#include <QSet>
+#include <QLocale>
+#include <QStringList>
 
 class CSongSortFilterProxyModel : public QSortFilterProxyModel
 {
   Q_OBJECT
-  Q_ENUMS(FilterMode)
-  Q_PROPERTY(FilterMode filterMode
-	     READ filterMode
-	     WRITE setFilterMode)
 
-public:
-  enum FilterMode { StandardMode, LanguageMode };
+public slots:
+  void checkAll();
+  void uncheckAll();
+  void toggleAll();
+
+  void setFilterString(const QString &filterString);
+
+  void insertLanguageFilter(const QLocale::Language &language);
+  void removeLanguageFilter(const QLocale::Language &language);
+  void clearLanguageFilter();
+
+  void insertNegativeLanguageFilter(const QLocale::Language &language);
+  void removeNegativeLanguageFilter(const QLocale::Language &language);
+  void clearNegativeLanguageFilter();
+
+  void clearKeywordFilter();
 
 public:
   CSongSortFilterProxyModel(QObject *parent = 0);
   ~CSongSortFilterProxyModel();
 
-  FilterMode filterMode() const;
-  void setFilterMode(FilterMode mode);
-
+  QString filterString() const;
+  const QSet< QLocale::Language > & languageFilter() const;
+  const QSet< QLocale::Language > & negativeLanguageFilter() const;
+  const QStringList & keywordFilter() const;
 
 protected:
   bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 
 private:
-  FilterMode m_filterMode;
+  QString m_filterString;
+  QSet< QLocale::Language > m_languageFilter;
+  QSet< QLocale::Language > m_negativeLanguageFilter;
+  QStringList m_keywordFilter;
 };
 
 #endif // __SONG_SORT_FILTER_PROXY_MODEL_HH__

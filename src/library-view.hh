@@ -34,7 +34,7 @@ class CLibraryView : public QTableView
   Q_OBJECT
 
 public:
-  CLibraryView(CMainWindow* parent);
+  CLibraryView(CMainWindow *parent);
   ~CLibraryView();
 
   void readSettings();
@@ -48,9 +48,7 @@ public slots:
 
 private:
   void createActions();
-  CMainWindow* parent() const;
-
-  CMainWindow* m_parent;
+  CMainWindow * parent() const;
 };
 
 #endif // __LIBRARY_VIEW_HH__

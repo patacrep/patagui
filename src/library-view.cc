@@ -25,8 +25,7 @@
 #include <QDebug>
 
 CLibraryView::CLibraryView(CMainWindow *parent)
-  : QTableView()
-  , m_parent(parent)
+  : QTableView(parent)
 {
   setShowGrid(false);
   setAlternatingRowColors(true);
@@ -46,7 +45,7 @@ CLibraryView::~CLibraryView()
 
 CMainWindow* CLibraryView::parent() const
 {
-  return m_parent;
+  return qobject_cast< CMainWindow* >(QTableView::parent());
 }
 
 void CLibraryView::readSettings()
