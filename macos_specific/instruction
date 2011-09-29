@@ -9,6 +9,14 @@ An option is to have the Sparkle framwork in /Library/Framework.if it's the case
 
 There might pe a dependency to libarchive (macport ?)
 
+Be carefull not to have a QT4 version installed through macport.
+otherwise you **should imperatively** check that `which qmake` does not
+point to the macport version !
+
+If it is the case, Remove All occurence of /opt/* from your path before ever
+running (C)Make, or it will cache the Library location !
+
+
 The "./configure" step is directly handled by Cmake. 
 
 $ make
@@ -18,8 +26,7 @@ there is no Xcode project.
 The application have only been tested on OS X 10.6.x
 
 
-
-Ne pas ou blier de faire une fois la compilation réussie.
+Ne pas oublier de faire une fois la compilation réussie.
 	changer le numero de version 
 	Vérifier la présenc de la clé publique dans contents ressources
 
@@ -30,4 +37,4 @@ Ne pas ou blier de faire une fois la compilation réussie.
 
 	generer la signture, la mettre dans le fichier appcast, uploader le tout
 
-	
+
