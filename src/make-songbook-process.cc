@@ -47,6 +47,14 @@ void CMakeSongbookProcess::execute()
   start(program(), arguments());
 }
 
+void CMakeSongbookProcess::setCommand(const QString &command)
+{
+  QStringList args = command.split(" ");
+  setProgram(args[0]);
+  args.pop_front();
+  setArguments(args);
+}
+
 void CMakeSongbookProcess::setProgram(const QString &program)
 {
   m_program = program;
@@ -75,6 +83,12 @@ void CMakeSongbookProcess::setErrorMessage(const QString &message)
 void CMakeSongbookProcess::setUrlToOpen(const QUrl &urlToOpen)
 {
   m_urlToOpen = urlToOpen;
+}
+
+QString CMakeSongbookProcess::command() const
+{
+  QString commandString = QString("%1 %2").arg(program()).arg(arguments().join(" "));
+  return commandString;
 }
 
 const QString & CMakeSongbookProcess::program() const

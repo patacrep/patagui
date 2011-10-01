@@ -27,6 +27,7 @@
 class CMakeSongbookProcess : public QProcess
 {
   Q_OBJECT
+  Q_PROPERTY(QString command READ command WRITE setCommand)
   Q_PROPERTY(QString program READ program WRITE setProgram)
   Q_PROPERTY(QStringList arguments READ arguments WRITE setArguments)
 
@@ -39,6 +40,7 @@ class CMakeSongbookProcess : public QProcess
 public slots:
   void execute();
 
+  void setCommand(const QString &command);
   void setProgram(const QString &program);
   void setArguments(const QStringList &arguments);
   void setStartMessage(const QString &message);
@@ -51,6 +53,7 @@ public:
   CMakeSongbookProcess(QObject *parent = 0);
   virtual ~CMakeSongbookProcess();
 
+  QString command() const;
   const QString & program() const;
   const QStringList & arguments() const;
   
