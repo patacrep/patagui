@@ -116,6 +116,8 @@ public:
 
 private slots:
   void checkWorkingPath(const QString &path);
+  void resetBuildCommand();
+  void resetCleanCommand();
 
 private:
   void readSettings();
@@ -123,6 +125,9 @@ private:
 
   CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
+
+  QLineEdit *m_buildCommand;
+  QLineEdit *m_cleanCommand;
 };
 
 /** \brief Editor is the config page used to specify options related

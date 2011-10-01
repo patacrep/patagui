@@ -160,6 +160,19 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  settings.beginGroup("tools");
+#ifdef Q_WS_WIN
+  setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
+  setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
+#elseif __APPLE__
+  setBuildCommand(settings.value("buildCommand", "make %target").toString());
+  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
+#else // UNIX/Linux
+  setBuildCommand(settings.value("buildCommand", "make %target").toString());
+  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
+#endif
+  settings.endGroup();
+
   library()->readSettings();
   view()->readSettings();
 }
@@ -487,13 +500,7 @@ void CMainWindow::build()
   connect(builder, SIGNAL(readOnStandardError(const QString &)),
           log(), SLOT(appendPlainText(const QString &)));
 
-#ifdef Q_WS_WIN
-  builder->setProgram("cmd.exe");
-  builder->setArguments(QStringList() << "/C" << "clean.bat");
-#else
-  builder->setProgram("make");
-  builder->setArguments(QStringList() << "clean");
-#endif
+  builder->setCommand(cleanCommand());
 
   builder->setStartMessage(tr("Cleaning the build directory."));
   builder->setSuccessMessage(tr("Build directory cleaned."));
@@ -506,11 +513,8 @@ void CMainWindow::build()
   environment.insert("LATEX_OPTIONS", "-halt-on-error");
   builder->setProcessEnvironment(environment);
 
-#ifdef Q_WS_WIN
-  builder->setArguments(QStringList() << "/C" << "make.bat" << basename);
-#else
-  builder->setArguments(QStringList() << target);
-#endif
+  QString command = buildCommand();
+  builder->setCommand(command.replace("%target", target).replace("%basename", basename));
 
   builder->setUrlToOpen(QUrl(QString("file:///%1/%2").arg(workingPath()).arg(target)));
   builder->setStartMessage(tr("Building %1.").arg(target));
@@ -832,9 +836,18 @@ void CMainWindow::cleanDialog()
       CMakeSongbookProcess *builder = new CMakeSongbookProcess(this);
       builder->setWorkingDirectory(workingPath());
 
-      connect(builder, SIGNAL(aboutToStart()), progressBar(), SLOT(show()));
-      connect(builder, SIGNAL(message(const QString &, int)), statusBar(), SLOT(showMessage(const QString &, int)));
-      connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)), progressBar(), SLOT(hide()));
+      connect(builder, SIGNAL(aboutToStart()),
+              progressBar(), SLOT(show()));
+      connect(builder, SIGNAL(aboutToStart()),
+              statusBar(), SLOT(clear()));
+      connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
+              SLOT(showMessage(const QString &, int)));
+      connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
+              progressBar(), SLOT(hide()));
+      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
+              log(), SLOT(appendPlainText(const QString &)));
+      connect(builder, SIGNAL(readOnStandardError(const QString &)),
+              log(), SLOT(appendPlainText(const QString &)));
 
 #ifdef Q_WS_WIN
       builder->setProgram("cmd.exe");
@@ -869,4 +882,24 @@ void CMainWindow::updateTempFilesView(int state)
       list.removeLast();
       m_tempFilesmodel->setNameFilters(list);
     }
+}
+
+const QString & CMainWindow::buildCommand() const
+{
+  return m_buildCommand;
+}
+
+void CMainWindow::setBuildCommand(const QString &command)
+{
+  m_buildCommand = command;
+}
+
+const QString & CMainWindow::cleanCommand() const
+{
+  return m_cleanCommand;
+}
+
+void CMainWindow::setCleanCommand(const QString &command)
+{
+  m_cleanCommand = command;
 }

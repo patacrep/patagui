@@ -57,6 +57,10 @@ class CMainWindow : public QMainWindow
 {
   Q_OBJECT
 
+public slots:
+  void setBuildCommand(const QString &command);
+  void setCleanCommand(const QString &command);
+
 public:
   CMainWindow();
   ~CMainWindow();
@@ -67,6 +71,9 @@ public:
   CLibrary * library() const;
   CSongbook * songbook() const;
   const QString workingPath();
+
+  const QString & buildCommand() const;
+  const QString & cleanCommand() const;
 
 protected:
   void closeEvent(QCloseEvent *event);
@@ -139,6 +146,8 @@ private:
   QString m_workingPath;
   bool m_isToolBarDisplayed;
   bool m_isStatusbarDisplayed;
+  QString m_buildCommand;
+  QString m_cleanCommand;
 
   CDialogNewSong *m_newSongDialog;
 

@@ -243,6 +243,8 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   : Page(configDialog)
   , m_workingPath(0)
   , m_workingPathValid(0)
+  , m_buildCommand(0)
+  , m_cleanCommand(0)
 {
   m_workingPathValid = new QLabel;
 
@@ -253,6 +255,9 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
 
   connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
           this, SLOT(checkWorkingPath(const QString&)));
+
+  m_buildCommand = new QLineEdit(this);
+  m_cleanCommand = new QLineEdit(this);
 
   readSettings();
 
@@ -267,9 +272,30 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
+  // external tools
+  QGroupBox *toolsGroupBox
+    = new QGroupBox(tr("External tools"));
+
+  QBoxLayout *toolsLayout = new QVBoxLayout;
+  QBoxLayout *buildCommandLayout = new QHBoxLayout;
+  QPushButton *buildCommandResetButton = new QPushButton(tr("reset"), this);
+  buildCommandLayout->addWidget(m_buildCommand);
+  buildCommandLayout->addWidget(buildCommandResetButton);
+  toolsLayout->addLayout(buildCommandLayout);
+  QBoxLayout *cleanCommandLayout = new QHBoxLayout;
+  QPushButton *cleanCommandResetButton = new QPushButton(tr("reset"), this);
+  cleanCommandLayout->addWidget(m_cleanCommand);
+  cleanCommandLayout->addWidget(cleanCommandResetButton);
+  toolsLayout->addLayout(cleanCommandLayout);
+  toolsGroupBox->setLayout(toolsLayout);
+
+  connect(buildCommandResetButton, SIGNAL(clicked()), SLOT(resetBuildCommand()));
+  connect(cleanCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanCommand()));
+
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
+  mainLayout->addWidget(toolsGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 }
@@ -280,6 +306,19 @@ void OptionsPage::readSettings()
   settings.beginGroup("library");
   m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
   settings.endGroup();
+
+  settings.beginGroup("tools");
+#ifdef Q_WS_WIN
+  m_buildCommand->setText(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
+  m_cleanCommand->setText(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
+#elseif __APPLE__
+  m_buildCommand->setText(settings.value("buildCommand", "make %target").toString());
+  m_cleanCommand->setText(settings.value("cleanCommand", "make clean").toString());
+#else // UNIX/Linux
+  m_buildCommand->setText(settings.value("buildCommand", "make %target").toString());
+  m_cleanCommand->setText(settings.value("cleanCommand", "make clean").toString());
+#endif
+  settings.endGroup();
 }
 
 void OptionsPage::writeSettings()
@@ -287,6 +326,11 @@ void OptionsPage::writeSettings()
   QSettings settings;
   settings.beginGroup("library");
   settings.setValue("workingPath", m_workingPath->path());
+  settings.endGroup();
+
+  settings.beginGroup("tools");
+  settings.setValue("buildCommand", m_buildCommand->text());
+  settings.setValue("cleanCommand", m_cleanCommand->text());
   settings.endGroup();
 }
 
@@ -352,6 +396,27 @@ void OptionsPage::checkWorkingPath(const QString &path)
   m_workingPathValid->setText(mask.arg(message));
 }
 
+void OptionsPage::resetBuildCommand()
+{
+#ifdef Q_WS_WIN
+  m_buildCommand->setText("cmd.exe /C make.bat %basename");
+#elseif __APPLE__
+  m_buildCommand->setText("make %target");
+#else // UNIX/Linux
+  m_buildCommand->setText("make %target");
+#endif
+}
+
+void OptionsPage::resetCleanCommand()
+{
+#ifdef Q_WS_WIN
+  m_cleanCommand->setText("cmd.exe /C clean.bat");
+#elseif __APPLE__
+  m_cleanCommand->setText("make clean");
+#else // UNIX/Linux
+  m_cleanCommand->setText("make clean");
+#endif
+}
 
 // Editor Page
 
