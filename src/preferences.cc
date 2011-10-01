@@ -308,16 +308,8 @@ void OptionsPage::readSettings()
   settings.endGroup();
 
   settings.beginGroup("tools");
-#ifdef Q_WS_WIN
-  m_buildCommand->setText(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
-  m_cleanCommand->setText(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
-#elseif __APPLE__
-  m_buildCommand->setText(settings.value("buildCommand", "make %target").toString());
-  m_cleanCommand->setText(settings.value("cleanCommand", "make clean").toString());
-#else // UNIX/Linux
-  m_buildCommand->setText(settings.value("buildCommand", "make %target").toString());
-  m_cleanCommand->setText(settings.value("cleanCommand", "make clean").toString());
-#endif
+  m_buildCommand->setText(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
+  m_cleanCommand->setText(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
   settings.endGroup();
 }
 
@@ -398,24 +390,12 @@ void OptionsPage::checkWorkingPath(const QString &path)
 
 void OptionsPage::resetBuildCommand()
 {
-#ifdef Q_WS_WIN
-  m_buildCommand->setText("cmd.exe /C make.bat %basename");
-#elseif __APPLE__
-  m_buildCommand->setText("make %target");
-#else // UNIX/Linux
-  m_buildCommand->setText("make %target");
-#endif
+  m_buildCommand->setText(PLATFORM_BUILD_COMMAND);
 }
 
 void OptionsPage::resetCleanCommand()
 {
-#ifdef Q_WS_WIN
-  m_cleanCommand->setText("cmd.exe /C clean.bat");
-#elseif __APPLE__
-  m_cleanCommand->setText("make clean");
-#else // UNIX/Linux
-  m_cleanCommand->setText("make clean");
-#endif
+  m_cleanCommand->setText(PLATFORM_CLEAN_COMMAND);
 }
 
 // Editor Page

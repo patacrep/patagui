@@ -160,6 +160,9 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
+  setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
+
   settings.beginGroup("tools");
 #ifdef Q_WS_WIN
   setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
@@ -849,16 +852,7 @@ void CMainWindow::cleanDialog()
       connect(builder, SIGNAL(readOnStandardError(const QString &)),
               log(), SLOT(appendPlainText(const QString &)));
 
-#ifdef Q_WS_WIN
-      builder->setProgram("cmd.exe");
-      builder->setArguments(QStringList() << "/C" << "clean.bat");
-#else
-      builder->setProgram("make");
-      if(cleanAllButton->isChecked())
-        builder->setArguments(QStringList() << "cleanall");
-      else
-        builder->setArguments(QStringList() << "clean");
-#endif
+      builder->setCommand(cleanCommand());
 
       builder->setStartMessage(tr("Cleaning the build directory."));
       builder->setSuccessMessage(tr("Build directory cleaned."));
