@@ -22,7 +22,6 @@
 
 #include "utils/utils.hh"
 #include "label.hh"
-#include "preferences.hh"
 #include "library.hh"
 #include "library-view.hh"
 #include "songbook.hh"
@@ -33,9 +32,15 @@
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
 #include "tab-widget.hh"
-#include "library-download.hh"
 #include "notification.hh"
 #include "song-item-delegate.hh"
+#include "preferences.hh"
+
+#include "config.hh"
+
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+#include "library-download.hh"
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 #include <QDebug>
 
@@ -265,11 +270,15 @@ void CMainWindow::createActions()
   m_libraryUpdateAct->setShortcut(QKeySequence::Refresh);
   connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
 
-  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
   m_libraryDownloadAct = new QAction(tr("Download"), this);
   m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
   m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/folder-remote")));
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
   connect(m_libraryDownloadAct, SIGNAL(triggered()), libraryDownload, SLOT(exec()));
+#else // ENABLE_LIBRARY_DOWNLOAD
+  m_libraryDownloadAct->setEnabled(false);
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
   QSettings settings;
   settings.beginGroup("general");
@@ -429,7 +438,7 @@ void CMainWindow::preferences()
 
 void CMainWindow::documentation()
 {
-  QDesktopServices::openUrl(QUrl(QString("http://www.patacrep.com/data/documents/doc.pdf")));
+  QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc.pdf"));
 }
 
 void CMainWindow::about()

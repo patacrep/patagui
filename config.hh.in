@@ -11,5 +11,6 @@
 
 #cmakedefine USE_SPARKLE
 #cmakedefine USE_PROUT
+#cmakedefine ENABLE_LIBRARY_DOWNLOAD
 
 #endif // __CONFIG_HH__

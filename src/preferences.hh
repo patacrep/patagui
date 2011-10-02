@@ -23,6 +23,8 @@
 #include <QWidget>
 #include <QScrollArea>
 
+#include "config.hh"
+
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
@@ -152,6 +154,8 @@ private:
   QFont m_font;
 };
 
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+
 /** \brief NetworkPage is the config page used to specify network options
  */
 class NetworkPage : public Page
@@ -170,6 +174,8 @@ private:
   QLineEdit *m_user;
   QLineEdit *m_password;
 };
+
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 /** \brief SongbookPage is the config page used to specify general songbooks
  */

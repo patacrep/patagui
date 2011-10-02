@@ -19,8 +19,11 @@
 #include "preferences.hh"
 
 #include <QtGui>
-#include <QNetworkProxy>
 #include <QtGroupBoxPropertyBrowser>
+
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+#include <QNetworkProxy>
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 #include "main-window.hh"
 #include "songbook.hh"
@@ -49,7 +52,9 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_pagesWidget->addWidget(new SongbookPage(this));
   m_pagesWidget->addWidget(new DisplayPage(this));
   m_pagesWidget->addWidget(new EditorPage(this));
+#ifdef ENABLE_LIBRARY_DOWNLOAD
   m_pagesWidget->addWidget(new NetworkPage(this));
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
 
@@ -106,11 +111,13 @@ void ConfigDialog::createIcons()
   editorButton->setTextAlignment(Qt::AlignHCenter);
   editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
+#ifdef ENABLE_LIBRARY_DOWNLOAD
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
   networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/preferences-system-network")));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
   connect(m_contentsWidget,
           SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
@@ -414,6 +421,7 @@ void EditorPage::updateFontButton()
 }
 
 
+#ifdef ENABLE_LIBRARY_DOWNLOAD
 // Network Page
 
 NetworkPage::NetworkPage(ConfigDialog *configDialog)
@@ -486,7 +494,7 @@ void NetworkPage::writeSettings()
     }
   QNetworkProxy::setApplicationProxy(proxy);
 }
-
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 // Songbook Page
 

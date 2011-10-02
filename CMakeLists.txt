@@ -13,23 +13,6 @@ endif()
 
 include(songbook-client-config.cmake)
 
-find_package(LibArchive REQUIRED)
-
-find_package(Qt4 REQUIRED)
-set(QT_USE_QTNETWORK true)
-set(QT_USE_QTSCRIPT true)
-
-include(${QT_USE_FILE})
-
-include(qt-property-editor-config.cmake)
-
-include_directories(
-  ${SOURCE_DIR}
-  ${SOURCE_DIR}/src/
-  ${BUILD_DIR}
-  ${LibArchive_INCLUDE_DIRS}
-  )
-
 # {{{ Sources
 set(SONGBOOK_CLIENT_SOURCES
   src/main.cc
@@ -56,7 +39,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/build-engine/make-songbook.cc
   src/code-editor.cc
   src/tab-widget.cc
-  src/library-download.cc
   src/song-panel.cc
   src/notification.cc
   src/identity-proxy-model.cc
@@ -87,16 +69,13 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/build-engine/make-songbook.hh
   src/code-editor.hh
   src/tab-widget.hh
-  src/library-download.hh
   src/song-panel.hh
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
   )
-# add header for binding between C/C++ and objective-C
-# to be able to call Sparkle (Autoupdate) on Mac os
-# ressources
-#should be moved in mac only and use 'LIST' to append
+
+# resources (rcs)
 set(SONGBOOK_CLIENT_RCS
   songbook.qrc
   icons/macos/macos.qrc
@@ -110,10 +89,34 @@ set(SONGBOOK_CLIENT_MAN_SRCS
 set(SONGBOOK_CLIENT_MAN_LANGS fr)
 # }}}
 
+find_package(Qt4 REQUIRED)
+set(QT_USE_QTSCRIPT true)
+
+if(ENABLE_SVG_SUPPORT)
+  set(QT_USE_QTSVG true)
+endif()
+
+if(ENABLE_LIBRARY_DOWNLOAD)
+  find_package(LibArchive REQUIRED)
+  set(QT_USE_QTNETWORK true)
+  include_directories(${LibArchive_INCLUDE_DIRS})
+  LIST(APPEND SONGBOOK_CLIENT_SOURCES src/library-download.cc)
+  LIST(APPEND SONGBOOK_CLIENT_QT_HEADER src/library-download.hh)
+endif()
+
+include(${QT_USE_FILE})
+
+include(qt-property-editor-config.cmake)
+
+include_directories(
+  ${SOURCE_DIR}
+  ${SOURCE_DIR}/src/
+  ${BUILD_DIR}
+  )
+
 # process Qt special files
 qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
-
 
 # {{{ Apple specific stuff
 if(APPLE)
@@ -122,10 +125,7 @@ endif(APPLE)
 # }}}
 
 # generating executable
-add_definitions("-g -Wall")
-if(APPLE)
-  include(${CMAKE_MODULE_PATH}/CMakeLists-Mac.cmake)
-else(APPLE)
+if(NOT APPLE)
   add_executable(${SONGBOOK_CLIENT_APPLICATION_NAME}
     ${SONGBOOK_CLIENT_SOURCES}
     ${SONGBOOK_CLIENT_MOCS}
@@ -133,7 +133,7 @@ else(APPLE)
     ${COMPILED_TRANSLATIONS}
     ${QT_PROPERTY_EDITOR_SOURCES}
     )
-endif(APPLE)
+endif(NOT APPLE)
 
 if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
