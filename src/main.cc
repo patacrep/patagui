@@ -23,89 +23,103 @@
 #include <QDate>
 #include <QLocale>
 #include <QDir>
+#include <QTextStream>
 
 #include "main-window.hh"
-#include "config.h"
+#include "config.hh"
 
 #ifdef USE_SPARKLE
 #include "../macos_specific/sparkle/src/CocoaInitializer.h"
 #include "../macos_specific/sparkle/src/SparkleAutoUpdater.h"
 #endif
 
-//******************************************************************************
-int main( int argc, char * argv[] )
+int main(int argc, char *argv[])
 {
-  //mac os, need to instanciate application fist to get it's path
-  QApplication app(argc, argv);
+  // MacOSX needs to instanciate the application first to get the path
+  QApplication application(argc, argv);
 
+  QApplication::setOrganizationName("Patacrep");
+  QApplication::setOrganizationDomain("patacrep.com");
+  QApplication::setApplicationName(SONGBOOK_CLIENT_APPLICATION_NAME);
+  QApplication::setApplicationVersion(SONGBOOK_CLIENT_VERSION);
+
+  // Load the application ressources (icons, ...)
   Q_INIT_RESOURCE(songbook);
-  
-  // this is the code needed to check for update on startup on mac os
-  // we might plan to move it and also check for beta.
-  #ifdef USE_SPARKLE
-    AutoUpdater* updater;
-    CocoaInitializer initializer;
-    updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
-    if (updater) {
-        updater->checkForUpdates();
-    }
-  #endif
 
-  static const char * GENERIC_ICON_TO_CHECK = "document-open";
-  #ifdef __APPLE__
-    static const char * FALLBACK_ICON_THEME = "macos";
-  #else
-    static const char * FALLBACK_ICON_THEME = "tango";
-  #endif
-  if (!QIcon::hasThemeIcon(GENERIC_ICON_TO_CHECK))
+  // Check for a standard theme icon. If it does not exist, for
+  // instance on MacOSX or Windows, fallback to one of the theme
+  // provided in the ressource file.
+  if (!QIcon::hasThemeIcon("document-open"))
     {
-      //If there is no default working icon theme then we should
-      //use an icon theme that we provide via a .qrc file
-      //This case happens under Windows and Mac OS X
-      //This does not happen under GNOME or KDE
-      QIcon::setThemeName(FALLBACK_ICON_THEME);
+#ifdef __APPLE__
+      QIcon::setThemeName("macos");
+#else // __APPLE__
+      QIcon::setThemeName("tango");
+#endif // __APPLE__
     }
 
-  QString version = QString("0.5.1 (%1)")
-    .arg(QDate::currentDate().toString(Qt::SystemLocaleLongDate));
-  QCoreApplication::setOrganizationName("Patacrep");
-  QCoreApplication::setOrganizationDomain("patacrep.com");
-  QCoreApplication::setApplicationName("songbook-client");
-  QCoreApplication::setApplicationVersion(version);
-  
+  // Parse command line arguments
+  QStringList arguments = QApplication::arguments();
+  bool helpFlag = false;;
+  bool versionFlag = false;
+  if (arguments.contains("-h") || arguments.contains("--help"))
+    helpFlag = true;
+  else if (arguments.contains("--version"))
+    versionFlag = true;
+
   // Localization
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
-  QString locale = QLocale::system().name().section('_', 0, 0);
-  QString filename = QString("songbook_%1").arg(locale) + ".qm";
-  QString dir;
+  QDir translationDirectory;
+  QString translationFilename = QString("songbook_%1.qm").arg(QLocale::system().name());
+  QString directory;
 
 #ifdef __APPLE__
-  QDir cdir(app.applicationDirPath());
-  cdir.cdUp();
-  cdir.cd("Resources/lang");
-  const QDir systemDir(cdir.absolutePath());
-  const QDir userDir(cdir.absolutePath());
+  translationDirectory = application.applicationDirPath();
+  translationDirectory.cd("../Resources");
 #else
-  const QDir systemDir("/usr/share/songbook-client/translations", "*.qm");
-  const QDir userDir("/usr/local/share/songbook-client/translations", "*.qm");
+  translationDirectory = QDir(SONGBOOK_CLIENT_DATA_PATH);
 #endif
 
-  if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
-    dir = systemDir.absolutePath();
-  else if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
-    dir = userDir.absolutePath();
+  if (translationDirectory.exists())
+    directory = translationDirectory.absoluteFilePath("lang");
   else
-    dir = QString("%1%2lang").arg(QDir::currentPath()).arg(QDir::separator());
+    directory = QDir::current().absoluteFilePath("lang");
 
   QTranslator translator;
-  translator.load(QString("songbook_%1").arg(locale), dir);
+  translator.load(translationFilename, directory);
+  application.installTranslator(&translator);
 
-  // Main application
-  // move app creation to beggining
-  app.installTranslator(&translator);
+#ifdef USE_SPARKLE
+  // Check for updates on startup using MacOSX. The atom feed provides
+  // the list of releases to get the update from.
+  // TODO: add a check to ignore beta versions
+  CocoaInitializer initializer;
+  AutoUpdater *updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
+  if (updater)
+    updater->checkForUpdates();
+#endif // USE_SPARKLE
+
+  if (helpFlag)
+    {
+      QTextStream out(stdout);
+      out << "Usage: " << QApplication::applicationName() << "[OPTION]" << endl
+	  << "Options:" << endl
+	  << "    " << "-h, --help"
+	  << "    " << "--version"
+	  << " " << QApplication::applicationVersion()
+	  << endl;
+      return 0;
+    }
+  else if (versionFlag)
+    {
+      QTextStream out(stdout);
+      out << QApplication::applicationName()
+	  << " " << QApplication::applicationVersion()
+	  << endl;
+      return 0;
+    }
 
   CMainWindow mainWindow;
   mainWindow.show();
-  return app.exec();
+  return application.exec();
 }
-//******************************************************************************

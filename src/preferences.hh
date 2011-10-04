@@ -19,9 +19,22 @@
 #ifndef __PREFERENCES_HH__
 #define __PREFERENCES_HH__
 
+#ifdef Q_WS_WIN
+#define PLATFORM_BUILD_COMMAND "cmd.exe /C make.bat %basename"
+#define PLATFORM_CLEAN_COMMAND "cmd.exe /C clean.bat"
+#elseif __APPLE__
+#define PLATFORM_BUILD_COMMAND "make %target"
+#define PLATFORM_CLEAN_COMMAND "make clean"
+#else // UNIX/Linux
+#define PLATFORM_BUILD_COMMAND "make %target"
+#define PLATFORM_CLEAN_COMMAND "make clean"
+#endif
+
 #include <QDialog>
 #include <QWidget>
 #include <QScrollArea>
+
+#include "config.hh"
 
 class QListWidget;
 class QListWidgetItem;
@@ -116,6 +129,8 @@ public:
 
 private slots:
   void checkWorkingPath(const QString &path);
+  void resetBuildCommand();
+  void resetCleanCommand();
 
 private:
   void readSettings();
@@ -123,6 +138,9 @@ private:
 
   CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
+
+  QLineEdit *m_buildCommand;
+  QLineEdit *m_cleanCommand;
 };
 
 /** \brief Editor is the config page used to specify options related
@@ -152,6 +170,8 @@ private:
   QFont m_font;
 };
 
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+
 /** \brief NetworkPage is the config page used to specify network options
  */
 class NetworkPage : public Page
@@ -170,6 +190,8 @@ private:
   QLineEdit *m_user;
   QLineEdit *m_password;
 };
+
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 /** \brief SongbookPage is the config page used to specify general songbooks
  */
