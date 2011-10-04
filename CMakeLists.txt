@@ -21,7 +21,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/library.cc
   src/library-view.cc
   src/songbook.cc
-  src/build-engine.cc
   src/song-editor.cc
   src/highlighter.cc
   src/dialog-new-song.cc
@@ -36,13 +35,13 @@ set(SONGBOOK_CLIENT_SOURCES
   src/utils/lineedit.cc
   src/utils/lineedit.cc
   src/utils/utils.cc
-  src/build-engine/make-songbook.cc
   src/code-editor.cc
   src/tab-widget.cc
   src/song-panel.cc
   src/notification.cc
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
+  src/make-songbook-process.cc
   )
 
 # header (moc)
@@ -51,7 +50,6 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/preferences.hh
   src/library.hh
   src/library-view.hh
-  src/build-engine.hh
   src/songbook.hh
   src/song-editor.hh
   src/highlighter.hh
@@ -66,13 +64,13 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/filter-lineedit.hh
   src/utils/lineedit.hh
   src/utils/lineedit_p.hh
-  src/build-engine/make-songbook.hh
   src/code-editor.hh
   src/tab-widget.hh
   src/song-panel.hh
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
+  src/make-songbook-process.hh
   )
 
 # resources (rcs)
