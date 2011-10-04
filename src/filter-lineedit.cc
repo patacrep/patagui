@@ -116,8 +116,6 @@ void CMagButton::paintEvent(QPaintEvent *event)
   painter.setRenderHint(QPainter::Antialiasing, true);
 
   QPalette p = palette();
-  QColor circleColor = isDown() ? p.color(QPalette::Dark) : p.color(QPalette::Mid);
-  QColor xColor = p.color(QPalette::Window);
 
   QPen pen(QColor::fromRgb(85,85,85));
   pen.setWidth(2.9);

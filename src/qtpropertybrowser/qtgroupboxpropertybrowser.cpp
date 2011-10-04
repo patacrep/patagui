@@ -312,15 +312,12 @@ void QtGroupBoxPropertyBrowserPrivate::propertyRemoved(QtBrowserItem *index)
         removeRow(parentItem->layout, row);
     } else {
         WidgetItem *par = parentItem->parent;
-        QWidget *w = 0;
         QGridLayout *l = 0;
         int oldRow = -1;
         if (!par) {
-            w = q_ptr;
             l = m_mainLayout;
             oldRow = m_children.indexOf(parentItem);
         } else {
-            w = par->groupBox;
             l = par->layout;
             oldRow = par->children.indexOf(parentItem);
             if (hasHeader(par))
@@ -333,9 +330,8 @@ void QtGroupBoxPropertyBrowserPrivate::propertyRemoved(QtBrowserItem *index)
         } else if (parentItem->widgetLabel) {
             parentItem->widgetLabel->hide();
             parentItem->widgetLabel->setParent(0);
-        } else {
-            //parentItem->widgetLabel = new QLabel(w);
         }
+
         l->removeWidget(parentItem->groupBox);
         delete parentItem->groupBox;
         parentItem->groupBox = 0;
