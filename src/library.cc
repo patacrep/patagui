@@ -53,7 +53,7 @@ void CLibrary::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("library");
-  settings.setValue("workingPath", directory().canonicalPath());
+  settings.setValue("workingPath", directory().absolutePath());
   settings.endGroup();
 }
 

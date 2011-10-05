@@ -311,7 +311,7 @@ void OptionsPage::readSettings()
 {
   QSettings settings;
   settings.beginGroup("library");
-  m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
+  m_workingPath->setPath(settings.value("workingPath", QDir::homePath()).toString());
   settings.endGroup();
 
   settings.beginGroup("tools");

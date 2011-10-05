@@ -176,15 +176,15 @@ void CLibraryDownload::downloadFinished()
 
   if (!abort)
     {
-      QDir libraryDir;
       QDir dir = m_path->directory();
       QDir oldCurrent = QDir::currentPath();
       QString filepath = dir.filePath(filename);
       if (saveToDisk(filepath, reply))
 	{
 	  QDir::setCurrent(dir.absolutePath());
-	  if (decompress(filepath, libraryDir))
-	    parent()->library()->setDirectory(libraryDir);
+	  if (decompress(filepath, dir))
+	    parent()->library()->setDirectory(dir);
+
 	  QDir::setCurrent(oldCurrent.absolutePath());
 	}
       // remove the downloaded archive after decompressing
