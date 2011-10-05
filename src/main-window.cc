@@ -22,20 +22,26 @@
 
 #include "utils/utils.hh"
 #include "label.hh"
-#include "preferences.hh"
 #include "library.hh"
 #include "library-view.hh"
 #include "songbook.hh"
-#include "build-engine/make-songbook.hh"
 #include "song-editor.hh"
 #include "highlighter.hh"
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
 #include "tab-widget.hh"
-#include "library-download.hh"
 #include "notification.hh"
 #include "song-item-delegate.hh"
+#include "preferences.hh"
+
+#include "config.hh"
+
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+#include "library-download.hh"
+#endif // ENABLE_LIBRARY_DOWNLOAD
+
+#include "make-songbook-process.hh"
 
 #include <QDebug>
 
@@ -159,6 +165,22 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
+  setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
+
+  settings.beginGroup("tools");
+#ifdef Q_WS_WIN
+  setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
+  setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
+#elseif __APPLE__
+  setBuildCommand(settings.value("buildCommand", "make %target").toString());
+  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
+#else // UNIX/Linux
+  setBuildCommand(settings.value("buildCommand", "make %target").toString());
+  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
+#endif
+  settings.endGroup();
+
   library()->readSettings();
   view()->readSettings();
 }
@@ -265,11 +287,15 @@ void CMainWindow::createActions()
   m_libraryUpdateAct->setShortcut(QKeySequence::Refresh);
   connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
 
-  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
   m_libraryDownloadAct = new QAction(tr("Download"), this);
   m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
   m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/folder-remote")));
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
   connect(m_libraryDownloadAct, SIGNAL(triggered()), libraryDownload, SLOT(exec()));
+#else // ENABLE_LIBRARY_DOWNLOAD
+  m_libraryDownloadAct->setEnabled(false);
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
   QSettings settings;
   settings.beginGroup("general");
@@ -291,12 +317,6 @@ void CMainWindow::createActions()
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  CBuildEngine *builder = new CMakeSongbook(this);
-#ifdef Q_WS_WIN
-  builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
-#else
-  builder->setProcessOptions(QStringList() << "clean");
-#endif
   m_cleanAct = new QAction(tr("Clean"), this);
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/edit-clear")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
@@ -429,7 +449,7 @@ void CMainWindow::preferences()
 
 void CMainWindow::documentation()
 {
-  QDesktopServices::openUrl(QUrl(QString("http://www.patacrep.com/data/documents/doc.pdf")));
+  QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc.pdf"));
 }
 
 void CMainWindow::about()
@@ -476,23 +496,44 @@ void CMainWindow::build()
   QString basename = QFileInfo(songbook()->filename()).baseName();
   QString target = QString("%1.pdf").arg(basename);
 
-  CBuildEngine *builder = new CMakeSongbook(this);
+  CMakeSongbookProcess *builder = new CMakeSongbookProcess(this);
+  builder->setWorkingDirectory(workingPath());
 
-  //force a make clean
-#ifdef Q_WS_WIN
-  builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
-#else
-  builder->setProcessOptions(QStringList() << "clean");
-#endif
-  builder->action();
-  builder->process()->waitForFinished();
+  connect(builder, SIGNAL(aboutToStart()),
+          progressBar(), SLOT(show()));
+  connect(builder, SIGNAL(aboutToStart()),
+          statusBar(), SLOT(clear()));
+  connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
+          SLOT(showMessage(const QString &, int)));
+  connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
+          progressBar(), SLOT(hide()));
+  connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
+          log(), SLOT(appendPlainText(const QString &)));
+  connect(builder, SIGNAL(readOnStandardError(const QString &)),
+          log(), SLOT(appendPlainText(const QString &)));
 
-#ifdef Q_WS_WIN
-  builder->setProcessOptions(QStringList() << "/C" << "make.bat" << basename);
-#else
-  builder->setProcessOptions(QStringList() << target);
-#endif
-  builder->action();
+  builder->setCommand(cleanCommand());
+
+  builder->setStartMessage(tr("Cleaning the build directory."));
+  builder->setSuccessMessage(tr("Build directory cleaned."));
+  builder->setSuccessMessage(tr("Error during cleaning, please check the log."));
+
+  builder->execute();
+  builder->waitForFinished();
+
+  QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+  environment.insert("LATEX_OPTIONS", "-halt-on-error");
+  builder->setProcessEnvironment(environment);
+
+  QString command = buildCommand();
+  builder->setCommand(command.replace("%target", target).replace("%basename", basename));
+
+  builder->setUrlToOpen(QUrl(QString("file:///%1/%2").arg(workingPath()).arg(target)));
+  builder->setStartMessage(tr("Building %1.").arg(target));
+  builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
+  builder->setSuccessMessage(tr("Error during the building of %1, please check the log.").arg(target));
+
+  builder->execute();
 }
 
 void CMainWindow::newSongbook()
@@ -804,19 +845,29 @@ void CMainWindow::cleanDialog()
 
   if (dialog->exec() == QDialog::Accepted)
     {
-      CBuildEngine* builder = new CMakeSongbook(this);
-      if(cleanAllButton->isChecked())
-	{
-	  builder->setProcessOptions(QStringList() << "cleanall");
-	}
-      else
-	{
-	  builder->setProcessOptions(QStringList() << "clean");
-	}
-#ifdef Q_WS_WIN
-      builder->setProcessOptions(QStringList() << "/C" << "clean.bat");
-#endif
-      builder->action();
+      CMakeSongbookProcess *builder = new CMakeSongbookProcess(this);
+      builder->setWorkingDirectory(workingPath());
+
+      connect(builder, SIGNAL(aboutToStart()),
+              progressBar(), SLOT(show()));
+      connect(builder, SIGNAL(aboutToStart()),
+              statusBar(), SLOT(clear()));
+      connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
+              SLOT(showMessage(const QString &, int)));
+      connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
+              progressBar(), SLOT(hide()));
+      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
+              log(), SLOT(appendPlainText(const QString &)));
+      connect(builder, SIGNAL(readOnStandardError(const QString &)),
+              log(), SLOT(appendPlainText(const QString &)));
+
+      builder->setCommand(cleanCommand());
+
+      builder->setStartMessage(tr("Cleaning the build directory."));
+      builder->setSuccessMessage(tr("Build directory cleaned."));
+      builder->setSuccessMessage(tr("Error during cleaning, please check the log."));
+
+      builder->execute();
     }
   delete dialog;
   delete m_tempFilesmodel;
@@ -834,4 +885,24 @@ void CMainWindow::updateTempFilesView(int state)
       list.removeLast();
       m_tempFilesmodel->setNameFilters(list);
     }
+}
+
+const QString & CMainWindow::buildCommand() const
+{
+  return m_buildCommand;
+}
+
+void CMainWindow::setBuildCommand(const QString &command)
+{
+  m_buildCommand = command;
+}
+
+const QString & CMainWindow::cleanCommand() const
+{
+  return m_cleanCommand;
+}
+
+void CMainWindow::setCleanCommand(const QString &command)
+{
+  m_cleanCommand = command;
 }

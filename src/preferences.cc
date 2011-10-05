@@ -19,8 +19,11 @@
 #include "preferences.hh"
 
 #include <QtGui>
-#include <QNetworkProxy>
 #include <QtGroupBoxPropertyBrowser>
+
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+#include <QNetworkProxy>
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 #include "main-window.hh"
 #include "songbook.hh"
@@ -49,7 +52,9 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_pagesWidget->addWidget(new SongbookPage(this));
   m_pagesWidget->addWidget(new DisplayPage(this));
   m_pagesWidget->addWidget(new EditorPage(this));
+#ifdef ENABLE_LIBRARY_DOWNLOAD
   m_pagesWidget->addWidget(new NetworkPage(this));
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
   QPushButton *closeButton = new QPushButton(tr("Close"));
 
@@ -106,11 +111,13 @@ void ConfigDialog::createIcons()
   editorButton->setTextAlignment(Qt::AlignHCenter);
   editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
+#ifdef ENABLE_LIBRARY_DOWNLOAD
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
   networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/preferences-system-network")));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
   connect(m_contentsWidget,
           SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
@@ -243,6 +250,8 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   : Page(configDialog)
   , m_workingPath(0)
   , m_workingPathValid(0)
+  , m_buildCommand(0)
+  , m_cleanCommand(0)
 {
   m_workingPathValid = new QLabel;
 
@@ -253,6 +262,9 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
 
   connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
           this, SLOT(checkWorkingPath(const QString&)));
+
+  m_buildCommand = new QLineEdit(this);
+  m_cleanCommand = new QLineEdit(this);
 
   readSettings();
 
@@ -267,9 +279,30 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   workingPathLayout->addWidget(m_workingPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
+  // external tools
+  QGroupBox *toolsGroupBox
+    = new QGroupBox(tr("External tools"));
+
+  QBoxLayout *toolsLayout = new QVBoxLayout;
+  QBoxLayout *buildCommandLayout = new QHBoxLayout;
+  QPushButton *buildCommandResetButton = new QPushButton(tr("reset"), this);
+  buildCommandLayout->addWidget(m_buildCommand);
+  buildCommandLayout->addWidget(buildCommandResetButton);
+  toolsLayout->addLayout(buildCommandLayout);
+  QBoxLayout *cleanCommandLayout = new QHBoxLayout;
+  QPushButton *cleanCommandResetButton = new QPushButton(tr("reset"), this);
+  cleanCommandLayout->addWidget(m_cleanCommand);
+  cleanCommandLayout->addWidget(cleanCommandResetButton);
+  toolsLayout->addLayout(cleanCommandLayout);
+  toolsGroupBox->setLayout(toolsLayout);
+
+  connect(buildCommandResetButton, SIGNAL(clicked()), SLOT(resetBuildCommand()));
+  connect(cleanCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanCommand()));
+
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(workingPathGroupBox);
+  mainLayout->addWidget(toolsGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 }
@@ -278,7 +311,12 @@ void OptionsPage::readSettings()
 {
   QSettings settings;
   settings.beginGroup("library");
-  m_workingPath->setPath(settings.value("workingPath", QDir::home().path()).toString());
+  m_workingPath->setPath(settings.value("workingPath", QDir::homePath()).toString());
+  settings.endGroup();
+
+  settings.beginGroup("tools");
+  m_buildCommand->setText(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
+  m_cleanCommand->setText(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
   settings.endGroup();
 }
 
@@ -287,6 +325,11 @@ void OptionsPage::writeSettings()
   QSettings settings;
   settings.beginGroup("library");
   settings.setValue("workingPath", m_workingPath->path());
+  settings.endGroup();
+
+  settings.beginGroup("tools");
+  settings.setValue("buildCommand", m_buildCommand->text());
+  settings.setValue("cleanCommand", m_cleanCommand->text());
   settings.endGroup();
 }
 
@@ -352,6 +395,15 @@ void OptionsPage::checkWorkingPath(const QString &path)
   m_workingPathValid->setText(mask.arg(message));
 }
 
+void OptionsPage::resetBuildCommand()
+{
+  m_buildCommand->setText(PLATFORM_BUILD_COMMAND);
+}
+
+void OptionsPage::resetCleanCommand()
+{
+  m_cleanCommand->setText(PLATFORM_CLEAN_COMMAND);
+}
 
 // Editor Page
 
@@ -414,6 +466,7 @@ void EditorPage::updateFontButton()
 }
 
 
+#ifdef ENABLE_LIBRARY_DOWNLOAD
 // Network Page
 
 NetworkPage::NetworkPage(ConfigDialog *configDialog)
@@ -486,7 +539,7 @@ void NetworkPage::writeSettings()
     }
   QNetworkProxy::setApplicationProxy(proxy);
 }
-
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 // Songbook Page
 

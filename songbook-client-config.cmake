@@ -6,10 +6,12 @@ set(VERSION devel)
 
 set(CODENAME "")
 
-project(${PROJECT_NAME} C)
+#project(${PROJECT_NAME} C)
 
 option(GENERATE_MANPAGES "generate manpages" ON)
 option(COMPRESS_MANPAGES "compress manpages" ON)
+option(ENBALE_SVG_SUPPORT "allow to use SVG icons fallback" ON)
+option(ENABLE_LIBRARY_DOWNLOAD "allow the application to download songbooks" ON)
 
 # {{{ CFLAGS
 add_definitions(-ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
@@ -43,6 +45,13 @@ a_find_program(GZIP_EXECUTABLE gzip FALSE)
 # pkg-config
 include(FindPkgConfig)
 # }}}
+
+if(ENABLE_LIBRARY_DOWNLOAD)
+  #set(LIBRARY_DOWNLOAD_ENABLED YES)
+  message(STATUS "Library download enabled")
+else()
+  message(STATUS "Library download disabled")
+endif()
 
 # {{{ Check if documentation can be build
 if(GENERATE_MANPAGES)
