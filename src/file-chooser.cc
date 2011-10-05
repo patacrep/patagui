@@ -59,7 +59,7 @@ void CFileChooser::readSettings()
   QSettings settings;
   settings.beginGroup("dialog");
   QByteArray state = settings.value("state", QByteArray()).toByteArray();
-  QString dir  = settings.value("directory", QDir::currentPath()).toString();
+  QString dir  = settings.value("directory", QDir::homePath()).toString();
   QString path  = settings.value("path", dir).toString();
   settings.endGroup();
 
