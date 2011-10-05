@@ -1,4 +1,4 @@
-	set( SONGBOOK_CLIENT_APPLICATION_NAME songbook-client )
+	set( SONGBOOK_CLIENT_APPLICATION_NAME Songbook-Client )
 	set( MACOSX_BUNDLE_ICON_FILE livre.icns )
 	set( CPACK_BUNDLE_NAME Sonbook Client With Space)
 	#versions
