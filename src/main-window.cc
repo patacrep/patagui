@@ -173,12 +173,15 @@ void CMainWindow::readSettings()
 #ifdef Q_WS_WIN
   setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
   setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
+  setCleanallCommand(settings.value("cleanallCommand", "cmd.exe /C clean.bat").toString());
 #elseif __APPLE__
   setBuildCommand(settings.value("buildCommand", "make %target").toString());
   setCleanCommand(settings.value("cleanCommand", "make clean").toString());
+  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
 #else // UNIX/Linux
   setBuildCommand(settings.value("buildCommand", "make %target").toString());
   setCleanCommand(settings.value("cleanCommand", "make clean").toString());
+  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
 #endif
   settings.endGroup();
 
@@ -862,7 +865,10 @@ void CMainWindow::cleanDialog()
       connect(builder, SIGNAL(readOnStandardError(const QString &)),
               log(), SLOT(appendPlainText(const QString &)));
 
-      builder->setCommand(cleanCommand());
+      if(cleanAllButton->isChecked())
+	builder->setCommand(cleanallCommand());
+      else
+	builder->setCommand(cleanCommand());
 
       builder->setStartMessage(tr("Cleaning the build directory."));
       builder->setSuccessMessage(tr("Build directory cleaned."));
@@ -904,6 +910,16 @@ const QString & CMainWindow::cleanCommand() const
 }
 
 void CMainWindow::setCleanCommand(const QString &command)
+{
+  m_cleanCommand = command;
+}
+
+const QString & CMainWindow::cleanallCommand() const
+{
+  return m_cleanCommand;
+}
+
+void CMainWindow::setCleanallCommand(const QString &command)
 {
   m_cleanCommand = command;
 }
