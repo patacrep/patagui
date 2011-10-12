@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+    <file>icons/songbook-client.png</file>
+    <file>icons/book.png</file>
+ </qresource>
+</RCC>
