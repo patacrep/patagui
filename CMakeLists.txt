@@ -149,12 +149,13 @@ set (COMPILED_TRANSLATIONS
   lang/songbook_fr.qm
   lang/songbook_en.qm)
 
-add_custom_command(
+add_custom_target(
+  translations_target
   COMMAND "${QT_LRELEASE_EXECUTABLE}" ${TRANSLATIONS}
-  OUTPUT ${COMPILED_TRANSLATIONS}
   DEPENDS ${TRANSLATIONS}
+  COMMENT "Updating translations"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-#uncomment and run make to update translations ts files from sources
+#uncomment and run `make translations_target` to update translations ts files from sources
 #warning, if uncommented, running make clean will remove ts files
 #qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
 # }}}
