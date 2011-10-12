@@ -1,0 +1,41 @@
+songbook-client for Debian
+--------------------------
+
+<possible notes regarding this package - if none, delete this file>
+
+ -- root
+daemon
+bin
+sys
+sync
+games
+man
+lp
+mail
+news
+uucp
+proxy
+www-data
+backup
+Mailing List Manager
+ircd
+Gnats Bug-Reporting System (admin)
+nobody
+
+
+rgoffe
+
+Avahi autoip daemon
+Avahi mDNS daemon
+CouchDB Administrator
+Speech Dispatcher
+usbmux daemon
+Hardware abstraction layer
+Kernel Oops Tracking Daemon
+PulseAudio daemon
+RealtimeKit
+
+HPLIP system user
+Gnome Display Manager
+Light Display Manager
+colord colour management daemon <>  Wed, 12 Oct 2011 17:32:45 +0200
