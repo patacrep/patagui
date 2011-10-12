@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=0.6
+Type=Application
+Name=Patacrep Songbook Client
+Comment=Build Patacrep LaTeX Songbooks for Guitar Tabs
+TryExec=songbook-client
+Exec=songbook-client %U
+Icon=songbook-client.png
+Terminal=false
+Categories=Application;Utility;
+MimeType=text/sg;text/sb;
