@@ -1,3 +1,9 @@
+songbook-client (0.6) oneiric; urgency=low
+
+  * New upstream version
+
+ -- Romain Goffe <romain.goffe@gmail.com>  Wed, 12 Oct 2011 14:43:39 +0200
+
 songbook-client (0.5-1ubuntu2) maverick; urgency=low
 
   * Add an improved build system
