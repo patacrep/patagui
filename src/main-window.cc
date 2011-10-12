@@ -167,6 +167,7 @@ void CMainWindow::readSettings()
 
   setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
   setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
+  setCleanallCommand(settings.value("cleanallCommand", PLATFORM_CLEAN_COMMAND).toString());
 
   settings.beginGroup("tools");
 #ifdef Q_WS_WIN
@@ -516,7 +517,7 @@ void CMainWindow::build()
 
   builder->setStartMessage(tr("Cleaning the build directory."));
   builder->setSuccessMessage(tr("Build directory cleaned."));
-  builder->setSuccessMessage(tr("Error during cleaning, please check the log."));
+  builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
   builder->execute();
   builder->waitForFinished();
@@ -865,7 +866,7 @@ void CMainWindow::cleanDialog()
 
       builder->setStartMessage(tr("Cleaning the build directory."));
       builder->setSuccessMessage(tr("Build directory cleaned."));
-      builder->setSuccessMessage(tr("Error during cleaning, please check the log."));
+      builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
       builder->execute();
     }
