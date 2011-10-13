@@ -37,7 +37,7 @@ CNotification::CNotification(QWidget* p)
 
   QIcon icon = QIcon::fromTheme("dialog-information", QIcon(":/tango/dialog-information"));
   QLabel* label = new QLabel;
-  label->setPixmap(icon.pixmap(64,64));
+  label->setPixmap(icon.pixmap(48,48));
 
   m_textEdit = new QTextEdit;
   m_textEdit->setReadOnly(true);
