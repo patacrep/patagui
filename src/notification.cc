@@ -35,7 +35,7 @@ CNotification::CNotification(QWidget* p)
   setTitleBarWidget(NULL);
   setMaximumHeight(120);
 
-  QIcon icon = QIcon::fromTheme("dialog-information", QIcon(":/tango/dialog-information"));
+  QIcon icon = QIcon::fromTheme("dialog-information");
   QLabel* label = new QLabel;
   label->setPixmap(icon.pixmap(48,48));
 

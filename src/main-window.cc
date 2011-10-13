@@ -212,49 +212,49 @@ void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/document-new")));
+  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/document-new.png")));
   m_newSongAct->setStatusTip(tr("Write a new song"));
   m_newSongAct->setIconText(tr("Add"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_newAct = new QAction(tr("New"), this);
-  m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new")));
+  m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
   m_newAct->setShortcut(QKeySequence::New);
   m_newAct->setStatusTip(tr("Create a new songbook"));
   connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
 
   m_openAct = new QAction(tr("Open..."), this);
-  m_openAct->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/tango/32x32/actions/document-open")));
+  m_openAct->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/tango/32x32/actions/document-open.png")));
   m_openAct->setShortcut(QKeySequence::Open);
   m_openAct->setStatusTip(tr("Open a songbook"));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   m_saveAct = new QAction(tr("Save"), this);
   m_saveAct->setShortcut(QKeySequence::Save);
-  m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save")));
+  m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   m_saveAsAct = new QAction(tr("Save As..."), this);
   m_saveAsAct->setShortcut(QKeySequence::SaveAs);
-  m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/32x32/actions/document-save-as")));
+  m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/32x32/actions/document-save-as.png")));
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
-  m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/help-contents")));
+  m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-  m_aboutAct->setIcon(QIcon::fromTheme("help-about", QIcon(":/icons/tango/help-about")));
+  m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
   m_aboutAct->setStatusTip(tr("About this application"));
   m_aboutAct->setMenuRole(QAction::AboutRole);
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
-  m_exitAct->setIcon(QIcon::fromTheme("application-exit", QIcon(":/icons/tango/help-about")));
+  m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
   m_exitAct->setMenuRole(QAction::QuitRole);
@@ -287,13 +287,13 @@ void CMainWindow::createActions()
 
   m_libraryUpdateAct = new QAction(tr("Update"), this);
   m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
-  m_libraryUpdateAct->setIcon(QIcon::fromTheme("view-refresh", QIcon(":/icons/tango/view-refresh")));
+  m_libraryUpdateAct->setIcon(QIcon::fromTheme("view-refresh", QIcon(":/icons/tango/32x32/actions/view-refresh.png")));
   m_libraryUpdateAct->setShortcut(QKeySequence::Refresh);
   connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
 
   m_libraryDownloadAct = new QAction(tr("Download"), this);
   m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
-  m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/folder-remote")));
+  m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/32x32/places/folder-remote.png")));
 #ifdef ENABLE_LIBRARY_DOWNLOAD
   connect(m_libraryDownloadAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 #else // ENABLE_LIBRARY_DOWNLOAD
@@ -321,7 +321,7 @@ void CMainWindow::createActions()
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
-  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/edit-clear")));
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
 }

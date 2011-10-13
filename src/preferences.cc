@@ -88,7 +88,7 @@ CMainWindow* ConfigDialog::parent() const
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
-  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/preferences-system")));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/32x32/categories/preferences-system.png")));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -100,20 +100,20 @@ void ConfigDialog::createIcons()
   songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
-  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/preferences-desktop-theme")));
+  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/32x32/categories/preferences-desktop-theme.png")));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *editorButton = new QListWidgetItem(m_contentsWidget);
-  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/accessories-text-editor")));
+  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/32x32/apps/accessories-text-editor.png")));
   editorButton->setText(tr("Editor"));
   editorButton->setTextAlignment(Qt::AlignHCenter);
   editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
-  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/preferences-system-network")));
+  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/32x32/categories/preferences-system-network.png")));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
