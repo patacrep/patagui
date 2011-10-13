@@ -295,8 +295,7 @@ void CMainWindow::createActions()
   m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
   m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/folder-remote")));
 #ifdef ENABLE_LIBRARY_DOWNLOAD
-  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
-  connect(m_libraryDownloadAct, SIGNAL(triggered()), libraryDownload, SLOT(exec()));
+  connect(m_libraryDownloadAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 #else // ENABLE_LIBRARY_DOWNLOAD
   m_libraryDownloadAct->setEnabled(false);
 #endif // ENABLE_LIBRARY_DOWNLOAD
@@ -814,6 +813,12 @@ void CMainWindow::noDataNotification(const QDir &directory)
 		    "Do you want to download the latest songs library?").arg(directory.canonicalPath())));
       m_noDataInfo->show();
     }
+}
+
+void CMainWindow::downloadDialog()
+{
+  CLibraryDownload libraryDownload(this);
+  libraryDownload.exec();
 }
 
 void CMainWindow::cleanDialog()

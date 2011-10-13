@@ -89,6 +89,7 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
+  void downloadDialog();
   void cleanDialog();
   void updateTempFilesView(int state);
   
