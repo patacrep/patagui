@@ -551,7 +551,7 @@ SongbookPage::SongbookPage(ConfigDialog *configDialog)
 
   QComboBox* templateComboBox = new QComboBox;
   templateComboBox->addItems(songbook->library()->templates());
-  templateComboBox->setCurrentIndex(songbook->library()->templates().indexOf("patacrep.tmpl"));
+  templateComboBox->setCurrentIndex(songbook->library()->templates().indexOf(songbook->tmpl()));
 
   connect(templateComboBox, SIGNAL(currentIndexChanged(const QString &)),
 	  songbook, SLOT(setTmpl(const QString &)));
