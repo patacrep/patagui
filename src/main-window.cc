@@ -411,7 +411,6 @@ void CMainWindow::createToolBar()
   m_mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   m_mainToolBar->addAction(m_newSongAct);
   m_mainToolBar->addAction(m_buildAct);
-  m_mainToolBar->addSeparator();
   addToolBar(m_mainToolBar);
 
   QCompleter *completer = new QCompleter;
