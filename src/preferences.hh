@@ -153,9 +153,6 @@ class EditorPage : public Page
 public:
   EditorPage(ConfigDialog *configDialog);
 
-signals:
-  void fontChanged();
-
 private slots:
   void selectFont();
   void updateFontButton();
@@ -168,6 +165,7 @@ private:
   QCheckBox *m_highlightCurrentLineCheckBox;
   QPushButton *m_fontButton;
   QFont m_font;
+  QString m_fontstr;
 };
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD

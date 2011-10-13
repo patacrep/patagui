@@ -409,23 +409,26 @@ void OptionsPage::resetCleanCommand()
 
 EditorPage::EditorPage(ConfigDialog *configDialog)
   : Page(configDialog)
+  , m_numberLinesCheckBox(new QCheckBox(tr("Display line numbers")))
+  , m_highlightCurrentLineCheckBox(new QCheckBox(tr("Highlight current line")))
+  , m_fontButton(new QPushButton)
 {
-  m_font = QFont("Monospace",10);
-  m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+  readSettings();
 
-  m_numberLinesCheckBox = new QCheckBox(tr("Display line numbers"));
-  m_highlightCurrentLineCheckBox = new QCheckBox(tr("Highlight current line"));
-  m_fontButton  = new QPushButton(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())), this);
+  if(m_fontstr.isEmpty())
+    {
+      m_font = QFont("Monospace",11);
+      m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+    }
+
+  updateFontButton();
   connect(m_fontButton, SIGNAL(clicked()), this, SLOT(selectFont()));
-  connect(this, SIGNAL(fontChanged()), this, SLOT(updateFontButton()));
 
   QFormLayout* layout = new QFormLayout;
   layout->addRow(m_numberLinesCheckBox);
   layout->addRow(m_highlightCurrentLineCheckBox);
-  layout->addRow(tr("Editor font:"), m_fontButton);
+  layout->addRow(tr("Font:"), m_fontButton);
   setLayout(layout);
-
-  readSettings();
 }
 
 void EditorPage::readSettings()
@@ -434,10 +437,10 @@ void EditorPage::readSettings()
   settings.beginGroup("editor");
   m_numberLinesCheckBox->setChecked(settings.value("lines", true).toBool());
   m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
-  m_font.fromString(settings.value("font", QString()).toString());
+  m_fontstr = settings.value("font", QString()).toString();
+  if(!m_fontstr.isEmpty())
+    m_font.fromString(m_fontstr);
   settings.endGroup();
-
-  emit(fontChanged());
 }
 
 void EditorPage::writeSettings()
@@ -453,16 +456,15 @@ void EditorPage::writeSettings()
 void EditorPage::selectFont()
 {
   bool ok;
-  m_font = QFontDialog::getFont(&ok, QFont("Monospace", 10), this);
-
-  if(ok) emit(fontChanged());
+  m_font = QFontDialog::getFont(&ok, m_font, this);
+  if(ok) updateFontButton();
 }
 
 void EditorPage::updateFontButton()
 {
   m_fontButton->setText(QString("%1 %2")
-			.arg(m_font.family())
-			.arg(QString::number(m_font.pointSize())));
+			.arg(QFontInfo(m_font).family())
+			.arg(QString::number(QFontInfo(m_font).pointSize())));
 }
 
 
