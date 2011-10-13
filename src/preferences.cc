@@ -106,7 +106,7 @@ void ConfigDialog::createIcons()
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *editorButton = new QListWidgetItem(m_contentsWidget);
-  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor"));
+  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/accessories-text-editor")));
   editorButton->setText(tr("Editor"));
   editorButton->setTextAlignment(Qt::AlignHCenter);
   editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
