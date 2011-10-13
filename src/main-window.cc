@@ -316,7 +316,7 @@ void CMainWindow::createActions()
   settings.endGroup();
 
   m_buildAct = new QAction(tr("Build PDF"), this);
-  m_buildAct->setIcon(QIcon::fromTheme("document-export",QIcon(":/icons/tango/48x48/mimetypes/document-export.png")));
+  m_buildAct->setIcon(QIcon::fromTheme("document-export",QIcon(":/icons/tango/32x32/mimetypes/document-export.png")));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 

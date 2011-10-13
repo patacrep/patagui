@@ -18,6 +18,7 @@
     <file>16x16/categories/preferences-system-network.png</file>
     <file>16x16/categories/preferences-desktop-theme.png</file>
     <file>16x16/mimetypes/audio-x-generic.png</file>
+    <file>16x16/mimetypes/document-export.png</file>
     <file>16x16/places/folder-remote.png</file>
     <file>16x16/status/image-missing.png</file>
     <file>22x22/actions/document-new.png</file>
@@ -37,6 +38,7 @@
     <file>22x22/categories/preferences-system-network.png</file>
     <file>22x22/categories/preferences-desktop-theme.png</file>
     <file>22x22/mimetypes/audio-x-generic.png</file>
+    <file>22x22/mimetypes/document-export.png</file>
     <file>22x22/places/folder-remote.png</file>
     <file>22x22/status/image-missing.png</file>
     <file>32x32/actions/document-new.png</file>
@@ -56,6 +58,7 @@
     <file>32x32/categories/preferences-system-network.png</file>
     <file>32x32/categories/preferences-desktop-theme.png</file>
     <file>32x32/mimetypes/audio-x-generic.png</file>
+    <file>32x32/mimetypes/document-export.png</file>
     <file>32x32/places/folder-remote.png</file>
     <file>32x32/status/image-missing.png</file>
     <file>48x48/songbook/select_all.png</file>
