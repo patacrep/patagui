@@ -81,6 +81,13 @@ set(SONGBOOK_CLIENT_RCS
   songbook.rc
   )
 
+if( MINGW )
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/songbook.o
+    COMMAND windres.exe -I${CMAKE_CURRENT_SOURCE_DIR} -i${CMAKE_CURRENT_SOURCE_DIR}/songbook.rc
+    -o ${CMAKE_CURRENT_BINARY_DIR}/songbook.o )
+  set(SONGBOOK_CLIENT_RCS ${SONGBOOK_CLIENT_RCS} ${CMAKE_CURRENT_BINARY_DIR}/songbook.o)
+endif( MINGW )
 # }}}
 
 find_package(Qt4 REQUIRED)
