@@ -81,10 +81,6 @@ set(SONGBOOK_CLIENT_RCS
   songbook.rc
   )
 
-set(SONGBOOK_CLIENT_MAN_SRCS
-  ${SOURCE_DIR}/manpages/songbook-client.1.txt
-  )
-set(SONGBOOK_CLIENT_MAN_LANGS fr)
 # }}}
 
 find_package(Qt4 REQUIRED)
@@ -163,8 +159,11 @@ add_custom_target(
 # {{{ Manpages
 if(GENERATE_MANPAGES)
 
-  # add the default translation to the list of languages
-  set(SONGBOOK_CLIENT_MAN_LANGS default ${SONGBOOK_CLIENT_MAN_LANGS})
+  set(SONGBOOK_CLIENT_MAN_SRCS
+    ${SOURCE_DIR}/debian/manpages/songbook-client.1.txt
+    )
+
+  set(SONGBOOK_CLIENT_MAN_LANGS default fr)
 
   foreach(lang ${SONGBOOK_CLIENT_MAN_LANGS})
 
