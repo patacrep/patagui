@@ -382,11 +382,11 @@ void OptionsPage::checkWorkingPath(const QString &path)
   QString mask("<font color=%1>%2%3.</font>");
   if (error)
     {
-      mask = mask.arg("red").arg("Error: ");
+      mask = mask.arg("red").arg(tr("Error: "));
     }
   else if (warning)
     {
-      mask = mask.arg("orange").arg("Warning: ");
+      mask = mask.arg("orange").arg(tr("Warning: "));
     }
   else
     {
