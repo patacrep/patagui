@@ -123,7 +123,14 @@ void CSongEditor::readSettings()
   settings.beginGroup("editor");
 
   QFont font;
-  font.fromString(settings.value("font", QString()).toString());
+  QString fontstr = settings.value("font", QString()).toString();
+  if(fontstr.isEmpty())
+    {
+      font = QFont("Monospace",11);
+      font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+    }
+
+  font.fromString(fontstr);
   setFont(font);
 
   setHighlightMode(settings.value("highlight", true).toBool());
