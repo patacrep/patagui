@@ -75,6 +75,9 @@ public:
   void readSettings();
   void writeSettings();
 
+  bool checkSongbookPath(const QString & path);
+  QString findSongbookPath();
+
   QDir directory() const;
   void setDirectory(const QString &directory);
   void setDirectory(const QDir &directory);

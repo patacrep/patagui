@@ -45,7 +45,7 @@ void CLibrary::readSettings()
 {
   QSettings settings;
   settings.beginGroup("library");
-  setDirectory(settings.value("workingPath", QDir::homePath()).toString());
+  setDirectory(settings.value("workingPath", findSongbookPath()).toString());
   settings.endGroup();
 }
 
@@ -55,6 +55,29 @@ void CLibrary::writeSettings()
   settings.beginGroup("library");
   settings.setValue("workingPath", directory().absolutePath());
   settings.endGroup();
+}
+
+bool CLibrary::checkSongbookPath(const QString & path)
+{
+  QDir directory(path);
+  return directory.exists() &&
+    directory.exists("makefile") &&
+    directory.exists("songbook.py") &&
+    directory.exists("songs");
+}
+
+QString CLibrary::findSongbookPath()
+{
+  QStringList paths;
+  paths << QString("%1/songbook").arg(QDir::homePath())
+	<< QString("%1/songbook").arg(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+
+  QString path;
+  foreach(path, paths)
+    if(checkSongbookPath(path))
+      return path;
+
+  return QDir::homePath();
 }
 
 QDir CLibrary::directory() const
