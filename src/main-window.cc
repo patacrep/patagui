@@ -548,7 +548,7 @@ void CMainWindow::open()
 {
   QString filename = QFileDialog::getOpenFileName(this,
                                                   tr("Open"),
-                                                  workingPath(),
+                                                  QString("%1/books").arg(workingPath()),
                                                   tr("Songbook (*.sb)"));
   songbook()->load(filename);
   updateTitle(songbook()->filename());
@@ -559,7 +559,7 @@ void CMainWindow::save(bool forced)
   if (songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
     {
       if (forced)
-	songbook()->setFilename(QString("%1/default.sb").arg(workingPath()));
+	songbook()->setFilename(QString("%1/books/default.sb").arg(workingPath()));
       else if (!songbook()->filename().isEmpty())
 	saveAs();
     }
