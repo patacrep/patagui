@@ -533,7 +533,7 @@ void CMainWindow::build()
   builder->setUrlToOpen(QUrl(QString("file:///%1/%2").arg(workingPath()).arg(target)));
   builder->setStartMessage(tr("Building %1.").arg(target));
   builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
-  builder->setSuccessMessage(tr("Error during the building of %1, please check the log.").arg(target));
+  builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
 
   builder->execute();
 }
