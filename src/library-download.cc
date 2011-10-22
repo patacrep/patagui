@@ -126,6 +126,7 @@ void CLibraryDownload::downloadStart()
       connect(reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
       parent()->statusBar()->showMessage(tr("Download in progress ..."));
+      parent()->progressBar()->setRange(0,0);
       parent()->progressBar()->show();
       QDialog::accept();
     }
