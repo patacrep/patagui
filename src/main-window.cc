@@ -263,6 +263,7 @@ void CMainWindow::createActions()
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
+  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties"));
   m_preferencesAct->setStatusTip(tr("Configure the application"));
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
@@ -413,6 +414,7 @@ void CMainWindow::createToolBar()
   m_mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   m_mainToolBar->addAction(m_newSongAct);
   m_mainToolBar->addAction(m_buildAct);
+  m_mainToolBar->addAction(m_preferencesAct);
   addToolBar(m_mainToolBar);
 
   QCompleter *completer = new QCompleter;
