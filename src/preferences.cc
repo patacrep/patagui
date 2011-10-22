@@ -252,6 +252,7 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   , m_workingPathValid(0)
   , m_buildCommand(0)
   , m_cleanCommand(0)
+  , m_cleanallCommand(0)
 {
   m_workingPathValid = new QLabel;
 
@@ -265,6 +266,7 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
 
   m_buildCommand = new QLineEdit(this);
   m_cleanCommand = new QLineEdit(this);
+  m_cleanallCommand = new QLineEdit(this);
 
   readSettings();
 
@@ -294,10 +296,16 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   cleanCommandLayout->addWidget(m_cleanCommand);
   cleanCommandLayout->addWidget(cleanCommandResetButton);
   toolsLayout->addLayout(cleanCommandLayout);
+  QBoxLayout *cleanallCommandLayout = new QHBoxLayout;
+  QPushButton *cleanallCommandResetButton = new QPushButton(tr("reset"), this);
+  cleanallCommandLayout->addWidget(m_cleanallCommand);
+  cleanallCommandLayout->addWidget(cleanallCommandResetButton);
+  toolsLayout->addLayout(cleanallCommandLayout);
   toolsGroupBox->setLayout(toolsLayout);
 
   connect(buildCommandResetButton, SIGNAL(clicked()), SLOT(resetBuildCommand()));
   connect(cleanCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanCommand()));
+  connect(cleanallCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanallCommand()));
 
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -317,6 +325,7 @@ void OptionsPage::readSettings()
   settings.beginGroup("tools");
   m_buildCommand->setText(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
   m_cleanCommand->setText(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
+  m_cleanallCommand->setText(settings.value("cleanallCommand", PLATFORM_CLEANALL_COMMAND).toString());
   settings.endGroup();
 }
 
@@ -330,6 +339,7 @@ void OptionsPage::writeSettings()
   settings.beginGroup("tools");
   settings.setValue("buildCommand", m_buildCommand->text());
   settings.setValue("cleanCommand", m_cleanCommand->text());
+  settings.setValue("cleanallCommand", m_cleanallCommand->text());
   settings.endGroup();
 }
 
@@ -403,6 +413,11 @@ void OptionsPage::resetBuildCommand()
 void OptionsPage::resetCleanCommand()
 {
   m_cleanCommand->setText(PLATFORM_CLEAN_COMMAND);
+}
+
+void OptionsPage::resetCleanallCommand()
+{
+  m_cleanallCommand->setText(PLATFORM_CLEANALL_COMMAND);
 }
 
 // Editor Page

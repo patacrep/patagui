@@ -22,12 +22,15 @@
 #ifdef Q_WS_WIN
 #define PLATFORM_BUILD_COMMAND "cmd.exe /C make.bat %basename"
 #define PLATFORM_CLEAN_COMMAND "cmd.exe /C clean.bat"
+#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C clean.bat"
 #elseif __APPLE__
 #define PLATFORM_BUILD_COMMAND "make %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
+#define PLATFORM_CLEANALL_COMMAND "make cleanall"
 #else // UNIX/Linux
 #define PLATFORM_BUILD_COMMAND "make %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
+#define PLATFORM_CLEANALL_COMMAND "make cleanall"
 #endif
 
 #include <QDialog>
@@ -131,6 +134,7 @@ private slots:
   void checkWorkingPath(const QString &path);
   void resetBuildCommand();
   void resetCleanCommand();
+  void resetCleanallCommand();
 
 private:
   void readSettings();
@@ -141,6 +145,7 @@ private:
 
   QLineEdit *m_buildCommand;
   QLineEdit *m_cleanCommand;
+  QLineEdit *m_cleanallCommand;
 };
 
 /** \brief Editor is the config page used to specify options related
