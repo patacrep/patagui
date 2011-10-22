@@ -14,12 +14,16 @@ option(ENABLE_SVG_SUPPORT "allow to use SVG icons fallback" ON)
 option(ENABLE_LIBRARY_DOWNLOAD "allow the application to download songbooks" ON)
 
 # {{{ CFLAGS
-add_definitions(-ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
+if(WIN32)
+  add_definitions(-Wall)
+else()
+  add_definitions(-ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
     -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
     -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
     -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
     -Wmissing-format-attribute)
-# }}}
+endif()
+  # }}}
 
 # {{{ Find external utilities
 macro(a_find_program var prg req)
