@@ -19,6 +19,10 @@
 #ifndef __PREFERENCES_HH__
 #define __PREFERENCES_HH__
 
+#include <QDialog>
+#include <QWidget>
+#include <QScrollArea>
+
 #ifdef Q_WS_WIN
 #define PLATFORM_BUILD_COMMAND "cmd.exe /C make.bat %basename"
 #define PLATFORM_CLEAN_COMMAND "cmd.exe /C clean.bat"
@@ -34,10 +38,6 @@
 #define PLATFORM_CLEAN_COMMAND "make clean"
 #define PLATFORM_CLEANALL_COMMAND "make cleanall"
 #endif
-
-#include <QDialog>
-#include <QWidget>
-#include <QScrollArea>
 
 #include "config.hh"
 
