@@ -174,11 +174,13 @@ void CMainWindow::readSettings()
   setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
   setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
   setCleanallCommand(settings.value("cleanallCommand", "cmd.exe /C clean.bat").toString());
-#elseif __APPLE__
+#endif
+#ifdef __APPLE__
   setBuildCommand(settings.value("buildCommand", "make %target").toString());
   setCleanCommand(settings.value("cleanCommand", "make clean").toString());
   setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#else // UNIX/Linux
+#endif
+#ifdef Q_WS_X11
   setBuildCommand(settings.value("buildCommand", "make %target").toString());
   setCleanCommand(settings.value("cleanCommand", "make clean").toString());
   setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
