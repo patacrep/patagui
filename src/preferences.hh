@@ -23,11 +23,15 @@
 #include <QWidget>
 #include <QScrollArea>
 
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN32)
 #define PLATFORM_BUILD_COMMAND "cmd.exe /C make.bat %basename"
 #define PLATFORM_CLEAN_COMMAND "cmd.exe /C clean.bat"
 #define PLATFORM_CLEANALL_COMMAND "cmd.exe /C clean.bat"
-#else //Apple/Linux
+#elif defined(Q_OS_MAC)
+#define PLATFORM_BUILD_COMMAND "make %target"
+#define PLATFORM_CLEAN_COMMAND "make clean"
+#define PLATFORM_CLEANALL_COMMAND "make cleanall"
+#else //Unix/Linux
 #define PLATFORM_BUILD_COMMAND "make %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
 #define PLATFORM_CLEANALL_COMMAND "make cleanall"

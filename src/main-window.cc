@@ -170,11 +170,15 @@ void CMainWindow::readSettings()
   setCleanallCommand(settings.value("cleanallCommand", PLATFORM_CLEAN_COMMAND).toString());
 
   settings.beginGroup("tools");
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN32)
   setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
   setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
   setCleanallCommand(settings.value("cleanallCommand", "cmd.exe /C clean.bat").toString());
-#else //Apple/Linux
+#elif defined(Q_OS_APPLE)
+  setBuildCommand(settings.value("buildCommand", "make %target").toString());
+  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
+  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
+#else //Unix/Linux
   setBuildCommand(settings.value("buildCommand", "make %target").toString());
   setCleanCommand(settings.value("cleanCommand", "make clean").toString());
   setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
