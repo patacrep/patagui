@@ -53,6 +53,9 @@ public slots:
   void downloadFinished();
   void downloadStart();
 
+private slots:
+  void downloadProgress(qint64 bytesRead, qint64 totalBytes);
+
 private:
   CMainWindow * parent();
 
