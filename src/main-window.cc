@@ -817,8 +817,8 @@ void CMainWindow::noDataNotification(const QDir &directory)
 
 void CMainWindow::downloadDialog()
 {
-  CLibraryDownload libraryDownload(this);
-  libraryDownload.exec();
+  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
+  libraryDownload->exec();
 }
 
 void CMainWindow::cleanDialog()
