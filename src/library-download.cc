@@ -191,7 +191,7 @@ void CLibraryDownload::downloadFinished()
 	  QDir::setCurrent(oldCurrent.absolutePath());
 	}
       // remove the downloaded archive after decompressing
-      dir.remove(filename);
+      dir.remove(filepath);
       parent()->statusBar()->showMessage(tr("Download completed"));
     }
 
