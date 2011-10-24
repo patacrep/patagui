@@ -27,13 +27,7 @@
 #define PLATFORM_BUILD_COMMAND "cmd.exe /C make.bat %basename"
 #define PLATFORM_CLEAN_COMMAND "cmd.exe /C clean.bat"
 #define PLATFORM_CLEANALL_COMMAND "cmd.exe /C clean.bat"
-#endif
-#ifdef __APPLE__
-#define PLATFORM_BUILD_COMMAND "make %target"
-#define PLATFORM_CLEAN_COMMAND "make clean"
-#define PLATFORM_CLEANALL_COMMAND "make cleanall"
-#endif
-#ifdef Q_WS_X11
+#else //Apple/Linux
 #define PLATFORM_BUILD_COMMAND "make %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
 #define PLATFORM_CLEANALL_COMMAND "make cleanall"
