@@ -337,7 +337,7 @@ void CMainWindow::setToolBarDisplayed(bool value)
     }
 }
 
-bool CMainWindow::isToolBarDisplayed( )
+bool CMainWindow::isToolBarDisplayed()
 {
   return m_isToolBarDisplayed;
 }
@@ -348,7 +348,7 @@ void CMainWindow::setStatusbarDisplayed(bool value)
   statusBar()->setVisible(value);
 }
 
-bool CMainWindow::isStatusbarDisplayed( )
+bool CMainWindow::isStatusbarDisplayed()
 {
   return m_isStatusbarDisplayed;
 }
@@ -828,8 +828,8 @@ void CMainWindow::cleanDialog()
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
 						     QDialogButtonBox::Cancel);
-  connect( buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()) );
-  connect( buttonBox, SIGNAL(rejected()), dialog, SLOT(close()) );
+  connect(buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), dialog, SLOT(close()));
 
   m_tempFilesmodel = new QFileSystemModel;
   m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());

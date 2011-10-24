@@ -57,13 +57,13 @@ void CLibrary::writeSettings()
   settings.endGroup();
 }
 
-bool CLibrary::checkSongbookPath(const QString & path)
+bool CLibrary::checkSongbookPath(const QString &path)
 {
   QDir directory(path);
-  return directory.exists() &&
-    directory.exists("makefile") &&
-    directory.exists("songbook.py") &&
-    directory.exists("songs");
+  return directory.exists()
+    && directory.exists("makefile")
+    && directory.exists("songbook.py")
+    && directory.exists("songs");
 }
 
 QString CLibrary::findSongbookPath()
@@ -74,8 +74,10 @@ QString CLibrary::findSongbookPath()
 
   QString path;
   foreach(path, paths)
-    if(checkSongbookPath(path))
-      return path;
+    {
+      if (checkSongbookPath(path))
+        return path;
+    }
 
   return QDir::homePath();
 }
@@ -113,8 +115,7 @@ QAbstractListModel * CLibrary::completionModel()
   return m_completionModel;
 }
 
-
-CMainWindow* CLibrary::parent() const
+CMainWindow * CLibrary::parent() const
 {
   return m_parent;
 }
