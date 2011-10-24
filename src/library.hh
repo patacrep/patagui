@@ -72,7 +72,6 @@ public:
   CLibrary(CMainWindow* parent);
   ~CLibrary();
 
-  void readSettings();
   void writeSettings();
 
   bool checkSongbookPath(const QString & path);
@@ -99,6 +98,7 @@ public:
 public slots:
   void update();
   void updateSong(const QString & path);
+  void readSettings();
 
 signals:
   void wasModified();
