@@ -788,10 +788,9 @@ void CMainWindow::updateNotification(const QString &path)
       m_updateAvailable->addAction(m_libraryUpdateAct);
     }
 
-  m_updateAvailable->setMessage
-    (QString(tr("<strong>The following directory has been modified:</strong><br/>"
-		"  %1 <br/>"
-		"Do you want to update the library to reflect these changes?")).arg(path));
+  m_updateAvailable->setMessage(tr("<strong>The following directory has been modified:</strong><br/>"
+                                   "  %1 <br/>"
+                                   "Do you want to update the library to reflect these changes?").arg(path));
 }
 
 void CMainWindow::noDataNotification(const QDir &directory)
@@ -808,9 +807,8 @@ void CMainWindow::noDataNotification(const QDir &directory)
     }
   else
     {
-      m_noDataInfo->setMessage
-	(QString(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
-		    "Do you want to download the latest songs library?").arg(directory.canonicalPath())));
+      m_noDataInfo->setMessage(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
+                                  "Do you want to download the latest songs library?").arg(directory.canonicalPath()));
       m_noDataInfo->show();
     }
 }
@@ -870,7 +868,7 @@ void CMainWindow::cleanDialog()
       connect(builder, SIGNAL(readOnStandardError(const QString &)),
               log(), SLOT(appendPlainText(const QString &)));
 
-      if(cleanAllButton->isChecked())
+      if (cleanAllButton->isChecked())
 	builder->setCommand(cleanallCommand());
       else
 	builder->setCommand(cleanCommand());
@@ -887,11 +885,11 @@ void CMainWindow::cleanDialog()
 
 void CMainWindow::updateTempFilesView(int state)
 {
-  if(state == Qt::Checked)
+  if (state == Qt::Checked)
     {
       m_tempFilesmodel->setNameFilters(m_tempFilesmodel->nameFilters() << "*.pdf");
     }
-  else if(m_tempFilesmodel->nameFilters().contains("*.pdf"))
+  else if (m_tempFilesmodel->nameFilters().contains("*.pdf"))
     {
       QStringList list  = m_tempFilesmodel->nameFilters();
       list.removeLast();
