@@ -95,6 +95,7 @@ void CSongPanel::update()
   m_albumLabel->setText(library()->data(currentIndex(), CLibrary::AlbumRole).toString());
   
   QPixmap pixmap = library()->data(currentIndex(), CLibrary::CoverFullRole).value< QPixmap >();
-  pixmap = pixmap.scaled(128,128,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+  if(!pixmap.isNull())
+    pixmap = pixmap.scaled(128,128,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
   m_coverLabel->setPixmap(pixmap);
 }
