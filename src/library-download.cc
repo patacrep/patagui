@@ -41,7 +41,7 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   , m_url()
   , m_path()
 {
-  setWindowTitle(tr("Download songs library"));
+  setWindowTitle(tr("Download"));
 
   m_manager = new QNetworkAccessManager;
 
