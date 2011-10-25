@@ -57,13 +57,13 @@ void CLibrary::writeSettings()
   settings.endGroup();
 }
 
-bool CLibrary::checkSongbookPath(const QString & path)
+bool CLibrary::checkSongbookPath(const QString &path)
 {
   QDir directory(path);
-  return directory.exists() &&
-    directory.exists("makefile") &&
-    directory.exists("songbook.py") &&
-    directory.exists("songs");
+  return directory.exists()
+    && directory.exists("makefile")
+    && directory.exists("songbook.py")
+    && directory.exists("songs");
 }
 
 QString CLibrary::findSongbookPath()
@@ -74,8 +74,10 @@ QString CLibrary::findSongbookPath()
 
   QString path;
   foreach(path, paths)
-    if(checkSongbookPath(path))
-      return path;
+    {
+      if (checkSongbookPath(path))
+        return path;
+    }
 
   return QDir::homePath();
 }
@@ -93,14 +95,11 @@ void CLibrary::setDirectory(const QString &directory)
 
 void CLibrary::setDirectory(const QDir &directory)
 {
-  if (m_directory != directory)
-    {
-      m_directory = directory;
-      QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
-      m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
-      writeSettings();
-      emit(directoryChanged(m_directory));
-    }
+  m_directory = directory;
+  QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
+  m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
+  writeSettings();
+  emit(directoryChanged(m_directory));
 }
 
 QStringList CLibrary::templates() const
@@ -113,8 +112,7 @@ QAbstractListModel * CLibrary::completionModel()
   return m_completionModel;
 }
 
-
-CMainWindow* CLibrary::parent() const
+CMainWindow * CLibrary::parent() const
 {
   return m_parent;
 }

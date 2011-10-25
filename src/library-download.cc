@@ -126,7 +126,7 @@ void CLibraryDownload::downloadStart()
       connect(reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
       connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
-	      this, SLOT(downloadProgress(qint64,qint64)));
+              this, SLOT(downloadProgress(qint64,qint64)));
       parent()->statusBar()->showMessage(tr("Download in progress ..."));
       parent()->progressBar()->setRange(0,0);
       parent()->progressBar()->show();
@@ -191,7 +191,7 @@ void CLibraryDownload::downloadFinished()
 	  QDir::setCurrent(oldCurrent.absolutePath());
 	}
       // remove the downloaded archive after decompressing
-      dir.remove(filename);
+      dir.remove(filepath);
       parent()->statusBar()->showMessage(tr("Download completed"));
     }
 
