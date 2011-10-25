@@ -257,6 +257,7 @@ void CLibrary::update()
   m_completionModel->setStringList(wordList);
 
   parent()->progressBar()->setTextVisible(false);
+  parent()->progressBar()->setRange(0, 0);
   parent()->progressBar()->hide();
   parent()->statusBar()->showMessage(tr("Song database updated."));
   emit(wasModified());
