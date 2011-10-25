@@ -49,12 +49,15 @@ CSongItemDelegate::~CSongItemDelegate()
 
 void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+  QStyleOptionViewItem opt = option;
+  opt.state &= ~QStyle::State_HasFocus;
+
   switch (index.column())
     {
     case 2:
       {
-        if (option.state & QStyle::State_Selected)
-          painter->fillRect(option.rect, option.palette.highlight());
+        if (opt.state & QStyle::State_Selected)
+          painter->fillRect(opt.rect, opt.palette.highlight());
 
         if (index.model()->data(index, CLibrary::LilypondRole).toBool())
           {
@@ -62,16 +65,16 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             if (QPixmapCache::find("lilypond-checked", &pixmap))
               {
                 QApplication::style()->drawItemPixmap(painter,
-                                                      option.rect,
+                                                      opt.rect,
                                                       Qt::AlignCenter,
                                                       pixmap);
               }
             else
               {
                 QApplication::style()->drawItemText(painter,
-                                                    option.rect,
+                                                    opt.rect,
                                                     Qt::AlignCenter,
-                                                    option.palette,
+                                                    opt.palette,
                                                     true,
                                                     tr("yes"));
               }
@@ -80,8 +83,8 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
       break;
     case 4:
       {
-        if (option.state & QStyle::State_Selected)
-          painter->fillRect(option.rect, option.palette.highlight());
+        if (opt.state & QStyle::State_Selected)
+          painter->fillRect(opt.rect, opt.palette.highlight());
 
         // draw the cover
         QPixmap pixmap;
@@ -90,20 +93,20 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
           {
             pixmap = qVariantValue< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole));
           }
-        QRect coverRectangle(option.rect.left(), option.rect.top() + 2,
-                             32, option.rect.height() - 4);
+        QRect coverRectangle(opt.rect.left(), opt.rect.top() + 2,
+                             32, opt.rect.height() - 4);
         QApplication::style()->drawItemPixmap(painter,
                                               coverRectangle,
                                               Qt::AlignCenter,
                                               pixmap);
 
         // draw the album title
-        QRect albumRectangle = option.rect;
+        QRect albumRectangle = opt.rect;
         albumRectangle.setTopLeft(coverRectangle.topRight());
         QApplication::style()->drawItemText(painter,
                                             albumRectangle,
                                             Qt::AlignLeft | Qt::AlignVCenter,
-                                            option.palette,
+                                            opt.palette,
                                             true,
                                             index.model()->data(index, CLibrary::AlbumRole).toString());
       }
@@ -112,14 +115,14 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
       {
         QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
         QPixmap pixmap;
-        if (option.state & QStyle::State_Selected)
-          painter->fillRect(option.rect, option.palette.highlight());
+        if (opt.state & QStyle::State_Selected)
+          painter->fillRect(opt.rect, opt.palette.highlight());
         if (QPixmapCache::find(QLocale(lang).name(), &pixmap))
           {
             //painter->save();
             //draw something different
             QApplication::style()->drawItemPixmap(painter,
-                                                  option.rect,
+                                                  opt.rect,
                                                   Qt::AlignCenter,
                                                   pixmap);
 
@@ -137,16 +140,16 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         else
           {
             QApplication::style()->drawItemText(painter,
-                                                option.rect,
+                                                opt.rect,
                                                 Qt::AlignCenter,
-                                                option.palette,
+                                                opt.palette,
                                                 true,
                                                 QLocale::languageToString(lang));
           }
       }
       break;
     default:
-      QStyledItemDelegate::paint(painter, option, index);
+      QStyledItemDelegate::paint(painter, opt, index);
       break;
     }
 }
