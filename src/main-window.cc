@@ -824,7 +824,7 @@ void CMainWindow::downloadDialog()
 void CMainWindow::cleanDialog()
 {
   QDialog *dialog = new QDialog(this);
-  dialog->setWindowTitle(tr("Remove temporary files"));
+  dialog->setWindowTitle(tr("Clean"));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
 						     QDialogButtonBox::Cancel);
