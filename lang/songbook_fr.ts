@@ -395,32 +395,32 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
 <context>
     <name>CLibrary</name>
     <message>
-        <location filename="../src/library.cc" line="150"/>
+        <location filename="../src/library.cc" line="171"/>
         <source>Lilypond music sheet</source>
         <translation>Partitions de musique Lilypond</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="108"/>
+        <location filename="../src/library.cc" line="129"/>
         <source>Artist</source>
         <translation>Artiste</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="106"/>
+        <location filename="../src/library.cc" line="127"/>
         <source>Title</source>
         <translation>Titre</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="110"/>
+        <location filename="../src/library.cc" line="131"/>
         <source>Lilypond</source>
         <translation>Lilypond</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="112"/>
+        <location filename="../src/library.cc" line="133"/>
         <source>Path</source>
         <translation>Chemin</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="114"/>
+        <location filename="../src/library.cc" line="135"/>
         <source>Album</source>
         <translation>Album</translation>
     </message>
@@ -429,12 +429,12 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
         <translation type="obsolete">Pochette</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="116"/>
+        <location filename="../src/library.cc" line="137"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="240"/>
+        <location filename="../src/library.cc" line="262"/>
         <source>Song database updated.</source>
         <translation>La base de données des chansons a été mise à jour.</translation>
     </message>
@@ -450,15 +450,15 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
 <context>
     <name>CLibraryDownload</name>
     <message>
-        <location filename="../src/library-download.cc" line="44"/>
         <source>Download songs library</source>
-        <translation>Télécharger la bibliothèque de chansons</translation>
+        <translation type="obsolete">Télécharger la bibliothèque de chansons</translation>
     </message>
     <message>
         <source>Install directroy</source>
         <translation type="obsolete">Répertoire d&apos;installation</translation>
     </message>
     <message>
+        <location filename="../src/library-download.cc" line="44"/>
         <location filename="../src/library-download.cc" line="83"/>
         <source>Download</source>
         <translation>Télécharger</translation>
@@ -553,6 +553,7 @@ Do you want to proceed anyway?</source>
     </message>
     <message>
         <location filename="../src/library-view.cc" line="89"/>
+        <location filename="../src/library-view.cc" line="98"/>
         <source>Information</source>
         <translation>Propriétés</translation>
     </message>
@@ -666,102 +667,102 @@ Do you want to proceed anyway?</source>
         <translation type="obsolete">Sélectionner/Déselectionner les chansons en espagnol</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="288"/>
+        <location filename="../src/main-window.cc" line="289"/>
         <source>Update</source>
         <translation>Mise à jour</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="295"/>
+        <location filename="../src/main-window.cc" line="296"/>
         <source>Download songs from remote location</source>
         <translation>Télécharger des chansons depuis une adresse distante</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="305"/>
+        <location filename="../src/main-window.cc" line="306"/>
         <source>ToolBar</source>
         <translation>Barre d&apos;outils</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="318"/>
+        <location filename="../src/main-window.cc" line="319"/>
         <source>Build PDF</source>
         <translation>Générer PDF</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="320"/>
+        <location filename="../src/main-window.cc" line="321"/>
         <source>Generate pdf from selected songs</source>
         <translation>Construire le pdf depuis les chansons sélectionnées</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="388"/>
+        <location filename="../src/main-window.cc" line="389"/>
         <source>&amp;Editor</source>
         <translation>&amp;Éditeur</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="409"/>
+        <location filename="../src/main-window.cc" line="410"/>
         <source>Song tools</source>
         <translation>Outils d&apos;une chanson</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="459"/>
+        <location filename="../src/main-window.cc" line="460"/>
         <source>About Patacrep! Songbook Client</source>
         <translation>À propos du Songbook Client Patacrep!</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="462"/>
+        <location filename="../src/main-window.cc" line="463"/>
         <source>This program allows to build customized songbooks from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</source>
         <translation>Cette application permet de construire des recueils personnalisés pour les chansons disponibles sur : &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="470"/>
+        <location filename="../src/main-window.cc" line="471"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version:&lt;/b&gt; %2&lt;/p&gt;&lt;p&gt;&lt;b&gt;Authors:&lt;/b&gt; %3&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version :&lt;/b&gt; %2&lt;/p&gt;&lt;p&gt;&lt;b&gt;Auteurs :&lt;/b&gt; %3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="482"/>
+        <location filename="../src/main-window.cc" line="483"/>
         <source>You did not select any song. 
  Do you want to build the songbook with all songs?</source>
         <translation>Aucune chanson n&apos;a été sélectionnée.
 Voulez-vous construire le recueil avec toutes les chansons disponibles ?</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="495"/>
+        <location filename="../src/main-window.cc" line="496"/>
         <source>The songbook file %1 is invalid. Build aborted.</source>
         <translation>Le recueil %1 n&apos;est pas valide. La génération du pdf a été annulée.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="519"/>
-        <location filename="../src/main-window.cc" line="877"/>
+        <location filename="../src/main-window.cc" line="520"/>
+        <location filename="../src/main-window.cc" line="878"/>
         <source>Cleaning the build directory.</source>
         <translation>Nettoyage du répertoire de compilation.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="520"/>
-        <location filename="../src/main-window.cc" line="878"/>
+        <location filename="../src/main-window.cc" line="521"/>
+        <location filename="../src/main-window.cc" line="879"/>
         <source>Build directory cleaned.</source>
         <translation>Répertoire de compilation nettoyé.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="521"/>
-        <location filename="../src/main-window.cc" line="879"/>
+        <location filename="../src/main-window.cc" line="522"/>
+        <location filename="../src/main-window.cc" line="880"/>
         <source>Error during cleaning, please check the log.</source>
         <translation>Erreur lors du nettoyage, veuillez consultez les traces de compilation.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="534"/>
+        <location filename="../src/main-window.cc" line="535"/>
         <source>Building %1.</source>
         <translation>Génération du fichier %1.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="535"/>
+        <location filename="../src/main-window.cc" line="536"/>
         <source>%1 successfully built.</source>
         <translation>Le fichier %1 a été correctement généré.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="536"/>
+        <location filename="../src/main-window.cc" line="537"/>
         <source>Error during the building of %1, please check the log.</source>
         <translation>Erreur lors de la génération du fichier %1, veuillez consulter les traces de compilation.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="691"/>
+        <location filename="../src/main-window.cc" line="692"/>
         <source>You are about to remove a song from the library.
 Yes : The song will only be deleted from the library and can be retrieved by rebuilding the library
 No  : Nothing will be deleted
@@ -774,14 +775,13 @@ Supprimer le fichier : le fichier %1 sera supprimé
 En cas de doute, cliquez sur Non.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="700"/>
+        <location filename="../src/main-window.cc" line="701"/>
         <source>Are you sure?</source>
         <translation>Êtes-vous sûr ?</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="826"/>
         <source>Remove temporary files</source>
-        <translation>Suppression des fichiers temporaires</translation>
+        <translation type="obsolete">Suppression des fichiers temporaires</translation>
     </message>
     <message>
         <source>Unable to establish a database connection.
@@ -790,12 +790,12 @@ This application needs SQLite support.</source>
 Cette application a besoin de SQLite.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="791"/>
+        <location filename="../src/main-window.cc" line="792"/>
         <source>&lt;strong&gt;The following directory has been modified:&lt;/strong&gt;&lt;br/&gt;  %1 &lt;br/&gt;Do you want to update the library to reflect these changes?</source>
         <translation>&lt;strong&gt;Le répertoire suivant a été modifié :&lt;/strong&gt;&lt;br/&gt;  %1 &lt;br/&gt;Voulez-vous mettre à jour la biblothèque pour prendre en compte ces changements ?</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="699"/>
+        <location filename="../src/main-window.cc" line="700"/>
         <source>Removing song from Library.</source>
         <translation>Suppression d&apos;une chanson dans la bibliothèque.</translation>
     </message>
@@ -805,57 +805,57 @@ Cette application a besoin de SQLite.</translation>
         <translation>Sélection : %1/%2</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="268"/>
+        <location filename="../src/main-window.cc" line="269"/>
         <source>Check all</source>
         <translation>Tout sélectionner</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="270"/>
+        <location filename="../src/main-window.cc" line="271"/>
         <source>Check all songs</source>
         <translation>Sélectionne toutes les chansons</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="273"/>
+        <location filename="../src/main-window.cc" line="274"/>
         <source>Uncheck all</source>
         <translation>Tout déselectionner</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="275"/>
+        <location filename="../src/main-window.cc" line="276"/>
         <source>Uncheck all songs</source>
         <translation>Déselectionne l&apos;ensemble des chansons</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="278"/>
+        <location filename="../src/main-window.cc" line="279"/>
         <source>Toggle all</source>
         <translation>Inverser la sélection</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="280"/>
+        <location filename="../src/main-window.cc" line="281"/>
         <source>Toggle the checked state of all songs</source>
         <translation>Inverse l&apos;état de sélection de l&apos;ensemble des chansons</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="703"/>
+        <location filename="../src/main-window.cc" line="704"/>
         <source>Delete file</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="737"/>
+        <location filename="../src/main-window.cc" line="738"/>
         <source>Close</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="738"/>
+        <location filename="../src/main-window.cc" line="739"/>
         <source>There is unsaved modification in the current editor, do you really want to close it?</source>
         <translation>Les modifications qui n&apos;ont pas été enregistrées seront perdues. Êtes-vous sûr de vouloir continuer ?</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="264"/>
+        <location filename="../src/main-window.cc" line="265"/>
         <source>Configure the application</source>
         <translation>Configure l&apos;application</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="811"/>
+        <location filename="../src/main-window.cc" line="812"/>
         <source>&lt;strong&gt;The directory &lt;b&gt;%1&lt;/b&gt; does not contain any song.&lt;/strong&gt;&lt;br/&gt;Do you want to download the latest songs library?</source>
         <translation>&lt;strong&gt;Le répertoire &lt;b&gt;%1&lt;/b&gt; ne contient aucune chanson.&lt;/strong&gt;&lt;br/&gt;Voulez-vous télécharger la dernière version de la bibliothèque ?</translation>
     </message>
@@ -888,7 +888,7 @@ Cette application a besoin de SQLite.</translation>
         <translation type="obsolete">Inverse les chansons sélectionnées dans la bibliothèque</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="284"/>
+        <location filename="../src/main-window.cc" line="285"/>
         <source>Adjust columns to contents</source>
         <translation>Ajuste les colonnes au contenu</translation>
     </message>
@@ -897,7 +897,7 @@ Cette application a besoin de SQLite.</translation>
         <translation type="obsolete">Rafraichir</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="289"/>
+        <location filename="../src/main-window.cc" line="290"/>
         <source>Update current song list from &quot;.sg&quot; files</source>
         <translation>Rafraichi la liste courante des chansons depuis les fichiers &quot;.sg&quot;</translation>
     </message>
@@ -910,7 +910,7 @@ Cette application a besoin de SQLite.</translation>
         <translation type="obsolete">Reconstruit la bibliothèque à partir des fichiers &quot;.sg&quot;</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="294"/>
+        <location filename="../src/main-window.cc" line="295"/>
         <source>Download</source>
         <translation>Télécharger</translation>
     </message>
@@ -923,17 +923,17 @@ Cette application a besoin de SQLite.</translation>
         <translation type="obsolete">Barre d&apos;outils</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="306"/>
+        <location filename="../src/main-window.cc" line="307"/>
         <source>Show or hide the toolbar in the current window</source>
         <translation>Affiche ou cache la barre d&apos;outils dans la fenêtre actuelle</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="311"/>
+        <location filename="../src/main-window.cc" line="312"/>
         <source>Statusbar</source>
         <translation>Barre d&apos;état</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="312"/>
+        <location filename="../src/main-window.cc" line="313"/>
         <source>Show or hide the statusbar in the current window</source>
         <translation>Affiche ou cache la barre d&apos;état dans la fenêtre actuelle</translation>
     </message>
@@ -954,17 +954,17 @@ Cette application a besoin de SQLite.</translation>
         <translation type="obsolete">Construction de la bibliothèque depuis les fichiers \&quot;.sg\&quot; terminée.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="365"/>
+        <location filename="../src/main-window.cc" line="366"/>
         <source>&amp;Songbook</source>
         <translation>&amp;Recueil</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="378"/>
+        <location filename="../src/main-window.cc" line="379"/>
         <source>&amp;Library</source>
         <translation>&amp;Bibliothèque</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="428"/>
+        <location filename="../src/main-window.cc" line="429"/>
         <source>Library tools</source>
         <translation>Outils de la bibliothèque</translation>
     </message>
@@ -1039,28 +1039,28 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
         <translation type="obsolete">Attention: une erreur est survenue pendant la construction du recueil.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="550"/>
+        <location filename="../src/main-window.cc" line="551"/>
         <source>Open</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="552"/>
-        <location filename="../src/main-window.cc" line="576"/>
+        <location filename="../src/main-window.cc" line="553"/>
+        <location filename="../src/main-window.cc" line="577"/>
         <source>Songbook (*.sb)</source>
         <translation>Recueil (*.sb)</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="574"/>
+        <location filename="../src/main-window.cc" line="575"/>
         <source>Save as</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="587"/>
+        <location filename="../src/main-window.cc" line="588"/>
         <source>New songbook</source>
         <translation>Nouveau recueil</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="588"/>
+        <location filename="../src/main-window.cc" line="589"/>
         <source>%1 - %2[*]</source>
         <translation>%1 - %2[*]</translation>
     </message>
@@ -1192,12 +1192,13 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Générer le pdf à partir des chansons sélectionnées.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="323"/>
+        <location filename="../src/main-window.cc" line="324"/>
+        <location filename="../src/main-window.cc" line="827"/>
         <source>Clean</source>
         <translation>Nettoyer</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="325"/>
+        <location filename="../src/main-window.cc" line="326"/>
         <source>Clean LaTeX temporary files</source>
         <translation>Supprimer les fichiers LaTeX temporaires</translation>
     </message>
@@ -1276,7 +1277,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&lt;br&gt;Cette application permet de créer des recueils de chansons en LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil peut afficher les paroles, tablatures ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 du 4 Juin 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="627"/>
+        <location filename="../src/main-window.cc" line="628"/>
         <source>Please select a song to edit.</source>
         <translation>Veuillez sélectionner une chanson à éditer.</translation>
     </message>
@@ -1285,7 +1286,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Veuillez remplir tous les champs obligatoires.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="680"/>
+        <location filename="../src/main-window.cc" line="681"/>
         <source>Please select a song to remove.</source>
         <translation>Veuillez sélectionner une chanson à supprimer.</translation>
     </message>
@@ -1310,7 +1311,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Afficher la sortie du processus de compilation LaTeX.</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="283"/>
+        <location filename="../src/main-window.cc" line="284"/>
         <source>Auto Adjust Columns</source>
         <translation>Ajuster automatiquement les colonnes</translation>
     </message>
@@ -1367,7 +1368,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&amp;Base de données</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="397"/>
+        <location filename="../src/main-window.cc" line="398"/>
         <source>&amp;View</source>
         <translation>&amp;Affichage</translation>
     </message>
@@ -1376,7 +1377,7 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">&amp;Outils</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="402"/>
+        <location filename="../src/main-window.cc" line="403"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
@@ -1704,7 +1705,7 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
 <context>
     <name>CSongItemDelegate</name>
     <message>
-        <location filename="../src/song-item-delegate.cc" line="76"/>
+        <location filename="../src/song-item-delegate.cc" line="79"/>
         <source>yes</source>
         <translation>oui</translation>
     </message>
@@ -1939,17 +1940,17 @@ du recueil</translation>
 <context>
     <name>EditorPage</name>
     <message>
-        <location filename="../src/preferences.cc" line="412"/>
+        <location filename="../src/preferences.cc" line="427"/>
         <source>Display line numbers</source>
         <translation>Afficher la numérotation des lignes</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="413"/>
+        <location filename="../src/preferences.cc" line="428"/>
         <source>Highlight current line</source>
         <translation>Afficher la ligne courante en surbrillance</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="430"/>
+        <location filename="../src/preferences.cc" line="445"/>
         <source>Font:</source>
         <translation>Police d&apos;écriture :</translation>
     </message>
@@ -1968,27 +1969,27 @@ du recueil</translation>
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../src/preferences.cc" line="492"/>
+        <location filename="../src/preferences.cc" line="507"/>
         <source>Proxy settings</source>
         <translation>Paramètres du proxy</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="495"/>
+        <location filename="../src/preferences.cc" line="510"/>
         <source>Hostname:</source>
         <translation>Hôte :</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="496"/>
+        <location filename="../src/preferences.cc" line="511"/>
         <source>Port:</source>
         <translation>Port :</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="497"/>
+        <location filename="../src/preferences.cc" line="512"/>
         <source>User:</source>
         <translation>Utilisateur :</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="498"/>
+        <location filename="../src/preferences.cc" line="513"/>
         <source>Password:</source>
         <translation>Mot de passe :</translation>
     </message>
@@ -1996,7 +1997,7 @@ du recueil</translation>
 <context>
     <name>OptionsPage</name>
     <message>
-        <location filename="../src/preferences.cc" line="273"/>
+        <location filename="../src/preferences.cc" line="275"/>
         <source>Directory for Patacrep Songbook</source>
         <translation>Répertoire du recueil de chansons Patacrep</translation>
     </message>
@@ -2021,68 +2022,69 @@ du recueil</translation>
         <translation type="obsolete">&lt;a href=&quot;http://git-scm.com/&quot;&gt;git&lt;/a&gt;: &lt;font color=orange&gt;%1&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="261"/>
+        <location filename="../src/preferences.cc" line="262"/>
         <source>Songbook path</source>
         <translation>Chemin du recueil</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="284"/>
+        <location filename="../src/preferences.cc" line="286"/>
         <source>External tools</source>
         <translation>Outils externes</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="288"/>
-        <location filename="../src/preferences.cc" line="293"/>
+        <location filename="../src/preferences.cc" line="290"/>
+        <location filename="../src/preferences.cc" line="295"/>
+        <location filename="../src/preferences.cc" line="300"/>
         <source>reset</source>
         <translation>reset</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="347"/>
+        <location filename="../src/preferences.cc" line="357"/>
         <source>the directory does not exist</source>
         <translation>le répertoire n&apos;existe pas</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="351"/>
+        <location filename="../src/preferences.cc" line="361"/>
         <source>makefile not found</source>
         <translation>makefile non trouvé</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="355"/>
+        <location filename="../src/preferences.cc" line="365"/>
         <source>songbook software (songbook.py) not found</source>
         <translation>logiciel songbook (songbook.py) non trouvé</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="359"/>
+        <location filename="../src/preferences.cc" line="369"/>
         <source>songs/ directory not found</source>
         <translation>repértoire &quot;songs/&quot; non trouvé</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="363"/>
+        <location filename="../src/preferences.cc" line="373"/>
         <source>img/ directory not found</source>
         <translation>répertoire &quot;img/&quot; non trouvé</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="368"/>
+        <location filename="../src/preferences.cc" line="378"/>
         <source>lilypond/ directory not found</source>
         <translation>répertoire &quot;lilypond/&quot; non trouvé</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="373"/>
+        <location filename="../src/preferences.cc" line="383"/>
         <source>utils/ directory not found</source>
         <translation>répertoire &quot;utils/&quot; non trouvé</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="379"/>
+        <location filename="../src/preferences.cc" line="389"/>
         <source>The directory is valid</source>
         <translation>Le répertoire est valide</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="385"/>
+        <location filename="../src/preferences.cc" line="395"/>
         <source>Error: </source>
         <translation>Errreur : </translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="389"/>
+        <location filename="../src/preferences.cc" line="399"/>
         <source>Warning: </source>
         <translation>Attention : </translation>
     </message>
@@ -2267,12 +2269,12 @@ du recueil</translation>
 <context>
     <name>SongbookPage</name>
     <message>
-        <location filename="../src/preferences.cc" line="569"/>
+        <location filename="../src/preferences.cc" line="584"/>
         <source>Songbook</source>
         <translation>Recueil</translation>
     </message>
     <message>
-        <location filename="../src/preferences.cc" line="572"/>
+        <location filename="../src/preferences.cc" line="587"/>
         <source>Template:</source>
         <translation>Modèle :</translation>
     </message>
