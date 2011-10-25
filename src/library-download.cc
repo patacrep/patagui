@@ -125,8 +125,6 @@ void CLibraryDownload::downloadStart()
       QNetworkReply *reply = m_manager->get(request);
       connect(reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
-      connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
-              this, SLOT(downloadProgress(qint64,qint64)));
       parent()->statusBar()->showMessage(tr("Download in progress ..."));
       parent()->progressBar()->setRange(0,0);
       parent()->progressBar()->show();
@@ -251,12 +249,6 @@ bool CLibraryDownload::decompress(const QString &filename, QDir &directory)
     }
   archive_read_finish(archive);
   return true;
-}
-
-void CLibraryDownload::downloadProgress(qint64 bytesRead, qint64 totalBytes)
-{
-  parent()->progressBar()->setMaximum(totalBytes);
-  parent()->progressBar()->setValue(bytesRead);
 }
 
 CMainWindow * CLibraryDownload::parent()
