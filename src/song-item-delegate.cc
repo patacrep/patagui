@@ -56,7 +56,7 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     {
     case 2:
       {
-        if (opt.state & QStyle::State_Selected)
+        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
           painter->fillRect(opt.rect, opt.palette.highlight());
 
         if (index.model()->data(index, CLibrary::LilypondRole).toBool())
@@ -83,7 +83,7 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
       break;
     case 4:
       {
-        if (opt.state & QStyle::State_Selected)
+        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
           painter->fillRect(opt.rect, opt.palette.highlight());
 
         // draw the cover
@@ -115,8 +115,9 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
       {
         QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
         QPixmap pixmap;
-        if (opt.state & QStyle::State_Selected)
+        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
           painter->fillRect(opt.rect, opt.palette.highlight());
+
         if (QPixmapCache::find(QLocale(lang).name(), &pixmap))
           {
             //painter->save();
