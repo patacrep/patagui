@@ -49,7 +49,7 @@ CSongItemDelegate::~CSongItemDelegate()
 
 void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-  QStyleOptionViewItem opt = option;
+  QStyleOptionViewItemV4 opt = option;
   opt.state &= ~QStyle::State_HasFocus;
 
   switch (index.column())
