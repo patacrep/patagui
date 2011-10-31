@@ -1,0 +1,8 @@
+.build*
+src/config.h
+build
+buildpackage.sh
+macos_specific/*priv*
+songbook-client
+*.dmg
+*.swp

@@ -45,7 +45,7 @@ void CLibrary::readSettings()
 {
   QSettings settings;
   settings.beginGroup("library");
-  setDirectory(settings.value("workingPath", QDir::homePath()).toString());
+  setDirectory(settings.value("workingPath", findSongbookPath()).toString());
   settings.endGroup();
 }
 
@@ -55,6 +55,31 @@ void CLibrary::writeSettings()
   settings.beginGroup("library");
   settings.setValue("workingPath", directory().absolutePath());
   settings.endGroup();
+}
+
+bool CLibrary::checkSongbookPath(const QString &path)
+{
+  QDir directory(path);
+  return directory.exists()
+    && directory.exists("makefile")
+    && directory.exists("songbook.py")
+    && directory.exists("songs");
+}
+
+QString CLibrary::findSongbookPath()
+{
+  QStringList paths;
+  paths << QString("%1/songbook").arg(QDir::homePath())
+	<< QString("%1/songbook").arg(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+
+  QString path;
+  foreach(path, paths)
+    {
+      if (checkSongbookPath(path))
+        return path;
+    }
+
+  return QDir::homePath();
 }
 
 QDir CLibrary::directory() const
@@ -70,14 +95,11 @@ void CLibrary::setDirectory(const QString &directory)
 
 void CLibrary::setDirectory(const QDir &directory)
 {
-  if (m_directory != directory)
-    {
-      m_directory = directory;
-      QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
-      m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
-      writeSettings();
-      emit(directoryChanged(m_directory));
-    }
+  m_directory = directory;
+  QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
+  m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
+  writeSettings();
+  emit(directoryChanged(m_directory));
 }
 
 QStringList CLibrary::templates() const
@@ -90,8 +112,7 @@ QAbstractListModel * CLibrary::completionModel()
   return m_completionModel;
 }
 
-
-CMainWindow* CLibrary::parent() const
+CMainWindow * CLibrary::parent() const
 {
   return m_parent;
 }
@@ -236,6 +257,7 @@ void CLibrary::update()
   m_completionModel->setStringList(wordList);
 
   parent()->progressBar()->setTextVisible(false);
+  parent()->progressBar()->setRange(0, 0);
   parent()->progressBar()->hide();
   parent()->statusBar()->showMessage(tr("Song database updated."));
   emit(wasModified());

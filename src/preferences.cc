@@ -42,7 +42,7 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_contentsWidget->setViewMode(QListView::IconMode);
   m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
-  m_contentsWidget->setMinimumHeight(476);
+  m_contentsWidget->setMinimumHeight(500);
   m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
   m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
@@ -88,7 +88,7 @@ CMainWindow* ConfigDialog::parent() const
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
-  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/preferences-system")));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/32x32/categories/preferences-system.png")));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -100,20 +100,20 @@ void ConfigDialog::createIcons()
   songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
-  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/preferences-desktop-theme")));
+  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/32x32/categories/preferences-desktop-theme.png")));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *editorButton = new QListWidgetItem(m_contentsWidget);
-  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor"));
+  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/32x32/apps/accessories-text-editor.png")));
   editorButton->setText(tr("Editor"));
   editorButton->setTextAlignment(Qt::AlignHCenter);
   editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
-  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/preferences-system-network")));
+  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/32x32/categories/preferences-system-network.png")));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -252,6 +252,7 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   , m_workingPathValid(0)
   , m_buildCommand(0)
   , m_cleanCommand(0)
+  , m_cleanallCommand(0)
 {
   m_workingPathValid = new QLabel;
 
@@ -265,6 +266,7 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
 
   m_buildCommand = new QLineEdit(this);
   m_cleanCommand = new QLineEdit(this);
+  m_cleanallCommand = new QLineEdit(this);
 
   readSettings();
 
@@ -294,10 +296,16 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   cleanCommandLayout->addWidget(m_cleanCommand);
   cleanCommandLayout->addWidget(cleanCommandResetButton);
   toolsLayout->addLayout(cleanCommandLayout);
+  QBoxLayout *cleanallCommandLayout = new QHBoxLayout;
+  QPushButton *cleanallCommandResetButton = new QPushButton(tr("reset"), this);
+  cleanallCommandLayout->addWidget(m_cleanallCommand);
+  cleanallCommandLayout->addWidget(cleanallCommandResetButton);
+  toolsLayout->addLayout(cleanallCommandLayout);
   toolsGroupBox->setLayout(toolsLayout);
 
   connect(buildCommandResetButton, SIGNAL(clicked()), SLOT(resetBuildCommand()));
   connect(cleanCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanCommand()));
+  connect(cleanallCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanallCommand()));
 
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -317,6 +325,7 @@ void OptionsPage::readSettings()
   settings.beginGroup("tools");
   m_buildCommand->setText(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
   m_cleanCommand->setText(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
+  m_cleanallCommand->setText(settings.value("cleanallCommand", PLATFORM_CLEANALL_COMMAND).toString());
   settings.endGroup();
 }
 
@@ -330,6 +339,7 @@ void OptionsPage::writeSettings()
   settings.beginGroup("tools");
   settings.setValue("buildCommand", m_buildCommand->text());
   settings.setValue("cleanCommand", m_cleanCommand->text());
+  settings.setValue("cleanallCommand", m_cleanallCommand->text());
   settings.endGroup();
 }
 
@@ -382,11 +392,11 @@ void OptionsPage::checkWorkingPath(const QString &path)
   QString mask("<font color=%1>%2%3.</font>");
   if (error)
     {
-      mask = mask.arg("red").arg("Error: ");
+      mask = mask.arg("red").arg(tr("Error: "));
     }
   else if (warning)
     {
-      mask = mask.arg("orange").arg("Warning: ");
+      mask = mask.arg("orange").arg(tr("Warning: "));
     }
   else
     {
@@ -405,27 +415,35 @@ void OptionsPage::resetCleanCommand()
   m_cleanCommand->setText(PLATFORM_CLEAN_COMMAND);
 }
 
+void OptionsPage::resetCleanallCommand()
+{
+  m_cleanallCommand->setText(PLATFORM_CLEANALL_COMMAND);
+}
+
 // Editor Page
 
 EditorPage::EditorPage(ConfigDialog *configDialog)
   : Page(configDialog)
+  , m_numberLinesCheckBox(new QCheckBox(tr("Display line numbers")))
+  , m_highlightCurrentLineCheckBox(new QCheckBox(tr("Highlight current line")))
+  , m_fontButton(new QPushButton)
 {
-  m_font = QFont("Monospace",10);
-  m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+  readSettings();
 
-  m_numberLinesCheckBox = new QCheckBox(tr("Display line numbers"));
-  m_highlightCurrentLineCheckBox = new QCheckBox(tr("Highlight current line"));
-  m_fontButton  = new QPushButton(QString("%1 %2").arg(m_font.family()).arg(QString::number(m_font.pointSize())), this);
+  if(m_fontstr.isEmpty())
+    {
+      m_font = QFont("Monospace",11);
+      m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+    }
+
+  updateFontButton();
   connect(m_fontButton, SIGNAL(clicked()), this, SLOT(selectFont()));
-  connect(this, SIGNAL(fontChanged()), this, SLOT(updateFontButton()));
 
   QFormLayout* layout = new QFormLayout;
   layout->addRow(m_numberLinesCheckBox);
   layout->addRow(m_highlightCurrentLineCheckBox);
-  layout->addRow(tr("Editor font:"), m_fontButton);
+  layout->addRow(tr("Font:"), m_fontButton);
   setLayout(layout);
-
-  readSettings();
 }
 
 void EditorPage::readSettings()
@@ -434,10 +452,10 @@ void EditorPage::readSettings()
   settings.beginGroup("editor");
   m_numberLinesCheckBox->setChecked(settings.value("lines", true).toBool());
   m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
-  m_font.fromString(settings.value("font", QString()).toString());
+  m_fontstr = settings.value("font", QString()).toString();
+  if(!m_fontstr.isEmpty())
+    m_font.fromString(m_fontstr);
   settings.endGroup();
-
-  emit(fontChanged());
 }
 
 void EditorPage::writeSettings()
@@ -453,16 +471,15 @@ void EditorPage::writeSettings()
 void EditorPage::selectFont()
 {
   bool ok;
-  m_font = QFontDialog::getFont(&ok, QFont("Monospace", 10), this);
-
-  if(ok) emit(fontChanged());
+  m_font = QFontDialog::getFont(&ok, m_font, this);
+  if(ok) updateFontButton();
 }
 
 void EditorPage::updateFontButton()
 {
   m_fontButton->setText(QString("%1 %2")
-			.arg(m_font.family())
-			.arg(QString::number(m_font.pointSize())));
+			.arg(QFontInfo(m_font).family())
+			.arg(QString::number(QFontInfo(m_font).pointSize())));
 }
 
 
@@ -551,7 +568,11 @@ SongbookPage::SongbookPage(ConfigDialog *configDialog)
 
   QComboBox* templateComboBox = new QComboBox;
   templateComboBox->addItems(songbook->library()->templates());
-  templateComboBox->setCurrentIndex(songbook->library()->templates().indexOf("patacrep.tmpl"));
+
+  int index = songbook->library()->templates().indexOf(songbook->tmpl());
+  if(index == -1)
+    index = songbook->library()->templates().indexOf("patacrep.tmpl");
+  templateComboBox->setCurrentIndex(index);
 
   connect(templateComboBox, SIGNAL(currentIndexChanged(const QString &)),
 	  songbook, SLOT(setTmpl(const QString &)));

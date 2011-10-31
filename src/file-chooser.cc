@@ -39,7 +39,7 @@ CFileChooser::CFileChooser()
   m_button = new QPushButton(tr("Browse"));
   connect(m_button, SIGNAL(clicked()), SLOT(browse()));
 
-  QLayout* layout = new QHBoxLayout;
+  QLayout *layout = new QHBoxLayout;
   layout->addWidget(m_lineEdit);
   layout->addWidget(m_button);
   // disable layout's margin to have a proper "one widget" appeareance

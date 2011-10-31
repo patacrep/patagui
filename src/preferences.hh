@@ -19,20 +19,23 @@
 #ifndef __PREFERENCES_HH__
 #define __PREFERENCES_HH__
 
-#ifdef Q_WS_WIN
-#define PLATFORM_BUILD_COMMAND "cmd.exe /C make.bat %basename"
-#define PLATFORM_CLEAN_COMMAND "cmd.exe /C clean.bat"
-#elseif __APPLE__
-#define PLATFORM_BUILD_COMMAND "make %target"
-#define PLATFORM_CLEAN_COMMAND "make clean"
-#else // UNIX/Linux
-#define PLATFORM_BUILD_COMMAND "make %target"
-#define PLATFORM_CLEAN_COMMAND "make clean"
-#endif
-
 #include <QDialog>
 #include <QWidget>
 #include <QScrollArea>
+
+#if defined(Q_OS_WIN32)
+#define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\make.bat %basename"
+#define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\clean.bat"
+#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\cleanall.bat"
+#elif defined(Q_OS_MAC)
+#define PLATFORM_BUILD_COMMAND "make %target"
+#define PLATFORM_CLEAN_COMMAND "make clean"
+#define PLATFORM_CLEANALL_COMMAND "make cleanall"
+#else //Unix/Linux
+#define PLATFORM_BUILD_COMMAND "make %target"
+#define PLATFORM_CLEAN_COMMAND "make clean"
+#define PLATFORM_CLEANALL_COMMAND "make cleanall"
+#endif
 
 #include "config.hh"
 
@@ -131,6 +134,7 @@ private slots:
   void checkWorkingPath(const QString &path);
   void resetBuildCommand();
   void resetCleanCommand();
+  void resetCleanallCommand();
 
 private:
   void readSettings();
@@ -141,6 +145,7 @@ private:
 
   QLineEdit *m_buildCommand;
   QLineEdit *m_cleanCommand;
+  QLineEdit *m_cleanallCommand;
 };
 
 /** \brief Editor is the config page used to specify options related
@@ -152,9 +157,6 @@ class EditorPage : public Page
 
 public:
   EditorPage(ConfigDialog *configDialog);
-
-signals:
-  void fontChanged();
 
 private slots:
   void selectFont();
@@ -168,6 +170,7 @@ private:
   QCheckBox *m_highlightCurrentLineCheckBox;
   QPushButton *m_fontButton;
   QFont m_font;
+  QString m_fontstr;
 };
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
