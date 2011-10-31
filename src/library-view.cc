@@ -95,6 +95,7 @@ void CLibraryView::createActions()
 void CLibraryView::songInfo()
 {
   QDialog* dialog = new QDialog;
+  dialog->setWindowTitle(tr("Information"));
   QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
   connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
 

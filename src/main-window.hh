@@ -60,6 +60,7 @@ class CMainWindow : public QMainWindow
 public slots:
   void setBuildCommand(const QString &command);
   void setCleanCommand(const QString &command);
+  void setCleanallCommand(const QString &command);
 
 public:
   CMainWindow();
@@ -74,6 +75,7 @@ public:
 
   const QString & buildCommand() const;
   const QString & cleanCommand() const;
+  const QString & cleanallCommand() const;
 
 protected:
   void closeEvent(QCloseEvent *event);
@@ -87,6 +89,7 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
+  void downloadDialog();
   void cleanDialog();
   void updateTempFilesView(int state);
   
@@ -148,6 +151,7 @@ private:
   bool m_isStatusbarDisplayed;
   QString m_buildCommand;
   QString m_cleanCommand;
+  QString m_cleanallCommand;
 
   CDialogNewSong *m_newSongDialog;
 

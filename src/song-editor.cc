@@ -49,7 +49,7 @@ CSongEditor::CSongEditor()
   // actions
   QAction* action = new QAction(tr("Save"), this);
   action->setShortcut(QKeySequence::Save);
-  action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/document-save")));
+  action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
   action->setStatusTip(tr("Save modifications"));
   connect(action, SIGNAL(triggered()), SLOT(save()));
   addAction(action);
@@ -57,21 +57,21 @@ CSongEditor::CSongEditor()
   //copy paste
   action = new QAction(tr("Cut"), this);
   action->setShortcut(QKeySequence::Cut);
-  action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/edit-cut")));
+  action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
   action->setStatusTip(tr("Cut the selection"));
   connect(action, SIGNAL(triggered()), SLOT(cut()));
   addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
-  action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/edit-copy")));
+  action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
   action->setStatusTip(tr("Copy the selection"));
   connect(action, SIGNAL(triggered()), SLOT(copy()));
   addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
-  action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/edit-paste")));
+  action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
   action->setStatusTip(tr("Paste clipboard content"));
   connect(action, SIGNAL(triggered()), SLOT(paste()));
   addAction(action);
@@ -81,14 +81,14 @@ CSongEditor::CSongEditor()
   //undo redo
   action = new QAction(tr("Undo"), this);
   action->setShortcut(QKeySequence::Undo);
-  action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/edit-undo")));
+  action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
   action->setStatusTip(tr("Undo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(undo()));
   addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
-  action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/edit-redo")));
+  action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
   action->setStatusTip(tr("Redo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(redo()));
   addAction(action);
@@ -123,7 +123,14 @@ void CSongEditor::readSettings()
   settings.beginGroup("editor");
 
   QFont font;
-  font.fromString(settings.value("font", QString()).toString());
+  QString fontstr = settings.value("font", QString()).toString();
+  if(fontstr.isEmpty())
+    {
+      font = QFont("Monospace",11);
+      font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
+    }
+
+  font.fromString(fontstr);
   setFont(font);
 
   setHighlightMode(settings.value("highlight", true).toBool());

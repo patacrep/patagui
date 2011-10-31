@@ -72,8 +72,10 @@ public:
   CLibrary(CMainWindow* parent);
   ~CLibrary();
 
-  void readSettings();
   void writeSettings();
+
+  bool checkSongbookPath(const QString & path);
+  QString findSongbookPath();
 
   QDir directory() const;
   void setDirectory(const QString &directory);
@@ -96,6 +98,7 @@ public:
 public slots:
   void update();
   void updateSong(const QString & path);
+  void readSettings();
 
 signals:
   void wasModified();

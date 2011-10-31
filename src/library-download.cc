@@ -41,7 +41,7 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   , m_url()
   , m_path()
 {
-  setWindowTitle(tr("Download songs library"));
+  setWindowTitle(tr("Download"));
 
   m_manager = new QNetworkAccessManager;
 
@@ -188,7 +188,7 @@ void CLibraryDownload::downloadFinished()
 	  QDir::setCurrent(oldCurrent.absolutePath());
 	}
       // remove the downloaded archive after decompressing
-      dir.remove(filename);
+      dir.remove(filepath);
       parent()->statusBar()->showMessage(tr("Download completed"));
     }
 
