@@ -38,15 +38,12 @@ public:
   CSongHeaderEditor(QWidget *parent = 0);
   ~CSongHeaderEditor();
 
-  bool isNewSong() const;
-
   Song & song();
 
   CSongEditor * songEditor();
   void setSongEditor(CSongEditor *songEditor);
 
 public slots:
-  void setNewSong(bool newSong);
   void update();
 
 private:
@@ -58,7 +55,6 @@ private:
   QLineEdit *m_capoLineEdit;
   QLabel *m_coverLabel;
 
-  bool m_newSong;
   CSongEditor *m_songEditor;
 };
 

@@ -52,6 +52,11 @@ public:
 
   Song & song();
 
+  bool isNewSong() const;
+
+public slots:
+  void setNewSong(bool newSong);
+
 signals:
   void labelChanged(const QString &label);
 
@@ -75,6 +80,7 @@ private:
   CSongHeaderEditor *m_songHeaderEditor;
   QToolBar *m_toolBar;
   Song m_song;
+  bool m_newSong;
 };
 
 #endif // __SONG_EDITOR_HH__

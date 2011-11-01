@@ -41,7 +41,6 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_columnCountLineEdit(new QLineEdit(this))
   , m_capoLineEdit(new QLineEdit(this))
   , m_coverLabel(new QLabel(this))
-  , m_newSong(true)
   , m_songEditor()
 {
   QBoxLayout *additionalInformationLayout = new QHBoxLayout();
@@ -74,16 +73,6 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
 
 CSongHeaderEditor::~CSongHeaderEditor()
 {}
-
-bool CSongHeaderEditor::isNewSong() const
-{
-  return m_newSong;
-}
-
-void CSongHeaderEditor::setNewSong(bool newSong)
-{
-  m_newSong = newSong;
-}
 
 Song & CSongHeaderEditor::song()
 {

@@ -40,6 +40,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_songHeaderEditor(0)
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_song()
+  , m_newSong(true)
 {
   m_editor->setUndoRedoEnabled(true);
 
@@ -322,4 +323,14 @@ bool CSongEditor::isModified() const
 Song & CSongEditor::song()
 {
   return m_song;
+}
+
+bool CSongEditor::isNewSong() const
+{
+  return m_newSong;
+}
+
+void CSongEditor::setNewSong(bool newSong)
+{
+  m_newSong = newSong;
 }
