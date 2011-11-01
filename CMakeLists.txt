@@ -19,6 +19,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/main-window.cc
   src/preferences.cc
   src/library.cc
+  src/song.cc
   src/library-view.cc
   src/songbook.cc
   src/song-editor.cc
