@@ -275,58 +275,9 @@ void CLibrary::addSongs(const QStringList &paths)
   emit(wasModified());
 }
 
-QRegExp CLibrary::reSong("begin\\{?song\\}?\\{([^[\\}]+)\\}[^[]*\\[([^]]*)\\]");
-QRegExp CLibrary::reArtist("by=([^,]+)");
-QRegExp CLibrary::reAlbum("album=([^,]+)");
-QRegExp CLibrary::reCoverName("cov=([^,]+)");
-QRegExp CLibrary::reLilypond("\\\\lilypond");
-QRegExp CLibrary::reLanguage("selectlanguage\\{([^\\}]+)");
-
-
-bool CLibrary::parseSong(const QString &path, Song &song)
-{
-  QFile file(path);
-
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-      qWarning() << "CLibrary::parseSong: unable to open " << path;
-      return false;
-    }
-
-  QTextStream stream (&file);
-  stream.setCodec("UTF-8");
-  QString fileStr = stream.readAll();
-  file.close();
-
-  song.path = path;
-
-  reSong.indexIn(fileStr);
-  song.title = SbUtils::latexToUtf8(reSong.cap(1));
-
-  reArtist.indexIn(reSong.cap(2));
-  song.artist = SbUtils::latexToUtf8(reArtist.cap(1));
-
-  reAlbum.indexIn(reSong.cap(2));
-  song.album = SbUtils::latexToUtf8(reAlbum.cap(1));
-
-  song.isLilypond = QBool(reLilypond.indexIn(fileStr) > -1);
-
-  reCoverName.indexIn(reSong.cap(2));
-  song.coverName = reCoverName.cap(1);
-
-  song.coverPath = QFileInfo(path).absolutePath();
-
-  reLanguage.indexIn(fileStr);
-  song.language = languageFromString(reLanguage.cap(1));
-
-  return true;
-}
-
 void CLibrary::addSong(const QString &path)
 {
-  Song song;
-  parseSong(path, song);
-  m_songs << song;
+  m_songs << Song::fromFile(path);
 }
 
 void CLibrary::removeSong(const QString &path)
@@ -364,16 +315,4 @@ int CLibrary::rowCount(const QModelIndex &) const
 int CLibrary::columnCount(const QModelIndex &) const
 {
   return 6;
-}
-
-QLocale::Language CLibrary::languageFromString(const QString &languageName)
-{
-  if (languageName == "french")
-    return QLocale::French;
-  else if (languageName == "english")
-    return QLocale::English;
-  else if (languageName == "spanish")
-    return QLocale::Spanish;
-
-  return QLocale::system().language();
 }

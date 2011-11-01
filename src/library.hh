@@ -26,6 +26,8 @@
 #ifndef __LIBRARY_HH__
 #define __LIBRARY_HH__
 
+#include "song.hh"
+
 #include <QAbstractTableModel>
 #include <QString>
 #include <QDir>
@@ -56,17 +58,6 @@ public:
     CoverFullRole = Qt::UserRole + 9,
     RelativePathRole = Qt::UserRole + 10,
     MaxRole = RelativePathRole
-  };
-
-  struct Song {
-    QString title;
-    QString artist;
-    QString album;
-    QString path;
-    QString coverName;
-    QString coverPath;
-    QLocale::Language language;
-    bool isLilypond;
   };
 
   CLibrary(CMainWindow* parent);
@@ -105,17 +96,6 @@ signals:
   void directoryChanged(const QDir &directory);
 
 protected:
-
-  bool parseSong(const QString &path, Song &song);
-
-  static QLocale::Language languageFromString(const QString &languageName = QString());
-
-  static QRegExp reSong;
-  static QRegExp reArtist;
-  static QRegExp reAlbum;
-  static QRegExp reCoverName;
-  static QRegExp reLilypond;
-  static QRegExp reLanguage;
 
 private:
   CMainWindow *m_parent;
