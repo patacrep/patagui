@@ -39,7 +39,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/utils/utils.cc
   src/code-editor.cc
   src/tab-widget.cc
-  src/song-panel.cc
   src/notification.cc
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
@@ -71,7 +70,6 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/utils/lineedit_p.hh
   src/code-editor.hh
   src/tab-widget.hh
-  src/song-panel.hh
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
