@@ -5,76 +5,61 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
-#ifndef __SONG_EDITOR_HH__
-#define __SONG_EDITOR_HH__
+#ifndef __SONG_HEADER_EDITOR_HH__
+#define __SONG_HEADER_EDITOR_HH__
 
 #include <QWidget>
 
 #include "song.hh"
 
 #include <QString>
-#include <QTextCursor>
-#include <QKeyEvent>
 
-class QToolBar;
+class CSongEditor;
 
-class CodeEditor;
-class CSongHeaderEditor;
+class QLabel;
+class QLineEdit;
 
-class CSongEditor : public QWidget
+class CSongHeaderEditor : public QWidget
 {
   Q_OBJECT
 
 public:
-  CSongEditor(QWidget *parent = 0);
-  ~CSongEditor();
+  CSongHeaderEditor(QWidget *parent = 0);
+  ~CSongHeaderEditor();
 
-  QString path();
-  void setPath(const QString &path);
-
-  QToolBar * toolBar();
-
-  void readSettings();
-  void writeSettings();
-
-  bool isModified() const;
+  bool isNewSong() const;
 
   Song & song();
 
-signals:
-  void labelChanged(const QString &label);
+  CSongEditor * songEditor();
+  void setSongEditor(CSongEditor *songEditor);
 
-protected:
-  virtual void keyPressEvent(QKeyEvent *event);
-
-private slots:
-  //write modifications of the textEdit into sg file.
-  void save();
-  void documentWasModified();
-  void insertVerse();
-  void insertChorus();
+public slots:
+  void setNewSong(bool newSong);
+  void update();
 
 private:
-  QString syntaxicColoration(const QString &string);
-  void indentSelection();
-  void indentLine(const QTextCursor &cursor);
-  void trimLine(const QTextCursor &cursor);
+  QLineEdit *m_titleLineEdit;
+  QLineEdit *m_artistLineEdit;
+  QLineEdit *m_albumLineEdit;
+  QLineEdit *m_languageLineEdit;
+  QLineEdit *m_columnCountLineEdit;
+  QLineEdit *m_capoLineEdit;
+  QLabel *m_coverLabel;
 
-  CodeEditor *m_editor;
-  CSongHeaderEditor *m_songHeaderEditor;
-  QToolBar *m_toolBar;
-  Song m_song;
+  bool m_newSong;
+  CSongEditor *m_songEditor;
 };
 
-#endif // __SONG_EDITOR_HH__
+#endif // __SONG_HEADER_EDITOR_HH__

@@ -387,9 +387,9 @@ void CMainWindow::createMenus()
   libraryMenu->addAction(m_libraryUpdateAct);
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
-  CSongEditor *editor = new CSongEditor();
+  CSongEditor *editor = new CSongEditor(this);
   QAction *action;
-  foreach (action, editor->actions())
+  foreach (action, editor->toolBar()->actions())
     {
       action->setDisabled(true);
       m_editorMenu->addAction(action);
@@ -643,7 +643,7 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
       return;
     }
 
-  CSongEditor *editor = new CSongEditor();
+  CSongEditor *editor = new CSongEditor(this);
   editor->setPath(path);
   if (title == QString())
     {
@@ -731,7 +731,7 @@ void CMainWindow::closeTab(int index)
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
   if (editor)
     {
-      if (editor->document()->isModified())
+      if (editor->isModified())
 	{
 	  QMessageBox::StandardButton answer = 
 	    QMessageBox::question(this,
