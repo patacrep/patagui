@@ -20,6 +20,7 @@
 #include "code-editor.hh"
 
 #include "highlighter.hh"
+#include "hunspell/hunspell.hxx"
 
 #include <QToolBar>
 #include <QAction>
@@ -27,6 +28,9 @@
 #include <QFile>
 #include <QTextStream>
 #include <QSettings>
+#include <QFileInfo>
+#include <QTextCodec>
+#include <QMenu>
 
 #include <QDebug>
 
@@ -37,8 +41,37 @@ CSongEditor::CSongEditor()
 {
   setUndoRedoEnabled(true);
 
+  //Spell-Checking
+  QString SpellDic = "./src/hunspell/dictionaries/en_GB.dic";
+  // create misspell actions in context menu
+  spell_dic=SpellDic.left(SpellDic.length()-4);
+  pChecker = new Hunspell(spell_dic.toLatin1()+".aff",spell_dic.toLatin1()+".dic");
+  
+  QFileInfo fi(SpellDic);
+  if (!(fi.exists() && fi.isReadable())){
+    delete pChecker;
+    pChecker=0;
+  }
+
+  // get user config dictionary
+  QSettings setting;
+  QString filePath = QFileInfo(setting.fileName()).absoluteFilePath();
+  filePath=filePath+"/User_"+QFileInfo(spell_dic.toLatin1()+".dic").fileName();
+  qDebug() << qPrintable(filePath);
+  fi=QFileInfo(filePath);
+  if (fi.exists() && fi.isReadable()){
+    pChecker->add_dic(filePath.toLatin1());
+  }
+  else filePath="";
+
+  addedWords.clear();
+
   CHighlighter *highlighter = new CHighlighter(document());
-  Q_UNUSED(highlighter);
+  highlighter->setSpellCheck(true);
+  highlighter->setDict(SpellDic);
+  
+  connect(this, SIGNAL(addWord(const QString &)),
+	  highlighter, SLOT(slot_addWord(const QString &)));
 
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
@@ -105,6 +138,13 @@ CSongEditor::CSongEditor()
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
   addAction(action);
+
+  for (int i = 0; i < MaxWords; ++i) 
+    {
+      misspelledWordsActs[i] = new QAction(this);
+      misspelledWordsActs[i]->setVisible(false);
+      connect(misspelledWordsActs[i], SIGNAL(triggered()), this, SLOT(correctWord()));
+    }
 
   readSettings();
 }
@@ -302,4 +342,107 @@ void CSongEditor::addAction(QAction* action)
 {
   toolBar()->addAction(action);
   m_actions.append(action);
+}
+
+void CSongEditor::correctWord() 
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    {
+      QString replacement = action->text();
+      QTextCursor cursor = cursorForPosition(lastPos);
+      //QTextCursor cursor = textCursor();
+      QString zeile = cursor.block().text();
+      cursor.select(QTextCursor::WordUnderCursor);
+      cursor.deleteChar();
+      cursor.insertText(replacement);
+    }
+}
+
+QStringList CSongEditor::getWordPropositions(const QString &word)
+{
+  QStringList wordList;
+  if(pChecker){
+    QByteArray encodedString;
+    QString spell_encoding=QString(pChecker->get_dic_encoding());
+    QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+    encodedString = codec->fromUnicode(word);
+    bool check = pChecker->spell(encodedString.data());
+    if(!check){
+      char ** wlst;
+      int ns = pChecker->suggest(&wlst,encodedString.data());
+      if (ns > 0)
+	{
+	  for (int i=0; i < ns; i++)
+	    {
+	      wordList.append(codec->toUnicode(wlst[i]));
+	      //free(wlst[i]);
+	    }
+	  //free(wlst);
+	  pChecker->free_list(&wlst, ns);
+	}// if ns >0
+    }// if check
+  }
+  return wordList;
+}
+
+void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu *menu = createStandardContextMenu();
+  lastPos=event->pos();
+  QTextCursor cursor = cursorForPosition(lastPos);
+  QString zeile = cursor.block().text();
+  int pos = cursor.columnNumber();
+  int end = zeile.indexOf(QRegExp("\\W+"),pos);
+  int begin = zeile.lastIndexOf(QRegExp("\\W+"),pos);
+  zeile=zeile.mid(begin+1,end-begin-1);
+  QStringList liste = getWordPropositions(zeile);
+  if (!liste.isEmpty())
+    {
+      menu->addSeparator();
+      menu->addAction(tr("Add .."), this, SLOT(slot_addWord()));
+      menu->addAction(tr("Ignore .."), this, SLOT(slot_ignoreWord()));
+      for (int i = 0; i < qMin(int(MaxWords),liste.size()); ++i) {
+	misspelledWordsActs[i]->setText(liste.at(i).trimmed());
+	misspelledWordsActs[i]->setVisible(true);
+	menu->addAction(misspelledWordsActs[i]);
+      }
+
+    } // if  misspelled
+  menu->exec(event->globalPos());
+  delete menu;
+}
+
+void CSongEditor::slot_ignoreWord()
+{
+  QTextCursor cursor = cursorForPosition(lastPos);
+  QString zeile = cursor.block().text();
+  int pos = cursor.columnNumber();
+  int end = zeile.indexOf(QRegExp("\\W+"),pos);
+  int begin = zeile.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
+  zeile=zeile.mid(begin+1,end-begin-1);
+  QByteArray encodedString;
+  QString spell_encoding=QString(pChecker->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(zeile);
+  pChecker->add(encodedString.data());
+  emit addWord(zeile);
+}
+
+void CSongEditor::slot_addWord()
+{
+  QTextCursor cursor = cursorForPosition(lastPos);
+  QString zeile = cursor.block().text();
+  int pos = cursor.columnNumber();
+  int end = zeile.indexOf(QRegExp("\\W+"),pos);
+  int begin = zeile.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
+  zeile=zeile.mid(begin+1,end-begin-1);
+  qDebug() << qPrintable(zeile);
+  QByteArray encodedString;
+  QString spell_encoding=QString(pChecker->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(zeile);
+  pChecker->add(encodedString.data());
+  addedWords.append(zeile);
+  emit addWord(zeile);
 }

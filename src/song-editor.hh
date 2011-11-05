@@ -25,6 +25,7 @@
 #include <QList>
 
 class QAction;
+class Hunspell;
 
 class CSongEditor : public CodeEditor
 {
@@ -46,9 +47,11 @@ public:
 
   void readSettings();
   void writeSettings();
+  QStringList getWordPropositions(const QString &word);
 
 signals:
   void labelChanged(const QString &label);
+  void addWord(const QString &word);
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -56,6 +59,13 @@ private slots:
   void documentWasModified();
   void insertVerse();
   void insertChorus();
+
+  void correctWord();
+  void slot_addWord();
+  void slot_ignoreWord();
+
+protected:
+  void contextMenuEvent(QContextMenuEvent *event);
 
 private:
   QString syntaxicColoration(const QString &);
@@ -66,6 +76,17 @@ private:
   QToolBar* m_toolBar;
   QString m_path;
   QList<QAction*> m_actions;
+
+  //Spell-checking
+  enum { MaxWords = 5 };
+  QAction *misspelledWordsActs[MaxWords];
+
+  QString spell_dic;
+  Hunspell *pChecker;
+
+  QPoint lastPos;
+
+  QStringList addedWords;
 };
 
 #endif // __SONG_EDITOR_HH__

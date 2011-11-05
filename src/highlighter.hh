@@ -25,16 +25,30 @@
 #include <QTextCharFormat>
 
 class QTextDocument;
+class Hunspell;
 
 class CHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
 
-  public:
+public:
   CHighlighter(QTextDocument *parent = 0);
+  ~CHighlighter();
+  void clearCheck();
+  QStringList misspelled();
+  QStringList correct();
+  void enableSpellChecking(const bool state);
+  void setSpellCheck(const bool state);
+  bool setDict(const QString SpellDic);
+
+public slots:
+  void slot_addWord(const QString &word);
 
 protected:
   void highlightBlock(const QString &text);
+  void spellCheck(const QString &text);
+  bool checkWord(QString word);
+
 
 private:
   struct HighlightingRule
@@ -61,6 +75,12 @@ private:
   QTextCharFormat m_latexWarningFormat;
   
   QTextCharFormat multiLineCommentFormat;
+
+  QString spell_dic, spell_encoding;
+  Hunspell * pChecker;
+  bool spellCheckActive,spellerError;
+  QTextCharFormat spellCheckFormat;
+  QTextCodec *codec;
 };
 
 #endif // __HIGHLIGHTER_HH__

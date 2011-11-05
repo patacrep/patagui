@@ -20,6 +20,7 @@
 #include <QtGui>
 
 #include "highlighter.hh"
+#include "hunspell/hunspell.hxx"
 
 CHighlighter::CHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
@@ -169,6 +170,18 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   commentStartExpression = QRegExp("/\\*");
   commentEndExpression = QRegExp("\\*/");
 
+  //Settings for online spellchecking
+  spellCheckFormat.setUnderlineColor(QColor(Qt::red));
+  spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+
+  spellCheckActive=false;
+  spellerError=!spellCheckActive;
+  pChecker = NULL;
+}
+
+CHighlighter::~CHighlighter()
+{
+  delete pChecker;
 }
 
 void CHighlighter::highlightBlock(const QString &text)
@@ -201,4 +214,100 @@ void CHighlighter::highlightBlock(const QString &text)
     setFormat(startIndex, commentLength, multiLineCommentFormat);
     startIndex = commentStartExpression.indexIn(text, startIndex + commentLength);
   }
+
+  spellCheck(text);
+}
+
+void CHighlighter::spellCheck(const QString &text)
+{
+  if (spellCheckActive) 
+    {
+      // split text into words
+      QString str = text.simplified();
+      if (!str.isEmpty()) 
+	{
+	  QStringList Checkliste = str.split(QRegExp("([^\\w,^\\\\]|(?=\\\\))+"),
+					     QString::SkipEmptyParts);
+	  int l,number;
+	  // check all words
+	  for (int i=0; i<Checkliste.size(); ++i) 
+	    {
+	      str = Checkliste.at(i);
+	      if (str.length()>1 &&!str.startsWith('\\'))
+		{
+		  if (!checkWord(str)) 
+		    {
+		      number = text.count(QRegExp("\\b" + str + "\\b"));
+		      l=-1;
+		      // underline all incorrect occurences of misspelled word
+		      for (int j=0;j < number; ++j)
+			{
+			  l = text.indexOf(QRegExp("\\b" + str + "\\b"),l+1);
+			  if (l>=0)
+			    setFormat(l, str.length(), spellCheckFormat);
+			}
+		    }
+		} 
+	    }
+	}
+    }
+}
+
+bool CHighlighter::checkWord(QString word)
+{
+  int check;
+  QByteArray encodedString;
+  encodedString = codec->fromUnicode(word);
+  check = pChecker->spell(encodedString.data());
+  return bool(check);
+}
+
+bool CHighlighter::setDict(const QString SpellDic)
+{
+  bool spell;
+  if(SpellDic!=""){
+    //mWords.clear();
+    spell_dic=SpellDic.left(SpellDic.length()-4);
+    if(pChecker) delete pChecker;
+    pChecker = new Hunspell(spell_dic.toLatin1()+".aff",spell_dic.toLatin1()+".dic");
+    spell_encoding=QString(pChecker->get_dic_encoding());
+    codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+
+    QFileInfo fi(SpellDic);
+
+    if (fi.exists() && fi.isReadable()) spell=true;
+    else spell=false;
+
+    // get user config dictionary
+    QSettings setting;
+    QString filePath=QFileInfo(setting.fileName()).absoluteFilePath();
+    filePath=filePath+"/User_"+QFileInfo(spell_dic.toLatin1()+".dic").fileName();
+    qDebug() << qPrintable(filePath);
+    fi=QFileInfo(filePath);
+    if (fi.exists() && fi.isReadable()){
+      pChecker->add_dic(filePath.toLatin1());
+    }
+    else filePath="";
+  }
+  else spell=false;
+  spellerError=!spell;
+  spellCheckActive=spellCheckActive && spell;
+  rehighlight();
+  return spell;
+}
+
+void CHighlighter::slot_addWord(const QString & word)
+{
+  qDebug() << qPrintable(word);
+  QByteArray encodedString;
+  QString spell_encoding=QString(pChecker->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(word);
+  pChecker->add(encodedString.data());
+  rehighlight();
+}
+
+void CHighlighter::setSpellCheck(const bool value)
+{
+  spellCheckActive = value;
 }

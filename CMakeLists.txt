@@ -42,6 +42,18 @@ set(SONGBOOK_CLIENT_SOURCES
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
   src/make-songbook-process.cc
+  src/hunspell/affentry.cxx
+  src/hunspell/affixmgr.cxx
+  src/hunspell/csutil.cxx
+  src/hunspell/dictmgr.cxx
+  src/hunspell/filemgr.cxx
+  src/hunspell/hashmgr.cxx
+  src/hunspell/hunspell.cxx
+  src/hunspell/hunzip.cxx
+  src/hunspell/phonet.cxx
+  src/hunspell/suggestmgr.cxx
+  #src/hunspell/utf_info.cxx
+  src/hunspell/replist.cxx
   )
 
 # header (moc)
