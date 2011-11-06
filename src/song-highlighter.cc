@@ -19,7 +19,7 @@
 
 #include <QtGui>
 
-#include "highlighter.hh"
+#include "song-highlighter.hh"
 #include "hunspell/hunspell.hxx"
 
 CHighlighter::CHighlighter(QTextDocument *parent)

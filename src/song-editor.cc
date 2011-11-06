@@ -19,7 +19,7 @@
 #include "song-editor.hh"
 #include "code-editor.hh"
 
-#include "highlighter.hh"
+#include "song-highlighter.hh"
 #include "hunspell/hunspell.hxx"
 
 #include <QToolBar>

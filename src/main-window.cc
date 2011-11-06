@@ -26,7 +26,7 @@
 #include "library-view.hh"
 #include "songbook.hh"
 #include "song-editor.hh"
-#include "highlighter.hh"
+#include "song-highlighter.hh"
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
