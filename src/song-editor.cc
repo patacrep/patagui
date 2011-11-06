@@ -126,7 +126,9 @@ CSongEditor::CSongEditor()
 }
 
 CSongEditor::~CSongEditor()
-{}
+{
+  delete m_highlighter;
+}
 
 QString CSongEditor::path()
 {

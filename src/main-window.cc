@@ -645,7 +645,7 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 
   CSongEditor *editor = new CSongEditor();
   editor->setPath(path);
-  if (title == QString())
+  if (title.isEmpty())
     {
       QFileInfo fileInfo(path);
       editor->setWindowTitle(fileInfo.fileName());
@@ -743,6 +743,7 @@ void CMainWindow::closeTab(int index)
 	    return;
 	}
       m_editors.remove(editor->path());
+      delete editor;
       m_mainWidget->closeTab(index);
     }
 }
