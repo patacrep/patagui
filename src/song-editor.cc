@@ -44,8 +44,8 @@ CSongEditor::CSongEditor()
   //Spell-Checking
   QString SpellDic = "./src/hunspell/dictionaries/en_GB.dic";
   // create misspell actions in context menu
-  spell_dic=SpellDic.left(SpellDic.length()-4);
-  pChecker = new Hunspell(spell_dic.toLatin1()+".aff",spell_dic.toLatin1()+".dic");
+  spell_dic = SpellDic.left(SpellDic.length()-4);
+  pChecker  = new Hunspell(spell_dic.toLatin1()+".aff",spell_dic.toLatin1()+".dic");
   
   QFileInfo fi(SpellDic);
   if (!(fi.exists() && fi.isReadable())){
@@ -56,9 +56,9 @@ CSongEditor::CSongEditor()
   // get user config dictionary
   QSettings setting;
   QString filePath = QFileInfo(setting.fileName()).absoluteFilePath();
-  filePath=filePath+"/User_"+QFileInfo(spell_dic.toLatin1()+".dic").fileName();
+  filePath = filePath + "/User_" + QFileInfo(spell_dic.toLatin1()+".dic").fileName();
   qDebug() << qPrintable(filePath);
-  fi=QFileInfo(filePath);
+  fi = QFileInfo(filePath);
   if (fi.exists() && fi.isReadable()){
     pChecker->add_dic(filePath.toLatin1());
   }
@@ -400,8 +400,8 @@ void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
   if (!liste.isEmpty())
     {
       menu->addSeparator();
-      menu->addAction(tr("Add .."), this, SLOT(slot_addWord()));
-      menu->addAction(tr("Ignore .."), this, SLOT(slot_ignoreWord()));
+      menu->addAction(tr("Add"), this, SLOT(slot_addWord()));
+      menu->addAction(tr("Ignore"), this, SLOT(slot_ignoreWord()));
       for (int i = 0; i < qMin(int(MaxWords),liste.size()); ++i) {
 	misspelledWordsActs[i]->setText(liste.at(i).trimmed());
 	misspelledWordsActs[i]->setVisible(true);
