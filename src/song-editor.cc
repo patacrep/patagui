@@ -344,6 +344,17 @@ void CSongEditor::addAction(QAction* action)
   m_actions.append(action);
 }
 
+QString CSongEditor::currentWord()
+{
+  QTextCursor cursor = cursorForPosition(lastPos);
+  QString zeile = cursor.block().text();
+  int pos = cursor.columnNumber();
+  int end = zeile.indexOf(QRegExp("\\W+"),pos);
+  int begin = zeile.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
+  zeile=zeile.mid(begin+1,end-begin-1);
+  return zeile;
+}
+
 void CSongEditor::correctWord() 
 {
   QAction *action = qobject_cast<QAction *>(sender());
@@ -351,7 +362,6 @@ void CSongEditor::correctWord()
     {
       QString replacement = action->text();
       QTextCursor cursor = cursorForPosition(lastPos);
-      //QTextCursor cursor = textCursor();
       QString zeile = cursor.block().text();
       cursor.select(QTextCursor::WordUnderCursor);
       cursor.deleteChar();
@@ -390,13 +400,8 @@ void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
 {
   QMenu *menu = createStandardContextMenu();
   lastPos=event->pos();
-  QTextCursor cursor = cursorForPosition(lastPos);
-  QString zeile = cursor.block().text();
-  int pos = cursor.columnNumber();
-  int end = zeile.indexOf(QRegExp("\\W+"),pos);
-  int begin = zeile.lastIndexOf(QRegExp("\\W+"),pos);
-  zeile=zeile.mid(begin+1,end-begin-1);
-  QStringList liste = getWordPropositions(zeile);
+  QString str = currentWord();
+  QStringList liste = getWordPropositions(str);
   if (!liste.isEmpty())
     {
       menu->addSeparator();
@@ -415,34 +420,23 @@ void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
 
 void CSongEditor::slot_ignoreWord()
 {
-  QTextCursor cursor = cursorForPosition(lastPos);
-  QString zeile = cursor.block().text();
-  int pos = cursor.columnNumber();
-  int end = zeile.indexOf(QRegExp("\\W+"),pos);
-  int begin = zeile.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
-  zeile=zeile.mid(begin+1,end-begin-1);
+  QString str = currentWord();
   QByteArray encodedString;
   QString spell_encoding=QString(pChecker->get_dic_encoding());
   QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
-  encodedString = codec->fromUnicode(zeile);
+  encodedString = codec->fromUnicode(str);
   pChecker->add(encodedString.data());
-  emit addWord(zeile);
+  emit addWord(str);
 }
 
 void CSongEditor::slot_addWord()
 {
-  QTextCursor cursor = cursorForPosition(lastPos);
-  QString zeile = cursor.block().text();
-  int pos = cursor.columnNumber();
-  int end = zeile.indexOf(QRegExp("\\W+"),pos);
-  int begin = zeile.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
-  zeile=zeile.mid(begin+1,end-begin-1);
-  qDebug() << qPrintable(zeile);
+  QString str = currentWord();
   QByteArray encodedString;
   QString spell_encoding=QString(pChecker->get_dic_encoding());
   QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
-  encodedString = codec->fromUnicode(zeile);
+  encodedString = codec->fromUnicode(str);
   pChecker->add(encodedString.data());
-  addedWords.append(zeile);
-  emit addWord(zeile);
+  addedWords.append(str);
+  emit addWord(str);
 }

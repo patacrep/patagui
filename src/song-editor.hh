@@ -72,6 +72,7 @@ private:
   void indentSelection();
   void indentLine(const QTextCursor & cursor);
   void trimLine(const QTextCursor & cursor);
+  QString currentWord();
 
   QToolBar* m_toolBar;
   QString m_path;
