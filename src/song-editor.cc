@@ -38,41 +38,16 @@ CSongEditor::CSongEditor()
   : CodeEditor()
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
-  , m_checker(0)
 {
   setUndoRedoEnabled(true);
 
   //Spell-Checking
-  QString SpellDic = "./src/hunspell/dictionaries/en_GB.dic";
-  // create misspell actions in context menu
-  QString spell = SpellDic.left(SpellDic.length()-4).toLatin1();
-  m_checker  = new Hunspell(QString(spell+".aff").toStdString().c_str(),
-			    QString(spell+".dic").toStdString().c_str());
-  
-  QFileInfo fi(SpellDic);
-  if (!(fi.exists() && fi.isReadable()))
-    {
-      delete m_checker;
-      m_checker=0;
-    }
-
-  // get user config dictionary
-  QSettings setting;
-  QString filePath = QFileInfo(setting.fileName()).absoluteFilePath();
-  filePath = filePath + "/User_" + QFileInfo(spell+".dic").fileName();
-  qDebug() << qPrintable(filePath);
-  fi = QFileInfo(filePath);
-  if (fi.exists() && fi.isReadable())
-    m_checker->add_dic(filePath.toLatin1());
-  else
-    filePath="";
-
-  CHighlighter *highlighter = new CHighlighter(document());
-  highlighter->setSpellCheck(true);
-  highlighter->setDict(SpellDic);
+  m_highlighter = new CHighlighter(document());
+  m_highlighter->setSpellCheck(true);
+  m_highlighter->setDictionary("./src/hunspell/dictionaries/en_GB.dic");
   
   connect(this, SIGNAL(addWord(const QString &)),
-	  highlighter, SLOT(slot_addWord(const QString &)));
+	  m_highlighter, SLOT(slot_addWord(const QString &)));
 
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
@@ -373,27 +348,28 @@ void CSongEditor::correctWord()
 QStringList CSongEditor::getWordPropositions(const QString &word)
 {
   QStringList wordList;
-  if(m_checker){
-    QByteArray encodedString;
-    QString spell_encoding=QString(m_checker->get_dic_encoding());
-    QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
-    encodedString = codec->fromUnicode(word);
-    bool check = m_checker->spell(encodedString.data());
-    if(!check){
-      char ** wlst;
-      int ns = m_checker->suggest(&wlst,encodedString.data());
-      if (ns > 0)
-	{
-	  for (int i=0; i < ns; i++)
-	    {
-	      wordList.append(codec->toUnicode(wlst[i]));
-	      //free(wlst[i]);
-	    }
-	  //free(wlst);
-	  m_checker->free_list(&wlst, ns);
-	}// if ns >0
-    }// if check
-  }
+  if(checker())
+    {
+      QByteArray encodedString;
+      QString spell_encoding=QString(checker()->get_dic_encoding());
+      QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+      encodedString = codec->fromUnicode(word);
+      bool check = checker()->spell(encodedString.data());
+      if(!check){
+	char ** wlst;
+	int ns = checker()->suggest(&wlst,encodedString.data());
+	if (ns > 0)
+	  {
+	    for (int i=0; i < ns; i++)
+	      {
+		wordList.append(codec->toUnicode(wlst[i]));
+		//free(wlst[i]);
+	      }
+	    //free(wlst);
+	    checker()->free_list(&wlst, ns);
+	  }// if ns >0
+      }// if check
+    }
   return wordList;
 }
 
@@ -423,10 +399,10 @@ void CSongEditor::slot_ignoreWord()
 {
   QString str = currentWord();
   QByteArray encodedString;
-  QString spell_encoding=QString(m_checker->get_dic_encoding());
+  QString spell_encoding=QString(checker()->get_dic_encoding());
   QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
   encodedString = codec->fromUnicode(str);
-  m_checker->add(encodedString.data());
+  checker()->add(encodedString.data());
   emit addWord(str);
 }
 
@@ -434,10 +410,15 @@ void CSongEditor::slot_addWord()
 {
   QString str = currentWord();
   QByteArray encodedString;
-  QString spell_encoding=QString(m_checker->get_dic_encoding());
+  QString spell_encoding=QString(checker()->get_dic_encoding());
   QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
   encodedString = codec->fromUnicode(str);
-  m_checker->add(encodedString.data());
+  checker()->add(encodedString.data());
   m_addedWords.append(str);
   emit addWord(str);
+}
+
+Hunspell* CSongEditor::checker() const
+{
+  return m_highlighter->checker();
 }

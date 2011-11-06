@@ -39,7 +39,8 @@ public:
   QStringList correct();
   void enableSpellChecking(const bool state);
   void setSpellCheck(const bool state);
-  bool setDict(const QString SpellDic);
+  bool setDictionary(const QString &filename);
+  Hunspell* checker() const;
 
 public slots:
   void slot_addWord(const QString &word);
@@ -72,9 +73,8 @@ private:
 
   QTextCharFormat multiLineCommentFormat;
 
-  QString spell_dic, spell_encoding;
-  Hunspell * pChecker;
-  bool spellCheckActive,spellerError;
+  Hunspell * m_checker;
+  bool spellCheckActive;
   QTextCharFormat spellCheckFormat;
   QTextCodec *codec;
 };

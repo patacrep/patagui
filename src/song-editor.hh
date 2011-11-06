@@ -26,6 +26,7 @@
 
 class QAction;
 class Hunspell;
+class CHighlighter;
 
 class CSongEditor : public CodeEditor
 {
@@ -48,6 +49,7 @@ public:
   void readSettings();
   void writeSettings();
   QStringList getWordPropositions(const QString &word);
+  Hunspell* checker() const;
 
 signals:
   void labelChanged(const QString &label);
@@ -77,11 +79,11 @@ private:
   QToolBar* m_toolBar;
   QString m_path;
   QList<QAction*> m_actions;
+  CHighlighter* m_highlighter;
 
   //Spell-checking
   enum { MaxWords = 5 };
   QAction *m_misspelledWordsActs[MaxWords];
-  Hunspell *m_checker;
   QPoint m_lastPos;
   QStringList m_addedWords;
 };

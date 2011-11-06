@@ -24,6 +24,8 @@
 
 CHighlighter::CHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
+  , m_checker(NULL)
+  , spellCheckActive(0)
 {
   HighlightingRule rule;
 
@@ -146,15 +148,11 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   //Settings for online spellchecking
   spellCheckFormat.setUnderlineColor(QColor(Qt::red));
   spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
-
-  spellCheckActive=false;
-  spellerError=!spellCheckActive;
-  pChecker = NULL;
 }
 
 CHighlighter::~CHighlighter()
 {
-  delete pChecker;
+  delete m_checker;
 }
 
 void CHighlighter::highlightBlock(const QString &text)
@@ -231,56 +229,56 @@ bool CHighlighter::checkWord(QString word)
   int check;
   QByteArray encodedString;
   encodedString = codec->fromUnicode(word);
-  check = pChecker->spell(encodedString.data());
+  check = m_checker->spell(encodedString.data());
   return bool(check);
 }
 
-bool CHighlighter::setDict(const QString SpellDic)
+bool CHighlighter::setDictionary(const QString &filename)
 {
-  bool spell;
-  if(SpellDic!=""){
-    //mWords.clear();
-    spell_dic=SpellDic.left(SpellDic.length()-4);
-    if(pChecker) delete pChecker;
-    pChecker = new Hunspell(spell_dic.toLatin1()+".aff",spell_dic.toLatin1()+".dic");
-    spell_encoding=QString(pChecker->get_dic_encoding());
-    codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  bool spell = false;
+  if(!filename.isEmpty())
+    {
+      QString basename = filename.left(filename.length()-4);
+      if(m_checker) delete m_checker;
+      m_checker = new Hunspell(basename.toLatin1() + ".aff", basename.toLatin1() + ".dic");
+      QString encoded = QString(m_checker->get_dic_encoding());
+      codec = QTextCodec::codecForName(encoded.toLatin1());
 
-    QFileInfo fi(SpellDic);
+      QFileInfo fi(filename);
+      spell = fi.exists() && fi.isReadable();
 
-    if (fi.exists() && fi.isReadable()) spell=true;
-    else spell=false;
-
-    // get user config dictionary
-    QSettings setting;
-    QString filePath=QFileInfo(setting.fileName()).absoluteFilePath();
-    filePath=filePath+"/User_"+QFileInfo(spell_dic.toLatin1()+".dic").fileName();
-    qDebug() << qPrintable(filePath);
-    fi=QFileInfo(filePath);
-    if (fi.exists() && fi.isReadable()){
-      pChecker->add_dic(filePath.toLatin1());
+      // get user config dictionary
+      QSettings setting;
+      QString filePath = QFileInfo(setting.fileName()).absoluteFilePath();
+      filePath = filePath + "/User_" + QFileInfo(basename + ".dic").fileName();
+      fi = QFileInfo(filePath);
+      if (fi.exists() && fi.isReadable())
+	m_checker->add_dic(filePath.toLatin1());
+      else
+	filePath = "";
     }
-    else filePath="";
-  }
-  else spell=false;
-  spellerError=!spell;
-  spellCheckActive=spellCheckActive && spell;
+
+  spellCheckActive = spellCheckActive && spell;
   rehighlight();
   return spell;
 }
 
 void CHighlighter::slot_addWord(const QString & word)
 {
-  qDebug() << qPrintable(word);
   QByteArray encodedString;
-  QString spell_encoding=QString(pChecker->get_dic_encoding());
-  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  QString encoded = QString(m_checker->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(encoded.toLatin1());
   encodedString = codec->fromUnicode(word);
-  pChecker->add(encodedString.data());
+  m_checker->add(encodedString.data());
   rehighlight();
 }
 
 void CHighlighter::setSpellCheck(const bool value)
 {
   spellCheckActive = value;
+}
+
+Hunspell* CHighlighter::checker() const
+{
+  return m_checker;
 }
