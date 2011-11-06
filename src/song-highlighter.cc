@@ -228,7 +228,7 @@ bool CHighlighter::checkWord(QString word)
 {
   int check;
   QByteArray encodedString;
-  encodedString = codec->fromUnicode(word);
+  encodedString = m_codec->fromUnicode(word);
   check = m_checker->spell(encodedString.data());
   return bool(check);
 }
@@ -242,7 +242,7 @@ bool CHighlighter::setDictionary(const QString &filename)
       if(m_checker) delete m_checker;
       m_checker = new Hunspell(basename.toLatin1() + ".aff", basename.toLatin1() + ".dic");
       QString encoded = QString(m_checker->get_dic_encoding());
-      codec = QTextCodec::codecForName(encoded.toLatin1());
+      m_codec = QTextCodec::codecForName(encoded.toLatin1());
 
       QFileInfo fi(filename);
       spell = fi.exists() && fi.isReadable();

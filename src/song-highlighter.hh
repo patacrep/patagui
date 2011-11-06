@@ -76,7 +76,7 @@ private:
   Hunspell * m_checker;
   bool spellCheckActive;
   QTextCharFormat spellCheckFormat;
-  QTextCodec *codec;
+  QTextCodec *m_codec;
 };
 
 #endif // __HIGHLIGHTER_HH__
