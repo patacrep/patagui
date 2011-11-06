@@ -80,14 +80,10 @@ private:
 
   //Spell-checking
   enum { MaxWords = 5 };
-  QAction *misspelledWordsActs[MaxWords];
-
-  QString spell_dic;
-  Hunspell *pChecker;
-
-  QPoint lastPos;
-
-  QStringList addedWords;
+  QAction *m_misspelledWordsActs[MaxWords];
+  Hunspell *m_checker;
+  QPoint m_lastPos;
+  QStringList m_addedWords;
 };
 
 #endif // __SONG_EDITOR_HH__
