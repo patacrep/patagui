@@ -38,17 +38,9 @@ CSongEditor::CSongEditor()
   : CodeEditor()
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
+  , m_highlighter(0)
 {
   setUndoRedoEnabled(true);
-
-  //Spell-Checking
-  m_highlighter = new CHighlighter(document());
-  m_highlighter->setSpellCheck(true);
-  m_highlighter->setDictionary("./src/hunspell/dictionaries/en_GB.dic");
-  
-  connect(this, SIGNAL(addWord(const QString &)),
-	  m_highlighter, SLOT(slot_addWord(const QString &)));
-
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   // toolBar
@@ -173,6 +165,16 @@ void CSongEditor::setPath(const QString &path)
     }
   setPlainText(text);
   m_path = path;
+}
+
+void CSongEditor::installHighlighter()
+{
+  m_highlighter = new CHighlighter(document());
+  m_highlighter->setSpellCheck(true);
+  m_highlighter->setDictionary("./src/hunspell/dictionaries/en_GB.dic");
+
+  connect(this, SIGNAL(addWord(const QString &)),
+	  m_highlighter, SLOT(slot_addWord(const QString &)));
 }
 
 void CSongEditor::save()
@@ -422,5 +424,6 @@ void CSongEditor::slot_addWord()
 
 Hunspell* CSongEditor::checker() const
 {
+  if(!m_highlighter) return 0;
   return m_highlighter->checker();
 }

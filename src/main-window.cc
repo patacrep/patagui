@@ -645,6 +645,8 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 
   CSongEditor *editor = new CSongEditor();
   editor->setPath(path);
+  editor->installHighlighter();
+
   if (title.isEmpty())
     {
       QFileInfo fileInfo(path);

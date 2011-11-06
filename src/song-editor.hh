@@ -50,6 +50,7 @@ public:
   void writeSettings();
   QStringList getWordPropositions(const QString &word);
   Hunspell* checker() const;
+  void installHighlighter();
 
 signals:
   void labelChanged(const QString &label);
