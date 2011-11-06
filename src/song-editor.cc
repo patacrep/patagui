@@ -380,21 +380,23 @@ QStringList CSongEditor::getWordPropositions(const QString &word)
 void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
 {
   QMenu *menu = createStandardContextMenu();
+  QMenu *spellMenu = new QMenu(tr("Suggestions"));
   m_lastPos=event->pos();
   QString str = currentWord();
   QStringList liste = getWordPropositions(str);
   if (!liste.isEmpty())
     {
-      menu->addSeparator();
-      menu->addAction(tr("Add"), this, SLOT(slot_addWord()));
-      menu->addAction(tr("Ignore"), this, SLOT(slot_ignoreWord()));
-      for (int i = 0; i < qMin(int(MaxWords),liste.size()); ++i) {
-	m_misspelledWordsActs[i]->setText(liste.at(i).trimmed());
-	m_misspelledWordsActs[i]->setVisible(true);
-	menu->addAction(m_misspelledWordsActs[i]);
-      }
-
-    } // if  misspelled
+      for (int i = 0; i < qMin(int(MaxWords),liste.size()); ++i)
+	{
+	  m_misspelledWordsActs[i]->setText(liste.at(i).trimmed());
+	  m_misspelledWordsActs[i]->setVisible(true);
+	  spellMenu->addAction(m_misspelledWordsActs[i]);
+	}
+      spellMenu->addSeparator();
+      spellMenu->addAction(tr("Add"), this, SLOT(slot_addWord()));
+      spellMenu->addAction(tr("Ignore"), this, SLOT(slot_ignoreWord()));
+    }
+  menu->addMenu(spellMenu);
   menu->exec(event->globalPos());
   delete menu;
 }
