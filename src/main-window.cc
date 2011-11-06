@@ -26,7 +26,7 @@
 #include "library-view.hh"
 #include "songbook.hh"
 #include "song-editor.hh"
-#include "song-highlighter.hh"
+#include "logs-highlighter.hh"
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
@@ -94,7 +94,7 @@ CMainWindow::CMainWindow()
   m_log->setMinimumHeight(150);
   m_log->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
   m_log->setReadOnly(true);
-  Q_UNUSED(new CHighlighter(m_log->document()));
+  Q_UNUSED(new CLogsHighlighter(m_log->document()));
 
   createActions();
   createMenus();

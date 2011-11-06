@@ -16,8 +16,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
-#ifndef __HIGHLIGHTER_HH__
-#define __HIGHLIGHTER_HH__
+#ifndef __LOGS_HIGHLIGHTER_HH__
+#define __LOGS_HIGHLIGHTER_HH__
 
 #include <QSyntaxHighlighter>
 
@@ -27,28 +27,16 @@
 class QTextDocument;
 class Hunspell;
 
-class CHighlighter : public QSyntaxHighlighter
+class CLogsHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
 
 public:
-  CHighlighter(QTextDocument *parent = 0);
-  ~CHighlighter();
-  void clearCheck();
-  QStringList misspelled();
-  QStringList correct();
-  void enableSpellChecking(const bool state);
-  void setSpellCheck(const bool state);
-  bool setDict(const QString SpellDic);
-
-public slots:
-  void slot_addWord(const QString &word);
+  CLogsHighlighter(QTextDocument *parent = 0);
+  ~CLogsHighlighter();
 
 protected:
   void highlightBlock(const QString &text);
-  void spellCheck(const QString &text);
-  bool checkWord(QString word);
-
 
 private:
   struct HighlightingRule
@@ -58,25 +46,9 @@ private:
   };
   QVector<HighlightingRule> highlightingRules;
 
-  QRegExp commentStartExpression;
-  QRegExp commentEndExpression;
-
-  QTextCharFormat keywordFormat;
-  QTextCharFormat keyword2Format;
-  QTextCharFormat environmentFormat;
-  QTextCharFormat singleLineCommentFormat;
-  QTextCharFormat chordFormat;
-  QTextCharFormat quotationFormat;
-  QTextCharFormat argumentFormat;
-  QTextCharFormat optionFormat;
-
-  QTextCharFormat multiLineCommentFormat;
-
-  QString spell_dic, spell_encoding;
-  Hunspell * pChecker;
-  bool spellCheckActive,spellerError;
-  QTextCharFormat spellCheckFormat;
-  QTextCodec *codec;
+  QTextCharFormat m_latexFileFormat;
+  QTextCharFormat m_latexErrorFormat;
+  QTextCharFormat m_latexWarningFormat;
 };
 
-#endif // __HIGHLIGHTER_HH__
+#endif // __LOGS_HIGHLIGHTER_HH__

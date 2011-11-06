@@ -72,33 +72,6 @@ CHighlighter::CHighlighter(QTextDocument *parent)
       highlightingRules.append(rule);
     }
 
-  //LaTeX compilation logs
-  //files (light blue)
-  QStringList extensions;
-  extensions << "pdf" << "jpg" << "png";
-  m_latexFileFormat.setForeground(QColor(114,159,207));
-
-  foreach (const QString &extension, extensions)
-    {
-      rule.pattern = QRegExp(QString("[^(\\s|/)]*\\.%1").arg(extension));
-      rule.format = m_latexFileFormat;
-      highlightingRules.append(rule);
-    }
-  
-  //errors (light red)
-  m_latexErrorFormat.setForeground(QColor(239,41,41));
-
-  rule.pattern = QRegExp("^!.*");
-  rule.format = m_latexErrorFormat;
-  highlightingRules.append(rule);
-
-  //warnings (light orange)
-  m_latexWarningFormat.setForeground(QColor(252,175,62));
-
-  rule.pattern = QRegExp("^.*(W|w)arning.*$");
-  rule.format = m_latexWarningFormat;
-  highlightingRules.append(rule);
-
   //Environments (bold, green)
   environmentFormat.setFontWeight(QFont::Bold);
   environmentFormat.setForeground(QColor(78,154,6));
