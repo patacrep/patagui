@@ -81,45 +81,19 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   environmentFormat.setFontWeight(QFont::Bold);
   environmentFormat.setForeground(QColor(78,154,6));
 
-  rule.pattern = QRegExp("\\\\begin");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
+  QStringList regexps;
+  regexps << "\\\\begin" << "\\\\end"
+	  << "\\\\beginverse" << "\\\\endverse"
+	  << "\\\\beginchorus" << "\\\\endchorus"
+	  << "\\\\beginsong" << "\\\\endsong"
+	  << "\\\\beginscripture" << "\\\\endscripture";
 
-  rule.pattern = QRegExp("\\\\end");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\beginverse");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\endverse");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\beginchorus");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\endchorus");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\beginsong");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\endsong");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\beginscripture");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
-
-  rule.pattern = QRegExp("\\\\endscripture");
-  rule.format = environmentFormat;
-  highlightingRules.append(rule);
+  foreach (const QString &regexp, regexps)
+    {
+      rule.pattern = QRegExp(regexp);
+      rule.format = environmentFormat;
+      highlightingRules.append(rule);
+    }
 
   //Comments (grey)
   singleLineCommentFormat.setForeground(QColor(136,138,133));
