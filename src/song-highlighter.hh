@@ -39,7 +39,7 @@ public:
   QStringList correct();
   void enableSpellChecking(const bool state);
   void setSpellCheck(const bool state);
-  bool setDictionary(const QString &filename);
+  void setDictionary(const QString &filename);
   Hunspell* checker() const;
 
 #ifdef ENABLE_SPELL_CHECKING

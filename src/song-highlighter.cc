@@ -235,34 +235,22 @@ bool CHighlighter::checkWord(QString word)
   return bool(check);
 }
 
-bool CHighlighter::setDictionary(const QString &filename)
+void CHighlighter::setDictionary(const QString &filename)
 {
-  bool spell = false;
-  if(!filename.isEmpty())
+  QFileInfo fi(filename);
+  if(filename.isEmpty() || !fi.exists() || !fi.isReadable())
     {
-      QString basename = filename.left(filename.length()-4);
-      if(m_checker) delete m_checker;
-      m_checker = new Hunspell(basename.toLatin1() + ".aff", basename.toLatin1() + ".dic");
-      QString encoded = QString(m_checker->get_dic_encoding());
-      m_codec = QTextCodec::codecForName(encoded.toLatin1());
-
-      QFileInfo fi(filename);
-      spell = fi.exists() && fi.isReadable();
-
-      // get user config dictionary
-      QSettings setting;
-      QString filePath = QFileInfo(setting.fileName()).absoluteFilePath();
-      filePath = filePath + "/User_" + QFileInfo(basename + ".dic").fileName();
-      fi = QFileInfo(filePath);
-      if (fi.exists() && fi.isReadable())
-	m_checker->add_dic(filePath.toLatin1());
-      else
-	filePath = "";
+      qWarning() << tr("CHighlighter::setDictionary cannot read open dictionary : ") << filename;
+      return;
     }
 
-  m_isSpellCheckActive = m_isSpellCheckActive && spell;
+  QString basename = filename.left(filename.length()-4);
+  if(m_checker) delete m_checker;
+  m_checker = new Hunspell(basename.toLatin1() + ".aff", basename.toLatin1() + ".dic");
+  QString encoded = QString(m_checker->get_dic_encoding());
+  m_codec = QTextCodec::codecForName(encoded.toLatin1());
+
   rehighlight();
-  return spell;
 }
 
 void CHighlighter::addWord(const QString & word)
