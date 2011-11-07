@@ -19,8 +19,8 @@
 #ifndef __HIGHLIGHTER_HH__
 #define __HIGHLIGHTER_HH__
 
+#include "config.hh"
 #include <QSyntaxHighlighter>
-
 #include <QHash>
 #include <QTextCharFormat>
 
@@ -42,8 +42,10 @@ public:
   bool setDictionary(const QString &filename);
   Hunspell* checker() const;
 
+#ifdef ENABLE_SPELL_CHECKING
 public slots:
   void slot_addWord(const QString &word);
+#endif //ENABLE_SPELL_CHECKING
 
 protected:
   void highlightBlock(const QString &text);

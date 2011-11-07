@@ -7,11 +7,11 @@ set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
-if(NOT EXISTS ${SOURCE_DIR}/songbook-client-config.cmake)
+if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
   message(FATAL_ERROR "songbook-client-config.cmake")
 endif()
 
-include(songbook-client-config.cmake)
+include(${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
 
 # {{{ Sources
 set(SONGBOOK_CLIENT_SOURCES
@@ -43,18 +43,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
   src/make-songbook-process.cc
-  src/hunspell/affentry.cxx
-  src/hunspell/affixmgr.cxx
-  src/hunspell/csutil.cxx
-  src/hunspell/dictmgr.cxx
-  src/hunspell/filemgr.cxx
-  src/hunspell/hashmgr.cxx
-  src/hunspell/hunspell.cxx
-  src/hunspell/hunzip.cxx
-  src/hunspell/phonet.cxx
-  src/hunspell/suggestmgr.cxx
-  #src/hunspell/utf_info.cxx
-  src/hunspell/replist.cxx
   )
 
 # header (moc)
@@ -113,9 +101,15 @@ if(ENABLE_LIBRARY_DOWNLOAD)
   LIST(APPEND SONGBOOK_CLIENT_QT_HEADER src/library-download.hh)
 endif()
 
+if(ENABLE_SPELL_CHECKING)
+  find_package(HUNSPELL REQUIRED)
+  message("Hunspell includes : ${HUNSPELL_INCLUDE_DIR}")
+  include_directories(${HUNSPELL_INCLUDE_DIR})
+endif()
+
 include(${QT_USE_FILE})
 
-include(qt-property-editor-config.cmake)
+include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
 include_directories(
   ${SOURCE_DIR}
@@ -148,7 +142,7 @@ if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
 
-target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${QT_LIBRARIES} ${LibArchive_LIBRARIES})
+target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${QT_LIBRARIES} ${LibArchive_LIBRARIES} ${HUNSPELL_LIBRARIES})
 
 # {{{ Internationalization
 set (TRANSLATIONS

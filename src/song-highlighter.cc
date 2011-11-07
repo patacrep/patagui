@@ -19,8 +19,11 @@
 
 #include <QtGui>
 
+#include "config.hh"
 #include "song-highlighter.hh"
+#ifdef ENABLE_SPELL_CHECKING
 #include "hunspell/hunspell.hxx"
+#endif //ENABLE_SPELL_CHECKING
 
 CHighlighter::CHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
@@ -145,14 +148,18 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   commentStartExpression = QRegExp("/\\*");
   commentEndExpression = QRegExp("\\*/");
 
+#ifdef ENABLE_SPELL_CHECKING
   //Settings for online spellchecking
   spellCheckFormat.setUnderlineColor(QColor(Qt::red));
   spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+#endif //ENABLE_SPELL_CHECKING
 }
 
 CHighlighter::~CHighlighter()
 {
+#ifdef ENABLE_SPELL_CHECKING
   delete m_checker;
+#endif //ENABLE_SPELL_CHECKING
 }
 
 void CHighlighter::highlightBlock(const QString &text)
@@ -186,9 +193,12 @@ void CHighlighter::highlightBlock(const QString &text)
     startIndex = commentStartExpression.indexIn(text, startIndex + commentLength);
   }
 
+#ifdef ENABLE_SPELL_CHECKING
   spellCheck(text);
+#endif //ENABLE_SPELL_CHECKING
 }
 
+#ifdef ENABLE_SPELL_CHECKING
 void CHighlighter::spellCheck(const QString &text)
 {
   if (spellCheckActive) 
@@ -282,3 +292,4 @@ Hunspell* CHighlighter::checker() const
 {
   return m_checker;
 }
+#endif //ENABLE_SPELL_CHECKING
