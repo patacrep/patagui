@@ -28,7 +28,7 @@
 CHighlighter::CHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
   , m_checker(NULL)
-  , spellCheckActive(0)
+  , m_isSpellCheckActive(false)
 {
   HighlightingRule rule;
 
@@ -150,8 +150,8 @@ CHighlighter::CHighlighter(QTextDocument *parent)
 
 #ifdef ENABLE_SPELL_CHECKING
   //Settings for online spellchecking
-  spellCheckFormat.setUnderlineColor(QColor(Qt::red));
-  spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+  m_spellCheckFormat.setUnderlineColor(QColor(Qt::red));
+  m_spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 #endif //ENABLE_SPELL_CHECKING
 }
 
@@ -201,37 +201,29 @@ void CHighlighter::highlightBlock(const QString &text)
 #ifdef ENABLE_SPELL_CHECKING
 void CHighlighter::spellCheck(const QString &text)
 {
-  if (spellCheckActive) 
-    {
-      // split text into words
-      QString str = text.simplified();
-      if (!str.isEmpty()) 
-	{
-	  QStringList Checkliste = str.split(QRegExp("([^\\w,^\\\\]|(?=\\\\))+"),
-					     QString::SkipEmptyParts);
-	  int l,number;
-	  // check all words
-	  for (int i=0; i<Checkliste.size(); ++i) 
-	    {
-	      str = Checkliste.at(i);
-	      if (str.length()>1 &&!str.startsWith('\\'))
-		{
-		  if (!checkWord(str)) 
-		    {
-		      number = text.count(QRegExp("\\b" + str + "\\b"));
-		      l=-1;
-		      // underline all incorrect occurences of misspelled word
-		      for (int j=0;j < number; ++j)
-			{
-			  l = text.indexOf(QRegExp("\\b" + str + "\\b"),l+1);
-			  if (l>=0)
-			    setFormat(l, str.length(), spellCheckFormat);
-			}
-		    }
-		} 
-	    }
-	}
-    }
+  if (!m_isSpellCheckActive)
+    return;
+
+  QString str = text.simplified();
+  if (str.isEmpty())
+    return;
+
+  QStringList list = str.split(QRegExp("([^\\w,^\\\\]|(?=\\\\))+"),
+			       QString::SkipEmptyParts);
+  int l, number;
+  foreach (str, list)
+    if (str.length()>1 && !str.startsWith('\\') && !checkWord(str))
+      {
+	number = text.count(QRegExp("\\b" + str + "\\b"));
+	l=-1;
+	// underline all incorrect occurences of misspelled word
+	for (int j=0; j < number; ++j)
+	  {
+	    l = text.indexOf(QRegExp("\\b" + str + "\\b"),l+1);
+	    if (l>=0)
+	      setFormat(l, str.length(), m_spellCheckFormat);
+	  }
+      }
 }
 
 bool CHighlighter::checkWord(QString word)
@@ -268,12 +260,12 @@ bool CHighlighter::setDictionary(const QString &filename)
 	filePath = "";
     }
 
-  spellCheckActive = spellCheckActive && spell;
+  m_isSpellCheckActive = m_isSpellCheckActive && spell;
   rehighlight();
   return spell;
 }
 
-void CHighlighter::slot_addWord(const QString & word)
+void CHighlighter::addWord(const QString & word)
 {
   QByteArray encodedString;
   QString encoded = QString(m_checker->get_dic_encoding());
@@ -285,7 +277,7 @@ void CHighlighter::slot_addWord(const QString & word)
 
 void CHighlighter::setSpellCheck(const bool value)
 {
-  spellCheckActive = value;
+  m_isSpellCheckActive = value;
 }
 
 Hunspell* CHighlighter::checker() const

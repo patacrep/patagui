@@ -44,7 +44,7 @@ public:
 
 #ifdef ENABLE_SPELL_CHECKING
 public slots:
-  void slot_addWord(const QString &word);
+  void addWord(const QString &word);
 #endif //ENABLE_SPELL_CHECKING
 
 protected:
@@ -76,8 +76,8 @@ private:
   QTextCharFormat multiLineCommentFormat;
 
   Hunspell * m_checker;
-  bool spellCheckActive;
-  QTextCharFormat spellCheckFormat;
+  bool m_isSpellCheckActive;
+  QTextCharFormat m_spellCheckFormat;
   QTextCodec *m_codec;
 };
 

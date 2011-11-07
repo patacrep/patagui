@@ -111,11 +111,12 @@ CSongEditor::CSongEditor()
   addAction(action);
 
 #ifdef ENABLE_SPELL_CHECKING
-  for (int i = 0; i < MaxWords; ++i) 
+  for(int i = 0; i < MAX_WORDS; ++i)
     {
-      m_misspelledWordsActs[i] = new QAction(this);
-      m_misspelledWordsActs[i]->setVisible(false);
-      connect(m_misspelledWordsActs[i], SIGNAL(triggered()), this, SLOT(correctWord()));
+      action = new QAction(this);
+      action->setVisible(false);
+      connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
+      m_misspelledWordsActs.append(action);
     }
 #endif //ENABLE_SPELL_CHECKING
 
@@ -179,8 +180,8 @@ void CSongEditor::installHighlighter()
 #ifdef ENABLE_SPELL_CHECKING
   m_highlighter->setSpellCheck(true);
   m_highlighter->setDictionary("/usr/share/hunspell/en_US.dic");
-  connect(this, SIGNAL(addWord(const QString &)),
-	  m_highlighter, SLOT(slot_addWord(const QString &)));
+  connect(this, SIGNAL(wordAdded(const QString &)),
+	  m_highlighter, SLOT(addWord(const QString &)));
 #endif //ENABLE_SPELL_CHECKING
 }
 
@@ -336,12 +337,12 @@ void CSongEditor::addAction(QAction* action)
 QString CSongEditor::currentWord()
 {
   QTextCursor cursor = cursorForPosition(m_lastPos);
-  QString zeile = cursor.block().text();
+  QString word = cursor.block().text();
   int pos = cursor.columnNumber();
-  int end = zeile.indexOf(QRegExp("\\W+"),pos);
-  int begin = zeile.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
-  zeile=zeile.mid(begin+1,end-begin-1);
-  return zeile;
+  int end = word.indexOf(QRegExp("\\W+"),pos);
+  int begin = word.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
+  word = word.mid(begin+1,end-begin-1);
+  return word;
 }
 
 void CSongEditor::correctWord() 
@@ -392,25 +393,26 @@ void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
   QMenu *spellMenu = new QMenu(tr("Suggestions"));
   m_lastPos=event->pos();
   QString str = currentWord();
-  QStringList liste = getWordPropositions(str);
-  if (!liste.isEmpty())
+  QStringList list = getWordPropositions(str);
+  int size = qMin(MAX_WORDS, list.size());
+  if (!list.isEmpty())
     {
-      for (int i = 0; i < qMin(int(MaxWords),liste.size()); ++i)
+      for (int i = 0; i < size; ++i)
 	{
-	  m_misspelledWordsActs[i]->setText(liste.at(i).trimmed());
+	  m_misspelledWordsActs[i]->setText(list[i].trimmed());
 	  m_misspelledWordsActs[i]->setVisible(true);
 	  spellMenu->addAction(m_misspelledWordsActs[i]);
 	}
       spellMenu->addSeparator();
-      spellMenu->addAction(tr("Add"), this, SLOT(slot_addWord()));
-      spellMenu->addAction(tr("Ignore"), this, SLOT(slot_ignoreWord()));
+      spellMenu->addAction(tr("Add"), this, SLOT(addWord()));
+      spellMenu->addAction(tr("Ignore"), this, SLOT(ignoreWord()));
+      menu->addMenu(spellMenu);
     }
-  menu->addMenu(spellMenu);
   menu->exec(event->globalPos());
   delete menu;
 }
 
-void CSongEditor::slot_ignoreWord()
+void CSongEditor::ignoreWord()
 {
   QString str = currentWord();
   QByteArray encodedString;
@@ -418,10 +420,10 @@ void CSongEditor::slot_ignoreWord()
   QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
   encodedString = codec->fromUnicode(str);
   checker()->add(encodedString.data());
-  emit addWord(str);
+  emit wordAdded(str);
 }
 
-void CSongEditor::slot_addWord()
+void CSongEditor::addWord()
 {
   QString str = currentWord();
   QByteArray encodedString;
@@ -430,7 +432,7 @@ void CSongEditor::slot_addWord()
   encodedString = codec->fromUnicode(str);
   checker()->add(encodedString.data());
   m_addedWords.append(str);
-  emit addWord(str);
+  emit wordAdded(str);
 }
 
 Hunspell* CSongEditor::checker() const

@@ -24,6 +24,7 @@
 
 #include <QToolBar>
 #include <QList>
+#define MAX_WORDS 5
 
 class QAction;
 class Hunspell;
@@ -55,7 +56,7 @@ public:
 
 signals:
   void labelChanged(const QString &label);
-  void addWord(const QString &word);
+  void wordAdded(const QString &word);
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -66,8 +67,8 @@ private slots:
 
 #ifdef ENABLE_SPELL_CHECKING
   void correctWord();
-  void slot_addWord();
-  void slot_ignoreWord();
+  void addWord();
+  void ignoreWord();
 
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
@@ -86,8 +87,7 @@ private:
   CHighlighter* m_highlighter;
 
   //Spell-checking
-  enum { MaxWords = 5 };
-  QAction *m_misspelledWordsActs[MaxWords];
+  QList<QAction *> m_misspelledWordsActs;
   QPoint m_lastPos;
   QStringList m_addedWords;
 };
