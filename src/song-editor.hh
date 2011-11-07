@@ -19,6 +19,7 @@
 #ifndef __SONG_EDITOR_HH__
 #define __SONG_EDITOR_HH__
 
+#include "config.hh"
 #include "code-editor.hh"
 
 #include <QToolBar>
@@ -63,19 +64,21 @@ private slots:
   void insertVerse();
   void insertChorus();
 
+#ifdef ENABLE_SPELL_CHECKING
   void correctWord();
   void slot_addWord();
   void slot_ignoreWord();
 
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
+  QString currentWord();
+#endif //ENABLE_SPELL_CHECKING
 
 private:
   QString syntaxicColoration(const QString &);
   void indentSelection();
   void indentLine(const QTextCursor & cursor);
   void trimLine(const QTextCursor & cursor);
-  QString currentWord();
 
   QToolBar* m_toolBar;
   QString m_path;

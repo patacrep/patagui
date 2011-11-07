@@ -20,7 +20,10 @@
 #include "code-editor.hh"
 
 #include "song-highlighter.hh"
+
+#ifdef ENABLE_SPELL_CHECKING
 #include "hunspell/hunspell.hxx"
+#endif //ENABLE_SPELL_CHECKING
 
 #include <QToolBar>
 #include <QAction>
@@ -107,12 +110,14 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
   addAction(action);
 
+#ifdef ENABLE_SPELL_CHECKING
   for (int i = 0; i < MaxWords; ++i) 
     {
       m_misspelledWordsActs[i] = new QAction(this);
       m_misspelledWordsActs[i]->setVisible(false);
       connect(m_misspelledWordsActs[i], SIGNAL(triggered()), this, SLOT(correctWord()));
     }
+#endif //ENABLE_SPELL_CHECKING
 
   readSettings();
 }
@@ -170,11 +175,13 @@ void CSongEditor::setPath(const QString &path)
 void CSongEditor::installHighlighter()
 {
   m_highlighter = new CHighlighter(document());
-  m_highlighter->setSpellCheck(true);
-  m_highlighter->setDictionary("./src/hunspell/dictionaries/en_GB.dic");
 
+#ifdef ENABLE_SPELL_CHECKING
+  m_highlighter->setSpellCheck(true);
+  m_highlighter->setDictionary("/usr/share/hunspell/en_US.dic");
   connect(this, SIGNAL(addWord(const QString &)),
 	  m_highlighter, SLOT(slot_addWord(const QString &)));
+#endif //ENABLE_SPELL_CHECKING
 }
 
 void CSongEditor::save()
@@ -324,6 +331,8 @@ void CSongEditor::addAction(QAction* action)
   m_actions.append(action);
 }
 
+
+#ifdef ENABLE_SPELL_CHECKING
 QString CSongEditor::currentWord()
 {
   QTextCursor cursor = cursorForPosition(m_lastPos);
@@ -427,3 +436,5 @@ Hunspell* CSongEditor::checker() const
   if(!m_highlighter) return 0;
   return m_highlighter->checker();
 }
+#endif //ENABLE_SPELL_CHECKING
+

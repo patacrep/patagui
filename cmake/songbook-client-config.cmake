@@ -12,6 +12,7 @@ option(GENERATE_MANPAGES "generate manpages" ON)
 option(COMPRESS_MANPAGES "compress manpages" ON)
 option(ENABLE_SVG_SUPPORT "allow to use SVG icons fallback" ON)
 option(ENABLE_LIBRARY_DOWNLOAD "allow the application to download songbooks" ON)
+option(ENABLE_SPELL_CHECKING "allow the application to apply spellchecking within song-editor" ON)
 
 # {{{ CFLAGS
 if(WIN32)
@@ -55,6 +56,12 @@ if(ENABLE_LIBRARY_DOWNLOAD)
   message(STATUS "Library download enabled")
 else()
   message(STATUS "Library download disabled")
+endif()
+
+if(ENABLE_SPELL_CHECKING)
+  message(STATUS "Spellchecking enabled")
+else()
+  message(STATUS "Spellchecking disabled")
 endif()
 
 # {{{ Check if documentation can be build
