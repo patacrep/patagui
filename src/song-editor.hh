@@ -24,7 +24,6 @@
 
 #include <QToolBar>
 #include <QList>
-#define MAX_WORDS 5
 
 class QAction;
 class Hunspell;
@@ -90,6 +89,7 @@ private:
   QList<QAction *> m_misspelledWordsActs;
   QPoint m_lastPos;
   QStringList m_addedWords;
+  uint m_maxSuggestedWords;
 };
 
 #endif // __SONG_EDITOR_HH__

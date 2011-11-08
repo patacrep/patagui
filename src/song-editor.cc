@@ -42,6 +42,7 @@ CSongEditor::CSongEditor()
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
   , m_highlighter(0)
+  , m_maxSuggestedWords(0)
 {
   setUndoRedoEnabled(true);
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
@@ -110,16 +111,6 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
   addAction(action);
 
-#ifdef ENABLE_SPELL_CHECKING
-  for(int i = 0; i < MAX_WORDS; ++i)
-    {
-      action = new QAction(this);
-      action->setVisible(false);
-      connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
-      m_misspelledWordsActs.append(action);
-    }
-#endif //ENABLE_SPELL_CHECKING
-
   readSettings();
 }
 
@@ -151,6 +142,17 @@ void CSongEditor::readSettings()
 
   setHighlightMode(settings.value("highlight", true).toBool());
   setLineNumberMode(settings.value("lines", true).toBool());
+
+#ifdef ENABLE_SPELL_CHECKING
+  m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
+  for(uint i = 0; i < m_maxSuggestedWords; ++i)
+    {
+      QAction *action = new QAction(this);
+      action->setVisible(false);
+      connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
+      m_misspelledWordsActs.append(action);
+    }
+#endif //ENABLE_SPELL_CHECKING
 
   settings.endGroup();
 }
@@ -394,7 +396,7 @@ void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
   m_lastPos=event->pos();
   QString str = currentWord();
   QStringList list = getWordPropositions(str);
-  int size = qMin(MAX_WORDS, list.size());
+  int size = qMin(m_maxSuggestedWords, (uint)list.size());
   if (!list.isEmpty())
     {
       for (int i = 0; i < size; ++i)
