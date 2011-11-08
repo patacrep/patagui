@@ -152,6 +152,7 @@ void CSongEditor::readSettings()
       connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
       m_misspelledWordsActs.append(action);
     }
+  m_dictionary = settings.value("dictionary", "/usr/share/hunspell/en_US.dic").toString();
 #endif //ENABLE_SPELL_CHECKING
 
   settings.endGroup();
@@ -181,7 +182,7 @@ void CSongEditor::installHighlighter()
 
 #ifdef ENABLE_SPELL_CHECKING
   m_highlighter->setSpellCheck(true);
-  m_highlighter->setDictionary("/usr/share/hunspell/en_US.dic");
+  m_highlighter->setDictionary(m_dictionary);
   connect(this, SIGNAL(wordAdded(const QString &)),
 	  m_highlighter, SLOT(addWord(const QString &)));
 #endif //ENABLE_SPELL_CHECKING
@@ -269,7 +270,7 @@ void CSongEditor::indentSelection()
 
 void CSongEditor::indentLine(const QTextCursor & cur)
 {
-  //if line is only contains whitespaces, remove them and exit
+  //if line only contains whitespaces, remove them and exit
   if(cur.block().text().trimmed().isEmpty() || cur.atStart())
     {
       trimLine(cur);
@@ -363,28 +364,25 @@ void CSongEditor::correctWord()
 
 QStringList CSongEditor::getWordPropositions(const QString &word)
 {
+  if(!checker())
+    return QStringList();
+
   QStringList wordList;
-  if(checker())
+  QByteArray encodedString;
+  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(word);
+
+  if(checker()->spell(encodedString.data()))
+    return wordList;
+
+  char ** wlst;
+  int ns = checker()->suggest(&wlst, encodedString.data());
+  if (ns > 0)
     {
-      QByteArray encodedString;
-      QString spell_encoding=QString(checker()->get_dic_encoding());
-      QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
-      encodedString = codec->fromUnicode(word);
-      bool check = checker()->spell(encodedString.data());
-      if(!check){
-	char ** wlst;
-	int ns = checker()->suggest(&wlst,encodedString.data());
-	if (ns > 0)
-	  {
-	    for (int i=0; i < ns; i++)
-	      {
-		wordList.append(codec->toUnicode(wlst[i]));
-		//free(wlst[i]);
-	      }
-	    //free(wlst);
-	    checker()->free_list(&wlst, ns);
-	  }// if ns >0
-      }// if check
+      for (int i=0; i < ns; i++)
+	wordList.append(codec->toUnicode(wlst[i]));
+      checker()->free_list(&wlst, ns);
     }
   return wordList;
 }

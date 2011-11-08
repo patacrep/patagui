@@ -85,11 +85,13 @@ private:
   QList<QAction*> m_actions;
   CHighlighter* m_highlighter;
 
-  //Spell-checking
+#ifdef ENABLE_SPELL_CHECKING
   QList<QAction *> m_misspelledWordsActs;
   QPoint m_lastPos;
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
+  QString m_dictionary;
+#endif //ENABLE_SPELL_CHECKING
 };
 
 #endif // __SONG_EDITOR_HH__

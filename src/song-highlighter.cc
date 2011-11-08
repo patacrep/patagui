@@ -218,9 +218,14 @@ void CHighlighter::setDictionary(const QString &filename)
       return;
     }
 
-  QString basename = filename.left(filename.length()-4);
-  if(m_checker) delete m_checker;
-  m_checker = new Hunspell(basename.toLatin1() + ".aff", basename.toLatin1() + ".dic");
+  QString basename = QString("%1/%2").arg(fi.absolutePath()).arg(fi.baseName());
+  if(m_checker)
+    {
+      delete m_checker;
+      m_checker = 0;
+    }
+  m_checker = new Hunspell(QString("%1.aff").arg(basename).toLatin1(),
+			   QString("%1.dic").arg(basename).toLatin1());
   QString encoded = QString(m_checker->get_dic_encoding());
   m_codec = QTextCodec::codecForName(encoded.toLatin1());
 
