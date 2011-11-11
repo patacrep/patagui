@@ -578,7 +578,7 @@ SongbookPage::SongbookPage(ConfigDialog *configDialog)
 	  songbook, SLOT(setTmpl(const QString &)));
   connect(songbook, SIGNAL(wasModified(bool)), SLOT(updatePropertyEditor()));
 
-  songbook->changeTemplate();
+  songbook->changeTemplate(songbook->tmpl());
   songbook->initializeEditor(m_propertyEditor);
 
   QGroupBox *songbookGroupBox = new QGroupBox(tr("Songbook"));
