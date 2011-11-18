@@ -744,6 +744,7 @@ void CMainWindow::closeTab(int index)
 	  if (answer != QMessageBox::Ok)
 	    return;
 	}
+      editor->writeSettings();
       m_editors.remove(editor->path());
       delete editor;
       m_mainWidget->closeTab(index);

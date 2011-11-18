@@ -43,6 +43,8 @@ set(SONGBOOK_CLIENT_SOURCES
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
   src/make-songbook-process.cc
+  src/qtfindreplacedialog/findreplaceform.cpp
+  src/qtfindreplacedialog/findreplacedialog.cpp
   )
 
 # header (moc)
@@ -73,6 +75,14 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
   src/make-songbook-process.hh
+  src/qtfindreplacedialog/findreplaceform.h
+  src/qtfindreplacedialog/findreplacedialog.h
+  )
+
+# uis
+set(SONGBOOK_CLIENT_UIS
+  src/qtfindreplacedialog/findreplacedialog.ui
+  src/qtfindreplacedialog/findreplaceform.ui
   )
 
 # resources (rcs)
@@ -120,6 +130,7 @@ include_directories(
 # process Qt special files
 qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
+qt4_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
 
 # {{{ Apple specific stuff
 if(APPLE)
@@ -135,6 +146,7 @@ if(NOT APPLE)
     ${SONGBOOK_CLIENT_RESSOURCES}
     ${COMPILED_TRANSLATIONS}
     ${QT_PROPERTY_EDITOR_SOURCES}
+    ${SONGBOOK_CLIENT_UI_HDRS}
     )
 endif(NOT APPLE)
 
