@@ -20,6 +20,7 @@
 #include "code-editor.hh"
 
 #include "song-highlighter.hh"
+#include "qtfindreplacedialog/findreplacedialog.h"
 
 #ifdef ENABLE_SPELL_CHECKING
 #include "hunspell/hunspell.hxx"
@@ -99,7 +100,21 @@ CSongEditor::CSongEditor()
   addAction(action);
 
   toolBar()->addSeparator();
-  
+
+  //find and replace
+  m_findReplaceDialog = new FindReplaceDialog(this);
+  m_findReplaceDialog->setModal(false);
+  m_findReplaceDialog->setTextEdit(this);
+
+  action = new QAction(tr("Search and Replace"), this);
+  action->setShortcut(QKeySequence::Find);
+  action->setIcon(QIcon::fromTheme("edit-find"));//, QIcon(":/icons/tango/32x32/actions/edit-find.png")));
+  action->setStatusTip(tr("Find some text and replace it"));
+  connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
+  addAction(action);
+
+  toolBar()->addSeparator();
+
   //songbook
   action = new QAction(tr("Verse"), this);
   action->setStatusTip(tr("New verse environment"));
@@ -155,11 +170,16 @@ void CSongEditor::readSettings()
   m_dictionary = settings.value("dictionary", "/usr/share/hunspell/en_US.dic").toString();
 #endif //ENABLE_SPELL_CHECKING
 
+  m_findReplaceDialog->readSettings(settings);
+
   settings.endGroup();
 }
 
 void CSongEditor::writeSettings()
-{}
+{
+  QSettings settings;
+  m_findReplaceDialog->writeSettings(settings);
+}
 
 void CSongEditor::setPath(const QString &path)
 {
@@ -229,7 +249,7 @@ void CSongEditor::insertChorus()
   insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
 
-QToolBar* CSongEditor::toolBar()
+QToolBar* CSongEditor::toolBar() const
 {
   return m_toolBar;
 }

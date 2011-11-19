@@ -28,6 +28,7 @@
 class QAction;
 class Hunspell;
 class CHighlighter;
+class FindReplaceDialog;
 
 class CSongEditor : public CodeEditor
 {
@@ -40,7 +41,7 @@ public:
   QString path();
   void setPath(const QString & APath);
 
-  QToolBar* toolBar();
+  QToolBar* toolBar() const;
 
   virtual void keyPressEvent(QKeyEvent *event);
 
@@ -92,6 +93,9 @@ private:
   uint m_maxSuggestedWords;
   QString m_dictionary;
 #endif //ENABLE_SPELL_CHECKING
+
+  FindReplaceDialog* m_findReplaceDialog;
+
 };
 
 #endif // __SONG_EDITOR_HH__
