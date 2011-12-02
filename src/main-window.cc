@@ -637,7 +637,7 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path, const QString &title)
 {
-  if (!path.isEmpty() && m_editors.contains(path))
+  if (m_editors.contains(path))
     {
       m_mainWidget->setCurrentWidget(m_editors[path]);
       return;
@@ -752,12 +752,10 @@ void CMainWindow::closeTab(int index)
 
 void CMainWindow::changeTab(int index)
 {
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  QAction *action;
-  if (editor)
+  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
     {
       m_editorMenu->clear();
-      foreach (action, editor->actions())
+      foreach (QAction *action, editor->actions())
 	{
 	  m_editorMenu->addAction(action);
 	  action->setEnabled(true);
@@ -769,8 +767,10 @@ void CMainWindow::changeTab(int index)
     }
   else
     {
-      foreach (action, m_editorMenu->actions())
+      CSongEditor *editor = m_editors[""];
+      foreach (QAction *action, editor->actions())
 	{
+	  m_editorMenu->addAction(action);
 	  action->setEnabled(false);
 	}
 
