@@ -114,12 +114,12 @@ CSongEditor::CSongEditor()
   addAction(action);
 
   //spellchecking
-  m_enableSpellChecking = new QAction(tr("Chec&k spelling"), this);
-  m_enableSpellChecking->setIcon(QIcon::fromTheme("tools-check-spelling"));//, QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
-  m_enableSpellChecking->setStatusTip(tr("Check current song for incorrect spelling"));
-  m_enableSpellChecking->setCheckable(true);
-  m_enableSpellChecking->setEnabled(false);
-  addAction(m_enableSpellChecking);
+  m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
+  m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling"));//, QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
+  m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
+  m_spellCheckingAct->setCheckable(true);
+  m_spellCheckingAct->setEnabled(false);
+  addAction(m_spellCheckingAct);
 
   toolBar()->addSeparator();
 
@@ -209,11 +209,30 @@ void CSongEditor::installHighlighter()
   m_highlighter = new CHighlighter(document());
 
 #ifdef ENABLE_SPELL_CHECKING
-  m_enableSpellChecking->setEnabled(true);
+  //find a suitable dictionary based on the song's language
+  QRegExp reLanguage("selectlanguage\\{([^\\}]+)");
+  reLanguage.indexIn(document()->toPlainText());
+  QString lang = reLanguage.cap(1);
+  if(!lang.compare("french"))
+    m_dictionary = QString("/usr/share/hunspell/fr_FR.dic");
+  else if(!lang.compare("english"))
+    m_dictionary = QString("/usr/share/hunspell/en_US.dic");
+  else if(!lang.compare("spanish"))
+    m_dictionary = QString("/usr/share/hunspell/es_ES.dic");
+  else
+    qWarning() << "CSongbEditor::installHighlighter Unable to find dictionnary for language: " << lang;
+
+  if(!QFile(m_dictionary).exists())
+    {
+      qWarning() << "CSongbEditor::installHighlighter Unable to open dictionnary: " << m_dictionary;
+      return;
+    }
+
+  setSpellCheckingEnabled(true);
   m_highlighter->setDictionary(m_dictionary);
   connect(this, SIGNAL(wordAdded(const QString &)),
 	  m_highlighter, SLOT(addWord(const QString &)));
-  connect(m_enableSpellChecking, SIGNAL(toggled(bool)),
+  connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_highlighter, SLOT(setSpellCheck(bool)));
 #endif //ENABLE_SPELL_CHECKING
 }
@@ -469,6 +488,17 @@ Hunspell* CSongEditor::checker() const
 {
   if(!m_highlighter) return 0;
   return m_highlighter->checker();
+}
+
+bool CSongEditor::isSpellCheckingEnabled() const
+{
+  return m_isSpellCheckingEnabled;
+}
+
+void CSongEditor::setSpellCheckingEnabled(const bool value)
+{
+  m_isSpellCheckingEnabled = value;
+  m_spellCheckingAct->setEnabled(value);
 }
 #endif //ENABLE_SPELL_CHECKING
 

@@ -54,6 +54,9 @@ public:
   Hunspell* checker() const;
   void installHighlighter();
 
+  bool isSpellCheckingEnabled() const;
+  void setSpellCheckingEnabled(const bool);
+
 signals:
   void labelChanged(const QString &label);
   void wordAdded(const QString &word);
@@ -85,6 +88,7 @@ private:
   QString m_path;
   QList<QAction*> m_actions;
   CHighlighter* m_highlighter;
+  bool m_isSpellCheckingEnabled;
 
 #ifdef ENABLE_SPELL_CHECKING
   QList<QAction *> m_misspelledWordsActs;
@@ -92,7 +96,7 @@ private:
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
   QString m_dictionary;
-  QAction* m_enableSpellChecking;
+  QAction* m_spellCheckingAct;
 #endif //ENABLE_SPELL_CHECKING
 
   FindReplaceDialog* m_findReplaceDialog;
