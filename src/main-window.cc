@@ -388,8 +388,8 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor *editor = new CSongEditor();
-  QAction *action;
-  foreach (action, editor->actions())
+  m_editors.insert("", editor);
+  foreach (QAction *action, editor->actions())
     {
       action->setDisabled(true);
       m_editorMenu->addAction(action);
