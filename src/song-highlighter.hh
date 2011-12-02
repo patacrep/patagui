@@ -38,13 +38,13 @@ public:
   QStringList misspelled();
   QStringList correct();
   void enableSpellChecking(const bool state);
-  void setSpellCheck(const bool state);
   void setDictionary(const QString &filename);
   Hunspell* checker() const;
 
 #ifdef ENABLE_SPELL_CHECKING
 public slots:
   void addWord(const QString &word);
+  void setSpellCheck(const bool state);
 #endif //ENABLE_SPELL_CHECKING
 
 protected:

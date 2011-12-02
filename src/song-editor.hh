@@ -92,6 +92,7 @@ private:
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
   QString m_dictionary;
+  QAction* m_enableSpellChecking;
 #endif //ENABLE_SPELL_CHECKING
 
   FindReplaceDialog* m_findReplaceDialog;

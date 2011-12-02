@@ -113,6 +113,14 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
   addAction(action);
 
+  //spellchecking
+  m_enableSpellChecking = new QAction(tr("Chec&k spelling"), this);
+  m_enableSpellChecking->setIcon(QIcon::fromTheme("tools-check-spelling"));//, QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
+  m_enableSpellChecking->setStatusTip(tr("Check current song for incorrect spelling"));
+  m_enableSpellChecking->setCheckable(true);
+  m_enableSpellChecking->setEnabled(false);
+  addAction(m_enableSpellChecking);
+
   toolBar()->addSeparator();
 
   //songbook
@@ -201,10 +209,12 @@ void CSongEditor::installHighlighter()
   m_highlighter = new CHighlighter(document());
 
 #ifdef ENABLE_SPELL_CHECKING
-  m_highlighter->setSpellCheck(true);
+  m_enableSpellChecking->setEnabled(true);
   m_highlighter->setDictionary(m_dictionary);
   connect(this, SIGNAL(wordAdded(const QString &)),
 	  m_highlighter, SLOT(addWord(const QString &)));
+  connect(m_enableSpellChecking, SIGNAL(toggled(bool)),
+	  m_highlighter, SLOT(setSpellCheck(bool)));
 #endif //ENABLE_SPELL_CHECKING
 }
 
