@@ -637,7 +637,7 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path, const QString &title)
 {
-  if (m_editors.contains(path))
+  if (!path.isEmpty() && m_editors.contains(path))
     {
       m_mainWidget->setCurrentWidget(m_editors[path]);
       return;
@@ -730,8 +730,7 @@ void CMainWindow::deleteSong(const QString &path)
 
 void CMainWindow::closeTab(int index)
 {
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  if (editor)
+  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
     {
       if (editor->document()->isModified())
 	{
@@ -746,8 +745,8 @@ void CMainWindow::closeTab(int index)
 	}
       editor->writeSettings();
       m_editors.remove(editor->path());
-      delete editor;
       m_mainWidget->closeTab(index);
+      delete editor;
     }
 }
 
