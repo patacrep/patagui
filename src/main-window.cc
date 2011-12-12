@@ -868,10 +868,6 @@ void CMainWindow::cleanDialog()
               SLOT(showMessage(const QString &, int)));
       connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
               progressBar(), SLOT(hide()));
-      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-              log(), SLOT(appendPlainText(const QString &)));
-      connect(builder, SIGNAL(readOnStandardError(const QString &)),
-              log(), SLOT(appendPlainText(const QString &)));
 
       if (cleanAllButton->isChecked())
 	builder->setCommand(cleanallCommand());
