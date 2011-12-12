@@ -90,24 +90,16 @@ CMainWindow::CMainWindow()
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
   
   // compilation log
-  m_log = new QPlainTextEdit;
-  m_log->setMinimumHeight(150);
-  m_log->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-  m_log->setReadOnly(true);
-  Q_UNUSED(new CLogsHighlighter(m_log->document()));
+  m_log = new QDockWidget(tr("LaTeX compilation logs"));
+  QPlainTextEdit* logs = new QPlainTextEdit;
+  logs->setReadOnly(true);
+  Q_UNUSED(new CLogsHighlighter(logs->document()));
+  m_log->setWidget(logs);
+  addDockWidget(Qt::BottomDockWidgetArea, m_log);
 
   createActions();
   createMenus();
   createToolBar();
-
-  //Layouts
-  QBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->setContentsMargins(0,0,0,0);
-  mainLayout->addWidget(m_view);
-  mainLayout->addWidget(m_log);
-
-  QWidget *libraryTab = new QWidget;
-  libraryTab->setLayout(mainLayout);
 
   // place elements into the main window
   m_mainWidget = new CTabWidget;
@@ -116,7 +108,7 @@ CMainWindow::CMainWindow()
   m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
   connect(m_mainWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(m_mainWidget, SIGNAL(currentChanged(int)), SLOT(changeTab(int)));
-  m_mainWidget->addTab(libraryTab, tr("Library"));
+  m_mainWidget->addTab(m_view, tr("Library"));
   setCentralWidget(m_mainWidget);
 
   // status bar with an embedded label and progress bar
@@ -511,9 +503,9 @@ void CMainWindow::build()
   connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
           progressBar(), SLOT(hide()));
   connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-          log(), SLOT(appendPlainText(const QString &)));
+          log()->widget(), SLOT(appendPlainText(const QString &)));
   connect(builder, SIGNAL(readOnStandardError(const QString &)),
-          log(), SLOT(appendPlainText(const QString &)));
+          log()->widget(), SLOT(appendPlainText(const QString &)));
 
   builder->setCommand(cleanCommand());
 
@@ -779,7 +771,7 @@ void CMainWindow::changeTab(int index)
     }
 }
 
-QPlainTextEdit* CMainWindow::log() const
+QDockWidget* CMainWindow::log() const
 {
   return m_log;
 }

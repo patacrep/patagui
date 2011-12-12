@@ -67,7 +67,7 @@ public:
   ~CMainWindow();
 
   QProgressBar * progressBar() const;
-  QPlainTextEdit * log() const;
+  QDockWidget * log() const;
   CLibraryView * view() const;
   CLibrary * library() const;
   CSongbook * songbook() const;
@@ -143,7 +143,7 @@ private:
   CNotification *m_updateAvailable;
   QLabel *m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
-  QPlainTextEdit *m_log;
+  QDockWidget *m_log;
 
   // Settings
   QString m_workingPath;
