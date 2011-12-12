@@ -20,6 +20,7 @@
 #include "make-songbook-process.hh"
 
 #include <QDesktopServices>
+#include <QFile>
 
 #include <QDebug>
 
@@ -140,17 +141,18 @@ void CMakeSongbookProcess::onStarted()
 
 void CMakeSongbookProcess::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  if (exitStatus == QProcess::NormalExit)
-    {
-      emit(message(successMessage(), 0));
-      if (!urlToOpen().isEmpty())
-        {
-          QDesktopServices::openUrl(urlToOpen());
-          emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
-        }
-    }
-  else
+  if (exitStatus != QProcess::NormalExit)
     {
       emit(message(errorMessage(), 0));
+      return;
     }
+
+  emit(message(successMessage(), 0));
+  if (urlToOpen().isEmpty())
+    return;
+
+  emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
+  if(!QDesktopServices::openUrl(urlToOpen()) ||
+     !QFile(urlToOpen().toLocalFile()).exists())
+    emit(error(QProcess::UnknownError));
 }

@@ -31,6 +31,7 @@
 
 #include <QModelIndex>
 #include <QDir>
+#include <QProcess>
 
 class CSongbook;
 class CLibrary;
@@ -115,6 +116,8 @@ private slots:
 
   void updateTitle(const QString &filename);
   void switchToolBar(QToolBar *toolBar);
+
+  void buildError(QProcess::ProcessError error);
 
 private:
   void readSettings();

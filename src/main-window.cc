@@ -506,6 +506,8 @@ void CMainWindow::build()
           log()->widget(), SLOT(appendPlainText(const QString &)));
   connect(builder, SIGNAL(readOnStandardError(const QString &)),
           log()->widget(), SLOT(appendPlainText(const QString &)));
+  connect(builder, SIGNAL(error(QProcess::ProcessError)),
+          this, SLOT(buildError(QProcess::ProcessError)));
 
   builder->setCommand(cleanCommand());
 
@@ -523,7 +525,7 @@ void CMainWindow::build()
   QString command = buildCommand();
   builder->setCommand(command.replace("%target", target).replace("%basename", basename));
 
-  builder->setUrlToOpen(QUrl(QString("file:///%1/%2").arg(workingPath()).arg(target)));
+  builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
   builder->setStartMessage(tr("Building %1.").arg(target));
   builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
   builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
@@ -774,6 +776,13 @@ void CMainWindow::changeTab(int index)
 QDockWidget* CMainWindow::log() const
 {
   return m_log;
+}
+
+void CMainWindow::buildError(QProcess::ProcessError error)
+{
+  log()->setVisible(true);
+  statusBar()->showMessage
+    (qobject_cast< CMakeSongbookProcess* >(QObject::sender())->errorMessage());
 }
 
 void CMainWindow::updateNotification(const QString &path)
