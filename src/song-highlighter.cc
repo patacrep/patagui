@@ -244,7 +244,11 @@ void CHighlighter::addWord(const QString & word)
 
 void CHighlighter::setSpellCheck(const bool value)
 {
-  m_isSpellCheckActive = value;
+  if(m_isSpellCheckActive != value)
+    {
+      m_isSpellCheckActive = value;
+      rehighlight();
+    }
 }
 
 Hunspell* CHighlighter::checker() const

@@ -380,8 +380,8 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor *editor = new CSongEditor();
-  QAction *action;
-  foreach (action, editor->actions())
+  m_editors.insert("", editor);
+  foreach (QAction *action, editor->actions())
     {
       action->setDisabled(true);
       m_editorMenu->addAction(action);
@@ -722,8 +722,7 @@ void CMainWindow::deleteSong(const QString &path)
 
 void CMainWindow::closeTab(int index)
 {
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  if (editor)
+  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
     {
       if (editor->document()->isModified())
 	{
@@ -738,31 +737,32 @@ void CMainWindow::closeTab(int index)
 	}
       editor->writeSettings();
       m_editors.remove(editor->path());
-      delete editor;
       m_mainWidget->closeTab(index);
+      delete editor;
     }
 }
 
 void CMainWindow::changeTab(int index)
 {
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  QAction *action;
-  if (editor)
+  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
     {
       m_editorMenu->clear();
-      foreach (action, editor->actions())
+      foreach (QAction *action, editor->actions())
 	{
 	  m_editorMenu->addAction(action);
 	  action->setEnabled(true);
 	}
+      editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
 
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
-      foreach (action, m_editorMenu->actions())
+      CSongEditor *editor = m_editors[""];
+      foreach (QAction *action, editor->actions())
 	{
+	  m_editorMenu->addAction(action);
 	  action->setEnabled(false);
 	}
 
