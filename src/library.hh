@@ -105,7 +105,6 @@ signals:
   void directoryChanged(const QDir &directory);
 
 protected:
-  CMainWindow *parent() const;
 
   bool parseSong(const QString &path, Song &song);
 
