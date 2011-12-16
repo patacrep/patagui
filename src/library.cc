@@ -115,11 +115,6 @@ QAbstractListModel * CLibrary::completionModel()
   return m_completionModel;
 }
 
-CMainWindow * CLibrary::parent() const
-{
-  return m_parent;
-}
-
 QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int role) const
 {
   if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -243,9 +238,9 @@ void CLibrary::update()
   while(it.hasNext())
     paths.append(it.next());
 
-  parent()->progressBar()->show();
-  parent()->progressBar()->setTextVisible(true);
-  parent()->progressBar()->setRange(0, paths.size());
+  m_parent->progressBar()->show();
+  m_parent->progressBar()->setTextVisible(true);
+  m_parent->progressBar()->setRange(0, paths.size());
 
   addSongs(paths);
 
@@ -259,10 +254,10 @@ void CLibrary::update()
   wordList.removeDuplicates();
   m_completionModel->setStringList(wordList);
 
-  parent()->progressBar()->setTextVisible(false);
-  parent()->progressBar()->setRange(0, 0);
-  parent()->progressBar()->hide();
-  parent()->statusBar()->showMessage(tr("Song database updated."));
+  m_parent->progressBar()->setTextVisible(false);
+  m_parent->progressBar()->setRange(0, 0);
+  m_parent->progressBar()->hide();
+  m_parent->statusBar()->showMessage(tr("Song database updated."));
   emit(wasModified());
 }
 
@@ -273,7 +268,7 @@ void CLibrary::addSongs(const QStringList &paths)
   QStringListIterator filepath(paths);
   while (filepath.hasNext())
     {
-      parent()->progressBar()->setValue(++count);
+      m_parent->progressBar()->setValue(++count);
       addSong(filepath.next());
     }
   reset();
