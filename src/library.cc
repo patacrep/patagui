@@ -277,10 +277,15 @@ void CLibrary::addSongs(const QStringList &paths)
 
 QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 {
+  QString artistInPath = SbUtils::stringToFilename(artist, "_");
+  artistInPath.remove(QRegExp("_+$"));
+  QString titleInPath = SbUtils::stringToFilename(title, "_");
+  titleInPath.remove(QRegExp("_+$"));
+
   return QString("%1/songs/%2/%3.sg")
     .arg(directory().canonicalPath())
-    .arg(SbUtils::stringToFilename(artist, "_"))
-    .arg(SbUtils::stringToFilename(title, "_"));
+    .arg(artistInPath)
+    .arg(titleInPath);
 }
 
 QString CLibrary::pathToSong(Song &song) const
@@ -290,7 +295,10 @@ QString CLibrary::pathToSong(Song &song) const
 
 void CLibrary::addSong(Song &song)
 {
-  song.path = pathToSong(song);
+  if (song.path.isEmpty())
+    song.path = pathToSong(song);
+
+  qDebug() << song.path << " " << song.artist << " " << song.title;
 
   QFileInfo fileInfo(song.path);
   QDir artistDirectory = fileInfo.absoluteDir();
