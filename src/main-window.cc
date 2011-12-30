@@ -623,45 +623,26 @@ void CMainWindow::songEditor(const QModelIndex &index)
     }
 
   QString path = view()->model()->data(selectionModel()->currentIndex(), CLibrary::PathRole).toString();
-  QString title = view()->model()->data(selectionModel()->currentIndex(), CLibrary::TitleRole).toString();
 
-  songEditor(path, title);
+  songEditor(path);
 }
 
-void CMainWindow::songEditor(const QString &path, const QString &title)
+void CMainWindow::songEditor(const QString &path)
 {
   CSongEditor *editor = new CSongEditor(this);
   editor->setLibrary(library());
-  editor->setPath(path);
   editor->installHighlighter();
-
-  if (title.isEmpty())
-    {
-      QFileInfo fileInfo(path);
-      editor->setWindowTitle(fileInfo.fileName());
-    }
-  else
-    {
-      editor->setWindowTitle(title);
-    }
+  if (!path.isEmpty())
+    editor->setSong(library()->getSong(path));
 
   connect(editor, SIGNAL(labelChanged(const QString&)),
 	  m_mainWidget, SLOT(changeTabText(const QString&)));
-
   m_mainWidget->addTab(editor);
 }
 
 void CMainWindow::newSong()
 {
-  CSongEditor *editor = new CSongEditor(this);
-  editor->setLibrary(library());
-  editor->setNewSong(true);
-  editor->setWindowTitle(tr("New song"));
-
-  connect(editor, SIGNAL(labelChanged(const QString&)),
-          m_mainWidget, SLOT(changeTabText(const QString&)));
-
-  m_mainWidget->addTab(editor);
+  songEditor(QString());
 }
 
 void CMainWindow::deleteSong()
@@ -696,23 +677,14 @@ void CMainWindow::deleteSong(const QString &path)
   msgBox.setDetailedText(qs);
   msgBox.exec();
 
-  if (msgBox.clickedButton() == yesb || msgBox.clickedButton() == delb)
+  if (msgBox.clickedButton() == yesb)
     {
       //remove entry in database in 2 case
       library()->removeSong(path);
     }
-  //don't forget to remove the file if asked
-  if (msgBox.clickedButton() == delb)
+  else if (msgBox.clickedButton() == delb)
     {
-      //removal on disk only if deletion
-      QFile file(path);
-      QFileInfo fileinfo(file);
-      QString tmp = fileinfo.canonicalPath();
-      if (file.remove())
-	{
-	  QDir dir;
-	  dir.rmdir(tmp); //remove dir if empty
-	}
+      library()->deleteSong(path);
     }
 }
 

@@ -51,11 +51,10 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_songHeaderEditor(0)
   , m_library(0)
   , m_toolBar(0)
-  , m_path()
   , m_highlighter(0)
   , m_maxSuggestedWords(0)
   , m_song()
-  , m_newSong(false)
+  , m_newSong(true)
 {
   m_songEditor = new CodeEditor();
   m_songEditor->setUndoRedoEnabled(true);
@@ -162,7 +161,11 @@ CSongEditor::CSongEditor(QWidget *parent)
   mainLayout->addWidget(m_songEditor);
   setLayout(mainLayout);
 
-  hide(); // required to hide some widget from the code editor
+  hide(); // required to hide some widgets from the code editor
+
+  // the editor is set for new song by default
+  setWindowTitle("New song");
+  setNewSong(true);
 
   readSettings();
 }
@@ -170,11 +173,6 @@ CSongEditor::CSongEditor(QWidget *parent)
 CSongEditor::~CSongEditor()
 {
   delete m_highlighter;
-}
-
-QString CSongEditor::path()
-{
-  return m_song.path;
 }
 
 void CSongEditor::readSettings()
@@ -205,7 +203,7 @@ void CSongEditor::readSettings()
       connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
       m_misspelledWordsActs.append(action);
     }
-  m_dictionary = settings.value("dictionary", "/usr/share/hunspell/en_US.dic").toString();
+  // m_dictionary = settings.value("dictionary", "/usr/share/hunspell/en_US.dic").toString();
 #endif //ENABLE_SPELL_CHECKING
 
   m_findReplaceDialog->readSettings(settings);
@@ -219,74 +217,61 @@ void CSongEditor::writeSettings()
   m_findReplaceDialog->writeSettings(settings);
 }
 
-void CSongEditor::setPath(const QString &path)
-{
-  m_song = Song::fromFile(path);
-  m_songHeaderEditor->update();
-
-  QString songContent;
-  foreach (QString gtab, m_song.gtabs)
-    {
-      songContent.append(QString("  \\gtab{%1}\n").arg(gtab));
-    }
-
-  songContent.append(QString("\n"));
-
-  foreach (QString lyric, m_song.lyrics)
-    {
-      songContent.append(QString("%1\n").arg(lyric));
-    }
-
-  m_songEditor->setPlainText(songContent);
-}
-
 void CSongEditor::installHighlighter()
 {
   m_highlighter = new CHighlighter(m_songEditor->document());
+}
+
 #ifdef ENABLE_SPELL_CHECKING
+void CSongEditor::setDictionary(QLocale::Language language)
+{
+  if (m_highlighter == 0)
+    return;
+
   // find the suitable dictionary based on the current song language
-  switch (m_song.language)
+  QString dictionary;
+  switch (language)
     {
     case QLocale::French:
-      m_dictionary = QString("/usr/share/hunspell/fr_FR.dic");
+      dictionary = "/usr/share/hunspell/fr_FR.dic";
       break;
     case QLocale::English:
-      m_dictionary = QString("/usr/share/hunspell/en_US.dic");
+      dictionary = "/usr/share/hunspell/en_US.dic";
       break;
     case QLocale::Spanish:
-      m_dictionary = QString("/usr/share/hunspell/es_ES.dic");
+      dictionary = "/usr/share/hunspell/es_ES.dic";
       break;
     default:
-      qWarning() << "Unable to find dictionnary for " << QLocale::languageToString(m_song.language);
+      qWarning() << "Unable to find dictionnary for " << QLocale::languageToString(language);
       break;
     }
 
-  if (!QFile(m_dictionary).exists())
+  if (!QFile(dictionary).exists())
     {
-      qWarning() << "Unable to open the dictionnary: " << m_dictionary;
+      qWarning() << "Unable to open the dictionnary: " << dictionary;
       return;
     }
 
   setSpellCheckingEnabled(true);
-  m_highlighter->setDictionary(m_dictionary);
+  m_highlighter->setDictionary(dictionary);
   connect(this, SIGNAL(wordAdded(const QString&)), m_highlighter, SLOT(addWord(const QString&)));
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)), m_highlighter, SLOT(setSpellCheck(bool)));
-#endif //ENABLE_SPELL_CHECKING
 }
+#endif //ENABLE_SPELL_CHECKING
 
 void CSongEditor::save()
 {
-  if (isNewSong())
-    {
-      createNewSong();
-      return;
-    }
-
+  // get the song contents
   parseText();
 
+  // save the song and add it to the library list
+  library()->saveSong(m_song);
+  library()->removeSong(m_song.path);
   library()->addSong(m_song);
-  m_songEditor->document()->setModified(false);
-  setWindowTitle(windowTitle().remove(" *"));
+
+  setNewSong(false);
+  setModified(false);
+  setWindowTitle(m_song.title);
   emit(labelChanged(windowTitle()));
 }
 
@@ -340,12 +325,7 @@ void CSongEditor::createNewSong()
 
 void CSongEditor::documentWasModified()
 {
-  m_songEditor->document()->setModified(true);
-  if (!windowTitle().contains(" *"))
-    {
-      setWindowTitle(windowTitle() + " *");
-      emit(labelChanged(windowTitle()));
-    }
+  setModified(true);
 }
 
 void CSongEditor::insertVerse()
@@ -470,9 +450,60 @@ bool CSongEditor::isModified() const
   return m_songEditor->document()->isModified();
 }
 
+void CSongEditor::setModified(bool modified)
+{
+  if (m_songEditor->document()->isModified() != modified)
+    m_songEditor->document()->setModified(modified);
+
+  // update the window title
+  if (modified && !windowTitle().contains(" *"))
+    {
+      setWindowTitle(windowTitle() + " *");
+      emit(labelChanged(windowTitle()));
+    }
+  else if (!modified && windowTitle().contains(" *"))
+    {
+      setWindowTitle(windowTitle().remove(" *"));
+      emit(labelChanged(windowTitle()));
+    }
+}
+
 Song & CSongEditor::song()
 {
   return m_song;
+}
+
+void CSongEditor::setSong(const Song &song)
+{
+  m_song = song;
+
+  // update the header editor
+  m_songHeaderEditor->update();
+
+  // update the text editor
+  QString songContent;
+  foreach (QString gtab, m_song.gtabs)
+    {
+      songContent.append(QString("  \\gtab{%1}\n").arg(gtab));
+    }
+
+  songContent.append(QString("\n"));
+
+  foreach (QString lyric, m_song.lyrics)
+    {
+      songContent.append(QString("%1\n").arg(lyric));
+    }
+
+  m_songEditor->setPlainText(songContent);
+
+
+#ifdef ENABLE_SPELL_CHECKING
+  setDictionary(song.language);
+#endif //ENABLE_SPELL_CHECKING
+
+  setNewSong(false);
+  setWindowTitle(m_song.title);
+  setModified(false);
 }
 
 bool CSongEditor::isNewSong() const

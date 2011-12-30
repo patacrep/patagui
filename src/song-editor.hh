@@ -47,9 +47,6 @@ public:
   CSongEditor(QWidget *parent = 0);
   ~CSongEditor();
 
-  QString path();
-  void setPath(const QString &path);
-
   QToolBar * toolBar() const;
   CLibrary * library() const;
   void setLibrary(CLibrary *library);
@@ -63,13 +60,14 @@ public:
   bool isSpellCheckingEnabled() const;
   void setSpellCheckingEnabled(const bool);
 
-  bool isModified() const;
-
   Song & song();
+  void setSong(const Song &song);
 
+  bool isModified() const;
   bool isNewSong() const;
 
 public slots:
+  void setModified(bool modified);
   void setNewSong(bool newSong);
 
 signals:
@@ -83,6 +81,7 @@ protected:
 #ifdef ENABLE_SPELL_CHECKING
   void contextMenuEvent(QContextMenuEvent *event);
   QString currentWord();
+  void setDictionary(QLocale::Language language);
 #endif //ENABLE_SPELL_CHECKING
 
 private slots:
@@ -114,7 +113,6 @@ private:
   CLibrary *m_library;
   QToolBar *m_toolBar;
 
-  QString m_path;
   QList<QAction*> m_actions;
   CHighlighter* m_highlighter;
   bool m_isSpellCheckingEnabled;
@@ -124,7 +122,6 @@ private:
   QPoint m_lastPos;
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
-  QString m_dictionary;
   QAction* m_spellCheckingAct;
 #endif //ENABLE_SPELL_CHECKING
 
