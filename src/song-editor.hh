@@ -109,7 +109,7 @@ private:
   void saveNewSong();
   void createNewSong();
 
-  CodeEditor *m_editor;
+  CodeEditor *m_songEditor;
   CSongHeaderEditor *m_songHeaderEditor;
   CLibrary *m_library;
   QToolBar *m_toolBar;

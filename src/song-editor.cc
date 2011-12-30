@@ -47,30 +47,31 @@
 
 CSongEditor::CSongEditor(QWidget *parent)
   : QWidget(parent)
-  , m_editor(new CodeEditor)
+  , m_songEditor(0)
   , m_songHeaderEditor(0)
-  , m_library()
-  , m_toolBar(new QToolBar(tr("Song edition tools"), this))
+  , m_library(0)
+  , m_toolBar(0)
   , m_path()
   , m_highlighter(0)
   , m_maxSuggestedWords(0)
   , m_song()
-  , m_newSong(true)
+  , m_newSong(false)
 {
-  m_editor->setUndoRedoEnabled(true);
+  m_songEditor = new CodeEditor();
+  m_songEditor->setUndoRedoEnabled(true);
+
+  CHighlighter *highlighter = new CHighlighter(m_songEditor->document());
+  Q_UNUSED(highlighter);
+  connect(m_songEditor->document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   m_songHeaderEditor = new CSongHeaderEditor(this);
   m_songHeaderEditor->setSongEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
-  CHighlighter *highlighter = new CHighlighter(m_editor->document());
-  Q_UNUSED(highlighter);
-
-  connect(m_editor->document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
-
   // toolBar
-  toolBar()->setMovable(false);
-  toolBar()->setContextMenuPolicy(Qt::PreventContextMenu);
+  m_toolBar = new QToolBar(tr("Song edition tools"), this);
+  m_toolBar->setMovable(false);
+  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
   // actions
   QAction* action = new QAction(tr("Save"), this);
@@ -85,21 +86,21 @@ CSongEditor::CSongEditor(QWidget *parent)
   action->setShortcut(QKeySequence::Cut);
   action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
   action->setStatusTip(tr("Cut the selection"));
-  connect(action, SIGNAL(triggered()), m_editor, SLOT(cut()));
+  connect(action, SIGNAL(triggered()), m_songEditor, SLOT(cut()));
   m_toolBar->addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
   action->setStatusTip(tr("Copy the selection"));
-  connect(action, SIGNAL(triggered()), m_editor, SLOT(copy()));
+  connect(action, SIGNAL(triggered()), m_songEditor, SLOT(copy()));
   m_toolBar->addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
   action->setStatusTip(tr("Paste clipboard content"));
-  connect(action, SIGNAL(triggered()), m_editor, SLOT(paste()));
+  connect(action, SIGNAL(triggered()), m_songEditor, SLOT(paste()));
   m_toolBar->addAction(action);
   
   toolBar()->addSeparator();
@@ -109,14 +110,14 @@ CSongEditor::CSongEditor(QWidget *parent)
   action->setShortcut(QKeySequence::Undo);
   action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
   action->setStatusTip(tr("Undo modifications"));
-  connect(action, SIGNAL(triggered()), m_editor, SLOT(undo()));
+  connect(action, SIGNAL(triggered()), m_songEditor, SLOT(undo()));
   m_toolBar->addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
   action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
   action->setStatusTip(tr("Redo modifications"));
-  connect(action, SIGNAL(triggered()), m_editor, SLOT(redo()));
+  connect(action, SIGNAL(triggered()), m_songEditor, SLOT(redo()));
   m_toolBar->addAction(action);
 
   toolBar()->addSeparator();
@@ -124,7 +125,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   //find and replace
   m_findReplaceDialog = new FindReplaceDialog(this);
   m_findReplaceDialog->setModal(false);
-  m_findReplaceDialog->setTextEdit(m_editor);
+  m_findReplaceDialog->setTextEdit(m_songEditor);
 
   action = new QAction(tr("Search and Replace"), this);
   action->setShortcut(QKeySequence::Find);
@@ -158,7 +159,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   mainLayout->addWidget(m_songHeaderEditor);
-  mainLayout->addWidget(m_editor);
+  mainLayout->addWidget(m_songEditor);
   setLayout(mainLayout);
 
   hide(); // required to hide some widget from the code editor
@@ -190,10 +191,10 @@ void CSongEditor::readSettings()
     }
 
   font.fromString(fontstr);
-  m_editor->setFont(font);
+  m_songEditor->setFont(font);
 
-  m_editor->setHighlightMode(settings.value("highlight", true).toBool());
-  m_editor->setLineNumberMode(settings.value("lines", true).toBool());
+  m_songEditor->setHighlightMode(settings.value("highlight", true).toBool());
+  m_songEditor->setLineNumberMode(settings.value("lines", true).toBool());
 
 #ifdef ENABLE_SPELL_CHECKING
   m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
@@ -236,39 +237,40 @@ void CSongEditor::setPath(const QString &path)
       songContent.append(QString("%1\n").arg(lyric));
     }
 
-  m_editor->setPlainText(songContent);
+  m_songEditor->setPlainText(songContent);
 }
 
 void CSongEditor::installHighlighter()
 {
-  m_highlighter = new CHighlighter(m_editor->document());
-
+  m_highlighter = new CHighlighter(m_songEditor->document());
 #ifdef ENABLE_SPELL_CHECKING
-  //find a suitable dictionary based on the song's language
-  QRegExp reLanguage("selectlanguage\\{([^\\}]+)");
-  reLanguage.indexIn(m_editor->document()->toPlainText());
-  QString lang = reLanguage.cap(1);
-  if(!lang.compare("french"))
-    m_dictionary = QString("/usr/share/hunspell/fr_FR.dic");
-  else if(!lang.compare("english"))
-    m_dictionary = QString("/usr/share/hunspell/en_US.dic");
-  else if(!lang.compare("spanish"))
-    m_dictionary = QString("/usr/share/hunspell/es_ES.dic");
-  else
-    qWarning() << "CSongbEditor::installHighlighter Unable to find dictionnary for language: " << lang;
-
-  if(!QFile(m_dictionary).exists())
+  // find the suitable dictionary based on the current song language
+  switch (m_song.language)
     {
-      qWarning() << "CSongbEditor::installHighlighter Unable to open dictionnary: " << m_dictionary;
+    case QLocale::French:
+      m_dictionary = QString("/usr/share/hunspell/fr_FR.dic");
+      break;
+    case QLocale::English:
+      m_dictionary = QString("/usr/share/hunspell/en_US.dic");
+      break;
+    case QLocale::Spanish:
+      m_dictionary = QString("/usr/share/hunspell/es_ES.dic");
+      break;
+    default:
+      qWarning() << "Unable to find dictionnary for " << QLocale::languageToString(m_song.language);
+      break;
+    }
+
+  if (!QFile(m_dictionary).exists())
+    {
+      qWarning() << "Unable to open the dictionnary: " << m_dictionary;
       return;
     }
 
   setSpellCheckingEnabled(true);
   m_highlighter->setDictionary(m_dictionary);
-  connect(this, SIGNAL(wordAdded(const QString &)),
-	  m_highlighter, SLOT(addWord(const QString &)));
-  connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
-	  m_highlighter, SLOT(setSpellCheck(bool)));
+  connect(this, SIGNAL(wordAdded(const QString&)), m_highlighter, SLOT(addWord(const QString&)));
+  connect(m_spellCheckingAct, SIGNAL(toggled(bool)), m_highlighter, SLOT(setSpellCheck(bool)));
 #endif //ENABLE_SPELL_CHECKING
 }
 
@@ -281,17 +283,18 @@ void CSongEditor::save()
     }
 
   parseText();
-  // m_song = Song::fromString(m_editor->toPlainText(), path());
 
   library()->addSong(m_song);
-  m_editor->document()->setModified(false);
+  m_songEditor->document()->setModified(false);
   setWindowTitle(windowTitle().remove(" *"));
   emit(labelChanged(windowTitle()));
 }
 
 void CSongEditor::parseText()
 {
-  QStringList lines = m_editor->toPlainText().split("\n");
+  m_song.gtabs.clear();
+  m_song.lyrics.clear();
+  QStringList lines = m_songEditor->toPlainText().split("\n");
   QString line;
   foreach (line, lines)
     {
@@ -337,7 +340,7 @@ void CSongEditor::createNewSong()
 
 void CSongEditor::documentWasModified()
 {
-  m_editor->document()->setModified(true);
+  m_songEditor->document()->setModified(true);
   if (!windowTitle().contains(" *"))
     {
       setWindowTitle(windowTitle() + " *");
@@ -347,14 +350,14 @@ void CSongEditor::documentWasModified()
 
 void CSongEditor::insertVerse()
 {
-  QString selection = m_editor->textCursor().selectedText();
-  m_editor->insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
+  QString selection = m_songEditor->textCursor().selectedText();
+  m_songEditor->insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
 }
 
 void CSongEditor::insertChorus()
 {
-  QString selection = m_editor->textCursor().selectedText();
-  m_editor->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
+  QString selection = m_songEditor->textCursor().selectedText();
+  m_songEditor->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
 
 QToolBar * CSongEditor::toolBar() const
@@ -377,13 +380,13 @@ void CSongEditor::keyPressEvent(QKeyEvent *event)
   // if (event->key() == Qt::Key_Tab)
   //   indentSelection();
   // else 
-  //   QApplication::sendEvent(m_editor, event);
+  //   QApplication::sendEvent(m_songEditor, event);
 }
 
 void CSongEditor::indentSelection()
 {
-  QTextCursor cursor = m_editor->textCursor();
-  QTextCursor it = m_editor->textCursor();
+  QTextCursor cursor = m_songEditor->textCursor();
+  QTextCursor it = m_songEditor->textCursor();
   it.setPosition(cursor.anchor());
 
   //swap such as it always points
@@ -464,7 +467,7 @@ void CSongEditor::trimLine(const QTextCursor & cur)
 
 bool CSongEditor::isModified() const
 {
-  return m_editor->document()->isModified();
+  return m_songEditor->document()->isModified();
 }
 
 Song & CSongEditor::song()
@@ -472,10 +475,20 @@ Song & CSongEditor::song()
   return m_song;
 }
 
+bool CSongEditor::isNewSong() const
+{
+  return m_newSong;
+}
+
+void CSongEditor::setNewSong(bool newSong)
+{
+  m_newSong = newSong;
+}
+
 #ifdef ENABLE_SPELL_CHECKING
 QString CSongEditor::currentWord()
 {
-  QTextCursor cursor = m_editor->cursorForPosition(m_lastPos);
+  QTextCursor cursor = m_songEditor->cursorForPosition(m_lastPos);
   QString word = cursor.block().text();
   int pos = cursor.columnNumber();
   int end = word.indexOf(QRegExp("\\W+"),pos);
@@ -490,7 +503,7 @@ void CSongEditor::correctWord()
   if (action)
     {
       QString replacement = action->text();
-      QTextCursor cursor = m_editor->cursorForPosition(m_lastPos);
+      QTextCursor cursor = m_songEditor->cursorForPosition(m_lastPos);
       QString zeile = cursor.block().text();
       cursor.select(QTextCursor::WordUnderCursor);
       cursor.deleteChar();
@@ -525,7 +538,7 @@ QStringList CSongEditor::getWordPropositions(const QString &word)
 
 void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
 {
-  QMenu *menu = m_editor->createStandardContextMenu();
+  QMenu *menu = m_songEditor->createStandardContextMenu();
   QMenu *spellMenu = new QMenu(tr("Suggestions"));
   m_lastPos=event->pos();
   QString str = currentWord();
@@ -588,13 +601,3 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
   m_spellCheckingAct->setEnabled(value);
 }
 #endif //ENABLE_SPELL_CHECKING
-
-bool CSongEditor::isNewSong() const
-{
-  return m_newSong;
-}
-
-void CSongEditor::setNewSong(bool newSong)
-{
-  m_newSong = newSong;
-}
