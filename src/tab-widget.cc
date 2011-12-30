@@ -32,7 +32,7 @@ CTabWidget::CTabWidget()
 
   updateTabBarVisibility();
 
-  QAction* action;
+  QAction *action;
   action = new QAction(tr("Next tab"), this);
   action->setShortcut(QKeySequence::NextChild);
   connect(action, SIGNAL(triggered()), this, SLOT(next()));
@@ -74,12 +74,12 @@ void CTabWidget::closeTab(int index)
   updateTabBarVisibility();
 }
 
-int CTabWidget::addTab(QWidget* widget)
+int CTabWidget::addTab(QWidget *widget)
 {
   return addTab(widget, widget->windowTitle());
 }
 
-int CTabWidget::addTab(QWidget* widget, const QString & label)
+int CTabWidget::addTab(QWidget *widget, const QString &label)
 {
   int index = QTabWidget::addTab(widget, label);
 
@@ -113,11 +113,7 @@ void CTabWidget::changeTabText(const QString &text)
 {
   QWidget *widget = qobject_cast< QWidget* >(QObject::sender());
   int index = indexOf(widget);
-  
-  if (index < 0)
-    {
-      qWarning() << "CTabWidget::changeText: unknown caller";
-      return;
-    }
-  setTabText(index, text);
+
+  if (index >= 0)
+    setTabText(index, text);
 }
