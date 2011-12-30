@@ -23,6 +23,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/library-view.cc
   src/songbook.cc
   src/song-editor.cc
+  src/song-header-editor.cc
   src/song-highlighter.cc
   src/logs-highlighter.cc
   src/dialog-new-song.cc
@@ -55,6 +56,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/library-view.hh
   src/songbook.hh
   src/song-editor.hh
+  src/song-header-editor.hh
   src/song-highlighter.hh
   src/logs-highlighter.hh
   src/dialog-new-song.hh

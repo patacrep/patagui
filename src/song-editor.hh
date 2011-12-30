@@ -21,32 +21,35 @@
 
 #include "config.hh"
 #include "code-editor.hh"
+#include "song.hh"
 
-#include <QToolBar>
-#include <QList>
+#include <QWidget>
+#include <QString>
+#include <QTextCursor>
+#include <QKeyEvent>
 
 class QAction;
 class Hunspell;
 class CHighlighter;
 class FindReplaceDialog;
 
-class CSongEditor : public CodeEditor
+class QToolBar;
+
+class CodeEditor;
+class CSongHeaderEditor;
+
+class CSongEditor : public QWidget
 {
   Q_OBJECT
 
 public:
-  CSongEditor();
+  CSongEditor(QWidget *parent = 0);
   ~CSongEditor();
 
   QString path();
-  void setPath(const QString & APath);
+  void setPath(const QString &path);
 
   QToolBar* toolBar() const;
-
-  virtual void keyPressEvent(QKeyEvent *event);
-
-  void addAction(QAction*);
-  QList<QAction*> actions() const;
 
   void readSettings();
   void writeSettings();
@@ -57,9 +60,16 @@ public:
   bool isSpellCheckingEnabled() const;
   void setSpellCheckingEnabled(const bool);
 
+  bool isModified() const;
+
+  Song & song();
+
 signals:
   void labelChanged(const QString &label);
   void wordAdded(const QString &word);
+
+protected:
+  virtual void keyPressEvent(QKeyEvent *event);
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -79,12 +89,15 @@ protected:
 #endif //ENABLE_SPELL_CHECKING
 
 private:
-  QString syntaxicColoration(const QString &);
+  QString syntaxicColoration(const QString &string);
   void indentSelection();
-  void indentLine(const QTextCursor & cursor);
-  void trimLine(const QTextCursor & cursor);
+  void indentLine(const QTextCursor &cursor);
+  void trimLine(const QTextCursor &cursor);
 
-  QToolBar* m_toolBar;
+  CodeEditor *m_editor;
+  CSongHeaderEditor *m_songHeaderEditor;
+  QToolBar *m_toolBar;
+
   QString m_path;
   QList<QAction*> m_actions;
   CHighlighter* m_highlighter;
@@ -101,6 +114,7 @@ private:
 
   FindReplaceDialog* m_findReplaceDialog;
 
+  Song m_song;
 };
 
 #endif // __SONG_EDITOR_HH__
