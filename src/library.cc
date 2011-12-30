@@ -261,18 +261,125 @@ void CLibrary::update()
   emit(wasModified());
 }
 
+int CLibrary::rowCount(const QModelIndex &) const
+{
+  return m_songs.size();
+}
+
+int CLibrary::columnCount(const QModelIndex &) const
+{
+  return 6;
+}
+
+void CLibrary::addSong(const Song &song)
+{
+  m_songs << song;
+  reset();
+  emit(wasModified());
+}
+
+void CLibrary::addSong(const QString &path)
+{
+  Song song;
+  loadSong(path, &song);
+  addSong(song);
+}
+
 void CLibrary::addSongs(const QStringList &paths)
 {
+  Song song;
+  int songCount = 0;
   // run through the library songs files
-  uint count = 0;
   QStringListIterator filepath(paths);
   while (filepath.hasNext())
     {
-      m_parent->progressBar()->setValue(++count);
-      addSong(filepath.next());
+      m_parent->progressBar()->setValue(++songCount);
+      loadSong(filepath.next(), &song);
+      addSong(song);
+    }
+}
+
+bool CLibrary::containsSong(const QString &path)
+{
+  for (int i = 0; i < m_songs.size(); ++i)
+    {
+      if (m_songs[i].path == path)
+        return true;
+    }
+  return false;
+}
+
+void CLibrary::removeSong(const QString &path)
+{
+  for (int i = 0; i < m_songs.size(); ++i)
+    {
+      if (m_songs[i].path == path)
+        {
+          m_songs.removeAt(i);
+          break;
+        }
     }
   reset();
   emit(wasModified());
+}
+
+Song CLibrary::getSong(const QString &path) const
+{
+  for (int i = 0; i < m_songs.size(); ++i)
+    {
+      if (m_songs[i].path == path)
+        return m_songs[i];
+    }
+  return Song();
+}
+
+void CLibrary::loadSong(const QString &path, Song *song)
+{
+  if (song == 0)
+    return;
+  (*song) = Song::fromFile(path);
+}
+
+void CLibrary::saveSong(Song &song)
+{
+  // if the song is new or comes from an other library, update the
+  // song file path
+  if (song.path.isEmpty()
+      || !song.path.startsWith(directory().path()))
+    {
+      song.path = pathToSong(song);
+    }
+
+  // create the artist directory (if it does not exists)
+  QFileInfo fileInfo(song.path);
+  QDir artistDirectory = fileInfo.absoluteDir();
+  if (!artistDirectory.exists())
+    directory().mkpath(artistDirectory.absolutePath());
+
+  // write the song file
+  QFile file(song.path);
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream (&file);
+      stream.setCodec("UTF-8");
+      stream << Song::toString(song);
+      file.close();
+    }
+
+  // TODO: copy artwork
+}
+
+void CLibrary::deleteSong(const QString &path)
+{
+  // make sure the song is not in the library list anymore
+  removeSong(path);
+
+  // remove the file
+  QFile file(path);
+  if (!file.remove())
+    {
+      qWarning() << "Unable to remove the song file: " << path;
+    }
 }
 
 QString CLibrary::pathToSong(const QString &artist, const QString &title) const
@@ -291,73 +398,4 @@ QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 QString CLibrary::pathToSong(Song &song) const
 {
   return pathToSong(song.artist, song.title);
-}
-
-void CLibrary::addSong(Song &song)
-{
-  if (song.path.isEmpty())
-    song.path = pathToSong(song);
-
-  qDebug() << song.path << " " << song.artist << " " << song.title;
-
-  QFileInfo fileInfo(song.path);
-  QDir artistDirectory = fileInfo.absoluteDir();
-  if (!artistDirectory.exists())
-    directory().mkpath(artistDirectory.absolutePath());
-
-  //write template in sg file
-  QFile file(song.path);
-  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-      QTextStream stream (&file);
-      stream.setCodec("UTF-8");
-      stream << Song::toString(song);
-      file.close();
-    }
-
-  // TODO: copy artwork
-
-  addSong(song.path);
-}
-
-void CLibrary::addSong(const QString &path)
-{
-  m_songs << Song::fromFile(path);
-}
-
-void CLibrary::removeSong(const QString &path)
-{
-  for (int i = 0; i < m_songs.size(); ++i)
-    {
-      if (m_songs[i].path == path)
-	m_songs.removeAt(i);
-    }
-  emit(wasModified());
-}
-
-void CLibrary::updateSong(const QString &path)
-{
-  removeSong(path);
-  addSong(path);
-  emit(wasModified());
-}
-
-bool CLibrary::containsSong(const QString &path)
-{
-  for (int i = 0; i < m_songs.size(); ++i)
-    {
-      if (m_songs[i].path == path)
-	return true;
-    }
-  return false;
-}
-
-int CLibrary::rowCount(const QModelIndex &) const
-{
-  return m_songs.size();
-}
-
-int CLibrary::columnCount(const QModelIndex &) const
-{
-  return 6;
 }

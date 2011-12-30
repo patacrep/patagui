@@ -79,21 +79,42 @@ public:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
-  void addSong(const QString &path);
-  void addSongs(const QStringList &paths);
-  void removeSong(const QString &path);
-  bool containsSong(const QString &path);
   virtual int rowCount(const QModelIndex &index = QModelIndex()) const;
   virtual int columnCount(const QModelIndex &index = QModelIndex()) const;
 
   QString pathToSong(const QString &artist, const QString &title) const;
   QString pathToSong(Song &song) const;
-  void addSong(Song &song);
+
+  //! Add a song to the library list
+  void addSong(const Song &song);
+
+  //! Add a song to the library list
+  void addSong(const QString &path);
+
+  //! Add songs to the library list
+  void addSongs(const QStringList &paths);
+
+  //! Look if the song is already in the library list
+  bool containsSong(const QString &path);
+
+  //! Remove a song from the library list
+  void removeSong(const QString &path);
+
+  //! Get a song from the library list
+  Song getSong(const QString &path) const;
+
+  //! Load a song from a file in the library
+  void loadSong(const QString &path, Song *song);
+
+  //! Save a song in the library (update the song path if required)
+  void saveSong(Song &song);
+
+  //! Destroy a song file from the library
+  void deleteSong(const QString &path);
 
 public slots:
-  void update();
-  void updateSong(const QString & path);
   void readSettings();
+  void update();
 
 signals:
   void wasModified();
