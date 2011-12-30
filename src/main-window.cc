@@ -379,7 +379,6 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor *editor = new CSongEditor(this);
-  m_editors.insert("", editor);
   QAction *action;
   foreach (action, editor->toolBar()->actions())
     {
@@ -631,12 +630,6 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path, const QString &title)
 {
-  if (m_editors.contains(path))
-    {
-      m_mainWidget->setCurrentWidget(m_editors[path]);
-      return;
-    }
-
   CSongEditor *editor = new CSongEditor(this);
   editor->setLibrary(library());
   editor->setPath(path);
@@ -656,7 +649,6 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 	  m_mainWidget, SLOT(changeTabText(const QString&)));
 
   m_mainWidget->addTab(editor);
-  m_editors.insert(path, editor);
 }
 
 void CMainWindow::newSong()
@@ -667,7 +659,7 @@ void CMainWindow::newSong()
   editor->setWindowTitle(tr("New song"));
 
   connect(editor, SIGNAL(labelChanged(const QString&)),
-	  m_mainWidget, SLOT(changeTabText(const QString&)));
+          m_mainWidget, SLOT(changeTabText(const QString&)));
 
   m_mainWidget->addTab(editor);
 }
@@ -740,7 +732,6 @@ void CMainWindow::closeTab(int index)
 	    return;
 	}
       editor->writeSettings();
-      m_editors.remove(editor->path());
       m_mainWidget->closeTab(index);
       delete editor;
     }

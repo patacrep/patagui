@@ -187,9 +187,6 @@ private:
   QAction *m_invertSelectionAct;
   QAction *m_libraryUpdateAct;
   QAction *m_libraryDownloadAct;
-
-  // Editors
-  QMap< QString, CSongEditor* > m_editors;
 };
 
 #endif  // __MAIN_WINDOW_HH__
