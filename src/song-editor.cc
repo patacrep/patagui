@@ -51,6 +51,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_highlighter(0)
   , m_maxSuggestedWords(0)
   , m_song()
+  , m_newSong(true)
 {
   m_editor->setUndoRedoEnabled(true);
 
@@ -409,7 +410,6 @@ Song & CSongEditor::song()
   return m_song;
 }
 
-
 #ifdef ENABLE_SPELL_CHECKING
 QString CSongEditor::currentWord()
 {
@@ -527,3 +527,12 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
 }
 #endif //ENABLE_SPELL_CHECKING
 
+bool CSongEditor::isNewSong() const
+{
+  return m_newSong;
+}
+
+void CSongEditor::setNewSong(bool newSong)
+{
+  m_newSong = newSong;
+}

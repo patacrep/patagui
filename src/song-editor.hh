@@ -64,6 +64,11 @@ public:
 
   Song & song();
 
+  bool isNewSong() const;
+
+public slots:
+  void setNewSong(bool newSong);
+
 signals:
   void labelChanged(const QString &label);
   void wordAdded(const QString &word);
@@ -115,6 +120,7 @@ private:
   FindReplaceDialog* m_findReplaceDialog;
 
   Song m_song;
+  bool m_newSong;
 };
 
 #endif // __SONG_EDITOR_HH__
