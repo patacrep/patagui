@@ -37,6 +37,7 @@ class QToolBar;
 
 class CodeEditor;
 class CSongHeaderEditor;
+class CLibrary;
 
 class CSongEditor : public QWidget
 {
@@ -49,7 +50,9 @@ public:
   QString path();
   void setPath(const QString &path);
 
-  QToolBar* toolBar() const;
+  QToolBar * toolBar() const;
+  CLibrary * library() const;
+  void setLibrary(CLibrary *library);
 
   void readSettings();
   void writeSettings();
@@ -72,9 +75,15 @@ public slots:
 signals:
   void labelChanged(const QString &label);
   void wordAdded(const QString &word);
+  void saved(const QString &path);
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
+
+#ifdef ENABLE_SPELL_CHECKING
+  void contextMenuEvent(QContextMenuEvent *event);
+  QString currentWord();
+#endif //ENABLE_SPELL_CHECKING
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -87,10 +96,6 @@ private slots:
   void correctWord();
   void addWord();
   void ignoreWord();
-
-protected:
-  void contextMenuEvent(QContextMenuEvent *event);
-  QString currentWord();
 #endif //ENABLE_SPELL_CHECKING
 
 private:
@@ -99,8 +104,14 @@ private:
   void indentLine(const QTextCursor &cursor);
   void trimLine(const QTextCursor &cursor);
 
+  void parseText();
+
+  void saveNewSong();
+  void createNewSong();
+
   CodeEditor *m_editor;
   CSongHeaderEditor *m_songHeaderEditor;
+  CLibrary *m_library;
   QToolBar *m_toolBar;
 
   QString m_path;

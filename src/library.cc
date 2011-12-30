@@ -275,6 +275,43 @@ void CLibrary::addSongs(const QStringList &paths)
   emit(wasModified());
 }
 
+QString CLibrary::pathToSong(const QString &artist, const QString &title) const
+{
+  return QString("%1/songs/%2/%3.sg")
+    .arg(directory().canonicalPath())
+    .arg(SbUtils::stringToFilename(artist, "_"))
+    .arg(SbUtils::stringToFilename(title, "_"));
+}
+
+QString CLibrary::pathToSong(Song &song) const
+{
+  return pathToSong(song.artist, song.title);
+}
+
+void CLibrary::addSong(Song &song)
+{
+  song.path = pathToSong(song);
+
+  QFileInfo fileInfo(song.path);
+  QDir artistDirectory = fileInfo.absoluteDir();
+  if (!artistDirectory.exists())
+    directory().mkpath(artistDirectory.absolutePath());
+
+  //write template in sg file
+  QFile file(song.path);
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream (&file);
+      stream.setCodec("UTF-8");
+      stream << Song::toString(song);
+      file.close();
+    }
+
+  // TODO: copy artwork
+
+  addSong(song.path);
+}
+
 void CLibrary::addSong(const QString &path)
 {
   m_songs << Song::fromFile(path);

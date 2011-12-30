@@ -20,16 +20,21 @@
 /**
  * \file song.hh
  *
- * Structure containing all the fields representing a song.
- *
+ * Provides the internal representation of a song from a songbook
+ * library.
  */
 #ifndef __SONG_HH__
 #define __SONG_HH__
 
 #include <QString>
+#include <QStringList>
 #include <QLocale>
 #include <QRegExp>
 
+/** \struct Song "song.hh"
+ *
+ * \brief Song is the internal representation of a song
+ */
 struct Song
 {
   QString title;
@@ -42,12 +47,16 @@ struct Song
   bool isLilypond;
   int columnCount;
   int capo;
+  QStringList gtabs;
+  QStringList lyrics;
 
   static Song fromFile(const QString &path);
   static Song fromString(const QString &text, const QString &path = QString());
+  static QString toString(const Song &song);
   static QLocale::Language languageFromString(const QString &languageName = QString());
   static QString languageToString(const QLocale::Language language);
 
+  static QRegExp reSgFile;
   static QRegExp reSong;
   static QRegExp reArtist;
   static QRegExp reAlbum;
@@ -56,6 +65,9 @@ struct Song
   static QRegExp reLanguage;
   static QRegExp reColumnCount;
   static QRegExp reCapo;
+  static QRegExp reCover;
+  static QRegExp reBlankLine;
+  static QRegExp reGtab;
 };
 
 #endif // __SONG_HH__

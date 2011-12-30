@@ -46,6 +46,12 @@ public:
 public slots:
   void update();
 
+signals:
+  void contentsChanged();
+
+private slots:
+  void onTextEdited(const QString &text);
+
 private:
   QLineEdit *m_titleLineEdit;
   QLineEdit *m_artistLineEdit;

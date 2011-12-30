@@ -43,6 +43,19 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_coverLabel(new QLabel(this))
   , m_songEditor()
 {
+  connect(m_titleLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_artistLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_albumLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_languageLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_columnCountLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_capoLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+
   QBoxLayout *additionalInformationLayout = new QHBoxLayout();
   additionalInformationLayout->setContentsMargins(1, 1, 1, 1);
   additionalInformationLayout->addWidget(m_languageLineEdit);
@@ -112,4 +125,34 @@ void CSongHeaderEditor::update()
         }
       m_coverLabel->setPixmap(pixmap);
     }
+}
+
+void CSongHeaderEditor::onTextEdited(const QString &text)
+{
+  QLineEdit *currentLineEdit = qobject_cast< QLineEdit* >(sender());
+  if (currentLineEdit == m_titleLineEdit)
+    {
+      song().title = text;
+    }
+  else if (currentLineEdit == m_artistLineEdit)
+    {
+      song().artist = text;
+    }
+  else if (currentLineEdit == m_albumLineEdit)
+    {
+      song().album = text;
+    }
+  else if (currentLineEdit == m_languageLineEdit)
+    {
+      song().language = Song::languageFromString(text);
+    }
+  else if (currentLineEdit == m_columnCountLineEdit)
+    {
+      song().columnCount = text.toInt();
+    }
+  else if (currentLineEdit == m_capoLineEdit)
+    {
+      song().capo = text.toInt();
+    }
+  emit(contentsChanged());
 }

@@ -27,7 +27,6 @@
 #include "songbook.hh"
 #include "song-editor.hh"
 #include "logs-highlighter.hh"
-#include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
 #include "tab-widget.hh"
@@ -639,6 +638,7 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
     }
 
   CSongEditor *editor = new CSongEditor(this);
+  editor->setLibrary(library());
   editor->setPath(path);
   editor->installHighlighter();
 
@@ -661,14 +661,15 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 
 void CMainWindow::newSong()
 {
-  CDialogNewSong *dialog = new CDialogNewSong(this);
+  CSongEditor *editor = new CSongEditor(this);
+  editor->setLibrary(library());
+  editor->setNewSong(true);
+  editor->setWindowTitle(tr("New song"));
 
-  if (dialog->exec() == QDialog::Accepted)
-    {
-      library()->update();
-      songEditor(dialog->path(), dialog->title());
-    }
-  delete dialog;
+  connect(editor, SIGNAL(labelChanged(const QString&)),
+	  m_mainWidget, SLOT(changeTabText(const QString&)));
+
+  m_mainWidget->addTab(editor);
 }
 
 void CMainWindow::deleteSong()
@@ -747,7 +748,8 @@ void CMainWindow::closeTab(int index)
 
 void CMainWindow::changeTab(int index)
 {
-  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
+  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
+  if (editor != 0)
     {
       m_editorMenu->clear();
       foreach (QAction *action, editor->actions())
@@ -762,12 +764,12 @@ void CMainWindow::changeTab(int index)
     }
   else
     {
-      CSongEditor *editor = m_editors[""];
-      foreach (QAction *action, editor->actions())
-	{
-	  m_editorMenu->addAction(action);
-	  action->setEnabled(false);
-	}
+      // CSongEditor *editor = m_editors[""];
+      // foreach (QAction *action, editor->actions())
+      //   {
+      //     m_editorMenu->addAction(action);
+      //     action->setEnabled(false);
+      //   }
 
       switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);

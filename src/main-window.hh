@@ -37,7 +37,6 @@ class CSongbook;
 class CLibrary;
 class CLibraryView;
 class CTabWidget;
-class CDialogNewSong;
 class CSongEditor;
 class CLabel;
 class CTabWidget;
@@ -155,8 +154,6 @@ private:
   QString m_buildCommand;
   QString m_cleanCommand;
   QString m_cleanallCommand;
-
-  CDialogNewSong *m_newSongDialog;
 
   // Menus
   QMenu *m_editorMenu;

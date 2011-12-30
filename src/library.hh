@@ -86,6 +86,10 @@ public:
   virtual int rowCount(const QModelIndex &index = QModelIndex()) const;
   virtual int columnCount(const QModelIndex &index = QModelIndex()) const;
 
+  QString pathToSong(const QString &artist, const QString &title) const;
+  QString pathToSong(Song &song) const;
+  void addSong(Song &song);
+
 public slots:
   void update();
   void updateSong(const QString & path);

@@ -27,6 +27,9 @@
 
 #include "code-editor.hh"
 #include "song-header-editor.hh"
+#include "library.hh"
+
+#include "utils/utils.hh"
 
 #include <QToolBar>
 #include <QAction>
@@ -46,6 +49,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   : QWidget(parent)
   , m_editor(new CodeEditor)
   , m_songHeaderEditor(0)
+  , m_library()
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
   , m_highlighter(0)
@@ -57,6 +61,7 @@ CSongEditor::CSongEditor(QWidget *parent)
 
   m_songHeaderEditor = new CSongHeaderEditor(this);
   m_songHeaderEditor->setSongEditor(this);
+  connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   CHighlighter *highlighter = new CHighlighter(m_editor->document());
   Q_UNUSED(highlighter);
@@ -218,17 +223,20 @@ void CSongEditor::setPath(const QString &path)
   m_song = Song::fromFile(path);
   m_songHeaderEditor->update();
 
-  // content
-  QString text;
-  QFile file(path);
-  if (file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text))
+  QString songContent;
+  foreach (QString gtab, m_song.gtabs)
     {
-      QTextStream stream (&file);
-      stream.setCodec("UTF-8");
-      text = stream.readAll();
-      file.close();
+      songContent.append(QString("  \\gtab{%1}\n").arg(gtab));
     }
-  m_editor->setPlainText(text);
+
+  songContent.append(QString("\n"));
+
+  foreach (QString lyric, m_song.lyrics)
+    {
+      songContent.append(QString("%1\n").arg(lyric));
+    }
+
+  m_editor->setPlainText(songContent);
 }
 
 void CSongEditor::installHighlighter()
@@ -266,27 +274,71 @@ void CSongEditor::installHighlighter()
 
 void CSongEditor::save()
 {
-  //open file in write mode
-  QFile file(path());
-  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+  if (isNewSong())
     {
-      QTextStream stream (&file);
-      stream.setCodec("UTF-8");
-      stream << m_editor->toPlainText();
-      file.close();
-      m_editor->document()->setModified(false);
-      setWindowTitle(windowTitle().remove(" *"));
-      emit(labelChanged(windowTitle()));
+      createNewSong();
+      return;
     }
-  else
+
+  parseText();
+  // m_song = Song::fromString(m_editor->toPlainText(), path());
+
+  library()->addSong(m_song);
+  m_editor->document()->setModified(false);
+  setWindowTitle(windowTitle().remove(" *"));
+  emit(labelChanged(windowTitle()));
+}
+
+void CSongEditor::parseText()
+{
+  QStringList lines = m_editor->toPlainText().split("\n");
+  QString line;
+  foreach (line, lines)
     {
-      qWarning() << "Mainwindow::songEditorSave warning: unable to open file in write mode";
+      if (Song::reGtab.indexIn(line) != -1)
+        {
+          m_song.gtabs << Song::reGtab.cap(1);
+        }
+      else
+        {
+          m_song.lyrics << line;
+        }
     }
+}
+
+void CSongEditor::saveNewSong()
+{
+  if (!isNewSong())
+    return;
+
+  if (m_song.title.isEmpty() || m_song.artist.isEmpty())
+    {
+      qDebug() << "Error: " << m_song.title << " " << m_song.artist;
+      return;
+    }
+  else if (m_song.title == tr("*New song*") || m_song.artist == tr("Unknown"))
+    {
+      qDebug() << "Warning: " << m_song.title << " " << m_song.artist;
+      return;
+    }
+  createNewSong();
+}
+
+void CSongEditor::createNewSong()
+{
+  if (!isNewSong())
+    return;
+
+  //add the song to the library
+  library()->addSong(m_song);
+
+  setNewSong(false);
 }
 
 void CSongEditor::documentWasModified()
 {
-  if (!windowTitle().contains(" *") && m_editor->document()->isModified())
+  m_editor->document()->setModified(true);
+  if (!windowTitle().contains(" *"))
     {
       setWindowTitle(windowTitle() + " *");
       emit(labelChanged(windowTitle()));
@@ -305,17 +357,27 @@ void CSongEditor::insertChorus()
   m_editor->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
 
-QToolBar* CSongEditor::toolBar() const
+QToolBar * CSongEditor::toolBar() const
 {
   return m_toolBar;
 }
 
+CLibrary * CSongEditor::library() const
+{
+  return m_library;
+}
+
+void CSongEditor::setLibrary(CLibrary *library)
+{
+  m_library = library;
+}
+
 void CSongEditor::keyPressEvent(QKeyEvent *event)
 {
-  if (event->key() == Qt::Key_Tab) 
-    indentSelection();
-  else 
-    QApplication::sendEvent(m_editor, event);
+  // if (event->key() == Qt::Key_Tab)
+  //   indentSelection();
+  // else 
+  //   QApplication::sendEvent(m_editor, event);
 }
 
 void CSongEditor::indentSelection()
