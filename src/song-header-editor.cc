@@ -22,6 +22,7 @@
 #include "song-editor.hh"
 
 #include <QBoxLayout>
+#include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
 
@@ -62,12 +63,11 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   additionalInformationLayout->addWidget(m_columnCountLineEdit);
   additionalInformationLayout->addWidget(m_capoLineEdit);
 
-  QBoxLayout *songInformationLayout = new QVBoxLayout();
-  songInformationLayout->setContentsMargins(1, 1, 1, 1);
-  songInformationLayout->addWidget(m_titleLineEdit);
-  songInformationLayout->addWidget(m_artistLineEdit);
-  songInformationLayout->addWidget(m_albumLineEdit);
-  songInformationLayout->addLayout(additionalInformationLayout);
+  QFormLayout *songInformationLayout = new QFormLayout();
+  songInformationLayout->addRow(tr("Title: "), m_titleLineEdit);
+  songInformationLayout->addRow(tr("Artist: "), m_artistLineEdit);
+  songInformationLayout->addRow(tr("Album: "), m_albumLineEdit);
+  songInformationLayout->addRow(additionalInformationLayout);
 
   QFrame *coverFrame = new QFrame(this);
   coverFrame->setFrameShape(QFrame::StyledPanel);
