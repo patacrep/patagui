@@ -342,6 +342,35 @@ void CLibrary::loadSong(const QString &path, Song *song)
 
 void CLibrary::saveSong(Song &song)
 {
+  // write the song file
+  QFile file(song.path);
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream (&file);
+      stream.setCodec("UTF-8");
+      stream << Song::toString(song);
+      file.close();
+    }
+}
+
+void CLibrary::saveCover(Song &song, const QImage &cover)
+{
+  QFileInfo fileInfo(song.path);
+  QDir artistDirectory = fileInfo.absoluteDir();
+
+  // update song cover information
+  song.coverPath = artistDirectory.absolutePath();
+  song.coverName = SbUtils::stringToFilename(song.album, "-");
+
+  // guess the cover filename
+  QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
+
+  // actually write the image
+  cover.save(coverFilename);
+}
+
+void CLibrary::createArtistDirectory(Song &song)
+{
   // if the song is new or comes from an other library, update the
   // song file path
   if (song.path.isEmpty()
@@ -355,18 +384,6 @@ void CLibrary::saveSong(Song &song)
   QDir artistDirectory = fileInfo.absoluteDir();
   if (!artistDirectory.exists())
     directory().mkpath(artistDirectory.absolutePath());
-
-  // write the song file
-  QFile file(song.path);
-  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-      QTextStream stream (&file);
-      stream.setCodec("UTF-8");
-      stream << Song::toString(song);
-      file.close();
-    }
-
-  // TODO: copy artwork
 }
 
 void CLibrary::deleteSong(const QString &path)

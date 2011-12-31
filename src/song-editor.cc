@@ -55,6 +55,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_maxSuggestedWords(0)
   , m_song()
   , m_newSong(true)
+  , m_newCover(false)
 {
   m_songEditor = new CodeEditor();
   m_songEditor->setUndoRedoEnabled(true);
@@ -265,6 +266,9 @@ void CSongEditor::save()
   parseText();
 
   // save the song and add it to the library list
+  library()->createArtistDirectory(m_song);
+  if (isNewCover())
+    library()->saveCover(m_song, m_songHeaderEditor->cover());
   library()->saveSong(m_song);
   library()->removeSong(m_song.path);
   library()->addSong(m_song);
@@ -514,6 +518,16 @@ bool CSongEditor::isNewSong() const
 void CSongEditor::setNewSong(bool newSong)
 {
   m_newSong = newSong;
+}
+
+bool CSongEditor::isNewCover() const
+{
+  return m_newCover;
+}
+
+void CSongEditor::setNewCover(bool newCover)
+{
+  m_newCover = newCover;
 }
 
 #ifdef ENABLE_SPELL_CHECKING

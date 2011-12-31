@@ -43,6 +43,10 @@ public:
   CSongEditor * songEditor();
   void setSongEditor(CSongEditor *songEditor);
 
+  const QImage & cover();
+  void setCover(const QImage &cover);
+  void setCover(const QString &path);
+
 public slots:
   void update();
 
@@ -60,6 +64,8 @@ private:
   QLineEdit *m_columnCountLineEdit;
   QLineEdit *m_capoLineEdit;
   QLabel *m_coverLabel;
+
+  QImage m_cover;
 
   CSongEditor *m_songEditor;
 };

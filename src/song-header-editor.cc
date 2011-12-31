@@ -120,7 +120,8 @@ void CSongHeaderEditor::update()
       QPixmap pixmap;
       if (!QPixmapCache::find(file.baseName()+"-full", &pixmap))
         {
-          pixmap = QPixmap::fromImage(QImage(file.filePath()).scaled(128,128));
+          setCover(file.filePath());
+          pixmap = QPixmap::fromImage(cover());
           QPixmapCache::insert(file.baseName()+"-full", pixmap);
         }
       m_coverLabel->setPixmap(pixmap);
@@ -155,4 +156,19 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
       song().capo = text.toInt();
     }
   emit(contentsChanged());
+}
+
+const QImage & CSongHeaderEditor::cover()
+{
+  return m_cover;
+}
+
+void CSongHeaderEditor::setCover(const QImage &cover)
+{
+  m_cover = cover.scaled(128, 128, Qt::KeepAspectRatio);
+}
+
+void CSongHeaderEditor::setCover(const QString &path)
+{
+  setCover(QImage(path));
 }
