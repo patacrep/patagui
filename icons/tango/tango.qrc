@@ -87,5 +87,6 @@
     <file>scalable/places/flag-fr.svg</file>
     <file>scalable/places/flag-es.svg</file>
     <file>scalable/places/flag-en.svg</file>
+    <file>scalable/places/flag-pt.svg</file>
   </qresource>
 </RCC>

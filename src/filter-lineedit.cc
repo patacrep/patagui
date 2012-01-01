@@ -197,6 +197,13 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   connect(action, SIGNAL(triggered()), SLOT(filterLanguageSpanish()));
   addAction(action);
 
+  action = new QAction(tr("portuguese"), this);
+  action->setStatusTip(tr("Select/Unselect songs in portuguese"));
+  action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-pt.svg")));
+  action->setIconVisibleInMenu(true);
+  connect(action, SIGNAL(triggered()), SLOT(filterLanguagePortuguese()));
+  addAction(action);
+
   updateTextMargins();
   setInactiveText(tr("Filter"));
 }
@@ -229,4 +236,9 @@ void CFilterLineEdit::filterLanguageFrench()
 void CFilterLineEdit::filterLanguageSpanish()
 {
   setText(text() + " :es");
+}
+
+void CFilterLineEdit::filterLanguagePortuguese()
+{
+  setText(text() + " :pt");
 }

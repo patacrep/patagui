@@ -241,6 +241,9 @@ void CSongEditor::setDictionary(QLocale::Language language)
     case QLocale::Spanish:
       dictionary = "/usr/share/hunspell/es_ES.dic";
       break;
+    case QLocale::Portuguese:
+      dictionary = "/usr/share/hunspell/pt_PT.dic";
+      break;
     default:
       qWarning() << "Unable to find dictionnary for " << QLocale::languageToString(language);
       break;

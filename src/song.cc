@@ -184,6 +184,8 @@ QLocale::Language Song::languageFromString(const QString &languageName)
     return QLocale::English;
   else if (languageName == "spanish")
     return QLocale::Spanish;
+  else if (languageName == "portuguese")
+    return QLocale::Portuguese;
 
   return QLocale::system().language();
 }
@@ -198,6 +200,8 @@ QString Song::languageToString(const QLocale::Language language)
       return "english";
     case QLocale::Spanish:
       return "spanish";
+    case QLocale::Portuguese:
+      return "portuguese";
     default:
       return "english";
     }

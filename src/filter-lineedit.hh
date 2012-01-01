@@ -71,6 +71,7 @@ public slots:
   void filterLanguageEnglish();
   void filterLanguageFrench();
   void filterLanguageSpanish();
+  void filterLanguagePortuguese();
 
 public:
   CFilterLineEdit(QWidget *parent = 0);

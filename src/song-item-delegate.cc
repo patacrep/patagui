@@ -42,6 +42,7 @@ CSongItemDelegate::CSongItemDelegate(QObject *parent)
   QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")).pixmap(22,22));
   QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")).pixmap(22,22));
   QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")).pixmap(22,22));
+  QPixmapCache::insert("pt_PT", QIcon::fromTheme("flag-pt", QIcon(":/icons/tango/scalable/places/flag-pt.svg")).pixmap(22,22));
 }
 
 CSongItemDelegate::~CSongItemDelegate()
