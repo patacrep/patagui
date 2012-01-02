@@ -106,8 +106,14 @@ public:
   //! Load a song from a file in the library
   void loadSong(const QString &path, Song *song);
 
+  //! Create the artist directory for the current library (if required)
+  void createArtistDirectory(Song &song);
+
   //! Save a song in the library (update the song path if required)
   void saveSong(Song &song);
+
+  //! Save a cover in the library (update the cover path if required)
+  void saveCover(Song &song, const QImage &cover);
 
   //! Destroy a song file from the library
   void deleteSong(const QString &path);

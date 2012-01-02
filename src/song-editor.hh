@@ -42,6 +42,8 @@ class CLibrary;
 class CSongEditor : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool newSong READ isNewSong WRITE setNewSong)
+  Q_PROPERTY(bool newCover READ isNewCover WRITE setNewCover)
 
 public:
   CSongEditor(QWidget *parent = 0);
@@ -65,6 +67,12 @@ public:
 
   bool isModified() const;
   bool isNewSong() const;
+
+  //! Getter on the new cover property
+  bool isNewCover() const;
+
+  //! Setter on the new cover property
+  void setNewCover(bool newCover);
 
 public slots:
   void setModified(bool modified);
@@ -129,6 +137,7 @@ private:
 
   Song m_song;
   bool m_newSong;
+  bool m_newCover;
 };
 
 #endif // __SONG_EDITOR_HH__
