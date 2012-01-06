@@ -752,7 +752,8 @@ void CMainWindow::closeTab(int index)
 
 void CMainWindow::changeTab(int index)
 {
-  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
+  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
+  if (editor)
     {
       m_editorMenu->clear();
       foreach (QAction *action, editor->actions())
@@ -767,7 +768,7 @@ void CMainWindow::changeTab(int index)
     }
   else
     {
-      CSongEditor *editor = m_editors[""];
+      editor = m_editors[""];
       foreach (QAction *action, editor->actions())
 	{
 	  m_editorMenu->addAction(action);
