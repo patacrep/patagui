@@ -5,53 +5,57 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
-#ifndef __SONG_PANEL_HH__
-#define __SONG_PANEL_HH__
 
-#include <QWidget>
-#include <QModelIndex>
+/**
+ * \file song.hh
+ *
+ * Structure containing all the fields representing a song.
+ *
+ */
+#ifndef __SONG_HH__
+#define __SONG_HH__
 
-class QAbstractItemModel;
-class QLabel;
+#include <QString>
+#include <QLocale>
+#include <QRegExp>
 
-class CLabel;
-
-class CSongPanel : public QWidget
+struct Song
 {
-  Q_OBJECT
+  QString title;
+  QString artist;
+  QString album;
+  QString coverName;
+  QString coverPath;
+  QString path;
+  QLocale::Language language;
+  bool isLilypond;
+  int columnCount;
+  int capo;
 
-public:
-  CSongPanel(QWidget *parent = 0);
-  ~CSongPanel();
+  static Song fromFile(const QString &path);
+  static Song fromString(const QString &text, const QString &path = QString());
+  static QLocale::Language languageFromString(const QString &languageName = QString());
+  static QString languageToString(const QLocale::Language language);
 
-  QAbstractItemModel * library() const;
-  void setLibrary(QAbstractItemModel *library);
-
-  QModelIndex currentIndex() const;
-
-public slots:
-  void setCurrentIndex(const QModelIndex &index);
-  void update();
-
-private:
-  QAbstractItemModel *m_library;
-  QModelIndex m_currentIndex;
-
-  CLabel *m_titleLabel;
-  CLabel *m_artistLabel;
-  CLabel *m_albumLabel;
-  QLabel *m_coverLabel;
+  static QRegExp reSong;
+  static QRegExp reArtist;
+  static QRegExp reAlbum;
+  static QRegExp reCoverName;
+  static QRegExp reLilypond;
+  static QRegExp reLanguage;
+  static QRegExp reColumnCount;
+  static QRegExp reCapo;
 };
 
-#endif // __SONG_PANEL_HH__
+#endif // __SONG_HH__

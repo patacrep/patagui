@@ -17,7 +17,6 @@
 // 02110-1301, USA.
 //******************************************************************************
 #include "song-editor.hh"
-#include "code-editor.hh"
 
 #include "song-highlighter.hh"
 #include "qtfindreplacedialog/findreplacedialog.h"
@@ -26,27 +25,37 @@
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELL_CHECKING
 
+#include "code-editor.hh"
+#include "song-header-editor.hh"
+
 #include <QToolBar>
 #include <QAction>
 #include <QTextDocumentFragment>
 #include <QFile>
 #include <QTextStream>
 #include <QSettings>
-#include <QFileInfo>
-#include <QTextCodec>
-#include <QMenu>
+#include <QBoxLayout>
+#include <QApplication>
 
 #include <QDebug>
 
-CSongEditor::CSongEditor()
-  : CodeEditor()
+CSongEditor::CSongEditor(QWidget *parent)
+  : QWidget(parent)
+  , m_editor(new CodeEditor)
+  , m_songHeaderEditor(0)
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
-  , m_path()
-  , m_highlighter(0)
-  , m_maxSuggestedWords(0)
+  , m_song()
+  , m_newSong(true)
 {
-  setUndoRedoEnabled(true);
-  connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
+  m_editor->setUndoRedoEnabled(true);
+
+  m_songHeaderEditor = new CSongHeaderEditor(this);
+  m_songHeaderEditor->setSongEditor(this);
+
+  CHighlighter *highlighter = new CHighlighter(m_editor->document());
+  Q_UNUSED(highlighter);
+
+  connect(m_editor->document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   // toolBar
   toolBar()->setMovable(false);
@@ -58,29 +67,29 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
   action->setStatusTip(tr("Save modifications"));
   connect(action, SIGNAL(triggered()), SLOT(save()));
-  addAction(action);
+  m_toolBar->addAction(action);
   
   //copy paste
   action = new QAction(tr("Cut"), this);
   action->setShortcut(QKeySequence::Cut);
   action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
   action->setStatusTip(tr("Cut the selection"));
-  connect(action, SIGNAL(triggered()), SLOT(cut()));
-  addAction(action);
+  connect(action, SIGNAL(triggered()), m_editor, SLOT(cut()));
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
   action->setStatusTip(tr("Copy the selection"));
-  connect(action, SIGNAL(triggered()), SLOT(copy()));
-  addAction(action);
+  connect(action, SIGNAL(triggered()), m_editor, SLOT(copy()));
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
   action->setStatusTip(tr("Paste clipboard content"));
-  connect(action, SIGNAL(triggered()), SLOT(paste()));
-  addAction(action);
+  connect(action, SIGNAL(triggered()), m_editor, SLOT(paste()));
+  m_toolBar->addAction(action);
   
   toolBar()->addSeparator();
   
@@ -89,15 +98,15 @@ CSongEditor::CSongEditor()
   action->setShortcut(QKeySequence::Undo);
   action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
   action->setStatusTip(tr("Undo modifications"));
-  connect(action, SIGNAL(triggered()), SLOT(undo()));
-  addAction(action);
+  connect(action, SIGNAL(triggered()), m_editor, SLOT(undo()));
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
   action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
   action->setStatusTip(tr("Redo modifications"));
-  connect(action, SIGNAL(triggered()), SLOT(redo()));
-  addAction(action);
+  connect(action, SIGNAL(triggered()), m_editor, SLOT(redo()));
+  m_toolBar->addAction(action);
 
   toolBar()->addSeparator();
 
@@ -127,12 +136,21 @@ CSongEditor::CSongEditor()
   action = new QAction(tr("Verse"), this);
   action->setStatusTip(tr("New verse environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
-  addAction(action);
+  m_toolBar->addAction(action);
   
   action = new QAction(tr("Chorus"), this);
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
-  addAction(action);
+  m_toolBar->addAction(action);
+
+  QBoxLayout *mainLayout = new QVBoxLayout();
+  mainLayout->setContentsMargins(0, 0, 0, 0);
+  mainLayout->setSpacing(0);
+  mainLayout->addWidget(m_songHeaderEditor);
+  mainLayout->addWidget(m_editor);
+  setLayout(mainLayout);
+
+  hide(); // required to hide some widget from the code editor
 
   readSettings();
 }
@@ -144,7 +162,7 @@ CSongEditor::~CSongEditor()
 
 QString CSongEditor::path()
 {
-  return m_path;
+  return m_song.path;
 }
 
 void CSongEditor::readSettings()
@@ -161,10 +179,10 @@ void CSongEditor::readSettings()
     }
 
   font.fromString(fontstr);
-  setFont(font);
+  m_editor->setFont(font);
 
-  setHighlightMode(settings.value("highlight", true).toBool());
-  setLineNumberMode(settings.value("lines", true).toBool());
+  m_editor->setHighlightMode(settings.value("highlight", true).toBool());
+  m_editor->setLineNumberMode(settings.value("lines", true).toBool());
 
 #ifdef ENABLE_SPELL_CHECKING
   m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
@@ -191,6 +209,10 @@ void CSongEditor::writeSettings()
 
 void CSongEditor::setPath(const QString &path)
 {
+  m_song = Song::fromFile(path);
+  m_songHeaderEditor->update();
+
+  // content
   QString text;
   QFile file(path);
   if (file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -200,8 +222,7 @@ void CSongEditor::setPath(const QString &path)
       text = stream.readAll();
       file.close();
     }
-  setPlainText(text);
-  m_path = path;
+  m_editor->setPlainText(text);
 }
 
 void CSongEditor::installHighlighter()
@@ -245,9 +266,9 @@ void CSongEditor::save()
     {
       QTextStream stream (&file);
       stream.setCodec("UTF-8");
-      stream << toPlainText();
+      stream << m_editor->toPlainText();
       file.close();
-      document()->setModified(false);
+      m_editor->document()->setModified(false);
       setWindowTitle(windowTitle().remove(" *"));
       emit(labelChanged(windowTitle()));
     }
@@ -259,7 +280,7 @@ void CSongEditor::save()
 
 void CSongEditor::documentWasModified()
 {
-  if (!windowTitle().contains(" *") && document()->isModified())
+  if (!windowTitle().contains(" *") && m_editor->document()->isModified())
     {
       setWindowTitle(windowTitle() + " *");
       emit(labelChanged(windowTitle()));
@@ -268,17 +289,17 @@ void CSongEditor::documentWasModified()
 
 void CSongEditor::insertVerse()
 {
-  QString selection = textCursor().selectedText();
-  insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
+  QString selection = m_editor->textCursor().selectedText();
+  m_editor->insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
 }
 
 void CSongEditor::insertChorus()
 {
-  QString selection = textCursor().selectedText();
-  insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
+  QString selection = m_editor->textCursor().selectedText();
+  m_editor->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
 
-QToolBar* CSongEditor::toolBar() const
+QToolBar * CSongEditor::toolBar()
 {
   return m_toolBar;
 }
@@ -288,13 +309,13 @@ void CSongEditor::keyPressEvent(QKeyEvent *event)
   if (event->key() == Qt::Key_Tab) 
     indentSelection();
   else 
-    QPlainTextEdit::keyPressEvent(event);
+    QApplication::sendEvent(m_editor, event);
 }
 
 void CSongEditor::indentSelection()
 {
-  QTextCursor cursor = textCursor();
-  QTextCursor it = textCursor();
+  QTextCursor cursor = m_editor->textCursor();
+  QTextCursor it = m_editor->textCursor();
   it.setPosition(cursor.anchor());
 
   //swap such as it always points
@@ -373,15 +394,24 @@ void CSongEditor::trimLine(const QTextCursor & cur)
     }
 }
 
-QList<QAction*> CSongEditor::actions() const
+bool CSongEditor::isModified() const
 {
-  return m_actions;
+  return m_editor->document()->isModified();
 }
 
-void CSongEditor::addAction(QAction* action)
+Song & CSongEditor::song()
 {
-  toolBar()->addAction(action);
-  m_actions.append(action);
+  return m_song;
+}
+
+bool CSongEditor::isNewSong() const
+{
+  return m_newSong;
+}
+
+void CSongEditor::setNewSong(bool newSong)
+{
+  m_newSong = newSong;
 }
 
 

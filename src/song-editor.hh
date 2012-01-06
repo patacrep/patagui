@@ -19,34 +19,31 @@
 #ifndef __SONG_EDITOR_HH__
 #define __SONG_EDITOR_HH__
 
-#include "config.hh"
-#include "code-editor.hh"
+#include <QWidget>
 
-#include <QToolBar>
-#include <QList>
+#include "song.hh"
 
-class QAction;
-class Hunspell;
-class CHighlighter;
-class FindReplaceDialog;
+#include <QString>
+#include <QTextCursor>
+#include <QKeyEvent>
 
-class CSongEditor : public CodeEditor
+class QToolBar;
+
+class CodeEditor;
+class CSongHeaderEditor;
+
+class CSongEditor : public QWidget
 {
   Q_OBJECT
 
 public:
-  CSongEditor();
+  CSongEditor(QWidget *parent = 0);
   ~CSongEditor();
 
   QString path();
-  void setPath(const QString & APath);
+  void setPath(const QString &path);
 
-  QToolBar* toolBar() const;
-
-  virtual void keyPressEvent(QKeyEvent *event);
-
-  void addAction(QAction*);
-  QList<QAction*> actions() const;
+  QToolBar * toolBar();
 
   void readSettings();
   void writeSettings();
@@ -57,9 +54,21 @@ public:
   bool isSpellCheckingEnabled() const;
   void setSpellCheckingEnabled(const bool);
 
+  bool isModified() const;
+
+  Song & song();
+
+  bool isNewSong() const;
+
+public slots:
+  void setNewSong(bool newSong);
+
 signals:
   void labelChanged(const QString &label);
   void wordAdded(const QString &word);
+
+protected:
+  virtual void keyPressEvent(QKeyEvent *event);
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -79,28 +88,16 @@ protected:
 #endif //ENABLE_SPELL_CHECKING
 
 private:
-  QString syntaxicColoration(const QString &);
+  QString syntaxicColoration(const QString &string);
   void indentSelection();
-  void indentLine(const QTextCursor & cursor);
-  void trimLine(const QTextCursor & cursor);
+  void indentLine(const QTextCursor &cursor);
+  void trimLine(const QTextCursor &cursor);
 
-  QToolBar* m_toolBar;
-  QString m_path;
-  QList<QAction*> m_actions;
-  CHighlighter* m_highlighter;
-  bool m_isSpellCheckingEnabled;
-
-#ifdef ENABLE_SPELL_CHECKING
-  QList<QAction *> m_misspelledWordsActs;
-  QPoint m_lastPos;
-  QStringList m_addedWords;
-  uint m_maxSuggestedWords;
-  QString m_dictionary;
-  QAction* m_spellCheckingAct;
-#endif //ENABLE_SPELL_CHECKING
-
-  FindReplaceDialog* m_findReplaceDialog;
-
+  CodeEditor *m_editor;
+  CSongHeaderEditor *m_songHeaderEditor;
+  QToolBar *m_toolBar;
+  Song m_song;
+  bool m_newSong;
 };
 
 #endif // __SONG_EDITOR_HH__

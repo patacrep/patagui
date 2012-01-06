@@ -19,11 +19,13 @@ set(SONGBOOK_CLIENT_SOURCES
   src/main-window.cc
   src/preferences.cc
   src/library.cc
+  src/song.cc
   src/library-view.cc
   src/songbook.cc
   src/song-editor.cc
   src/song-highlighter.cc
   src/logs-highlighter.cc
+  src/song-header-editor.cc
   src/dialog-new-song.cc
   src/label.cc
   src/unit-property-manager.cc
@@ -38,7 +40,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/utils/utils.cc
   src/code-editor.cc
   src/tab-widget.cc
-  src/song-panel.cc
   src/notification.cc
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
@@ -57,6 +58,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/song-editor.hh
   src/song-highlighter.hh
   src/logs-highlighter.hh
+  src/song-header-editor.hh
   src/dialog-new-song.hh
   src/label.hh
   src/unit-property-manager.hh
@@ -70,7 +72,6 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/utils/lineedit_p.hh
   src/code-editor.hh
   src/tab-widget.hh
-  src/song-panel.hh
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
