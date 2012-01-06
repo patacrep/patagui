@@ -120,7 +120,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   action->setIcon(QIcon::fromTheme("edit-find"));//, QIcon(":/icons/tango/32x32/actions/edit-find.png")));
   action->setStatusTip(tr("Find some text and replace it"));
   connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
-  addAction(action);
+  m_toolBar->addAction(action);
 
   //spellchecking
   m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
@@ -128,7 +128,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
   m_spellCheckingAct->setCheckable(true);
   m_spellCheckingAct->setEnabled(false);
-  addAction(m_spellCheckingAct);
+  m_toolBar->addAction(m_spellCheckingAct);
 
   toolBar()->addSeparator();
 
@@ -227,7 +227,7 @@ void CSongEditor::setPath(const QString &path)
 
 void CSongEditor::installHighlighter()
 {
-  m_highlighter = new CHighlighter(document());
+  m_highlighter = new CHighlighter(m_editor->document());
 
 #ifdef ENABLE_SPELL_CHECKING
   //find a suitable dictionary based on the song's language
@@ -520,6 +520,8 @@ Hunspell* CSongEditor::checker() const
   return m_highlighter->checker();
 }
 
+#endif //ENABLE_SPELL_CHECKING
+
 bool CSongEditor::isSpellCheckingEnabled() const
 {
   return m_isSpellCheckingEnabled;
@@ -530,5 +532,4 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
   m_isSpellCheckingEnabled = value;
   m_spellCheckingAct->setEnabled(value);
 }
-#endif //ENABLE_SPELL_CHECKING
 

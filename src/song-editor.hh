@@ -29,7 +29,9 @@
 
 class QToolBar;
 
+class QAction;
 class CodeEditor;
+class CHighlighter;
 class CSongHeaderEditor;
 class FindReplaceDialog;
 
@@ -49,7 +51,9 @@ public:
   void readSettings();
   void writeSettings();
   QStringList getWordPropositions(const QString &word);
+#ifdef ENABLE_SPELL_CHECKING
   Hunspell* checker() const;
+#endif
   void installHighlighter();
 
   bool isSpellCheckingEnabled() const;
@@ -100,6 +104,9 @@ private:
   Song m_song;
   bool m_newSong;
   FindReplaceDialog *m_findReplaceDialog;
+  QAction *m_spellCheckingAct;
+  CHighlighter *m_highlighter;
+  bool m_isSpellCheckingEnabled;
 };
 
 #endif // __SONG_EDITOR_HH__
