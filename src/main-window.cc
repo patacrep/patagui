@@ -380,6 +380,7 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor *editor = new CSongEditor(this);
+  m_editors.insert("", editor);
   QAction *action;
   foreach (action, editor->toolBar()->actions())
     {
