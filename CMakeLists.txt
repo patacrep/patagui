@@ -8,7 +8,7 @@ set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
 if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
-  message(FATAL_ERROR "songbook-client-config.cmake")
+  message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/songbook-client-config.cmake")
 endif()
 
 include(${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
@@ -113,7 +113,6 @@ endif()
 
 if(ENABLE_SPELL_CHECKING)
   find_package(HUNSPELL REQUIRED)
-  message("Hunspell includes : ${HUNSPELL_INCLUDE_DIR}")
   include_directories(${HUNSPELL_INCLUDE_DIR})
 endif()
 

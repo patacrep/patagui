@@ -31,6 +31,7 @@
 
 #include <QModelIndex>
 #include <QDir>
+#include <QProcess>
 
 class CSongbook;
 class CLibrary;
@@ -67,7 +68,7 @@ public:
   ~CMainWindow();
 
   QProgressBar * progressBar() const;
-  QPlainTextEdit * log() const;
+  QDockWidget * log() const;
   CLibraryView * view() const;
   CLibrary * library() const;
   CSongbook * songbook() const;
@@ -116,6 +117,8 @@ private slots:
   void updateTitle(const QString &filename);
   void switchToolBar(QToolBar *toolBar);
 
+  void buildError(QProcess::ProcessError error);
+
 private:
   void readSettings();
   void writeSettings();
@@ -143,7 +146,7 @@ private:
   CNotification *m_updateAvailable;
   QLabel *m_infoSelection;
   CFilterLineEdit *m_filterLineEdit;
-  QPlainTextEdit *m_log;
+  QDockWidget *m_log;
 
   // Settings
   QString m_workingPath;
