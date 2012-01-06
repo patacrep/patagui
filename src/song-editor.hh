@@ -31,6 +31,7 @@ class QToolBar;
 
 class CodeEditor;
 class CSongHeaderEditor;
+class FindReplaceDialog;
 
 class CSongEditor : public QWidget
 {
@@ -98,6 +99,7 @@ private:
   QToolBar *m_toolBar;
   Song m_song;
   bool m_newSong;
+  FindReplaceDialog *m_findReplaceDialog;
 };
 
 #endif // __SONG_EDITOR_HH__

@@ -113,7 +113,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   //find and replace
   m_findReplaceDialog = new FindReplaceDialog(this);
   m_findReplaceDialog->setModal(false);
-  m_findReplaceDialog->setTextEdit(this);
+  m_findReplaceDialog->setTextEdit(m_editor);
 
   action = new QAction(tr("Search and Replace"), this);
   action->setShortcut(QKeySequence::Find);
