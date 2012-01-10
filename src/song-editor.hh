@@ -88,15 +88,15 @@ private:
   QString m_path;
   QList<QAction*> m_actions;
   CHighlighter* m_highlighter;
-  bool m_isSpellCheckingEnabled;
 
+  QAction* m_spellCheckingAct;
+  bool m_isSpellCheckingEnabled;
 #ifdef ENABLE_SPELL_CHECKING
   QList<QAction *> m_misspelledWordsActs;
   QPoint m_lastPos;
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
   QString m_dictionary;
-  QAction* m_spellCheckingAct;
 #endif //ENABLE_SPELL_CHECKING
 
   FindReplaceDialog* m_findReplaceDialog;

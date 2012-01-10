@@ -43,7 +43,9 @@ CSongEditor::CSongEditor()
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
   , m_highlighter(0)
+#ifdef ENABLE_SPELL_CHECKING
   , m_maxSuggestedWords(0)
+#endif
 {
   setUndoRedoEnabled(true);
   connect(document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
@@ -489,6 +491,7 @@ Hunspell* CSongEditor::checker() const
   if(!m_highlighter) return 0;
   return m_highlighter->checker();
 }
+#endif //ENABLE_SPELL_CHECKING
 
 bool CSongEditor::isSpellCheckingEnabled() const
 {
@@ -500,5 +503,4 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
   m_isSpellCheckingEnabled = value;
   m_spellCheckingAct->setEnabled(value);
 }
-#endif //ENABLE_SPELL_CHECKING
 
