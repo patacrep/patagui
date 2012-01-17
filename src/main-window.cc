@@ -157,24 +157,10 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  settings.beginGroup("tools");
   setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
   setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
   setCleanallCommand(settings.value("cleanallCommand", PLATFORM_CLEAN_COMMAND).toString());
-
-  settings.beginGroup("tools");
-#if defined(Q_OS_WIN32)
-  setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
-  setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "cmd.exe /C clean.bat").toString());
-#elif defined(Q_OS_APPLE)
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#else //Unix/Linux
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#endif
   settings.endGroup();
 
   view()->readSettings();
