@@ -24,9 +24,9 @@
 #include <QScrollArea>
 
 #if defined(Q_OS_WIN32)
-#define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\make.bat %basename"
-#define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\clean.bat"
-#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\cleanall.bat"
+#define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\\make.bat %basename"
+#define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\\clean.bat"
+#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\\cleanall.bat"
 #elif defined(Q_OS_MAC)
 #define PLATFORM_BUILD_COMMAND "make %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
