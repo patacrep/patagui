@@ -103,8 +103,8 @@ if(ENABLE_SVG_SUPPORT)
 endif()
 
 set(QT_USE_QTSVG true)
+
 if(ENABLE_LIBRARY_DOWNLOAD)
-  find_package(LibArchive REQUIRED)
   set(QT_USE_QTNETWORK true)
   include_directories(${LibArchive_INCLUDE_DIRS})
   LIST(APPEND SONGBOOK_CLIENT_SOURCES src/library-download.cc)
@@ -112,7 +112,6 @@ if(ENABLE_LIBRARY_DOWNLOAD)
 endif()
 
 if(ENABLE_SPELL_CHECKING)
-  find_package(HUNSPELL REQUIRED)
   include_directories(${HUNSPELL_INCLUDE_DIR})
 endif()
 
