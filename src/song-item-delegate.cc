@@ -56,7 +56,7 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     {
     case 2:
       {
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
+        if (opt.state & QStyle::State_Selected)
           painter->fillRect(opt.rect, opt.palette.highlight());
 
         if (index.model()->data(index, CLibrary::LilypondRole).toBool())
@@ -83,8 +83,12 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
       break;
     case 4:
       {
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
-          painter->fillRect(opt.rect, opt.palette.highlight());
+        QPalette::ColorRole textColor = QPalette::NoRole;
+        if (opt.state & QStyle::State_Selected)
+          {
+            painter->fillRect(opt.rect, opt.palette.highlight());
+            textColor = QPalette::HighlightedText;
+          }
 
         // draw the cover
         QPixmap pixmap;
@@ -108,35 +112,23 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                                             Qt::AlignLeft | Qt::AlignVCenter,
                                             opt.palette,
                                             true,
-                                            index.model()->data(index, CLibrary::AlbumRole).toString());
+                                            index.model()->data(index, CLibrary::AlbumRole).toString(),
+                                            textColor);
       }
       break;
     case 5:
       {
         QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
         QPixmap pixmap;
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
+        if (opt.state & QStyle::State_Selected)
           painter->fillRect(opt.rect, opt.palette.highlight());
 
         if (QPixmapCache::find(QLocale(lang).name(), &pixmap))
           {
-            //painter->save();
-            //draw something different
             QApplication::style()->drawItemPixmap(painter,
                                                   opt.rect,
                                                   Qt::AlignCenter,
                                                   pixmap);
-
-            // QStyleOptionButton buttonOption;
-            // buttonOption.state = QStyle::State_Enabled;
-            // buttonOption.direction = QApplication::layoutDirection();
-            // buttonOption.rect = option.rect;
-            // buttonOption.fontMetrics = QApplication::fontMetrics();
-      
-            // buttonOption.text = QString().sprintf("Modifier");
-
-            // QApplication::style()->drawControl(QStyle::CE_PushButton, &buttonOption, painter);
-            //painter->restore();
           }
         else
           {
