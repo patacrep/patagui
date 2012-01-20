@@ -1,91 +1,118 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource prefix="icons/tango">
     <file>index.theme</file>
+    <file>16x16/actions/application-exit.png</file>
     <file>16x16/actions/document-new.png</file>
     <file>16x16/actions/document-open.png</file>
     <file>16x16/actions/document-save-as.png</file>
     <file>16x16/actions/document-save.png</file>
+    <file>16x16/actions/document-properties.png</file>
     <file>16x16/actions/edit-clear.png</file>
     <file>16x16/actions/edit-copy.png</file>
     <file>16x16/actions/edit-cut.png</file>
     <file>16x16/actions/edit-paste.png</file>
     <file>16x16/actions/edit-redo.png</file>
     <file>16x16/actions/edit-undo.png</file>
+    <file>16x16/actions/edit-find-replace.png</file>
     <file>16x16/actions/folder-new.png</file>
     <file>16x16/actions/view-refresh.png</file>
+    <file>16x16/actions/tools-check-spelling.png</file>
+    <file>16x16/actions/list-add.png</file>
+    <file>16x16/actions/help-about.png</file>
+    <file>16x16/actions/help-contents.png</file>
     <file>16x16/apps/accessories-text-editor.png</file>
     <file>16x16/categories/preferences-system.png</file>
     <file>16x16/categories/preferences-system-network.png</file>
-    <file>16x16/categories/preferences-desktop-theme.png</file>
+    <file>16x16/categories/preferences-desktop.png</file>
     <file>16x16/mimetypes/audio-x-generic.png</file>
     <file>16x16/mimetypes/document-export.png</file>
     <file>16x16/places/folder-remote.png</file>
     <file>16x16/status/image-missing.png</file>
+
+    <file>22x22/actions/application-exit.png</file>
     <file>22x22/actions/document-new.png</file>
     <file>22x22/actions/document-open.png</file>
     <file>22x22/actions/document-save-as.png</file>
     <file>22x22/actions/document-save.png</file>
+    <file>22x22/actions/document-properties.png</file>
     <file>22x22/actions/edit-clear.png</file>
     <file>22x22/actions/edit-copy.png</file>
     <file>22x22/actions/edit-cut.png</file>
     <file>22x22/actions/edit-paste.png</file>
     <file>22x22/actions/edit-redo.png</file>
     <file>22x22/actions/edit-undo.png</file>
+    <file>22x22/actions/edit-find-replace.png</file>
     <file>22x22/actions/folder-new.png</file>
     <file>22x22/actions/view-refresh.png</file>
+    <file>22x22/actions/tools-check-spelling.png</file>
+    <file>22x22/actions/list-add.png</file>
+    <file>22x22/actions/help-about.png</file>
+    <file>22x22/actions/help-contents.png</file>
     <file>22x22/apps/accessories-text-editor.png</file>
     <file>22x22/categories/preferences-system.png</file>
     <file>22x22/categories/preferences-system-network.png</file>
-    <file>22x22/categories/preferences-desktop-theme.png</file>
+    <file>22x22/categories/preferences-desktop.png</file>
     <file>22x22/mimetypes/audio-x-generic.png</file>
     <file>22x22/mimetypes/document-export.png</file>
     <file>22x22/places/folder-remote.png</file>
     <file>22x22/status/image-missing.png</file>
+
+    <file>32x32/actions/application-exit.png</file>
     <file>32x32/actions/document-new.png</file>
     <file>32x32/actions/document-open.png</file>
     <file>32x32/actions/document-save-as.png</file>
     <file>32x32/actions/document-save.png</file>
+    <file>32x32/actions/document-properties.png</file>
     <file>32x32/actions/edit-clear.png</file>
     <file>32x32/actions/edit-copy.png</file>
     <file>32x32/actions/edit-cut.png</file>
     <file>32x32/actions/edit-paste.png</file>
     <file>32x32/actions/edit-redo.png</file>
     <file>32x32/actions/edit-undo.png</file>
+    <file>32x32/actions/edit-find-replace.png</file>
     <file>32x32/actions/folder-new.png</file>
     <file>32x32/actions/view-refresh.png</file>
+    <file>32x32/actions/tools-check-spelling.png</file>
+    <file>32x32/actions/list-add.png</file>
+    <file>32x32/actions/help-about.png</file>
+    <file>32x32/actions/help-contents.png</file>
     <file>32x32/apps/accessories-text-editor.png</file>
     <file>32x32/categories/preferences-system.png</file>
     <file>32x32/categories/preferences-system-network.png</file>
-    <file>32x32/categories/preferences-desktop-theme.png</file>
+    <file>32x32/categories/preferences-desktop.png</file>
     <file>32x32/mimetypes/audio-x-generic.png</file>
     <file>32x32/mimetypes/document-export.png</file>
     <file>32x32/places/folder-remote.png</file>
     <file>32x32/status/image-missing.png</file>
-    <file>48x48/songbook/select_all.png</file>
-    <file>48x48/songbook/select_none.png</file>
-    <file>48x48/songbook/select_invert.png</file>
-    <file>scalable/actions/document-new.svg</file>
-    <file>scalable/actions/document-open.svg</file>
-    <file>scalable/actions/document-save-as.svg</file>
-    <file>scalable/actions/document-save.svg</file>
-    <file>scalable/actions/edit-clear.svg</file>
-    <file>scalable/actions/edit-copy.svg</file>
-    <file>scalable/actions/edit-cut.svg</file>
-    <file>scalable/actions/edit-paste.svg</file>
-    <file>scalable/actions/edit-redo.svg</file>
-    <file>scalable/actions/edit-undo.svg</file>
-    <file>scalable/actions/folder-new.svg</file>
-    <file>scalable/actions/view-refresh.svg</file>
-    <file>scalable/apps/accessories-text-editor.svg</file>
-    <file>scalable/categories/preferences-system.svg</file>
-    <file>scalable/categories/preferences-system-network.svg</file>
-    <file>scalable/categories/preferences-desktop-theme.svg</file>
-    <file>scalable/mimetypes/audio-x-generic.svg</file>
-    <file>scalable/mimetypes/document-export.svg</file>
-    <file>scalable/places/folder-remote.svg</file>
-    <file>scalable/status/image-missing.svg</file>
-    <file>scalable/places/flag-fr.svg</file>
-    <file>scalable/places/flag-es.svg</file>
-    <file>scalable/places/flag-en.svg</file>
+
+    <file>48x48/actions/application-exit.png</file>
+    <file>48x48/actions/document-new.png</file>
+    <file>48x48/actions/document-open.png</file>
+    <file>48x48/actions/document-save-as.png</file>
+    <file>48x48/actions/document-save.png</file>
+    <file>48x48/actions/document-properties.png</file>
+    <file>48x48/actions/edit-clear.png</file>
+    <file>48x48/actions/edit-copy.png</file>
+    <file>48x48/actions/edit-cut.png</file>
+    <file>48x48/actions/edit-paste.png</file>
+    <file>48x48/actions/edit-redo.png</file>
+    <file>48x48/actions/edit-undo.png</file>
+    <file>48x48/actions/edit-find-replace.png</file>
+    <file>48x48/actions/folder-new.png</file>
+    <file>48x48/actions/view-refresh.png</file>
+    <file>48x48/actions/tools-check-spelling.png</file>
+    <file>48x48/actions/list-add.png</file>
+    <file>48x48/actions/help-about.png</file>
+    <file>48x48/actions/help-contents.png</file>
+    <file>48x48/apps/accessories-text-editor.png</file>
+    <file>48x48/categories/preferences-system.png</file>
+    <file>48x48/categories/preferences-system-network.png</file>
+    <file>48x48/categories/preferences-desktop.png</file>
+    <file>48x48/mimetypes/audio-x-generic.png</file>
+    <file>48x48/mimetypes/document-export.png</file>
+    <file>48x48/places/folder-remote.png</file>
+    <file>48x48/status/image-missing.png</file>
+
+    <file>128x128/status/image-missing.png</file>
   </qresource>
 </RCC>
