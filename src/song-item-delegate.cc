@@ -36,12 +36,12 @@ CSongItemDelegate::CSongItemDelegate(QObject *parent)
 
   // cover missing
   QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22));
-  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/scalable/status/image-missing.svg")).pixmap(128, 128));
+  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(128, 128));
   
   // language flags
-  QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")).pixmap(22,22));
-  QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")).pixmap(22,22));
-  QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")).pixmap(22,22));
+  QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")).pixmap(22,22));
+  QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")).pixmap(22,22));
+  QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")).pixmap(22,22));
 }
 
 CSongItemDelegate::~CSongItemDelegate()

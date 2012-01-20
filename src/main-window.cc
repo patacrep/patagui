@@ -59,7 +59,7 @@ CMainWindow::CMainWindow()
   , m_infoSelection(0)
 {
   setWindowTitle("Patacrep Songbook Client");
-  setWindowIcon(QIcon(":/icons/songbook-client.png"));
+  setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
 
   // song library
   m_library = new CLibrary(this);
@@ -190,7 +190,7 @@ void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/document-new.png")));
+  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
   m_newSongAct->setStatusTip(tr("Write a new song"));
   m_newSongAct->setIconText(tr("Add"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
@@ -221,41 +221,41 @@ void CMainWindow::createActions()
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
-  m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
+  m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/32x32/actions/help-contents.png")));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-  m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
+  m_aboutAct->setIcon(QIcon::fromTheme("help-about", QIcon(":/icons/tango/32x32/actions/help-about.png")));
   m_aboutAct->setStatusTip(tr("About this application"));
   m_aboutAct->setMenuRole(QAction::AboutRole);
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
-  m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
+  m_exitAct->setIcon(QIcon::fromTheme("application-exit",QIcon(":/icons/tango/32x32/application-exit.png")));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
   m_exitAct->setMenuRole(QAction::QuitRole);
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
-  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties"));
+  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties",QIcon(":/icons/tango/32x32/document-properties.png")));
   m_preferencesAct->setStatusTip(tr("Configure the application"));
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Check all"), this);
-  m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
+  m_selectAllAct->setIcon(QIcon::fromTheme("select-all",QIcon(":/icons/songbook/32x32/select-all.png")));
   m_selectAllAct->setStatusTip(tr("Check all songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(checkAll()));
 
   m_unselectAllAct = new QAction(tr("Uncheck all"), this);
-  m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
+  m_unselectAllAct->setIcon(QIcon::fromTheme("select-none",QIcon(":/icons/songbook/32x32/select-none.png")));
   m_unselectAllAct->setStatusTip(tr("Uncheck all songs"));
   connect(m_unselectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(uncheckAll()));
 
   m_invertSelectionAct = new QAction(tr("Toggle all"), this);
-  m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
+  m_invertSelectionAct->setIcon(QIcon::fromTheme("select-invert",QIcon(":/icons/songbook/32x32/select-invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
 
@@ -300,7 +300,7 @@ void CMainWindow::createActions()
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
-  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear")));
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear.png")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
 }
