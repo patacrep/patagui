@@ -58,7 +58,7 @@
 		</dict>
 		<dict>
 			<key>CFBundleTypeIconFile</key>
-			<string>sb_icon.icns</string>
+			<string>book.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Songbook file</string>
 			<key>CFBundleTypeExtensions</key>
@@ -70,7 +70,7 @@
 		</dict>
 		<dict>
 			<key>CFBundleTypeIconFile</key>
-			<string>sg_icon.icns</string>
+			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>Songbook file</string>
 			<key>CFBundleTypeExtensions</key>
@@ -82,7 +82,7 @@
 		</dict>
 		<dict>
 			<key>CFBundleTypeIconFile</key>
-			<string>sg_icon.icns</string>
+			<string>song.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>NSRTFPboardType</string>
 			<key>CFBundleTypeRole</key>
