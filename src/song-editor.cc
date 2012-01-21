@@ -126,7 +126,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   action->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
   action->setStatusTip(tr("Find some text and replace it"));
   connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
-  addAction(action);
+  m_toolBar->addAction(action);
 
   //spellchecking
   m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
@@ -134,7 +134,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
   m_spellCheckingAct->setCheckable(true);
   m_spellCheckingAct->setEnabled(false);
-  addAction(m_spellCheckingAct);
+  m_toolBar->addAction(m_spellCheckingAct);
 
   toolBar()->addSeparator();
 

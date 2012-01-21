@@ -735,7 +735,7 @@ void CMainWindow::changeTab(int index)
   if (editor)
     {
       m_editorMenu->clear();
-      foreach (QAction *action, editor->actions())
+      foreach (QAction *action, editor->toolBar()->actions())
 	{
 	  m_editorMenu->addAction(action);
 	  action->setEnabled(true);
@@ -747,10 +747,8 @@ void CMainWindow::changeTab(int index)
     }
   else
     {
-      editor = m_editors[""];
-      foreach (QAction *action, editor->actions())
+      foreach (QAction *action, m_editorMenu->actions())
 	{
-	  m_editorMenu->addAction(action);
 	  action->setEnabled(false);
 	}
 
