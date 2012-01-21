@@ -15,16 +15,12 @@ option(ENABLE_LIBRARY_DOWNLOAD "allow the application to download songbooks" ON)
 option(ENABLE_SPELL_CHECKING "allow the application to apply spellchecking within song-editor" ON)
 
 # {{{ CFLAGS
-if(WIN32)
-  add_definitions(-Wall)
-else()
-  add_definitions(-ggdb3 -rdynamic -fno-strict-aliasing -Wall -Wextra
-    -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
-    -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
-    -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
-    -Wmissing-format-attribute)
-endif()
-  # }}}
+add_definitions(-ggdb3 -fno-strict-aliasing -Wall -Wextra
+  -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
+  -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
+  -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
+  -Wmissing-format-attribute)
+# }}}
 
 # {{{ Find external utilities
 macro(a_find_program var prg req)

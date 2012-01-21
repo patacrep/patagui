@@ -20,7 +20,7 @@ PanelDefault=32
 PanelSizes=16,22,32,48,64,72,96,128
 
 # Directory list
-Directories=16x16/actions,16x16/apps,16x16/categories,16x16/mimetypes,16x16/places,16x16/status,22x22/actions,22x22/apps,22x22/categories,22x22/mimetypes,22x22/places,22x22/status,32x32/actions,32x32/apps,32x32/categories,32x32/mimetypes,32x32/places,32x32/status,scalable/actions,scalable/apps,scalable/categories,scalable/mimetypes,scalable/places,scalable/status,48x48/songbook
+Directories=16x16/actions,16x16/apps,16x16/categories,16x16/mimetypes,16x16/places,16x16/status,22x22/actions,22x22/apps,22x22/categories,22x22/mimetypes,22x22/places,22x22/status,32x32/actions,32x32/apps,32x32/categories,32x32/mimetypes,32x32/places,32x32/status,48x48/actions,48x48/apps,48x48/categories,48x48/mimetypes,48x48/places,48x48/status
 
 
 [16x16/actions]
@@ -108,58 +108,38 @@ Size=32
 Context=Places
 Type=Fixed
 
-[48x48/songbook]
-Size=48
-Context=Songbook
-Type=Fixed
-Type=Scalable
-MinSize=22
-MaxSize=56
-
 [32x32/status]
 Size=32
 Context=Status
 Type=Fixed
 
-[scalable/actions]
+[48x48/actions]
 Size=48
 Context=Actions
-Type=Scalable
-MinSize=32
-MaxSize=256
+Type=Fixed
 
-[scalable/apps]
+[48x48/apps]
 Size=48
 Context=Apps
-Type=Scalable
-MinSize=32
-MaxSize=256
+Type=Fixed
 
-[scalable/categories]
+[48x48/categories]
 Size=48
 Context=Categories
-Type=Scalable
-MinSize=32
-MaxSize=256
+Type=Fixed
 
-[scalable/mimetypes]
+[48x48/mimetypes]
 Size=48
 Context=MimeTypes
-Type=Scalable
-MinSize=32
-MaxSize=256
+Type=Fixed
 
-[scalable/places]
+[48x48/places]
 Size=48
 Context=Places
-Type=Scalable
-MinSize=32
-MaxSize=256
+Type=Fixed
 
-[scalable/status]
+[48x48/status]
 Size=48
 Context=Status
-Type=Scalable
-MinSize=32
-MaxSize=256
+Type=Fixed
 

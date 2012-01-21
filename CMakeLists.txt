@@ -88,7 +88,7 @@ set(SONGBOOK_CLIENT_UIS
 
 # resources (rcs)
 set(SONGBOOK_CLIENT_RCS
-  songbook.qrc
+  icons/songbook/songbook.qrc
   icons/macos/macos.qrc
   icons/tango/tango.qrc
   songbook.rc
@@ -262,7 +262,7 @@ if(NOT APPLE)
       REGEX ${regex} EXCLUDE)
   endif()
   install(FILES ${SONGBOOK_CLIENT_APPLICATION_NAME}.desktop DESTINATION share/applications)
-  install(FILES icons/songbook-client.png DESTINATION share/icons)
+  install(FILES icons/songbook/256x256/songbook-client.png DESTINATION share/icons)
   install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${SONGBOOK_CLIENT_DATA_PATH}/lang)
 endif(NOT APPLE)
 # }}}

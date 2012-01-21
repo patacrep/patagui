@@ -58,7 +58,7 @@ CMainWindow::CMainWindow()
   , m_infoSelection(0)
 {
   setWindowTitle("Patacrep Songbook Client");
-  setWindowIcon(QIcon(":/icons/songbook-client.png"));
+  setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
 
   // song library
   m_library = new CLibrary(this);
@@ -156,24 +156,10 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  settings.beginGroup("tools");
   setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
   setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
   setCleanallCommand(settings.value("cleanallCommand", PLATFORM_CLEAN_COMMAND).toString());
-
-  settings.beginGroup("tools");
-#if defined(Q_OS_WIN32)
-  setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
-  setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "cmd.exe /C clean.bat").toString());
-#elif defined(Q_OS_APPLE)
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#else //Unix/Linux
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#endif
   settings.endGroup();
 
   view()->readSettings();
@@ -203,7 +189,7 @@ void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/document-new.png")));
+  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
   m_newSongAct->setStatusTip(tr("Write a new song"));
   m_newSongAct->setIconText(tr("Add"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
@@ -234,41 +220,41 @@ void CMainWindow::createActions()
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
-  m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
+  m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/32x32/actions/help-contents.png")));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-  m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
+  m_aboutAct->setIcon(QIcon::fromTheme("help-about", QIcon(":/icons/tango/32x32/actions/help-about.png")));
   m_aboutAct->setStatusTip(tr("About this application"));
   m_aboutAct->setMenuRole(QAction::AboutRole);
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
-  m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
+  m_exitAct->setIcon(QIcon::fromTheme("application-exit",QIcon(":/icons/tango/32x32/application-exit.png")));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
   m_exitAct->setMenuRole(QAction::QuitRole);
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
-  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties"));
+  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties",QIcon(":/icons/tango/32x32/document-properties.png")));
   m_preferencesAct->setStatusTip(tr("Configure the application"));
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Check all"), this);
-  m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
+  m_selectAllAct->setIcon(QIcon::fromTheme("select-all",QIcon(":/icons/songbook/32x32/select-all.png")));
   m_selectAllAct->setStatusTip(tr("Check all songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(checkAll()));
 
   m_unselectAllAct = new QAction(tr("Uncheck all"), this);
-  m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
+  m_unselectAllAct->setIcon(QIcon::fromTheme("select-none",QIcon(":/icons/songbook/32x32/select-none.png")));
   m_unselectAllAct->setStatusTip(tr("Uncheck all songs"));
   connect(m_unselectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(uncheckAll()));
 
   m_invertSelectionAct = new QAction(tr("Toggle all"), this);
-  m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
+  m_invertSelectionAct->setIcon(QIcon::fromTheme("select-invert",QIcon(":/icons/songbook/32x32/select-invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
 
@@ -313,7 +299,7 @@ void CMainWindow::createActions()
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
-  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear")));
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear.png")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
 }
@@ -379,8 +365,7 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor *editor = new CSongEditor(this);
-  QAction *action;
-  foreach (action, editor->toolBar()->actions())
+  foreach (QAction *action, editor->toolBar()->actions())
     {
       action->setDisabled(true);
       m_editorMenu->addAction(action);
@@ -660,32 +645,14 @@ void CMainWindow::deleteSong()
 
 void CMainWindow::deleteSong(const QString &path)
 {
-  QString qs(tr("You are about to remove a song from the library.\n"
-                "Yes : The song will only be deleted from the library "
-		"and can be retrieved by rebuilding the library\n"
-                "No  : Nothing will be deleted\n"
-                "Delete file : You will also delete %1 from your hard drive\n"
-                "If you are unsure what to do, click No.").arg(path));
-  QMessageBox msgBox;
-  msgBox.setIcon(QMessageBox::Question);
-  msgBox.setText(tr("Removing song from Library."));
-  msgBox.setInformativeText(tr("Are you sure?"));
-  msgBox.addButton(QMessageBox::No);
-  QPushButton *yesb = msgBox.addButton(QMessageBox::Yes);
-  QPushButton *delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
-  msgBox.setDefaultButton(QMessageBox::No);
-  msgBox.setDetailedText(qs);
-  msgBox.exec();
+  int ret = QMessageBox::warning(this, tr("Songbook-Client"),
+				 tr("The file : %1 will be deleted.\n"
+				    "Are you sure?"),
+				 QMessageBox::Cancel | QMessageBox::Ok,
+				 QMessageBox::Cancel);
 
-  if (msgBox.clickedButton() == yesb)
-    {
-      //remove entry in database in 2 case
-      library()->removeSong(path);
-    }
-  else if (msgBox.clickedButton() == delb)
-    {
-      library()->deleteSong(path);
-    }
+  if (ret == QMessageBox::Ok)
+    library()->deleteSong(path);
 }
 
 void CMainWindow::closeTab(int index)
@@ -695,11 +662,13 @@ void CMainWindow::closeTab(int index)
       if (editor->isModified())
 	{
 	  QMessageBox::StandardButton answer = 
-	    QMessageBox::question(this,
-				  tr("Close"),
-				  tr("There is unsaved modification in the current editor, do you really want to close it?"),
-				  QMessageBox::Ok | QMessageBox::Cancel,
-				  QMessageBox::Cancel);
+	    QMessageBox::question(this, tr("Songbook-Client"),
+				  tr("The document has been modified.\n"
+				     "Do you want to save your changes?"),
+				  QMessageBox::Save | QMessageBox::Discard
+				  | QMessageBox::Cancel,
+				  QMessageBox::Save);
+	  
 	  if (answer != QMessageBox::Ok)
 	    return;
 	}
@@ -715,7 +684,7 @@ void CMainWindow::changeTab(int index)
   if (editor != 0)
     {
       m_editorMenu->clear();
-      foreach (QAction *action, editor->actions())
+      foreach (QAction *action, editor->toolBar()->actions())
 	{
 	  m_editorMenu->addAction(action);
 	  action->setEnabled(true);
@@ -727,13 +696,10 @@ void CMainWindow::changeTab(int index)
     }
   else
     {
-      // CSongEditor *editor = m_editors[""];
-      // foreach (QAction *action, editor->actions())
-      //   {
-      //     m_editorMenu->addAction(action);
-      //     action->setEnabled(false);
-      //   }
-
+      foreach (QAction *action, m_editorMenu->actions())
+	{
+	  action->setEnabled(false);
+	}
       switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
@@ -786,8 +752,10 @@ void CMainWindow::noDataNotification(const QDir &directory)
 
 void CMainWindow::downloadDialog()
 {
+#ifdef ENABLE_LIBRARY_DOWNLOAD
   CLibraryDownload *libraryDownload = new CLibraryDownload(this);
   libraryDownload->exec();
+#endif
 }
 
 void CMainWindow::cleanDialog()

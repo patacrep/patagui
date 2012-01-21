@@ -36,13 +36,13 @@ CSongItemDelegate::CSongItemDelegate(QObject *parent)
 
   // cover missing
   QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22));
-  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/scalable/status/image-missing.svg")).pixmap(128, 128));
+  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(128, 128));
   
   // language flags
-  QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")).pixmap(22,22));
-  QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")).pixmap(22,22));
-  QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")).pixmap(22,22));
-  QPixmapCache::insert("pt_PT", QIcon::fromTheme("flag-pt", QIcon(":/icons/tango/scalable/places/flag-pt.svg")).pixmap(22,22));
+  QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")).pixmap(22,22));
+  QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")).pixmap(22,22));
+  QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")).pixmap(22,22));
+  QPixmapCache::insert("pt_PT", QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")).pixmap(22,22));
 }
 
 CSongItemDelegate::~CSongItemDelegate()
@@ -50,16 +50,31 @@ CSongItemDelegate::~CSongItemDelegate()
 
 void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-  QStyleOptionViewItemV4 opt = option;
+  QStyleOptionViewItemV4 opt(option);
+  opt.state &= ~QStyle::State_MouseOver;
   opt.state &= ~QStyle::State_HasFocus;
+
+  QPalette::ColorRole textColor = QPalette::NoRole;
+  opt.state &= ~QStyle::State_HasFocus;
+  if(opt.state & QStyle::State_Selected)
+    {
+      if (opt.state & QStyle::State_Active)
+	{
+	  painter->fillRect(opt.rect, opt.palette.highlight());
+	  textColor = QPalette::HighlightedText;
+	}
+      else
+	{
+#if defined(Q_OS_WIN32)
+	  painter->fillRect(opt.rect, opt.palette.button());
+#endif
+	}
+    }
 
   switch (index.column())
     {
     case 2:
       {
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
-          painter->fillRect(opt.rect, opt.palette.highlight());
-
         if (index.model()->data(index, CLibrary::LilypondRole).toBool())
           {
             QPixmap pixmap;
@@ -77,15 +92,14 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                                                     Qt::AlignCenter,
                                                     opt.palette,
                                                     true,
-                                                    tr("yes"));
+                                                    tr("yes"),
+                                                    textColor);
               }
           }
       }
       break;
     case 4:
       {
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
-          painter->fillRect(opt.rect, opt.palette.highlight());
 
         // draw the cover
         QPixmap pixmap;
@@ -109,35 +123,20 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                                             Qt::AlignLeft | Qt::AlignVCenter,
                                             opt.palette,
                                             true,
-                                            index.model()->data(index, CLibrary::AlbumRole).toString());
+                                            index.model()->data(index, CLibrary::AlbumRole).toString(),
+                                            textColor);
       }
       break;
     case 5:
       {
         QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
         QPixmap pixmap;
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
-          painter->fillRect(opt.rect, opt.palette.highlight());
-
         if (QPixmapCache::find(QLocale(lang).name(), &pixmap))
           {
-            //painter->save();
-            //draw something different
             QApplication::style()->drawItemPixmap(painter,
                                                   opt.rect,
                                                   Qt::AlignCenter,
                                                   pixmap);
-
-            // QStyleOptionButton buttonOption;
-            // buttonOption.state = QStyle::State_Enabled;
-            // buttonOption.direction = QApplication::layoutDirection();
-            // buttonOption.rect = option.rect;
-            // buttonOption.fontMetrics = QApplication::fontMetrics();
-      
-            // buttonOption.text = QString().sprintf("Modifier");
-
-            // QApplication::style()->drawControl(QStyle::CE_PushButton, &buttonOption, painter);
-            //painter->restore();
           }
         else
           {

@@ -32,6 +32,11 @@ class QAction;
 class Hunspell;
 class CHighlighter;
 class FindReplaceDialog;
+class QToolBar;
+class CodeEditor;
+class CHighlighter;
+class CSongHeaderEditor;
+class FindReplaceDialog;
 
 class QToolBar;
 
@@ -56,7 +61,9 @@ public:
   void readSettings();
   void writeSettings();
   QStringList getWordPropositions(const QString &word);
+#ifdef ENABLE_SPELL_CHECKING
   Hunspell* checker() const;
+#endif
   void installHighlighter();
 
   bool isSpellCheckingEnabled() const;
@@ -84,13 +91,14 @@ signals:
   void saved(const QString &path);
 
 protected:
-  virtual void keyPressEvent(QKeyEvent *event);
 
 #ifdef ENABLE_SPELL_CHECKING
   void contextMenuEvent(QContextMenuEvent *event);
   QString currentWord();
   void setDictionary(const QLocale &locale);
 #endif //ENABLE_SPELL_CHECKING
+
+  virtual void keyPressEvent(QKeyEvent *event);
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -123,6 +131,7 @@ private:
 
   QList<QAction*> m_actions;
   CHighlighter* m_highlighter;
+  QAction* m_spellCheckingAct;
   bool m_isSpellCheckingEnabled;
 
 #ifdef ENABLE_SPELL_CHECKING
@@ -130,7 +139,6 @@ private:
   QPoint m_lastPos;
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
-  QAction* m_spellCheckingAct;
 #endif //ENABLE_SPELL_CHECKING
 
   FindReplaceDialog* m_findReplaceDialog;

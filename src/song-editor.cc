@@ -37,7 +37,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QSettings>
-#include <QFileInfo>
+#include <QBoxLayout>
+#include <QApplication>
 #include <QTextCodec>
 #include <QMenu>
 #include <QBoxLayout>
@@ -52,7 +53,9 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_library(0)
   , m_toolBar(0)
   , m_highlighter(0)
+#ifdef ENABLE_SPELL_CHECKING
   , m_maxSuggestedWords(0)
+#endif
   , m_song()
   , m_newSong(true)
   , m_newCover(false)
@@ -129,18 +132,18 @@ CSongEditor::CSongEditor(QWidget *parent)
 
   action = new QAction(tr("Search and Replace"), this);
   action->setShortcut(QKeySequence::Find);
-  action->setIcon(QIcon::fromTheme("edit-find"));//, QIcon(":/icons/tango/32x32/actions/edit-find.png")));
+  action->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
   action->setStatusTip(tr("Find some text and replace it"));
   connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
-  addAction(action);
+  m_toolBar->addAction(action);
 
   //spellchecking
   m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
-  m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling"));//, QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
+  m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
   m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
   m_spellCheckingAct->setCheckable(true);
   m_spellCheckingAct->setEnabled(false);
-  addAction(m_spellCheckingAct);
+  m_toolBar->addAction(m_spellCheckingAct);
 
   toolBar()->addSeparator();
 
@@ -618,6 +621,7 @@ Hunspell* CSongEditor::checker() const
   if(!m_highlighter) return 0;
   return m_highlighter->checker();
 }
+#endif //ENABLE_SPELL_CHECKING
 
 bool CSongEditor::isSpellCheckingEnabled() const
 {
@@ -629,4 +633,3 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
   m_isSpellCheckingEnabled = value;
   m_spellCheckingAct->setEnabled(value);
 }
-#endif //ENABLE_SPELL_CHECKING

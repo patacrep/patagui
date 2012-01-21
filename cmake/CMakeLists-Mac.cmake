@@ -1,5 +1,5 @@
 	set( SONGBOOK_CLIENT_APPLICATION_NAME Songbook-Client )
-	set( MACOSX_BUNDLE_ICON_FILE livre.icns )
+	set( MACOSX_BUNDLE_ICON_FILE songbook-client.icns )
 	set( CPACK_BUNDLE_NAME Sonbook Client With Space)
 	#versions
 	set( MACOSX_BUNDLE_VERSION 0.5.1 )
@@ -13,8 +13,8 @@
 	# need to copy the icns (icon) file in the buils dir
 	# also copy the icons for the .sg and .sb files
 	SET_SOURCE_FILES_PROPERTIES(
-		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sb_icon.icns
-		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sg_icon.icns
+		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/book.icns
+		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/song.icns
 		PROPERTIES
 		MACOSX_PACKAGE_LOCATION Resources
 	)
@@ -22,8 +22,8 @@
 	#set( CMAKE_OSX_ARCHITECTURES "ppc;i386" 
 	#				CACHE STRING "Build architectures for OSX" FORCE)
 	
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/livre.icns
-		${CMAKE_CURRENT_BINARY_DIR}/livre.icns COPYONLY)
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/songbook-client.icns
+		${CMAKE_CURRENT_BINARY_DIR}/songbook-client.icns COPYONLY)
 
 	IF(EXISTS "/Library/Frameworks/Sparkle.framework")
 		message(STATUS "Looking for Sparkle Framwork - found")
@@ -79,8 +79,8 @@
 		${SONGBOOK_CLIENT_UI_HDRS}
 		${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
 		${PUBLIC_KEY}
-		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sb_icon.icns
-		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/sg_icon.icns
+		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/book.icns
+		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/song.icns
 		)
 	add_custom_command( TARGET ${SONGBOOK_CLIENT_APPLICATION_NAME} POST_BUILD
 		COMMAND mkdir ARGS ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang

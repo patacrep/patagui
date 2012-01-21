@@ -278,13 +278,6 @@ void CLibrary::addSong(const Song &song)
   emit(wasModified());
 }
 
-void CLibrary::addSong(const QString &path)
-{
-  Song song;
-  loadSong(path, &song);
-  addSong(song);
-}
-
 void CLibrary::addSongs(const QStringList &paths)
 {
   Song song;
@@ -299,15 +292,11 @@ void CLibrary::addSongs(const QStringList &paths)
     }
 }
 
-bool CLibrary::containsSong(const QString &path)
+void CLibrary::addSong(const QString &path)
 {
-  for (int i = 0; i < m_songs.size(); ++i)
-    {
-      if (m_songs[i].path == path)
-        return true;
-    }
-  return false;
+  m_songs << Song::fromFile(path);
 }
+
 
 void CLibrary::removeSong(const QString &path)
 {
