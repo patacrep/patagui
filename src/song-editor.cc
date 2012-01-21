@@ -236,22 +236,11 @@ void CSongEditor::installHighlighter()
   m_highlighter = new CHighlighter(m_editor->document());
 
 #ifdef ENABLE_SPELL_CHECKING
-  //find a suitable dictionary based on the song's language
-  QRegExp reLanguage("selectlanguage\\{([^\\}]+)");
-  reLanguage.indexIn(m_editor->document()->toPlainText());
-  QString lang = reLanguage.cap(1);
-  if(!lang.compare("french"))
-    m_dictionary = QString("/usr/share/hunspell/fr_FR.dic");
-  else if(!lang.compare("english"))
-    m_dictionary = QString("/usr/share/hunspell/en_US.dic");
-  else if(!lang.compare("spanish"))
-    m_dictionary = QString("/usr/share/hunspell/es_ES.dic");
-  else
-    qWarning() << "CSongbEditor::installHighlighter Unable to find dictionnary for language: " << lang;
-
+  //find a suitable dictionary based on the song's locale
+  m_dictionary = QString("/usr/share/hunspell/%1.dic").arg(m_song.locale.name());
   if(!QFile(m_dictionary).exists())
     {
-      qWarning() << "CSongbEditor::installHighlighter Unable to open dictionnary: " << m_dictionary;
+      qWarning() << "CSongEditor::installHighlighter Unable to open dictionnary: " << m_dictionary;
       return;
     }
 
