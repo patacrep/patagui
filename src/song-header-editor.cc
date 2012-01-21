@@ -95,7 +95,7 @@ void CSongHeaderEditor::update()
   m_titleLineEdit->setText(song().title);
   m_artistLineEdit->setText(song().artist);
   m_albumLineEdit->setText(song().album);
-  m_languageLineEdit->setText(QLocale::languageToString(song().language));
+  m_languageLineEdit->setText(QLocale::languageToString(song().locale.language()));
   m_columnCountLineEdit->setText(QString::number(song().columnCount));
   m_capoLineEdit->setText(QString::number(song().capo));
 

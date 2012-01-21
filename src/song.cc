@@ -56,7 +56,7 @@ Song Song::fromString(const QString &text, const QString &path)
   song.coverPath = QFileInfo(path).absolutePath();
 
   reLanguage.indexIn(text);
-  song.language = languageFromString(reLanguage.cap(1));
+  song.locale = QLocale(languageFromString(reLanguage.cap(1)), QLocale::AnyCountry);
 
   reColumnCount.indexIn(text);
   song.columnCount = reColumnCount.cap(1).toInt();
