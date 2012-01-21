@@ -186,7 +186,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     case LilypondRole:
       return m_songs[index.row()].isLilypond;
     case LanguageRole:
-      return qVariantFromValue(m_songs[index.row()].language);
+      return qVariantFromValue(m_songs[index.row()].locale.language());
     case PathRole:
       return m_songs[index.row()].path;
     case RelativePathRole:

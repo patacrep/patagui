@@ -93,6 +93,11 @@ Song Song::fromString(const QString &text, const QString &path)
 
   // content
   song.isLilypond = QBool(reLilypond.indexIn(content) > -1);
+  song.coverPath = QFileInfo(path).absolutePath();
+
+  //locale
+  reLanguage.indexIn(text);
+  song.locale = QLocale(languageFromString(reLanguage.cap(1)), QLocale::AnyCountry);
 
   song.capo = 0;
 

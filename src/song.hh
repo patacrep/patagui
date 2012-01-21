@@ -43,7 +43,7 @@ struct Song
   QString coverName;
   QString coverPath;
   QString path;
-  QLocale::Language language;
+  QLocale locale;
   bool isLilypond;
   int columnCount;
   int capo;
