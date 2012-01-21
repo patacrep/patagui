@@ -31,11 +31,11 @@ class QAction;
 class Hunspell;
 class CHighlighter;
 class FindReplaceDialog;
-
 class QToolBar;
-
 class CodeEditor;
+class CHighlighter;
 class CSongHeaderEditor;
+class FindReplaceDialog;
 
 class CSongEditor : public QWidget
 {
@@ -53,7 +53,9 @@ public:
   void readSettings();
   void writeSettings();
   QStringList getWordPropositions(const QString &word);
+#ifdef ENABLE_SPELL_CHECKING
   Hunspell* checker() const;
+#endif
   void installHighlighter();
 
   bool isSpellCheckingEnabled() const;
