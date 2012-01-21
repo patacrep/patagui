@@ -89,7 +89,7 @@ protected:
 #ifdef ENABLE_SPELL_CHECKING
   void contextMenuEvent(QContextMenuEvent *event);
   QString currentWord();
-  void setDictionary(QLocale::Language language);
+  void setDictionary(const QLocale &locale);
 #endif //ENABLE_SPELL_CHECKING
 
 private slots:

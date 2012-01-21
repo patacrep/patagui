@@ -145,7 +145,7 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
     }
   else if (currentLineEdit == m_languageLineEdit)
     {
-      song().language = Song::languageFromString(text);
+      song().locale = QLocale(Song::languageFromString(text), QLocale::AnyCountry);
     }
   else if (currentLineEdit == m_columnCountLineEdit)
     {

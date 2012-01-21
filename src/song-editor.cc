@@ -224,35 +224,16 @@ void CSongEditor::installHighlighter()
 }
 
 #ifdef ENABLE_SPELL_CHECKING
-void CSongEditor::setDictionary(QLocale::Language language)
+void CSongEditor::setDictionary(const QLocale &locale)
 {
   if (m_highlighter == 0)
     return;
 
-  // find the suitable dictionary based on the current song language
-  QString dictionary;
-  switch (language)
-    {
-    case QLocale::French:
-      dictionary = "/usr/share/hunspell/fr_FR.dic";
-      break;
-    case QLocale::English:
-      dictionary = "/usr/share/hunspell/en_US.dic";
-      break;
-    case QLocale::Spanish:
-      dictionary = "/usr/share/hunspell/es_ES.dic";
-      break;
-    case QLocale::Portuguese:
-      dictionary = "/usr/share/hunspell/pt_PT.dic";
-      break;
-    default:
-      qWarning() << "Unable to find dictionnary for " << QLocale::languageToString(language);
-      break;
-    }
-
+  // find the suitable dictionary based on the current song's locale
+  QString dictionary = QString("/usr/share/hunspell/%1.dic").arg(locale.name());;
   if (!QFile(dictionary).exists())
     {
-      qWarning() << "Unable to open the dictionnary: " << dictionary;
+      qWarning() << "Unable to find the following dictionnary: " << dictionary;
       return;
     }
 
@@ -505,7 +486,7 @@ void CSongEditor::setSong(const Song &song)
 
 
 #ifdef ENABLE_SPELL_CHECKING
-  setDictionary(song.language);
+  setDictionary(song.locale);
 #endif //ENABLE_SPELL_CHECKING
 
   setNewSong(false);

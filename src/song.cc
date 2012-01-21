@@ -71,10 +71,6 @@ Song Song::fromString(const QString &text, const QString &path)
   // path (for cover)
   song.coverPath = QFileInfo(path).absolutePath();
 
-  // prefix
-  reLanguage.indexIn(prefix);
-  song.language = languageFromString(reLanguage.cap(1));
-
   reColumnCount.indexIn(prefix);
   song.columnCount = reColumnCount.cap(1).toInt();
 
@@ -96,7 +92,7 @@ Song Song::fromString(const QString &text, const QString &path)
   song.coverPath = QFileInfo(path).absolutePath();
 
   //locale
-  reLanguage.indexIn(text);
+  reLanguage.indexIn(prefix);
   song.locale = QLocale(languageFromString(reLanguage.cap(1)), QLocale::AnyCountry);
 
   song.capo = 0;
@@ -144,7 +140,7 @@ Song Song::fromString(const QString &text, const QString &path)
 QString Song::toString(const Song &song)
 {
   QString text;
-  text.append(QString("\\selectlanguage{%1}\n").arg(Song::languageToString(song.language)));
+  text.append(QString("\\selectlanguage{%1}\n").arg(Song::languageToString(song.locale.language())));
   if (song.columnCount > 0)
     text.append(QString("\\songcolumns{%1}\n").arg(song.columnCount));
 
