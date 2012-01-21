@@ -19,13 +19,18 @@
 #ifndef __SONG_EDITOR_HH__
 #define __SONG_EDITOR_HH__
 
-#include <QWidget>
-
+#include "config.hh"
 #include "song.hh"
 
+#include <QWidget>
 #include <QString>
 #include <QTextCursor>
 #include <QKeyEvent>
+
+class QAction;
+class Hunspell;
+class CHighlighter;
+class FindReplaceDialog;
 
 class QToolBar;
 
@@ -43,10 +48,16 @@ public:
   QString path();
   void setPath(const QString &path);
 
-  QToolBar * toolBar();
+  QToolBar* toolBar() const;
 
   void readSettings();
   void writeSettings();
+  QStringList getWordPropositions(const QString &word);
+  Hunspell* checker() const;
+  void installHighlighter();
+
+  bool isSpellCheckingEnabled() const;
+  void setSpellCheckingEnabled(const bool);
 
   bool isModified() const;
 
@@ -59,6 +70,7 @@ public slots:
 
 signals:
   void labelChanged(const QString &label);
+  void wordAdded(const QString &word);
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
@@ -69,6 +81,16 @@ private slots:
   void documentWasModified();
   void insertVerse();
   void insertChorus();
+
+#ifdef ENABLE_SPELL_CHECKING
+  void correctWord();
+  void addWord();
+  void ignoreWord();
+
+protected:
+  void contextMenuEvent(QContextMenuEvent *event);
+  QString currentWord();
+#endif //ENABLE_SPELL_CHECKING
 
 private:
   QString syntaxicColoration(const QString &string);
@@ -81,6 +103,20 @@ private:
   QToolBar *m_toolBar;
   Song m_song;
   bool m_newSong;
+
+  CHighlighter* m_highlighter;
+  QAction* m_spellCheckingAct;
+  bool m_isSpellCheckingEnabled;
+
+#ifdef ENABLE_SPELL_CHECKING
+  QList<QAction *> m_misspelledWordsActs;
+  QPoint m_lastPos;
+  QStringList m_addedWords;
+  uint m_maxSuggestedWords;
+  QString m_dictionary;
+#endif //ENABLE_SPELL_CHECKING
+
+  FindReplaceDialog* m_findReplaceDialog;
 };
 
 #endif // __SONG_EDITOR_HH__

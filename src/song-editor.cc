@@ -18,7 +18,12 @@
 //******************************************************************************
 #include "song-editor.hh"
 
-#include "highlighter.hh"
+#include "song-highlighter.hh"
+#include "qtfindreplacedialog/findreplacedialog.h"
+
+#ifdef ENABLE_SPELL_CHECKING
+#include "hunspell/hunspell.hxx"
+#endif //ENABLE_SPELL_CHECKING
 
 #include "code-editor.hh"
 #include "song-header-editor.hh"
@@ -31,6 +36,8 @@
 #include <QSettings>
 #include <QBoxLayout>
 #include <QApplication>
+#include <QTextCodec>
+#include <QMenu>
 
 #include <QDebug>
 
@@ -41,6 +48,10 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_song()
   , m_newSong(true)
+  , m_highlighter(0)
+#ifdef ENABLE_SPELL_CHECKING
+  , m_maxSuggestedWords(0)
+#endif
 {
   m_editor->setUndoRedoEnabled(true);
 
@@ -104,7 +115,29 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_toolBar->addAction(action);
 
   toolBar()->addSeparator();
-  
+
+  //find and replace
+  m_findReplaceDialog = new FindReplaceDialog(this);
+  m_findReplaceDialog->setModal(false);
+  m_findReplaceDialog->setTextEdit(m_editor);
+
+  action = new QAction(tr("Search and Replace"), this);
+  action->setShortcut(QKeySequence::Find);
+  action->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
+  action->setStatusTip(tr("Find some text and replace it"));
+  connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
+  addAction(action);
+
+  //spellchecking
+  m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
+  m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
+  m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
+  m_spellCheckingAct->setCheckable(true);
+  m_spellCheckingAct->setEnabled(false);
+  addAction(m_spellCheckingAct);
+
+  toolBar()->addSeparator();
+
   //songbook
   action = new QAction(tr("Verse"), this);
   action->setStatusTip(tr("New verse environment"));
@@ -129,7 +162,9 @@ CSongEditor::CSongEditor(QWidget *parent)
 }
 
 CSongEditor::~CSongEditor()
-{}
+{
+  delete m_highlighter;
+}
 
 QString CSongEditor::path()
 {
@@ -155,11 +190,28 @@ void CSongEditor::readSettings()
   m_editor->setHighlightMode(settings.value("highlight", true).toBool());
   m_editor->setLineNumberMode(settings.value("lines", true).toBool());
 
+#ifdef ENABLE_SPELL_CHECKING
+  m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
+  for(uint i = 0; i < m_maxSuggestedWords; ++i)
+    {
+      QAction *action = new QAction(this);
+      action->setVisible(false);
+      connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
+      m_misspelledWordsActs.append(action);
+    }
+  m_dictionary = settings.value("dictionary", "/usr/share/hunspell/en_US.dic").toString();
+#endif //ENABLE_SPELL_CHECKING
+
+  m_findReplaceDialog->readSettings(settings);
+
   settings.endGroup();
 }
 
 void CSongEditor::writeSettings()
-{}
+{
+  QSettings settings;
+  m_findReplaceDialog->writeSettings(settings);
+}
 
 void CSongEditor::setPath(const QString &path)
 {
@@ -177,6 +229,39 @@ void CSongEditor::setPath(const QString &path)
       file.close();
     }
   m_editor->setPlainText(text);
+}
+
+void CSongEditor::installHighlighter()
+{
+  m_highlighter = new CHighlighter(m_editor->document());
+
+#ifdef ENABLE_SPELL_CHECKING
+  //find a suitable dictionary based on the song's language
+  QRegExp reLanguage("selectlanguage\\{([^\\}]+)");
+  reLanguage.indexIn(m_editor->document()->toPlainText());
+  QString lang = reLanguage.cap(1);
+  if(!lang.compare("french"))
+    m_dictionary = QString("/usr/share/hunspell/fr_FR.dic");
+  else if(!lang.compare("english"))
+    m_dictionary = QString("/usr/share/hunspell/en_US.dic");
+  else if(!lang.compare("spanish"))
+    m_dictionary = QString("/usr/share/hunspell/es_ES.dic");
+  else
+    qWarning() << "CSongbEditor::installHighlighter Unable to find dictionnary for language: " << lang;
+
+  if(!QFile(m_dictionary).exists())
+    {
+      qWarning() << "CSongbEditor::installHighlighter Unable to open dictionnary: " << m_dictionary;
+      return;
+    }
+
+  setSpellCheckingEnabled(true);
+  m_highlighter->setDictionary(m_dictionary);
+  connect(this, SIGNAL(wordAdded(const QString &)),
+	  m_highlighter, SLOT(addWord(const QString &)));
+  connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
+	  m_highlighter, SLOT(setSpellCheck(bool)));
+#endif //ENABLE_SPELL_CHECKING
 }
 
 void CSongEditor::save()
@@ -220,7 +305,7 @@ void CSongEditor::insertChorus()
   m_editor->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
 }
 
-QToolBar * CSongEditor::toolBar()
+QToolBar* CSongEditor::toolBar() const
 {
   return m_toolBar;
 }
@@ -261,7 +346,7 @@ void CSongEditor::indentSelection()
 
 void CSongEditor::indentLine(const QTextCursor & cur)
 {
-  //if line is only contains whitespaces, remove them and exit
+  //if line only contains whitespaces, remove them and exit
   if(cur.block().text().trimmed().isEmpty() || cur.atStart())
     {
       trimLine(cur);
@@ -334,3 +419,122 @@ void CSongEditor::setNewSong(bool newSong)
 {
   m_newSong = newSong;
 }
+
+
+#ifdef ENABLE_SPELL_CHECKING
+QString CSongEditor::currentWord()
+{
+  QTextCursor cursor = m_editor->cursorForPosition(m_lastPos);
+  QString word = cursor.block().text();
+  int pos = cursor.columnNumber();
+  int end = word.indexOf(QRegExp("\\W+"),pos);
+  int begin = word.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
+  word = word.mid(begin+1,end-begin-1);
+  return word;
+}
+
+void CSongEditor::correctWord() 
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    {
+      QString replacement = action->text();
+      QTextCursor cursor = m_editor->cursorForPosition(m_lastPos);
+      QString zeile = cursor.block().text();
+      cursor.select(QTextCursor::WordUnderCursor);
+      cursor.deleteChar();
+      cursor.insertText(replacement);
+    }
+}
+
+QStringList CSongEditor::getWordPropositions(const QString &word)
+{
+  if(!checker())
+    return QStringList();
+
+  QStringList wordList;
+  QByteArray encodedString;
+  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(word);
+
+  if(checker()->spell(encodedString.data()))
+    return wordList;
+
+  char ** wlst;
+  int ns = checker()->suggest(&wlst, encodedString.data());
+  if (ns > 0)
+    {
+      for (int i=0; i < ns; i++)
+	wordList.append(codec->toUnicode(wlst[i]));
+      checker()->free_list(&wlst, ns);
+    }
+  return wordList;
+}
+
+void CSongEditor::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu *menu = m_editor->createStandardContextMenu();
+  QMenu *spellMenu = new QMenu(tr("Suggestions"));
+  m_lastPos=event->pos();
+  QString str = currentWord();
+  QStringList list = getWordPropositions(str);
+  int size = qMin(m_maxSuggestedWords, (uint)list.size());
+  if (!list.isEmpty())
+    {
+      for (int i = 0; i < size; ++i)
+	{
+	  m_misspelledWordsActs[i]->setText(list[i].trimmed());
+	  m_misspelledWordsActs[i]->setVisible(true);
+	  spellMenu->addAction(m_misspelledWordsActs[i]);
+	}
+      spellMenu->addSeparator();
+      spellMenu->addAction(tr("Add"), this, SLOT(addWord()));
+      spellMenu->addAction(tr("Ignore"), this, SLOT(ignoreWord()));
+      menu->addMenu(spellMenu);
+    }
+  menu->exec(event->globalPos());
+  delete menu;
+}
+
+void CSongEditor::ignoreWord()
+{
+  QString str = currentWord();
+  QByteArray encodedString;
+  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(str);
+  checker()->add(encodedString.data());
+  emit wordAdded(str);
+}
+
+void CSongEditor::addWord()
+{
+  QString str = currentWord();
+  QByteArray encodedString;
+  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(str);
+  checker()->add(encodedString.data());
+  m_addedWords.append(str);
+  emit wordAdded(str);
+}
+
+Hunspell* CSongEditor::checker() const
+{
+  if(!m_highlighter) return 0;
+  return m_highlighter->checker();
+}
+#endif //ENABLE_SPELL_CHECKING
+
+bool CSongEditor::isSpellCheckingEnabled() const
+{
+  return m_isSpellCheckingEnabled;
+}
+
+void CSongEditor::setSpellCheckingEnabled(const bool value)
+{
+  m_isSpellCheckingEnabled = value;
+  m_spellCheckingAct->setEnabled(value);
+}
+

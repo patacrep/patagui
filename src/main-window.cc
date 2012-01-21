@@ -26,7 +26,7 @@
 #include "library-view.hh"
 #include "songbook.hh"
 #include "song-editor.hh"
-#include "highlighter.hh"
+#include "logs-highlighter.hh"
 #include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
@@ -59,7 +59,7 @@ CMainWindow::CMainWindow()
   , m_infoSelection(0)
 {
   setWindowTitle("Patacrep Songbook Client");
-  setWindowIcon(QIcon(":/icons/songbook-client.png"));
+  setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
 
   // song library
   m_library = new CLibrary(this);
@@ -90,24 +90,16 @@ CMainWindow::CMainWindow()
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
   
   // compilation log
-  m_log = new QPlainTextEdit;
-  m_log->setMinimumHeight(150);
-  m_log->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-  m_log->setReadOnly(true);
-  Q_UNUSED(new CHighlighter(m_log->document()));
+  m_log = new QDockWidget(tr("LaTeX compilation logs"));
+  QPlainTextEdit* logs = new QPlainTextEdit;
+  logs->setReadOnly(true);
+  Q_UNUSED(new CLogsHighlighter(logs->document()));
+  m_log->setWidget(logs);
+  addDockWidget(Qt::BottomDockWidgetArea, m_log);
 
   createActions();
   createMenus();
   createToolBar();
-
-  //Layouts
-  QBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->setContentsMargins(0,0,0,0);
-  mainLayout->addWidget(m_view);
-  mainLayout->addWidget(m_log);
-
-  QWidget *libraryTab = new QWidget;
-  libraryTab->setLayout(mainLayout);
 
   // place elements into the main window
   m_mainWidget = new CTabWidget;
@@ -116,7 +108,7 @@ CMainWindow::CMainWindow()
   m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
   connect(m_mainWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(m_mainWidget, SIGNAL(currentChanged(int)), SLOT(changeTab(int)));
-  m_mainWidget->addTab(libraryTab, tr("Library"));
+  m_mainWidget->addTab(m_view, tr("Library"));
   setCentralWidget(m_mainWidget);
 
   // status bar with an embedded label and progress bar
@@ -165,24 +157,10 @@ void CMainWindow::readSettings()
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  settings.beginGroup("tools");
   setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
   setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
   setCleanallCommand(settings.value("cleanallCommand", PLATFORM_CLEAN_COMMAND).toString());
-
-  settings.beginGroup("tools");
-#if defined(Q_OS_WIN32)
-  setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
-  setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "cmd.exe /C clean.bat").toString());
-#elif defined(Q_OS_APPLE)
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#else //Unix/Linux
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#endif
   settings.endGroup();
 
   view()->readSettings();
@@ -212,7 +190,7 @@ void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/document-new.png")));
+  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
   m_newSongAct->setStatusTip(tr("Write a new song"));
   m_newSongAct->setIconText(tr("Add"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
@@ -243,41 +221,41 @@ void CMainWindow::createActions()
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
-  m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
+  m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/32x32/actions/help-contents.png")));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-  m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
+  m_aboutAct->setIcon(QIcon::fromTheme("help-about", QIcon(":/icons/tango/32x32/actions/help-about.png")));
   m_aboutAct->setStatusTip(tr("About this application"));
   m_aboutAct->setMenuRole(QAction::AboutRole);
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
-  m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
+  m_exitAct->setIcon(QIcon::fromTheme("application-exit",QIcon(":/icons/tango/32x32/application-exit.png")));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
   m_exitAct->setMenuRole(QAction::QuitRole);
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
-  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties"));
+  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties",QIcon(":/icons/tango/32x32/document-properties.png")));
   m_preferencesAct->setStatusTip(tr("Configure the application"));
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Check all"), this);
-  m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
+  m_selectAllAct->setIcon(QIcon::fromTheme("select-all",QIcon(":/icons/songbook/32x32/select-all.png")));
   m_selectAllAct->setStatusTip(tr("Check all songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(checkAll()));
 
   m_unselectAllAct = new QAction(tr("Uncheck all"), this);
-  m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
+  m_unselectAllAct->setIcon(QIcon::fromTheme("select-none",QIcon(":/icons/songbook/32x32/select-none.png")));
   m_unselectAllAct->setStatusTip(tr("Uncheck all songs"));
   connect(m_unselectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(uncheckAll()));
 
   m_invertSelectionAct = new QAction(tr("Toggle all"), this);
-  m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
+  m_invertSelectionAct->setIcon(QIcon::fromTheme("select-invert",QIcon(":/icons/songbook/32x32/select-invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
 
@@ -322,7 +300,7 @@ void CMainWindow::createActions()
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
-  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear")));
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear.png")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
 }
@@ -388,8 +366,7 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor *editor = new CSongEditor(this);
-  QAction *action;
-  foreach (action, editor->toolBar()->actions())
+  foreach (QAction *action, editor->toolBar()->actions())
     {
       action->setDisabled(true);
       m_editorMenu->addAction(action);
@@ -511,9 +488,11 @@ void CMainWindow::build()
   connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
           progressBar(), SLOT(hide()));
   connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-          log(), SLOT(appendPlainText(const QString &)));
+          log()->widget(), SLOT(appendPlainText(const QString &)));
   connect(builder, SIGNAL(readOnStandardError(const QString &)),
-          log(), SLOT(appendPlainText(const QString &)));
+          log()->widget(), SLOT(appendPlainText(const QString &)));
+  connect(builder, SIGNAL(error(QProcess::ProcessError)),
+          this, SLOT(buildError(QProcess::ProcessError)));
 
   builder->setCommand(cleanCommand());
 
@@ -531,7 +510,7 @@ void CMainWindow::build()
   QString command = buildCommand();
   builder->setCommand(command.replace("%target", target).replace("%basename", basename));
 
-  builder->setUrlToOpen(QUrl(QString("file:///%1/%2").arg(workingPath()).arg(target)));
+  builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
   builder->setStartMessage(tr("Building %1.").arg(target));
   builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
   builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
@@ -645,7 +624,9 @@ void CMainWindow::songEditor(const QString &path, const QString &title)
 
   CSongEditor *editor = new CSongEditor(this);
   editor->setPath(path);
-  if (title == QString())
+  editor->installHighlighter();
+
+  if (title.isEmpty())
     {
       QFileInfo fileInfo(path);
       editor->setWindowTitle(fileInfo.fileName());
@@ -728,8 +709,7 @@ void CMainWindow::deleteSong(const QString &path)
 
 void CMainWindow::closeTab(int index)
 {
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  if (editor)
+  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
     {
       if (editor->isModified())
 	{
@@ -742,31 +722,35 @@ void CMainWindow::closeTab(int index)
 	  if (answer != QMessageBox::Ok)
 	    return;
 	}
+      editor->writeSettings();
       m_editors.remove(editor->path());
       m_mainWidget->closeTab(index);
+      delete editor;
     }
 }
 
 void CMainWindow::changeTab(int index)
 {
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  QAction *action;
   if (editor)
     {
       m_editorMenu->clear();
-      foreach (action, editor->actions())
+      foreach (QAction *action, editor->actions())
 	{
 	  m_editorMenu->addAction(action);
 	  action->setEnabled(true);
 	}
+      editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
 
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
-      foreach (action, m_editorMenu->actions())
+      editor = m_editors[""];
+      foreach (QAction *action, editor->actions())
 	{
+	  m_editorMenu->addAction(action);
 	  action->setEnabled(false);
 	}
 
@@ -775,9 +759,16 @@ void CMainWindow::changeTab(int index)
     }
 }
 
-QPlainTextEdit* CMainWindow::log() const
+QDockWidget* CMainWindow::log() const
 {
   return m_log;
+}
+
+void CMainWindow::buildError(QProcess::ProcessError error)
+{
+  log()->setVisible(true);
+  statusBar()->showMessage
+    (qobject_cast< CMakeSongbookProcess* >(QObject::sender())->errorMessage());
 }
 
 void CMainWindow::updateNotification(const QString &path)
@@ -865,10 +856,6 @@ void CMainWindow::cleanDialog()
               SLOT(showMessage(const QString &, int)));
       connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
               progressBar(), SLOT(hide()));
-      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-              log(), SLOT(appendPlainText(const QString &)));
-      connect(builder, SIGNAL(readOnStandardError(const QString &)),
-              log(), SLOT(appendPlainText(const QString &)));
 
       if (cleanAllButton->isChecked())
 	builder->setCommand(cleanallCommand());

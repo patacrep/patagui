@@ -7,11 +7,11 @@ set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
-if(NOT EXISTS ${SOURCE_DIR}/songbook-client-config.cmake)
-  message(FATAL_ERROR "songbook-client-config.cmake")
+if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
+  message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/songbook-client-config.cmake")
 endif()
 
-include(songbook-client-config.cmake)
+include(${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
 
 # {{{ Sources
 set(SONGBOOK_CLIENT_SOURCES
@@ -24,7 +24,8 @@ set(SONGBOOK_CLIENT_SOURCES
   src/songbook.cc
   src/song-editor.cc
   src/song-header-editor.cc
-  src/highlighter.cc
+  src/song-highlighter.cc
+  src/logs-highlighter.cc
   src/dialog-new-song.cc
   src/label.cc
   src/unit-property-manager.cc
@@ -43,6 +44,8 @@ set(SONGBOOK_CLIENT_SOURCES
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
   src/make-songbook-process.cc
+  src/qtfindreplacedialog/findreplaceform.cpp
+  src/qtfindreplacedialog/findreplacedialog.cpp
   )
 
 # header (moc)
@@ -54,7 +57,8 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/songbook.hh
   src/song-editor.hh
   src/song-header-editor.hh
-  src/highlighter.hh
+  src/song-highlighter.hh
+  src/logs-highlighter.hh
   src/dialog-new-song.hh
   src/label.hh
   src/unit-property-manager.hh
@@ -72,11 +76,19 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
   src/make-songbook-process.hh
+  src/qtfindreplacedialog/findreplaceform.h
+  src/qtfindreplacedialog/findreplacedialog.h
+  )
+
+# uis
+set(SONGBOOK_CLIENT_UIS
+  src/qtfindreplacedialog/findreplacedialog.ui
+  src/qtfindreplacedialog/findreplaceform.ui
   )
 
 # resources (rcs)
 set(SONGBOOK_CLIENT_RCS
-  songbook.qrc
+  icons/songbook/songbook.qrc
   icons/macos/macos.qrc
   icons/tango/tango.qrc
   songbook.rc
@@ -100,9 +112,14 @@ if(ENABLE_LIBRARY_DOWNLOAD)
   LIST(APPEND SONGBOOK_CLIENT_QT_HEADER src/library-download.hh)
 endif()
 
+if(ENABLE_SPELL_CHECKING)
+  find_package(HUNSPELL REQUIRED)
+  include_directories(${HUNSPELL_INCLUDE_DIR})
+endif()
+
 include(${QT_USE_FILE})
 
-include(qt-property-editor-config.cmake)
+include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
 include_directories(
   ${SOURCE_DIR}
@@ -113,6 +130,7 @@ include_directories(
 # process Qt special files
 qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
+qt4_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
 
 # {{{ Apple specific stuff
 if(APPLE)
@@ -128,6 +146,7 @@ if(NOT APPLE)
     ${SONGBOOK_CLIENT_RESSOURCES}
     ${COMPILED_TRANSLATIONS}
     ${QT_PROPERTY_EDITOR_SOURCES}
+    ${SONGBOOK_CLIENT_UI_HDRS}
     )
 endif(NOT APPLE)
 
@@ -135,7 +154,7 @@ if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
 
-target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${QT_LIBRARIES} ${LibArchive_LIBRARIES})
+target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${QT_LIBRARIES} ${LibArchive_LIBRARIES} ${HUNSPELL_LIBRARIES})
 
 # {{{ Internationalization
 set (TRANSLATIONS
@@ -243,7 +262,7 @@ if(NOT APPLE)
       REGEX ${regex} EXCLUDE)
   endif()
   install(FILES ${SONGBOOK_CLIENT_APPLICATION_NAME}.desktop DESTINATION share/applications)
-  install(FILES icons/songbook-client.png DESTINATION share/icons)
+  install(FILES icons/songbook/256x256/songbook-client.png DESTINATION share/icons)
   install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${SONGBOOK_CLIENT_DATA_PATH}/lang)
 endif(NOT APPLE)
 # }}}

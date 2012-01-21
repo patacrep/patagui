@@ -178,21 +178,21 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
 
   QAction *action = new QAction(tr("english"), this);
   action->setStatusTip(tr("Select/Unselect songs in english"));
-  action->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")));
+  action->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")));
   action->setIconVisibleInMenu(true);
   connect(action, SIGNAL(triggered()), SLOT(filterLanguageEnglish()));
   addAction(action);
 
   action = new QAction(tr("french"), this);
   action->setStatusTip(tr("Select/Unselect songs in french"));
-  action->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")));
+  action->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")));
   action->setIconVisibleInMenu(true);
   connect(action, SIGNAL(triggered()), SLOT(filterLanguageFrench()));
   addAction(action);
 
   action = new QAction(tr("spanish"), this);
   action->setStatusTip(tr("Select/Unselect songs in spanish"));
-  action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")));
+  action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")));
   action->setIconVisibleInMenu(true);
   connect(action, SIGNAL(triggered()), SLOT(filterLanguageSpanish()));
   addAction(action);

@@ -96,7 +96,6 @@ signals:
   void directoryChanged(const QDir &directory);
 
 protected:
-  CMainWindow *parent() const;
 
 private:
   CMainWindow *m_parent;
