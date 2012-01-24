@@ -28,9 +28,9 @@
 #define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\\clean.bat"
 #define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\\cleanall.bat"
 #elif defined(Q_OS_MAC)
-#define PLATFORM_BUILD_COMMAND "make %target"
-#define PLATFORM_CLEAN_COMMAND "make clean"
-#define PLATFORM_CLEANALL_COMMAND "make cleanall"
+#define PLATFORM_BUILD_COMMAND "macos/make.sh %basename"
+#define PLATFORM_CLEAN_COMMAND "macos/clean.sh"
+#define PLATFORM_CLEANALL_COMMAND "macos/cleanall.sh"
 #else //Unix/Linux
 #define PLATFORM_BUILD_COMMAND "make %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
