@@ -850,13 +850,19 @@ void CMainWindow::cleanDialog()
       builder->setWorkingDirectory(workingPath());
 
       connect(builder, SIGNAL(aboutToStart()),
-              progressBar(), SLOT(show()));
+	      progressBar(), SLOT(show()));
       connect(builder, SIGNAL(aboutToStart()),
-              statusBar(), SLOT(clear()));
+	      statusBar(), SLOT(clear()));
       connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
-              SLOT(showMessage(const QString &, int)));
+	      SLOT(showMessage(const QString &, int)));
       connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
-              progressBar(), SLOT(hide()));
+	      progressBar(), SLOT(hide()));
+      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
+	      log()->widget(), SLOT(appendPlainText(const QString &)));
+      connect(builder, SIGNAL(readOnStandardError(const QString &)),
+	      log()->widget(), SLOT(appendPlainText(const QString &)));
+      connect(builder, SIGNAL(error(QProcess::ProcessError)),
+	      this, SLOT(buildError(QProcess::ProcessError)));
 
       if (cleanAllButton->isChecked())
 	builder->setCommand(cleanallCommand());
