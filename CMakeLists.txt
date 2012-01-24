@@ -109,10 +109,12 @@ if(ENABLE_LIBRARY_DOWNLOAD)
   include_directories(${LibArchive_INCLUDE_DIRS})
   LIST(APPEND SONGBOOK_CLIENT_SOURCES src/library-download.cc)
   LIST(APPEND SONGBOOK_CLIENT_QT_HEADER src/library-download.hh)
+  LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
 endif()
 
 if(ENABLE_SPELL_CHECKING)
   include_directories(${HUNSPELL_INCLUDE_DIR})
+  LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
 endif()
 
 include(${QT_USE_FILE})
@@ -152,7 +154,9 @@ if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
 
-target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${QT_LIBRARIES} ${LibArchive_LIBRARIES} ${HUNSPELL_LIBRARIES})
+list(APPEND LIBRARIES ${QT_LIBRARIES})
+
+target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 
 # {{{ Internationalization
 set (TRANSLATIONS

@@ -61,7 +61,6 @@ endif()
 
 if(ENABLE_SPELL_CHECKING)
   find_package(HUNSPELL)
-  include_directories(${HUNSPELL_INCLUDE_DIR})
   if(HUNSPELL_FOUND)
     message(STATUS "Spellchecking enabled")
   else()
