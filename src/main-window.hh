@@ -157,7 +157,7 @@ private:
 
   // Menus
   QMenu *m_editorMenu;
-
+  CSongEditor *m_voidEditor;
   QToolBar *m_libraryToolBar;
   QToolBar *m_currentToolBar;
   QToolBar *m_mainToolBar;

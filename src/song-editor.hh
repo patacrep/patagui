@@ -29,6 +29,7 @@
 #include <QKeyEvent>
 
 class QAction;
+class QActionGroup;
 class Hunspell;
 class CHighlighter;
 class FindReplaceDialog;
@@ -57,6 +58,8 @@ public:
   QToolBar * toolBar() const;
   CLibrary * library() const;
   void setLibrary(CLibrary *library);
+
+  QActionGroup * actionGroup() const;
 
   void readSettings();
   void writeSettings();
@@ -128,8 +131,8 @@ private:
   CSongHeaderEditor *m_songHeaderEditor;
   CLibrary *m_library;
   QToolBar *m_toolBar;
+  QActionGroup *m_actions;
 
-  QList<QAction*> m_actions;
   CHighlighter* m_highlighter;
   QAction* m_spellCheckingAct;
   bool m_isSpellCheckingEnabled;
