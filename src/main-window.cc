@@ -732,32 +732,23 @@ void CMainWindow::closeTab(int index)
 
 void CMainWindow::changeTab(int index)
 {
+  m_editorMenu->clear();
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
   if (editor)
     {
-      m_editorMenu->clear();
-      foreach (QAction *action, editor->actions())
-	{
-	  m_editorMenu->addAction(action);
-	  action->setEnabled(true);
-	}
+      editor->actionGroup()->setEnabled(true);
       editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
-
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
       editor = m_editors[""];
-      foreach (QAction *action, editor->actions())
-	{
-	  m_editorMenu->addAction(action);
-	  action->setEnabled(false);
-	}
-
+      editor->actionGroup()->setEnabled(false);
       switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
+  m_editorMenu->addActions(editor->actionGroup()->actions());
 }
 
 QDockWidget* CMainWindow::log() const

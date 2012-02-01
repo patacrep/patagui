@@ -26,6 +26,7 @@
 #include <QList>
 
 class QAction;
+class QActionGroup;
 class Hunspell;
 class CHighlighter;
 class FindReplaceDialog;
@@ -45,8 +46,8 @@ public:
 
   virtual void keyPressEvent(QKeyEvent *event);
 
-  void addAction(QAction*);
-  QList<QAction*> actions() const;
+  //void addAction(QAction*);
+  QActionGroup * actionGroup() const;
 
   void readSettings();
   void writeSettings();
@@ -86,7 +87,7 @@ private:
 
   QToolBar* m_toolBar;
   QString m_path;
-  QList<QAction*> m_actions;
+  QActionGroup *m_actions;
   CHighlighter* m_highlighter;
 
   QAction* m_spellCheckingAct;

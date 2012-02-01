@@ -28,6 +28,7 @@
 
 #include <QToolBar>
 #include <QAction>
+#include <QActionGroup>
 #include <QTextDocumentFragment>
 #include <QFile>
 #include <QTextStream>
@@ -42,6 +43,7 @@ CSongEditor::CSongEditor()
   : CodeEditor()
   , m_toolBar(new QToolBar(tr("Song edition tools"), this))
   , m_path()
+  , m_actions(new QActionGroup(this))
   , m_highlighter(0)
 #ifdef ENABLE_SPELL_CHECKING
   , m_maxSuggestedWords(0)
@@ -60,7 +62,8 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
   action->setStatusTip(tr("Save modifications"));
   connect(action, SIGNAL(triggered()), SLOT(save()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
   
   //copy paste
   action = new QAction(tr("Cut"), this);
@@ -68,21 +71,24 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
   action->setStatusTip(tr("Cut the selection"));
   connect(action, SIGNAL(triggered()), SLOT(cut()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
   
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
   action->setStatusTip(tr("Copy the selection"));
   connect(action, SIGNAL(triggered()), SLOT(copy()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
   
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
   action->setStatusTip(tr("Paste clipboard content"));
   connect(action, SIGNAL(triggered()), SLOT(paste()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
   
   toolBar()->addSeparator();
   
@@ -92,14 +98,15 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
   action->setStatusTip(tr("Undo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(undo()));
-  addAction(action);
+  toolBar()->addAction(action);
   
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
   action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
   action->setStatusTip(tr("Redo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(redo()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
 
   toolBar()->addSeparator();
 
@@ -113,7 +120,8 @@ CSongEditor::CSongEditor()
   action->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
   action->setStatusTip(tr("Find some text and replace it"));
   connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
 
   //spellchecking
   m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
@@ -121,7 +129,8 @@ CSongEditor::CSongEditor()
   m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
   m_spellCheckingAct->setCheckable(true);
   m_spellCheckingAct->setEnabled(false);
-  addAction(m_spellCheckingAct);
+  m_actions->addAction(action);
+  toolBar()->addAction(m_spellCheckingAct);
 
   toolBar()->addSeparator();
 
@@ -129,12 +138,14 @@ CSongEditor::CSongEditor()
   action = new QAction(tr("Verse"), this);
   action->setStatusTip(tr("New verse environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
   
   action = new QAction(tr("Chorus"), this);
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
-  addAction(action);
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
 
   readSettings();
 }
@@ -204,6 +215,11 @@ void CSongEditor::setPath(const QString &path)
     }
   setPlainText(text);
   m_path = path;
+}
+
+QActionGroup* CSongEditor::actionGroup() const
+{
+  return m_actions;
 }
 
 void CSongEditor::installHighlighter()
@@ -374,18 +390,6 @@ void CSongEditor::trimLine(const QTextCursor & cur)
       str  = cursor.block().text();
     }
 }
-
-QList<QAction*> CSongEditor::actions() const
-{
-  return m_actions;
-}
-
-void CSongEditor::addAction(QAction* action)
-{
-  toolBar()->addAction(action);
-  m_actions.append(action);
-}
-
 
 #ifdef ENABLE_SPELL_CHECKING
 QString CSongEditor::currentWord()
