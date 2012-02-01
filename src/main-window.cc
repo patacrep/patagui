@@ -366,11 +366,9 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
   CSongEditor *editor = new CSongEditor(this);
-  foreach (QAction *action, editor->toolBar()->actions())
-    {
-      action->setDisabled(true);
-      m_editorMenu->addAction(action);
-    }
+  m_editors.insert("void", editor);
+  editor->actionGroup()->setEnabled(false);
+  m_editorMenu->addActions(editor->actionGroup()->actions());
 
   QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
   viewMenu->addAction(m_toolBarViewAct);
@@ -731,30 +729,23 @@ void CMainWindow::closeTab(int index)
 
 void CMainWindow::changeTab(int index)
 {
+  m_editorMenu->clear();
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
   if (editor)
     {
-      m_editorMenu->clear();
-      foreach (QAction *action, editor->toolBar()->actions())
-	{
-	  m_editorMenu->addAction(action);
-	  action->setEnabled(true);
-	}
+      editor->actionGroup()->setEnabled(true);
       editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
-
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
-      foreach (QAction *action, m_editorMenu->actions())
-	{
-	  action->setEnabled(false);
-	}
-
+      editor = m_editors["void"];
+      editor->actionGroup()->setEnabled(false);
       switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
+  m_editorMenu->addActions(editor->actionGroup()->actions());
 }
 
 QDockWidget* CMainWindow::log() const
@@ -847,13 +838,19 @@ void CMainWindow::cleanDialog()
       builder->setWorkingDirectory(workingPath());
 
       connect(builder, SIGNAL(aboutToStart()),
-              progressBar(), SLOT(show()));
+	      progressBar(), SLOT(show()));
       connect(builder, SIGNAL(aboutToStart()),
-              statusBar(), SLOT(clear()));
+	      statusBar(), SLOT(clear()));
       connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
-              SLOT(showMessage(const QString &, int)));
+	      SLOT(showMessage(const QString &, int)));
       connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
-              progressBar(), SLOT(hide()));
+	      progressBar(), SLOT(hide()));
+      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
+	      log()->widget(), SLOT(appendPlainText(const QString &)));
+      connect(builder, SIGNAL(readOnStandardError(const QString &)),
+	      log()->widget(), SLOT(appendPlainText(const QString &)));
+      connect(builder, SIGNAL(error(QProcess::ProcessError)),
+	      this, SLOT(buildError(QProcess::ProcessError)));
 
       if (cleanAllButton->isChecked())
 	builder->setCommand(cleanallCommand());

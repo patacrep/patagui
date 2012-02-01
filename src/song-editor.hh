@@ -28,6 +28,7 @@
 #include <QKeyEvent>
 
 class QAction;
+class QActionGroup;
 class Hunspell;
 class CHighlighter;
 class FindReplaceDialog;
@@ -49,6 +50,8 @@ public:
   void setPath(const QString &path);
 
   QToolBar* toolBar() const;
+
+  QActionGroup * actionGroup() const;
 
   void readSettings();
   void writeSettings();
@@ -105,6 +108,7 @@ private:
   QToolBar *m_toolBar;
   Song m_song;
   bool m_newSong;
+  QActionGroup *m_actions;
 
   CHighlighter* m_highlighter;
   QAction* m_spellCheckingAct;
