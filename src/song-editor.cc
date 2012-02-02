@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -64,7 +64,7 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(save()));
   m_actions->addAction(action);
   toolBar()->addAction(action);
-  
+
   //copy paste
   action = new QAction(tr("Cut"), this);
   action->setShortcut(QKeySequence::Cut);
@@ -73,7 +73,7 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(cut()));
   m_actions->addAction(action);
   toolBar()->addAction(action);
-  
+
   action = new QAction(tr("Copy"), this);
   action->setShortcut(QKeySequence::Copy);
   action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
@@ -81,7 +81,7 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(copy()));
   m_actions->addAction(action);
   toolBar()->addAction(action);
-  
+
   action = new QAction(tr("Paste"), this);
   action->setShortcut(QKeySequence::Paste);
   action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
@@ -89,9 +89,9 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(paste()));
   m_actions->addAction(action);
   toolBar()->addAction(action);
-  
+
   toolBar()->addSeparator();
-  
+
   //undo redo
   action = new QAction(tr("Undo"), this);
   action->setShortcut(QKeySequence::Undo);
@@ -99,7 +99,7 @@ CSongEditor::CSongEditor()
   action->setStatusTip(tr("Undo modifications"));
   connect(action, SIGNAL(triggered()), SLOT(undo()));
   toolBar()->addAction(action);
-  
+
   action = new QAction(tr("Redo"), this);
   action->setShortcut(QKeySequence::Redo);
   action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
@@ -140,7 +140,7 @@ CSongEditor::CSongEditor()
   connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
   m_actions->addAction(action);
   toolBar()->addAction(action);
-  
+
   action = new QAction(tr("Chorus"), this);
   action->setStatusTip(tr("New chorus environment"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
@@ -303,9 +303,9 @@ QToolBar* CSongEditor::toolBar() const
 
 void CSongEditor::keyPressEvent(QKeyEvent *event)
 {
-  if (event->key() == Qt::Key_Tab) 
+  if (event->key() == Qt::Key_Tab)
     indentSelection();
-  else 
+  else
     QPlainTextEdit::keyPressEvent(event);
 }
 
@@ -316,7 +316,7 @@ void CSongEditor::indentSelection()
   it.setPosition(cursor.anchor());
 
   //swap such as it always points
-  //to the beginning of the selection 
+  //to the beginning of the selection
   if(it > cursor)
     {
       it.setPosition(cursor.position());
@@ -372,7 +372,7 @@ void CSongEditor::indentLine(const QTextCursor & cur)
   //remove indentation level if current line begins with \end
   if(cursor.block().text().contains("\\end") && index!=0)
     --index;
-  
+
   //performs the correct indentation
   trimLine(cursor);
   for(int i=0; i < index; ++i)
@@ -403,7 +403,7 @@ QString CSongEditor::currentWord()
   return word;
 }
 
-void CSongEditor::correctWord() 
+void CSongEditor::correctWord()
 {
   QAction *action = qobject_cast<QAction *>(sender());
   if (action)
