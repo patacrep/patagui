@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -37,7 +37,7 @@ CSongItemDelegate::CSongItemDelegate(QObject *parent)
   // cover missing
   QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22));
   QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(128, 128));
-  
+
   // language flags
   QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")).pixmap(22,22));
   QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")).pixmap(22,22));

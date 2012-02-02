@@ -145,21 +145,21 @@ QString Song::toString(const Song &song)
     text.append(QString("\\songcolumns{%1}\n").arg(song.columnCount));
 
   text.append(QString("\\beginsong{%1}\n  [by=%2").arg(song.title).arg(song.artist));
-  
+
   if (!song.coverName.isEmpty())
     text.append(QString(",cov=%1").arg(song.coverName));
 
   if (!song.album.isEmpty())
     text.append(QString(",album=%1").arg(song.album));
- 
+
   text.append(QString("]\n\n"));
-  
+
   if (!song.coverName.isEmpty())
     text.append(QString("  \\cover\n"));
 
   if (song.capo > 0)
     text.append(QString("  \\capo{%1}\n").arg(song.capo));
-  
+
   foreach (QString gtab, song.gtabs)
     {
       text.append(QString("  \\gtab{%1}\n").arg(gtab));
