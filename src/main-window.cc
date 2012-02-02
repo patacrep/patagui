@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -88,7 +88,7 @@ CMainWindow::CMainWindow()
   m_view->setItemDelegate(new CSongItemDelegate);
   m_view->resizeColumns();
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
-  
+
   // compilation log
   m_log = new QDockWidget(tr("LaTeX compilation logs"));
   QPlainTextEdit* logs = new QPlainTextEdit;
@@ -466,7 +466,7 @@ void CMainWindow::build()
     }
 
   save(true);
-  
+
   if (!QFile(songbook()->filename()).exists())
     statusBar()->showMessage(QString(tr("The songbook file %1 is invalid. Build aborted."))
 			     .arg(songbook()->filename()));
@@ -711,7 +711,7 @@ void CMainWindow::closeTab(int index)
     {
       if (editor->isModified())
 	{
-	  QMessageBox::StandardButton answer = 
+	  QMessageBox::StandardButton answer =
 	    QMessageBox::question(this,
 				  tr("Close"),
 				  tr("There is unsaved modification in the current editor, do you really want to close it?"),

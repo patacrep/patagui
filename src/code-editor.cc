@@ -43,7 +43,7 @@
 #include "code-editor.hh"
 
 
-CodeEditor::CodeEditor(QWidget *parent) : 
+CodeEditor::CodeEditor(QWidget *parent) :
   QPlainTextEdit(parent)
   , m_highlightMode(false)
   , m_lineNumberMode(false)

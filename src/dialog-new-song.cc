@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -118,7 +118,7 @@ bool CDialogNewSong::checkRequiredFields()
   map.insert(m_titleEdit, title());
   map.insert(m_artistEdit, artist());
   QMapIterator<QLineEdit*, QString> it(map);
-    
+
   while (it.hasNext())
     {
       it.next();
@@ -141,23 +141,23 @@ QString CDialogNewSong::songTemplate()
   text.append(QString("\\selectlanguage{%1}\n").arg(lang()));
   if (nbColumns() > 0)
     text.append(QString("\\songcolumns{%1}\n").arg(nbColumns()));
-  
+
   text.append(QString("\\beginsong{%1}[by=%2").arg(title()).arg(artist()));
-  
+
   if (!cover().isEmpty())
     text.append(QString(",cov=%1").arg(SbUtils::stringToFilename(album(),"-")));
 
   if (!album().isEmpty())
     text.append(QString(",album=%1").arg(album()));
- 
+
   text.append(QString("]\n\n"));
-  
+
   if (!cover().isEmpty())
     text.append(QString("\\cover\n"));
 
   if (capo() > 0)
     text.append(QString("\\capo{%1}\n").arg(capo()));
-  
+
   text.append(QString("\n\\endsong"));
 
   return text;
@@ -182,7 +182,7 @@ void CDialogNewSong::addSong()
 
   //handle album art
   if (SbUtils::copyFile(cover(), dirpath) && !album().isEmpty())
-    { 
+    {
       QFile copy(QString("%1/%2").arg(dirpath).arg(QFileInfo(cover()).fileName()));
 
       //resize cover
