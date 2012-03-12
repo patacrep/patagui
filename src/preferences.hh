@@ -99,7 +99,11 @@ private:
   ConfigDialog *m_configDialog;
 };
 
-/** \brief DisplayPage is the config page used to specify display options
+/**
+ * \class DisplayPage
+ * \brief DisplayPage is the config page used to specify
+ * which components should be displayed/hidden
+ * \image html pref-display.png
  */
 class DisplayPage : public Page
 {
@@ -121,7 +125,10 @@ private:
   QCheckBox *m_compilationLogCheckBox;
 };
 
-/** \brief OptionsPage is the config page used to specify general options
+/**
+ * \class OptionsPage
+ * \brief OptionsPage is the config page used to specify general options
+ * \image html pref-global.png
  */
 class OptionsPage : public Page
 {
@@ -148,8 +155,11 @@ private:
   QLineEdit *m_cleanallCommand;
 };
 
-/** \brief Editor is the config page used to specify options related
-    to the song editor
+/**
+ * \class EditorPage
+ * \brief EditorPage is the config page used to specify options related
+ *  to the song editor.
+ * \image html pref-editor.png
  */
 class EditorPage : public Page
 {
@@ -176,6 +186,7 @@ private:
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 
 /** \brief NetworkPage is the config page used to specify network options
+ * \image html pref-network.png
  */
 class NetworkPage : public Page
 {
@@ -197,6 +208,7 @@ private:
 #endif // ENABLE_LIBRARY_DOWNLOAD
 
 /** \brief SongbookPage is the config page used to specify general songbooks
+ * \image html pref-songbook.png
  */
 class SongbookPage : public Page
 {
