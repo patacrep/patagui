@@ -17,13 +17,6 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-/**
- * \file mainWindow.hh
- *
- * Class for the main window of the application.
- *
- */
-
 #ifndef __MAIN_WINDOW_HH__
 #define __MAIN_WINDOW_HH__
 
@@ -50,31 +43,78 @@ class QSortFilterProxyModel;
 class QFileSystemModel;
 class QLabel;
 
-/** \class CMainWindow "main-window.hh"
- * \brief CMainWindow is the base class of the application
+/**
+ * \file main-window.hh
+ * \class CMainWindow
+ * \brief CMainWindow is the base class of the application.
+ *
+ * \image html main-window.png
+ *
+ * Class for the main window of the application.
+ *
  */
 class CMainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public slots:
+  /// System call that allows to build a songbook.
+  /// @param command : the command line
   void setBuildCommand(const QString &command);
+
+  /// System call that allows to remove temporary files
+  /// that are generated during the compilation of a songbook.
+  /// @param command : the command line
   void setCleanCommand(const QString &command);
+
+  /// System call that allows to remove temporary files and pdf files
+  /// that are generated during the compilation of a songbook.
+  /// @param command : the command line
   void setCleanallCommand(const QString &command);
 
 public:
+  /// Constructor.
   CMainWindow();
+
+  /// Destructor.
   ~CMainWindow();
 
+  /// Getter on the progress bar that is embedded in the status bar.
+  /// @return the progress bar
   QProgressBar * progressBar() const;
+
+  /// Getter on the LaTeX compilation logs widget that
+  /// displays terminal output of the compilation process.
+  /// \image html logs.png
+  /// @return the logs widget
   QDockWidget * log() const;
+
+  /// Getter on the songs' library view.
+  /// @return the songs' library view
   CLibraryView * view() const;
+
+  /// Getter on the songs' library.
+  /// @return the songs' library
   CLibrary * library() const;
+
+  /// Getter on songs' library.
+  /// @return the songs' library
   CSongbook * songbook() const;
+
+  /// Getter on the songbook directory.
+  /// @return the path to the songbook directory
   const QString workingPath();
 
+  /// Getter on the songbook build command.
+  /// @return the command line
   const QString & buildCommand() const;
+
+  /// Getter on the songbook clean command.
+  /// @return the command line
   const QString & cleanCommand() const;
+
+  /// Getter on the songbook cleanall command.
+  /// @return the command line
   const QString & cleanallCommand() const;
 
 protected:
@@ -89,7 +129,13 @@ private slots:
   void build();
   void closeTab(int index);
   void changeTab(int index);
+
+  /// Displays a dialog to download a remote songbook.
+  /// \image html download.png
   void downloadDialog();
+
+  /// Displays a dialog to remove temporary LaTeX files.
+  /// \image html clean.png
   void cleanDialog();
   void updateTempFilesView(int state);
 

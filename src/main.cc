@@ -16,6 +16,20 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
+
+/*! 
+ * \file main.cc
+ * \mainpage Songbook-Client Documentation
+ *
+ * A songbook is a collection of lyrics/guitar chords for songs.
+ * This application allows to manage your own set of songs and produce
+ * a beautiful pdf as a result.
+ *
+ * \image html application.png
+ *
+ *
+ */
+
 #include <QApplication>
 
 #include <QTranslator>
