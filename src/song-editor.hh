@@ -31,7 +31,7 @@
 class QAction;
 class QActionGroup;
 class Hunspell;
-class CHighlighter;
+class CSongHighlighter;
 class FindReplaceDialog;
 class QToolBar;
 class CodeEditor;
@@ -144,7 +144,7 @@ private:
   QToolBar *m_toolBar;
   QActionGroup *m_actions;
 
-  CHighlighter* m_highlighter;
+  CSongHighlighter* m_highlighter;
   QAction* m_spellCheckingAct;
   bool m_isSpellCheckingEnabled;
 

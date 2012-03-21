@@ -29,8 +29,8 @@ class Hunspell;
 
 /**
  * \file song-highlighter.hh
- * \class CHighlighter
- * \brief CHighlighter provides colors and highlights for the song editor.
+ * \class CSongHighlighter
+ * \brief CSongHighlighter provides colors and highlights for the song editor.
  *
  * Highlights include LaTeX keywords and specific commands provided by the
  * Songs LaTeX package (http://songs.sourceforge.net).
@@ -39,15 +39,15 @@ class Hunspell;
  * unrecognized words.
  *
  */
-class CHighlighter : public QSyntaxHighlighter
+class CSongHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
 
 public:
   /// Constructor
-  CHighlighter(QTextDocument *parent = 0);
+  CSongHighlighter(QTextDocument *parent = 0);
   /// Destructor
-  ~CHighlighter();
+  ~CSongHighlighter();
 
   /// Set the dictionnary used by the spellchecker.
   /// @param filename the .dic file that corresponds to a hunspell dictionnary.

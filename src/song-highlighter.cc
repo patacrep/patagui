@@ -25,7 +25,7 @@
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELL_CHECKING
 
-CHighlighter::CHighlighter(QTextDocument *parent)
+CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
   , m_checker(NULL)
   , m_isSpellCheckActive(false)
@@ -129,14 +129,14 @@ CHighlighter::CHighlighter(QTextDocument *parent)
 #endif //ENABLE_SPELL_CHECKING
 }
 
-CHighlighter::~CHighlighter()
+CSongHighlighter::~CSongHighlighter()
 {
 #ifdef ENABLE_SPELL_CHECKING
   delete m_checker;
 #endif //ENABLE_SPELL_CHECKING
 }
 
-void CHighlighter::highlightBlock(const QString &text)
+void CSongHighlighter::highlightBlock(const QString &text)
 {
   foreach (const HighlightingRule &rule, highlightingRules) {
     QRegExp expression(rule.pattern);
@@ -173,7 +173,7 @@ void CHighlighter::highlightBlock(const QString &text)
 }
 
 #ifdef ENABLE_SPELL_CHECKING
-void CHighlighter::spellCheck(const QString &text)
+void CSongHighlighter::spellCheck(const QString &text)
 {
   if (!m_isSpellCheckActive)
     return;
@@ -200,7 +200,7 @@ void CHighlighter::spellCheck(const QString &text)
       }
 }
 
-bool CHighlighter::checkWord(const QString &word)
+bool CSongHighlighter::checkWord(const QString &word)
 {
   int check;
   QByteArray encodedString;
@@ -209,12 +209,12 @@ bool CHighlighter::checkWord(const QString &word)
   return bool(check);
 }
 
-void CHighlighter::setDictionary(const QString &filename)
+void CSongHighlighter::setDictionary(const QString &filename)
 {
   QFileInfo fi(filename);
   if(filename.isEmpty() || !fi.exists() || !fi.isReadable())
     {
-      qWarning() << tr("CHighlighter::setDictionary cannot read open dictionary : ") << filename;
+      qWarning() << tr("CSongHighlighter::setDictionary cannot read open dictionary : ") << filename;
       return;
     }
 
@@ -232,7 +232,7 @@ void CHighlighter::setDictionary(const QString &filename)
   rehighlight();
 }
 
-void CHighlighter::addWord(const QString & word)
+void CSongHighlighter::addWord(const QString & word)
 {
   QByteArray encodedString;
   QString encoded = QString(m_checker->get_dic_encoding());
@@ -242,7 +242,7 @@ void CHighlighter::addWord(const QString & word)
   rehighlight();
 }
 
-void CHighlighter::setSpellCheck(const bool value)
+void CSongHighlighter::setSpellCheck(const bool value)
 {
   if(m_isSpellCheckActive != value)
     {
@@ -251,7 +251,7 @@ void CHighlighter::setSpellCheck(const bool value)
     }
 }
 
-Hunspell* CHighlighter::checker() const
+Hunspell* CSongHighlighter::checker() const
 {
   return m_checker;
 }

@@ -65,7 +65,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_songEditor = new CodeEditor();
   m_songEditor->setUndoRedoEnabled(true);
 
-  CHighlighter *highlighter = new CHighlighter(m_songEditor->document());
+  CSongHighlighter *highlighter = new CSongHighlighter(m_songEditor->document());
   Q_UNUSED(highlighter);
   connect(m_songEditor->document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
@@ -235,7 +235,7 @@ void CSongEditor::writeSettings()
 
 void CSongEditor::installHighlighter()
 {
-  m_highlighter = new CHighlighter(m_songEditor->document());
+  m_highlighter = new CSongHighlighter(m_songEditor->document());
 }
 
 QActionGroup* CSongEditor::actionGroup() const
