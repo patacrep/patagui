@@ -17,12 +17,6 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-/**
- * \file library.hh
- *
- * Class for representing the songlibrary.
- *
- */
 #ifndef __LIBRARY_HH__
 #define __LIBRARY_HH__
 
@@ -40,6 +34,18 @@ class QStringListModel;
 class QPixmap;
 class CMainWindow;
 
+/**
+ * \file library.hh
+ * \class CLibrary
+ * \brief CLibrary is the base model that corresponds to the list of songs
+ *
+ * A CLibrary is a list of Song (.sg files) that are fetched from a
+ * local directory.
+ * This model is used to build an intermediate model (CSongSortFilterProxyModel)
+ * that allows filtering options, and is then presented in the library tab (CTabWidget)
+ * of the main window (CMainWindow) through its associated view (CLibraryView).
+ *
+ */
 class CLibrary : public QAbstractTableModel
 {
   Q_OBJECT
@@ -60,7 +66,9 @@ public:
     MaxRole = RelativePathRole
   };
 
+  /// Constructor.
   CLibrary(CMainWindow* parent);
+  /// Destructor.
   ~CLibrary();
 
   void writeSettings();
