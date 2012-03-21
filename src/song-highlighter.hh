@@ -27,30 +27,62 @@
 class QTextDocument;
 class Hunspell;
 
+/**
+ * \file song-highlighter.hh
+ * \class CHighlighter
+ * \brief CHighlighter provides colors and highlights for the song editor.
+ *
+ * Highlights include LaTeX keywords and specific commands provided by the
+ * Songs LaTeX package (http://songs.sourceforge.net).
+ *
+ * This class is also used by the hunspell spellchecker to underline
+ * unrecognized words.
+ *
+ */
 class CHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
 
 public:
+  /// Constructor
   CHighlighter(QTextDocument *parent = 0);
+  /// Destructor
   ~CHighlighter();
-  void clearCheck();
-  QStringList misspelled();
-  QStringList correct();
-  void enableSpellChecking(const bool state);
+
+  /// Set the dictionnary used by the spellchecker.
+  /// @param filename the .dic file that corresponds to a hunspell dictionnary.
+  /// Those files are usually located in /usr/share/hunspell/.
   void setDictionary(const QString &filename);
+
+  /// Getter on the Hunspell spellchecker.
+  /// @return the hunspell spellchecker
   Hunspell* checker() const;
 
 #ifdef ENABLE_SPELL_CHECKING
 public slots:
+  /// Add an unrecognized word to the hunspell dictionnary
+  /// so that it is not marked as incorrect anymore.
+  /// @param word the word that is to be marked as correct.
   void addWord(const QString &word);
+
+  /// Define whether the spellchecker is active or not.
+  /// @param state true if the spellchecker is active, false otherwise.
   void setSpellCheck(const bool state);
 #endif //ENABLE_SPELL_CHECKING
 
 protected:
+  /// Apply highlighting rules for a block of text.
+  /// @param text the text on which the rules should be applied.
   void highlightBlock(const QString &text);
+
+  /// Apply spellchecking on a text.
+  /// @param text the text on which the spellchecking should be applied.
   void spellCheck(const QString &text);
-  bool checkWord(QString word);
+
+  /// Apply spellchecking on a particular word.
+  /// @param word the word that is to be spellchecked.
+  /// @return true if the word is correctly spelled, false otherwise.
+  bool checkWord(const QString &word);
 
 
 private:

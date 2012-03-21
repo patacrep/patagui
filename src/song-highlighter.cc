@@ -200,7 +200,7 @@ void CHighlighter::spellCheck(const QString &text)
       }
 }
 
-bool CHighlighter::checkWord(QString word)
+bool CHighlighter::checkWord(const QString &word)
 {
   int check;
   QByteArray encodedString;
