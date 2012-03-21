@@ -51,7 +51,19 @@ class QWidget;
 
 class LineNumberArea;
 
-
+/**
+ * \file code-editor.hh
+ * \class CodeEditor
+ * \brief CodeEditor is a custom QPlainTextEdit for coding specific needs.
+ *
+ * A CodeEditor provides features such as:
+ *  \li displaying the current line number on the left
+ *  \li highlighting the current line
+ *
+ * The original code can be found at :
+ * http://doc.trolltech.com/4.7/widgets-codeeditor-codeeditor-cpp.html
+ *
+ */
 class CodeEditor : public QPlainTextEdit
 {
   Q_OBJECT
@@ -83,6 +95,11 @@ private:
 };
 
 
+/**
+ * \file code-editor.hh
+ * \class LineNumberArea
+ * \brief LineNumberArea is the part of a CodeEditor that displays the lines numbers
+ */
 class LineNumberArea : public QWidget
 {
 public:
