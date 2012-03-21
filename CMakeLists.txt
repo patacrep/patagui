@@ -26,7 +26,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/song-header-editor.cc
   src/song-highlighter.cc
   src/logs-highlighter.cc
-  src/dialog-new-song.cc
   src/label.cc
   src/unit-property-manager.cc
   src/unit-factory.cc
@@ -59,7 +58,6 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/song-header-editor.hh
   src/song-highlighter.hh
   src/logs-highlighter.hh
-  src/dialog-new-song.hh
   src/label.hh
   src/unit-property-manager.hh
   src/unit-factory.hh
