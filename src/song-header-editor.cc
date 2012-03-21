@@ -64,9 +64,9 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   additionalInformationLayout->addWidget(m_capoLineEdit);
 
   QFormLayout *songInformationLayout = new QFormLayout();
-  songInformationLayout->addRow(tr("Title: "), m_titleLineEdit);
-  songInformationLayout->addRow(tr("Artist: "), m_artistLineEdit);
-  songInformationLayout->addRow(tr("Album: "), m_albumLineEdit);
+  songInformationLayout->addRow(m_titleLineEdit);
+  songInformationLayout->addRow(m_artistLineEdit);
+  songInformationLayout->addRow(m_albumLineEdit);
   songInformationLayout->addRow(additionalInformationLayout);
 
   QFrame *coverFrame = new QFrame(this);
