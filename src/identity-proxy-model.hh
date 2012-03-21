@@ -19,8 +19,15 @@
 
 #include <QAbstractProxyModel>
 
-// Class based on the identity proxy model from Qt 4.8
-
+/**
+ * \file identity-proxy-model.hh
+ * \class CIdentityProxyModel
+ * \brief CIdentityProxyModel is the base model to build a CSongbook
+ *
+ * This class is based on the identity proxy model from Qt 4.8 :
+ * http://doc.qt.nokia.com/4.8-snapshot/qidentityproxymodel.html
+ *
+ */
 class CIdentityProxyModel : public QAbstractProxyModel
 {
   Q_OBJECT
