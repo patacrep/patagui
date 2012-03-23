@@ -73,10 +73,10 @@ void CSongCodeEditor::installHighlighter()
 
 void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
 {
-  // if (event->key() == Qt::Key_Tab)
-  //   indentSelection();
-  // else
-  //   QApplication::sendEvent(codeEditor(), event);
+  if (event->key() == Qt::Key_Tab)
+    indentSelection();
+  else
+    QPlainTextEdit::keyPressEvent(event);
 }
 
 void CSongCodeEditor::indentSelection()
