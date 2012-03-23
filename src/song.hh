@@ -68,6 +68,15 @@ struct Song
   static QRegExp reCover;
   static QRegExp reBlankLine;
   static QRegExp reGtab;
+
+  static QRegExp reBegin;
+  static QRegExp reEnd;
+  static QRegExp reBeginVerse;
+  static QRegExp reEndVerse;
+  static QRegExp reBeginChorus;
+  static QRegExp reEndChorus;
+  static QRegExp reBeginScripture;
+  static QRegExp reEndScripture;
 };
 
 #endif // __SONG_HH__

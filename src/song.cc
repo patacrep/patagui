@@ -38,6 +38,15 @@ QRegExp Song::reCover("\\\\cover");
 QRegExp Song::reBlankLine("^\\s*$");
 QRegExp Song::reGtab("\\\\gtab\\{([^\\}]+\\}\\{[^\\}]+)");
 
+QRegExp Song::reBegin("\\\\begin");
+QRegExp Song::reEnd("\\\\end");
+QRegExp Song::reBeginVerse("\\\\begin\\{verse\\}");
+QRegExp Song::reEndVerse("\\\\end\\{verse\\}");
+QRegExp Song::reBeginChorus("\\\\begin\\{chorus\\}");
+QRegExp Song::reEndChorus("\\\\end\\{chorus\\}");
+QRegExp Song::reBeginScripture("\\\\begin\\{scripture\\}");
+QRegExp Song::reEndScripture("\\\\end\\{scripture\\}");
+
 Song Song::fromFile(const QString &path)
 {
   QFile file(path);
