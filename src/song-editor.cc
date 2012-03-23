@@ -56,7 +56,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_newSong(true)
   , m_newCover(false)
 {
-  m_codeEditor = new CodeEditor();
+  m_codeEditor = new CSongCodeEditor();
   m_codeEditor->setUndoRedoEnabled(true);
 
   CSongHighlighter *highlighter = new CSongHighlighter(codeEditor()->document());
@@ -645,7 +645,7 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
   m_spellCheckingAct->setEnabled(value);
 }
 
-CodeEditor* CSongEditor::codeEditor() const
+CSongCodeEditor* CSongEditor::codeEditor() const
 {
   return m_codeEditor;
 }

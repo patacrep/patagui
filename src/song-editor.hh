@@ -33,7 +33,7 @@ class QToolBar;
 class Hunspell;
 class FindReplaceDialog;
 class CLibrary;
-class CodeEditor;
+class CSongCodeEditor;
 class CSongHighlighter;
 class CSongHeaderEditor;
 
@@ -44,7 +44,7 @@ class CSongHeaderEditor;
  *
  * A CSongEditor is embedded into a CTabWidget and is composed of:
  *  \li a CSongHeaderEditor that manages the song metadata
- *  \li a CodeEditor that manages the body of the song
+ *  \li a CSongCodeEditor that manages the body of the song
  *
  * \image html song-editor.png
  *
@@ -79,7 +79,7 @@ public:
   Song & song();
   void setSong(const Song &song);
 
-  CodeEditor * codeEditor() const;
+  CSongCodeEditor * codeEditor() const;
 
   bool isModified() const;
   bool isNewSong() const;
@@ -132,7 +132,7 @@ private:
   void saveNewSong();
   void createNewSong();
 
-  CodeEditor *m_codeEditor;
+  CSongCodeEditor *m_codeEditor;
   CSongHeaderEditor *m_songHeaderEditor;
   CLibrary *m_library;
   QToolBar *m_toolBar;
