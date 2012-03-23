@@ -26,9 +26,11 @@
 #include <QString>
 
 class CSongEditor;
+class CDiagram;
 
 class QLabel;
 class QLineEdit;
+class QBoxLayout;
 
 /**
  * \file song-header-editor.hh
@@ -76,6 +78,8 @@ public:
   /// @para cover the cover as a file object
   void setCover(const QString &path);
 
+  void addDiagram(CDiagram* diagram);
+
 public slots:
   void update();
 
@@ -97,6 +101,8 @@ private:
   QImage m_cover;
 
   CSongEditor *m_songEditor;
+
+  QBoxLayout * m_diagramsLayout;
 };
 
 #endif // __SONG_HEADER_EDITOR_HH__

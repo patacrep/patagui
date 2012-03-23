@@ -20,6 +20,7 @@
 #include "song-header-editor.hh"
 
 #include "song-editor.hh"
+#include "diagram.hh"
 
 #include <QBoxLayout>
 #include <QFormLayout>
@@ -77,10 +78,13 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   coverLayout->addWidget(m_coverLabel);
   coverFrame->setLayout(coverLayout);
 
+  m_diagramsLayout = new QHBoxLayout();
+
   QBoxLayout *mainLayout = new QHBoxLayout();
   mainLayout->setContentsMargins(1, 1, 1, 1);
   mainLayout->addWidget(coverFrame);
   mainLayout->addLayout(songInformationLayout);
+  mainLayout->addLayout(m_diagramsLayout);
   setLayout(mainLayout);
 }
 
@@ -125,6 +129,12 @@ void CSongHeaderEditor::update()
           QPixmapCache::insert(file.baseName()+"-full", pixmap);
         }
       m_coverLabel->setPixmap(pixmap);
+    }
+
+  QString gtab;
+  foreach (gtab, song().gtabs)
+    {
+      m_diagramsLayout->addWidget(new CDiagram(gtab));
     }
 }
 
@@ -171,4 +181,9 @@ void CSongHeaderEditor::setCover(const QImage &cover)
 void CSongHeaderEditor::setCover(const QString &path)
 {
   setCover(QImage(path));
+}
+
+void CSongHeaderEditor::addDiagram(CDiagram* diagram)
+{
+  m_diagramsLayout->addWidget(diagram);
 }
