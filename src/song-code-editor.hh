@@ -49,16 +49,19 @@ public:
 
   void installHighlighter();
 
-private slots:
-  void highlight();
-
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
+
+private slots:
+  void highlight();
 
 private:
   void indentSelection();
   void indentLine(const QTextCursor &cursor);
   void trimLine(const QTextCursor &cursor);
+
+  QTextEdit::ExtraSelection environmentSelection(const SongEnvironment & env,
+						 const QTextCursor & cursor);
 
   CSongHighlighter* m_highlighter;
 };

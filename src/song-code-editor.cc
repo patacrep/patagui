@@ -30,6 +30,8 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   , m_highlighter(0)
 {
   setUndoRedoEnabled(true);
+  connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlight()));
+
   CSongHighlighter *highlighter = new CSongHighlighter(document());
   Q_UNUSED(highlighter);
   readSettings();
@@ -77,6 +79,62 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
     indentSelection();
   else
     QPlainTextEdit::keyPressEvent(event);
+}
+
+void CSongCodeEditor::highlight()
+{
+  SongEnvironment env = None;
+  QTextCursor cursor(document());
+  QStringList lines = toPlainText().split("\n");
+  QList<QTextEdit::ExtraSelection> extraSelections;
+  foreach (QString line, lines)
+    {
+      if(Song::reBeginVerse.indexIn(line) > -1)
+	env = Verse;
+      else if(Song::reBeginChorus.indexIn(line) > -1)
+	env = Chorus;
+      else if(Song::reBeginScripture.indexIn(line) > -1)
+	env = Scripture;
+
+      if( ((env == Verse) && (Song::reEndVerse.indexIn(line) > -1)) ||
+	  ((env == Chorus) && (Song::reEndChorus.indexIn(line) > -1)) ||
+	  ((env == Scripture) && (Song::reEndScripture.indexIn(line) > -1)) )
+	{
+	  cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor);
+	  extraSelections.append(environmentSelection(env, cursor));
+	  cursor.movePosition(QTextCursor::Up, QTextCursor::KeepAnchor);
+	  env = None;
+	}
+      cursor.movePosition(QTextCursor::Down, (env != None)?
+			  QTextCursor::KeepAnchor : QTextCursor::MoveAnchor);
+    }
+  extraSelections.append(currentLineSelection());
+  setExtraSelections(extraSelections);
+}
+
+QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnvironment & env,
+							    const QTextCursor & cursor)
+{
+  QColor backgroundColor;
+  switch(env)
+    {
+    case Verse:
+      backgroundColor = QColor(138,226,52).lighter(170);
+      break;
+    case Chorus:
+      backgroundColor = QColor(252,175,62).lighter(140);
+      break;
+    case Scripture:
+      backgroundColor = QColor(173,127,168).lighter(150);
+      break;
+    default:
+      break;
+    }
+  QTextEdit::ExtraSelection selection;
+  selection.format.setBackground(backgroundColor);
+  selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+  selection.cursor = cursor;
+  return selection;
 }
 
 void CSongCodeEditor::indentSelection()

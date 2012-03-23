@@ -41,8 +41,9 @@
 #ifndef CODEEDITOR_H
 #define CODEEDITOR_H
 
-#include <QPlainTextEdit>
 #include <QObject>
+#include <QPlainTextEdit>
+#include <QKeyEvent>
 
 class QPaintEvent;
 class QResizeEvent;
@@ -80,12 +81,13 @@ class CodeEditor : public QPlainTextEdit
   bool lineNumberMode() const;
   void setLineNumberMode(bool);
 
+  QTextEdit::ExtraSelection currentLineSelection();
+
 protected:
   void resizeEvent(QResizeEvent *event);
 
 private slots:
   void updateLineNumberAreaWidth(int newBlockCount);
-  void highlightCurrentLine();
   void updateLineNumberArea(const QRect &, int);
 
 private:
