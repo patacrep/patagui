@@ -107,8 +107,6 @@ protected:
   void setDictionary(const QLocale &locale);
 #endif //ENABLE_SPELL_CHECKING
 
-  virtual void keyPressEvent(QKeyEvent *event);
-
 private slots:
   //write modifications of the textEdit into sg file.
   void save();
@@ -123,10 +121,6 @@ private slots:
 #endif //ENABLE_SPELL_CHECKING
 
 private:
-  void indentSelection();
-  void indentLine(const QTextCursor &cursor);
-  void trimLine(const QTextCursor &cursor);
-
   void parseText();
 
   void saveNewSong();
@@ -138,7 +132,6 @@ private:
   QToolBar *m_toolBar;
   QActionGroup *m_actions;
 
-  CSongHighlighter* m_highlighter;
   QAction* m_spellCheckingAct;
   bool m_isSpellCheckingEnabled;
 

@@ -49,6 +49,8 @@ public:
 
   void installHighlighter();
 
+  CSongHighlighter* highlighter() const;
+
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 

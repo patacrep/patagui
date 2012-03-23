@@ -24,7 +24,7 @@
 #endif //ENABLE_SPELL_CHECKING
 
 #include "song-header-editor.hh"
-#include "code-editor.hh"
+#include "song-code-editor.hh"
 #include "song-highlighter.hh"
 #include "library.hh"
 #include "utils/utils.hh"
@@ -48,7 +48,6 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_library(0)
   , m_toolBar(0)
   , m_actions(new QActionGroup(this))
-  , m_highlighter(0)
 #ifdef ENABLE_SPELL_CHECKING
   , m_maxSuggestedWords(0)
 #endif
@@ -57,11 +56,6 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_newCover(false)
 {
   m_codeEditor = new CSongCodeEditor();
-  m_codeEditor->setUndoRedoEnabled(true);
-
-  CSongHighlighter *highlighter = new CSongHighlighter(codeEditor()->document());
-  Q_UNUSED(highlighter);
-  connect(codeEditor()->document(), SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 
   m_songHeaderEditor = new CSongHeaderEditor(this);
   m_songHeaderEditor->setSongEditor(this);
@@ -181,28 +175,12 @@ CSongEditor::CSongEditor(QWidget *parent)
 }
 
 CSongEditor::~CSongEditor()
-{
-  delete m_highlighter;
-}
+{}
 
 void CSongEditor::readSettings()
 {
   QSettings settings;
   settings.beginGroup("editor");
-
-  QFont font;
-  QString fontstr = settings.value("font", QString()).toString();
-  if(fontstr.isEmpty())
-    {
-      font = QFont("Monospace",11);
-      font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
-    }
-
-  font.fromString(fontstr);
-  codeEditor()->setFont(font);
-
-  codeEditor()->setHighlightMode(settings.value("highlight", true).toBool());
-  codeEditor()->setLineNumberMode(settings.value("lines", true).toBool());
 
 #ifdef ENABLE_SPELL_CHECKING
   m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
@@ -227,11 +205,6 @@ void CSongEditor::writeSettings()
   m_findReplaceDialog->writeSettings(settings);
 }
 
-void CSongEditor::installHighlighter()
-{
-  m_highlighter = new CSongHighlighter(codeEditor()->document());
-}
-
 QActionGroup* CSongEditor::actionGroup() const
 {
   return m_actions;
@@ -240,7 +213,7 @@ QActionGroup* CSongEditor::actionGroup() const
 #ifdef ENABLE_SPELL_CHECKING
 void CSongEditor::setDictionary(const QLocale &locale)
 {
-  if (m_highlighter == 0)
+  if (codeEditor()->highlighter() == 0)
     return;
 
   // find the suitable dictionary based on the current song's locale
@@ -252,9 +225,9 @@ void CSongEditor::setDictionary(const QLocale &locale)
     }
 
   setSpellCheckingEnabled(true);
-  m_highlighter->setDictionary(dictionary);
-  connect(this, SIGNAL(wordAdded(const QString&)), m_highlighter, SLOT(addWord(const QString&)));
-  connect(m_spellCheckingAct, SIGNAL(toggled(bool)), m_highlighter, SLOT(setSpellCheck(bool)));
+  codeEditor()->highlighter()->setDictionary(dictionary);
+  connect(this, SIGNAL(wordAdded(const QString&)), codeEditor()->highlighter(), SLOT(addWord(const QString&)));
+  connect(m_spellCheckingAct, SIGNAL(toggled(bool)), codeEditor()->highlighter(), SLOT(setSpellCheck(bool)));
 }
 #endif //ENABLE_SPELL_CHECKING
 
@@ -355,96 +328,6 @@ CLibrary * CSongEditor::library() const
 void CSongEditor::setLibrary(CLibrary *library)
 {
   m_library = library;
-}
-
-void CSongEditor::keyPressEvent(QKeyEvent *event)
-{
-  // if (event->key() == Qt::Key_Tab)
-  //   indentSelection();
-  // else
-  //   QApplication::sendEvent(codeEditor(), event);
-}
-
-void CSongEditor::indentSelection()
-{
-  QTextCursor cursor = codeEditor()->textCursor();
-  QTextCursor it = codeEditor()->textCursor();
-  it.setPosition(cursor.anchor());
-
-  //swap such as it always points
-  //to the beginning of the selection
-  if(it > cursor)
-    {
-      it.setPosition(cursor.position());
-      cursor.setPosition(cursor.anchor());
-    }
-
-  it.movePosition(QTextCursor::StartOfLine);
-  while(it <= cursor)
-    {
-      indentLine(it);
-      it.movePosition(QTextCursor::EndOfLine);
-      if(!it.atEnd())
-	it.movePosition(QTextCursor::Down);
-      else
-	break;
-    }
-}
-
-void CSongEditor::indentLine(const QTextCursor & cur)
-{
-  //if line only contains whitespaces, remove them and exit
-  if(cur.block().text().trimmed().isEmpty() || cur.atStart())
-    {
-      trimLine(cur);
-      return;
-    }
-
-  //get the previous non void line
-  QTextCursor cursor(cur);
-  QString prevLine;
-  do
-    {
-      cursor.movePosition(QTextCursor::Up);
-      prevLine = cursor.block().text();
-    }
-  while(cursor.block().text().trimmed().isEmpty());
-
-  //deduce column from previous line
-  int spaces = 0;
-  while(prevLine.startsWith(" "))
-    {
-      prevLine.remove(0,1);
-      ++spaces;
-    }
-  int index = spaces/2;
-
-  //add indentation level if previous line begins with \begin
-  if(prevLine.startsWith("\\begin"))
-    ++index;
-
-  cursor = cur;
-  cursor.movePosition (QTextCursor::StartOfLine);
-  //remove indentation level if current line begins with \end
-  if(cursor.block().text().contains("\\end") && index!=0)
-    --index;
-
-  //performs the correct indentation
-  trimLine(cursor);
-  for(int i=0; i < index; ++i)
-    cursor.insertText("  ");
-}
-
-void CSongEditor::trimLine(const QTextCursor & cur)
-{
-  QTextCursor cursor(cur);
-  QString str  = cursor.block().text();
-  while( str.startsWith(" ") )
-    {
-      cursor.movePosition (QTextCursor::StartOfLine);
-      cursor.deleteChar();
-      str  = cursor.block().text();
-    }
 }
 
 bool CSongEditor::isModified() const
@@ -629,8 +512,8 @@ void CSongEditor::addWord()
 
 Hunspell* CSongEditor::checker() const
 {
-  if(!m_highlighter) return 0;
-  return m_highlighter->checker();
+  if(!codeEditor()->highlighter()) return 0;
+  return codeEditor()->highlighter()->checker();
 }
 #endif //ENABLE_SPELL_CHECKING
 
