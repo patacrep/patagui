@@ -79,6 +79,8 @@ public:
   Song & song();
   void setSong(const Song &song);
 
+  CodeEditor * songEditor() const;
+
   bool isModified() const;
   bool isNewSong() const;
 

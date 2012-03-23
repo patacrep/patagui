@@ -644,3 +644,8 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
   m_isSpellCheckingEnabled = value;
   m_spellCheckingAct->setEnabled(value);
 }
+
+CodeEditor* CSongEditor::codeEditor() const
+{
+  return m_codeEditor;
+}
