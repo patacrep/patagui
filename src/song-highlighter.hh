@@ -93,9 +93,6 @@ private:
   };
   QVector<HighlightingRule> highlightingRules;
 
-  QRegExp commentStartExpression;
-  QRegExp commentEndExpression;
-
   QTextCharFormat keywordFormat;
   QTextCharFormat keyword2Format;
   QTextCharFormat environmentFormat;

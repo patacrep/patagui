@@ -21,6 +21,7 @@
 
 #include "config.hh"
 #include "song-highlighter.hh"
+#include "song.hh"
 #ifdef ENABLE_SPELL_CHECKING
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELL_CHECKING
@@ -48,14 +49,14 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   keywordFormat.setForeground(QColor(206,92,0));
   keywordFormat.setFontWeight(QFont::Bold);
   QStringList keywordPatterns;
-  keywordPatterns << "\\\\gtab"     << "\\\\echo"
+  keywordPatterns << "\\\\gtab"     << "\\\\utab"
 		  << "\\\\rep"      << "\\\\lilypond"
 		  << "\\\\image"    << "\\\\songcolumns"
 		  << "\\\\cover"    << "\\\\capo"
 		  << "\\\\nolyrics" << "\\\\musicnote"
 		  << "\\\\textnote" << "\\\\dots"
-		  << "\\\\single"  << "\\\\emph"
-		  << "\\\\selectlanguage";
+		  << "\\\\single"  << "\\\\echo"
+		  << "\\\\transpose" << "\\\\selectlanguage";
 
   foreach (const QString &pattern, keywordPatterns)
     {
@@ -68,7 +69,11 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   keyword2Format.setForeground(QColor(164,0,0));
   keyword2Format.setFontWeight(QFont::Bold);
   QStringList keyword2Patterns;
-  keyword2Patterns << "\\\\bar";
+  keyword2Patterns << "\\\\bar"
+		   << "\\\\Intro" << "\\\\Rythm"
+		   << "\\\\Outro" << "\\\\Bridge"
+		   << "\\\\Verse" << "\\\\Chorus"
+		   << "\\\\Pattern" << "\\\\Solo";
 
   foreach (const QString &pattern, keyword2Patterns)
     {
@@ -81,16 +86,15 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   environmentFormat.setFontWeight(QFont::Bold);
   environmentFormat.setForeground(QColor(78,154,6));
 
-  QStringList regexps;
-  regexps << "\\\\begin" << "\\\\end"
-	  << "\\\\beginverse" << "\\\\endverse"
-	  << "\\\\beginchorus" << "\\\\endchorus"
-	  << "\\\\beginsong" << "\\\\endsong"
-	  << "\\\\beginscripture" << "\\\\endscripture";
+  QList<QRegExp> regexps;
+  regexps << Song::reBegin << Song::reEnd
+	  << Song::reBeginVerse << Song::reEndVerse
+	  << Song::reBeginChorus << Song::reEndChorus
+	  << Song::reBeginScripture << Song::reEndScripture;
 
-  foreach (const QString &regexp, regexps)
+  foreach (const QRegExp &regexp, regexps)
     {
-      rule.pattern = QRegExp(regexp);
+      rule.pattern = regexp;
       rule.format = environmentFormat;
       highlightingRules.append(rule);
     }
@@ -118,10 +122,6 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   rule.format = chordFormat;
   highlightingRules.append(rule);
 
-  //todo: remove
-  commentStartExpression = QRegExp("/\\*");
-  commentEndExpression = QRegExp("\\*/");
-
 #ifdef ENABLE_SPELL_CHECKING
   //Settings for online spellchecking
   m_spellCheckFormat.setUnderlineColor(QColor(Qt::red));
@@ -148,24 +148,6 @@ void CSongHighlighter::highlightBlock(const QString &text)
     }
   }
   setCurrentBlockState(0);
-
-  int startIndex = 0;
-  if (previousBlockState() != 1)
-    startIndex = commentStartExpression.indexIn(text);
-
-  while (startIndex >= 0) {
-    int endIndex = commentEndExpression.indexIn(text, startIndex);
-    int commentLength;
-    if (endIndex == -1) {
-      setCurrentBlockState(1);
-      commentLength = text.length() - startIndex;
-    } else {
-      commentLength = endIndex - startIndex
-	+ commentEndExpression.matchedLength();
-    }
-    setFormat(startIndex, commentLength, multiLineCommentFormat);
-    startIndex = commentStartExpression.indexIn(text, startIndex + commentLength);
-  }
 
 #ifdef ENABLE_SPELL_CHECKING
   spellCheck(text);
