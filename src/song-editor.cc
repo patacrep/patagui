@@ -333,13 +333,13 @@ void CSongEditor::documentWasModified()
 void CSongEditor::insertVerse()
 {
   QString selection = codeEditor()->textCursor().selectedText();
-  codeEditor()->insertPlainText(QString("\n\\beginverse\n%1\n\\endverse\n").arg(selection)  );
+  codeEditor()->insertPlainText(QString("\n\\begin{verse}\n%1\n\\end{verse}\n").arg(selection)  );
 }
 
 void CSongEditor::insertChorus()
 {
   QString selection = codeEditor()->textCursor().selectedText();
-  codeEditor()->insertPlainText(QString("\n\\beginchorus\n%1\n\\endchorus\n").arg(selection)  );
+  codeEditor()->insertPlainText(QString("\n\\begin{chorus}\n%1\n\\end{chorus}\n").arg(selection)  );
 }
 
 QToolBar * CSongEditor::toolBar() const
