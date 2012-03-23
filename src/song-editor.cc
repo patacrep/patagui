@@ -649,3 +649,8 @@ CodeEditor* CSongEditor::codeEditor() const
 {
   return m_codeEditor;
 }
+
+void CSongEditor::installHighlighter()
+{
+  codeEditor()->installHighlighter();
+}
