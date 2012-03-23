@@ -18,32 +18,26 @@
 //******************************************************************************
 #include "song-editor.hh"
 
-#include "song-highlighter.hh"
 #include "qtfindreplacedialog/findreplacedialog.h"
-
 #ifdef ENABLE_SPELL_CHECKING
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELL_CHECKING
 
-#include "code-editor.hh"
 #include "song-header-editor.hh"
+#include "code-editor.hh"
+#include "song-highlighter.hh"
 #include "library.hh"
-
 #include "utils/utils.hh"
 
+#include <QFile>
+#include <QMenu>
 #include <QToolBar>
 #include <QAction>
 #include <QActionGroup>
-#include <QTextDocumentFragment>
-#include <QFile>
 #include <QTextStream>
+#include <QTextCodec>
 #include <QSettings>
 #include <QBoxLayout>
-#include <QApplication>
-#include <QTextCodec>
-#include <QMenu>
-#include <QBoxLayout>
-#include <QApplication>
 
 #include <QDebug>
 

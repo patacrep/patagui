@@ -20,7 +20,6 @@
 #define __SONG_EDITOR_HH__
 
 #include "config.hh"
-#include "code-editor.hh"
 #include "song.hh"
 
 #include <QWidget>
@@ -30,19 +29,13 @@
 
 class QAction;
 class QActionGroup;
+class QToolBar;
 class Hunspell;
-class CSongHighlighter;
 class FindReplaceDialog;
-class QToolBar;
-class CodeEditor;
-class CSongHeaderEditor;
-class FindReplaceDialog;
-
-class QToolBar;
-
-class CodeEditor;
-class CSongHeaderEditor;
 class CLibrary;
+class CodeEditor;
+class CSongHighlighter;
+class CSongHeaderEditor;
 
 /**
  * \file song-editor.hh
@@ -128,7 +121,6 @@ private slots:
 #endif //ENABLE_SPELL_CHECKING
 
 private:
-  QString syntaxicColoration(const QString &string);
   void indentSelection();
   void indentLine(const QTextCursor &cursor);
   void trimLine(const QTextCursor &cursor);
