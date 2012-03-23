@@ -79,7 +79,7 @@ public:
   Song & song();
   void setSong(const Song &song);
 
-  CodeEditor * songEditor() const;
+  CodeEditor * codeEditor() const;
 
   bool isModified() const;
   bool isNewSong() const;
@@ -132,7 +132,7 @@ private:
   void saveNewSong();
   void createNewSong();
 
-  CodeEditor *m_songEditor;
+  CodeEditor *m_codeEditor;
   CSongHeaderEditor *m_songHeaderEditor;
   CLibrary *m_library;
   QToolBar *m_toolBar;
