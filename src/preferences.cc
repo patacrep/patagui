@@ -443,6 +443,22 @@ EditorPage::EditorPage(ConfigDialog *configDialog)
   layout->addRow(m_numberLinesCheckBox);
   layout->addRow(m_highlightCurrentLineCheckBox);
   layout->addRow(tr("Font:"), m_fontButton);
+
+  m_verseColor = QColor(138,226,52).lighter(170);
+  m_verse.setStyleSheet(QString("background-color: %1;").arg(m_verseColor.name()));
+  m_chorusColor = QColor(252,175,62).lighter(140);
+  m_chorus.setStyleSheet(QString("background-color: %1;").arg(m_chorusColor.name()));
+  m_scriptureColor = QColor(173,127,168).lighter(150);
+  m_scripture.setStyleSheet(QString("background-color: %1;").arg(m_scriptureColor.name()));
+
+  connect(&m_verse, SIGNAL(clicked()), this, SLOT(selectVerseColor()));
+  connect(&m_chorus, SIGNAL(clicked()), this, SLOT(selectChorusColor()));
+  connect(&m_scripture, SIGNAL(clicked()), this, SLOT(selectScriptureColor()));
+
+  layout->addRow(tr("Highlight verse color:"), &m_verse);
+  layout->addRow(tr("Highlight chorus color:"), &m_chorus);
+  layout->addRow(tr("Highlight scripture color:"), &m_scripture);
+
   setLayout(layout);
 }
 
@@ -455,6 +471,11 @@ void EditorPage::readSettings()
   m_fontstr = settings.value("font", QString()).toString();
   if(!m_fontstr.isEmpty())
     m_font.fromString(m_fontstr);
+
+  m_verseColor = settings.value("verseColor").value<QColor>();
+  m_verseColor = settings.value("chorusColor").value<QColor>();
+  m_verseColor = settings.value("scriptureColor").value<QColor>();
+
   settings.endGroup();
 }
 
@@ -465,6 +486,9 @@ void EditorPage::writeSettings()
   settings.setValue("lines", m_numberLinesCheckBox->isChecked());
   settings.setValue("highlight", m_highlightCurrentLineCheckBox->isChecked());
   settings.setValue("font", m_font.toString());
+  settings.setValue("verseColor", m_verseColor);
+  settings.setValue("chorusColor", m_chorusColor);
+  settings.setValue("scriptureColor", m_scriptureColor);
   settings.endGroup();
 }
 
@@ -473,6 +497,24 @@ void EditorPage::selectFont()
   bool ok;
   m_font = QFontDialog::getFont(&ok, m_font, this);
   if(ok) updateFontButton();
+}
+
+void EditorPage::selectVerseColor()
+{
+  m_verseColor = QColorDialog::getColor(m_verseColor, this);
+  m_verse.setStyleSheet(QString("background-color: %1;").arg(m_verseColor.name()));
+}
+
+void EditorPage::selectChorusColor()
+{
+  m_chorusColor = QColorDialog::getColor(m_chorusColor, this);
+  m_chorus.setStyleSheet(QString("background-color: %1;").arg(m_chorusColor.name()));
+}
+
+void EditorPage::selectScriptureColor()
+{
+  m_scriptureColor = QColorDialog::getColor(m_scriptureColor, this);
+  m_scripture.setStyleSheet(QString("background-color: %1;").arg(m_scriptureColor.name()));
 }
 
 void EditorPage::updateFontButton()

@@ -58,6 +58,18 @@ void CSongCodeEditor::readSettings()
   font.fromString(fontstr);
   setFont(font);
 
+  m_verseColor = settings.value("verseColor").value<QColor>();
+  m_chorusColor = settings.value("chorusColor").value<QColor>();
+  m_scriptureColor = settings.value("scriptureColor").value<QColor>();
+
+  if(!m_verseColor.isValid())
+    {
+      m_verseColor = QColor(138,226,52).lighter(170);
+      m_chorusColor = QColor(138,226,52).lighter(170);
+      m_scriptureColor = QColor(138,226,52).lighter(170);
+    }
+
+
   setHighlightMode(settings.value("highlight", true).toBool());
   setLineNumberMode(settings.value("lines", true).toBool());
 
@@ -119,13 +131,13 @@ QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnviro
   switch(env)
     {
     case Verse:
-      backgroundColor = QColor(138,226,52).lighter(170);
+      backgroundColor = m_verseColor;
       break;
     case Chorus:
-      backgroundColor = QColor(252,175,62).lighter(140);
+      backgroundColor = m_chorusColor;
       break;
     case Scripture:
-      backgroundColor = QColor(173,127,168).lighter(150);
+      backgroundColor = m_scriptureColor;
       break;
     default:
       break;

@@ -22,6 +22,7 @@
 #include <QDialog>
 #include <QWidget>
 #include <QScrollArea>
+#include <QPushButton>
 
 #if defined(Q_OS_WIN32)
 #define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\\make.bat %basename"
@@ -172,6 +173,10 @@ private slots:
   void selectFont();
   void updateFontButton();
 
+  void selectVerseColor();
+  void selectChorusColor();
+  void selectScriptureColor();
+
 private:
   void readSettings();
   void writeSettings();
@@ -181,6 +186,14 @@ private:
   QPushButton *m_fontButton;
   QFont m_font;
   QString m_fontstr;
+
+  QPushButton m_verse;
+  QPushButton m_chorus;
+  QPushButton m_scripture;
+
+  QColor m_verseColor;
+  QColor m_chorusColor;
+  QColor m_scriptureColor;
 };
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD

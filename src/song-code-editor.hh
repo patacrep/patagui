@@ -66,6 +66,10 @@ private:
 						 const QTextCursor & cursor);
 
   CSongHighlighter* m_highlighter;
+
+  QColor m_verseColor;
+  QColor m_chorusColor;
+  QColor m_scriptureColor;
 };
 
 #endif // __SONG_CODE_EDITOR_HH__
