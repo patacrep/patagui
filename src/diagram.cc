@@ -87,6 +87,7 @@ void CDiagram::fromString(const QString & gtab)
 void CDiagram::paintEvent(QPaintEvent *)
 {
   QPainter painter(this);
+  painter.setRenderHint(QPainter::Antialiasing, true);
   painter.setPen(Qt::black);
 
   int cellWidth = 14, cellHeight = 14;
