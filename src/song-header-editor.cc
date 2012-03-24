@@ -24,6 +24,7 @@
 
 #include <QBoxLayout>
 #include <QFormLayout>
+#include <QScrollArea>
 #include <QLabel>
 #include <QLineEdit>
 
@@ -58,17 +59,23 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   connect(m_capoLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
 
+  m_titleLineEdit->setMinimumWidth(200);
+  m_artistLineEdit->setMinimumWidth(200);
+  m_albumLineEdit->setMinimumWidth(200);
+
   QBoxLayout *additionalInformationLayout = new QHBoxLayout();
   additionalInformationLayout->setContentsMargins(1, 1, 1, 1);
   additionalInformationLayout->addWidget(m_languageLineEdit);
   additionalInformationLayout->addWidget(m_columnCountLineEdit);
   additionalInformationLayout->addWidget(m_capoLineEdit);
+  additionalInformationLayout->addStretch();
 
-  QFormLayout *songInformationLayout = new QFormLayout();
-  songInformationLayout->addRow(m_titleLineEdit);
-  songInformationLayout->addRow(m_artistLineEdit);
-  songInformationLayout->addRow(m_albumLineEdit);
-  songInformationLayout->addRow(additionalInformationLayout);
+  QBoxLayout *songInformationLayout = new QVBoxLayout();
+  songInformationLayout->addWidget(m_titleLineEdit);
+  songInformationLayout->addWidget(m_artistLineEdit);
+  songInformationLayout->addWidget(m_albumLineEdit);
+  songInformationLayout->addLayout(additionalInformationLayout);
+  songInformationLayout->addStretch();
 
   QFrame *coverFrame = new QFrame(this);
   coverFrame->setFrameShape(QFrame::StyledPanel);
@@ -78,13 +85,27 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   coverLayout->addWidget(m_coverLabel);
   coverFrame->setLayout(coverLayout);
 
-  m_diagramsLayout = new QHBoxLayout();
+  m_diagramsLayout = new QHBoxLayout;
 
-  QBoxLayout *mainLayout = new QHBoxLayout();
+  QWidget* scroll = new QWidget;
+  scroll->setLayout(m_diagramsLayout);
+  QScrollArea* diagramsScrollArea = new QScrollArea;
+  diagramsScrollArea->setWidget(scroll);
+  diagramsScrollArea->setBackgroundRole(QPalette::Dark);
+  diagramsScrollArea->setWidgetResizable(true);
+  diagramsScrollArea->setMaximumHeight(186);
+  diagramsScrollArea->setMinimumWidth(125);
+  diagramsScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+  setMaximumHeight(186);
+
+  QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setContentsMargins(1, 1, 1, 1);
   mainLayout->addWidget(coverFrame);
   mainLayout->addLayout(songInformationLayout);
-  mainLayout->addLayout(m_diagramsLayout);
+  mainLayout->addWidget(diagramsScrollArea);
+  mainLayout->setStretchFactor(songInformationLayout, 1);
+  mainLayout->setStretchFactor(diagramsScrollArea, 2);
   setLayout(mainLayout);
 }
 
@@ -117,7 +138,7 @@ void CSongHeaderEditor::update()
   m_capoLineEdit->setText(QString::number(song().capo));
 
   // display the cover art
-  m_coverLabel->setMinimumSize(QSize(128,128));
+  m_coverLabel->setMinimumSize(QSize(175,175));
   QFileInfo file = QFileInfo(QString("%1/%2.jpg").arg(song().coverPath).arg(song().coverName));
   if (file.exists())
     {
@@ -134,7 +155,7 @@ void CSongHeaderEditor::update()
   QString gtab;
   foreach (gtab, song().gtabs)
     {
-      m_diagramsLayout->addWidget(new CDiagram(gtab));
+      m_diagramsLayout->addWidget(new CDiagramWidget(gtab));
     }
 }
 
@@ -175,15 +196,10 @@ const QImage & CSongHeaderEditor::cover()
 
 void CSongHeaderEditor::setCover(const QImage &cover)
 {
-  m_cover = cover.scaled(128, 128, Qt::KeepAspectRatio);
+  m_cover = cover.scaled(175, 175, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 void CSongHeaderEditor::setCover(const QString &path)
 {
   setCover(QImage(path));
-}
-
-void CSongHeaderEditor::addDiagram(CDiagram* diagram)
-{
-  m_diagramsLayout->addWidget(diagram);
 }

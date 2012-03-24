@@ -78,7 +78,6 @@ public:
   /// @para cover the cover as a file object
   void setCover(const QString &path);
 
-  void addDiagram(CDiagram* diagram);
 
 public slots:
   void update();
