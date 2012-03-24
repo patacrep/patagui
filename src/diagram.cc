@@ -18,6 +18,10 @@
 //******************************************************************************
 #include "diagram.hh"
 
+#include <QBoxLayout>
+#include <QToolBar>
+#include <QAction>
+#include <QLabel>
 #include <QPainter>
 #include <QDebug>
 
@@ -25,14 +29,6 @@ QRegExp CDiagram::reChord("([^\\}]+)");
 QRegExp CDiagram::reFret("\\{(\\d):");
 QRegExp CDiagram::reStringsFret(":([^\\}]+)");
 QRegExp CDiagram::reStringsNoFret("\\{([^\\}]+)");
-
-CDiagram::CDiagram(QWidget *parent)
-  : QWidget(parent)
-{
-  setBackgroundRole(QPalette::Base);
-  setAutoFillBackground(true);
-  show();
-}
 
 CDiagram::CDiagram(const QString & gtab, QWidget *parent)
   : QWidget(parent)
@@ -48,12 +44,12 @@ CDiagram::~CDiagram()
 
 QSize CDiagram::minimumSizeHint() const
 {
-  return QSize(100, 50);
+  return QSize(100, 75);
 }
 
 QSize CDiagram::sizeHint() const
 {
-  return QSize(100, 50);
+  return QSize(100, 75);
 }
 
 QString CDiagram::toString()
@@ -131,11 +127,6 @@ void CDiagram::paintEvent(QPaintEvent *)
   QRect fretRect(padding-(cellWidth-4), padding+cellHeight/2.0, cellWidth-4, cellHeight);
   painter.setFont(QFont("Arial", 11));
   painter.drawText(fretRect, Qt::AlignCenter, fret());
-
-  //draw chord name
-  QRect chordRect(padding, height+padding+10, width, 20);
-  painter.setFont(QFont("Arial", 12));
-  painter.drawText(chordRect, Qt::AlignCenter, chord());
 }
 
 void CDiagram::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush)
@@ -173,4 +164,58 @@ QString CDiagram::strings() const
 void CDiagram::setStrings(const QString & str)
 {
   m_strings = str;
+}
+
+//----------------------------------------------------------------------------
+
+CDiagramWidget::CDiagramWidget(const QString & gtab, QWidget *parent)
+  : QWidget(parent)
+  , m_diagram(new CDiagram(gtab))
+{
+  setBackgroundRole(QPalette::Base);
+  setAutoFillBackground(true);
+  setMinimumWidth(120);
+  setMaximumWidth(120);
+
+  QToolBar* bar = new QToolBar;
+  bar->setFloatable(false);
+  bar->setMovable(false);
+  bar->setIconSize(QSize(16,16));
+  bar->setStyleSheet("border:0;padding:2;");
+
+  QLabel* chordName = new QLabel(QString("<b>%1</b>").arg(m_diagram->chord()));
+  chordName->setAlignment(Qt::AlignHCenter);
+  chordName->setContentsMargins(0,0,0,0);
+
+  QAction* action = new QAction(tr("Edit"), this);
+  action->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/16x16/actions/accessories-text-editor.png")));
+  action->setStatusTip(tr("Edit the chord"));
+  connect(action, SIGNAL(triggered()), this, SLOT(editChord()));
+  bar->addAction(action);
+
+  action = new QAction(tr("Delete"), this);
+  action->setIcon(QIcon::fromTheme("user-trash", QIcon(":/icons/tango/16x16/actions/user-trash.png")));
+  action->setStatusTip(tr("Remove this chord"));
+  connect(action, SIGNAL(triggered()), this, SLOT(removeChord()));
+  bar->addAction(action);
+
+  QBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(chordName);
+  layout->addWidget(m_diagram);
+  layout->addWidget(bar);
+  setLayout(layout);
+}
+
+CDiagramWidget::~CDiagramWidget()
+{
+}
+
+void CDiagramWidget::editChord()
+{
+  qDebug() << "Edit chord: not implemented yet";
+}
+
+void CDiagramWidget::removeChord()
+{
+  qDebug() << "Remove chord: not implemented yet";
 }

@@ -35,7 +35,6 @@ class CDiagram : public QWidget
   Q_OBJECT
 
 public:
-  CDiagram(QWidget *parent = 0);
   CDiagram(const QString & chord, QWidget *parent = 0);
   ~CDiagram();
 
@@ -68,6 +67,32 @@ private:
   static QRegExp reFret;
   static QRegExp reStringsFret;
   static QRegExp reStringsNoFret;
+};
+
+/**
+ * \file diagram.hh
+ * \class CDiagramWidget
+ * \brief CDiagramWidget embeds a CDiagram and related actions
+ *
+ */
+class CDiagramWidget : public QWidget
+{
+  Q_OBJECT
+
+  public:
+  CDiagram* m_diagram;
+
+  /// Constructor.
+  /// @param chord a gtab macro content such as B&m}{1:X0222 representing a chord
+  CDiagramWidget(const QString & chord, QWidget *parent = 0);
+
+  ///Destructor.
+  ~CDiagramWidget();
+
+public slots:
+  void editChord();
+  void removeChord();
+
 };
 
 #endif // __DIAGRAM_HH__
