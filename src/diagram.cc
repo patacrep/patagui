@@ -58,13 +58,16 @@ QSize CDiagram::sizeHint() const
 
 QString CDiagram::toString()
 {
-  return QString("\\gtab{%1}{%2:%3}").arg(chord()).arg(fret()).arg(strings());
+  return QString("\\gtab{%1}{%2:%3}")
+    .arg(chord().replace(QChar(0x266D),"&"))
+    .arg(fret())
+    .arg(strings());
 }
 
 void CDiagram::fromString(const QString & gtab)
 {
   reChord.indexIn(gtab);
-  setChord(reChord.cap(1));
+  setChord(reChord.cap(1).replace("&",QChar(0x266D)));
 
   reFret.indexIn(gtab);
   setFret(reFret.cap(1));
