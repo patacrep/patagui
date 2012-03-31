@@ -36,8 +36,9 @@ class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
 class CNotification;
+class CProgressBar;
+class CMakeSongbookProcess;
 
-class QProgressBar;
 class QPlainTextEdit;
 class QItemSelectionModel;
 class QSortFilterProxyModel;
@@ -82,7 +83,7 @@ public:
 
   /// Getter on the progress bar that is embedded in the status bar.
   /// @return the progress bar
-  QProgressBar * progressBar() const;
+  CProgressBar * progressBar() const;
 
   /// Getter on the LaTeX compilation logs widget that
   /// displays terminal output of the compilation process.
@@ -117,6 +118,15 @@ public:
   /// Getter on the songbook cleanall command.
   /// @return the command line
   const QString & cleanallCommand() const;
+
+  /// Calls pdflatex to build the songbook
+  void make();
+
+  /// Remove LaTeX temporary files
+  void makeClean();
+
+  /// Remove LaTeX temporary files and pdf files
+  void makeCleanall();
 
 protected:
   void closeEvent(QCloseEvent *event);
@@ -165,6 +175,8 @@ private slots:
 
   void buildError(QProcess::ProcessError error);
 
+  void cancelProcess();
+
 private:
   void readSettings();
   void writeSettings();
@@ -187,7 +199,7 @@ private:
 
   // Widgets
   CTabWidget *m_mainWidget;
-  QProgressBar *m_progressBar;
+  CProgressBar *m_progressBar;
   CNotification *m_noDataInfo;
   CNotification *m_updateAvailable;
   QLabel *m_infoSelection;
@@ -228,6 +240,7 @@ private:
   QAction *m_buildAct;
   QAction *m_cleanAct;
   QAction *m_sbInfoAct;
+  CMakeSongbookProcess *m_builder;
 
   // Library action
   QAction *m_newSongAct;

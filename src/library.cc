@@ -22,6 +22,7 @@
 
 #include "main-window.hh"
 #include "utils/utils.hh"
+#include "progress-bar.hh"
 
 #include <QDebug>
 

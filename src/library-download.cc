@@ -32,6 +32,7 @@
 #include "file-chooser.hh"
 #include "main-window.hh"
 #include "library.hh"
+#include "progress-bar.hh"
 
 #include <QDebug>
 
