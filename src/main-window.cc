@@ -34,6 +34,7 @@
 #include "notification.hh"
 #include "song-item-delegate.hh"
 #include "preferences.hh"
+#include "progress-bar.hh"
 
 #include "config.hh"
 
@@ -115,7 +116,7 @@ CMainWindow::CMainWindow()
   m_infoSelection = new QLabel(this);
   statusBar()->addPermanentWidget(m_infoSelection);
 
-  m_progressBar = new QProgressBar(this);
+  m_progressBar = new CProgressBar(this);
   m_progressBar->setTextVisible(false);
   m_progressBar->setRange(0, 0);
   m_progressBar->hide();
@@ -576,7 +577,7 @@ const QString CMainWindow::workingPath()
   return library()->directory().canonicalPath();
 }
 
-QProgressBar * CMainWindow::progressBar() const
+CProgressBar * CMainWindow::progressBar() const
 {
   return m_progressBar;
 }

@@ -36,8 +36,8 @@ class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
 class CNotification;
+class CProgressBar;
 
-class QProgressBar;
 class QPlainTextEdit;
 class QItemSelectionModel;
 class QSortFilterProxyModel;
@@ -82,7 +82,7 @@ public:
 
   /// Getter on the progress bar that is embedded in the status bar.
   /// @return the progress bar
-  QProgressBar * progressBar() const;
+  CProgressBar * progressBar() const;
 
   /// Getter on the LaTeX compilation logs widget that
   /// displays terminal output of the compilation process.
@@ -187,7 +187,7 @@ private:
 
   // Widgets
   CTabWidget *m_mainWidget;
-  QProgressBar *m_progressBar;
+  CProgressBar *m_progressBar;
   CNotification *m_noDataInfo;
   CNotification *m_updateAvailable;
   QLabel *m_infoSelection;
