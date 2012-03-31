@@ -37,6 +37,7 @@ class CTabWidget;
 class CFilterLineEdit;
 class CNotification;
 class CProgressBar;
+class CMakeSongbookProcess;
 
 class QPlainTextEdit;
 class QItemSelectionModel;
@@ -118,6 +119,15 @@ public:
   /// @return the command line
   const QString & cleanallCommand() const;
 
+  /// Calls pdflatex to build the songbook
+  void make();
+
+  /// Remove LaTeX temporary files
+  void makeClean();
+
+  /// Remove LaTeX temporary files and pdf files
+  void makeCleanall();
+
 protected:
   void closeEvent(QCloseEvent *event);
 
@@ -164,6 +174,8 @@ private slots:
   void switchToolBar(QToolBar *toolBar);
 
   void buildError(QProcess::ProcessError error);
+
+  void cancelProcess();
 
 private:
   void readSettings();
@@ -228,6 +240,7 @@ private:
   QAction *m_buildAct;
   QAction *m_cleanAct;
   QAction *m_sbInfoAct;
+  CMakeSongbookProcess *m_builder;
 
   // Library action
   QAction *m_newSongAct;
