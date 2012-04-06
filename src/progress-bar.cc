@@ -38,6 +38,7 @@ CProgressBar::CProgressBar(QWidget* parent)
   layout->addWidget(m_progressBar);
   layout->addWidget(m_cancelButton);
   setLayout(layout);
+  setContentsMargins(0, 0, 0, 0);
 }
 
 CProgressBar::~CProgressBar()
