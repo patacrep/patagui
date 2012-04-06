@@ -33,6 +33,7 @@
 #include "notification.hh"
 #include "song-item-delegate.hh"
 #include "preferences.hh"
+#include "progress-bar.hh"
 
 #include "config.hh"
 
@@ -114,11 +115,31 @@ CMainWindow::CMainWindow()
   m_infoSelection = new QLabel(this);
   statusBar()->addPermanentWidget(m_infoSelection);
 
-  m_progressBar = new QProgressBar(this);
+  m_progressBar = new CProgressBar(this);
   m_progressBar->setTextVisible(false);
   m_progressBar->setRange(0, 0);
   m_progressBar->hide();
   statusBar()->addPermanentWidget(m_progressBar);
+  connect(progressBar(), SIGNAL(canceled()),
+          this, SLOT(cancelProcess()));
+
+  // make/make clean/make cleanall process
+  m_builder = new CMakeSongbookProcess(this);
+
+  connect(m_builder, SIGNAL(aboutToStart()),
+          progressBar(), SLOT(show()));
+  connect(m_builder, SIGNAL(aboutToStart()),
+          statusBar(), SLOT(clear()));
+  connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
+          SLOT(showMessage(const QString &, int)));
+  connect(m_builder, SIGNAL(finished(int, QProcess::ExitStatus)),
+          progressBar(), SLOT(hide()));
+  connect(m_builder, SIGNAL(readOnStandardOutput(const QString &)),
+          log()->widget(), SLOT(appendPlainText(const QString &)));
+  connect(m_builder, SIGNAL(readOnStandardError(const QString &)),
+          log()->widget(), SLOT(appendPlainText(const QString &)));
+  connect(m_builder, SIGNAL(error(QProcess::ProcessError)),
+          this, SLOT(buildError(QProcess::ProcessError)));
 
   updateTitle(songbook()->filename());
 
@@ -470,49 +491,7 @@ void CMainWindow::build()
     statusBar()->showMessage(QString(tr("The songbook file %1 is invalid. Build aborted."))
 			     .arg(songbook()->filename()));
 
-  QString basename = QFileInfo(songbook()->filename()).baseName();
-  QString target = QString("%1.pdf").arg(basename);
-
-  CMakeSongbookProcess *builder = new CMakeSongbookProcess(this);
-  builder->setWorkingDirectory(workingPath());
-
-  connect(builder, SIGNAL(aboutToStart()),
-          progressBar(), SLOT(show()));
-  connect(builder, SIGNAL(aboutToStart()),
-          statusBar(), SLOT(clear()));
-  connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
-          SLOT(showMessage(const QString &, int)));
-  connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
-          progressBar(), SLOT(hide()));
-  connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-          log()->widget(), SLOT(appendPlainText(const QString &)));
-  connect(builder, SIGNAL(readOnStandardError(const QString &)),
-          log()->widget(), SLOT(appendPlainText(const QString &)));
-  connect(builder, SIGNAL(error(QProcess::ProcessError)),
-          this, SLOT(buildError(QProcess::ProcessError)));
-
-  builder->setCommand(cleanCommand());
-
-  builder->setStartMessage(tr("Cleaning the build directory."));
-  builder->setSuccessMessage(tr("Build directory cleaned."));
-  builder->setErrorMessage(tr("Error during cleaning, please check the log."));
-
-  builder->execute();
-  builder->waitForFinished();
-
-  QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-  environment.insert("LATEX_OPTIONS", "-halt-on-error");
-  builder->setProcessEnvironment(environment);
-
-  QString command = buildCommand();
-  builder->setCommand(command.replace("%target", target).replace("%basename", basename));
-
-  builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
-  builder->setStartMessage(tr("Building %1.").arg(target));
-  builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
-  builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
-
-  builder->execute();
+  make();
 }
 
 void CMainWindow::newSongbook()
@@ -572,7 +551,71 @@ const QString CMainWindow::workingPath()
   return library()->directory().canonicalPath();
 }
 
-QProgressBar * CMainWindow::progressBar() const
+void CMainWindow::make()
+{
+  makeClean(); //fix problems, don't remove
+  m_builder->setWorkingDirectory(workingPath());
+
+  QString basename = QFileInfo(songbook()->filename()).baseName();
+  QString target = QString("%1.pdf").arg(basename);
+
+  QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+  environment.insert("LATEX_OPTIONS", "-halt-on-error");
+  m_builder->setProcessEnvironment(environment);
+
+  QString command = buildCommand();
+  m_builder->setCommand(command.replace("%target", target).replace("%basename", basename));
+
+  m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
+  m_builder->setStartMessage(tr("Building %1.").arg(target));
+  m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
+  m_builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
+
+  m_builder->execute();
+}
+
+void CMainWindow::makeClean()
+{
+  m_builder->setWorkingDirectory(workingPath());
+  m_builder->setCommand(cleanCommand());
+  m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
+
+  m_builder->setStartMessage(tr("Cleaning the build directory."));
+  m_builder->setSuccessMessage(tr("Build directory cleaned."));
+  m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
+
+  m_builder->execute();
+  m_builder->waitForFinished();
+}
+
+void CMainWindow::makeCleanall()
+{
+  m_builder->setWorkingDirectory(workingPath());
+  m_builder->setCommand(cleanCommand());
+  m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
+
+  m_builder->setStartMessage(tr("Cleaning the build directory."));
+  m_builder->setSuccessMessage(tr("Build directory cleaned."));
+  m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
+
+  m_builder->execute();
+  m_builder->waitForFinished();
+}
+
+void CMainWindow::cancelProcess()
+{
+  if(m_builder->state() == QProcess::Running)
+    {
+      m_builder->close();
+      if(m_builder->command() == buildCommand())
+	{
+	  qDebug() << "m_builder closed, running make clean";
+	  makeClean();
+	}
+    }
+}
+
+CProgressBar * CMainWindow::progressBar() const
 {
   return m_progressBar;
 }
@@ -783,34 +826,10 @@ void CMainWindow::cleanDialog()
 
   if (dialog->exec() == QDialog::Accepted)
     {
-      CMakeSongbookProcess *builder = new CMakeSongbookProcess(this);
-      builder->setWorkingDirectory(workingPath());
-
-      connect(builder, SIGNAL(aboutToStart()),
-	      progressBar(), SLOT(show()));
-      connect(builder, SIGNAL(aboutToStart()),
-	      statusBar(), SLOT(clear()));
-      connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
-	      SLOT(showMessage(const QString &, int)));
-      connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
-	      progressBar(), SLOT(hide()));
-      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-	      log()->widget(), SLOT(appendPlainText(const QString &)));
-      connect(builder, SIGNAL(readOnStandardError(const QString &)),
-	      log()->widget(), SLOT(appendPlainText(const QString &)));
-      connect(builder, SIGNAL(error(QProcess::ProcessError)),
-	      this, SLOT(buildError(QProcess::ProcessError)));
-
       if (cleanAllButton->isChecked())
-	builder->setCommand(cleanallCommand());
+	makeCleanall();
       else
-	builder->setCommand(cleanCommand());
-
-      builder->setStartMessage(tr("Cleaning the build directory."));
-      builder->setSuccessMessage(tr("Build directory cleaned."));
-      builder->setErrorMessage(tr("Error during cleaning, please check the log."));
-
-      builder->execute();
+	makeClean();
     }
   delete dialog;
   delete m_tempFilesmodel;
