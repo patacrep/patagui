@@ -554,7 +554,6 @@ const QString CMainWindow::workingPath()
 
 void CMainWindow::make()
 {
-  qDebug() << "make";
   makeClean(); //fix problems, don't remove
   m_builder->setWorkingDirectory(workingPath());
 
@@ -578,7 +577,6 @@ void CMainWindow::make()
 
 void CMainWindow::makeClean()
 {
-  qDebug() << "make clean";
   m_builder->setWorkingDirectory(workingPath());
   m_builder->setCommand(cleanCommand());
   m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
@@ -593,7 +591,6 @@ void CMainWindow::makeClean()
 
 void CMainWindow::makeCleanall()
 {
-  qDebug() << "make cleanall";
   m_builder->setWorkingDirectory(workingPath());
   m_builder->setCommand(cleanCommand());
   m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
