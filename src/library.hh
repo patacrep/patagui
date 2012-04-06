@@ -94,7 +94,7 @@ public:
   QString pathToSong(Song &song) const;
 
   //! Add a song to the library list
-  void addSong(const Song &song);
+  void addSong(const Song &song, bool reset=false);
 
   //! Add a song to the library list
   void addSong(const QString &path);

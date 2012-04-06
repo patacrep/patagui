@@ -293,7 +293,7 @@ void CSongEditor::createNewSong()
     return;
 
   //add the song to the library
-  library()->addSong(m_song);
+  library()->addSong(m_song, true);
 
   setNewSong(false);
 }

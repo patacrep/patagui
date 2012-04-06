@@ -271,11 +271,15 @@ int CLibrary::columnCount(const QModelIndex &) const
   return 6;
 }
 
-void CLibrary::addSong(const Song &song)
+void CLibrary::addSong(const Song &song, bool reset)
 {
   m_songs << song;
-  reset();
-  emit(wasModified());
+
+  if(reset)
+    {
+      reset();
+      emit(wasModified());
+    }
 }
 
 void CLibrary::addSongs(const QStringList &paths)
@@ -290,6 +294,8 @@ void CLibrary::addSongs(const QStringList &paths)
       loadSong(filepath.next(), &song);
       addSong(song);
     }
+  reset();
+  emit(wasModified());
 }
 
 void CLibrary::addSong(const QString &path)
