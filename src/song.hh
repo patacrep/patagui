@@ -48,6 +48,7 @@ struct Song
   int columnCount;
   int capo;
   QStringList gtabs;
+  QStringList utabs;
   QStringList lyrics;
 
   static Song fromFile(const QString &path);
@@ -68,6 +69,7 @@ struct Song
   static QRegExp reCover;
   static QRegExp reBlankLine;
   static QRegExp reGtab;
+  static QRegExp reUtab;
 
   static QRegExp reBegin;
   static QRegExp reEnd;

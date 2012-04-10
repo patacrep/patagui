@@ -37,6 +37,7 @@ QRegExp Song::reCapo("\\\\capo\\{([^\\}]+)");
 QRegExp Song::reCover("\\\\cover");
 QRegExp Song::reBlankLine("^\\s*$");
 QRegExp Song::reGtab("\\\\gtab\\{([^\\}]+\\}\\{[^\\}]+)");
+QRegExp Song::reUtab("\\\\utab\\{([^\\}]+\\}\\{[^\\}]+)");
 
 QRegExp Song::reBegin("\\\\begin");
 QRegExp Song::reEnd("\\\\end");
@@ -123,6 +124,11 @@ Song Song::fromString(const QString &text, const QString &path)
               song.gtabs << reGtab.cap(1);
               continue;
             }
+          else if (reUtab.indexIn(line) != -1)
+            {
+              song.utabs << reUtab.cap(1);
+              continue;
+            }
           else if (reCover.indexIn(line) != -1 || reBlankLine.indexIn(line) != -1)
             {
               continue;
@@ -172,6 +178,11 @@ QString Song::toString(const Song &song)
   foreach (QString gtab, song.gtabs)
     {
       text.append(QString("  \\gtab{%1}\n").arg(gtab));
+    }
+
+  foreach (QString utab, song.utabs)
+    {
+      text.append(QString("  \\utab{%1}\n").arg(utab));
     }
 
   text.append(QString("\n"));
