@@ -57,16 +57,16 @@ public:
   /// @return true if the operation succeeded, false otherwise
   bool saveToDisk(const QString &filename, QIODevice *data);
 
-  /// Decompress an archive depending on libarchive library 
+  /// Decompress an archive depending on libarchive library
   /// (http://github.com/libarchive/libarchive).
   /// @param filename : filename of the compressed archive
-  /// @param directory : the directory resulting from the decompression 
+  /// @param directory : the directory resulting from the decompression
   /// @return true if the operation succeeded, false otherwise
   bool decompress(const QString &filename, QDir &directory);
 
 public slots:
   /// Handles common errors and dialog at the end of the downloading operation
-  /// such as conflicts with filenames or failed download.  
+  /// such as conflicts with filenames or failed download.
   void downloadFinished();
 
   /// Network initialisation before download.

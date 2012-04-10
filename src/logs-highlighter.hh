@@ -27,15 +27,27 @@
 class QTextDocument;
 class Hunspell;
 
+/**
+ * \file logs-highlighter.hh
+ * \class CLogsHighlighter
+ * \brief CLogsHighlighter provides colors and highlights for the logs widget.
+ *
+ * Highlights include filenames and errors/warnings that are output during
+ * the LaTeX compilation of a songbook.
+ *
+ */
 class CLogsHighlighter : public QSyntaxHighlighter
 {
   Q_OBJECT
 
 public:
+  /// Constructor
   CLogsHighlighter(QTextDocument *parent = 0);
+  /// Destructor
   ~CLogsHighlighter();
 
 protected:
+  /// Apply highlighting rules for LaTeX logs compilation output
   void highlightBlock(const QString &text);
 
 private:

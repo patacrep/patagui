@@ -42,6 +42,7 @@ CSongItemDelegate::CSongItemDelegate(QObject *parent)
   QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")).pixmap(22,22));
   QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")).pixmap(22,22));
   QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")).pixmap(22,22));
+  QPixmapCache::insert("pt_PT", QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")).pixmap(22,22));
 }
 
 CSongItemDelegate::~CSongItemDelegate()

@@ -20,7 +20,6 @@
 #include <QtGui>
 
 #include "main-window.hh"
-#include "song-panel.hh"
 
 #include <QDebug>
 
@@ -85,30 +84,6 @@ void CLibraryView::createActions()
   connect(action, SIGNAL(triggered()),
 	  parent(), SLOT(deleteSong()));
   addAction(action);
-
-  action = new QAction(tr("Information"), this);
-  connect(action, SIGNAL(triggered()),
-  	  this, SLOT(songInfo()));
-  addAction(action);
-}
-
-void CLibraryView::songInfo()
-{
-  QDialog* dialog = new QDialog;
-  dialog->setWindowTitle(tr("Information"));
-  QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Close);
-  connect(buttons, SIGNAL(rejected()), dialog, SLOT(reject()));
-
-  CSongPanel songPanel(this);
-  songPanel.setLibrary(model());
-  songPanel.setCurrentIndex(currentIndex());
-
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(&songPanel);
-  layout->addWidget(buttons);
-
-  dialog->setLayout(layout);
-  dialog->exec();
 }
 
 void CLibraryView::resizeColumns()

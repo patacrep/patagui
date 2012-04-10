@@ -30,7 +30,6 @@ class CSongbook;
 class CLibrary;
 class CLibraryView;
 class CTabWidget;
-class CDialogNewSong;
 class CSongEditor;
 class CLabel;
 class CTabWidget;
@@ -155,7 +154,7 @@ private slots:
   void songEditor(const QModelIndex &index = QModelIndex());
   void deleteSong();
 
-  void songEditor(const QString &filename, const QString &title = QString());
+  void songEditor(const QString &filename);
   void deleteSong(const QString &filename);
   void updateNotification(const QString &path);
   void noDataNotification(const QDir &directory);
@@ -214,11 +213,9 @@ private:
   QString m_cleanCommand;
   QString m_cleanallCommand;
 
-  CDialogNewSong *m_newSongDialog;
-
   // Menus
   QMenu *m_editorMenu;
-
+  CSongEditor *m_voidEditor;
   QToolBar *m_libraryToolBar;
   QToolBar *m_currentToolBar;
   QToolBar *m_mainToolBar;
@@ -249,9 +246,6 @@ private:
   QAction *m_invertSelectionAct;
   QAction *m_libraryUpdateAct;
   QAction *m_libraryDownloadAct;
-
-  // Editors
-  QMap< QString, CSongEditor* > m_editors;
 };
 
 #endif  // __MAIN_WINDOW_HH__

@@ -27,7 +27,6 @@
 #include "songbook.hh"
 #include "song-editor.hh"
 #include "logs-highlighter.hh"
-#include "dialog-new-song.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
 #include "tab-widget.hh"
@@ -386,13 +385,10 @@ void CMainWindow::createMenus()
   libraryMenu->addAction(m_libraryUpdateAct);
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
-  CSongEditor *editor = new CSongEditor();
-  m_editors.insert("", editor);
-  foreach (QAction *action, editor->actions())
-    {
-      action->setDisabled(true);
-      m_editorMenu->addAction(action);
-    }
+
+  m_voidEditor = new CSongEditor(this);
+  m_voidEditor->actionGroup()->setEnabled(false);
+  m_editorMenu->addActions(m_voidEditor->actionGroup()->actions());
 
   QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
   viewMenu->addAction(m_toolBarViewAct);
@@ -653,50 +649,26 @@ void CMainWindow::songEditor(const QModelIndex &index)
     }
 
   QString path = view()->model()->data(selectionModel()->currentIndex(), CLibrary::PathRole).toString();
-  QString title = view()->model()->data(selectionModel()->currentIndex(), CLibrary::TitleRole).toString();
 
-  songEditor(path, title);
+  songEditor(path);
 }
 
-void CMainWindow::songEditor(const QString &path, const QString &title)
+void CMainWindow::songEditor(const QString &path)
 {
-  if (m_editors.contains(path))
-    {
-      m_mainWidget->setCurrentWidget(m_editors[path]);
-      return;
-    }
-
-  CSongEditor *editor = new CSongEditor();
-  editor->setPath(path);
+  CSongEditor *editor = new CSongEditor(this);
+  editor->setLibrary(library());
   editor->installHighlighter();
-
-  if (title.isEmpty())
-    {
-      QFileInfo fileInfo(path);
-      editor->setWindowTitle(fileInfo.fileName());
-    }
-  else
-    {
-      editor->setWindowTitle(title);
-    }
+  if (!path.isEmpty())
+    editor->setSong(library()->getSong(path));
 
   connect(editor, SIGNAL(labelChanged(const QString&)),
 	  m_mainWidget, SLOT(changeTabText(const QString&)));
-
   m_mainWidget->addTab(editor);
-  m_editors.insert(path, editor);
 }
 
 void CMainWindow::newSong()
 {
-  CDialogNewSong *dialog = new CDialogNewSong(this);
-
-  if (dialog->exec() == QDialog::Accepted)
-    {
-      library()->update();
-      songEditor(dialog->path(), dialog->title());
-    }
-  delete dialog;
+  songEditor(QString());
 }
 
 void CMainWindow::deleteSong()
@@ -714,60 +686,34 @@ void CMainWindow::deleteSong()
 
 void CMainWindow::deleteSong(const QString &path)
 {
-  QString qs(tr("You are about to remove a song from the library.\n"
-                "Yes : The song will only be deleted from the library "
-		"and can be retrieved by rebuilding the library\n"
-                "No  : Nothing will be deleted\n"
-                "Delete file : You will also delete %1 from your hard drive\n"
-                "If you are unsure what to do, click No.").arg(path));
-  QMessageBox msgBox;
-  msgBox.setIcon(QMessageBox::Question);
-  msgBox.setText(tr("Removing song from Library."));
-  msgBox.setInformativeText(tr("Are you sure?"));
-  msgBox.addButton(QMessageBox::No);
-  QPushButton *yesb = msgBox.addButton(QMessageBox::Yes);
-  QPushButton *delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
-  msgBox.setDefaultButton(QMessageBox::No);
-  msgBox.setDetailedText(qs);
-  msgBox.exec();
+  int ret = QMessageBox::warning(this, tr("Songbook-Client"),
+				 tr("The file : %1 will be deleted.\n"
+				    "Are you sure?"),
+				 QMessageBox::Cancel | QMessageBox::Ok,
+				 QMessageBox::Cancel);
 
-  if (msgBox.clickedButton() == yesb || msgBox.clickedButton() == delb)
-    {
-      //remove entry in database in 2 case
-      library()->removeSong(path);
-    }
-  //don't forget to remove the file if asked
-  if (msgBox.clickedButton() == delb)
-    {
-      //removal on disk only if deletion
-      QFile file(path);
-      QFileInfo fileinfo(file);
-      QString tmp = fileinfo.canonicalPath();
-      if (file.remove())
-	{
-	  QDir dir;
-	  dir.rmdir(tmp); //remove dir if empty
-	}
-    }
+  if (ret == QMessageBox::Ok)
+    library()->deleteSong(path);
 }
 
 void CMainWindow::closeTab(int index)
 {
   if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
     {
-      if (editor->document()->isModified())
+      if (editor->isModified())
 	{
 	  QMessageBox::StandardButton answer =
-	    QMessageBox::question(this,
-				  tr("Close"),
-				  tr("There is unsaved modification in the current editor, do you really want to close it?"),
-				  QMessageBox::Ok | QMessageBox::Cancel,
-				  QMessageBox::Cancel);
+	    QMessageBox::question(this, tr("Songbook-Client"),
+				  tr("The document has been modified.\n"
+				     "Do you want to save your changes?"),
+				  QMessageBox::Save | QMessageBox::Discard
+				  | QMessageBox::Cancel,
+				  QMessageBox::Save);
+
 	  if (answer != QMessageBox::Ok)
 	    return;
 	}
       editor->writeSettings();
-      m_editors.remove(editor->path());
       m_mainWidget->closeTab(index);
       delete editor;
     }
@@ -777,7 +723,7 @@ void CMainWindow::changeTab(int index)
 {
   m_editorMenu->clear();
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  if (editor)
+  if (editor != 0)
     {
       editor->actionGroup()->setEnabled(true);
       editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
@@ -786,7 +732,7 @@ void CMainWindow::changeTab(int index)
     }
   else
     {
-      editor = m_editors[""];
+      editor = m_voidEditor;
       editor->actionGroup()->setEnabled(false);
       switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
