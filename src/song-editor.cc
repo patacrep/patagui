@@ -252,20 +252,12 @@ void CSongEditor::save()
 
 void CSongEditor::parseText()
 {
-  m_song.gtabs.clear();
   m_song.lyrics.clear();
   QStringList lines = codeEditor()->toPlainText().split("\n");
   QString line;
   foreach (line, lines)
     {
-      if (Song::reGtab.indexIn(line) != -1)
-        {
-          m_song.gtabs << Song::reGtab.cap(1);
-        }
-      else
-        {
-          m_song.lyrics << line;
-        }
+      m_song.lyrics << line;
     }
 }
 
@@ -367,13 +359,6 @@ void CSongEditor::setSong(const Song &song)
 
   // update the text editor
   QString songContent;
-  foreach (QString gtab, m_song.gtabs)
-    {
-      songContent.append(QString("  \\gtab{%1}\n").arg(gtab));
-    }
-
-  songContent.append(QString("\n"));
-
   foreach (QString lyric, m_song.lyrics)
     {
       songContent.append(QString("%1\n").arg(lyric));
