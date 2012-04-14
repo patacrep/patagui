@@ -532,7 +532,7 @@ void CMainWindow::saveAs()
 {
   QString filename = QFileDialog::getSaveFileName(this,
 						  tr("Save as"),
-						  workingPath(),
+						  QString("%1/books").arg(workingPath()),
 						  tr("Songbook (*.sb)"));
 
   if (!filename.isEmpty())
