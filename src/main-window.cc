@@ -480,7 +480,7 @@ void CMainWindow::build()
     {
       if (QMessageBox::question(this, windowTitle(),
 				QString(tr("You did not select any song. \n "
-					   "Do you want to build the songbook with all songs?")),
+                       "Do you want to build the songbook with all songs?")),
 				QMessageBox::Yes,
 				QMessageBox::No,
 				QMessageBox::NoButton) == QMessageBox::No)
@@ -585,7 +585,7 @@ void CMainWindow::makeClean()
   m_builder->setWorkingDirectory(workingPath());
   m_builder->setCommand(cleanCommand());
   m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
-
+  m_builder->setUrlToOpen(QUrl());
   m_builder->setStartMessage(tr("Cleaning the build directory."));
   m_builder->setSuccessMessage(tr("Build directory cleaned."));
   m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
@@ -599,7 +599,7 @@ void CMainWindow::makeCleanall()
   m_builder->setWorkingDirectory(workingPath());
   m_builder->setCommand(cleanCommand());
   m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
-
+  m_builder->setUrlToOpen(QUrl());
   m_builder->setStartMessage(tr("Cleaning the build directory."));
   m_builder->setSuccessMessage(tr("Build directory cleaned."));
   m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
