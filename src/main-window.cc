@@ -516,7 +516,9 @@ void CMainWindow::open()
 
 void CMainWindow::save(bool forced)
 {
-  if (songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
+  if (songbook()->filename().isEmpty() ||
+      songbook()->filename().endsWith("default.sb") ||
+      !songbook()->filename().compare(".sb"))
     {
       if (forced)
 	songbook()->setFilename(QString("%1/books/default.sb").arg(workingPath()));
