@@ -41,11 +41,11 @@ public:
   void setDictionary(const QString &filename);
   Hunspell* checker() const;
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 public slots:
   void addWord(const QString &word);
   void setSpellCheck(const bool state);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 protected:
   void highlightBlock(const QString &text);

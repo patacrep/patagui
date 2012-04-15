@@ -21,9 +21,9 @@
 
 #include "config.hh"
 #include "song-highlighter.hh"
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 CHighlighter::CHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
@@ -127,18 +127,18 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   commentStartExpression = QRegExp("/\\*");
   commentEndExpression = QRegExp("\\*/");
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   //Settings for online spellchecking
   m_spellCheckFormat.setUnderlineColor(QColor(Qt::red));
   m_spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 }
 
 CHighlighter::~CHighlighter()
 {
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   delete m_checker;
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 }
 
 void CHighlighter::highlightBlock(const QString &text)
@@ -172,12 +172,12 @@ void CHighlighter::highlightBlock(const QString &text)
     startIndex = commentStartExpression.indexIn(text, startIndex + commentLength);
   }
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   spellCheck(text);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 }
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 void CHighlighter::spellCheck(const QString &text)
 {
   if (!m_isSpellCheckActive)
@@ -260,4 +260,4 @@ Hunspell* CHighlighter::checker() const
 {
   return m_checker;
 }
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK

@@ -22,9 +22,9 @@
 #include "song-highlighter.hh"
 #include "qtfindreplacedialog/findreplacedialog.h"
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 #include <QToolBar>
 #include <QAction>
@@ -45,7 +45,7 @@ CSongEditor::CSongEditor()
   , m_path()
   , m_actions(new QActionGroup(this))
   , m_highlighter(0)
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   , m_maxSuggestedWords(0)
 #endif
 {
@@ -179,7 +179,7 @@ void CSongEditor::readSettings()
   setHighlightMode(settings.value("highlight", true).toBool());
   setLineNumberMode(settings.value("lines", true).toBool());
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
   for(uint i = 0; i < m_maxSuggestedWords; ++i)
     {
@@ -188,8 +188,12 @@ void CSongEditor::readSettings()
       connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
       m_misspelledWordsActs.append(action);
     }
+#if defined(Q_OS_WIN32)
+  m_dictionary = settings.value("dictionary", "hunspell/en_US.dic").toString();
+#else
   m_dictionary = settings.value("dictionary", "/usr/share/hunspell/en_US.dic").toString();
-#endif //ENABLE_SPELL_CHECKING
+#endif //Q_OS_WIN32
+#endif //ENABLE_SPELLCHECK
 
   m_findReplaceDialog->readSettings(settings);
 
@@ -226,19 +230,25 @@ void CSongEditor::installHighlighter()
 {
   m_highlighter = new CHighlighter(document());
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   //find a suitable dictionary based on the song's language
   QRegExp reLanguage("selectlanguage\\{([^\\}]+)");
   reLanguage.indexIn(document()->toPlainText());
   QString lang = reLanguage.cap(1);
+  QString prefix;
+#if defined(Q_OS_WIN32)
+  prefix = "";
+#else
+  prefix = "/usr/share/";
+#endif //Q_OS_WIN32
   if(!lang.compare("french"))
-    m_dictionary = QString("/usr/share/hunspell/fr_FR.dic");
+    m_dictionary = QString("%1hunspell/fr_FR.dic").arg(prefix);
   else if(!lang.compare("english"))
-    m_dictionary = QString("/usr/share/hunspell/en_US.dic");
+    m_dictionary = QString("%1hunspell/en_US.dic").arg(prefix);
   else if(!lang.compare("spanish"))
-    m_dictionary = QString("/usr/share/hunspell/es_ES.dic");
+    m_dictionary = QString("%1hunspell/es_ES.dic").arg(prefix);
   else
-    qWarning() << "CSongbEditor::installHighlighter Unable to find dictionnary for language: " << lang;
+    qWarning() << "CSongEditor::installHighlighter Unable to find dictionnary for language: " << lang;
 
   if(!QFile(m_dictionary).exists())
     {
@@ -252,7 +262,7 @@ void CSongEditor::installHighlighter()
 	  m_highlighter, SLOT(addWord(const QString &)));
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_highlighter, SLOT(setSpellCheck(bool)));
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 }
 
 void CSongEditor::save()
@@ -391,7 +401,7 @@ void CSongEditor::trimLine(const QTextCursor & cur)
     }
 }
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 QString CSongEditor::currentWord()
 {
   QTextCursor cursor = cursorForPosition(m_lastPos);
@@ -495,7 +505,7 @@ Hunspell* CSongEditor::checker() const
   if(!m_highlighter) return 0;
   return m_highlighter->checker();
 }
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 bool CSongEditor::isSpellCheckingEnabled() const
 {

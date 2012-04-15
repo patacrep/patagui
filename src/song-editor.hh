@@ -69,7 +69,7 @@ private slots:
   void insertVerse();
   void insertChorus();
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   void correctWord();
   void addWord();
   void ignoreWord();
@@ -77,7 +77,7 @@ private slots:
 protected:
   void contextMenuEvent(QContextMenuEvent *event);
   QString currentWord();
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 private:
   QString syntaxicColoration(const QString &);
@@ -92,13 +92,13 @@ private:
 
   QAction* m_spellCheckingAct;
   bool m_isSpellCheckingEnabled;
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   QList<QAction *> m_misspelledWordsActs;
   QPoint m_lastPos;
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
   QString m_dictionary;
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
   FindReplaceDialog* m_findReplaceDialog;
 
