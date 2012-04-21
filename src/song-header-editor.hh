@@ -33,6 +33,8 @@ class CCoverDropArea;
 class QLabel;
 class QLineEdit;
 class QBoxLayout;
+class QToolButton;
+class QSpacerItem;
 
 /**
  * \file song-header-editor.hh
@@ -72,14 +74,19 @@ public:
   /// @return the cover
   const QImage & cover();
 
+private:
+  void addNewDiagramButton();
+
+private slots:
+  void onTextEdited(const QString &text);
+  void addDiagram();
+  void removeDiagram();
+
 public slots:
   void update();
 
 signals:
   void contentsChanged();
-
-private slots:
-  void onTextEdited(const QString &text);
 
 private:
   QLineEdit *m_titleLineEdit;
@@ -92,7 +99,9 @@ private:
 
   CSongEditor *m_songEditor;
 
-  QBoxLayout * m_diagramsLayout;
+  QBoxLayout *m_diagramsLayout;
+  QToolButton *m_addDiagramButton;
+  QSpacerItem *m_spacer;
 };
 
 

@@ -79,6 +79,7 @@ private:
 };
 
 class QMouseEvent;
+class QLabel;
 
 /**
  * \file diagram.hh
@@ -110,15 +111,18 @@ protected:
 
 signals:
   void changed();
+  void diagramCloseRequested();
 
 private slots:
   void updateBackground();
+  void updateChordName();
 
 public slots:
-  void editChord();
+  bool editChord();
   void removeChord();
 
 private:
+  QLabel *m_chordName;
   bool m_selected;
 };
 

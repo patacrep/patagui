@@ -228,6 +228,7 @@ void CDiagram::setImportant(bool value)
 CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWidget *parent)
   : QWidget(parent)
   , m_diagram(new CDiagram(gtab, type))
+  , m_chordName(new QLabel)
   , m_selected(false)
 {
   setBackgroundRole(QPalette::Base);
@@ -238,13 +239,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
   setContextMenuPolicy(Qt::ActionsContextMenu);
 
   updateBackground();
-
-  QLabel* chordName = new QLabel(QString("<b>%1</b>").arg(m_diagram->chord()));
-  chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-  if (m_diagram->isImportant())
-    chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(dark);");
-  else
-    chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(mid);");
+  updateChordName();
 
   QAction* action = new QAction(tr("Edit"), parent);
   action->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/16x16/actions/accessories-text-editor.png")));
@@ -259,7 +254,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
   addAction(action);
 
   QBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(chordName);
+  layout->addWidget(m_chordName);
   layout->addWidget(m_diagram);
   setLayout(layout);
 
@@ -267,11 +262,9 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
 }
 
 CDiagramWidget::~CDiagramWidget()
-{
-  delete m_diagram;
-}
+{}
 
-void CDiagramWidget::editChord()
+bool CDiagramWidget::editChord()
 {
   QDialog dialog(this);
   dialog.setWindowTitle(tr("Edit chord"));
@@ -282,6 +275,7 @@ void CDiagramWidget::editChord()
   connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
 
   QLineEdit *chordEdit = new QLineEdit;
+  chordEdit->setMinimumWidth(200);
   chordEdit->setText(m_diagram->toString());
 
   QBoxLayout *layout = new QVBoxLayout;
@@ -291,13 +285,17 @@ void CDiagramWidget::editChord()
 
   if (dialog.exec() == QDialog::Accepted)
     {
+      updateChordName();
       m_diagram->fromString(chordEdit->text());
+      update();
+      return true;
     }
+  return false;
 }
 
 void CDiagramWidget::removeChord()
 {
-  delete m_diagram;
+  emit diagramCloseRequested();
 }
 
 void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
@@ -330,6 +328,16 @@ void CDiagramWidget::updateBackground()
       else
 	setBackgroundRole(QPalette::Base);
     }
+}
+
+void CDiagramWidget::updateChordName()
+{
+  m_chordName->setText(QString("<b>%1</b>").arg(m_diagram->chord()));
+  m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+  if (m_diagram->isImportant())
+    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(dark);");
+  else
+    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(mid);");
 }
 
 bool CDiagramWidget::isSelected() const

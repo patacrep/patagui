@@ -26,6 +26,8 @@
 #include <QScrollArea>
 #include <QLabel>
 #include <QLineEdit>
+#include <QToolButton>
+#include <QSpacerItem>
 
 #include <QFileInfo>
 #include <QFile>
@@ -51,6 +53,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_capoLineEdit(new QLineEdit(this))
   , m_coverLabel(new CCoverDropArea(this))
   , m_songEditor()
+  , m_addDiagramButton(0)
+  , m_spacer(0)
 {
   connect(m_titleLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
@@ -145,11 +149,21 @@ void CSongHeaderEditor::update()
 
   QString gtab;
   foreach (gtab, song().gtabs)
-    m_diagramsLayout->addWidget(new CDiagramWidget(gtab, GuitarChord));
+    {
+      CDiagramWidget *diagram = new CDiagramWidget(gtab, GuitarChord);
+      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+      m_diagramsLayout->addWidget(diagram);
+    }
 
   QString utab;
   foreach (utab, song().utabs)
-    m_diagramsLayout->addWidget(new CDiagramWidget(utab, UkuleleChord));
+    {
+      CDiagramWidget *diagram = new CDiagramWidget(utab, UkuleleChord);
+      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+      m_diagramsLayout->addWidget(diagram);
+    }
+
+  addNewDiagramButton();
 }
 
 void CSongHeaderEditor::onTextEdited(const QString &text)
@@ -185,6 +199,47 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
 const QImage & CSongHeaderEditor::cover()
 {
   return m_coverLabel->cover();
+}
+
+void CSongHeaderEditor::addNewDiagramButton()
+{
+  if(m_addDiagramButton)
+    {
+      m_diagramsLayout->removeItem(m_spacer);
+      delete m_addDiagramButton;
+    }
+
+  m_addDiagramButton = new QToolButton;
+  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
+  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
+  m_diagramsLayout->addWidget(m_addDiagramButton);
+  m_spacer = new QSpacerItem(500, 20, QSizePolicy::Ignored, QSizePolicy::MinimumExpanding);
+  m_diagramsLayout->addSpacerItem(m_spacer);
+}
+
+void CSongHeaderEditor::addDiagram()
+{
+  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{<name>}{<fret>:<strings>}", GuitarChord);
+  if (diagram->editChord())
+    {
+      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+      m_diagramsLayout->addWidget(diagram);
+      addNewDiagramButton();
+    }
+  else
+    delete diagram;
+}
+
+void CSongHeaderEditor::removeDiagram()
+{
+  CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender());
+  if(diagram)
+    {
+      m_diagramsLayout->removeWidget(diagram);
+      disconnect(diagram,0,0,0);
+      diagram->setParent(0);
+      //delete diagram;
+    }
 }
 
 //------------------------------------------------------------------------------
