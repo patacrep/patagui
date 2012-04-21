@@ -275,7 +275,7 @@ bool CDiagramWidget::editChord()
   connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
 
   QLineEdit *chordEdit = new QLineEdit;
-  chordEdit->setMinimumWidth(200);
+  chordEdit->setMinimumWidth(250);
   chordEdit->setText(m_diagram->toString());
 
   QBoxLayout *layout = new QVBoxLayout;
