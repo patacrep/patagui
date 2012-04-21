@@ -24,6 +24,7 @@
 
 enum SbError { WrongDirectory, WrongExtension, Invalid };
 enum SbPriority { LowPriority, MediumPriority, HighPriority };
+enum ChordType { GuitarChord, UkuleleChord };
 
 namespace SbUtils
 {
