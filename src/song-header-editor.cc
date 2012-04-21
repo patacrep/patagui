@@ -26,6 +26,7 @@
 #include <QScrollArea>
 #include <QLabel>
 #include <QLineEdit>
+#include <QComboBox>
 #include <QToolButton>
 #include <QSpacerItem>
 
@@ -48,7 +49,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_titleLineEdit(new QLineEdit(this))
   , m_artistLineEdit(new QLineEdit(this))
   , m_albumLineEdit(new QLineEdit(this))
-  , m_languageLineEdit(new QLineEdit(this))
+  , m_languageComboBox(new QComboBox(this))
   , m_columnCountLineEdit(new QLineEdit(this))
   , m_capoLineEdit(new QLineEdit(this))
   , m_coverLabel(new CCoverDropArea(this))
@@ -56,14 +57,23 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_addDiagramButton(0)
   , m_spacer(0)
 {
+  m_languageComboBox->addItem
+    (QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")), tr("English"));
+  m_languageComboBox->addItem
+    (QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")), tr("French"));
+  m_languageComboBox->addItem
+    (QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")), tr("Spanish"));
+  m_languageComboBox->addItem
+    (QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")), tr("Portuguese"));
+
   connect(m_titleLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_artistLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_albumLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
-  connect(m_languageLineEdit, SIGNAL(textEdited(const QString&)),
-          SLOT(onTextEdited(const QString&)));
+  connect(m_languageComboBox, SIGNAL(currentIndexChanged(const QString&)),
+          SLOT(onLanguageSelected(const QString&)));
   connect(m_columnCountLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_capoLineEdit, SIGNAL(textEdited(const QString&)),
@@ -75,7 +85,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
 
   QBoxLayout *additionalInformationLayout = new QHBoxLayout();
   additionalInformationLayout->setContentsMargins(1, 1, 1, 1);
-  additionalInformationLayout->addWidget(m_languageLineEdit);
+  additionalInformationLayout->addWidget(m_languageComboBox);
   additionalInformationLayout->addWidget(m_columnCountLineEdit);
   additionalInformationLayout->addWidget(m_capoLineEdit);
   additionalInformationLayout->addStretch();
@@ -140,7 +150,9 @@ void CSongHeaderEditor::update()
   m_titleLineEdit->setText(song().title);
   m_artistLineEdit->setText(song().artist);
   m_albumLineEdit->setText(song().album);
-  m_languageLineEdit->setText(QLocale::languageToString(song().locale.language()));
+  m_languageComboBox->setCurrentIndex(m_languageComboBox->findText
+				      (QLocale::languageToString(song().locale.language()),
+				       Qt::MatchContains));
   m_columnCountLineEdit->setText(QString::number(song().columnCount));
   m_capoLineEdit->setText(QString::number(song().capo));
 
@@ -166,33 +178,27 @@ void CSongHeaderEditor::update()
   addNewDiagramButton();
 }
 
+void CSongHeaderEditor::onLanguageSelected(const QString &text)
+{
+  song().locale = QLocale(Song::languageFromString(text), QLocale::AnyCountry);
+}
+
 void CSongHeaderEditor::onTextEdited(const QString &text)
 {
   QLineEdit *currentLineEdit = qobject_cast< QLineEdit* >(sender());
   if (currentLineEdit == m_titleLineEdit)
-    {
-      song().title = text;
-    }
+    song().title = text;
   else if (currentLineEdit == m_artistLineEdit)
-    {
-      song().artist = text;
-    }
+    song().artist = text;
   else if (currentLineEdit == m_albumLineEdit)
-    {
-      song().album = text;
-    }
-  else if (currentLineEdit == m_languageLineEdit)
-    {
-      song().locale = QLocale(Song::languageFromString(text), QLocale::AnyCountry);
-    }
+    song().album = text;
   else if (currentLineEdit == m_columnCountLineEdit)
-    {
-      song().columnCount = text.toInt();
-    }
+    song().columnCount = text.toInt();
   else if (currentLineEdit == m_capoLineEdit)
-    {
-      song().capo = text.toInt();
-    }
+    song().capo = text.toInt();
+  else
+    qWarning() << "CSongHeaderEditor::onTextEdited unknow sender";
+
   emit(contentsChanged());
 }
 
