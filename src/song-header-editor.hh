@@ -30,8 +30,8 @@ class CSongEditor;
 class CDiagram;
 class CCoverDropArea;
 
-class QLabel;
 class QLineEdit;
+class QComboBox;
 class QBoxLayout;
 class QToolButton;
 class QSpacerItem;
@@ -78,6 +78,7 @@ private:
   void addNewDiagramButton();
 
 private slots:
+  void onLanguageSelected(const QString &text);
   void onTextEdited(const QString &text);
   void addDiagram();
   void removeDiagram();
@@ -92,7 +93,7 @@ private:
   QLineEdit *m_titleLineEdit;
   QLineEdit *m_artistLineEdit;
   QLineEdit *m_albumLineEdit;
-  QLineEdit *m_languageLineEdit;
+  QComboBox *m_languageComboBox;
   QLineEdit *m_columnCountLineEdit;
   QLineEdit *m_capoLineEdit;
   CCoverDropArea *m_coverLabel;
