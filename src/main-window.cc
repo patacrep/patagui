@@ -512,7 +512,9 @@ void CMainWindow::open()
 
 void CMainWindow::save(bool forced)
 {
-  if (songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
+  if (songbook()->filename().isEmpty() ||
+      songbook()->filename().endsWith("default.sb") ||
+      !songbook()->filename().compare(".sb"))
     {
       if (forced)
 	songbook()->setFilename(QString("%1/books/default.sb").arg(workingPath()));
@@ -528,7 +530,7 @@ void CMainWindow::saveAs()
 {
   QString filename = QFileDialog::getSaveFileName(this,
 						  tr("Save as"),
-						  workingPath(),
+						  QString("%1/books").arg(workingPath()),
 						  tr("Songbook (*.sb)"));
 
   if (!filename.isEmpty())

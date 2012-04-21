@@ -272,11 +272,11 @@ int CLibrary::columnCount(const QModelIndex &) const
   return 6;
 }
 
-void CLibrary::addSong(const Song &song, bool reset)
+void CLibrary::addSong(const Song &song, bool resetModel)
 {
   m_songs << song;
 
-  if(reset)
+  if(resetModel)
     {
       reset();
       emit(wasModified());

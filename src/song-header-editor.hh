@@ -24,13 +24,17 @@
 #include "song.hh"
 
 #include <QString>
+#include <QLabel>
 
 class CSongEditor;
 class CDiagram;
+class CCoverDropArea;
 
 class QLabel;
 class QLineEdit;
 class QBoxLayout;
+class QToolButton;
+class QSpacerItem;
 
 /**
  * \file song-header-editor.hh
@@ -70,23 +74,19 @@ public:
   /// @return the cover
   const QImage & cover();
 
-  /// Setter on the song's cover
-  /// @para cover the cover as an image object
-  void setCover(const QImage &cover);
+private:
+  void addNewDiagramButton();
 
-  /// Setter on the song's cover
-  /// @para cover the cover as a file object
-  void setCover(const QString &path);
-
+private slots:
+  void onTextEdited(const QString &text);
+  void addDiagram();
+  void removeDiagram();
 
 public slots:
   void update();
 
 signals:
   void contentsChanged();
-
-private slots:
-  void onTextEdited(const QString &text);
 
 private:
   QLineEdit *m_titleLineEdit;
@@ -95,13 +95,66 @@ private:
   QLineEdit *m_languageLineEdit;
   QLineEdit *m_columnCountLineEdit;
   QLineEdit *m_capoLineEdit;
-  QLabel *m_coverLabel;
-
-  QImage m_cover;
+  CCoverDropArea *m_coverLabel;
 
   CSongEditor *m_songEditor;
 
-  QBoxLayout * m_diagramsLayout;
+  QBoxLayout *m_diagramsLayout;
+  QToolButton *m_addDiagramButton;
+  QSpacerItem *m_spacer;
+};
+
+
+class QMimeData;
+class QDragEnterEvent;
+class QDragMoveEvent;
+class QDragLeaveEvent;
+class QDragDropEvent;
+
+class CCoverDropArea : public QLabel
+{
+  Q_OBJECT
+
+  public:
+  CCoverDropArea(QWidget *parent = 0);
+
+  Song & song();
+  void setSong(const Song & song);
+
+  /// Getter on the song's cover
+  /// @return the cover
+  const QImage & cover();
+
+  /// Setter on the song's cover
+  /// @para cover the cover as an image object
+  void setCover(const QImage &cover);
+
+  /// Setter on the song's cover
+  /// @para cover the cover as a file object
+  void setCover(const QString &path);
+
+private slots:
+  void selectCover();
+
+public slots:
+  void clear();
+  void update();
+
+signals:
+  void changed(const QMimeData *mimeData = 0);
+
+protected:
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dragMoveEvent(QDragMoveEvent *event);
+  void dragLeaveEvent(QDragLeaveEvent *event);
+  void dropEvent(QDropEvent *event);
+  virtual void mousePressEvent(QMouseEvent *event);
+  virtual void mouseReleaseEvent(QMouseEvent *event);
+
+private:
+  Song m_song;
+  QString m_filename;
+  QImage m_cover;
 };
 
 #endif // __SONG_HEADER_EDITOR_HH__

@@ -23,17 +23,23 @@
 #include <QAction>
 #include <QLabel>
 #include <QPainter>
+#include <QLineEdit>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QBoxLayout>
+#include <QMouseEvent>
 #include <QDebug>
 
-QRegExp CDiagram::reChord("([^\\}]+)");
-QRegExp CDiagram::reFret("\\{(\\d):");
+QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
+QRegExp CDiagram::reFret("\\\\[ug]tab[\\*]?\\{.+\\{(\\d):");
 QRegExp CDiagram::reStringsFret(":([^\\}]+)");
-QRegExp CDiagram::reStringsNoFret("\\{([^\\}]+)");
+QRegExp CDiagram::reStringsNoFret("\\\\[ug]tab[\\*]?\\{.+\\{([^\\}]+)");
 
-CDiagram::CDiagram(const QString & gtab, QWidget *parent)
+CDiagram::CDiagram(const QString & chord, const ChordType & type, QWidget *parent)
   : QWidget(parent)
+  , m_type(type)
 {
-  fromString(gtab);
+  fromString(chord);
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
 }
@@ -54,28 +60,59 @@ QSize CDiagram::sizeHint() const
 
 QString CDiagram::toString()
 {
-  return QString("\\gtab{%1}{%2:%3}")
-    .arg(chord().replace(QChar(0x266D),"&"))
-    .arg(fret())
-    .arg(strings());
+  QString str;
+  switch(m_type)
+    {
+    case GuitarChord:
+      str.append("\\gtab");
+      break;
+    case UkuleleChord:
+      str.append("\\utab");
+      break;
+    default:
+      qWarning() << tr("CDiagram::toString unsupported chord type");
+    }
+
+  if(isImportant())
+    str.append("*");
+
+  //the chord name such as Am
+  str.append( QString("{%1}{").arg(chord().replace(QChar(0x266D),"&")) );
+  //the fret
+  str.append(QString("%2").arg(fret()));
+  //the strings
+  if(!fret().isEmpty())
+    str.append(":");
+  str.append(QString("%3}").arg(strings()));
+
+  return str;
 }
 
-void CDiagram::fromString(const QString & gtab)
+void CDiagram::fromString(const QString & str)
 {
-  reChord.indexIn(gtab);
+  if(str.contains("gtab"))
+    m_type = GuitarChord;
+  else if(str.contains("utab"))
+    m_type = UkuleleChord;
+  else
+    qWarning() << tr("CDiagram::fromString unsupported chord type");
+
+  setImportant(str.contains("*"));
+
+  reChord.indexIn(str);
   setChord(reChord.cap(1).replace("&",QChar(0x266D)));
 
-  reFret.indexIn(gtab);
+  reFret.indexIn(str);
   setFret(reFret.cap(1));
 
   if(fret().isEmpty())
     {
-      reStringsNoFret.indexIn(gtab);
+      reStringsNoFret.indexIn(str);
       setStrings(reStringsNoFret.cap(1));
     }
   else
     {
-      reStringsFret.indexIn(gtab);
+      reStringsFret.indexIn(str);
       setStrings(reStringsFret.cap(1));
     }
 }
@@ -166,56 +203,153 @@ void CDiagram::setStrings(const QString & str)
   m_strings = str;
 }
 
+ChordType CDiagram::type() const
+{
+  return m_type;
+}
+
+void CDiagram::setType(const ChordType & type)
+{
+  m_type = type;
+}
+
+bool CDiagram::isImportant() const
+{
+  return m_important;
+}
+
+void CDiagram::setImportant(bool value)
+{
+  m_important = value;
+}
+
 //----------------------------------------------------------------------------
 
-CDiagramWidget::CDiagramWidget(const QString & gtab, QWidget *parent)
+CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWidget *parent)
   : QWidget(parent)
-  , m_diagram(new CDiagram(gtab))
+  , m_diagram(new CDiagram(gtab, type))
+  , m_chordName(new QLabel)
+  , m_selected(false)
 {
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
   setMinimumWidth(120);
   setMaximumWidth(120);
+  setToolTip(m_diagram->toString());
+  setContextMenuPolicy(Qt::ActionsContextMenu);
 
-  QToolBar* bar = new QToolBar;
-  bar->setFloatable(false);
-  bar->setMovable(false);
-  bar->setIconSize(QSize(16,16));
-  bar->setStyleSheet("border:0;padding:2;");
+  updateBackground();
+  updateChordName();
 
-  QLabel* chordName = new QLabel(QString("<b>%1</b>").arg(m_diagram->chord()));
-  chordName->setAlignment(Qt::AlignHCenter);
-  chordName->setContentsMargins(0,0,0,0);
-
-  QAction* action = new QAction(tr("Edit"), this);
+  QAction* action = new QAction(tr("Edit"), parent);
   action->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/16x16/actions/accessories-text-editor.png")));
   action->setStatusTip(tr("Edit the chord"));
   connect(action, SIGNAL(triggered()), this, SLOT(editChord()));
-  bar->addAction(action);
+  addAction(action);
 
-  action = new QAction(tr("Delete"), this);
+  action = new QAction(tr("Delete"), parent);
   action->setIcon(QIcon::fromTheme("user-trash", QIcon(":/icons/tango/16x16/actions/user-trash.png")));
   action->setStatusTip(tr("Remove this chord"));
   connect(action, SIGNAL(triggered()), this, SLOT(removeChord()));
-  bar->addAction(action);
+  addAction(action);
 
   QBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(chordName);
+  layout->addWidget(m_chordName);
   layout->addWidget(m_diagram);
-  layout->addWidget(bar);
   setLayout(layout);
+
+  connect(this, SIGNAL(changed()), SLOT(updateBackground()));
 }
 
 CDiagramWidget::~CDiagramWidget()
-{
-}
+{}
 
-void CDiagramWidget::editChord()
+bool CDiagramWidget::editChord()
 {
-  qDebug() << "Edit chord: not implemented yet";
+  QDialog dialog(this);
+  dialog.setWindowTitle(tr("Edit chord"));
+
+  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
+						     QDialogButtonBox::Cancel);
+  connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
+
+  QLineEdit *chordEdit = new QLineEdit;
+  chordEdit->setMinimumWidth(200);
+  chordEdit->setText(m_diagram->toString());
+
+  QBoxLayout *layout = new QVBoxLayout;
+  layout->addWidget(chordEdit);
+  layout->addWidget(buttonBox);
+  dialog.setLayout(layout);
+
+  if (dialog.exec() == QDialog::Accepted)
+    {
+      updateChordName();
+      m_diagram->fromString(chordEdit->text());
+      update();
+      return true;
+    }
+  return false;
 }
 
 void CDiagramWidget::removeChord()
 {
-  qDebug() << "Remove chord: not implemented yet";
+  emit diagramCloseRequested();
+}
+
+void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+  editChord();
+}
+
+void CDiagramWidget::mousePressEvent(QMouseEvent *event)
+{
+  setSelected(true);
+  emit changed();
+}
+
+void CDiagramWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  setSelected(false);
+  emit changed();
+}
+
+void CDiagramWidget::updateBackground()
+{
+  if ( isSelected() )
+    {
+      setBackgroundRole(QPalette::Highlight);
+    }
+  else
+    {
+      if (m_diagram->isImportant())
+	setBackgroundRole(QPalette::Mid);
+      else
+	setBackgroundRole(QPalette::Base);
+    }
+}
+
+void CDiagramWidget::updateChordName()
+{
+  m_chordName->setText(QString("<b>%1</b>").arg(m_diagram->chord()));
+  m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+  if (m_diagram->isImportant())
+    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(dark);");
+  else
+    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(mid);");
+}
+
+bool CDiagramWidget::isSelected() const
+{
+  return m_selected;
+}
+
+void CDiagramWidget::setSelected(bool value)
+{
+  if ( value != m_selected )
+    {
+      m_selected = value;
+      emit changed();
+    }
 }
