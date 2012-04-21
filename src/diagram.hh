@@ -20,6 +20,7 @@
 #define __DIAGRAM_HH__
 
 #include "diagram.hh"
+#include "utils/utils.hh"
 
 #include <QWidget>
 #include <QString>
@@ -35,7 +36,7 @@ class CDiagram : public QWidget
   Q_OBJECT
 
 public:
-  CDiagram(const QString & chord, QWidget *parent = 0);
+  CDiagram(const QString & chord, const ChordType & type = GuitarChord, QWidget *parent = 0);
   ~CDiagram();
 
   QString toString();
@@ -50,6 +51,12 @@ public:
   QString strings() const;
   void setStrings(const QString & chord);
 
+  ChordType type() const;
+  void setType(const ChordType & type);
+
+  bool isImportant() const;
+  void setImportant(bool value);
+
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
 
@@ -59,15 +66,19 @@ protected:
 private:
   void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
 
+  ChordType m_type;
   QString m_chord;
   QString m_fret;
   QString m_strings;
+  bool m_important;
 
   static QRegExp reChord;
   static QRegExp reFret;
   static QRegExp reStringsFret;
   static QRegExp reStringsNoFret;
 };
+
+class QMouseEvent;
 
 /**
  * \file diagram.hh
@@ -84,15 +95,31 @@ class CDiagramWidget : public QWidget
 
   /// Constructor.
   /// @param chord a gtab macro content such as B&m}{1:X0222 representing a chord
-  CDiagramWidget(const QString & chord, QWidget *parent = 0);
+  CDiagramWidget(const QString & chord, const ChordType & type = GuitarChord, QWidget *parent = 0);
 
   ///Destructor.
   ~CDiagramWidget();
+
+  bool isSelected() const;
+  void setSelected(bool value);
+
+protected:
+  virtual void mouseDoubleClickEvent(QMouseEvent *event);
+  virtual void mousePressEvent(QMouseEvent *event);
+  virtual void mouseReleaseEvent(QMouseEvent *event);
+
+signals:
+  void changed();
+
+private slots:
+  void updateBackground();
 
 public slots:
   void editChord();
   void removeChord();
 
+private:
+  bool m_selected;
 };
 
 #endif // __DIAGRAM_HH__
