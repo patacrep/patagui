@@ -36,8 +36,8 @@ QRegExp Song::reColumnCount("\\\\songcolumns\\{([^\\}]+)");
 QRegExp Song::reCapo("\\\\capo\\{([^\\}]+)");
 QRegExp Song::reCover("\\\\cover");
 QRegExp Song::reBlankLine("^\\s*$");
-QRegExp Song::reGtab("(\\\\gtab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+)");
-QRegExp Song::reUtab("(\\\\utab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+)");
+QRegExp Song::reGtab("(\\\\gtab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+\\})");
+QRegExp Song::reUtab("(\\\\utab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+\\})");
 
 QRegExp Song::reBegin("\\\\begin");
 QRegExp Song::reEnd("\\\\end");
