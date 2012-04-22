@@ -25,7 +25,7 @@
 
 class QNetworkAccessManager;
 class QNetworkReply;
-class QLineEdit;
+class QComboBox;
 
 class CFileChooser;
 class CMainWindow;
@@ -76,7 +76,7 @@ private:
   CMainWindow * parent();
 
   QNetworkAccessManager *m_manager;
-  QLineEdit *m_url;
+  QComboBox *m_url;
   CFileChooser *m_path;
 };
 
