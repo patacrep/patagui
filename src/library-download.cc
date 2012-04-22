@@ -71,9 +71,11 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
     QNetworkProxy::setApplicationProxy(proxy);
   }
 
-  m_url = new QLineEdit();
+  m_url = new QComboBox;
+  m_url->setEditable(true);
   // set the default download URL to the songbook repository HEAD
-  m_url->setText("http://git.lohrun.net/?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
+  m_url->addItem("http://git.lohrun.net/?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
+  m_url->addItem("http://www.patacrep.com/data/documents/songbook.tar.gz");
 
   m_path = new CFileChooser();
   m_path->setFileMode(QFileDialog::Directory);
@@ -115,11 +117,11 @@ bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
 
 void CLibraryDownload::downloadStart()
 {
-  if (!m_url->text().isEmpty())
+  if (!m_url->currentText().isEmpty())
     {
       // check if there already is a songbook directory in the specified path
       QDir dir = m_path->directory();
-      QUrl url(m_url->text());
+      QUrl url(m_url->currentText());
       QNetworkRequest request;
       request.setUrl(url);
       request.setRawHeader("User-Agent", "songbook-client a1");
