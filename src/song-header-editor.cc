@@ -79,9 +79,9 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   connect(m_capoLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
 
-  m_titleLineEdit->setMinimumWidth(200);
-  m_artistLineEdit->setMinimumWidth(200);
-  m_albumLineEdit->setMinimumWidth(200);
+  m_titleLineEdit->setMinimumWidth(150);
+  m_artistLineEdit->setMinimumWidth(150);
+  m_albumLineEdit->setMinimumWidth(150);
 
   QBoxLayout *additionalInformationLayout = new QHBoxLayout();
   additionalInformationLayout->setContentsMargins(1, 1, 1, 1);
@@ -110,10 +110,10 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   diagramsScrollArea->setWidget(scroll);
   diagramsScrollArea->setBackgroundRole(QPalette::Dark);
   diagramsScrollArea->setWidgetResizable(true);
+  diagramsScrollArea->setMinimumWidth(350);
   diagramsScrollArea->setMinimumHeight(150);
   diagramsScrollArea->setMaximumHeight(160);
 
-  setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   setMaximumHeight(160);
 
   QBoxLayout *mainLayout = new QHBoxLayout;
