@@ -29,6 +29,7 @@
 class CSongEditor;
 class CDiagram;
 class CCoverDropArea;
+class LineEdit;
 
 class QLineEdit;
 class QComboBox;
@@ -64,7 +65,7 @@ public:
 
   /// Getter on the embedding SongEditor
   /// @return the embedding song editor
-  CSongEditor * songEditor();
+  CSongEditor * songEditor() const;
 
   /// Setter on the embedding SongEditor
   /// @param songEditor the embedding song editor
@@ -73,6 +74,9 @@ public:
   /// Getter on the song's cover
   /// @return the cover
   const QImage & cover();
+
+  LineEdit* titleLineEdit() const;
+  LineEdit* artistLineEdit() const;
 
 private:
   void addNewDiagramButton();
@@ -90,9 +94,9 @@ signals:
   void contentsChanged();
 
 private:
-  QLineEdit *m_titleLineEdit;
-  QLineEdit *m_artistLineEdit;
-  QLineEdit *m_albumLineEdit;
+  LineEdit *m_titleLineEdit;
+  LineEdit *m_artistLineEdit;
+  LineEdit *m_albumLineEdit;
   QComboBox *m_languageComboBox;
   QLineEdit *m_columnCountLineEdit;
   QLineEdit *m_capoLineEdit;

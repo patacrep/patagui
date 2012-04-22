@@ -22,6 +22,8 @@
 #include "song-editor.hh"
 #include "diagram.hh"
 
+#include "utils/lineedit.hh"
+
 #include <QBoxLayout>
 #include <QScrollArea>
 #include <QLabel>
@@ -46,9 +48,9 @@
 
 CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   : QWidget(parent)
-  , m_titleLineEdit(new QLineEdit(this))
-  , m_artistLineEdit(new QLineEdit(this))
-  , m_albumLineEdit(new QLineEdit(this))
+  , m_titleLineEdit(new LineEdit(this))
+  , m_artistLineEdit(new LineEdit(this))
+  , m_albumLineEdit(new LineEdit(this))
   , m_languageComboBox(new QComboBox(this))
   , m_columnCountLineEdit(new QLineEdit(this))
   , m_capoLineEdit(new QLineEdit(this))
@@ -134,7 +136,7 @@ Song & CSongHeaderEditor::song()
   return songEditor()->song();
 }
 
-CSongEditor * CSongHeaderEditor::songEditor()
+CSongEditor * CSongHeaderEditor::songEditor() const
 {
   return m_songEditor;
 }
@@ -145,11 +147,33 @@ void CSongHeaderEditor::setSongEditor(CSongEditor *songEditor)
   update();
 }
 
+LineEdit * CSongHeaderEditor::titleLineEdit() const
+{
+  return m_titleLineEdit;
+}
+
+LineEdit * CSongHeaderEditor::artistLineEdit() const
+{
+  return m_artistLineEdit;
+}
+
 void CSongHeaderEditor::update()
 {
-  m_titleLineEdit->setText(song().title);
-  m_artistLineEdit->setText(song().artist);
-  m_albumLineEdit->setText(song().album);
+  if (song().title.isEmpty())
+    m_titleLineEdit->setInactiveText(tr("Song title"));
+  else
+    m_titleLineEdit->setText(song().title);
+
+  if (song().artist.isEmpty())
+    m_artistLineEdit->setInactiveText(tr("Artist"));
+  else
+    m_artistLineEdit->setText(song().artist);
+
+  if (song().album.isEmpty())
+    m_albumLineEdit->setInactiveText(tr("Album"));
+  else
+    m_albumLineEdit->setText(song().album);
+
   m_languageComboBox->setCurrentIndex(m_languageComboBox->findText
 				      (QLocale::languageToString(song().locale.language()),
 				       Qt::MatchContains));
