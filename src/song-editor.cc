@@ -28,6 +28,7 @@
 #include "song-highlighter.hh"
 #include "library.hh"
 #include "utils/utils.hh"
+#include "utils/lineedit.hh"
 
 #include <QFile>
 #include <QMenu>
@@ -235,6 +236,8 @@ void CSongEditor::save()
 {
   // get the song contents
   parseText();
+  if (!checkSongMandatoryFields())
+    return;
 
   // save the song and add it to the library list
   library()->createArtistDirectory(m_song);
@@ -242,14 +245,38 @@ void CSongEditor::save()
     library()->saveCover(m_song, m_songHeaderEditor->cover());
   library()->saveSong(m_song);
   library()->removeSong(m_song.path);
-  library()->addSong(m_song);
+  library()->addSong(m_song, true);
 
   setNewSong(false);
   setModified(false);
   setWindowTitle(m_song.title);
   emit(labelChanged(windowTitle()));
+  setStatusTip(QString(tr("Song saved in: %1")).arg(song().path));
 }
 
+bool CSongEditor::checkSongMandatoryFields()
+{
+  QString css = QString("border: 1px solid red; "
+			"border-radius: 2px; ");
+
+  if (song().title.isEmpty())
+    {
+      setStatusTip(tr("Invalid song title"));
+      m_songHeaderEditor->titleLineEdit()->setStyleSheet(css);
+      return false;
+    }
+  m_songHeaderEditor->titleLineEdit()->setStyleSheet(QString());
+
+  if (song().artist.isEmpty())
+    {
+      setStatusTip(tr("Invalid artist name"));
+      m_songHeaderEditor->artistLineEdit()->setStyleSheet(css);
+      return false;
+    }
+  m_songHeaderEditor->artistLineEdit()->setStyleSheet(QString());
+
+  return true;
+}
 void CSongEditor::parseText()
 {
   m_song.lyrics.clear();

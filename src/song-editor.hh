@@ -122,7 +122,7 @@ private slots:
 
 private:
   void parseText();
-
+  bool checkSongMandatoryFields();
   void saveNewSong();
   void createNewSong();
 
