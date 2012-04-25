@@ -25,6 +25,7 @@
 #include <QTextCursor>
 
 class QKeyEvent;
+class QCompleter;
 class CSongHighlighter;
 
 /**
@@ -50,22 +51,26 @@ public:
   void installHighlighter();
 
   CSongHighlighter* highlighter() const;
+  QCompleter* completer() const;
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 
 private slots:
   void highlight();
+  void insertCompletion(const QString &completion);
 
 private:
   void indentSelection();
   void indentLine(const QTextCursor &cursor);
   void trimLine(const QTextCursor &cursor);
+  QString textUnderCursor() const;
 
   QTextEdit::ExtraSelection environmentSelection(const SongEnvironment & env,
 						 const QTextCursor & cursor);
 
   CSongHighlighter* m_highlighter;
+  QCompleter* m_completer;
 
   QColor m_verseColor;
   QColor m_chorusColor;

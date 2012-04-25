@@ -25,15 +25,42 @@
 #include <QTextBlock>
 #include <QDebug>
 
+#include <QCompleter>
+#include <QAbstractItemView>
+#include <QModelIndex>
+#include <QAbstractItemModel>
+#include <QScrollBar>
+
 CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   : CodeEditor(parent)
   , m_highlighter(0)
+  , m_completer(0)
 {
   setUndoRedoEnabled(true);
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlight()));
 
   CSongHighlighter *highlighter = new CSongHighlighter(document());
   Q_UNUSED(highlighter);
+
+  QStringList wordList = QStringList()
+    << "\\begin{verse}" << "\\end{verse}"
+    << "\\begin{verse*}" << "\\end{verse*}"
+    << "\\begin{chorus}" << "\\end{chorus}"
+    << "\\begin{bridge}" << "\\end{bridge}"
+    << "\\rep"      << "\\echo"
+    << "\\image"    <<  "\\nolyrics"
+    << "\\musicnote" << "\\textnote"
+    << "\\dots"  << "\\lilypond"
+    << "\\Intro" << "\\Rythm"
+    << "\\Outro" << "\\Bridge"
+    << "\\Verse" << "\\Chorus"
+    << "\\Pattern" << "\\Solo";
+
+  m_completer = new QCompleter(wordList, this);
+  m_completer->setWidget(this);
+  m_completer->setCompletionMode(QCompleter::PopupCompletion);
+  QObject::connect(m_completer, SIGNAL(activated(QString)),
+		   this, SLOT(insertCompletion(QString)));
   readSettings();
 }
 
@@ -85,12 +112,76 @@ void CSongCodeEditor::installHighlighter()
   m_highlighter = new CSongHighlighter(document());
 }
 
+void CSongCodeEditor::insertCompletion(const QString& completion)
+{
+  if (completer()->widget() != this)
+    return;
+  QTextCursor cursor = textCursor();
+  int extra = completion.length() - completer()->completionPrefix().length();
+  cursor.movePosition(QTextCursor::Left);
+  cursor.movePosition(QTextCursor::EndOfWord);
+  cursor.insertText(completion.right(extra));
+  setTextCursor(cursor);
+}
+
+QString CSongCodeEditor::textUnderCursor() const
+{
+  QTextCursor cursor = textCursor();
+  cursor.select(QTextCursor::WordUnderCursor);
+  return cursor.selectedText();
+}
+
 void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
 {
   if (event->key() == Qt::Key_Tab)
-    indentSelection();
-  else
+    {
+      indentSelection();
+      return;
+    }
+  else if (completer() && completer()->popup()->isVisible())
+    {
+      // The following keys are forwarded by the completer to the widget
+      switch (event->key())
+	{
+	case Qt::Key_Enter:
+	case Qt::Key_Return:
+	case Qt::Key_Escape:
+	case Qt::Key_Backtab:
+	  event->ignore();
+	  return; // let the completer do default behavior
+	default:
+	  break;
+	}
+    }
+
+  bool isShortcut = ((event->modifiers() & Qt::ControlModifier) && event->key() == Qt::Key_Space); // CTRL+Space
+  if (!completer() || !isShortcut) // do not process the shortcut when we have a completer
     QPlainTextEdit::keyPressEvent(event);
+
+  const bool ctrlOrShift = event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
+  if (!completer() || (ctrlOrShift && event->text().isEmpty()))
+    return;
+
+  static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+  bool hasModifier = (event->modifiers() != Qt::NoModifier) && !ctrlOrShift;
+  QString completionPrefix = textUnderCursor();
+
+  if (!isShortcut && (hasModifier || event->text().isEmpty()|| completionPrefix.length() < 3
+		      || eow.contains(event->text().right(1))))
+    {
+      completer()->popup()->hide();
+      return;
+    }
+
+  if (completionPrefix != completer()->completionPrefix())
+    {
+      completer()->setCompletionPrefix(completionPrefix);
+      completer()->popup()->setCurrentIndex(completer()->completionModel()->index(0, 0));
+    }
+  QRect cr = cursorRect();
+  cr.setWidth(completer()->popup()->sizeHintForColumn(0)
+	      + completer()->popup()->verticalScrollBar()->sizeHint().width());
+  completer()->complete(cr); // popup it up!
 }
 
 void CSongCodeEditor::highlight()
@@ -234,4 +325,9 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
 CSongHighlighter * CSongCodeEditor::highlighter() const
 {
   return m_highlighter;
+}
+
+QCompleter * CSongCodeEditor::completer() const
+{
+  return m_completer;
 }
