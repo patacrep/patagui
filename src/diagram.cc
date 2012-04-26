@@ -288,6 +288,7 @@ bool CDiagramWidget::editChord()
       updateChordName();
       m_diagram->fromString(chordEdit->text());
       update();
+      emit diagramChanged();
       return true;
     }
   return false;
@@ -352,4 +353,14 @@ void CDiagramWidget::setSelected(bool value)
       m_selected = value;
       emit changed();
     }
+}
+
+QString CDiagramWidget::toString()
+{
+  return m_diagram->toString();
+}
+
+ChordType CDiagramWidget::type() const
+{
+  return m_diagram->type();
 }

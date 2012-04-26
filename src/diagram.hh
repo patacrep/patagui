@@ -104,6 +104,9 @@ class CDiagramWidget : public QWidget
   bool isSelected() const;
   void setSelected(bool value);
 
+  QString toString();
+  ChordType type() const;
+
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event);
   virtual void mousePressEvent(QMouseEvent *event);
@@ -112,6 +115,7 @@ protected:
 signals:
   void changed();
   void diagramCloseRequested();
+  void diagramChanged();
 
 private slots:
   void updateBackground();
