@@ -27,7 +27,7 @@
 #include <QBoxLayout>
 #include <QScrollArea>
 #include <QLabel>
-#include <QLineEdit>
+#include <QSpinBox>
 #include <QComboBox>
 #include <QToolButton>
 #include <QSpacerItem>
@@ -52,8 +52,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_artistLineEdit(new LineEdit(this))
   , m_albumLineEdit(new LineEdit(this))
   , m_languageComboBox(new QComboBox(this))
-  , m_columnCountLineEdit(new QLineEdit(this))
-  , m_capoLineEdit(new QLineEdit(this))
+  , m_columnCountSpinBox(new QSpinBox(this))
+  , m_capoSpinBox(new QSpinBox(this))
   , m_coverLabel(new CCoverDropArea(this))
   , m_songEditor()
   , m_addDiagramButton(0)
@@ -67,6 +67,24 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
     (QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")), tr("Spanish"));
   m_languageComboBox->addItem
     (QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")), tr("Portuguese"));
+  m_languageComboBox->setToolTip(tr("Language"));
+
+  QLabel *columnCountLabel = new QLabel(this);
+  columnCountLabel->setPixmap(QIcon(":/icons/songbook/22x22/columns.png").pixmap(22,22));
+  m_columnCountSpinBox->setToolTip(tr("Columns"));
+  m_columnCountSpinBox->setRange(1,3);
+
+  QLabel *capoLabel = new QLabel(this);
+  capoLabel->setPixmap(QIcon(":/icons/songbook/22x22/capo.png").pixmap(22,22));
+  m_capoSpinBox->setToolTip(tr("Capo"));
+  m_capoSpinBox->setRange(0,9);
+
+  m_titleLineEdit->setMinimumWidth(150);
+  m_titleLineEdit->setToolTip(tr("Song title"));
+  m_artistLineEdit->setMinimumWidth(150);
+  m_artistLineEdit->setToolTip(tr("Artist"));
+  m_albumLineEdit->setMinimumWidth(150);
+  m_albumLineEdit->setToolTip(tr("Album"));
 
   connect(m_titleLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
@@ -75,21 +93,19 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   connect(m_albumLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_languageComboBox, SIGNAL(currentIndexChanged(const QString&)),
-          SLOT(onLanguageSelected(const QString&)));
-  connect(m_columnCountLineEdit, SIGNAL(textEdited(const QString&)),
-          SLOT(onTextEdited(const QString&)));
-  connect(m_capoLineEdit, SIGNAL(textEdited(const QString&)),
-          SLOT(onTextEdited(const QString&)));
-
-  m_titleLineEdit->setMinimumWidth(150);
-  m_artistLineEdit->setMinimumWidth(150);
-  m_albumLineEdit->setMinimumWidth(150);
+          SLOT(onIndexChanged(const QString&)));
+  connect(m_columnCountSpinBox, SIGNAL(valueChanged(int)),
+          SLOT(onValueChanged(int)));
+  connect(m_capoSpinBox, SIGNAL(valueChanged(int)),
+          SLOT(onValueChanged(int)));
 
   QBoxLayout *additionalInformationLayout = new QHBoxLayout();
   additionalInformationLayout->setContentsMargins(1, 1, 1, 1);
   additionalInformationLayout->addWidget(m_languageComboBox);
-  additionalInformationLayout->addWidget(m_columnCountLineEdit);
-  additionalInformationLayout->addWidget(m_capoLineEdit);
+  additionalInformationLayout->addWidget(columnCountLabel);
+  additionalInformationLayout->addWidget(m_columnCountSpinBox);
+  additionalInformationLayout->addWidget(capoLabel);
+  additionalInformationLayout->addWidget(m_capoSpinBox);
   additionalInformationLayout->addStretch();
 
   QBoxLayout *songInformationLayout = new QVBoxLayout();
@@ -177,8 +193,8 @@ void CSongHeaderEditor::update()
   m_languageComboBox->setCurrentIndex(m_languageComboBox->findText
 				      (QLocale::languageToString(song().locale.language()),
 				       Qt::MatchContains));
-  m_columnCountLineEdit->setText(QString::number(song().columnCount));
-  m_capoLineEdit->setText(QString::number(song().capo));
+  m_columnCountSpinBox->setValue(song().columnCount);
+  m_capoSpinBox->setValue(song().capo);
 
   m_coverLabel->setSong(song());
   m_coverLabel->update();
@@ -202,9 +218,23 @@ void CSongHeaderEditor::update()
   addNewDiagramButton();
 }
 
-void CSongHeaderEditor::onLanguageSelected(const QString &text)
+void CSongHeaderEditor::onIndexChanged(const QString &text)
 {
   song().locale = QLocale(Song::languageFromString(text), QLocale::AnyCountry);
+  emit(contentsChanged());
+}
+
+void CSongHeaderEditor::onValueChanged(int value)
+{
+  QSpinBox *currentSpinBox = qobject_cast< QSpinBox* >(sender());
+  if (currentSpinBox == m_columnCountSpinBox)
+    song().columnCount = value;
+  else if (currentSpinBox == m_capoSpinBox)
+    song().capo = value;
+  else
+    qWarning() << "CSongHeaderEditor::onValueChanged unknow sender";
+
+  emit(contentsChanged());
 }
 
 void CSongHeaderEditor::onTextEdited(const QString &text)
@@ -216,10 +246,6 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
     song().artist = text;
   else if (currentLineEdit == m_albumLineEdit)
     song().album = text;
-  else if (currentLineEdit == m_columnCountLineEdit)
-    song().columnCount = text.toInt();
-  else if (currentLineEdit == m_capoLineEdit)
-    song().capo = text.toInt();
   else
     qWarning() << "CSongHeaderEditor::onTextEdited unknow sender";
 
