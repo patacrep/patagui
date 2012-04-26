@@ -268,10 +268,12 @@ void CSongHeaderEditor::onDiagramChanged()
   song().gtabs = QStringList();
   for(int i=0; i < m_diagramsLayout->count(); ++i)
     if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_diagramsLayout->itemAt(i)->widget()))
-      if (diagram->type() == GuitarChord)
-	song().gtabs << diagram->toString();
-      else if (diagram->type() == UkuleleChord)
-	song().utabs << diagram->toString();
+      {
+	if (diagram->type() == GuitarChord)
+	  song().gtabs << diagram->toString();
+	else if (diagram->type() == UkuleleChord)
+	  song().utabs << diagram->toString();
+      }
 
   emit(contentsChanged());
 }
