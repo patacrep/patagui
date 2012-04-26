@@ -47,6 +47,7 @@ struct Song
   bool isLilypond;
   int columnCount;
   int capo;
+  int transpose;
   QStringList gtabs;
   QStringList utabs;
   QStringList lyrics;
@@ -66,6 +67,7 @@ struct Song
   static QRegExp reLanguage;
   static QRegExp reColumnCount;
   static QRegExp reCapo;
+  static QRegExp reTranspose;
   static QRegExp reCover;
   static QRegExp reBlankLine;
   static QRegExp reGtab;

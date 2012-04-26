@@ -54,6 +54,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_languageComboBox(new QComboBox(this))
   , m_columnCountSpinBox(new QSpinBox(this))
   , m_capoSpinBox(new QSpinBox(this))
+  , m_transposeSpinBox(new QSpinBox(this))
   , m_coverLabel(new CCoverDropArea(this))
   , m_songEditor()
   , m_addDiagramButton(0)
@@ -78,6 +79,11 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   capoLabel->setPixmap(QIcon(":/icons/songbook/22x22/capo.png").pixmap(22,22));
   m_capoSpinBox->setToolTip(tr("Capo"));
   m_capoSpinBox->setRange(0,9);
+
+  QLabel *transposeLabel = new QLabel(this);
+  transposeLabel->setPixmap(QIcon(":/icons/songbook/22x22/transpose.png").pixmap(22,22));
+  m_transposeSpinBox->setToolTip(tr("Transposition"));
+  m_transposeSpinBox->setRange(-14,14);
 
   m_titleLineEdit->setMinimumWidth(150);
   m_titleLineEdit->setToolTip(tr("Song title"));
@@ -106,6 +112,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   additionalInformationLayout->addWidget(m_columnCountSpinBox);
   additionalInformationLayout->addWidget(capoLabel);
   additionalInformationLayout->addWidget(m_capoSpinBox);
+  additionalInformationLayout->addWidget(transposeLabel);
+  additionalInformationLayout->addWidget(m_transposeSpinBox);
   additionalInformationLayout->addStretch();
 
   QBoxLayout *songInformationLayout = new QVBoxLayout();

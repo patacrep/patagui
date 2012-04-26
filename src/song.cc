@@ -34,6 +34,7 @@ QRegExp Song::reLilypond("\\\\lilypond");
 QRegExp Song::reLanguage("\\\\selectlanguage\\{([^\\}]+)");
 QRegExp Song::reColumnCount("\\\\songcolumns\\{([^\\}]+)");
 QRegExp Song::reCapo("\\\\capo\\{([^\\}]+)");
+QRegExp Song::reTranspose("\\\\transpose\\{([^\\}]+)");
 QRegExp Song::reCover("\\\\cover");
 QRegExp Song::reBlankLine("^\\s*$");
 QRegExp Song::reGtab("(\\\\gtab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+\\})");
@@ -106,6 +107,7 @@ Song Song::fromString(const QString &text, const QString &path)
   song.locale = QLocale(languageFromString(reLanguage.cap(1)), QLocale::AnyCountry);
 
   song.capo = 0;
+  song.transpose = 0;
 
   QStringList lines = content.split("\n");
   QString line;
@@ -117,6 +119,11 @@ Song Song::fromString(const QString &text, const QString &path)
           if (reCapo.indexIn(line) != -1)
             {
               song.capo = reCapo.cap(1).toInt();
+              continue;
+            }
+          else if (reTranspose.indexIn(line) != -1)
+            {
+              song.transpose = reTranspose.cap(1).toInt();
               continue;
             }
           else if (reGtab.indexIn(line) != -1)
@@ -171,6 +178,9 @@ QString Song::toString(const Song &song)
 
   if (!song.coverName.isEmpty())
     text.append(QString("  \\cover\n"));
+
+  if (song.transpose > 0)
+    text.append(QString("  \\transpose{%1}\n").arg(song.transpose));
 
   if (song.capo > 0)
     text.append(QString("  \\capo{%1}\n").arg(song.capo));

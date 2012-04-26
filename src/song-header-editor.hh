@@ -101,6 +101,7 @@ private:
   QComboBox *m_languageComboBox;
   QSpinBox *m_columnCountSpinBox;
   QSpinBox *m_capoSpinBox;
+  QSpinBox *m_transposeSpinBox;
   CCoverDropArea *m_coverLabel;
 
   CSongEditor *m_songEditor;
