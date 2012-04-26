@@ -85,6 +85,7 @@ private slots:
   void onIndexChanged(const QString &text);
   void onTextEdited(const QString &text);
   void onValueChanged(int value);
+  void onDiagramChanged();
   void addDiagram();
   void removeDiagram();
 

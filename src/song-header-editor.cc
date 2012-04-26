@@ -203,6 +203,7 @@ void CSongHeaderEditor::update()
 				       Qt::MatchContains));
   m_columnCountSpinBox->setValue(song().columnCount);
   m_capoSpinBox->setValue(song().capo);
+  m_transposeSpinBox->setValue(song().transpose);
 
   m_coverLabel->setSong(song());
   m_coverLabel->update();
@@ -212,6 +213,7 @@ void CSongHeaderEditor::update()
     {
       CDiagramWidget *diagram = new CDiagramWidget(gtab, GuitarChord);
       connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+      connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
       m_diagramsLayout->addWidget(diagram);
     }
 
@@ -220,6 +222,7 @@ void CSongHeaderEditor::update()
     {
       CDiagramWidget *diagram = new CDiagramWidget(utab, UkuleleChord);
       connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+      connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
       m_diagramsLayout->addWidget(diagram);
     }
 
@@ -260,6 +263,19 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
   emit(contentsChanged());
 }
 
+void CSongHeaderEditor::onDiagramChanged()
+{
+  song().gtabs = QStringList();
+  for(int i=0; i < m_diagramsLayout->count(); ++i)
+    if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_diagramsLayout->itemAt(i)->widget()))
+      if (diagram->type() == GuitarChord)
+	song().gtabs << diagram->toString();
+      else if (diagram->type() == UkuleleChord)
+	song().utabs << diagram->toString();
+
+  emit(contentsChanged());
+}
+
 const QImage & CSongHeaderEditor::cover()
 {
   return m_coverLabel->cover();
@@ -284,9 +300,10 @@ void CSongHeaderEditor::addNewDiagramButton()
 void CSongHeaderEditor::addDiagram()
 {
   CDiagramWidget *diagram = new CDiagramWidget("\\gtab{<name>}{<fret>:<strings>}", GuitarChord);
+  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
   if (diagram->editChord())
     {
-      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
       m_diagramsLayout->addWidget(diagram);
       addNewDiagramButton();
     }
