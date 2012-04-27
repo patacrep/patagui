@@ -22,6 +22,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
+#include <QtGlobal>
 #include <QtGui>
 
 #include <QNetworkProxy>
@@ -128,8 +129,9 @@ void CLibraryDownload::downloadStart()
       QNetworkReply *reply = m_manager->get(request);
       connect(reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
-      parent()->statusBar()->showMessage(tr("Download in progress ..."));
-      parent()->progressBar()->show();
+      connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
+	      this, SLOT(downloadProgress(qint64,qint64)));
+      m_downloadTime.start();
       QDialog::accept();
     }
 }
@@ -139,28 +141,13 @@ void CLibraryDownload::downloadFinished()
   bool abort = false;
 
   QNetworkReply *reply = qobject_cast< QNetworkReply* >(sender());
-  QUrl url = reply->url();
-
   if (reply->error())
     {
-      parent()->statusBar()->showMessage(tr("Download of %1 failed: %2").arg(url.toEncoded().constData()).arg(qPrintable(reply->errorString())));
+      parent()->statusBar()->showMessage(tr("Download of %1 failed: %2").arg(reply->url().toEncoded().constData()).arg(qPrintable(reply->errorString())));
       abort = true;
     }
 
-  QString filename = QFileInfo(url.path()).fileName();
-  if (filename.isEmpty())
-    {
-      // try to find a filename in the reply header
-      QByteArray raw = reply->rawHeader(QByteArray("Content-Disposition"));
-      QString rawHeader(raw);
-      QRegExp re("filename=\"(.*)\"");
-      re.indexIn(rawHeader);
-      filename = re.cap(1);
-
-      // falback
-      if (filename.isEmpty())
-	filename = QString("songbook.tar.gz");
-    }
+  QString filename = findFileName(reply);
 
   if (QDir().exists(filename))
     {
@@ -256,4 +243,73 @@ bool CLibraryDownload::decompress(const QString &filename, QDir &directory)
 CMainWindow * CLibraryDownload::parent()
 {
   return qobject_cast< CMainWindow* >(QDialog::parent());
+}
+
+QString CLibraryDownload::findFileName(QNetworkReply *reply)
+{
+  if (!reply)
+    {
+      qWarning() << tr("CLibraryDownload::findFileName : invalid network reply");
+      return QString();
+    }
+
+  QString filename = QFileInfo(reply->url().path()).fileName();
+  if (filename.isEmpty())
+    {
+      // try to find a filename in the reply header
+      QByteArray raw = reply->rawHeader(QByteArray("Content-Disposition"));
+      QString rawHeader(raw);
+      QRegExp re("filename=\"(.*)\"");
+      re.indexIn(rawHeader);
+      filename = re.cap(1);
+
+      // fallback
+      if (filename.isEmpty())
+	filename = QString("songbook.tar.gz");
+    }
+  return filename;
+}
+
+QString CLibraryDownload::bytesToString(double value)
+{
+  QString unit;
+  if (value < 1024)
+    {
+      unit = tr("bytes");
+    }
+  else if (value < 1024*1024)
+    {
+      value /= 1024;
+      unit = tr("kB");
+    }
+  else
+    {
+      value /= 1024*1024;
+      unit = "MB";
+    }
+  return tr("%1 %2").arg(value, 3, 'f', 1).arg(unit);
+}
+
+void CLibraryDownload::downloadProgress(qint64 bytesRead, qint64 totalBytes)
+{
+  QNetworkReply *reply = qobject_cast< QNetworkReply* >(sender());
+  QString message = tr("Downloading %1").arg(findFileName(reply));
+  // download transfer
+  message.append(tr(" - %1").arg(bytesToString(bytesRead)));
+
+  if (totalBytes > -1)
+    {
+      // download size
+      message.append(tr(" of %1").arg(bytesToString(totalBytes)));
+
+      //update the progress bar
+      parent()->progressBar()->setRange(0, totalBytes);
+      parent()->progressBar()->setValue(bytesRead);
+    }
+
+  // download speed
+  message.append(tr(" (%2/s)").arg(bytesToString(bytesRead * 1000.0 / m_downloadTime.elapsed())));
+
+  parent()->statusBar()->showMessage(message);
+  parent()->progressBar()->show();
 }

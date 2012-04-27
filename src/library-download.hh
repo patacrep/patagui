@@ -22,6 +22,7 @@
 
 #include <QDialog>
 #include <QDir>
+#include <QTime>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -72,12 +73,17 @@ public slots:
   /// Network initialisation before download.
   void downloadStart();
 
+  void downloadProgress(qint64 bytesRead, qint64 totalBytes);
+
 private:
   CMainWindow * parent();
+  QString bytesToString(double bytes);
+  QString findFileName(QNetworkReply *reply);
 
   QNetworkAccessManager *m_manager;
   QComboBox *m_url;
   CFileChooser *m_path;
+  QTime m_downloadTime;
 };
 
 #endif  // __LIBRARY_DOWNLOAD_HH_
