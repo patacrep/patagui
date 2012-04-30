@@ -234,10 +234,11 @@ void CSongEditor::setDictionary(const QLocale &locale)
 
 void CSongEditor::save()
 {
-  // get the song contents
-  parseText();
   if (!checkSongMandatoryFields())
     return;
+
+  // get the song contents
+  parseText();
 
   // save the song and add it to the library list
   library()->createArtistDirectory(m_song);
