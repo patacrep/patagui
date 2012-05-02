@@ -56,8 +56,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_newSong(true)
   , m_newCover(false)
 {
-  m_codeEditor = new CSongCodeEditor();
-
+  m_codeEditor = new CSongCodeEditor(this);
   m_songHeaderEditor = new CSongHeaderEditor(this);
   m_songHeaderEditor->setSongEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));

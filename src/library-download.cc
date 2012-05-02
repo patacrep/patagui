@@ -285,7 +285,7 @@ QString CLibraryDownload::bytesToString(double value)
   else
     {
       value /= 1024*1024;
-      unit = "MB";
+      unit = tr("MB");
     }
   return tr("%1 %2").arg(value, 3, 'f', 1).arg(unit);
 }
