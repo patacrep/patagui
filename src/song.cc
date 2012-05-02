@@ -42,8 +42,8 @@ QRegExp Song::reUtab("(\\\\utab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+\\})");
 
 QRegExp Song::reBegin("\\\\begin");
 QRegExp Song::reEnd("\\\\end");
-QRegExp Song::reBeginVerse("\\\\begin\\{verse\\}");
-QRegExp Song::reEndVerse("\\\\end\\{verse\\}");
+QRegExp Song::reBeginVerse("\\\\begin\\{verse[\\*]?\\}");
+QRegExp Song::reEndVerse("\\\\end\\{verse[\\*]?\\}");
 QRegExp Song::reBeginChorus("\\\\begin\\{chorus\\}");
 QRegExp Song::reEndChorus("\\\\end\\{chorus\\}");
 QRegExp Song::reBeginScripture("\\\\begin\\{scripture\\}");
