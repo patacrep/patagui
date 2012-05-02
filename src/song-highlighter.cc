@@ -87,10 +87,7 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   environmentFormat.setForeground(QColor(78,154,6));
 
   QList<QRegExp> regexps;
-  regexps << Song::reBegin << Song::reEnd
-	  << Song::reBeginVerse << Song::reEndVerse
-	  << Song::reBeginChorus << Song::reEndChorus
-	  << Song::reBeginScripture << Song::reEndScripture;
+  regexps << Song::reBegin << Song::reEnd;
 
   foreach (const QRegExp &regexp, regexps)
     {
