@@ -86,6 +86,7 @@ private slots:
   void onTextEdited(const QString &text);
   void onValueChanged(int value);
   void onDiagramChanged();
+  void onCoverChanged();
   void addDiagram();
   void removeDiagram();
 
@@ -127,7 +128,6 @@ class CCoverDropArea : public QLabel
   CCoverDropArea(QWidget *parent = 0);
 
   Song & song();
-  void setSong(const Song & song);
 
   /// Getter on the song's cover
   /// @return the cover
@@ -150,6 +150,7 @@ public slots:
 
 signals:
   void changed(const QMimeData *mimeData = 0);
+  void coverChanged();
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);
@@ -160,7 +161,6 @@ protected:
   virtual void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-  Song m_song;
   QString m_filename;
   QImage m_cover;
 };

@@ -104,6 +104,10 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
           SLOT(onValueChanged(int)));
   connect(m_capoSpinBox, SIGNAL(valueChanged(int)),
           SLOT(onValueChanged(int)));
+  connect(m_transposeSpinBox, SIGNAL(valueChanged(int)),
+          SLOT(onValueChanged(int)));
+  connect(m_coverLabel, SIGNAL(coverChanged()),
+          SLOT(onCoverChanged()));
 
   QBoxLayout *additionalInformationLayout = new QHBoxLayout();
   additionalInformationLayout->setContentsMargins(1, 1, 1, 1);
@@ -204,8 +208,6 @@ void CSongHeaderEditor::update()
   m_columnCountSpinBox->setValue(song().columnCount);
   m_capoSpinBox->setValue(song().capo);
   m_transposeSpinBox->setValue(song().transpose);
-
-  m_coverLabel->setSong(song());
   m_coverLabel->update();
 
   QString gtab;
@@ -231,7 +233,7 @@ void CSongHeaderEditor::update()
 
 void CSongHeaderEditor::onIndexChanged(const QString &text)
 {
-  song().locale = QLocale(Song::languageFromString(text), QLocale::AnyCountry);
+  song().locale = QLocale(Song::languageFromString(text.toLower()), QLocale::AnyCountry);
   emit(contentsChanged());
 }
 
@@ -239,11 +241,22 @@ void CSongHeaderEditor::onValueChanged(int value)
 {
   QSpinBox *currentSpinBox = qobject_cast< QSpinBox* >(sender());
   if (currentSpinBox == m_columnCountSpinBox)
-    song().columnCount = value;
+    {
+      song().columnCount = value;
+    }
   else if (currentSpinBox == m_capoSpinBox)
-    song().capo = value;
+    {
+      song().capo = value;
+    }
+  else if (currentSpinBox == m_transposeSpinBox)
+    {
+      song().transpose = value;
+    }
   else
-    qWarning() << "CSongHeaderEditor::onValueChanged unknow sender";
+    {
+      qWarning() << "CSongHeaderEditor::onValueChanged unknow sender";
+      return;
+    }
 
   emit(contentsChanged());
 }
@@ -252,13 +265,22 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
 {
   QLineEdit *currentLineEdit = qobject_cast< QLineEdit* >(sender());
   if (currentLineEdit == m_titleLineEdit)
-    song().title = text;
+    {
+      song().title = text;
+    }
   else if (currentLineEdit == m_artistLineEdit)
-    song().artist = text;
+    {
+      song().artist = text;
+    }
   else if (currentLineEdit == m_albumLineEdit)
-    song().album = text;
+    {
+      song().album = text;
+    }
   else
-    qWarning() << "CSongHeaderEditor::onTextEdited unknow sender";
+    {
+      qWarning() << "CSongHeaderEditor::onTextEdited unknow sender";
+      return;
+    }
 
   emit(contentsChanged());
 }
@@ -275,6 +297,11 @@ void CSongHeaderEditor::onDiagramChanged()
 	  song().utabs << diagram->toString();
       }
 
+  emit(contentsChanged());
+}
+
+void CSongHeaderEditor::onCoverChanged()
+{
   emit(contentsChanged());
 }
 
@@ -337,8 +364,8 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   setAutoFillBackground(true);
   setAcceptDrops(true);
   setToolTip(tr("Click or drop image to change cover"));
+  setBackgroundRole(QPalette::Dark);
   connect(this, SIGNAL(changed()), SLOT(update()));
-  clear();
 }
 
 void CCoverDropArea::dragEnterEvent(QDragEnterEvent *event)
@@ -384,26 +411,25 @@ void CCoverDropArea::clear()
 
 void CCoverDropArea::update()
 {
-  if ( song().coverPath.isEmpty() ||
-       song().coverName.isEmpty() ||
-       m_filename.isEmpty() )
-    return;
+  if(m_filename.isEmpty() && !song().coverPath.isEmpty() && !song().coverName.isEmpty())
+    m_filename = QString("%1/%2.jpg").arg(song().coverPath).arg(song().coverName);
 
   // display the cover art
   QFileInfo file = QFileInfo(m_filename);
-  if(!file.exists())
-    qWarning() << QString(tr("CCoverDropArea::update invalid cover file : %1").arg(m_filename));
-
-  song().coverPath = file.absolutePath();
-  song().coverName = file.baseName();
-  QPixmap pixmap;
-  if (!QPixmapCache::find(file.baseName()+"-full", &pixmap))
+  if(file.exists())
     {
-      setCover(file.filePath());
-      pixmap = QPixmap::fromImage(cover());
-      QPixmapCache::insert(file.baseName()+"-full", pixmap);
+      song().coverPath = file.absolutePath();
+      song().coverName = file.baseName();
+      QPixmap pixmap;
+      if (!QPixmapCache::find(file.baseName()+"-full", &pixmap))
+	{
+	  setCover(file.filePath());
+	  pixmap = QPixmap::fromImage(cover());
+	  QPixmapCache::insert(file.baseName()+"-full", pixmap);
+	}
+      setPixmap(pixmap);
+      emit(coverChanged());
     }
-  setPixmap(pixmap);
 }
 
 void CCoverDropArea::selectCover()
@@ -431,16 +457,9 @@ void CCoverDropArea::mouseReleaseEvent(QMouseEvent *event)
   selectCover();
 }
 
-void CCoverDropArea::setSong(const Song & sg)
-{
-  m_song = sg;
-  m_filename = QString("%1/%2.jpg").arg(song().coverPath).arg(song().coverName);
-  emit changed();
-}
-
 Song & CCoverDropArea::song()
 {
-  return m_song;
+  return qobject_cast<CSongHeaderEditor*>(QLabel::parent())->song();
 }
 
 const QImage & CCoverDropArea::cover()
