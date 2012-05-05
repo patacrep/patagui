@@ -25,8 +25,8 @@
 #include <QBoxLayout>
 #include <QSettings>
 
-CFileChooser::CFileChooser()
-  : QWidget()
+CFileChooser::CFileChooser(QWidget *parent)
+  : QWidget(parent)
   , m_lineEdit(0)
   , m_button(0)
   , m_dialog(new QFileDialog)
