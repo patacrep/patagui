@@ -39,6 +39,7 @@
 #include <QTextCodec>
 #include <QSettings>
 #include <QBoxLayout>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -232,6 +233,35 @@ void CSongEditor::setDictionary(const QLocale &locale)
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)), codeEditor()->highlighter(), SLOT(setSpellCheck(bool)));
 }
 #endif //ENABLE_SPELL_CHECKING
+
+void CSongEditor::closeEvent(QCloseEvent *event)
+{
+  if (isModified())
+    {
+      QMessageBox::StandardButton answer =
+	QMessageBox::question(this, tr("Songbook-Client"),
+			      tr("The document has been modified.\n"
+				 "Do you want to save your changes?"),
+			      QMessageBox::Save | QMessageBox::Discard
+			      | QMessageBox::Cancel,
+			      QMessageBox::Save);
+
+      if (answer == QMessageBox::Save)
+	{
+	  save();
+	  writeSettings();
+	  event->accept();
+	}
+      if (answer == QMessageBox::Cancel)
+	{
+	  event->ignore();
+	}
+      if (answer == QMessageBox::Discard)
+	{
+	  event->accept();
+	}
+    }
+}
 
 void CSongEditor::save()
 {

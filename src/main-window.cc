@@ -704,24 +704,11 @@ void CMainWindow::deleteSong(const QString &path)
 void CMainWindow::closeTab(int index)
 {
   if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
-    {
-      if (editor->isModified())
-	{
-	  QMessageBox::StandardButton answer =
-	    QMessageBox::question(this, tr("Songbook-Client"),
-				  tr("The document has been modified.\n"
-				     "Do you want to save your changes?"),
-				  QMessageBox::Save | QMessageBox::Discard
-				  | QMessageBox::Cancel,
-				  QMessageBox::Save);
-
-	  if (answer != QMessageBox::Ok)
-	    return;
-	}
-      editor->writeSettings();
-      m_mainWidget->closeTab(index);
-      delete editor;
-    }
+    if (editor->close())
+      {
+	m_mainWidget->closeTab(index);
+	delete editor;
+      }
 }
 
 void CMainWindow::changeTab(int index)

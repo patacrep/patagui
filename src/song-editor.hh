@@ -100,6 +100,7 @@ signals:
   void saved(const QString &path);
 
 protected:
+  void closeEvent(QCloseEvent *event);
 
 #ifdef ENABLE_SPELL_CHECKING
   void contextMenuEvent(QContextMenuEvent *event);
