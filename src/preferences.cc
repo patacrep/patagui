@@ -34,9 +34,8 @@
 
 // Config Dialog
 
-ConfigDialog::ConfigDialog(CMainWindow* parent)
+ConfigDialog::ConfigDialog(QWidget* parent)
   : QDialog(parent)
-  , m_parent(parent)
 {
   m_contentsWidget = new QListWidget;
   m_contentsWidget->setViewMode(QListView::IconMode);
@@ -75,7 +74,9 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
 
 CMainWindow* ConfigDialog::parent() const
 {
-  return m_parent;
+  CMainWindow *p = qobject_cast<CMainWindow*>(QDialog::parent());
+  if (!p) qWarning() << tr("ConfigDialog::parent() invalid parent");
+  return p;
 }
 
 void ConfigDialog::createIcons()
@@ -137,17 +138,18 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
 
 // Page
 
-Page::Page(ConfigDialog *configDialog)
-  : QScrollArea(configDialog)
+Page::Page(QWidget *parent)
+  : QScrollArea(parent)
   , m_content(new QWidget)
-  , m_configDialog(configDialog)
 {
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-ConfigDialog * Page::configDialog() const
+ConfigDialog * Page::parent() const
 {
-  return m_configDialog;
+  ConfigDialog *p = qobject_cast<ConfigDialog*>(QScrollArea::parent());
+  if (!p) qWarning() << tr("Page::parent() invalid parent");
+  return p;
 }
 
 void Page::closeEvent(QCloseEvent *event)
@@ -171,8 +173,8 @@ void Page::setLayout(QLayout *layout)
 
 // Display Page
 
-DisplayPage::DisplayPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+DisplayPage::DisplayPage(QWidget *parent)
+  : Page(parent)
 {
   QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
 
@@ -239,8 +241,8 @@ void DisplayPage::writeSettings()
 
 // Option Page
 
-OptionsPage::OptionsPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+OptionsPage::OptionsPage(QWidget *parent)
+  : Page(parent)
   , m_workingPath(0)
   , m_workingPathValid(0)
   , m_buildCommand(0)
@@ -415,8 +417,8 @@ void OptionsPage::resetCleanallCommand()
 
 // Editor Page
 
-EditorPage::EditorPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+EditorPage::EditorPage(QWidget *parent)
+  : Page(parent)
   , m_numberLinesCheckBox(new QCheckBox(tr("Display line numbers")))
   , m_highlightCurrentLineCheckBox(new QCheckBox(tr("Highlight current line")))
   , m_fontButton(new QPushButton)
@@ -521,8 +523,8 @@ void EditorPage::updateFontButton()
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 // Network Page
 
-NetworkPage::NetworkPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+NetworkPage::NetworkPage(QWidget *parent)
+  : Page(parent)
   , m_hostname()
   , m_port()
   , m_user()
@@ -595,11 +597,18 @@ void NetworkPage::writeSettings()
 
 // Songbook Page
 
-SongbookPage::SongbookPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+SongbookPage::SongbookPage(QWidget *p)
+  : Page(p)
   , m_propertyEditor(new QtGroupBoxPropertyBrowser)
+  , m_mainwindow(parent()->parent())
 {
-  CSongbook *songbook = configDialog->parent()->songbook();
+  if(!m_mainwindow)
+    {
+      qWarning() << tr("SongbookPage::SongbookPage invalid parent: can't find the mainwindow");
+      return;
+    }
+
+  CSongbook *songbook = m_mainwindow->songbook();
 
   QComboBox* templateComboBox = new QComboBox;
   templateComboBox->addItems(songbook->library()->templates());
@@ -636,5 +645,8 @@ SongbookPage::SongbookPage(ConfigDialog *configDialog)
 
 void SongbookPage::updatePropertyEditor()
 {
-  configDialog()->parent()->songbook()->initializeEditor(m_propertyEditor);
+  if (m_mainwindow)
+    m_mainwindow->songbook()->initializeEditor(m_propertyEditor);
+  else
+    qWarning() << tr("SongbookPage::updatePropertyEditor can't find the mainwindow");
 }
