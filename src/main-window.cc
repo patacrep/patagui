@@ -53,6 +53,7 @@ CMainWindow::CMainWindow()
   , m_view(0)
   , m_songbook(0)
   , m_proxyModel(0)
+  , m_tempFilesmodel(0)
   , m_progressBar(0)
   , m_noDataInfo(0)
   , m_updateAvailable(0)
@@ -799,44 +800,46 @@ void CMainWindow::downloadDialog()
 
 void CMainWindow::cleanDialog()
 {
-  QDialog *dialog = new QDialog(this);
-  dialog->setWindowTitle(tr("Clean"));
+  QDialog dialog(this);
+  dialog.setWindowTitle(tr("Clean"));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
 						     QDialogButtonBox::Cancel);
-  connect(buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
-  connect(buttonBox, SIGNAL(rejected()), dialog, SLOT(close()));
+  connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
 
-  m_tempFilesmodel = new QFileSystemModel;
-  m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());
-  m_tempFilesmodel->setNameFilters(QStringList()
-			<< "*.aux" << "*.d" << "*.toc" << "*.out"
-			<< "*.log" << "*.nav" << "*.snm" << "*.sbx" << "*.sxd");
-  m_tempFilesmodel->setNameFilterDisables(false);
-  m_tempFilesmodel->setFilter(QDir::Files);
+  if(!m_tempFilesmodel)
+    {
+      m_tempFilesmodel = new QFileSystemModel;
+      m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());
+      m_tempFilesmodel->setNameFilters(QStringList()
+				       << "*.aux" << "*.d" << "*.toc" << "*.out"
+				       << "*.log" << "*.nav" << "*.snm" << "*.sbx" << "*.sxd");
+      m_tempFilesmodel->setNameFilterDisables(false);
+      m_tempFilesmodel->setFilter(QDir::Files);
+    }
 
-  QListView* view = new QListView;
+  QListView *view = new QListView;
   view->setModel(m_tempFilesmodel);
   view->setRootIndex(m_tempFilesmodel->index(library()->directory().canonicalPath()));
 
   QCheckBox* cleanAllButton = new QCheckBox("Also remove pdf files", this);
+  updateTempFilesView(cleanAllButton->checkState());
   connect(cleanAllButton, SIGNAL(stateChanged(int)), this, SLOT(updateTempFilesView(int)));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(view);
   layout->addWidget(cleanAllButton);
   layout->addWidget(buttonBox);
-  dialog->setLayout(layout);
+  dialog.setLayout(layout);
 
-  if (dialog->exec() == QDialog::Accepted)
+  if (dialog.exec() == QDialog::Accepted)
     {
       if (cleanAllButton->isChecked())
 	makeCleanall();
       else
 	makeClean();
     }
-  delete dialog;
-  delete m_tempFilesmodel;
 }
 
 void CMainWindow::updateTempFilesView(int state)
