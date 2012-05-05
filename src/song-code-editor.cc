@@ -35,9 +35,14 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   : CodeEditor(parent)
   , m_highlighter(0)
   , m_completer(0)
+  , m_environmentsHighlighted(true)
+  , m_verseColor(QColor(138,226,52).lighter(180))
+  , m_chorusColor(QColor(252,175,62).lighter(160))
+  , m_bridgeColor(QColor(114,159,207).lighter(170))
+  , m_scriptureColor(QColor(173,127,168).lighter(170))
 {
   setUndoRedoEnabled(true);
-  connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlight()));
+  connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
 
   CSongHighlighter *highlighter = new CSongHighlighter(document());
   Q_UNUSED(highlighter);
@@ -85,18 +90,7 @@ void CSongCodeEditor::readSettings()
   font.fromString(fontstr);
   setFont(font);
 
-  m_verseColor = settings.value("verseColor").value<QColor>();
-  m_chorusColor = settings.value("chorusColor").value<QColor>();
-  m_scriptureColor = settings.value("scriptureColor").value<QColor>();
-
-  if(!m_verseColor.isValid())
-    {
-      m_verseColor = QColor(138,226,52).lighter(170);
-      m_chorusColor = QColor(138,226,52).lighter(170);
-      m_scriptureColor = QColor(138,226,52).lighter(170);
-    }
-
-
+  setEnvironmentsHighlighted(settings.value("color-environments", true).toBool());
   setHighlightMode(settings.value("highlight", true).toBool());
   setLineNumberMode(settings.value("lines", true).toBool());
 
@@ -184,8 +178,11 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
   completer()->complete(cr); // popup it up!
 }
 
-void CSongCodeEditor::highlight()
+void CSongCodeEditor::highlightEnvironments()
 {
+  if(!environmentsHighlighted())
+    return;
+
   SongEnvironment env = None;
   QTextCursor cursor(document());
   QStringList lines = toPlainText().split("\n");
@@ -196,10 +193,13 @@ void CSongCodeEditor::highlight()
 	env = Verse;
       else if(Song::reBeginChorus.indexIn(line) > -1)
 	env = Chorus;
+      else if(Song::reBeginBridge.indexIn(line) > -1)
+	env = Bridge;
       else if(Song::reBeginScripture.indexIn(line) > -1)
 	env = Scripture;
 
       if( ((env == Verse) && (Song::reEndVerse.indexIn(line) > -1)) ||
+	  ((env == Bridge) && (Song::reEndBridge.indexIn(line) > -1)) ||
 	  ((env == Chorus) && (Song::reEndChorus.indexIn(line) > -1)) ||
 	  ((env == Scripture) && (Song::reEndScripture.indexIn(line) > -1)) )
 	{
@@ -223,6 +223,9 @@ QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnviro
     {
     case Verse:
       backgroundColor = m_verseColor;
+      break;
+    case Bridge:
+      backgroundColor = m_bridgeColor;
       break;
     case Chorus:
       backgroundColor = m_chorusColor;
@@ -330,4 +333,14 @@ CSongHighlighter * CSongCodeEditor::highlighter() const
 QCompleter * CSongCodeEditor::completer() const
 {
   return m_completer;
+}
+
+bool CSongCodeEditor::environmentsHighlighted() const
+{
+  return m_environmentsHighlighted;
+}
+
+void CSongCodeEditor::setEnvironmentsHighlighted(bool value)
+{
+  m_environmentsHighlighted = value;
 }

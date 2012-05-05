@@ -44,10 +44,12 @@ QRegExp Song::reBegin("\\\\begin");
 QRegExp Song::reEnd("\\\\end");
 QRegExp Song::reBeginVerse("\\\\begin\\{verse[\\*]?\\}");
 QRegExp Song::reEndVerse("\\\\end\\{verse[\\*]?\\}");
+QRegExp Song::reBeginBridge("\\\\begin\\{bridge\\}");
+QRegExp Song::reEndBridge("\\\\end\\{bridge\\}");
 QRegExp Song::reBeginChorus("\\\\begin\\{chorus\\}");
 QRegExp Song::reEndChorus("\\\\end\\{chorus\\}");
-QRegExp Song::reBeginScripture("\\\\begin\\{scripture\\}");
-QRegExp Song::reEndScripture("\\\\end\\{scripture\\}");
+QRegExp Song::reBeginScripture("\\\\beginscripture");
+QRegExp Song::reEndScripture("\\\\endscripture");
 
 Song Song::fromFile(const QString &path)
 {

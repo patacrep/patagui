@@ -77,6 +77,8 @@ struct Song
   static QRegExp reEnd;
   static QRegExp reBeginVerse;
   static QRegExp reEndVerse;
+  static QRegExp reBeginBridge;
+  static QRegExp reEndBridge;
   static QRegExp reBeginChorus;
   static QRegExp reEndChorus;
   static QRegExp reBeginScripture;

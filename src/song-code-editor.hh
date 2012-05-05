@@ -40,7 +40,7 @@ class CSongCodeEditor : public CodeEditor
   Q_ENUMS(SongEnvironment)
 
 public:
-  enum SongEnvironment { Verse, Chorus, Scripture, None };
+  enum SongEnvironment { Verse, Bridge, Chorus, Scripture, None };
 
   CSongCodeEditor(QWidget *parent = 0);
   ~CSongCodeEditor();
@@ -53,11 +53,14 @@ public:
   CSongHighlighter* highlighter() const;
   QCompleter* completer() const;
 
+  bool environmentsHighlighted() const;
+  void setEnvironmentsHighlighted(bool);
+
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 
 private slots:
-  void highlight();
+  void highlightEnvironments();
   void insertCompletion(const QString &completion);
 
 private:
@@ -72,8 +75,10 @@ private:
   CSongHighlighter* m_highlighter;
   QCompleter* m_completer;
 
+  bool m_environmentsHighlighted;
   QColor m_verseColor;
   QColor m_chorusColor;
+  QColor m_bridgeColor;
   QColor m_scriptureColor;
 };
 

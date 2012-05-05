@@ -170,27 +170,16 @@ private slots:
   void selectFont();
   void updateFontButton();
 
-  void selectVerseColor();
-  void selectChorusColor();
-  void selectScriptureColor();
-
 private:
   void readSettings();
   void writeSettings();
 
   QCheckBox *m_numberLinesCheckBox;
   QCheckBox *m_highlightCurrentLineCheckBox;
+  QCheckBox *m_colorEnvironmentsCheckBox;
   QPushButton *m_fontButton;
   QFont m_font;
   QString m_fontstr;
-
-  QPushButton m_verse;
-  QPushButton m_chorus;
-  QPushButton m_scripture;
-
-  QColor m_verseColor;
-  QColor m_chorusColor;
-  QColor m_scriptureColor;
 };
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
