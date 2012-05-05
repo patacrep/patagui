@@ -365,6 +365,14 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   setAcceptDrops(true);
   setToolTip(tr("Click or drop image to change cover"));
   setBackgroundRole(QPalette::Dark);
+
+  QPixmap pixmap;
+  if(!QPixmapCache::find("cover-missing-full", &pixmap))
+    {
+      pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(128, 128);
+      QPixmapCache::insert("cover-missing-full", pixmap);
+    }
+  setPixmap(pixmap);
   connect(this, SIGNAL(changed()), SLOT(update()));
 }
 
