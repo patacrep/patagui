@@ -42,10 +42,8 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_contentsWidget->setViewMode(QListView::IconMode);
   m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
-  m_contentsWidget->setMinimumHeight(500);
-  m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
-  m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
+  m_contentsWidget->setFixedWidth(110);
 
   m_pagesWidget = new QStackedWidget;
   m_pagesWidget->addWidget(new OptionsPage(this));
@@ -56,27 +54,22 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_pagesWidget->addWidget(new NetworkPage(this));
 #endif // ENABLE_LIBRARY_DOWNLOAD
 
-  QPushButton *closeButton = new QPushButton(tr("Close"));
+  QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Close);
+  connect(buttons, SIGNAL(rejected()), this, SLOT(close()));
 
   createIcons();
   m_contentsWidget->setCurrentRow(0);
 
-  connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-
-  QHBoxLayout *horizontalLayout = new QHBoxLayout;
+  QBoxLayout *horizontalLayout = new QHBoxLayout;
   horizontalLayout->addWidget(m_contentsWidget);
   horizontalLayout->addWidget(m_pagesWidget, 1);
 
-  QHBoxLayout *buttonsLayout = new QHBoxLayout;
-  buttonsLayout->addStretch(1);
-  buttonsLayout->addWidget(closeButton);
-
-  QVBoxLayout *mainLayout = new QVBoxLayout;
+  QBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addLayout(horizontalLayout);
   mainLayout->addSpacing(12);
-  mainLayout->addLayout(buttonsLayout);
-  setLayout(mainLayout);
+  mainLayout->addWidget(buttons);
 
+  setLayout(mainLayout);
   setWindowTitle(tr("Preferences"));
 }
 
