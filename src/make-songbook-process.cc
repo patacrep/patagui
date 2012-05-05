@@ -148,7 +148,7 @@ void CMakeSongbookProcess::onFinished(int exitCode, QProcess::ExitStatus exitSta
     }
 
   emit(message(successMessage(), 0));
-  if (urlToOpen().isEmpty())
+  if (urlToOpen().isEmpty() || !urlToOpen().isValid())
     return;
 
   emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
