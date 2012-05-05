@@ -114,6 +114,7 @@ private slots:
   void documentWasModified();
   void insertVerse();
   void insertChorus();
+  void insertBridge();
 
 #ifdef ENABLE_SPELL_CHECKING
   void correctWord();

@@ -150,14 +150,23 @@ CSongEditor::CSongEditor(QWidget *parent)
 
   //songbook
   action = new QAction(tr("Verse"), this);
-  action->setStatusTip(tr("New verse environment"));
+  action->setToolTip(tr("Insert a new verse"));
+  action->setStatusTip(tr("Insert a new verse"));
   connect(action, SIGNAL(triggered()), SLOT(insertVerse()));
   m_actions->addAction(action);
   toolBar()->addAction(action);
 
   action = new QAction(tr("Chorus"), this);
-  action->setStatusTip(tr("New chorus environment"));
+  action->setToolTip(tr("Insert a new chorus"));
+  action->setStatusTip(tr("Insert a new chorus"));
   connect(action, SIGNAL(triggered()), SLOT(insertChorus()));
+  m_actions->addAction(action);
+  toolBar()->addAction(action);
+
+  action = new QAction(tr("Bridge"), this);
+  action->setToolTip(tr("Insert a new bridge"));
+  action->setStatusTip(tr("Insert a new bridge"));
+  connect(action, SIGNAL(triggered()), SLOT(insertBridge()));
   m_actions->addAction(action);
   toolBar()->addAction(action);
 
@@ -364,6 +373,12 @@ void CSongEditor::insertChorus()
 {
   QString selection = codeEditor()->textCursor().selectedText();
   codeEditor()->insertPlainText(QString("\n\\begin{chorus}\n%1\n\\end{chorus}\n").arg(selection)  );
+}
+
+void CSongEditor::insertBridge()
+{
+  QString selection = codeEditor()->textCursor().selectedText();
+  codeEditor()->insertPlainText(QString("\n\\begin{bridge}\n%1\n\\end{bridge}\n").arg(selection)  );
 }
 
 QToolBar * CSongEditor::toolBar() const
