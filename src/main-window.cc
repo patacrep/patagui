@@ -594,7 +594,7 @@ void CMainWindow::makeClean()
 void CMainWindow::makeCleanall()
 {
   m_builder->setWorkingDirectory(workingPath());
-  m_builder->setCommand(cleanCommand());
+  m_builder->setCommand(cleanallCommand());
   m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
 
   m_builder->setUrlToOpen(QUrl());
@@ -875,10 +875,10 @@ void CMainWindow::setCleanCommand(const QString &command)
 
 const QString & CMainWindow::cleanallCommand() const
 {
-  return m_cleanCommand;
+  return m_cleanallCommand;
 }
 
 void CMainWindow::setCleanallCommand(const QString &command)
 {
-  m_cleanCommand = command;
+  m_cleanallCommand = command;
 }
