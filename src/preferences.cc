@@ -70,6 +70,7 @@ ConfigDialog::ConfigDialog(QWidget* parent)
 
   setLayout(mainLayout);
   setWindowTitle(tr("Preferences"));
+  resize(600,600);
 }
 
 CMainWindow* ConfigDialog::parent() const
@@ -142,7 +143,6 @@ Page::Page(QWidget *parent)
   : QScrollArea(parent)
   , m_content(new QWidget)
 {
-  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 ConfigDialog * Page::parent() const
@@ -252,6 +252,7 @@ OptionsPage::OptionsPage(QWidget *parent)
   m_workingPathValid = new QLabel;
 
   m_workingPath = new CFileChooser();
+  m_workingPath->setMinimumWidth(400);
   m_workingPath->setFileMode(QFileDialog::Directory);
   m_workingPath->setOptions(QFileDialog::ShowDirsOnly);
   m_workingPath->setCaption(tr("Songbook path"));
