@@ -693,7 +693,7 @@ void CMainWindow::deleteSong(const QString &path)
 {
   int ret = QMessageBox::warning(this, tr("Songbook-Client"),
 				 tr("The file : %1 will be deleted.\n"
-				    "Are you sure?"),
+				    "Are you sure?").arg(path),
 				 QMessageBox::Cancel | QMessageBox::Ok,
 				 QMessageBox::Cancel);
 
