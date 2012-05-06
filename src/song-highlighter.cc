@@ -48,14 +48,14 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   keywordFormat.setForeground(QColor(206,92,0));
   keywordFormat.setFontWeight(QFont::Bold);
   QStringList keywordPatterns;
-  keywordPatterns << "\\\\gtab"     << "\\\\echo"
+  keywordPatterns << "\\\\gtab"     << "\\\\utab"
 		  << "\\\\rep"      << "\\\\lilypond"
 		  << "\\\\image"    << "\\\\songcolumns"
 		  << "\\\\cover"    << "\\\\capo"
 		  << "\\\\nolyrics" << "\\\\musicnote"
 		  << "\\\\textnote" << "\\\\dots"
-		  << "\\\\single"  << "\\\\emph"
-		  << "\\\\selectlanguage";
+		  << "\\\\single"  << "\\\\echo"
+		  << "\\\\transpose" << "\\\\selectlanguage";
 
   foreach (const QString &pattern, keywordPatterns)
     {
@@ -68,7 +68,12 @@ CHighlighter::CHighlighter(QTextDocument *parent)
   keyword2Format.setForeground(QColor(164,0,0));
   keyword2Format.setFontWeight(QFont::Bold);
   QStringList keyword2Patterns;
-  keyword2Patterns << "\\\\bar";
+  keyword2Patterns << "\\\\bar"
+		   << "\\\\Intro" << "\\\\Rythm"
+		   << "\\\\Outro" << "\\\\Bridge"
+		   << "\\\\Verse" << "\\\\Chorus"
+		   << "\\\\Pattern" << "\\\\Solo";
+
 
   foreach (const QString &pattern, keyword2Patterns)
     {
