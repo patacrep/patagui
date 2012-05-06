@@ -38,6 +38,22 @@ class QtGroupPropertyManager;
 class CUnitPropertyManager;
 class CFilePropertyManager;
 
+/**
+ * \file songbook.hh
+ * \class CSongbook
+ * \brief CSongbook is the model representing a songbook
+ *
+ * A songbook is a composed of a list of songs and a set of options
+ * that defines its PDF output.
+ *
+ * A CSongbook class extracts the list of selected songs in CLibraryView,
+ * manages all the songbook options through the QtGroupBoxPropertyBrowser framework,
+ * and can be saved/loaded as a .sb file.
+ *
+ * LaTeX options than can be used within a songbook are defined in a template
+ * file (.tmpl) that is located in the songbook application's template/ directory.
+ *
+ */
 class CSongbook : public CIdentityProxyModel
 {
   Q_OBJECT

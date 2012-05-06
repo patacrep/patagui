@@ -22,10 +22,11 @@
 
 #include <QDialog>
 #include <QDir>
+#include <QTime>
 
 class QNetworkAccessManager;
 class QNetworkReply;
-class QLineEdit;
+class QComboBox;
 
 class CFileChooser;
 class CMainWindow;
@@ -57,27 +58,32 @@ public:
   /// @return true if the operation succeeded, false otherwise
   bool saveToDisk(const QString &filename, QIODevice *data);
 
-  /// Decompress an archive depending on libarchive library 
+  /// Decompress an archive depending on libarchive library
   /// (http://github.com/libarchive/libarchive).
   /// @param filename : filename of the compressed archive
-  /// @param directory : the directory resulting from the decompression 
+  /// @param directory : the directory resulting from the decompression
   /// @return true if the operation succeeded, false otherwise
   bool decompress(const QString &filename, QDir &directory);
 
 public slots:
   /// Handles common errors and dialog at the end of the downloading operation
-  /// such as conflicts with filenames or failed download.  
+  /// such as conflicts with filenames or failed download.
   void downloadFinished();
 
   /// Network initialisation before download.
   void downloadStart();
 
+  void downloadProgress(qint64 bytesRead, qint64 totalBytes);
+
 private:
   CMainWindow * parent();
+  QString bytesToString(double bytes);
+  QString findFileName(QNetworkReply *reply);
 
   QNetworkAccessManager *m_manager;
-  QLineEdit *m_url;
+  QComboBox *m_url;
   CFileChooser *m_path;
+  QTime m_downloadTime;
 };
 
 #endif  // __LIBRARY_DOWNLOAD_HH_

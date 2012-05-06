@@ -24,10 +24,11 @@ set(SONGBOOK_CLIENT_SOURCES
   src/songbook.cc
   src/song-editor.cc
   src/song-header-editor.cc
+  src/song-code-editor.cc
   src/song-highlighter.cc
   src/logs-highlighter.cc
-  src/dialog-new-song.cc
   src/label.cc
+  src/diagram.cc
   src/progress-bar.cc
   src/unit-property-manager.cc
   src/unit-factory.cc
@@ -58,10 +59,11 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/songbook.hh
   src/song-editor.hh
   src/song-header-editor.hh
+  src/song-code-editor.hh
   src/song-highlighter.hh
   src/logs-highlighter.hh
-  src/dialog-new-song.hh
   src/label.hh
+  src/diagram.hh
   src/progress-bar.hh
   src/unit-property-manager.hh
   src/unit-factory.hh

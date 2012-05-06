@@ -43,7 +43,7 @@ class CFileChooser : public QWidget
   Q_OBJECT
 
 public:
-  CFileChooser();
+  CFileChooser(QWidget *parent=0);
   ~CFileChooser();
 
   void readSettings();

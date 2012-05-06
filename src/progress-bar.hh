@@ -29,7 +29,7 @@
 class QProgressBar;
 class QToolButton;
 
-/** 
+/**
  * \file progress-bar.hh
  * \class CProgressBar
  * \brief CProgressBar is a progress embedded into the CMainWindow's statusBar.

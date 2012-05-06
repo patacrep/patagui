@@ -22,6 +22,7 @@
 #include <QDialog>
 #include <QWidget>
 #include <QScrollArea>
+#include <QPushButton>
 
 #if defined(Q_OS_WIN32)
 #define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\\make.bat %basename"
@@ -59,7 +60,7 @@ class ConfigDialog : public QDialog
   Q_OBJECT
 
 public:
-  ConfigDialog(CMainWindow* parent);
+  ConfigDialog(QWidget* parent=0);
   CMainWindow* parent() const;
 
 public slots:
@@ -71,7 +72,6 @@ protected:
 private:
   void createIcons();
 
-  CMainWindow *m_parent;
   QListWidget *m_contentsWidget;
   QStackedWidget *m_pagesWidget;
 };
@@ -82,9 +82,8 @@ class Page : public QScrollArea
 {
   Q_OBJECT
 public:
-  Page(ConfigDialog *configDialog);
-
-  ConfigDialog * configDialog() const;
+  Page(QWidget *parent=0);
+  ConfigDialog * parent() const;
 
   void setLayout(QLayout *layout);
 
@@ -96,7 +95,6 @@ private:
   virtual void writeSettings();
 
   QWidget *m_content;
-  ConfigDialog *m_configDialog;
 };
 
 /**
@@ -110,7 +108,7 @@ class DisplayPage : public Page
   Q_OBJECT
 
 public:
-  DisplayPage(ConfigDialog *configDialog);
+  DisplayPage(QWidget *parent=0);
 
 private:
   void readSettings();
@@ -135,7 +133,7 @@ class OptionsPage : public Page
   Q_OBJECT
 
 public:
-  OptionsPage(ConfigDialog *configDialog);
+  OptionsPage(QWidget *parent=0);
 
 private slots:
   void checkWorkingPath(const QString &path);
@@ -166,7 +164,7 @@ class EditorPage : public Page
   Q_OBJECT
 
 public:
-  EditorPage(ConfigDialog *configDialog);
+  EditorPage(QWidget *parent=0);
 
 private slots:
   void selectFont();
@@ -178,6 +176,7 @@ private:
 
   QCheckBox *m_numberLinesCheckBox;
   QCheckBox *m_highlightCurrentLineCheckBox;
+  QCheckBox *m_colorEnvironmentsCheckBox;
   QPushButton *m_fontButton;
   QFont m_font;
   QString m_fontstr;
@@ -193,7 +192,7 @@ class NetworkPage : public Page
   Q_OBJECT
 
 public:
-  NetworkPage(ConfigDialog *configDialog);
+  NetworkPage(QWidget *parent=0);
 
 private:
   void readSettings();
@@ -215,13 +214,14 @@ class SongbookPage : public Page
   Q_OBJECT
 
 public:
-  SongbookPage(ConfigDialog *configDialog);
+  SongbookPage(QWidget *parent=0);
 
 private slots:
   void updatePropertyEditor();
 
 private:
   QtGroupBoxPropertyBrowser * m_propertyEditor;
+  CMainWindow *m_mainwindow;
 };
 
 #endif // __PREFERENCES_HH__

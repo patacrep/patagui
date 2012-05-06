@@ -27,6 +27,7 @@
     <file>16x16/mimetypes/audio-x-generic.png</file>
     <file>16x16/mimetypes/document-export.png</file>
     <file>16x16/places/folder-remote.png</file>
+    <file>16x16/places/user-trash.png</file>
     <file>16x16/status/image-missing.png</file>
 
     <file>22x22/actions/application-exit.png</file>
@@ -55,6 +56,7 @@
     <file>22x22/mimetypes/audio-x-generic.png</file>
     <file>22x22/mimetypes/document-export.png</file>
     <file>22x22/places/folder-remote.png</file>
+    <file>22x22/places/user-trash.png</file>
     <file>22x22/status/image-missing.png</file>
 
     <file>32x32/actions/application-exit.png</file>
@@ -83,6 +85,7 @@
     <file>32x32/mimetypes/audio-x-generic.png</file>
     <file>32x32/mimetypes/document-export.png</file>
     <file>32x32/places/folder-remote.png</file>
+    <file>32x32/places/user-trash.png</file>
     <file>32x32/status/image-missing.png</file>
 
     <file>48x48/actions/application-exit.png</file>
@@ -111,6 +114,7 @@
     <file>48x48/mimetypes/audio-x-generic.png</file>
     <file>48x48/mimetypes/document-export.png</file>
     <file>48x48/places/folder-remote.png</file>
+    <file>48x48/places/user-trash.png</file>
     <file>48x48/status/image-missing.png</file>
 
     <file>128x128/status/image-missing.png</file>
