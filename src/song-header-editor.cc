@@ -234,6 +234,7 @@ void CSongHeaderEditor::update()
 void CSongHeaderEditor::onIndexChanged(const QString &text)
 {
   song().locale = QLocale(Song::languageFromString(text.toLower()), QLocale::AnyCountry);
+  emit(languageChanged(song().locale));
   emit(contentsChanged());
 }
 

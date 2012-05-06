@@ -95,6 +95,7 @@ public slots:
 
 signals:
   void contentsChanged();
+  void languageChanged(const QLocale &);
 
 private:
   LineEdit *m_titleLineEdit;

@@ -63,6 +63,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_songHeaderEditor = new CSongHeaderEditor(this);
   m_songHeaderEditor->setSongEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
+  connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)), SLOT(setDictionary(const QLocale &)));
 
   // toolBar
   m_toolBar = new QToolBar(tr("Song edition tools"), this);
@@ -203,7 +204,6 @@ void CSongEditor::readSettings()
       connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
       m_misspelledWordsActs.append(action);
     }
-  // m_dictionary = settings.value("dictionary", "/usr/share/hunspell/en_US.dic").toString();
 #endif //ENABLE_SPELL_CHECKING
 
   m_findReplaceDialog->readSettings(settings);

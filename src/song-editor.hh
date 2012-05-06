@@ -105,6 +105,7 @@ protected:
 #ifdef ENABLE_SPELL_CHECKING
   void contextMenuEvent(QContextMenuEvent *event);
   QString currentWord();
+protected slots:
   void setDictionary(const QLocale &locale);
 #endif //ENABLE_SPELL_CHECKING
 
