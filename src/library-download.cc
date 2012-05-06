@@ -118,7 +118,7 @@ bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
 
 void CLibraryDownload::downloadStart()
 {
-  if (!m_url->currentText().isEmpty())
+  if (!m_url->currentText().isEmpty() && QUrl(m_url->currentText()).isValid())
     {
       // check if there already is a songbook directory in the specified path
       QDir dir = m_path->directory();
@@ -133,6 +133,10 @@ void CLibraryDownload::downloadStart()
 	      this, SLOT(downloadProgress(qint64,qint64)));
       m_downloadTime.start();
       QDialog::accept();
+    }
+  else
+    {
+      qWarning() << tr("CLibraryDownload::downloadStart the following url is invalid: ") << m_url;
     }
 }
 
