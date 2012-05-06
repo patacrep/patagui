@@ -348,7 +348,7 @@ void CSongHeaderEditor::removeDiagram()
       m_diagramsLayout->removeWidget(diagram);
       disconnect(diagram,0,0,0);
       diagram->setParent(0);
-      //delete diagram;
+      onDiagramChanged();
     }
 }
 
