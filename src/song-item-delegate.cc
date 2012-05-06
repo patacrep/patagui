@@ -31,18 +31,6 @@
 CSongItemDelegate::CSongItemDelegate(QObject *parent)
   : QStyledItemDelegate(parent)
 {
-  // lilypond symbol
-  QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic", QIcon(":/icons/tango/22x22/mimetypes/audio-x-generic.png")).pixmap(22,22));
-
-  // cover missing
-  QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22));
-  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(128, 128));
-
-  // language flags
-  QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")).pixmap(22,22));
-  QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")).pixmap(22,22));
-  QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")).pixmap(22,22));
-  QPixmapCache::insert("pt_PT", QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")).pixmap(22,22));
 }
 
 CSongItemDelegate::~CSongItemDelegate()
@@ -78,35 +66,30 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         if (index.model()->data(index, CLibrary::LilypondRole).toBool())
           {
             QPixmap pixmap;
-            if (QPixmapCache::find("lilypond-checked", &pixmap))
+            if (!QPixmapCache::find("lilypond-checked", &pixmap))
               {
-                QApplication::style()->drawItemPixmap(painter,
-                                                      opt.rect,
-                                                      Qt::AlignCenter,
-                                                      pixmap);
-              }
-            else
-              {
-                QApplication::style()->drawItemText(painter,
-                                                    opt.rect,
-                                                    Qt::AlignCenter,
-                                                    opt.palette,
-                                                    true,
-                                                    tr("yes"),
-                                                    textColor);
-              }
+		pixmap = QIcon::fromTheme("audio-x-generic", QIcon(":/icons/tango/22x22/mimetypes/audio-x-generic.png")).pixmap(22,22);
+		QPixmapCache::insert("lilypond-checked", pixmap);
+	      }
+	    QApplication::style()->drawItemPixmap(painter,
+						  opt.rect,
+						  Qt::AlignCenter,
+						  pixmap);
           }
       }
       break;
     case 4:
       {
-
         // draw the cover
         QPixmap pixmap;
-        QPixmapCache::find("cover-missing-small", &pixmap);
-        if (qVariantCanConvert< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole)))
-          {
-            pixmap = qVariantValue< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole));
+        if (!QPixmapCache::find("cover-missing-small", &pixmap))
+	  {
+	    pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22);
+	    QPixmapCache::insert("cover-missing-small", pixmap);
+	  }
+	if (qVariantCanConvert< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole)))
+	  {
+	    pixmap = qVariantValue< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole));
           }
         QRect coverRectangle(opt.rect.left(), opt.rect.top() + 2,
                              32, opt.rect.height() - 4);
@@ -130,23 +113,18 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     case 5:
       {
         QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
+	QString locale = QLocale(lang).name();
         QPixmap pixmap;
-        if (QPixmapCache::find(QLocale(lang).name(), &pixmap))
+        if (!QPixmapCache::find(locale, &pixmap))
           {
-            QApplication::style()->drawItemPixmap(painter,
-                                                  opt.rect,
-                                                  Qt::AlignCenter,
-                                                  pixmap);
-          }
-        else
-          {
-            QApplication::style()->drawItemText(painter,
-                                                opt.rect,
-                                                Qt::AlignCenter,
-                                                opt.palette,
-                                                true,
-                                                QLocale::languageToString(lang));
-          }
+	    pixmap = QIcon::fromTheme(QString("flag-%1").arg(locale.split('_').first()),
+				      QIcon(QString(":/icons/songbook/22x22/flags/flag-%1.png").arg(locale.split('_').first()))).pixmap(22,22);
+	    QPixmapCache::insert(locale, pixmap);
+	  }
+	QApplication::style()->drawItemPixmap(painter,
+					      opt.rect,
+					      Qt::AlignCenter,
+					      pixmap);
       }
       break;
     default:
