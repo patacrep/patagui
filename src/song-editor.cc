@@ -188,7 +188,13 @@ CSongEditor::CSongEditor(QWidget *parent)
 }
 
 CSongEditor::~CSongEditor()
-{}
+{
+  delete m_codeEditor;
+  delete m_songHeaderEditor;
+  delete m_toolBar;
+  delete m_actions;
+  delete m_findReplaceDialog;
+}
 
 void CSongEditor::readSettings()
 {

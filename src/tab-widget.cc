@@ -24,8 +24,8 @@
 
 #include <QDebug>
 
-CTabWidget::CTabWidget()
-  : QTabWidget()
+CTabWidget::CTabWidget(QWidget *parent)
+  : QTabWidget(parent)
   , m_selectionBehaviorOnAdd(SelectCurrent)
 {
   setDocumentMode(true);

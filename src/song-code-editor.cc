@@ -72,6 +72,7 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
 CSongCodeEditor::~CSongCodeEditor()
 {
   delete m_highlighter;
+  delete m_completer;
 }
 
 void CSongCodeEditor::readSettings()

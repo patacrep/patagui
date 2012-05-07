@@ -24,12 +24,9 @@
 
 CProgressBar::CProgressBar(QWidget* parent)
   : QWidget(parent)
-  , m_progressBar(0)
-  , m_cancelButton(0)
+  , m_progressBar(new QProgressBar(this))
+  , m_cancelButton(new QToolButton(this))
 {
-  m_progressBar = new QProgressBar;
-
-  m_cancelButton = new QToolButton;
   m_cancelButton->setIcon(QIcon::fromTheme("process-stop", QIcon(":/icons/tango/32x32/actions/process-stop.png")));
 
   connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));

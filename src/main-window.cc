@@ -47,29 +47,29 @@
 
 using namespace SbUtils;
 
-CMainWindow::CMainWindow()
-  : QMainWindow()
-  , m_library(0)
-  , m_view(0)
-  , m_songbook(0)
-  , m_proxyModel(0)
+CMainWindow::CMainWindow(QWidget *parent)
+  : QMainWindow(parent)
+  , m_library(new CLibrary(this))
+  , m_view(new CLibraryView(this))
+  , m_songbook(new CSongbook(this))
+  , m_proxyModel(new CSongSortFilterProxyModel(this))
   , m_tempFilesmodel(0)
-  , m_progressBar(0)
+  , m_mainWidget(new CTabWidget(this))
+  , m_progressBar(new CProgressBar(this))
   , m_noDataInfo(0)
   , m_updateAvailable(0)
-  , m_infoSelection(0)
+  , m_infoSelection(new QLabel(this))
+  , m_log(new QDockWidget(tr("LaTeX compilation logs")))
+  , m_currentToolBar(0)
+  , m_builder(new CMakeSongbookProcess(this))
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
-
-  // song library
-  m_library = new CLibrary(this);
 
   connect(m_library, SIGNAL(directoryChanged(const QDir &)),
 	  SLOT(noDataNotification(const QDir &)));
 
   // songbook (title, authors, song list)
-  m_songbook = new CSongbook(this);
   m_songbook->setLibrary(m_library);
 
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
@@ -77,21 +77,18 @@ CMainWindow::CMainWindow()
 	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
 
   // proxy model (sorting & filtering)
-  m_proxyModel = new CSongSortFilterProxyModel(this);
   m_proxyModel->setSourceModel(m_songbook);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
   m_proxyModel->setFilterKeyColumn(-1);
 
   // view
-  m_view = new CLibraryView(this);
   m_view->setModel(m_proxyModel);
   m_view->setItemDelegate(new CSongItemDelegate);
   m_view->resizeColumns();
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
 
   // compilation log
-  m_log = new QDockWidget(tr("LaTeX compilation logs"));
   QPlainTextEdit* logs = new QPlainTextEdit;
   logs->setReadOnly(true);
   Q_UNUSED(new CLogsHighlighter(logs->document()));
@@ -103,7 +100,6 @@ CMainWindow::CMainWindow()
   createToolBar();
 
   // place elements into the main window
-  m_mainWidget = new CTabWidget;
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
   m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
@@ -112,21 +108,17 @@ CMainWindow::CMainWindow()
   m_mainWidget->addTab(m_view, tr("Library"));
   setCentralWidget(m_mainWidget);
 
-  // status bar with an embedded label and progress bar
-  m_infoSelection = new QLabel(this);
-  statusBar()->addPermanentWidget(m_infoSelection);
-
-  m_progressBar = new CProgressBar(this);
   m_progressBar->setTextVisible(false);
   m_progressBar->setRange(0, 0);
   m_progressBar->hide();
-  statusBar()->addPermanentWidget(m_progressBar);
   connect(progressBar(), SIGNAL(canceled()),
           this, SLOT(cancelProcess()));
 
-  // make/make clean/make cleanall process
-  m_builder = new CMakeSongbookProcess(this);
+  // status bar with an embedded label and progress bar
+  statusBar()->addPermanentWidget(m_infoSelection);
+  statusBar()->addPermanentWidget(m_progressBar);
 
+  // make/make clean/make cleanall process
   connect(m_builder, SIGNAL(aboutToStart()),
           progressBar(), SLOT(show()));
   connect(m_builder, SIGNAL(aboutToStart()),

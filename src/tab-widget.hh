@@ -55,7 +55,7 @@ public:
   enum SelectionBehavior { SelectCurrent, SelectNew };
 
   /// Constructor.
-  CTabWidget();
+  CTabWidget(QWidget *parent=0);
 
   /// Destructor.
   virtual ~CTabWidget();

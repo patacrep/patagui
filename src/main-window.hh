@@ -75,7 +75,7 @@ public slots:
 
 public:
   /// Constructor.
-  CMainWindow();
+  CMainWindow(QWidget *parent=0);
 
   /// Destructor.
   ~CMainWindow();
