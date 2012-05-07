@@ -162,9 +162,12 @@ void CMainWindow::readSettings()
 {
   QSettings settings;
   settings.beginGroup("general");
-  resize(settings.value("size", QSize(800,600)).toSize());
   setStatusbarDisplayed(settings.value("statusBar", true).toBool());
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
+  resize(settings.value("size", QSize(800,600)).toSize());
+  move(settings.value("pos", QPoint(200, 200)).toPoint());
+  if (settings.value("maximized", isMaximized()).toBool())
+    showMaximized();
   settings.endGroup();
 
   settings.beginGroup("display");
@@ -185,9 +188,14 @@ void CMainWindow::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("general");
-  settings.setValue("size", size());
   settings.setValue("statusBar", isStatusbarDisplayed());
   settings.setValue("toolBar", isToolBarDisplayed());
+  settings.setValue( "maximized", isMaximized() );
+  if (!isMaximized())
+    {
+      settings.setValue( "pos", pos() );
+      settings.setValue( "size", size() );
+    }
   settings.endGroup();
 
   library()->writeSettings();
