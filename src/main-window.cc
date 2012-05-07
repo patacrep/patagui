@@ -60,6 +60,7 @@ CMainWindow::CMainWindow(QWidget *parent)
   , m_updateAvailable(0)
   , m_infoSelection(new QLabel(this))
   , m_log(new QDockWidget(tr("LaTeX compilation logs")))
+  , m_isToolBarDisplayed(true)
   , m_currentToolBar(0)
   , m_builder(new CMakeSongbookProcess(this))
 {
