@@ -37,13 +37,13 @@ QRegExp Song::reCapo("\\\\capo\\{([^\\}]+)");
 QRegExp Song::reTranspose("\\\\transpose\\{([^\\}]+)");
 QRegExp Song::reCover("\\\\cover");
 QRegExp Song::reBlankLine("^\\s*$");
-QRegExp Song::reGtab("(\\\\gtab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+\\})");
-QRegExp Song::reUtab("(\\\\utab[\\*]?\\{[^\\}]+\\}\\{[^\\}]+\\})");
+QRegExp Song::reGtab("(\\\\gtab\\*?\\{[^\\}]+\\}\\{[^\\}]+\\})");
+QRegExp Song::reUtab("(\\\\utab\\*?\\{[^\\}]+\\}\\{[^\\}]+\\})");
 
 QRegExp Song::reBegin("\\\\begin");
 QRegExp Song::reEnd("\\\\end");
-QRegExp Song::reBeginVerse("\\\\begin\\{verse[\\*]?\\}");
-QRegExp Song::reEndVerse("\\\\end\\{verse[\\*]?\\}");
+QRegExp Song::reBeginVerse("\\\\begin\\{verse\\*?\\}");
+QRegExp Song::reEndVerse("\\\\end\\{verse\\*?\\}");
 QRegExp Song::reBeginBridge("\\\\begin\\{bridge\\}");
 QRegExp Song::reEndBridge("\\\\end\\{bridge\\}");
 QRegExp Song::reBeginChorus("\\\\begin\\{chorus\\}");
