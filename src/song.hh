@@ -51,6 +51,7 @@ struct Song
   QStringList gtabs;
   QStringList utabs;
   QStringList lyrics;
+  QStringList scripture;
 
   static Song fromFile(const QString &path);
   static Song fromString(const QString &text, const QString &path = QString());

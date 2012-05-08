@@ -330,11 +330,22 @@ bool CSongEditor::checkSongMandatoryFields()
 void CSongEditor::parseText()
 {
   m_song.lyrics.clear();
+  m_song.scripture.clear();
+  bool scripture = false;
   QStringList lines = codeEditor()->toPlainText().split("\n");
   QString line;
   foreach (line, lines)
     {
-      m_song.lyrics << line;
+      if(Song::reBeginScripture.indexIn(line) > -1)
+	scripture = true;
+
+      if(scripture)
+	m_song.scripture << line;
+      else
+	m_song.lyrics << line;
+
+      if(Song::reEndScripture.indexIn(line) > -1)
+	scripture = false;
     }
 }
 
@@ -445,6 +456,10 @@ void CSongEditor::setSong(const Song &song)
   foreach (QString lyric, m_song.lyrics)
     {
       songContent.append(QString("%1\n").arg(lyric));
+    }
+  foreach (QString line, m_song.scripture)
+    {
+      songContent.append(QString("%1\n").arg(line));
     }
 
   codeEditor()->setPlainText(songContent);

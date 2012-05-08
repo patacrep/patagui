@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-QRegExp Song::reSgFile("(.*)\\\\begin\\{?song\\}?\\{([^\\}]+)\\}[^[]*\\[([^]]*)\\](.*)\\s*\\\\endsong.*");
+QRegExp Song::reSgFile("(.*)\\\\begin\\{?song\\}?\\{([^\\}]+)\\}[^[]*\\[([^]]*)\\](.*)\\s*\\\\endsong(.*)");
 QRegExp Song::reSong("\\\\begin\\{?song\\}?\\{([^[\\}]+)\\}[^[]*\\[([^]]*)\\]");
 QRegExp Song::reArtist("by=([^,]+)");
 QRegExp Song::reAlbum("album=([^,]+)");
@@ -77,6 +77,7 @@ Song Song::fromString(const QString &text, const QString &path)
   QString prefix = reSgFile.cap(1);
   QString options = reSgFile.cap(3);
   QString content = reSgFile.cap(4);
+  QString post = reSgFile.cap(5);
 
   // path
   song.path = path;
@@ -158,6 +159,12 @@ Song Song::fromString(const QString &text, const QString &path)
       song.lyrics.removeLast();
     }
 
+  lines = post.split("\n");
+  foreach (line, lines)
+    {
+      song.scripture << line;
+    }
+
   return song;
 }
 
@@ -205,6 +212,11 @@ QString Song::toString(const Song &song)
     }
 
   text.append(QString("\\endsong\n"));
+
+  foreach (QString line, song.scripture)
+    {
+      text.append(QString("%1\n").arg(line));
+    }
 
   return text;
 }
