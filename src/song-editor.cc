@@ -35,7 +35,6 @@
 #include <QToolBar>
 #include <QAction>
 #include <QActionGroup>
-#include <QTextStream>
 #include <QTextCodec>
 #include <QSettings>
 #include <QBoxLayout>
@@ -340,9 +339,19 @@ void CSongEditor::parseText()
 	scripture = true;
 
       if(scripture)
-	m_song.scripture << line;
+	{
+	  //ensures all lines in a scripture environment end with a % symbol
+	  if (!line.endsWith("%"))
+	    line = line.append("%");
+	  m_song.scripture << line;
+	}
       else
-	m_song.lyrics << line;
+	{
+	  //add a level of indentation
+	  if (!line.isEmpty())
+	    line = line.prepend("  ");
+	  m_song.lyrics << line;
+	}
 
       if(Song::reEndScripture.indexIn(line) > -1)
 	scripture = false;
@@ -463,7 +472,7 @@ void CSongEditor::setSong(const Song &song)
     }
 
   codeEditor()->setPlainText(songContent);
-
+  codeEditor()->indent();
 
 #ifdef ENABLE_SPELL_CHECKING
   setDictionary(song.locale);
