@@ -56,6 +56,9 @@ public:
   bool environmentsHighlighted() const;
   void setEnvironmentsHighlighted(bool);
 
+  void indent();
+  void indentSelection();
+
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 
@@ -64,7 +67,6 @@ private slots:
   void insertCompletion(const QString &completion);
 
 private:
-  void indentSelection();
   void indentLine(const QTextCursor &cursor);
   void trimLine(const QTextCursor &cursor);
   QString textUnderCursor() const;

@@ -283,6 +283,9 @@ void CSongEditor::save()
   if (!checkSongMandatoryFields())
     return;
 
+  //apply indentation before saving
+  codeEditor()->indent();
+
   // get the song contents
   parseText();
 
