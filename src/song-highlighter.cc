@@ -22,9 +22,9 @@
 #include "config.hh"
 #include "song-highlighter.hh"
 #include "song.hh"
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
@@ -120,18 +120,18 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   rule.format = chordFormat;
   highlightingRules.append(rule);
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   //Settings for online spellchecking
   m_spellCheckFormat.setUnderlineColor(QColor(Qt::red));
   m_spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 }
 
 CSongHighlighter::~CSongHighlighter()
 {
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   delete m_checker;
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 }
 
 void CSongHighlighter::highlightBlock(const QString &text)
@@ -147,12 +147,12 @@ void CSongHighlighter::highlightBlock(const QString &text)
   }
   setCurrentBlockState(0);
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   spellCheck(text);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 }
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 void CSongHighlighter::spellCheck(const QString &text)
 {
   if (!m_isSpellCheckActive)
@@ -235,4 +235,4 @@ Hunspell* CSongHighlighter::checker() const
 {
   return m_checker;
 }
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK

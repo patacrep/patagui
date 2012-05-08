@@ -12,9 +12,18 @@ IF (HUNSPELL_INCLUDE_DIR AND HUNSPELL_LIBRARIES)
   SET(HUNSPELL_FIND_QUIETLY TRUE)
 ENDIF (HUNSPELL_INCLUDE_DIR AND HUNSPELL_LIBRARIES)
 
-FIND_PATH(HUNSPELL_INCLUDE_DIR hunspell/hunspell.hxx )
+FIND_PATH(HUNSPELL_INCLUDE_DIR
+  NAMES hunspell/hunspell.hxx
+  PATHS
+  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\hunspell;InstallPath]/include"
+  "C:/Program Files/GnuWin32/include"
+  )
 
-FIND_LIBRARY(HUNSPELL_LIBRARIES NAMES hunspell-1.2 hunspell-1.3)
+FIND_LIBRARY(HUNSPELL_LIBRARIES
+  NAMES hunspell-1.3 hunspell-1.2 hunspell
+  PATHS
+  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\hunspell;InstallPath]/lib"
+  )
 
 # handle the QUIETLY and REQUIRED arguments and set HUNSPELL_FOUND to TRUE if 
 # all listed variables are TRUE

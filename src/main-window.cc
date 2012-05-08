@@ -478,7 +478,7 @@ void CMainWindow::build()
     {
       if (QMessageBox::question(this, windowTitle(),
 				QString(tr("You did not select any song. \n "
-					   "Do you want to build the songbook with all songs?")),
+                       "Do you want to build the songbook with all songs?")),
 				QMessageBox::Yes,
 				QMessageBox::No,
 				QMessageBox::NoButton) == QMessageBox::No)

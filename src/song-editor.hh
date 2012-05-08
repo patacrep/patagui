@@ -68,7 +68,7 @@ public:
   void readSettings();
   void writeSettings();
   QStringList getWordPropositions(const QString &word);
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   Hunspell* checker() const;
 #endif
   void installHighlighter();
@@ -102,12 +102,12 @@ signals:
 protected:
   void closeEvent(QCloseEvent *event);
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   void contextMenuEvent(QContextMenuEvent *event);
   QString currentWord();
 protected slots:
   void setDictionary(const QLocale &locale);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -117,11 +117,11 @@ private slots:
   void insertChorus();
   void insertBridge();
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   void correctWord();
   void addWord();
   void ignoreWord();
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 private:
   void parseText();
@@ -138,12 +138,12 @@ private:
   QAction* m_spellCheckingAct;
   bool m_isSpellCheckingEnabled;
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   QList<QAction *> m_misspelledWordsActs;
   QPoint m_lastPos;
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
   FindReplaceDialog* m_findReplaceDialog;
 

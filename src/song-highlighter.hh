@@ -58,7 +58,7 @@ public:
   /// @return the hunspell spellchecker
   Hunspell* checker() const;
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 public slots:
   /// Add an unrecognized word to the hunspell dictionnary
   /// so that it is not marked as incorrect anymore.
@@ -68,7 +68,7 @@ public slots:
   /// Define whether the spellchecker is active or not.
   /// @param state true if the spellchecker is active, false otherwise.
   void setSpellCheck(const bool state);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 protected:
   /// Apply highlighting rules for a block of text.

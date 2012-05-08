@@ -19,9 +19,9 @@
 #include "song-editor.hh"
 
 #include "qtfindreplacedialog/findreplacedialog.h"
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 #include "song-header-editor.hh"
 #include "song-code-editor.hh"
@@ -49,7 +49,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_library(0)
   , m_toolBar(0)
   , m_actions(new QActionGroup(this))
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   , m_maxSuggestedWords(0)
 #endif
   , m_song()
@@ -62,7 +62,9 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_songHeaderEditor = new CSongHeaderEditor(this);
   m_songHeaderEditor->setSongEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
+#ifdef ENABLE_SPELLCHECK
   connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)), SLOT(setDictionary(const QLocale &)));
+#endif
 
   // toolBar
   m_toolBar = new QToolBar(tr("Song edition tools"), this);
@@ -200,7 +202,7 @@ void CSongEditor::readSettings()
   QSettings settings;
   settings.beginGroup("editor");
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
   for(uint i = 0; i < m_maxSuggestedWords; ++i)
     {
@@ -209,7 +211,7 @@ void CSongEditor::readSettings()
       connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
       m_misspelledWordsActs.append(action);
     }
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
   m_findReplaceDialog->readSettings(settings);
 
@@ -227,14 +229,20 @@ QActionGroup* CSongEditor::actionGroup() const
   return m_actions;
 }
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 void CSongEditor::setDictionary(const QLocale &locale)
 {
   if (codeEditor()->highlighter() == 0)
     return;
 
   // find the suitable dictionary based on the current song's locale
-  QString dictionary = QString("/usr/share/hunspell/%1.dic").arg(locale.name());;
+  QString prefix;
+#if defined(Q_OS_WIN32)
+  prefix = "";
+#else
+  prefix = "/usr/share/";
+#endif //Q_OS_WIN32
+  QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
   if (!QFile(dictionary).exists())
     {
       qWarning() << "Unable to find the following dictionnary: " << dictionary;
@@ -246,7 +254,7 @@ void CSongEditor::setDictionary(const QLocale &locale)
   connect(this, SIGNAL(wordAdded(const QString&)), codeEditor()->highlighter(), SLOT(addWord(const QString&)));
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)), codeEditor()->highlighter(), SLOT(setSpellCheck(bool)));
 }
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 void CSongEditor::closeEvent(QCloseEvent *event)
 {
@@ -474,9 +482,9 @@ void CSongEditor::setSong(const Song &song)
   codeEditor()->setPlainText(songContent);
   codeEditor()->indent();
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
   setDictionary(song.locale);
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
   setNewSong(false);
   setWindowTitle(m_song.title);
@@ -503,7 +511,7 @@ void CSongEditor::setNewCover(bool newCover)
   m_newCover = newCover;
 }
 
-#ifdef ENABLE_SPELL_CHECKING
+#ifdef ENABLE_SPELLCHECK
 QString CSongEditor::currentWord()
 {
   QTextCursor cursor = codeEditor()->cursorForPosition(m_lastPos);
@@ -607,7 +615,7 @@ Hunspell* CSongEditor::checker() const
   if(!codeEditor()->highlighter()) return 0;
   return codeEditor()->highlighter()->checker();
 }
-#endif //ENABLE_SPELL_CHECKING
+#endif //ENABLE_SPELLCHECK
 
 bool CSongEditor::isSpellCheckingEnabled() const
 {
