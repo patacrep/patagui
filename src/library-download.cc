@@ -129,6 +129,8 @@ void CLibraryDownload::downloadStart()
       QNetworkReply *reply = m_manager->get(request);
       connect(reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
+      connect(reply, SIGNAL(sslErrors(QList<QSslError>)),
+	      this, SLOT(sslErrors(QList<QSslError>)));
       connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
 	      this, SLOT(downloadProgress(qint64,qint64)));
       m_downloadTime.start();
@@ -188,6 +190,14 @@ void CLibraryDownload::downloadFinished()
 
   parent()->progressBar()->hide();
   reply->deleteLater();
+}
+
+void CLibraryDownload::sslErrors(const QList<QSslError> &sslErrors)
+{
+#ifndef QT_NO_OPENSSL
+  foreach (const QSslError &error, sslErrors)
+    qWarning() << "CLibraryDownload::sslErrors : " << error.errorString();
+#endif
 }
 
 // Uses the code sample proposed in the libarchive documentation

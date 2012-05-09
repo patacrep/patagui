@@ -23,6 +23,8 @@
 #include <QDialog>
 #include <QDir>
 #include <QTime>
+#include <QList>
+#include <QSslError>
 
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -69,6 +71,8 @@ public slots:
   /// Handles common errors and dialog at the end of the downloading operation
   /// such as conflicts with filenames or failed download.
   void downloadFinished();
+
+  void sslErrors(const QList<QSslError> &errors);
 
   /// Network initialisation before download.
   void downloadStart();
