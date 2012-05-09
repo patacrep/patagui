@@ -40,6 +40,7 @@
 CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   : QDialog(parent)
   , m_manager()
+  , m_reply(0)
   , m_url()
   , m_path()
 {
@@ -126,12 +127,12 @@ void CLibraryDownload::downloadStart()
       QNetworkRequest request;
       request.setUrl(url);
       request.setRawHeader("User-Agent", "songbook-client a1");
-      QNetworkReply *reply = m_manager->get(request);
-      connect(reply, SIGNAL(finished()),
+      m_reply = m_manager->get(request);
+      connect(m_reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
-      connect(reply, SIGNAL(sslErrors(QList<QSslError>)),
+      connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)),
 	      this, SLOT(sslErrors(QList<QSslError>)));
-      connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
+      connect(m_reply, SIGNAL(downloadProgress(qint64,qint64)),
 	      this, SLOT(downloadProgress(qint64,qint64)));
       m_downloadTime.start();
       QDialog::accept();
@@ -146,14 +147,15 @@ void CLibraryDownload::downloadFinished()
 {
   bool abort = false;
 
-  QNetworkReply *reply = qobject_cast< QNetworkReply* >(sender());
-  if (reply->error())
+  if (m_reply->error())
     {
-      parent()->statusBar()->showMessage(tr("Download of %1 failed: %2").arg(reply->url().toEncoded().constData()).arg(qPrintable(reply->errorString())));
+      parent()->statusBar()->showMessage(tr("Download of %1 failed: %2")
+					 .arg(m_reply->url().toEncoded().constData())
+					 .arg(qPrintable(m_reply->errorString())));
       abort = true;
     }
 
-  QString filename = findFileName(reply);
+  QString filename = findFileName();
 
   if (QDir().exists(filename))
     {
@@ -175,7 +177,7 @@ void CLibraryDownload::downloadFinished()
       QDir dir = m_path->directory();
       QDir oldCurrent = QDir::currentPath();
       QString filepath = dir.filePath(filename);
-      if (saveToDisk(filepath, reply))
+      if (saveToDisk(filepath, m_reply))
 	{
 	  QDir::setCurrent(dir.absolutePath());
 	  if (decompress(filepath, dir))
@@ -189,7 +191,7 @@ void CLibraryDownload::downloadFinished()
     }
 
   parent()->progressBar()->hide();
-  reply->deleteLater();
+  m_reply->deleteLater();
 }
 
 void CLibraryDownload::sslErrors(const QList<QSslError> &sslErrors)
@@ -259,19 +261,19 @@ CMainWindow * CLibraryDownload::parent()
   return qobject_cast< CMainWindow* >(QDialog::parent());
 }
 
-QString CLibraryDownload::findFileName(QNetworkReply *reply)
+QString CLibraryDownload::findFileName()
 {
-  if (!reply)
+  if (!m_reply)
     {
       qWarning() << tr("CLibraryDownload::findFileName : invalid network reply");
       return QString();
     }
 
-  QString filename = QFileInfo(reply->url().path()).fileName();
+  QString filename = QFileInfo(m_reply->url().path()).fileName();
   if (filename.isEmpty())
     {
       // try to find a filename in the reply header
-      QByteArray raw = reply->rawHeader(QByteArray("Content-Disposition"));
+      QByteArray raw = m_reply->rawHeader(QByteArray("Content-Disposition"));
       QString rawHeader(raw);
       QRegExp re("filename=\"(.*)\"");
       re.indexIn(rawHeader);
@@ -306,8 +308,7 @@ QString CLibraryDownload::bytesToString(double value)
 
 void CLibraryDownload::downloadProgress(qint64 bytesRead, qint64 totalBytes)
 {
-  QNetworkReply *reply = qobject_cast< QNetworkReply* >(sender());
-  QString message = tr("Downloading %1").arg(findFileName(reply));
+  QString message = tr("Downloading %1").arg(findFileName());
   // download transfer
   message.append(tr(" - %1").arg(bytesToString(bytesRead)));
 

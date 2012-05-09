@@ -82,9 +82,10 @@ public slots:
 private:
   CMainWindow * parent();
   QString bytesToString(double bytes);
-  QString findFileName(QNetworkReply *reply);
+  QString findFileName();
 
   QNetworkAccessManager *m_manager;
+  QNetworkReply *m_reply;
   QComboBox *m_url;
   CFileChooser *m_path;
   QTime m_downloadTime;
