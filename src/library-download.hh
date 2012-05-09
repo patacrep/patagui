@@ -79,6 +79,8 @@ public slots:
 
   void downloadProgress(qint64 bytesRead, qint64 totalBytes);
 
+  void cancelDownload();
+
 private:
   CMainWindow * parent();
   QString bytesToString(double bytes);

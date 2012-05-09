@@ -37,8 +37,8 @@
 
 #include <QDebug>
 
-CLibraryDownload::CLibraryDownload(CMainWindow *parent)
-  : QDialog(parent)
+CLibraryDownload::CLibraryDownload(CMainWindow *p)
+  : QDialog(p)
   , m_manager()
   , m_reply(0)
   , m_url()
@@ -98,10 +98,15 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   vlayout->addLayout(layout);
   vlayout->addWidget(buttonBox);
   setLayout(vlayout);
+
+  connect(parent()->progressBar(), SIGNAL(canceled()),
+	  this, SLOT(cancelDownload()));
 }
 
 CLibraryDownload::~CLibraryDownload()
-{}
+{
+  disconnect(parent()->progressBar(), 0, this, 0);
+}
 
 bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
 {
@@ -200,6 +205,12 @@ void CLibraryDownload::sslErrors(const QList<QSslError> &sslErrors)
   foreach (const QSslError &error, sslErrors)
     qWarning() << "CLibraryDownload::sslErrors : " << error.errorString();
 #endif
+}
+
+void CLibraryDownload::cancelDownload()
+{
+  m_reply->abort();
+  downloadFinished();
 }
 
 // Uses the code sample proposed in the libarchive documentation
