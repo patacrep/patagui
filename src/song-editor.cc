@@ -364,6 +364,17 @@ void CSongEditor::parseText()
       if(Song::reEndScripture.indexIn(line) > -1)
 	scripture = false;
     }
+
+  // remove blank line at the end of input
+  while (m_song.lyrics.last().trimmed().isEmpty())
+    m_song.lyrics.removeLast();
+
+  if (!m_song.scripture.isEmpty())
+    while (m_song.scripture.last().trimmed().isEmpty())
+      m_song.scripture.removeLast();
+
+  //finally insert newline after endsong macro
+  m_song.lyrics << QString();
 }
 
 void CSongEditor::saveNewSong()
