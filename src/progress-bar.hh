@@ -51,6 +51,9 @@ public:
   void setRange(int start, int stop);
   void setTextVisible(bool value);
 
+  bool isCancelable() const;
+  void setCancelable(bool);
+
 public slots:
   void show();
   void hide();
@@ -65,6 +68,7 @@ private slots:
 private:
   QProgressBar *m_progressBar;
   QToolButton *m_cancelButton;
+  bool m_cancelable;
 };
 
 #endif  // __FILE_CHOOSER_HH__

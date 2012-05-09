@@ -26,6 +26,7 @@ CProgressBar::CProgressBar(QWidget* parent)
   : QWidget(parent)
   , m_progressBar(new QProgressBar(this))
   , m_cancelButton(new QToolButton(this))
+  , m_cancelable(true)
 {
   m_cancelButton->setIcon(QIcon::fromTheme("process-stop", QIcon(":/icons/tango/32x32/actions/process-stop.png")));
 
@@ -36,6 +37,8 @@ CProgressBar::CProgressBar(QWidget* parent)
   layout->addWidget(m_cancelButton);
   setLayout(layout);
   setContentsMargins(0, 0, 0, 0);
+
+  hide();
 }
 
 CProgressBar::~CProgressBar()
@@ -59,7 +62,8 @@ void CProgressBar::hide()
 void CProgressBar::show()
 {
   m_progressBar->show();
-  m_cancelButton->show();
+  if (isCancelable())
+    m_cancelButton->show();
 }
 
 void CProgressBar::setTextVisible(bool value)
@@ -75,4 +79,14 @@ void CProgressBar::setRange(int start, int stop)
 void CProgressBar::setValue(int value)
 {
   m_progressBar->setValue(value);
+}
+
+bool CProgressBar::isCancelable() const
+{
+ return m_cancelable;
+}
+
+void CProgressBar::setCancelable(bool value)
+{
+  m_cancelable = value;
 }
