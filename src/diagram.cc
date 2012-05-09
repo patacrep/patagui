@@ -273,6 +273,7 @@ bool CDiagramWidget::editChord()
 						     QDialogButtonBox::Cancel);
   connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
+  connect(this, SIGNAL(diagramChanged()), this, SLOT(updateChordName()));
 
   QLineEdit *chordEdit = new QLineEdit;
   chordEdit->setMinimumWidth(250);
@@ -285,7 +286,6 @@ bool CDiagramWidget::editChord()
 
   if (dialog.exec() == QDialog::Accepted)
     {
-      updateChordName();
       m_diagram->fromString(chordEdit->text());
       update();
       emit diagramChanged();
