@@ -103,7 +103,6 @@ Song Song::fromString(const QString &text, const QString &path)
 
   // content
   song.isLilypond = QBool(reLilypond.indexIn(content) > -1);
-  song.coverPath = QFileInfo(path).absolutePath();
 
   //locale
   reLanguage.indexIn(prefix);

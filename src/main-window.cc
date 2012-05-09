@@ -614,10 +614,7 @@ void CMainWindow::cancelProcess()
     {
       m_builder->close();
       if(m_builder->command() == buildCommand())
-	{
-	  qDebug() << "m_builder closed, running make clean";
-	  makeClean();
-	}
+	makeClean();
     }
 }
 
@@ -693,7 +690,7 @@ void CMainWindow::deleteSong()
 void CMainWindow::deleteSong(const QString &path)
 {
   int ret = QMessageBox::warning(this, tr("Songbook-Client"),
-				 tr("The file : %1 will be deleted.\n"
+				 tr("This file will be deleted:\n%1\n"
 				    "Are you sure?").arg(path),
 				 QMessageBox::Cancel | QMessageBox::Ok,
 				 QMessageBox::Cancel);
