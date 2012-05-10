@@ -366,8 +366,12 @@ void CSongEditor::parseText()
     }
 
   // remove blank line at the end of input
-  while (m_song.lyrics.last().trimmed().isEmpty())
-    m_song.lyrics.removeLast();
+    while (m_song.lyrics.last().trimmed().isEmpty())
+      {
+	if (m_song.lyrics.isEmpty())
+	  break;
+	m_song.lyrics.removeLast();
+      }
 
   if (!m_song.scripture.isEmpty())
     while (m_song.scripture.last().trimmed().isEmpty())

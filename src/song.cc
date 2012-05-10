@@ -156,6 +156,8 @@ Song Song::fromString(const QString &text, const QString &path)
   // remove blank line at the end of input
   while (song.lyrics.last().trimmed().isEmpty())
     {
+      if (song.lyrics.isEmpty())
+	break;
       song.lyrics.removeLast();
     }
 
