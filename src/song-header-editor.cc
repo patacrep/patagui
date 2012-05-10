@@ -303,6 +303,7 @@ void CSongHeaderEditor::onDiagramChanged()
 
 void CSongHeaderEditor::onCoverChanged()
 {
+  songEditor()->setNewCover(true);
   emit(contentsChanged());
 }
 
