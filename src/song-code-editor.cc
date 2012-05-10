@@ -296,6 +296,8 @@ void CSongCodeEditor::indentLine(const QTextCursor & cur)
   QString prevLine;
   do
     {
+      if (cursor.atStart())
+	return;
       cursor.movePosition(QTextCursor::Up);
       prevLine = cursor.block().text();
     }
