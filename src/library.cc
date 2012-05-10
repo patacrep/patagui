@@ -358,7 +358,9 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
 
   // update song cover information
   song.coverPath = artistDirectory.absolutePath();
-  song.coverName = SbUtils::stringToFilename(song.album, "-");
+  song.coverName = (!song.album.isEmpty()) ?
+    SbUtils::stringToFilename(song.album, "-") :
+    song.artist.toLower(); //fallback on artist name
 
   // guess the cover filename
   QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
