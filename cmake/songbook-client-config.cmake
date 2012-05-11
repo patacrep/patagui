@@ -15,11 +15,20 @@ option(ENABLE_LIBRARY_DOWNLOAD "allow the application to download songbooks" ON)
 option(ENABLE_SPELLCHECK "allow the application to apply spellchecking within song-editor" ON)
 
 # {{{ CFLAGS
-add_definitions(-ggdb3 -fno-strict-aliasing -Wall -Wextra
-  -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
-  -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
-  -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
-  -Wmissing-format-attribute)
+if( CMAKE_COMPILER_IS_GNUCXX )
+  # Add additional GCC options.
+  add_definitions(
+    -ggdb3 -fno-strict-aliasing -Wall -Wextra
+    -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
+    -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
+    -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
+    -Wmissing-format-attribute -Wpacked -Wformat-security
+    )
+  add_definitions( -fvisibility=hidden )
+elseif( CMAKE_CXX_COMPILER MATCHES "clang" )
+  add_definitions( -Wall -Wextra -Wno-unused-parameter )
+  add_definitions( -fvisibility=hidden )
+endif()
 # }}}
 
 # {{{ Find external utilities
