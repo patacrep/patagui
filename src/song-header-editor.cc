@@ -60,14 +60,15 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_addDiagramButton(0)
   , m_spacer(0)
 {
+  //do not translate combobox content since "english", "french" etc is used by LaTeX
   m_languageComboBox->addItem
-    (QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")), tr("English"));
+    (QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")), "English");
   m_languageComboBox->addItem
-    (QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")), tr("French"));
+    (QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")), "French");
   m_languageComboBox->addItem
-    (QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")), tr("Spanish"));
+    (QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")), "Spanish");
   m_languageComboBox->addItem
-    (QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")), tr("Portuguese"));
+    (QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")), "Portuguese");
   m_languageComboBox->setToolTip(tr("Language"));
 
   QLabel *columnCountLabel = new QLabel(this);
