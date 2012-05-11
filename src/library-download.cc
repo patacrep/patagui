@@ -105,7 +105,6 @@ CLibraryDownload::CLibraryDownload(CMainWindow *p)
 
 CLibraryDownload::~CLibraryDownload()
 {
-  disconnect(parent()->progressBar(), 0, this, 0);
 }
 
 bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
