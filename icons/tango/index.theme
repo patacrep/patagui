@@ -143,3 +143,8 @@ Size=48
 Context=Status
 Type=Fixed
 
+[128x128/status]
+Size=128
+Context=Status
+Type=Fixed
+

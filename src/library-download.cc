@@ -46,7 +46,7 @@ CLibraryDownload::CLibraryDownload(CMainWindow *p)
 {
   setWindowTitle(tr("Download"));
 
-  m_manager = new QNetworkAccessManager;
+  m_manager = new QNetworkAccessManager(this);
 
   {
     QSettings settings;
@@ -73,13 +73,13 @@ CLibraryDownload::CLibraryDownload(CMainWindow *p)
     QNetworkProxy::setApplicationProxy(proxy);
   }
 
-  m_url = new QComboBox;
+  m_url = new QComboBox(this);
   m_url->setEditable(true);
   // set the default download URL to the songbook repository HEAD
   m_url->addItem("http://git.lohrun.net/?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
   m_url->addItem("http://www.patacrep.com/data/documents/songbook.tar.gz");
 
-  m_path = new CFileChooser();
+  m_path = new CFileChooser(this);
   m_path->setFileMode(QFileDialog::Directory);
   m_path->setOptions(QFileDialog::ShowDirsOnly);
   m_path->setCaption(tr("Install directory"));
@@ -91,8 +91,8 @@ CLibraryDownload::CLibraryDownload(CMainWindow *p)
   connect(buttonBox, SIGNAL(accepted()), this, SLOT(downloadStart()));
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-  QVBoxLayout *vlayout = new QVBoxLayout();
-  QFormLayout *layout = new QFormLayout();
+  QVBoxLayout *vlayout = new QVBoxLayout;
+  QFormLayout *layout = new QFormLayout;
   layout->addRow(tr("URL:"), m_url);
   layout->addRow(tr("Directory:"), m_path);
   vlayout->addLayout(layout);

@@ -37,14 +37,14 @@
 ConfigDialog::ConfigDialog(QWidget* parent)
   : QDialog(parent)
 {
-  m_contentsWidget = new QListWidget;
+  m_contentsWidget = new QListWidget(this);
   m_contentsWidget->setViewMode(QListView::IconMode);
   m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
   m_contentsWidget->setSpacing(12);
   m_contentsWidget->setFixedWidth(110);
 
-  m_pagesWidget = new QStackedWidget;
+  m_pagesWidget = new QStackedWidget(this);
   m_pagesWidget->addWidget(new OptionsPage(this));
   m_pagesWidget->addWidget(new SongbookPage(this));
   m_pagesWidget->addWidget(new DisplayPage(this));
