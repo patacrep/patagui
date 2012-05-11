@@ -181,7 +181,7 @@ void CMainWindow::readSettings()
   settings.endGroup();
 
   view()->readSettings();
-  QTimer::singleShot(0, library(), SLOT(readSettings()));
+  QTimer::singleShot(100, library(), SLOT(readSettings()));
 }
 
 void CMainWindow::writeSettings()
