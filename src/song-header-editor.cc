@@ -331,7 +331,7 @@ void CSongHeaderEditor::addNewDiagramButton()
 
 void CSongHeaderEditor::addDiagram()
 {
-  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{<name>}{<fret>:<strings>}", GuitarChord);
+  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", GuitarChord);
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
   if (diagram->editChord())

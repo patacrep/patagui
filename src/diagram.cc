@@ -18,15 +18,18 @@
 //******************************************************************************
 #include "diagram.hh"
 
-#include <QBoxLayout>
 #include <QToolBar>
 #include <QAction>
 #include <QLabel>
 #include <QPainter>
 #include <QLineEdit>
+#include <QSpinBox>
+#include <QGroupBox>
+#include <QRadioButton>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QBoxLayout>
+#include <QFormLayout>
 #include <QMouseEvent>
 #include <QDebug>
 
@@ -267,7 +270,7 @@ CDiagramWidget::~CDiagramWidget()
 bool CDiagramWidget::editChord()
 {
   QDialog dialog(this);
-  dialog.setWindowTitle(tr("Edit chord"));
+  dialog.setWindowTitle(tr("Chord editor"));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
 						     QDialogButtonBox::Cancel);
@@ -275,18 +278,51 @@ bool CDiagramWidget::editChord()
   connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
   connect(this, SIGNAL(diagramChanged()), this, SLOT(updateChordName()));
 
-  QLineEdit *chordEdit = new QLineEdit;
-  chordEdit->setMinimumWidth(250);
-  chordEdit->setText(m_diagram->toString());
+  QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
+  QRadioButton *guitar  = new QRadioButton(tr("Guitar"));
+  QRadioButton *ukulele = new QRadioButton(tr("Ukulele"));
+
+  guitar->setChecked(true);
+  QVBoxLayout *instrumentLayout = new QVBoxLayout;
+  instrumentLayout->addWidget(guitar);
+  instrumentLayout->addWidget(ukulele);
+  instrumentLayout->addStretch(1);
+  instrumentGroupBox->setLayout(instrumentLayout);
+
+  QLineEdit *nameLineEdit = new QLineEdit;
+  nameLineEdit->setToolTip(tr("The chord name such as A&m for A-flat minor"));
+  nameLineEdit->setText(m_diagram->chord());
+
+  QSpinBox *fretSpinBox = new QSpinBox;
+  fretSpinBox->setToolTip(tr("Fret"));
+  fretSpinBox->setRange(0,9);
+  fretSpinBox->setValue(m_diagram->fret().toInt());
+
+  QLineEdit *stringsLineEdit = new QLineEdit;
+  stringsLineEdit->setMaxLength(6);
+  stringsLineEdit->setToolTip(tr("Symbols for each string of the guitar from lowest pitch to highest:\n"
+			      "  X: string is not to be played\n"
+			      "  0: string is to be played open\n"
+			      "  [1-9]: string is to be played on the given numbered fret."));
+  stringsLineEdit->setText(m_diagram->strings());
+
+  QFormLayout *chordLayout = new QFormLayout;
+  chordLayout->addRow(tr("Name:"), nameLineEdit);
+  chordLayout->addRow(tr("Fret:"), fretSpinBox);
+  chordLayout->addRow(tr("Strings:"), stringsLineEdit);
 
   QBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(chordEdit);
+  layout->addWidget(instrumentGroupBox);
+  layout->addLayout(chordLayout);
   layout->addWidget(buttonBox);
   dialog.setLayout(layout);
 
   if (dialog.exec() == QDialog::Accepted)
     {
-      m_diagram->fromString(chordEdit->text());
+      m_diagram->setType(guitar->isChecked() ? GuitarChord : UkuleleChord);
+      m_diagram->setChord(nameLineEdit->text());
+      m_diagram->setFret((fretSpinBox->value() == 0) ? "" : QString::number(fretSpinBox->value()));
+      m_diagram->setStrings(stringsLineEdit->text());
       update();
       emit diagramChanged();
       return true;
