@@ -24,9 +24,10 @@ if( CMAKE_COMPILER_IS_GNUCXX )
     -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
     -Wmissing-format-attribute -Wpacked -Wformat-security
     )
-  add_definitions( -fvisibility=hidden )
 elseif( CMAKE_CXX_COMPILER MATCHES "clang" )
   add_definitions( -Wall -Wextra -Wno-unused-parameter )
+endif()
+if(NOT WIN32)
   add_definitions( -fvisibility=hidden )
 endif()
 # }}}
