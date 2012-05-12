@@ -442,6 +442,7 @@ void CMainWindow::createToolBar()
 
 void CMainWindow::preferences()
 {
+  writeSettings();
   ConfigDialog dialog(this);
   dialog.exec();
   readSettings();
