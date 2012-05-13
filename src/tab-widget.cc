@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -24,15 +24,15 @@
 
 #include <QDebug>
 
-CTabWidget::CTabWidget()
-  : QTabWidget()
+CTabWidget::CTabWidget(QWidget *parent)
+  : QTabWidget(parent)
   , m_selectionBehaviorOnAdd(SelectCurrent)
 {
   setDocumentMode(true);
 
   updateTabBarVisibility();
 
-  QAction* action;
+  QAction *action;
   action = new QAction(tr("Next tab"), this);
   action->setShortcut(QKeySequence::NextChild);
   connect(action, SIGNAL(triggered()), this, SLOT(next()));
@@ -70,16 +70,16 @@ void CTabWidget::closeTab()
 void CTabWidget::closeTab(int index)
 {
   removeTab(index);
-  
+
   updateTabBarVisibility();
 }
 
-int CTabWidget::addTab(QWidget* widget)
+int CTabWidget::addTab(QWidget *widget)
 {
   return addTab(widget, widget->windowTitle());
 }
 
-int CTabWidget::addTab(QWidget* widget, const QString & label)
+int CTabWidget::addTab(QWidget *widget, const QString &label)
 {
   int index = QTabWidget::addTab(widget, label);
 
@@ -113,11 +113,7 @@ void CTabWidget::changeTabText(const QString &text)
 {
   QWidget *widget = qobject_cast< QWidget* >(QObject::sender());
   int index = indexOf(widget);
-  
-  if (index < 0)
-    {
-      qWarning() << "CTabWidget::changeText: unknown caller";
-      return;
-    }
-  setTabText(index, text);
+
+  if (index >= 0)
+    setTabText(index, text);
 }

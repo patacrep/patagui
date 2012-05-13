@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -19,36 +19,95 @@
 #ifndef __SONG_EDITOR_HH__
 #define __SONG_EDITOR_HH__
 
-#include "code-editor.hh"
+#include "config.hh"
+#include "song.hh"
 
-#include <QToolBar>
-#include <QList>
+#include <QWidget>
+#include <QString>
+#include <QTextCursor>
+#include <QKeyEvent>
 
 class QAction;
+class QActionGroup;
+class QToolBar;
+class Hunspell;
+class FindReplaceDialog;
+class CLibrary;
+class CSongCodeEditor;
+class CSongHighlighter;
+class CSongHeaderEditor;
 
-class CSongEditor : public CodeEditor
+/**
+ * \file song-editor.hh
+ * \class CSongEditor
+ * \brief CSongEditor is the widget that allows to write a song
+ *
+ * A CSongEditor is embedded into a CTabWidget and is composed of:
+ *  \li a CSongHeaderEditor that manages the song metadata
+ *  \li a CSongCodeEditor that manages the body of the song
+ *
+ * \image html song-editor.png
+ *
+ */
+class CSongEditor : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(bool newSong READ isNewSong WRITE setNewSong)
+  Q_PROPERTY(bool newCover READ isNewCover WRITE setNewCover)
 
 public:
-  CSongEditor();
+  CSongEditor(QWidget *parent = 0);
   ~CSongEditor();
 
-  QString path();
-  void setPath(const QString & APath);
+  QToolBar * toolBar() const;
+  CLibrary * library() const;
+  void setLibrary(CLibrary *library);
 
-  QToolBar* toolBar();
-
-  virtual void keyPressEvent(QKeyEvent *event);
-
-  void addAction(QAction*);
-  QList<QAction*> actions() const;
+  QActionGroup * actionGroup() const;
 
   void readSettings();
   void writeSettings();
+  QStringList getWordPropositions(const QString &word);
+#ifdef ENABLE_SPELLCHECK
+  Hunspell* checker() const;
+#endif
+  void installHighlighter();
+
+  bool isSpellCheckingEnabled() const;
+  void setSpellCheckingEnabled(const bool);
+
+  Song & song();
+  void setSong(const Song &song);
+
+  CSongCodeEditor * codeEditor() const;
+
+  bool isModified() const;
+  bool isNewSong() const;
+
+  //! Getter on the new cover property
+  bool isNewCover() const;
+
+  //! Setter on the new cover property
+  void setNewCover(bool newCover);
+
+public slots:
+  void setModified(bool modified);
+  void setNewSong(bool newSong);
 
 signals:
   void labelChanged(const QString &label);
+  void wordAdded(const QString &word);
+  void saved(const QString &path);
+
+protected:
+  void closeEvent(QCloseEvent *event);
+
+#ifdef ENABLE_SPELLCHECK
+  void contextMenuEvent(QContextMenuEvent *event);
+  QString currentWord();
+protected slots:
+  void setDictionary(const QLocale &locale);
+#endif //ENABLE_SPELLCHECK
 
 private slots:
   //write modifications of the textEdit into sg file.
@@ -56,16 +115,41 @@ private slots:
   void documentWasModified();
   void insertVerse();
   void insertChorus();
+  void insertBridge();
+
+#ifdef ENABLE_SPELLCHECK
+  void correctWord();
+  void addWord();
+  void ignoreWord();
+#endif //ENABLE_SPELLCHECK
 
 private:
-  QString syntaxicColoration(const QString &);
-  void indentSelection();
-  void indentLine(const QTextCursor & cursor);
-  void trimLine(const QTextCursor & cursor);
+  void parseText();
+  bool checkSongMandatoryFields();
+  void saveNewSong();
+  void createNewSong();
 
-  QToolBar* m_toolBar;
-  QString m_path;
-  QList<QAction*> m_actions;
+  CSongCodeEditor *m_codeEditor;
+  CSongHeaderEditor *m_songHeaderEditor;
+  CLibrary *m_library;
+  QToolBar *m_toolBar;
+  QActionGroup *m_actions;
+
+  QAction* m_spellCheckingAct;
+  bool m_isSpellCheckingEnabled;
+
+#ifdef ENABLE_SPELLCHECK
+  QList<QAction *> m_misspelledWordsActs;
+  QPoint m_lastPos;
+  QStringList m_addedWords;
+  uint m_maxSuggestedWords;
+#endif //ENABLE_SPELLCHECK
+
+  FindReplaceDialog* m_findReplaceDialog;
+
+  Song m_song;
+  bool m_newSong;
+  bool m_newCover;
 };
 
 #endif // __SONG_EDITOR_HH__

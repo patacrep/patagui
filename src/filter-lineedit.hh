@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -29,11 +29,17 @@
 #include <QToolButton>
 #include "utils/lineedit.hh"
 
+/**
+ * \file filter-lineedit.hh
+ * \class CClearButton
+ * \brief CClearButton is the clear button that resets the content of a CFilterLineEdit
+ */
 class CClearButton : public QToolButton
 {
   Q_OBJECT
-  
+
 public:
+  /// Constructor.
   CClearButton(QWidget *parent = 0);
 
 protected slots:
@@ -46,11 +52,17 @@ private:
   QImage m_icon;
 };
 
+/**
+ * \file filter-lineedit.hh
+ * \class CMagButton
+ * \brief CMagButton is the magnify button in a CFilterLineEdit widget
+ */
 class CMagButton : public QToolButton
 {
   Q_OBJECT
 
 public:
+  /// Constructor.
   CMagButton(QWidget *parent = 0);
 
 protected:
@@ -63,21 +75,49 @@ private:
 class QAction;
 class CSongSortFilterProxyModel;
 
+/**
+ * \file filter-lineedit.hh
+ * \class CFilterLineEdit
+ * \brief CFilterLineEdit is a QLineEdit widget that allows to filter results in the songs library
+ *
+ * The filter updates the songs library view so that it only displays songs that match
+ * the user input.
+ *
+ * The filter only applies on artist/title/album columns.
+ *
+ * A CFilterLineEdit widget contains a CMagButton on the left that allows to
+ * access quick filters functions (such as search by songs' language) and a CClearButton
+ * on the right that resets its content (only dispayed when there is some user input).
+ *
+ * \image html filter.png
+ *
+ */
 class CFilterLineEdit : public LineEdit
 {
   Q_OBJECT
 
 public slots:
+  /// Only display songs written in English.
   void filterLanguageEnglish();
+  /// Only display songs written in French.
   void filterLanguageFrench();
+  /// Only display songs written in Spanish.
   void filterLanguageSpanish();
+  /// Only display songs written in Portuguese.
+  void filterLanguagePortuguese();
 
 public:
+  /// Constructor.
   CFilterLineEdit(QWidget *parent = 0);
+  /// Destructor.
   ~CFilterLineEdit();
 
+  /// Add an action to the menu that is displayed
+  /// when clicking on the CMagButton on the left.
   void addAction(QAction *action);
 
+  /// Defines the model that should be filtered.
+  /// @param filterModel the proxy model of the songs library
   void setFilterModel(CSongSortFilterProxyModel *filterModel);
 
 private:

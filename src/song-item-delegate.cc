@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -31,17 +31,6 @@
 CSongItemDelegate::CSongItemDelegate(QObject *parent)
   : QStyledItemDelegate(parent)
 {
-  // lilypond symbol
-  QPixmapCache::insert("lilypond-checked", QIcon::fromTheme("audio-x-generic", QIcon(":/icons/tango/22x22/mimetypes/audio-x-generic.png")).pixmap(22,22));
-
-  // cover missing
-  QPixmapCache::insert("cover-missing-small", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22));
-  QPixmapCache::insert("cover-missing-full", QIcon::fromTheme("image-missing", QIcon(":/icons/tango/scalable/status/image-missing.svg")).pixmap(128, 128));
-  
-  // language flags
-  QPixmapCache::insert("fr_FR", QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")).pixmap(22,22));
-  QPixmapCache::insert("en_US", QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")).pixmap(22,22));
-  QPixmapCache::insert("es_ES", QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")).pixmap(22,22));
 }
 
 CSongItemDelegate::~CSongItemDelegate()
@@ -49,49 +38,58 @@ CSongItemDelegate::~CSongItemDelegate()
 
 void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-  QStyleOptionViewItemV4 opt = option;
+  QStyleOptionViewItemV4 opt(option);
+  opt.state &= ~QStyle::State_MouseOver;
   opt.state &= ~QStyle::State_HasFocus;
+
+  QPalette::ColorRole textColor = QPalette::NoRole;
+  opt.state &= ~QStyle::State_HasFocus;
+  if(opt.state & QStyle::State_Selected)
+    {
+      if (opt.state & QStyle::State_Active)
+	{
+	  painter->fillRect(opt.rect, opt.palette.highlight());
+	  textColor = QPalette::HighlightedText;
+	}
+      else
+	{
+#if defined(Q_OS_WIN32)
+	  painter->fillRect(opt.rect, opt.palette.button());
+#endif
+	}
+    }
 
   switch (index.column())
     {
     case 2:
       {
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
-          painter->fillRect(opt.rect, opt.palette.highlight());
-
         if (index.model()->data(index, CLibrary::LilypondRole).toBool())
           {
             QPixmap pixmap;
-            if (QPixmapCache::find("lilypond-checked", &pixmap))
+            if (!QPixmapCache::find("lilypond-checked", &pixmap))
               {
-                QApplication::style()->drawItemPixmap(painter,
-                                                      opt.rect,
-                                                      Qt::AlignCenter,
-                                                      pixmap);
-              }
-            else
-              {
-                QApplication::style()->drawItemText(painter,
-                                                    opt.rect,
-                                                    Qt::AlignCenter,
-                                                    opt.palette,
-                                                    true,
-                                                    tr("yes"));
-              }
+		pixmap = QIcon::fromTheme("audio-x-generic", QIcon(":/icons/tango/22x22/mimetypes/audio-x-generic.png")).pixmap(22,22);
+		QPixmapCache::insert("lilypond-checked", pixmap);
+	      }
+	    QApplication::style()->drawItemPixmap(painter,
+						  opt.rect,
+						  Qt::AlignCenter,
+						  pixmap);
           }
       }
       break;
     case 4:
       {
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
-          painter->fillRect(opt.rect, opt.palette.highlight());
-
         // draw the cover
         QPixmap pixmap;
-        QPixmapCache::find("cover-missing-small", &pixmap);
-        if (qVariantCanConvert< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole)))
-          {
-            pixmap = qVariantValue< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole));
+        if (!QPixmapCache::find("cover-missing-small", &pixmap))
+	  {
+	    pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22);
+	    QPixmapCache::insert("cover-missing-small", pixmap);
+	  }
+	if (qVariantCanConvert< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole)))
+	  {
+	    pixmap = qVariantValue< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole));
           }
         QRect coverRectangle(opt.rect.left(), opt.rect.top() + 2,
                              32, opt.rect.height() - 4);
@@ -108,45 +106,25 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                                             Qt::AlignLeft | Qt::AlignVCenter,
                                             opt.palette,
                                             true,
-                                            index.model()->data(index, CLibrary::AlbumRole).toString());
+                                            index.model()->data(index, CLibrary::AlbumRole).toString(),
+                                            textColor);
       }
       break;
     case 5:
       {
         QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
+	QString locale = QLocale(lang).name();
         QPixmap pixmap;
-        if (opt.state & QStyle::State_Selected & QStyle::State_HasFocus)
-          painter->fillRect(opt.rect, opt.palette.highlight());
-
-        if (QPixmapCache::find(QLocale(lang).name(), &pixmap))
+        if (!QPixmapCache::find(locale, &pixmap))
           {
-            //painter->save();
-            //draw something different
-            QApplication::style()->drawItemPixmap(painter,
-                                                  opt.rect,
-                                                  Qt::AlignCenter,
-                                                  pixmap);
-
-            // QStyleOptionButton buttonOption;
-            // buttonOption.state = QStyle::State_Enabled;
-            // buttonOption.direction = QApplication::layoutDirection();
-            // buttonOption.rect = option.rect;
-            // buttonOption.fontMetrics = QApplication::fontMetrics();
-      
-            // buttonOption.text = QString().sprintf("Modifier");
-
-            // QApplication::style()->drawControl(QStyle::CE_PushButton, &buttonOption, painter);
-            //painter->restore();
-          }
-        else
-          {
-            QApplication::style()->drawItemText(painter,
-                                                opt.rect,
-                                                Qt::AlignCenter,
-                                                opt.palette,
-                                                true,
-                                                QLocale::languageToString(lang));
-          }
+	    pixmap = QIcon::fromTheme(QString("flag-%1").arg(locale.split('_').first()),
+				      QIcon(QString(":/icons/songbook/22x22/flags/flag-%1.png").arg(locale.split('_').first()))).pixmap(22,22);
+	    QPixmapCache::insert(locale, pixmap);
+	  }
+	QApplication::style()->drawItemPixmap(painter,
+					      opt.rect,
+					      Qt::AlignCenter,
+					      pixmap);
       }
       break;
     default:

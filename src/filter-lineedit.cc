@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -58,7 +58,7 @@ void CClearButton::paintEvent(QPaintEvent *event)
 {
   Q_UNUSED(event);
   QPainter painter(this);
-  
+
   if (!m_icon.isNull())
     {
       int x = (width() - m_icon.width()) / 2 - 1;
@@ -66,21 +66,21 @@ void CClearButton::paintEvent(QPaintEvent *event)
       painter.drawImage(x, y, m_icon);
       return;
     }
-  
+
   // Fall back to boring circle X
   painter.setRenderHint(QPainter::Antialiasing, true);
-  
+
   QPalette p = palette();
   QColor circleColor = isDown() ? p.color(QPalette::Dark) : p.color(QPalette::Mid);
   QColor xColor = p.color(QPalette::Window);
-  
+
   // draw circle
   painter.setBrush(circleColor);
   painter.setPen(circleColor);
   int padding = width() / 5;
   int circleRadius = width() - (padding * 2);
   painter.drawEllipse(padding, padding, circleRadius, circleRadius);
-  
+
   // draw X
   painter.setPen(xColor);
   padding *= 2;
@@ -125,7 +125,7 @@ void CMagButton::paintEvent(QPaintEvent *event)
   int padding = width() / 4;
   int circleRadius = (width() - (padding * 2))*3/4;
   painter.drawEllipse(padding, padding, circleRadius, circleRadius);
-  
+
   // draw
   painter.drawLine(padding+circleRadius, padding+circleRadius, width() - padding, width() - padding);
 }
@@ -178,23 +178,30 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
 
   QAction *action = new QAction(tr("english"), this);
   action->setStatusTip(tr("Select/Unselect songs in english"));
-  action->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/tango/scalable/places/flag-en.svg")));
+  action->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")));
   action->setIconVisibleInMenu(true);
   connect(action, SIGNAL(triggered()), SLOT(filterLanguageEnglish()));
   addAction(action);
 
   action = new QAction(tr("french"), this);
   action->setStatusTip(tr("Select/Unselect songs in french"));
-  action->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/tango/scalable/places/flag-fr.svg")));
+  action->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")));
   action->setIconVisibleInMenu(true);
   connect(action, SIGNAL(triggered()), SLOT(filterLanguageFrench()));
   addAction(action);
 
   action = new QAction(tr("spanish"), this);
   action->setStatusTip(tr("Select/Unselect songs in spanish"));
-  action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/tango/scalable/places/flag-es.svg")));
+  action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")));
   action->setIconVisibleInMenu(true);
   connect(action, SIGNAL(triggered()), SLOT(filterLanguageSpanish()));
+  addAction(action);
+
+  action = new QAction(tr("portuguese"), this);
+  action->setStatusTip(tr("Select/Unselect songs in portuguese"));
+  action->setIcon(QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")));
+  action->setIconVisibleInMenu(true);
+  connect(action, SIGNAL(triggered()), SLOT(filterLanguagePortuguese()));
   addAction(action);
 
   updateTextMargins();
@@ -229,4 +236,9 @@ void CFilterLineEdit::filterLanguageFrench()
 void CFilterLineEdit::filterLanguageSpanish()
 {
   setText(text() + " :es");
+}
+
+void CFilterLineEdit::filterLanguagePortuguese()
+{
+  setText(text() + " :pt");
 }

@@ -7,11 +7,11 @@ set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
-if(NOT EXISTS ${SOURCE_DIR}/songbook-client-config.cmake)
-  message(FATAL_ERROR "songbook-client-config.cmake")
+if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
+  message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/songbook-client-config.cmake")
 endif()
 
-include(songbook-client-config.cmake)
+include(${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
 
 # {{{ Sources
 set(SONGBOOK_CLIENT_SOURCES
@@ -19,12 +19,17 @@ set(SONGBOOK_CLIENT_SOURCES
   src/main-window.cc
   src/preferences.cc
   src/library.cc
+  src/song.cc
   src/library-view.cc
   src/songbook.cc
   src/song-editor.cc
-  src/highlighter.cc
-  src/dialog-new-song.cc
+  src/song-header-editor.cc
+  src/song-code-editor.cc
+  src/song-highlighter.cc
+  src/logs-highlighter.cc
   src/label.cc
+  src/diagram.cc
+  src/progress-bar.cc
   src/unit-property-manager.cc
   src/unit-factory.cc
   src/file-property-manager.cc
@@ -37,11 +42,12 @@ set(SONGBOOK_CLIENT_SOURCES
   src/utils/utils.cc
   src/code-editor.cc
   src/tab-widget.cc
-  src/song-panel.cc
   src/notification.cc
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
   src/make-songbook-process.cc
+  src/qtfindreplacedialog/findreplaceform.cpp
+  src/qtfindreplacedialog/findreplacedialog.cpp
   )
 
 # header (moc)
@@ -52,9 +58,13 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/library-view.hh
   src/songbook.hh
   src/song-editor.hh
-  src/highlighter.hh
-  src/dialog-new-song.hh
+  src/song-header-editor.hh
+  src/song-code-editor.hh
+  src/song-highlighter.hh
+  src/logs-highlighter.hh
   src/label.hh
+  src/diagram.hh
+  src/progress-bar.hh
   src/unit-property-manager.hh
   src/unit-factory.hh
   src/file-property-manager.hh
@@ -66,16 +76,23 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/utils/lineedit_p.hh
   src/code-editor.hh
   src/tab-widget.hh
-  src/song-panel.hh
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
   src/make-songbook-process.hh
+  src/qtfindreplacedialog/findreplaceform.h
+  src/qtfindreplacedialog/findreplacedialog.h
+  )
+
+# uis
+set(SONGBOOK_CLIENT_UIS
+  src/qtfindreplacedialog/findreplacedialog.ui
+  src/qtfindreplacedialog/findreplaceform.ui
   )
 
 # resources (rcs)
 set(SONGBOOK_CLIENT_RCS
-  songbook.qrc
+  icons/songbook/songbook.qrc
   icons/macos/macos.qrc
   icons/tango/tango.qrc
   songbook.rc
@@ -91,17 +108,23 @@ if(ENABLE_SVG_SUPPORT)
 endif()
 
 set(QT_USE_QTSVG true)
+
 if(ENABLE_LIBRARY_DOWNLOAD)
-  find_package(LibArchive REQUIRED)
   set(QT_USE_QTNETWORK true)
   include_directories(${LibArchive_INCLUDE_DIRS})
   LIST(APPEND SONGBOOK_CLIENT_SOURCES src/library-download.cc)
   LIST(APPEND SONGBOOK_CLIENT_QT_HEADER src/library-download.hh)
+  LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
+endif()
+
+if(ENABLE_SPELLCHECK)
+  include_directories(${HUNSPELL_INCLUDE_DIR})
+  LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
 endif()
 
 include(${QT_USE_FILE})
 
-include(qt-property-editor-config.cmake)
+include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
 include_directories(
   ${SOURCE_DIR}
@@ -112,6 +135,7 @@ include_directories(
 # process Qt special files
 qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
 qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
+qt4_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
 
 # {{{ Apple specific stuff
 if(APPLE)
@@ -127,6 +151,7 @@ if(NOT APPLE)
     ${SONGBOOK_CLIENT_RESSOURCES}
     ${COMPILED_TRANSLATIONS}
     ${QT_PROPERTY_EDITOR_SOURCES}
+    ${SONGBOOK_CLIENT_UI_HDRS}
     )
 endif(NOT APPLE)
 
@@ -134,7 +159,9 @@ if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
 
-target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${QT_LIBRARIES} ${LibArchive_LIBRARIES})
+list(APPEND LIBRARIES ${QT_LIBRARIES})
+
+target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 
 # {{{ Internationalization
 set (TRANSLATIONS
@@ -242,7 +269,7 @@ if(NOT APPLE)
       REGEX ${regex} EXCLUDE)
   endif()
   install(FILES ${SONGBOOK_CLIENT_APPLICATION_NAME}.desktop DESTINATION share/applications)
-  install(FILES icons/songbook-client.png DESTINATION share/icons)
+  install(FILES icons/songbook/256x256/songbook-client.png DESTINATION share/icons)
   install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${SONGBOOK_CLIENT_DATA_PATH}/lang)
 endif(NOT APPLE)
 # }}}

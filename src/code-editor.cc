@@ -43,7 +43,7 @@
 #include "code-editor.hh"
 
 
-CodeEditor::CodeEditor(QWidget *parent) : 
+CodeEditor::CodeEditor(QWidget *parent) :
   QPlainTextEdit(parent)
   , m_highlightMode(false)
   , m_lineNumberMode(false)
@@ -52,7 +52,6 @@ CodeEditor::CodeEditor(QWidget *parent) :
 
   connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
   connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
-  connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
   updateLineNumberAreaWidth(0);
 }
@@ -98,26 +97,19 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
   lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
-void CodeEditor::highlightCurrentLine()
+QTextEdit::ExtraSelection CodeEditor::currentLineSelection()
 {
-  if(!highlightMode())
-    return;
+  if(!highlightMode() || isReadOnly())
+    return QTextEdit::ExtraSelection();
 
-  QList<QTextEdit::ExtraSelection> extraSelections;
+  QColor lineColor = QColor(Qt::yellow).lighter(160);
 
-  if (!isReadOnly()) {
-    QTextEdit::ExtraSelection selection;
-
-    QColor lineColor = QColor(Qt::yellow).lighter(160);
-
-    selection.format.setBackground(lineColor);
-    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-    selection.cursor = textCursor();
-    selection.cursor.clearSelection();
-    extraSelections.append(selection);
-  }
-
-  setExtraSelections(extraSelections);
+  QTextEdit::ExtraSelection selection;
+  selection.format.setBackground(lineColor);
+  selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+  selection.cursor = textCursor();
+  selection.cursor.clearSelection();
+  return selection;
 }
 
 void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)

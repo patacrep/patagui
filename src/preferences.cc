@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -34,20 +34,17 @@
 
 // Config Dialog
 
-ConfigDialog::ConfigDialog(CMainWindow* parent)
+ConfigDialog::ConfigDialog(QWidget* parent)
   : QDialog(parent)
-  , m_parent(parent)
 {
-  m_contentsWidget = new QListWidget;
+  m_contentsWidget = new QListWidget(this);
   m_contentsWidget->setViewMode(QListView::IconMode);
   m_contentsWidget->setIconSize(QSize(62, 62));
   m_contentsWidget->setMovement(QListView::Static);
-  m_contentsWidget->setMinimumHeight(500);
-  m_contentsWidget->setMaximumWidth(110);
   m_contentsWidget->setSpacing(12);
-  m_contentsWidget->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding);
+  m_contentsWidget->setFixedWidth(110);
 
-  m_pagesWidget = new QStackedWidget;
+  m_pagesWidget = new QStackedWidget(this);
   m_pagesWidget->addWidget(new OptionsPage(this));
   m_pagesWidget->addWidget(new SongbookPage(this));
   m_pagesWidget->addWidget(new DisplayPage(this));
@@ -56,64 +53,62 @@ ConfigDialog::ConfigDialog(CMainWindow* parent)
   m_pagesWidget->addWidget(new NetworkPage(this));
 #endif // ENABLE_LIBRARY_DOWNLOAD
 
-  QPushButton *closeButton = new QPushButton(tr("Close"));
+  QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Close);
+  connect(buttons, SIGNAL(rejected()), this, SLOT(close()));
 
   createIcons();
   m_contentsWidget->setCurrentRow(0);
 
-  connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-
-  QHBoxLayout *horizontalLayout = new QHBoxLayout;
+  QBoxLayout *horizontalLayout = new QHBoxLayout;
   horizontalLayout->addWidget(m_contentsWidget);
   horizontalLayout->addWidget(m_pagesWidget, 1);
 
-  QHBoxLayout *buttonsLayout = new QHBoxLayout;
-  buttonsLayout->addStretch(1);
-  buttonsLayout->addWidget(closeButton);
-
-  QVBoxLayout *mainLayout = new QVBoxLayout;
+  QBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addLayout(horizontalLayout);
   mainLayout->addSpacing(12);
-  mainLayout->addLayout(buttonsLayout);
-  setLayout(mainLayout);
+  mainLayout->addWidget(buttons);
 
+  setLayout(mainLayout);
   setWindowTitle(tr("Preferences"));
+  resize(600,600);
 }
 
 CMainWindow* ConfigDialog::parent() const
 {
-  return m_parent;
+  CMainWindow *p = qobject_cast<CMainWindow*>(QDialog::parent());
+  if (!p) qWarning() << tr("ConfigDialog::parent() invalid parent");
+  return p;
 }
 
 void ConfigDialog::createIcons()
 {
   QListWidgetItem *optionsButton = new QListWidgetItem(m_contentsWidget);
-  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/32x32/categories/preferences-system.png")));
+  optionsButton->setIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/48x48/categories/preferences-system.png")));
   optionsButton->setText(tr("Options"));
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *songbookButton = new QListWidgetItem(m_contentsWidget);
-  songbookButton->setIcon(QIcon(":/icons/book.png"));
+  songbookButton->setIcon(QIcon(":/icons/songbook/256x256/book.png"));
   songbookButton->setText(tr("Songbook"));
   songbookButton->setTextAlignment(Qt::AlignHCenter);
   songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
-  displayButton->setIcon(QIcon::fromTheme("preferences-desktop-theme", QIcon(":/icons/tango/32x32/categories/preferences-desktop-theme.png")));
+  displayButton->setIcon(QIcon::fromTheme("preferences-desktop", QIcon(":/icons/tango/48x48/categories/preferences-desktop.png")));
   displayButton->setText(tr("Display"));
   displayButton->setTextAlignment(Qt::AlignHCenter);
   displayButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *editorButton = new QListWidgetItem(m_contentsWidget);
-  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/32x32/apps/accessories-text-editor.png")));
+  editorButton->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/48x48/apps/accessories-text-editor.png")));
   editorButton->setText(tr("Editor"));
   editorButton->setTextAlignment(Qt::AlignHCenter);
   editorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
   QListWidgetItem *networkButton = new QListWidgetItem(m_contentsWidget);
-  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/32x32/categories/preferences-system-network.png")));
+  networkButton->setIcon(QIcon::fromTheme("preferences-system-network", QIcon(":/icons/tango/48x48/categories/preferences-system-network.png")));
   networkButton->setText(tr("Network"));
   networkButton->setTextAlignment(Qt::AlignHCenter);
   networkButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -144,17 +139,17 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
 
 // Page
 
-Page::Page(ConfigDialog *configDialog)
-  : QScrollArea(configDialog)
+Page::Page(QWidget *parent)
+  : QScrollArea(parent)
   , m_content(new QWidget)
-  , m_configDialog(configDialog)
 {
-  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-ConfigDialog * Page::configDialog() const
+ConfigDialog * Page::parent() const
 {
-  return m_configDialog;
+  ConfigDialog *p = qobject_cast<ConfigDialog*>(QScrollArea::parent());
+  if (!p) qWarning() << tr("Page::parent() invalid parent");
+  return p;
 }
 
 void Page::closeEvent(QCloseEvent *event)
@@ -178,8 +173,8 @@ void Page::setLayout(QLayout *layout)
 
 // Display Page
 
-DisplayPage::DisplayPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+DisplayPage::DisplayPage(QWidget *parent)
+  : Page(parent)
 {
   QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
 
@@ -246,8 +241,8 @@ void DisplayPage::writeSettings()
 
 // Option Page
 
-OptionsPage::OptionsPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+OptionsPage::OptionsPage(QWidget *parent)
+  : Page(parent)
   , m_workingPath(0)
   , m_workingPathValid(0)
   , m_buildCommand(0)
@@ -257,6 +252,7 @@ OptionsPage::OptionsPage(ConfigDialog *configDialog)
   m_workingPathValid = new QLabel;
 
   m_workingPath = new CFileChooser();
+  m_workingPath->setMinimumWidth(400);
   m_workingPath->setFileMode(QFileDialog::Directory);
   m_workingPath->setOptions(QFileDialog::ShowDirsOnly);
   m_workingPath->setCaption(tr("Songbook path"));
@@ -388,7 +384,7 @@ void OptionsPage::checkWorkingPath(const QString &path)
       warning = false;
       message = tr("The directory is valid");
     }
-  
+
   QString mask("<font color=%1>%2%3.</font>");
   if (error)
     {
@@ -422,10 +418,11 @@ void OptionsPage::resetCleanallCommand()
 
 // Editor Page
 
-EditorPage::EditorPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+EditorPage::EditorPage(QWidget *parent)
+  : Page(parent)
   , m_numberLinesCheckBox(new QCheckBox(tr("Display line numbers")))
   , m_highlightCurrentLineCheckBox(new QCheckBox(tr("Highlight current line")))
+  , m_colorEnvironmentsCheckBox(new QCheckBox(tr("Highlight environments")))
   , m_fontButton(new QPushButton)
 {
   readSettings();
@@ -442,7 +439,9 @@ EditorPage::EditorPage(ConfigDialog *configDialog)
   QFormLayout* layout = new QFormLayout;
   layout->addRow(m_numberLinesCheckBox);
   layout->addRow(m_highlightCurrentLineCheckBox);
+  layout->addRow(m_colorEnvironmentsCheckBox);
   layout->addRow(tr("Font:"), m_fontButton);
+
   setLayout(layout);
 }
 
@@ -452,6 +451,7 @@ void EditorPage::readSettings()
   settings.beginGroup("editor");
   m_numberLinesCheckBox->setChecked(settings.value("lines", true).toBool());
   m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
+  m_colorEnvironmentsCheckBox->setChecked(settings.value("color-environments", true).toBool());
   m_fontstr = settings.value("font", QString()).toString();
   if(!m_fontstr.isEmpty())
     m_font.fromString(m_fontstr);
@@ -464,6 +464,7 @@ void EditorPage::writeSettings()
   settings.beginGroup("editor");
   settings.setValue("lines", m_numberLinesCheckBox->isChecked());
   settings.setValue("highlight", m_highlightCurrentLineCheckBox->isChecked());
+  settings.setValue("color-environments", m_colorEnvironmentsCheckBox->isChecked());
   settings.setValue("font", m_font.toString());
   settings.endGroup();
 }
@@ -486,8 +487,8 @@ void EditorPage::updateFontButton()
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 // Network Page
 
-NetworkPage::NetworkPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+NetworkPage::NetworkPage(QWidget *parent)
+  : Page(parent)
   , m_hostname()
   , m_port()
   , m_user()
@@ -560,11 +561,18 @@ void NetworkPage::writeSettings()
 
 // Songbook Page
 
-SongbookPage::SongbookPage(ConfigDialog *configDialog)
-  : Page(configDialog)
+SongbookPage::SongbookPage(QWidget *p)
+  : Page(p)
   , m_propertyEditor(new QtGroupBoxPropertyBrowser)
+  , m_mainwindow(parent()->parent())
 {
-  CSongbook *songbook = configDialog->parent()->songbook();
+  if(!m_mainwindow)
+    {
+      qWarning() << tr("SongbookPage::SongbookPage invalid parent: can't find the mainwindow");
+      return;
+    }
+
+  CSongbook *songbook = m_mainwindow->songbook();
 
   QComboBox* templateComboBox = new QComboBox;
   templateComboBox->addItems(songbook->library()->templates());
@@ -578,7 +586,7 @@ SongbookPage::SongbookPage(ConfigDialog *configDialog)
 	  songbook, SLOT(setTmpl(const QString &)));
   connect(songbook, SIGNAL(wasModified(bool)), SLOT(updatePropertyEditor()));
 
-  songbook->changeTemplate();
+  songbook->changeTemplate(songbook->tmpl());
   songbook->initializeEditor(m_propertyEditor);
 
   QGroupBox *songbookGroupBox = new QGroupBox(tr("Songbook"));
@@ -601,5 +609,8 @@ SongbookPage::SongbookPage(ConfigDialog *configDialog)
 
 void SongbookPage::updatePropertyEditor()
 {
-  configDialog()->parent()->songbook()->initializeEditor(m_propertyEditor);
+  if (m_mainwindow)
+    m_mainwindow->songbook()->initializeEditor(m_propertyEditor);
+  else
+    qWarning() << tr("SongbookPage::updatePropertyEditor can't find the mainwindow");
 }

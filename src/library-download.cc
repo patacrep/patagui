@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -22,6 +22,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
+#include <QtGlobal>
 #include <QtGui>
 
 #include <QNetworkProxy>
@@ -32,18 +33,20 @@
 #include "file-chooser.hh"
 #include "main-window.hh"
 #include "library.hh"
+#include "progress-bar.hh"
 
 #include <QDebug>
 
-CLibraryDownload::CLibraryDownload(CMainWindow *parent)
-  : QDialog(parent)
+CLibraryDownload::CLibraryDownload(CMainWindow *p)
+  : QDialog(p)
   , m_manager()
+  , m_reply(0)
   , m_url()
   , m_path()
 {
   setWindowTitle(tr("Download"));
 
-  m_manager = new QNetworkAccessManager;
+  m_manager = new QNetworkAccessManager(this);
 
   {
     QSettings settings;
@@ -70,11 +73,13 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
     QNetworkProxy::setApplicationProxy(proxy);
   }
 
-  m_url = new QLineEdit();
+  m_url = new QComboBox(this);
+  m_url->setEditable(true);
   // set the default download URL to the songbook repository HEAD
-  m_url->setText("http://git.lohrun.net/?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
+  m_url->addItem("http://git.lohrun.net/?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
+  m_url->addItem("http://www.patacrep.com/data/documents/songbook.tar.gz");
 
-  m_path = new CFileChooser();
+  m_path = new CFileChooser(this);
   m_path->setFileMode(QFileDialog::Directory);
   m_path->setOptions(QFileDialog::ShowDirsOnly);
   m_path->setCaption(tr("Install directory"));
@@ -86,17 +91,21 @@ CLibraryDownload::CLibraryDownload(CMainWindow *parent)
   connect(buttonBox, SIGNAL(accepted()), this, SLOT(downloadStart()));
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-  QVBoxLayout *vlayout = new QVBoxLayout();
-  QFormLayout *layout = new QFormLayout();
+  QVBoxLayout *vlayout = new QVBoxLayout;
+  QFormLayout *layout = new QFormLayout;
   layout->addRow(tr("URL:"), m_url);
   layout->addRow(tr("Directory:"), m_path);
   vlayout->addLayout(layout);
   vlayout->addWidget(buttonBox);
   setLayout(vlayout);
+
+  connect(parent()->progressBar(), SIGNAL(canceled()),
+	  this, SLOT(cancelDownload()));
 }
 
 CLibraryDownload::~CLibraryDownload()
-{}
+{
+}
 
 bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
 {
@@ -114,20 +123,27 @@ bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
 
 void CLibraryDownload::downloadStart()
 {
-  if (!m_url->text().isEmpty())
+  if (!m_url->currentText().isEmpty() && QUrl(m_url->currentText()).isValid())
     {
       // check if there already is a songbook directory in the specified path
       QDir dir = m_path->directory();
-      QUrl url(m_url->text());
+      QUrl url(m_url->currentText());
       QNetworkRequest request;
       request.setUrl(url);
       request.setRawHeader("User-Agent", "songbook-client a1");
-      QNetworkReply *reply = m_manager->get(request);
-      connect(reply, SIGNAL(finished()),
+      m_reply = m_manager->get(request);
+      connect(m_reply, SIGNAL(finished()),
               this, SLOT(downloadFinished()));
-      parent()->statusBar()->showMessage(tr("Download in progress ..."));
-      parent()->progressBar()->show();
+      connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)),
+	      this, SLOT(sslErrors(QList<QSslError>)));
+      connect(m_reply, SIGNAL(downloadProgress(qint64,qint64)),
+	      this, SLOT(downloadProgress(qint64,qint64)));
+      m_downloadTime.start();
       QDialog::accept();
+    }
+  else
+    {
+      qWarning() << tr("CLibraryDownload::downloadStart the following url is invalid: ") << m_url;
     }
 }
 
@@ -135,29 +151,15 @@ void CLibraryDownload::downloadFinished()
 {
   bool abort = false;
 
-  QNetworkReply *reply = qobject_cast< QNetworkReply* >(sender());
-  QUrl url = reply->url();
-
-  if (reply->error())
+  if (m_reply->error())
     {
-      parent()->statusBar()->showMessage(tr("Download of %1 failed: %2").arg(url.toEncoded().constData()).arg(qPrintable(reply->errorString())));
+      parent()->statusBar()->showMessage(tr("Download of %1 failed: %2")
+					 .arg(m_reply->url().toEncoded().constData())
+					 .arg(qPrintable(m_reply->errorString())));
       abort = true;
     }
 
-  QString filename = QFileInfo(url.path()).fileName();
-  if (filename.isEmpty())
-    {
-      // try to find a filename in the reply header
-      QByteArray raw = reply->rawHeader(QByteArray("Content-Disposition"));
-      QString rawHeader(raw);
-      QRegExp re("filename=\"(.*)\"");
-      re.indexIn(rawHeader);
-      filename = re.cap(1);
-
-      // falback
-      if (filename.isEmpty())
-	filename = QString("songbook.tar.gz");
-    }
+  QString filename = findFileName();
 
   if (QDir().exists(filename))
     {
@@ -179,7 +181,7 @@ void CLibraryDownload::downloadFinished()
       QDir dir = m_path->directory();
       QDir oldCurrent = QDir::currentPath();
       QString filepath = dir.filePath(filename);
-      if (saveToDisk(filepath, reply))
+      if (saveToDisk(filepath, m_reply))
 	{
 	  QDir::setCurrent(dir.absolutePath());
 	  if (decompress(filepath, dir))
@@ -193,7 +195,21 @@ void CLibraryDownload::downloadFinished()
     }
 
   parent()->progressBar()->hide();
-  reply->deleteLater();
+  m_reply->deleteLater();
+}
+
+void CLibraryDownload::sslErrors(const QList<QSslError> &sslErrors)
+{
+#ifndef QT_NO_OPENSSL
+  foreach (const QSslError &error, sslErrors)
+    qWarning() << "CLibraryDownload::sslErrors : " << error.errorString();
+#endif
+}
+
+void CLibraryDownload::cancelDownload()
+{
+  m_reply->abort();
+  downloadFinished();
 }
 
 // Uses the code sample proposed in the libarchive documentation
@@ -253,4 +269,72 @@ bool CLibraryDownload::decompress(const QString &filename, QDir &directory)
 CMainWindow * CLibraryDownload::parent()
 {
   return qobject_cast< CMainWindow* >(QDialog::parent());
+}
+
+QString CLibraryDownload::findFileName()
+{
+  if (!m_reply)
+    {
+      qWarning() << tr("CLibraryDownload::findFileName : invalid network reply");
+      return QString();
+    }
+
+  QString filename = QFileInfo(m_reply->url().path()).fileName();
+  if (filename.isEmpty())
+    {
+      // try to find a filename in the reply header
+      QByteArray raw = m_reply->rawHeader(QByteArray("Content-Disposition"));
+      QString rawHeader(raw);
+      QRegExp re("filename=\"(.*)\"");
+      re.indexIn(rawHeader);
+      filename = re.cap(1);
+
+      // fallback
+      if (filename.isEmpty())
+	filename = QString("songbook.tar.gz");
+    }
+  return filename;
+}
+
+QString CLibraryDownload::bytesToString(double value)
+{
+  QString unit;
+  if (value < 1024)
+    {
+      unit = tr("bytes");
+    }
+  else if (value < 1024*1024)
+    {
+      value /= 1024;
+      unit = tr("kB");
+    }
+  else
+    {
+      value /= 1024*1024;
+      unit = tr("MB");
+    }
+  return tr("%1 %2").arg(value, 3, 'f', 1).arg(unit);
+}
+
+void CLibraryDownload::downloadProgress(qint64 bytesRead, qint64 totalBytes)
+{
+  QString message = tr("Downloading %1").arg(findFileName());
+  // download transfer
+  message.append(tr(" - %1").arg(bytesToString(bytesRead)));
+
+  if (totalBytes > -1)
+    {
+      // download size
+      message.append(tr(" of %1").arg(bytesToString(totalBytes)));
+
+      //update the progress bar
+      parent()->progressBar()->setRange(0, totalBytes);
+      parent()->progressBar()->setValue(bytesRead);
+    }
+
+  // download speed
+  message.append(tr(" (%2/s)").arg(bytesToString(bytesRead * 1000.0 / m_downloadTime.elapsed())));
+
+  parent()->statusBar()->showMessage(message);
+  parent()->progressBar()->show();
 }
