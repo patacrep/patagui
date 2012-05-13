@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -22,15 +22,16 @@
 #include <QDialog>
 #include <QWidget>
 #include <QScrollArea>
+#include <QPushButton>
 
 #if defined(Q_OS_WIN32)
-#define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\make.bat %basename"
-#define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\clean.bat"
-#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\cleanall.bat"
+#define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\\make.bat %basename"
+#define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\\clean.bat"
+#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\\cleanall.bat"
 #elif defined(Q_OS_MAC)
-#define PLATFORM_BUILD_COMMAND "make %target"
-#define PLATFORM_CLEAN_COMMAND "make clean"
-#define PLATFORM_CLEANALL_COMMAND "make cleanall"
+#define PLATFORM_BUILD_COMMAND "macos/make.sh %basename"
+#define PLATFORM_CLEAN_COMMAND "macos/clean.sh"
+#define PLATFORM_CLEANALL_COMMAND "macos/cleanall.sh"
 #else //Unix/Linux
 #define PLATFORM_BUILD_COMMAND "make %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
@@ -59,8 +60,8 @@ class ConfigDialog : public QDialog
   Q_OBJECT
 
 public:
-  ConfigDialog(CMainWindow* parent);
-  CMainWindow* parent() const;				   
+  ConfigDialog(QWidget* parent=0);
+  CMainWindow* parent() const;
 
 public slots:
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
@@ -71,7 +72,6 @@ protected:
 private:
   void createIcons();
 
-  CMainWindow *m_parent;
   QListWidget *m_contentsWidget;
   QStackedWidget *m_pagesWidget;
 };
@@ -82,9 +82,8 @@ class Page : public QScrollArea
 {
   Q_OBJECT
 public:
-  Page(ConfigDialog *configDialog);
-
-  ConfigDialog * configDialog() const;
+  Page(QWidget *parent=0);
+  ConfigDialog * parent() const;
 
   void setLayout(QLayout *layout);
 
@@ -96,17 +95,20 @@ private:
   virtual void writeSettings();
 
   QWidget *m_content;
-  ConfigDialog *m_configDialog;
 };
 
-/** \brief DisplayPage is the config page used to specify display options
+/**
+ * \class DisplayPage
+ * \brief DisplayPage is the config page used to specify
+ * which components should be displayed/hidden
+ * \image html pref-display.png
  */
 class DisplayPage : public Page
 {
   Q_OBJECT
 
 public:
-  DisplayPage(ConfigDialog *configDialog);
+  DisplayPage(QWidget *parent=0);
 
 private:
   void readSettings();
@@ -121,14 +123,17 @@ private:
   QCheckBox *m_compilationLogCheckBox;
 };
 
-/** \brief OptionsPage is the config page used to specify general options
+/**
+ * \class OptionsPage
+ * \brief OptionsPage is the config page used to specify general options
+ * \image html pref-global.png
  */
 class OptionsPage : public Page
 {
   Q_OBJECT
 
 public:
-  OptionsPage(ConfigDialog *configDialog);
+  OptionsPage(QWidget *parent=0);
 
 private slots:
   void checkWorkingPath(const QString &path);
@@ -148,15 +153,18 @@ private:
   QLineEdit *m_cleanallCommand;
 };
 
-/** \brief Editor is the config page used to specify options related
-    to the song editor
+/**
+ * \class EditorPage
+ * \brief EditorPage is the config page used to specify options related
+ *  to the song editor.
+ * \image html pref-editor.png
  */
 class EditorPage : public Page
 {
   Q_OBJECT
 
 public:
-  EditorPage(ConfigDialog *configDialog);
+  EditorPage(QWidget *parent=0);
 
 private slots:
   void selectFont();
@@ -168,6 +176,7 @@ private:
 
   QCheckBox *m_numberLinesCheckBox;
   QCheckBox *m_highlightCurrentLineCheckBox;
+  QCheckBox *m_colorEnvironmentsCheckBox;
   QPushButton *m_fontButton;
   QFont m_font;
   QString m_fontstr;
@@ -176,13 +185,14 @@ private:
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 
 /** \brief NetworkPage is the config page used to specify network options
+ * \image html pref-network.png
  */
 class NetworkPage : public Page
 {
   Q_OBJECT
 
 public:
-  NetworkPage(ConfigDialog *configDialog);
+  NetworkPage(QWidget *parent=0);
 
 private:
   void readSettings();
@@ -197,19 +207,21 @@ private:
 #endif // ENABLE_LIBRARY_DOWNLOAD
 
 /** \brief SongbookPage is the config page used to specify general songbooks
+ * \image html pref-songbook.png
  */
 class SongbookPage : public Page
 {
   Q_OBJECT
 
 public:
-  SongbookPage(ConfigDialog *configDialog);
-  
+  SongbookPage(QWidget *parent=0);
+
 private slots:
   void updatePropertyEditor();
 
 private:
   QtGroupBoxPropertyBrowser * m_propertyEditor;
+  CMainWindow *m_mainwindow;
 };
 
 #endif // __PREFERENCES_HH__

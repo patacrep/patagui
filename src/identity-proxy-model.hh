@@ -4,12 +4,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -19,8 +19,15 @@
 
 #include <QAbstractProxyModel>
 
-// Class based on the identity proxy model from Qt 4.8
-
+/**
+ * \file identity-proxy-model.hh
+ * \class CIdentityProxyModel
+ * \brief CIdentityProxyModel is the base model to build a CSongbook
+ *
+ * This class is based on the identity proxy model from Qt 4.8 :
+ * http://doc.qt.nokia.com/4.8-snapshot/qidentityproxymodel.html
+ *
+ */
 class CIdentityProxyModel : public QAbstractProxyModel
 {
   Q_OBJECT
@@ -38,7 +45,7 @@ public:
 
   virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
   virtual QModelIndex parent(const QModelIndex &index ) const;
-    
+
   virtual QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
   virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
 

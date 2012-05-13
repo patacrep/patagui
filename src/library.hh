@@ -5,26 +5,22 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
 
-/**
- * \file library.hh
- *
- * Class for representing the songlibrary.
- *
- */
 #ifndef __LIBRARY_HH__
 #define __LIBRARY_HH__
+
+#include "song.hh"
 
 #include <QAbstractTableModel>
 #include <QString>
@@ -38,6 +34,18 @@ class QStringListModel;
 class QPixmap;
 class CMainWindow;
 
+/**
+ * \file library.hh
+ * \class CLibrary
+ * \brief CLibrary is the base model that corresponds to the list of songs
+ *
+ * A CLibrary is a list of Song (.sg files) that are fetched from a
+ * local directory.
+ * This model is used to build an intermediate model (CSongSortFilterProxyModel)
+ * that allows filtering options, and is then presented in the library tab (CTabWidget)
+ * of the main window (CMainWindow) through its associated view (CLibraryView).
+ *
+ */
 class CLibrary : public QAbstractTableModel
 {
   Q_OBJECT
@@ -58,18 +66,9 @@ public:
     MaxRole = RelativePathRole
   };
 
-  struct Song {
-    QString title;
-    QString artist;
-    QString album;
-    QString path;
-    QString coverName;
-    QString coverPath;
-    QLocale::Language language;
-    bool isLilypond;
-  };
-
+  /// Constructor.
   CLibrary(CMainWindow* parent);
+  /// Destructor.
   ~CLibrary();
 
   void writeSettings();
@@ -88,35 +87,54 @@ public:
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
-  void addSong(const QString &path);
-  void addSongs(const QStringList &paths);
-  void removeSong(const QString &path);
-  bool containsSong(const QString &path);
   virtual int rowCount(const QModelIndex &index = QModelIndex()) const;
   virtual int columnCount(const QModelIndex &index = QModelIndex()) const;
 
+  QString pathToSong(const QString &artist, const QString &title) const;
+  QString pathToSong(Song &song) const;
+
+  //! Add a song to the library list
+  void addSong(const Song &song, bool reset=false);
+
+  //! Add a song to the library list
+  void addSong(const QString &path);
+
+  //! Add songs to the library list
+  void addSongs(const QStringList &paths);
+
+  //! Look if the song is already in the library list
+  bool containsSong(const QString &path);
+
+  //! Remove a song from the library list
+  void removeSong(const QString &path);
+
+  //! Get a song from the library list
+  Song getSong(const QString &path) const;
+
+  //! Load a song from a file in the library
+  void loadSong(const QString &path, Song *song);
+
+  //! Create the artist directory for the current library (if required)
+  void createArtistDirectory(Song &song);
+
+  //! Save a song in the library (update the song path if required)
+  void saveSong(Song &song);
+
+  //! Save a cover in the library (update the cover path if required)
+  void saveCover(Song &song, const QImage &cover);
+
+  //! Destroy a song file from the library
+  void deleteSong(const QString &path);
+
 public slots:
-  void update();
-  void updateSong(const QString & path);
   void readSettings();
+  void update();
 
 signals:
   void wasModified();
   void directoryChanged(const QDir &directory);
 
 protected:
-  CMainWindow *parent() const;
-
-  bool parseSong(const QString &path, Song &song);
-
-  static QLocale::Language languageFromString(const QString &languageName = QString());
-
-  static QRegExp reSong;
-  static QRegExp reArtist;
-  static QRegExp reAlbum;
-  static QRegExp reCoverName;
-  static QRegExp reLilypond;
-  static QRegExp reLanguage;
 
 private:
   CMainWindow *m_parent;

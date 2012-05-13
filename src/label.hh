@@ -5,43 +5,51 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
 
-/**
- * \file label.hh
- *
- * Class for label with elide support.
- *
- */
 #ifndef __LABEL_HH__
 #define __LABEL_HH__
 
 #include <QLabel>
 
+/**
+ * \file label.hh
+ * \class CLabel
+ * \brief CLabel is a custom QLabel with a fixed width and elide mode.
+ */
 class CLabel : public QLabel
 {
   Q_OBJECT
   Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
 
 public:
+  /// Constructor.
   CLabel(QWidget *parent = 0);
+
+  /// Destructor.
   ~CLabel();
 
+  /// Getter on the elide mode used by the label.
+  /// Default is elide on the right.
+  /// @return the elide mode.
   Qt::TextElideMode elideMode() const;
+
+  /// Setter on the elide mode used by the label.
+  /// @param mode the elide mode.
   void setElideMode(Qt::TextElideMode mode);
 
 protected:
-    void paintEvent(QPaintEvent *event);
+  void paintEvent(QPaintEvent *event);
 
 private:
   Qt::TextElideMode m_elideMode;

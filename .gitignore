@@ -6,3 +6,6 @@ macos_specific/*priv*
 songbook-client
 *.dmg
 *.swp
+doc/html
+doc/man
+doc/latex

@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -38,6 +38,22 @@ class QtGroupPropertyManager;
 class CUnitPropertyManager;
 class CFilePropertyManager;
 
+/**
+ * \file songbook.hh
+ * \class CSongbook
+ * \brief CSongbook is the model representing a songbook
+ *
+ * A songbook is a composed of a list of songs and a set of options
+ * that defines its PDF output.
+ *
+ * A CSongbook class extracts the list of selected songs in CLibraryView,
+ * manages all the songbook options through the QtGroupBoxPropertyBrowser framework,
+ * and can be saved/loaded as a .sb file.
+ *
+ * LaTeX options than can be used within a songbook are defined in a template
+ * file (.tmpl) that is located in the songbook application's template/ directory.
+ *
+ */
 class CSongbook : public CIdentityProxyModel
 {
   Q_OBJECT
@@ -76,7 +92,7 @@ public:
 
   QString filename() const;
   QString tmpl() const;
-  
+
   int selectedCount() const;
   void selectLanguages(const QStringList &languages);
 

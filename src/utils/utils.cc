@@ -72,13 +72,15 @@ namespace SbUtils
     QString str(AString);
     QString item;
   
+    //replace whitespaces with separator
+    str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
+
+    //replace utf8 characters
     QStringList list = QStringList() 
       <<"é"<<"è"<<"ê"<<"ë";
   
     foreach(item, list)
       str.replace(item, QString("e"));
-
-    str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
 
     str.replace(QString("à"), QString("a"));
     str.replace(QString("â"), QString("a"));
@@ -87,7 +89,7 @@ namespace SbUtils
     str.replace(QString("ô"), QString("o"));
     str.replace(QString("ù"), QString("u"));
 
-    return str;
+    return str.toLower();
   }
   //------------------------------------------------------------------------------
   bool copyFile(const QString & ASourcePath, const QString & ATargetDirectory)
