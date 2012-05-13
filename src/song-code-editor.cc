@@ -253,6 +253,7 @@ void CSongCodeEditor::indent()
     {
       indentLine(cursor);
       cursor.movePosition(QTextCursor::Down);
+      cursor.movePosition(QTextCursor::EndOfLine);
     }
 }
 
