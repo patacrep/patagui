@@ -2,6 +2,11 @@
 Version=0.6
 Type=Application
 Name=Patacrep Songbook Client
+Name[fr]=Gestionnaire de recueils de chansons Patacrep
+Name[en]=Songbook manager Patacrep
+GenericName=Songbook manager
+GenericName[fr]=Gestionnaire de recueils de chansons
+GenericName[en]=Songbook manager
 Comment=Build Patacrep LaTeX Songbooks for Guitar Tabs
 TryExec=songbook-client
 Exec=songbook-client %U

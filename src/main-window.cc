@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -26,14 +26,14 @@
 #include "library-view.hh"
 #include "songbook.hh"
 #include "song-editor.hh"
-#include "highlighter.hh"
-#include "dialog-new-song.hh"
+#include "logs-highlighter.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
 #include "tab-widget.hh"
 #include "notification.hh"
 #include "song-item-delegate.hh"
 #include "preferences.hh"
+#include "progress-bar.hh"
 
 #include "config.hh"
 
@@ -47,28 +47,30 @@
 
 using namespace SbUtils;
 
-CMainWindow::CMainWindow()
-  : QMainWindow()
-  , m_library(0)
-  , m_view(0)
-  , m_songbook(0)
-  , m_proxyModel(0)
-  , m_progressBar(0)
+CMainWindow::CMainWindow(QWidget *parent)
+  : QMainWindow(parent)
+  , m_library(new CLibrary(this))
+  , m_view(new CLibraryView(this))
+  , m_songbook(new CSongbook(this))
+  , m_proxyModel(new CSongSortFilterProxyModel(this))
+  , m_tempFilesmodel(0)
+  , m_mainWidget(new CTabWidget(this))
+  , m_progressBar(new CProgressBar(this))
   , m_noDataInfo(0)
   , m_updateAvailable(0)
-  , m_infoSelection(0)
+  , m_infoSelection(new QLabel(this))
+  , m_log(new QDockWidget(tr("LaTeX compilation logs")))
+  , m_isToolBarDisplayed(true)
+  , m_currentToolBar(0)
+  , m_builder(new CMakeSongbookProcess(this))
 {
   setWindowTitle("Patacrep Songbook Client");
-  setWindowIcon(QIcon(":/icons/songbook-client.png"));
-
-  // song library
-  m_library = new CLibrary(this);
+  setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
 
   connect(m_library, SIGNAL(directoryChanged(const QDir &)),
 	  SLOT(noDataNotification(const QDir &)));
 
   // songbook (title, authors, song list)
-  m_songbook = new CSongbook(this);
   m_songbook->setLibrary(m_library);
 
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
@@ -76,58 +78,62 @@ CMainWindow::CMainWindow()
 	  SLOT(selectedSongsChanged(const QModelIndex &, const QModelIndex &)));
 
   // proxy model (sorting & filtering)
-  m_proxyModel = new CSongSortFilterProxyModel(this);
   m_proxyModel->setSourceModel(m_songbook);
   m_proxyModel->setSortLocaleAware(true);
   m_proxyModel->setDynamicSortFilter(true);
   m_proxyModel->setFilterKeyColumn(-1);
 
   // view
-  m_view = new CLibraryView(this);
   m_view->setModel(m_proxyModel);
   m_view->setItemDelegate(new CSongItemDelegate);
   m_view->resizeColumns();
   connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
-  
+
   // compilation log
-  m_log = new QPlainTextEdit;
-  m_log->setMinimumHeight(150);
-  m_log->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-  m_log->setReadOnly(true);
-  Q_UNUSED(new CHighlighter(m_log->document()));
+  QPlainTextEdit* logs = new QPlainTextEdit;
+  logs->setReadOnly(true);
+  Q_UNUSED(new CLogsHighlighter(logs->document()));
+  m_log->setWidget(logs);
+  addDockWidget(Qt::BottomDockWidgetArea, m_log);
 
   createActions();
   createMenus();
   createToolBar();
 
-  //Layouts
-  QBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->setContentsMargins(0,0,0,0);
-  mainLayout->addWidget(m_view);
-  mainLayout->addWidget(m_log);
-
-  QWidget *libraryTab = new QWidget;
-  libraryTab->setLayout(mainLayout);
-
   // place elements into the main window
-  m_mainWidget = new CTabWidget;
   m_mainWidget->setTabsClosable(true);
   m_mainWidget->setMovable(true);
   m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
   connect(m_mainWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(m_mainWidget, SIGNAL(currentChanged(int)), SLOT(changeTab(int)));
-  m_mainWidget->addTab(libraryTab, tr("Library"));
+  m_mainWidget->addTab(m_view, tr("Library"));
   setCentralWidget(m_mainWidget);
 
-  // status bar with an embedded label and progress bar
-  m_infoSelection = new QLabel(this);
-  statusBar()->addPermanentWidget(m_infoSelection);
-
-  m_progressBar = new QProgressBar(this);
   m_progressBar->setTextVisible(false);
   m_progressBar->setRange(0, 0);
   m_progressBar->hide();
+  connect(progressBar(), SIGNAL(canceled()),
+          this, SLOT(cancelProcess()));
+
+  // status bar with an embedded label and progress bar
+  statusBar()->addPermanentWidget(m_infoSelection);
   statusBar()->addPermanentWidget(m_progressBar);
+
+  // make/make clean/make cleanall process
+  connect(m_builder, SIGNAL(aboutToStart()),
+          progressBar(), SLOT(show()));
+  connect(m_builder, SIGNAL(aboutToStart()),
+          statusBar(), SLOT(clear()));
+  connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
+          SLOT(showMessage(const QString &, int)));
+  connect(m_builder, SIGNAL(finished(int, QProcess::ExitStatus)),
+          progressBar(), SLOT(hide()));
+  connect(m_builder, SIGNAL(readOnStandardOutput(const QString &)),
+          log()->widget(), SLOT(appendPlainText(const QString &)));
+  connect(m_builder, SIGNAL(readOnStandardError(const QString &)),
+          log()->widget(), SLOT(appendPlainText(const QString &)));
+  connect(m_builder, SIGNAL(error(QProcess::ProcessError)),
+          this, SLOT(buildError(QProcess::ProcessError)));
 
   updateTitle(songbook()->filename());
 
@@ -156,46 +162,40 @@ void CMainWindow::readSettings()
 {
   QSettings settings;
   settings.beginGroup("general");
-  resize(settings.value("size", QSize(800,600)).toSize());
   setStatusbarDisplayed(settings.value("statusBar", true).toBool());
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
+  resize(settings.value("size", QSize(800,600)).toSize());
+  move(settings.value("pos", QPoint(200, 200)).toPoint());
+  if (settings.value("maximized", isMaximized()).toBool())
+    showMaximized();
   settings.endGroup();
 
   settings.beginGroup("display");
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
+  settings.beginGroup("tools");
   setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
   setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
   setCleanallCommand(settings.value("cleanallCommand", PLATFORM_CLEAN_COMMAND).toString());
-
-  settings.beginGroup("tools");
-#if defined(Q_OS_WIN32)
-  setBuildCommand(settings.value("buildCommand", "cmd.exe /C make.bat %basename").toString());
-  setCleanCommand(settings.value("cleanCommand", "cmd.exe /C clean.bat").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "cmd.exe /C clean.bat").toString());
-#elif defined(Q_OS_APPLE)
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#else //Unix/Linux
-  setBuildCommand(settings.value("buildCommand", "make %target").toString());
-  setCleanCommand(settings.value("cleanCommand", "make clean").toString());
-  setCleanallCommand(settings.value("cleanallCommand", "make cleanall").toString());
-#endif
   settings.endGroup();
 
   view()->readSettings();
-  QTimer::singleShot(0, library(), SLOT(readSettings()));
+  QTimer::singleShot(100, library(), SLOT(readSettings()));
 }
 
 void CMainWindow::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("general");
-  settings.setValue("size", size());
   settings.setValue("statusBar", isStatusbarDisplayed());
   settings.setValue("toolBar", isToolBarDisplayed());
+  settings.setValue( "maximized", isMaximized() );
+  if (!isMaximized())
+    {
+      settings.setValue( "pos", pos() );
+      settings.setValue( "size", size() );
+    }
   settings.endGroup();
 
   library()->writeSettings();
@@ -212,7 +212,7 @@ void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 void CMainWindow::createActions()
 {
   m_newSongAct = new QAction(tr("New Song"), this);
-  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/document-new.png")));
+  m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
   m_newSongAct->setStatusTip(tr("Write a new song"));
   m_newSongAct->setIconText(tr("Add"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
@@ -243,41 +243,41 @@ void CMainWindow::createActions()
 
   m_documentationAct = new QAction(tr("Online documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
-  m_documentationAct->setIcon(QIcon::fromTheme("help-contents"));
+  m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/32x32/actions/help-contents.png")));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
   m_aboutAct = new QAction(tr("&About"), this);
-  m_aboutAct->setIcon(QIcon::fromTheme("help-about"));
+  m_aboutAct->setIcon(QIcon::fromTheme("help-about", QIcon(":/icons/tango/32x32/actions/help-about.png")));
   m_aboutAct->setStatusTip(tr("About this application"));
   m_aboutAct->setMenuRole(QAction::AboutRole);
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   m_exitAct = new QAction(tr("Quit"), this);
-  m_exitAct->setIcon(QIcon::fromTheme("application-exit"));
+  m_exitAct->setIcon(QIcon::fromTheme("application-exit",QIcon(":/icons/tango/32x32/application-exit.png")));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
   m_exitAct->setMenuRole(QAction::QuitRole);
   connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   m_preferencesAct = new QAction(tr("&Preferences"), this);
-  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties"));
+  m_preferencesAct->setIcon(QIcon::fromTheme("document-properties",QIcon(":/icons/tango/32x32/document-properties.png")));
   m_preferencesAct->setStatusTip(tr("Configure the application"));
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
   m_selectAllAct = new QAction(tr("Check all"), this);
-  m_selectAllAct->setIcon(QIcon::fromTheme("select_all",QIcon(":/icons/tango/48x48/songbook/select_all.png")));
+  m_selectAllAct->setIcon(QIcon::fromTheme("select-all",QIcon(":/icons/songbook/32x32/select-all.png")));
   m_selectAllAct->setStatusTip(tr("Check all songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(checkAll()));
 
   m_unselectAllAct = new QAction(tr("Uncheck all"), this);
-  m_unselectAllAct->setIcon(QIcon::fromTheme("select_none",QIcon(":/icons/tango/48x48/songbook/select_none.png")));
+  m_unselectAllAct->setIcon(QIcon::fromTheme("select-none",QIcon(":/icons/songbook/32x32/select-none.png")));
   m_unselectAllAct->setStatusTip(tr("Uncheck all songs"));
   connect(m_unselectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(uncheckAll()));
 
   m_invertSelectionAct = new QAction(tr("Toggle all"), this);
-  m_invertSelectionAct->setIcon(QIcon::fromTheme("select_invert",QIcon(":/icons/tango/48x48/songbook/select_invert.png")));
+  m_invertSelectionAct->setIcon(QIcon::fromTheme("select-invert",QIcon(":/icons/songbook/32x32/select-invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
 
@@ -322,7 +322,7 @@ void CMainWindow::createActions()
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
   m_cleanAct = new QAction(tr("Clean"), this);
-  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear")));
+  m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear.png")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
 }
@@ -387,13 +387,10 @@ void CMainWindow::createMenus()
   libraryMenu->addAction(m_libraryUpdateAct);
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
-  CSongEditor *editor = new CSongEditor();
-  QAction *action;
-  foreach (action, editor->actions())
-    {
-      action->setDisabled(true);
-      m_editorMenu->addAction(action);
-    }
+
+  m_voidEditor = new CSongEditor(this);
+  m_voidEditor->actionGroup()->setEnabled(false);
+  m_editorMenu->addActions(m_voidEditor->actionGroup()->actions());
 
   QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
   viewMenu->addAction(m_toolBarViewAct);
@@ -445,6 +442,7 @@ void CMainWindow::createToolBar()
 
 void CMainWindow::preferences()
 {
+  writeSettings();
   ConfigDialog dialog(this);
   dialog.exec();
   readSettings();
@@ -481,7 +479,7 @@ void CMainWindow::build()
     {
       if (QMessageBox::question(this, windowTitle(),
 				QString(tr("You did not select any song. \n "
-					   "Do you want to build the songbook with all songs?")),
+                       "Do you want to build the songbook with all songs?")),
 				QMessageBox::Yes,
 				QMessageBox::No,
 				QMessageBox::NoButton) == QMessageBox::No)
@@ -491,52 +489,12 @@ void CMainWindow::build()
     }
 
   save(true);
-  
+
   if (!QFile(songbook()->filename()).exists())
     statusBar()->showMessage(QString(tr("The songbook file %1 is invalid. Build aborted."))
 			     .arg(songbook()->filename()));
 
-  QString basename = QFileInfo(songbook()->filename()).baseName();
-  QString target = QString("%1.pdf").arg(basename);
-
-  CMakeSongbookProcess *builder = new CMakeSongbookProcess(this);
-  builder->setWorkingDirectory(workingPath());
-
-  connect(builder, SIGNAL(aboutToStart()),
-          progressBar(), SLOT(show()));
-  connect(builder, SIGNAL(aboutToStart()),
-          statusBar(), SLOT(clear()));
-  connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
-          SLOT(showMessage(const QString &, int)));
-  connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
-          progressBar(), SLOT(hide()));
-  connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-          log(), SLOT(appendPlainText(const QString &)));
-  connect(builder, SIGNAL(readOnStandardError(const QString &)),
-          log(), SLOT(appendPlainText(const QString &)));
-
-  builder->setCommand(cleanCommand());
-
-  builder->setStartMessage(tr("Cleaning the build directory."));
-  builder->setSuccessMessage(tr("Build directory cleaned."));
-  builder->setErrorMessage(tr("Error during cleaning, please check the log."));
-
-  builder->execute();
-  builder->waitForFinished();
-
-  QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-  environment.insert("LATEX_OPTIONS", "-halt-on-error");
-  builder->setProcessEnvironment(environment);
-
-  QString command = buildCommand();
-  builder->setCommand(command.replace("%target", target).replace("%basename", basename));
-
-  builder->setUrlToOpen(QUrl(QString("file:///%1/%2").arg(workingPath()).arg(target)));
-  builder->setStartMessage(tr("Building %1.").arg(target));
-  builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
-  builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
-
-  builder->execute();
+  make();
 }
 
 void CMainWindow::newSongbook()
@@ -557,7 +515,9 @@ void CMainWindow::open()
 
 void CMainWindow::save(bool forced)
 {
-  if (songbook()->filename().isEmpty() || songbook()->filename().endsWith("default.sb"))
+  if (songbook()->filename().isEmpty() ||
+      songbook()->filename().endsWith("default.sb") ||
+      !songbook()->filename().compare(".sb"))
     {
       if (forced)
 	songbook()->setFilename(QString("%1/books/default.sb").arg(workingPath()));
@@ -573,7 +533,7 @@ void CMainWindow::saveAs()
 {
   QString filename = QFileDialog::getSaveFileName(this,
 						  tr("Save as"),
-						  workingPath(),
+						  QString("%1/books").arg(workingPath()),
 						  tr("Songbook (*.sb)"));
 
   if (!filename.isEmpty())
@@ -596,7 +556,70 @@ const QString CMainWindow::workingPath()
   return library()->directory().canonicalPath();
 }
 
-QProgressBar * CMainWindow::progressBar() const
+void CMainWindow::make()
+{
+  makeClean(); //fix problems, don't remove
+  m_builder->setWorkingDirectory(workingPath());
+
+  QString basename = QFileInfo(songbook()->filename()).baseName();
+  QString target = QString("%1.pdf").arg(basename);
+
+  QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+  environment.insert("LATEX_OPTIONS", "-halt-on-error");
+  m_builder->setProcessEnvironment(environment);
+
+  QString command = buildCommand();
+  m_builder->setCommand(command.replace("%target", target).replace("%basename", basename));
+
+  m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
+  m_builder->setStartMessage(tr("Building %1.").arg(target));
+  m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
+  m_builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
+
+  m_builder->execute();
+}
+
+void CMainWindow::makeClean()
+{
+  m_builder->setWorkingDirectory(workingPath());
+  m_builder->setCommand(cleanCommand());
+  m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
+
+  m_builder->setUrlToOpen(QUrl());
+  m_builder->setStartMessage(tr("Cleaning the build directory."));
+  m_builder->setSuccessMessage(tr("Build directory cleaned."));
+  m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
+
+  m_builder->execute();
+  m_builder->waitForFinished();
+}
+
+void CMainWindow::makeCleanall()
+{
+  m_builder->setWorkingDirectory(workingPath());
+  m_builder->setCommand(cleanallCommand());
+  m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
+
+  m_builder->setUrlToOpen(QUrl());
+  m_builder->setStartMessage(tr("Cleaning the build directory."));
+  m_builder->setSuccessMessage(tr("Build directory cleaned."));
+  m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
+
+  m_builder->execute();
+  m_builder->waitForFinished();
+}
+
+void CMainWindow::cancelProcess()
+{
+  if(m_builder->state() == QProcess::Running)
+    {
+      m_builder->close();
+      if(m_builder->command() == buildCommand())
+	makeClean();
+    }
+}
+
+CProgressBar * CMainWindow::progressBar() const
 {
   return m_progressBar;
 }
@@ -630,48 +653,26 @@ void CMainWindow::songEditor(const QModelIndex &index)
     }
 
   QString path = view()->model()->data(selectionModel()->currentIndex(), CLibrary::PathRole).toString();
-  QString title = view()->model()->data(selectionModel()->currentIndex(), CLibrary::TitleRole).toString();
 
-  songEditor(path, title);
+  songEditor(path);
 }
 
-void CMainWindow::songEditor(const QString &path, const QString &title)
+void CMainWindow::songEditor(const QString &path)
 {
-  if (m_editors.contains(path))
-    {
-      m_mainWidget->setCurrentWidget(m_editors[path]);
-      return;
-    }
-
-  CSongEditor *editor = new CSongEditor();
-  editor->setPath(path);
-  if (title == QString())
-    {
-      QFileInfo fileInfo(path);
-      editor->setWindowTitle(fileInfo.fileName());
-    }
-  else
-    {
-      editor->setWindowTitle(title);
-    }
+  CSongEditor *editor = new CSongEditor(this);
+  editor->setLibrary(library());
+  editor->installHighlighter();
+  if (!path.isEmpty())
+    editor->setSong(library()->getSong(path));
 
   connect(editor, SIGNAL(labelChanged(const QString&)),
 	  m_mainWidget, SLOT(changeTabText(const QString&)));
-
   m_mainWidget->addTab(editor);
-  m_editors.insert(path, editor);
 }
 
 void CMainWindow::newSong()
 {
-  CDialogNewSong *dialog = new CDialogNewSong(this);
-
-  if (dialog->exec() == QDialog::Accepted)
-    {
-      library()->update();
-      songEditor(dialog->path(), dialog->title());
-    }
-  delete dialog;
+  songEditor(QString());
 }
 
 void CMainWindow::deleteSong()
@@ -689,95 +690,57 @@ void CMainWindow::deleteSong()
 
 void CMainWindow::deleteSong(const QString &path)
 {
-  QString qs(tr("You are about to remove a song from the library.\n"
-                "Yes : The song will only be deleted from the library "
-		"and can be retrieved by rebuilding the library\n"
-                "No  : Nothing will be deleted\n"
-                "Delete file : You will also delete %1 from your hard drive\n"
-                "If you are unsure what to do, click No.").arg(path));
-  QMessageBox msgBox;
-  msgBox.setIcon(QMessageBox::Question);
-  msgBox.setText(tr("Removing song from Library."));
-  msgBox.setInformativeText(tr("Are you sure?"));
-  msgBox.addButton(QMessageBox::No);
-  QPushButton *yesb = msgBox.addButton(QMessageBox::Yes);
-  QPushButton *delb = msgBox.addButton(tr("Delete file"),QMessageBox::DestructiveRole);
-  msgBox.setDefaultButton(QMessageBox::No);
-  msgBox.setDetailedText(qs);
-  msgBox.exec();
+  int ret = QMessageBox::warning(this, tr("Songbook-Client"),
+				 tr("This file will be deleted:\n%1\n"
+				    "Are you sure?").arg(path),
+				 QMessageBox::Cancel | QMessageBox::Ok,
+				 QMessageBox::Cancel);
 
-  if (msgBox.clickedButton() == yesb || msgBox.clickedButton() == delb)
-    {
-      //remove entry in database in 2 case
-      library()->removeSong(path);
-    }
-  //don't forget to remove the file if asked
-  if (msgBox.clickedButton() == delb)
-    {
-      //removal on disk only if deletion
-      QFile file(path);
-      QFileInfo fileinfo(file);
-      QString tmp = fileinfo.canonicalPath();
-      if (file.remove())
-	{
-	  QDir dir;
-	  dir.rmdir(tmp); //remove dir if empty
-	}
-    }
+  if (ret == QMessageBox::Ok)
+    library()->deleteSong(path);
 }
 
 void CMainWindow::closeTab(int index)
 {
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  if (editor)
-    {
-      if (editor->document()->isModified())
-	{
-	  QMessageBox::StandardButton answer = 
-	    QMessageBox::question(this,
-				  tr("Close"),
-				  tr("There is unsaved modification in the current editor, do you really want to close it?"),
-				  QMessageBox::Ok | QMessageBox::Cancel,
-				  QMessageBox::Cancel);
-	  if (answer != QMessageBox::Ok)
-	    return;
-	}
-      m_editors.remove(editor->path());
-      m_mainWidget->closeTab(index);
-    }
+  if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
+    if (editor->close())
+      {
+	m_mainWidget->closeTab(index);
+	delete editor;
+      }
 }
 
 void CMainWindow::changeTab(int index)
 {
+  m_editorMenu->clear();
   CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
-  QAction *action;
-  if (editor)
+  if (editor != 0)
     {
-      m_editorMenu->clear();
-      foreach (action, editor->actions())
-	{
-	  m_editorMenu->addAction(action);
-	  action->setEnabled(true);
-	}
-
+      editor->actionGroup()->setEnabled(true);
+      editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
-      foreach (action, m_editorMenu->actions())
-	{
-	  action->setEnabled(false);
-	}
-
+      editor = m_voidEditor;
+      editor->actionGroup()->setEnabled(false);
       switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
+  m_editorMenu->addActions(editor->actionGroup()->actions());
 }
 
-QPlainTextEdit* CMainWindow::log() const
+QDockWidget* CMainWindow::log() const
 {
   return m_log;
+}
+
+void CMainWindow::buildError(QProcess::ProcessError error)
+{
+  log()->setVisible(true);
+  statusBar()->showMessage
+    (qobject_cast< CMakeSongbookProcess* >(QObject::sender())->errorMessage());
 }
 
 void CMainWindow::updateNotification(const QString &path)
@@ -815,72 +778,54 @@ void CMainWindow::noDataNotification(const QDir &directory)
 
 void CMainWindow::downloadDialog()
 {
+#ifdef ENABLE_LIBRARY_DOWNLOAD
   CLibraryDownload *libraryDownload = new CLibraryDownload(this);
   libraryDownload->exec();
+#endif
 }
 
 void CMainWindow::cleanDialog()
 {
-  QDialog *dialog = new QDialog(this);
-  dialog->setWindowTitle(tr("Clean"));
+  QDialog dialog(this);
+  dialog.setWindowTitle(tr("Clean"));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
 						     QDialogButtonBox::Cancel);
-  connect(buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
-  connect(buttonBox, SIGNAL(rejected()), dialog, SLOT(close()));
+  connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
 
-  m_tempFilesmodel = new QFileSystemModel;
-  m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());
-  m_tempFilesmodel->setNameFilters(QStringList()
-			<< "*.aux" << "*.d" << "*.toc" << "*.out"
-			<< "*.log" << "*.nav" << "*.snm" << "*.sbx" << "*.sxd");
-  m_tempFilesmodel->setNameFilterDisables(false);
-  m_tempFilesmodel->setFilter(QDir::Files);
+  if(!m_tempFilesmodel)
+    {
+      m_tempFilesmodel = new QFileSystemModel;
+      m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());
+      m_tempFilesmodel->setNameFilters(QStringList()
+				       << "*.aux" << "*.d" << "*.toc" << "*.out"
+				       << "*.log" << "*.nav" << "*.snm" << "*.sbx" << "*.sxd");
+      m_tempFilesmodel->setNameFilterDisables(false);
+      m_tempFilesmodel->setFilter(QDir::Files);
+    }
 
-  QListView* view = new QListView;
+  QListView *view = new QListView;
   view->setModel(m_tempFilesmodel);
   view->setRootIndex(m_tempFilesmodel->index(library()->directory().canonicalPath()));
 
   QCheckBox* cleanAllButton = new QCheckBox("Also remove pdf files", this);
+  updateTempFilesView(cleanAllButton->checkState());
   connect(cleanAllButton, SIGNAL(stateChanged(int)), this, SLOT(updateTempFilesView(int)));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(view);
   layout->addWidget(cleanAllButton);
   layout->addWidget(buttonBox);
-  dialog->setLayout(layout);
+  dialog.setLayout(layout);
 
-  if (dialog->exec() == QDialog::Accepted)
+  if (dialog.exec() == QDialog::Accepted)
     {
-      CMakeSongbookProcess *builder = new CMakeSongbookProcess(this);
-      builder->setWorkingDirectory(workingPath());
-
-      connect(builder, SIGNAL(aboutToStart()),
-              progressBar(), SLOT(show()));
-      connect(builder, SIGNAL(aboutToStart()),
-              statusBar(), SLOT(clear()));
-      connect(builder, SIGNAL(message(const QString &, int)), statusBar(),
-              SLOT(showMessage(const QString &, int)));
-      connect(builder, SIGNAL(finished(int, QProcess::ExitStatus)),
-              progressBar(), SLOT(hide()));
-      connect(builder, SIGNAL(readOnStandardOutput(const QString &)),
-              log(), SLOT(appendPlainText(const QString &)));
-      connect(builder, SIGNAL(readOnStandardError(const QString &)),
-              log(), SLOT(appendPlainText(const QString &)));
-
       if (cleanAllButton->isChecked())
-	builder->setCommand(cleanallCommand());
+	makeCleanall();
       else
-	builder->setCommand(cleanCommand());
-
-      builder->setStartMessage(tr("Cleaning the build directory."));
-      builder->setSuccessMessage(tr("Build directory cleaned."));
-      builder->setErrorMessage(tr("Error during cleaning, please check the log."));
-
-      builder->execute();
+	makeClean();
     }
-  delete dialog;
-  delete m_tempFilesmodel;
 }
 
 void CMainWindow::updateTempFilesView(int state)
@@ -919,10 +864,10 @@ void CMainWindow::setCleanCommand(const QString &command)
 
 const QString & CMainWindow::cleanallCommand() const
 {
-  return m_cleanCommand;
+  return m_cleanallCommand;
 }
 
 void CMainWindow::setCleanallCommand(const QString &command)
 {
-  m_cleanCommand = command;
+  m_cleanallCommand = command;
 }

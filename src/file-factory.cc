@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -36,14 +36,14 @@ CFileFactory::CFileFactory(QObject *parent)
 
 CFileFactory::~CFileFactory()
 {
-  // no need to delete editors because they will be 
+  // no need to delete editors because they will be
   // deleted by originalFactory in its destructor
 }
 
 void CFileFactory::connectPropertyManager(CFilePropertyManager *manager)
 {
   originalFactory->addPropertyManager(manager);
-  connect(manager, SIGNAL(filenameChanged(QtProperty *, const QString &)), 
+  connect(manager, SIGNAL(filenameChanged(QtProperty *, const QString &)),
 	  this, SLOT(slotFilenameChanged(QtProperty *, const QString &)));
 }
 
@@ -64,15 +64,15 @@ QWidget *CFileFactory::createEditor(CFilePropertyManager *manager, QtProperty *p
 
   QToolButton* button = new QToolButton;
   button->setText(tr("Browse"));
-  m_manager = manager; 
-  m_property = property; 
+  m_manager = manager;
+  m_property = property;
   connect(button, SIGNAL(clicked()), this, SLOT(browse()));
 
   layout->addWidget(button);
   QWidget* widget = new QWidget;
   widget->setLayout(layout);
   lineEdit->setText(manager->filename(property));
-    
+
   createdEditors[property].append(lineEdit);
   editorToProperty[lineEdit] = property;
 
@@ -93,7 +93,7 @@ void CFileFactory::browse()
 void CFileFactory::disconnectPropertyManager(CFilePropertyManager *manager)
 {
   originalFactory->removePropertyManager(manager);
-  // disconnect(manager, SIGNAL(filterChanged(QtProperty *, const QString &)), 
+  // disconnect(manager, SIGNAL(filterChanged(QtProperty *, const QString &)),
   //  	     this, SLOT(slotFilterChanged(QtProperty *, const QString &)));
 }
 
@@ -131,4 +131,4 @@ void CFileFactory::slotEditorDestroyed(QObject *object)
     itEditor++;
   }
 }
-    
+

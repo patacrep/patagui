@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -46,7 +46,7 @@ public slots:
   void setStartMessage(const QString &message);
   void setSuccessMessage(const QString &message);
   void setErrorMessage(const QString &message);
-  
+
   void setUrlToOpen(const QUrl &url);
 
 public:
@@ -56,7 +56,7 @@ public:
   QString command() const;
   const QString & program() const;
   const QStringList & arguments() const;
-  
+
   const QString & startMessage() const;
   const QString & successMessage() const;
   const QString & errorMessage() const;
@@ -68,7 +68,7 @@ signals:
   void message(const QString &message, int timeout);
   void readOnStandardOutput(const QString &output);
   void readOnStandardError(const QString &error);
-                                          
+
 private slots:
   void readStandardOutput();
   void readStandardError();

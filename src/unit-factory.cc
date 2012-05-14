@@ -5,12 +5,12 @@
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 2 of the
 // License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -33,14 +33,14 @@ CUnitFactory::CUnitFactory(QObject *parent)
 
 CUnitFactory::~CUnitFactory()
 {
-  // no need to delete editors because they will be 
+  // no need to delete editors because they will be
   // deleted by originalFactory in its destructor
 }
 
 void CUnitFactory::connectPropertyManager(CUnitPropertyManager *manager)
 {
   originalFactory->addPropertyManager(manager);
-  connect(manager, SIGNAL(suffixChanged(QtProperty *, const QString &)), 
+  connect(manager, SIGNAL(suffixChanged(QtProperty *, const QString &)),
 	  this, SLOT(slotSuffixChanged(QtProperty *, const QString &)));
 }
 
@@ -67,7 +67,7 @@ QWidget *CUnitFactory::createEditor(CUnitPropertyManager *manager, QtProperty *p
 void CUnitFactory::disconnectPropertyManager(CUnitPropertyManager *manager)
 {
   originalFactory->removePropertyManager(manager);
-  disconnect(manager, SIGNAL(suffixChanged(QtProperty *, const QString &)), 
+  disconnect(manager, SIGNAL(suffixChanged(QtProperty *, const QString &)),
 	     this, SLOT(slotSuffixChanged(QtProperty *, const QString &)));
 }
 
