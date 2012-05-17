@@ -73,16 +73,19 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
 
   QLabel *columnCountLabel = new QLabel(this);
   columnCountLabel->setPixmap(QIcon(":/icons/songbook/22x22/columns.png").pixmap(22,22));
+  columnCountLabel->setToolTip(tr("Number of columns for the song"));
   m_columnCountSpinBox->setToolTip(tr("Number of columns for the song"));
   m_columnCountSpinBox->setRange(1,3);
 
   QLabel *capoLabel = new QLabel(this);
   capoLabel->setPixmap(QIcon(":/icons/songbook/22x22/capo.png").pixmap(22,22));
+  capoLabel->setToolTip(tr("Fret on which the capo should be put"));
   m_capoSpinBox->setToolTip(tr("Fret on which the capo should be put"));
   m_capoSpinBox->setRange(0,9);
 
   QLabel *transposeLabel = new QLabel(this);
   transposeLabel->setPixmap(QIcon(":/icons/songbook/22x22/transpose.png").pixmap(22,22));
+  transposeLabel->setToolTip(tr("Number of half-steps by which chords are transposed"));
   m_transposeSpinBox->setToolTip(tr("Number of half-steps by which chords are transposed"));
   m_transposeSpinBox->setRange(-14,14);
 
