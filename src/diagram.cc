@@ -307,6 +307,9 @@ bool CDiagramWidget::editChord()
 			      "  X: string is not to be played\n"
 			      "  0: string is to be played open\n"
 			      "  [1-9]: string is to be played on the given numbered fret."));
+  QRegExp rx("[X\\d]+");
+  QRegExpValidator validator(rx, 0);
+  stringsLineEdit->setValidator(&validator);
   stringsLineEdit->setText(m_diagram->strings());
 
   QCheckBox *importantCheckBox = new QCheckBox(tr("Important diagram"));
