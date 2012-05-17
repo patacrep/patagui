@@ -376,7 +376,7 @@ void CDiagramWidget::updateBackground()
 
 void CDiagramWidget::updateChordName()
 {
-  m_chordName->setText(QString("<b>%1</b>").arg(m_diagram->chord()));
+  m_chordName->setText(QString("<b>%1</b>").arg(m_diagram->chord().replace("&", QChar(0x266D))));
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   if (m_diagram->isImportant())
     m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(dark);");
