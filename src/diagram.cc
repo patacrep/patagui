@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QCheckBox>
 #include <QGroupBox>
 #include <QRadioButton>
 #include <QDialog>
@@ -308,6 +309,10 @@ bool CDiagramWidget::editChord()
 			      "  [1-9]: string is to be played on the given numbered fret."));
   stringsLineEdit->setText(m_diagram->strings());
 
+  QCheckBox *importantCheckBox = new QCheckBox(tr("Important diagram"));
+  importantCheckBox->setToolTip(tr("Mark this diagram as important."));
+  importantCheckBox->setChecked(m_diagram->isImportant());
+
   QFormLayout *chordLayout = new QFormLayout;
   chordLayout->addRow(tr("Name:"), nameLineEdit);
   chordLayout->addRow(tr("Fret:"), fretSpinBox);
@@ -316,6 +321,7 @@ bool CDiagramWidget::editChord()
   QBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(instrumentGroupBox);
   layout->addLayout(chordLayout);
+  layout->addWidget(importantCheckBox);
   layout->addWidget(buttonBox);
   dialog.setLayout(layout);
 
@@ -325,7 +331,9 @@ bool CDiagramWidget::editChord()
       m_diagram->setChord(nameLineEdit->text());
       m_diagram->setFret((fretSpinBox->value() == 0) ? "" : QString::number(fretSpinBox->value()));
       m_diagram->setStrings(stringsLineEdit->text());
+      m_diagram->setImportant(importantCheckBox->isChecked());
       setToolTip(m_diagram->toString());
+      updateBackground();
       update();
       emit diagramChanged();
       return true;
@@ -357,17 +365,13 @@ void CDiagramWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void CDiagramWidget::updateBackground()
 {
-  if ( isSelected() )
-    {
-      setBackgroundRole(QPalette::Highlight);
-    }
+  if (m_diagram->isImportant())
+    setBackgroundRole(QPalette::Mid);
   else
-    {
-      if (m_diagram->isImportant())
-	setBackgroundRole(QPalette::Mid);
-      else
-	setBackgroundRole(QPalette::Base);
-    }
+    setBackgroundRole(QPalette::Base);
+
+  if ( isSelected() )
+    setBackgroundRole(QPalette::Highlight);
 }
 
 void CDiagramWidget::updateChordName()
