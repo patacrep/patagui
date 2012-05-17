@@ -325,6 +325,7 @@ bool CDiagramWidget::editChord()
       m_diagram->setChord(nameLineEdit->text());
       m_diagram->setFret((fretSpinBox->value() == 0) ? "" : QString::number(fretSpinBox->value()));
       m_diagram->setStrings(stringsLineEdit->text());
+      setToolTip(m_diagram->toString());
       update();
       emit diagramChanged();
       return true;
