@@ -177,7 +177,7 @@ private slots:
   void cancelProcess();
 
 private:
-  void readSettings();
+  void readSettings(bool firstLaunch=false);
   void writeSettings();
 
   void createActions();

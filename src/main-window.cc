@@ -137,7 +137,7 @@ CMainWindow::CMainWindow(QWidget *parent)
 
   updateTitle(songbook()->filename());
 
-  readSettings();
+  readSettings(true);
 }
 
 CMainWindow::~CMainWindow()
@@ -158,16 +158,19 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
     }
 }
 
-void CMainWindow::readSettings()
+void CMainWindow::readSettings(bool firstLaunch)
 {
   QSettings settings;
   settings.beginGroup("general");
   setStatusbarDisplayed(settings.value("statusBar", true).toBool());
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
-  resize(settings.value("size", QSize(800,600)).toSize());
-  move(settings.value("pos", QPoint(200, 200)).toPoint());
-  if (settings.value("maximized", isMaximized()).toBool())
-    showMaximized();
+  if (firstLaunch)
+    {
+      resize(settings.value("size", QSize(800,600)).toSize());
+      move(settings.value("pos", QPoint(200, 200)).toPoint());
+      if (settings.value("maximized", isMaximized()).toBool())
+	showMaximized();
+    }
   settings.endGroup();
 
   settings.beginGroup("display");
@@ -442,7 +445,6 @@ void CMainWindow::createToolBar()
 
 void CMainWindow::preferences()
 {
-  writeSettings();
   ConfigDialog dialog(this);
   dialog.exec();
   readSettings();
