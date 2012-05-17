@@ -293,6 +293,7 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
 void CSongHeaderEditor::onDiagramChanged()
 {
   song().gtabs = QStringList();
+  song().utabs = QStringList();
   for(int i=0; i < m_diagramsLayout->count(); ++i)
     if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_diagramsLayout->itemAt(i)->widget()))
       {
