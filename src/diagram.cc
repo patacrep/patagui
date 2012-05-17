@@ -282,7 +282,9 @@ bool CDiagramWidget::editChord()
   QRadioButton *guitar  = new QRadioButton(tr("Guitar"));
   QRadioButton *ukulele = new QRadioButton(tr("Ukulele"));
 
-  guitar->setChecked(true);
+  guitar->setChecked(m_diagram->type() == GuitarChord);
+  ukulele->setChecked(m_diagram->type() == UkuleleChord);
+
   QVBoxLayout *instrumentLayout = new QVBoxLayout;
   instrumentLayout->addWidget(guitar);
   instrumentLayout->addWidget(ukulele);
