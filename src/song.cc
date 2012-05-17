@@ -189,7 +189,7 @@ QString Song::toString(const Song &song)
   if (!song.coverName.isEmpty())
     text.append(QString("  \\cover\n"));
 
-  if (song.transpose > 0)
+  if (song.transpose != 0)
     text.append(QString("  \\transpose{%1}\n").arg(song.transpose));
 
   if (song.capo > 0)
