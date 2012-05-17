@@ -291,7 +291,7 @@ void CSongEditor::save()
     return;
 
   //apply indentation before saving
-  codeEditor()->indent();
+  //codeEditor()->indent();
 
   // get the song contents
   parseText();
