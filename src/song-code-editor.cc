@@ -248,6 +248,7 @@ QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnviro
 void CSongCodeEditor::indent()
 {
   QTextCursor cursor = textCursor();
+  cursor.beginEditBlock();
   cursor.movePosition(QTextCursor::Start);
   while(!cursor.atEnd())
     {
@@ -255,11 +256,13 @@ void CSongCodeEditor::indent()
       cursor.movePosition(QTextCursor::Down);
       cursor.movePosition(QTextCursor::EndOfLine);
     }
+  cursor.endEditBlock();
 }
 
 void CSongCodeEditor::indentSelection()
 {
   QTextCursor cursor = textCursor();
+  cursor.beginEditBlock();
   QTextCursor it = textCursor();
   it.setPosition(cursor.anchor());
 
@@ -281,6 +284,7 @@ void CSongCodeEditor::indentSelection()
       else
 	break;
     }
+  cursor.endEditBlock();
 }
 
 void CSongCodeEditor::indentLine(const QTextCursor & cur)
