@@ -54,12 +54,12 @@ CDiagram::~CDiagram()
 
 QSize CDiagram::minimumSizeHint() const
 {
-  return QSize(100, 75);
+  return QSize(100, 50);
 }
 
 QSize CDiagram::sizeHint() const
 {
-  return QSize(100, 75);
+  return QSize(100, 50);
 }
 
 QString CDiagram::toString()
@@ -127,10 +127,10 @@ void CDiagram::paintEvent(QPaintEvent *)
   painter.setRenderHint(QPainter::Antialiasing, true);
   painter.setPen(Qt::black);
 
-  int cellWidth = 14, cellHeight = 14;
+  int cellWidth = 12, cellHeight = 12;
   int width = (strings().length() - 1)*cellWidth;
   int height = 4*cellHeight;
-  int padding = 15;
+  int padding = 13;
   //draw a vertical line for each string
   for(int i=0; i<strings().length(); ++i)
     {
@@ -165,8 +165,8 @@ void CDiagram::paintEvent(QPaintEvent *)
     }
 
   //draw fret
-  QRect fretRect(padding-(cellWidth-4), padding+cellHeight/2.0, cellWidth-4, cellHeight);
-  painter.setFont(QFont("Arial", 11));
+  QRect fretRect(padding-(cellWidth-2), padding+cellHeight/2.0, cellWidth-4, cellHeight);
+  painter.setFont(QFont("Arial", 9));
   painter.drawText(fretRect, Qt::AlignCenter, fret());
 }
 
@@ -237,8 +237,8 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
 {
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
-  setMinimumWidth(120);
-  setMaximumWidth(120);
+  setMinimumWidth(100);
+  setMaximumWidth(100);
   setToolTip(m_diagram->toString());
   setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -258,6 +258,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
   addAction(action);
 
   QBoxLayout* layout = new QVBoxLayout;
+  layout->setContentsMargins(6, 6, 6, 6);
   layout->addWidget(m_chordName);
   layout->addWidget(m_diagram);
   setLayout(layout);
@@ -379,12 +380,14 @@ void CDiagramWidget::updateBackground()
 
 void CDiagramWidget::updateChordName()
 {
-  m_chordName->setText(QString("<b>%1</b>").arg(m_diagram->chord().replace("&", QChar(0x266D))));
+  m_chordName->setText(QString("<font size=\"2\"><b>%1</b></font>").arg(m_diagram->chord()));
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+  m_chordName->setMaximumHeight(20);
+
   if (m_diagram->isImportant())
-    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(dark);");
+    m_chordName->setStyleSheet("border-radius: 4px; background-color: palette(dark);");
   else
-    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(mid);");
+    m_chordName->setStyleSheet("border-radius: 4px; background-color: palette(mid);");
 }
 
 bool CDiagramWidget::isSelected() const

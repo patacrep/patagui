@@ -137,6 +137,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   coverLayout->addStretch();
 
   m_diagramsLayout = new QHBoxLayout;
+  m_diagramsLayout->setContentsMargins(4, 4, 4, 4);
 
   QWidget* scroll = new QWidget;
   scroll->setLayout(m_diagramsLayout);
@@ -144,11 +145,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   diagramsScrollArea->setWidget(scroll);
   diagramsScrollArea->setBackgroundRole(QPalette::Dark);
   diagramsScrollArea->setWidgetResizable(true);
-  diagramsScrollArea->setMinimumWidth(350);
-  diagramsScrollArea->setMinimumHeight(150);
-  diagramsScrollArea->setMaximumHeight(160);
 
-  setMaximumHeight(160);
+  setMaximumHeight(132);
 
   QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setContentsMargins(1, 1, 1, 1);
@@ -364,7 +362,7 @@ void CSongHeaderEditor::removeDiagram()
 CCoverDropArea::CCoverDropArea(QWidget *parent)
   : QLabel(parent)
 {
-  setMinimumSize(150,150);
+  setMinimumSize(132,132);
   setFrameStyle(QFrame::Raised | QFrame::Panel);
   setLineWidth(3);
   setAlignment(Qt::AlignCenter);
@@ -376,7 +374,7 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   QPixmap pixmap;
   if(!QPixmapCache::find("cover-missing-full", &pixmap))
     {
-      pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(128, 128);
+      pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(115, 115);
       QPixmapCache::insert("cover-missing-full", pixmap);
     }
   setPixmap(pixmap);
@@ -487,7 +485,7 @@ void CCoverDropArea::setCover(const QImage &cover)
   if(cover.isNull())
     qWarning() << tr("CCoverDropArea::setCover invalid cover");
 
-  m_cover = cover.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 void CCoverDropArea::setCover(const QString &path)
