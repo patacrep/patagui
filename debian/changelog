@@ -1,8 +1,14 @@
+songbook-client (0.7.1) precise; urgency=low
+
+  * New upstream version
+
+ -- Romain Goffe <romain.goffe@gmail.com>  Tue, 22 May 2012 21:44:09 +0200
+
 songbook-client (0.7) precise; urgency=low
 
   * New upstream version
 
- -- Romain Goffe <romain.goffe@gmail.com> Mon, 14 May 2012 18:26:36 +0200
+ -- Romain Goffe <romain.goffe@gmail.com>  Mon, 14 May 2012 18:26:36 +0200
 
 songbook-client (0.7) squeeze; urgency=low
 
