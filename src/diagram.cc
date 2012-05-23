@@ -237,8 +237,8 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
 {
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
-  setMinimumWidth(100);
   setMaximumWidth(100);
+  setMaximumHeight(110);
   setToolTip(m_diagram->toString());
   setContextMenuPolicy(Qt::ActionsContextMenu);
 
