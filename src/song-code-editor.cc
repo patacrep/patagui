@@ -52,6 +52,7 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
     << "\\begin{verse*}" << "\\end{verse*}"
     << "\\begin{chorus}" << "\\end{chorus}"
     << "\\begin{bridge}" << "\\end{bridge}"
+    << "\\begin{repeatedchords}" << "\\end{repeatedchords}"
     << "\\beginscripture" << "\\endscripture"
     << "\\rep"      << "\\echo"
     << "\\image"    <<  "\\nolyrics"
