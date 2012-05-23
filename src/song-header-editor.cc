@@ -29,8 +29,6 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QComboBox>
-#include <QToolButton>
-#include <QSpacerItem>
 
 #include <QFileInfo>
 #include <QFile>
@@ -57,8 +55,6 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_transposeSpinBox(new QSpinBox(this))
   , m_coverLabel(new CCoverDropArea(this))
   , m_songEditor()
-  , m_addDiagramButton(0)
-  , m_spacer(0)
 {
   //do not translate combobox content since "english", "french" etc is used by LaTeX
   m_languageComboBox->addItem
@@ -136,13 +132,12 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   coverLayout->addWidget(m_coverLabel);
   coverLayout->addStretch();
 
-  m_diagramsLayout = new QHBoxLayout;
-  m_diagramsLayout->setContentsMargins(4, 4, 4, 4);
+  m_diagramArea = new CDiagramArea(this);
+  connect(m_diagramArea, SIGNAL(contentsChanged()),
+          SLOT(onDiagramsChanged()));
 
-  QWidget* scroll = new QWidget;
-  scroll->setLayout(m_diagramsLayout);
   QScrollArea* diagramsScrollArea = new QScrollArea;
-  diagramsScrollArea->setWidget(scroll);
+  diagramsScrollArea->setWidget(m_diagramArea);
   diagramsScrollArea->setBackgroundRole(QPalette::Dark);
   diagramsScrollArea->setWidgetResizable(true);
 
@@ -215,22 +210,14 @@ void CSongHeaderEditor::update()
   QString gtab;
   foreach (gtab, song().gtabs)
     {
-      CDiagramWidget *diagram = new CDiagramWidget(gtab, GuitarChord);
-      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-      connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
-      m_diagramsLayout->addWidget(diagram);
+      m_diagramArea->addDiagram(gtab, GuitarChord);
     }
 
   QString utab;
   foreach (utab, song().utabs)
     {
-      CDiagramWidget *diagram = new CDiagramWidget(utab, UkuleleChord);
-      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-      connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
-      m_diagramsLayout->addWidget(diagram);
+      m_diagramArea->addDiagram(utab, UkuleleChord);
     }
-
-  addNewDiagramButton();
 }
 
 void CSongHeaderEditor::onIndexChanged(const QString &text)
@@ -288,19 +275,17 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
   emit(contentsChanged());
 }
 
-void CSongHeaderEditor::onDiagramChanged()
+void CSongHeaderEditor::onDiagramsChanged()
 {
   song().gtabs = QStringList();
   song().utabs = QStringList();
-  for(int i=0; i < m_diagramsLayout->count(); ++i)
-    if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_diagramsLayout->itemAt(i)->widget()))
-      {
-	if (diagram->type() == GuitarChord)
-	  song().gtabs << diagram->toString();
-	else if (diagram->type() == UkuleleChord)
-	  song().utabs << diagram->toString();
-      }
-
+  foreach (CDiagramWidget *diagram, m_diagramArea->diagrams())
+    {
+      if (diagram->type() == GuitarChord)
+	song().gtabs << diagram->toString();
+      else if (diagram->type() == UkuleleChord)
+	song().utabs << diagram->toString();
+    }
   emit(contentsChanged());
 }
 
@@ -313,48 +298,6 @@ void CSongHeaderEditor::onCoverChanged()
 const QImage & CSongHeaderEditor::cover()
 {
   return m_coverLabel->cover();
-}
-
-void CSongHeaderEditor::addNewDiagramButton()
-{
-  if(m_addDiagramButton)
-    {
-      m_diagramsLayout->removeItem(m_spacer);
-      delete m_addDiagramButton;
-    }
-
-  m_addDiagramButton = new QToolButton;
-  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
-  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
-  m_diagramsLayout->addWidget(m_addDiagramButton);
-  m_spacer = new QSpacerItem(500, 20, QSizePolicy::Ignored, QSizePolicy::MinimumExpanding);
-  m_diagramsLayout->addSpacerItem(m_spacer);
-}
-
-void CSongHeaderEditor::addDiagram()
-{
-  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", GuitarChord);
-  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
-  if (diagram->editChord())
-    {
-      m_diagramsLayout->addWidget(diagram);
-      addNewDiagramButton();
-    }
-  else
-    delete diagram;
-}
-
-void CSongHeaderEditor::removeDiagram()
-{
-  CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender());
-  if(diagram)
-    {
-      m_diagramsLayout->removeWidget(diagram);
-      disconnect(diagram,0,0,0);
-      diagram->setParent(0);
-      onDiagramChanged();
-    }
 }
 
 //------------------------------------------------------------------------------

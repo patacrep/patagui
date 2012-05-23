@@ -34,6 +34,10 @@
 #include <QMouseEvent>
 #include <QDebug>
 
+#include <QToolButton>
+#include <QSpacerItem>
+
+
 QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
 QRegExp CDiagram::reFret("\\\\[ug]tab[\\*]?\\{.+\\{(\\d):");
 QRegExp CDiagram::reStringsFret(":([^\\}]+)");
@@ -81,7 +85,7 @@ QString CDiagram::toString()
     str.append("*");
 
   //the chord name such as Am
-  str.append( QString("{%1}{").arg(chord().replace(QChar(0x266D),"&")) );
+  str.append( QString("{%1}{").arg(chord()) );
   //the fret
   str.append(QString("%2").arg(fret()));
   //the strings
@@ -104,7 +108,7 @@ void CDiagram::fromString(const QString & str)
   setImportant(str.contains("*"));
 
   reChord.indexIn(str);
-  setChord(reChord.cap(1).replace("&",QChar(0x266D)));
+  setChord(reChord.cap(1));
 
   reFret.indexIn(str);
   setFret(reFret.cap(1));
@@ -357,14 +361,14 @@ void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void CDiagramWidget::mousePressEvent(QMouseEvent *event)
 {
-  setSelected(true);
+  setSelected(!isSelected());
   emit changed();
 }
 
 void CDiagramWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  setSelected(false);
-  emit changed();
+//  setSelected(false);
+//  emit changed();
 }
 
 void CDiagramWidget::updateBackground()
@@ -380,7 +384,8 @@ void CDiagramWidget::updateBackground()
 
 void CDiagramWidget::updateChordName()
 {
-  m_chordName->setText(QString("<font size=\"2\"><b>%1</b></font>").arg(m_diagram->chord()));
+  m_chordName->setText(QString("<font size=\"2\"><b>%1</b></font>")
+		       .arg(m_diagram->chord().replace("&", QChar(0x266D))));
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   m_chordName->setMaximumHeight(20);
 
@@ -412,4 +417,88 @@ QString CDiagramWidget::toString()
 ChordType CDiagramWidget::type() const
 {
   return m_diagram->type();
+}
+
+//----------------------------------------------------------------------------
+
+CDiagramArea::CDiagramArea(QWidget *parent)
+  : QWidget(parent)
+  , m_layout (new QHBoxLayout)
+  , m_addDiagramButton(0)
+  , m_spacer(0)
+{
+  m_layout->setContentsMargins(4, 4, 4, 4);
+  setLayout(m_layout);
+
+  addNewDiagramButton();
+}
+
+CDiagramWidget * CDiagramArea::addDiagram()
+{
+  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", GuitarChord);
+  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
+  if (diagram->editChord())
+    {
+      m_layout->addWidget(diagram);
+      addNewDiagramButton();
+    }
+  else
+    {
+      delete diagram;
+      diagram = 0;
+    }
+  addNewDiagramButton();
+  return diagram;
+}
+
+CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const ChordType & type)
+{
+  CDiagramWidget *diagram = new CDiagramWidget(chord, type);
+  m_layout->addWidget(diagram);
+  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
+  addNewDiagramButton();
+  return diagram;
+}
+
+void CDiagramArea::removeDiagram()
+{
+  if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender()))
+    {
+      m_layout->removeWidget(diagram);
+      disconnect(diagram,0,0,0);
+      diagram->setParent(0);
+      onDiagramChanged();
+    }
+}
+
+void CDiagramArea::addNewDiagramButton()
+{
+  if(m_addDiagramButton)
+    {
+      m_layout->removeItem(m_spacer);
+      delete m_addDiagramButton;
+    }
+
+  m_addDiagramButton = new QToolButton;
+  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
+  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
+  m_layout->addWidget(m_addDiagramButton);
+  m_spacer = new QSpacerItem(500, 20, QSizePolicy::Ignored, QSizePolicy::MinimumExpanding);
+  m_layout->addSpacerItem(m_spacer);
+}
+
+QList<CDiagramWidget*> CDiagramArea::diagrams() const
+{
+  QList<CDiagramWidget*>  list;
+  for(int i=0; i < m_layout->count(); ++i)
+    if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+      list << diagram;
+  return list;
+}
+
+void CDiagramArea::onDiagramChanged()
+{
+  emit(contentsChanged());
 }

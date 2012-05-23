@@ -27,15 +27,14 @@
 #include <QLabel>
 
 class CSongEditor;
-class CDiagram;
 class CCoverDropArea;
+class CDiagramArea;
 class LineEdit;
 
 class QSpinBox;
 class QComboBox;
 class QBoxLayout;
 class QToolButton;
-class QSpacerItem;
 
 /**
  * \file song-header-editor.hh
@@ -78,17 +77,12 @@ public:
   LineEdit* titleLineEdit() const;
   LineEdit* artistLineEdit() const;
 
-private:
-  void addNewDiagramButton();
-
 private slots:
   void onIndexChanged(const QString &text);
   void onTextEdited(const QString &text);
   void onValueChanged(int value);
-  void onDiagramChanged();
+  void onDiagramsChanged();
   void onCoverChanged();
-  void addDiagram();
-  void removeDiagram();
 
 public slots:
   void update();
@@ -109,9 +103,7 @@ private:
 
   CSongEditor *m_songEditor;
 
-  QBoxLayout *m_diagramsLayout;
-  QToolButton *m_addDiagramButton;
-  QSpacerItem *m_spacer;
+  CDiagramArea *m_diagramArea;
 };
 
 

@@ -130,4 +130,43 @@ private:
   bool m_selected;
 };
 
+class QSpacerItem;
+class QToolButton;
+class QBoxLayout;
+
+/**
+ * \file diagram.hh
+ * \class CDiagramArea
+ * \brief CDiagramArea contains a list of diagrams
+ *
+ */
+class CDiagramArea : public QWidget
+{
+  Q_OBJECT
+
+public:
+  CDiagramArea(QWidget *parent=0);
+
+  CDiagramWidget * addDiagram(const QString & chord, const ChordType & type);
+
+  QList<CDiagramWidget*> diagrams() const;
+
+private:
+  void addNewDiagramButton();
+
+private slots:
+  void onDiagramChanged();
+  CDiagramWidget * addDiagram();
+  void removeDiagram();
+
+signals:
+  void contentsChanged();
+
+  private:
+  QBoxLayout *m_layout;
+  QToolButton *m_addDiagramButton;
+  QSpacerItem *m_spacer;
+  QList<CDiagramWidget*> m_diagrams;
+};
+
 #endif // __DIAGRAM_HH__
