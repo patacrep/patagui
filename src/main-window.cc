@@ -289,11 +289,6 @@ void CMainWindow::createActions()
   m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
 
-  m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
-  m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
-  connect(m_adjustColumnsAct, SIGNAL(triggered()),
-          view(), SLOT(resizeColumnsToContents()));
-
   m_libraryUpdateAct = new QAction(tr("&Update"), this);
   m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
   m_libraryUpdateAct->setIcon(QIcon::fromTheme("view-refresh", QIcon(":/icons/tango/32x32/actions/view-refresh.png")));
@@ -405,7 +400,6 @@ void CMainWindow::createMenus()
   QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
   viewMenu->addAction(m_toolBarViewAct);
   viewMenu->addAction(m_statusbarViewAct);
-  viewMenu->addAction(m_adjustColumnsAct);
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(m_documentationAct);

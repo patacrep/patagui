@@ -225,7 +225,6 @@ private:
   QAction *m_preferencesAct;
   QAction *m_toolBarViewAct;
   QAction *m_statusbarViewAct;
-  QAction *m_adjustColumnsAct;
   QAction *m_documentationAct;
   QAction *m_bugsAct;
   QAction *m_aboutAct;
