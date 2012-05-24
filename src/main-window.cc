@@ -454,7 +454,11 @@ void CMainWindow::preferences()
 
 void CMainWindow::documentation()
 {
-  QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc.pdf"));
+  if (QLocale::system().language() == QLocale::French)
+    QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc_fr.pdf"));
+  else
+    QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc_en.pdf"));
+}
 
 void CMainWindow::reportBug()
 {
