@@ -150,11 +150,15 @@ public:
   CDiagramWidget * addDiagram(const QString & chord, const ChordType & type);
   QList<CDiagramWidget*> diagrams() const;
 
+protected:
+  virtual void keyPressEvent(QKeyEvent *event);
+
 private:
   void addNewDiagramButton();
 
 private slots:
   void onDiagramChanged();
+  void onDiagramClicked();
   CDiagramWidget * addDiagram();
   void removeDiagram();
 

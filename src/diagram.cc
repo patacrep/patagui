@@ -429,6 +429,7 @@ CDiagramArea::CDiagramArea(QWidget *parent)
   setLayout(m_layout);
 
   addNewDiagramButton();
+  setFocusPolicy(Qt::StrongFocus);
 }
 
 CDiagramWidget * CDiagramArea::addDiagram()
@@ -500,4 +501,27 @@ QList<CDiagramWidget*> CDiagramArea::diagrams() const
 void CDiagramArea::onDiagramChanged()
 {
   emit(contentsChanged());
+}
+
+void CDiagramArea::onDiagramClicked()
+{
+  CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender());
+  diagram->setSelected(!diagram->isSelected());
+}
+
+void CDiagramArea::keyPressEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_Delete)
+    {
+      bool changed = false;
+      for(int i=0; i < m_layout->count(); ++i)
+        if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+	  if(diagram->isSelected())
+            {
+	      changed = true;
+	      diagram->deleteLater();
+            }
+      if(changed)
+	onDiagramChanged();
+    }
 }
