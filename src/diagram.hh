@@ -91,7 +91,7 @@ class CDiagramWidget : public QWidget
 {
   Q_OBJECT
 
-  public:
+public:
   CDiagram* m_diagram;
 
   /// Constructor.
@@ -148,7 +148,6 @@ public:
   CDiagramArea(QWidget *parent=0);
 
   CDiagramWidget * addDiagram(const QString & chord, const ChordType & type);
-
   QList<CDiagramWidget*> diagrams() const;
 
 private:
@@ -162,7 +161,7 @@ private slots:
 signals:
   void contentsChanged();
 
-  private:
+private:
   QBoxLayout *m_layout;
   QToolButton *m_addDiagramButton;
   QSpacerItem *m_spacer;
