@@ -340,9 +340,9 @@ void CCoverDropArea::dropEvent(QDropEvent *event)
 {
   const QMimeData *mimeData = event->mimeData();
 
-  if (mimeData->hasText())
+  if (mimeData->hasUrls())
     {
-      QUrl url(mimeData->text());
+      QUrl url(mimeData->urls()[0]);
       m_filename = url.toLocalFile().trimmed();
       update();
     }
