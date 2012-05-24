@@ -331,6 +331,16 @@ Song CLibrary::getSong(const QString &path) const
   return Song();
 }
 
+int CLibrary::getSongIndex(const QString &path) const
+{
+  for (int i = 0; i < m_songs.size(); ++i)
+    {
+      if (m_songs[i].path == path)
+        return i;
+    }
+  return -1;
+}
+
 void CLibrary::loadSong(const QString &path, Song *song)
 {
   if (song == 0)
@@ -349,6 +359,12 @@ void CLibrary::saveSong(Song &song)
       stream << Song::toString(song);
       file.close();
     }
+  //update the song in the library
+  int index = getSongIndex(song.path);
+  if (index != -1)
+    m_songs[index] = song;
+  else //new song
+    addSong(song, true);
 }
 
 void CLibrary::saveCover(Song &song, const QImage &cover)
