@@ -251,6 +251,10 @@ void CMainWindow::createActions()
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
 
+  m_bugsAct = new QAction(tr("&Report a bug"), this);
+  m_bugsAct->setStatusTip(tr("Report a bug about this application"));
+  connect(m_bugsAct, SIGNAL(triggered()), this, SLOT(reportBug()));
+
   m_aboutAct = new QAction(tr("&About"), this);
   m_aboutAct->setIcon(QIcon::fromTheme("help-about", QIcon(":/icons/tango/32x32/actions/help-about.png")));
   m_aboutAct->setStatusTip(tr("About this application"));
@@ -405,6 +409,7 @@ void CMainWindow::createMenus()
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(m_documentationAct);
+  helpMenu->addAction(m_bugsAct);
   helpMenu->addAction(m_aboutAct);
 }
 
@@ -456,6 +461,10 @@ void CMainWindow::preferences()
 void CMainWindow::documentation()
 {
   QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc.pdf"));
+
+void CMainWindow::reportBug()
+{
+  QDesktopServices::openUrl(QUrl("https://github.com/crep4ever/songbook-client/issues"));
 }
 
 void CMainWindow::about()
