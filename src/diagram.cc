@@ -361,14 +361,7 @@ void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void CDiagramWidget::mousePressEvent(QMouseEvent *event)
 {
-  setSelected(!isSelected());
-  emit changed();
-}
-
-void CDiagramWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-//  setSelected(false);
-//  emit changed();
+  emit clicked();
 }
 
 void CDiagramWidget::updateBackground()
@@ -458,6 +451,7 @@ CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const ChordType
   m_layout->addWidget(diagram);
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
+  connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
   addNewDiagramButton();
   return diagram;
 }

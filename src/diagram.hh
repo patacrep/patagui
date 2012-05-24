@@ -110,10 +110,10 @@ public:
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event);
   virtual void mousePressEvent(QMouseEvent *event);
-  virtual void mouseReleaseEvent(QMouseEvent *event);
 
 signals:
   void changed();
+  void clicked();
   void diagramCloseRequested();
   void diagramChanged();
 
