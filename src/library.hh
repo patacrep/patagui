@@ -108,6 +108,9 @@ public:
   //! Remove a song from the library list
   void removeSong(const QString &path);
 
+  //! Get the song index from the library list
+  int getSongIndex(const QString &path) const;
+
   //! Get a song from the library list
   Song getSong(const QString &path) const;
 

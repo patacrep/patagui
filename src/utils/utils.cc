@@ -69,7 +69,7 @@ namespace SbUtils
   //------------------------------------------------------------------------------
   QString stringToFilename(const QString & AString, const QString & sep)
   {
-    QString str(AString);
+    QString str(AString.toLower());
     QString item;
   
     //replace whitespaces with separator
@@ -88,8 +88,9 @@ namespace SbUtils
     str.replace(QString("î"), QString("i"));
     str.replace(QString("ô"), QString("o"));
     str.replace(QString("ù"), QString("u"));
+    str.replace(QString("ç"), QString("c"));
 
-    return str.toLower();
+    return str;
   }
   //------------------------------------------------------------------------------
   bool copyFile(const QString & ASourcePath, const QString & ATargetDirectory)

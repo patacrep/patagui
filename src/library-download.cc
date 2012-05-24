@@ -80,7 +80,6 @@ CLibraryDownload::CLibraryDownload(CMainWindow *p)
   m_url->addItem("http://www.patacrep.com/data/documents/songbook.tar.gz");
 
   m_path = new CFileChooser(this);
-  m_path->setFileMode(QFileDialog::Directory);
   m_path->setOptions(QFileDialog::ShowDirsOnly);
   m_path->setCaption(tr("Install directory"));
 

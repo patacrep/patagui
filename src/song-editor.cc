@@ -290,9 +290,6 @@ void CSongEditor::save()
   if (!checkSongMandatoryFields())
     return;
 
-  //apply indentation before saving
-  codeEditor()->indent();
-
   // get the song contents
   parseText();
 
@@ -301,8 +298,6 @@ void CSongEditor::save()
   if (isNewCover())
     library()->saveCover(m_song, m_songHeaderEditor->cover());
   library()->saveSong(m_song);
-  library()->removeSong(m_song.path);
-  library()->addSong(m_song, true);
 
   setNewSong(false);
   setModified(false);

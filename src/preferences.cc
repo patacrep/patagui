@@ -253,7 +253,6 @@ OptionsPage::OptionsPage(QWidget *parent)
 
   m_workingPath = new CFileChooser();
   m_workingPath->setMinimumWidth(400);
-  m_workingPath->setFileMode(QFileDialog::Directory);
   m_workingPath->setOptions(QFileDialog::ShowDirsOnly);
   m_workingPath->setCaption(tr("Songbook path"));
 

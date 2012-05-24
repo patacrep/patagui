@@ -52,6 +52,7 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
     << "\\begin{verse*}" << "\\end{verse*}"
     << "\\begin{chorus}" << "\\end{chorus}"
     << "\\begin{bridge}" << "\\end{bridge}"
+    << "\\begin{repeatedchords}" << "\\end{repeatedchords}"
     << "\\beginscripture" << "\\endscripture"
     << "\\rep"      << "\\echo"
     << "\\image"    <<  "\\nolyrics"
@@ -205,12 +206,12 @@ void CSongCodeEditor::highlightEnvironments()
 	  ((env == Chorus) && (Song::reEndChorus.indexIn(line) > -1)) ||
 	  ((env == Scripture) && (Song::reEndScripture.indexIn(line) > -1)) )
 	{
-	  cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor);
+	  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
 	  extraSelections.append(environmentSelection(env, cursor));
-	  cursor.movePosition(QTextCursor::Up, QTextCursor::KeepAnchor);
+	  cursor.movePosition(QTextCursor::PreviousBlock, QTextCursor::KeepAnchor);
 	  env = None;
 	}
-      cursor.movePosition(QTextCursor::Down, (env != None)?
+      cursor.movePosition(QTextCursor::NextBlock, (env != None)?
 			  QTextCursor::KeepAnchor : QTextCursor::MoveAnchor);
     }
   extraSelections.append(currentLineSelection());
@@ -248,22 +249,25 @@ QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnviro
 void CSongCodeEditor::indent()
 {
   QTextCursor cursor = textCursor();
+  cursor.beginEditBlock();
   cursor.movePosition(QTextCursor::Start);
   while(!cursor.atEnd())
     {
       indentLine(cursor);
-      cursor.movePosition(QTextCursor::Down);
-      cursor.movePosition(QTextCursor::EndOfLine);
+      cursor.movePosition(QTextCursor::NextBlock);
+      cursor.movePosition(QTextCursor::EndOfBlock);
     }
+  cursor.endEditBlock();
 }
 
 void CSongCodeEditor::indentSelection()
 {
   QTextCursor cursor = textCursor();
+  cursor.beginEditBlock();
   QTextCursor it = textCursor();
   it.setPosition(cursor.anchor());
 
-  //swap such as it always points
+  //swap such as the cursor "it" always points
   //to the beginning of the selection
   if(it > cursor)
     {
@@ -271,16 +275,17 @@ void CSongCodeEditor::indentSelection()
       cursor.setPosition(cursor.anchor());
     }
 
-  it.movePosition(QTextCursor::StartOfLine);
+  it.movePosition(QTextCursor::StartOfBlock);
   while(it <= cursor)
     {
       indentLine(it);
-      it.movePosition(QTextCursor::EndOfLine);
+      it.movePosition(QTextCursor::EndOfBlock);
       if(!it.atEnd())
-	it.movePosition(QTextCursor::Down);
+	it.movePosition(QTextCursor::NextBlock);
       else
 	break;
     }
+  cursor.endEditBlock();
 }
 
 void CSongCodeEditor::indentLine(const QTextCursor & cur)
@@ -318,7 +323,7 @@ void CSongCodeEditor::indentLine(const QTextCursor & cur)
     ++index;
 
   cursor = cur;
-  cursor.movePosition (QTextCursor::StartOfLine);
+  cursor.movePosition (QTextCursor::StartOfBlock);
   //remove indentation level if current line begins with \end
   if(cursor.block().text().contains("\\end") && index!=0)
     --index;
@@ -335,7 +340,6 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
   QString str  = cursor.block().text();
   while( str.startsWith(" ") )
     {
-      cursor.movePosition (QTextCursor::StartOfLine);
       cursor.deleteChar();
       str  = cursor.block().text();
     }
