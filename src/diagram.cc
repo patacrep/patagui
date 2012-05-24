@@ -366,10 +366,15 @@ void CDiagramWidget::mousePressEvent(QMouseEvent *event)
 
 void CDiagramWidget::updateBackground()
 {
-  if (m_diagram->isImportant())
-    setBackgroundRole(QPalette::Mid);
+  if(m_diagram->type() == GuitarChord)
+    setPalette(QPalette(QColor(114,159,207)));
+  else if(m_diagram->type() == UkuleleChord)
+    setPalette(QPalette(QColor(173,127,168)));
+
+  if ( m_diagram->isImportant() )
+    setBackgroundRole(QPalette::Button);
   else
-    setBackgroundRole(QPalette::Base);
+    setBackgroundRole(QPalette::AlternateBase);
 
   if ( isSelected() )
     setBackgroundRole(QPalette::Highlight);
