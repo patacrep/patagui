@@ -1866,9 +1866,47 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
     </message>
 </context>
 <context>
+    <name>CSongCodeEditor</name>
+    <message>
+        <location filename="../src/song-code-editor.cc" line="494"/>
+        <source>Comment selection</source>
+        <translation>Commenter la sélection</translation>
+    </message>
+    <message>
+        <location filename="../src/song-code-editor.cc" line="495"/>
+        <source>Comment the selection</source>
+        <translation>Mettre la sélection en commentaire </translation>
+    </message>
+    <message>
+        <location filename="../src/song-code-editor.cc" line="499"/>
+        <source>Uncomment selection</source>
+        <translation>Décommenter la sélection</translation>
+    </message>
+    <message>
+        <location filename="../src/song-code-editor.cc" line="500"/>
+        <source>Uncomment the selection</source>
+        <translation>Supprimer les commentaires de la sélection</translation>
+    </message>
+    <message>
+        <location filename="../src/song-code-editor.cc" line="506"/>
+        <source>Suggestions</source>
+        <translation>Suggestions</translation>
+    </message>
+    <message>
+        <location filename="../src/song-code-editor.cc" line="520"/>
+        <source>Add</source>
+        <translation>Ajouter</translation>
+    </message>
+    <message>
+        <location filename="../src/song-code-editor.cc" line="521"/>
+        <source>Ignore</source>
+        <translation>Ignorer</translation>
+    </message>
+</context>
+<context>
     <name>CSongEditor</name>
     <message>
-        <location filename="../src/song-editor.cc" line="75"/>
+        <location filename="../src/song-editor.cc" line="71"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
@@ -1877,12 +1915,12 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
         <translation type="obsolete">Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="78"/>
+        <location filename="../src/song-editor.cc" line="74"/>
         <source>Save modifications</source>
         <translation>Enregistrer les modifications</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="84"/>
+        <location filename="../src/song-editor.cc" line="80"/>
         <source>Cut</source>
         <translation>Couper</translation>
     </message>
@@ -1891,12 +1929,12 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
         <translation type="obsolete">Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="87"/>
+        <location filename="../src/song-editor.cc" line="83"/>
         <source>Cut the selection</source>
         <translation>Coupe la sélection</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="92"/>
+        <location filename="../src/song-editor.cc" line="88"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
@@ -1905,12 +1943,12 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
         <translation type="obsolete">Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="95"/>
+        <location filename="../src/song-editor.cc" line="91"/>
         <source>Copy the selection</source>
         <translation>Copie la sélection</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="100"/>
+        <location filename="../src/song-editor.cc" line="96"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
@@ -1919,117 +1957,117 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
         <translation type="obsolete">Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="70"/>
+        <location filename="../src/song-editor.cc" line="66"/>
         <source>Song edition tools</source>
         <translation>Outils d&apos;édition d&apos;une chanson</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="103"/>
+        <location filename="../src/song-editor.cc" line="99"/>
         <source>Paste clipboard content</source>
         <translation>Colle le contenu du presse-papiers</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="111"/>
+        <location filename="../src/song-editor.cc" line="107"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="114"/>
+        <location filename="../src/song-editor.cc" line="110"/>
         <source>Undo modifications</source>
         <translation>Annuler la dernière action</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="119"/>
+        <location filename="../src/song-editor.cc" line="115"/>
         <source>Redo</source>
         <translation>Refait la dernière opération annulée</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="122"/>
+        <location filename="../src/song-editor.cc" line="118"/>
         <source>Redo modifications</source>
         <translation>Refait la dernière opération annulée</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="134"/>
+        <location filename="../src/song-editor.cc" line="130"/>
         <source>Search and Replace</source>
         <translation>Chercher et Remplacer</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="137"/>
+        <location filename="../src/song-editor.cc" line="133"/>
         <source>Find some text and replace it</source>
         <translation>Rechercher du text et le remplacer</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="143"/>
+        <location filename="../src/song-editor.cc" line="139"/>
         <source>Chec&amp;k spelling</source>
         <translation>&amp;Vérifier l&apos;orthographe</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="145"/>
+        <location filename="../src/song-editor.cc" line="141"/>
         <source>Check current song for incorrect spelling</source>
         <translation>Vérifier l&apos;orthographe de la chanson courante</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="154"/>
+        <location filename="../src/song-editor.cc" line="150"/>
         <source>Verse</source>
         <translation>Couplet</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="155"/>
-        <location filename="../src/song-editor.cc" line="156"/>
+        <location filename="../src/song-editor.cc" line="151"/>
+        <location filename="../src/song-editor.cc" line="152"/>
         <source>Insert a new verse</source>
         <translation>Insérer un nouveau couplet</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="162"/>
-        <location filename="../src/song-editor.cc" line="163"/>
+        <location filename="../src/song-editor.cc" line="158"/>
+        <location filename="../src/song-editor.cc" line="159"/>
         <source>Insert a new chorus</source>
         <translation>Insérer un nouveau refrain</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="168"/>
+        <location filename="../src/song-editor.cc" line="164"/>
         <source>Bridge</source>
         <translation>Pont</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="169"/>
-        <location filename="../src/song-editor.cc" line="170"/>
+        <location filename="../src/song-editor.cc" line="165"/>
+        <location filename="../src/song-editor.cc" line="166"/>
         <source>Insert a new bridge</source>
         <translation>Insérer un nouveau pont</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="264"/>
+        <location filename="../src/song-editor.cc" line="220"/>
         <source>Songbook-Client</source>
         <translation>Songbook-Client</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="265"/>
+        <location filename="../src/song-editor.cc" line="221"/>
         <source>The document has been modified.
 Do you want to save your changes?</source>
         <translation>Le document a été modifié.
 Voulez-vous sauvegarder vos changements ?</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="306"/>
+        <location filename="../src/song-editor.cc" line="262"/>
         <source>Song saved in: %1</source>
         <translation>Chanson enregistrée dans : %1</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="316"/>
+        <location filename="../src/song-editor.cc" line="272"/>
         <source>Invalid song title</source>
         <translation>Le titre de la chanson n&apos;est pas valide</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="324"/>
+        <location filename="../src/song-editor.cc" line="280"/>
         <source>Invalid artist name</source>
         <translation>L&apos;artiste de la chanson n&apos;est pas valide</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="389"/>
+        <location filename="../src/song-editor.cc" line="345"/>
         <source>*New song*</source>
         <translation>*Nouvelle chanson*</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="389"/>
+        <location filename="../src/song-editor.cc" line="345"/>
         <source>Unknown</source>
         <translation>Inconnu</translation>
     </message>
@@ -2038,7 +2076,7 @@ Voulez-vous sauvegarder vos changements ?</translation>
         <translation type="obsolete">Insère un nouveau couplet</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="161"/>
+        <location filename="../src/song-editor.cc" line="157"/>
         <source>Chorus</source>
         <translation>Refrain</translation>
     </message>
@@ -2047,19 +2085,16 @@ Voulez-vous sauvegarder vos changements ?</translation>
         <translation type="obsolete">Insère un nouveau refrain</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="578"/>
         <source>Suggestions</source>
-        <translation>Suggestions</translation>
+        <translation type="obsolete">Suggestions</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="592"/>
         <source>Add</source>
-        <translation>Ajouter</translation>
+        <translation type="obsolete">Ajouter</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="593"/>
         <source>Ignore</source>
-        <translation>Ignorer</translation>
+        <translation type="obsolete">Ignorer</translation>
     </message>
     <message>
         <source>Unable to open file:
@@ -2143,7 +2178,7 @@ Voulez-vous sauvegarder vos changements ?</translation>
 <context>
     <name>CSongHighlighter</name>
     <message>
-        <location filename="../src/song-highlighter.cc" line="197"/>
+        <location filename="../src/song-highlighter.cc" line="198"/>
         <source>CSongHighlighter::setDictionary cannot read open dictionary : </source>
         <translation>CSongHighlighter::setDictionary impossible d&apos;ouvrir ou de lire le dictionnaire :  </translation>
     </message>
