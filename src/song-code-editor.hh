@@ -65,6 +65,8 @@ protected:
 private slots:
   void highlightEnvironments();
   void insertCompletion(const QString &completion);
+  void commentSelection();
+  void uncommentSelection();
 
 private:
   void indentLine(const QTextCursor &cursor);

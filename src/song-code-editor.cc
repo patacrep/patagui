@@ -369,6 +369,30 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
     }
 }
 
+void CSongCodeEditor::commentSelection()
+{
+  QTextCursor cursor = textCursor();
+  QStringList selection = cursor.selectedText().split(QChar(0x2029));
+  QStringList commentedSelection;
+  foreach (QString line, selection)
+      commentedSelection << line.prepend("%");
+  cursor.removeSelectedText();
+  cursor.insertText(commentedSelection.join("\n"));
+}
+
+void CSongCodeEditor::uncommentSelection()
+{
+  QTextCursor cursor = textCursor();
+  QStringList selection = cursor.selectedText().split(QChar(0x2029));
+  QStringList uncommentedSelection;
+  foreach (QString line, selection)
+    if (line.trimmed().startsWith("%"))
+      uncommentedSelection << line.trimmed().remove(0,1);
+    else
+      uncommentedSelection << line;
+  cursor.removeSelectedText();
+  cursor.insertText(uncommentedSelection.join("\n"));
+}
 CSongHighlighter * CSongCodeEditor::highlighter() const
 {
   return m_highlighter;
