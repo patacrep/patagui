@@ -24,13 +24,10 @@
 
 #include <QWidget>
 #include <QString>
-#include <QTextCursor>
-#include <QKeyEvent>
 
 class QAction;
 class QActionGroup;
 class QToolBar;
-class Hunspell;
 class FindReplaceDialog;
 class CLibrary;
 class CSongCodeEditor;
@@ -67,14 +64,8 @@ public:
 
   void readSettings();
   void writeSettings();
-  QStringList getWordPropositions(const QString &word);
-#ifdef ENABLE_SPELLCHECK
-  Hunspell* checker() const;
-#endif
-  void installHighlighter();
 
-  bool isSpellCheckingEnabled() const;
-  void setSpellCheckingEnabled(const bool);
+  void installHighlighter();
 
   Song & song();
   void setSong(const Song &song);
@@ -90,38 +81,24 @@ public:
   //! Setter on the new cover property
   void setNewCover(bool newCover);
 
+  bool isSpellCheckingEnabled() const;
+  void setSpellCheckingEnabled(const bool);
+
 public slots:
   void setModified(bool modified);
   void setNewSong(bool newSong);
 
 signals:
   void labelChanged(const QString &label);
-  void wordAdded(const QString &word);
   void saved(const QString &path);
 
 protected:
   void closeEvent(QCloseEvent *event);
 
-#ifdef ENABLE_SPELLCHECK
-  void contextMenuEvent(QContextMenuEvent *event);
-  QString currentWord();
-protected slots:
-  void setDictionary(const QLocale &locale);
-#endif //ENABLE_SPELLCHECK
-
 private slots:
   //write modifications of the textEdit into sg file.
   void save();
   void documentWasModified();
-  void insertVerse();
-  void insertChorus();
-  void insertBridge();
-
-#ifdef ENABLE_SPELLCHECK
-  void correctWord();
-  void addWord();
-  void ignoreWord();
-#endif //ENABLE_SPELLCHECK
 
 private:
   void parseText();
@@ -135,17 +112,8 @@ private:
   QToolBar *m_toolBar;
   QActionGroup *m_actions;
 
-  QAction* m_spellCheckingAct;
-  bool m_isSpellCheckingEnabled;
-
-#ifdef ENABLE_SPELLCHECK
-  QList<QAction *> m_misspelledWordsActs;
-  QPoint m_lastPos;
-  QStringList m_addedWords;
-  uint m_maxSuggestedWords;
-#endif //ENABLE_SPELLCHECK
-
   FindReplaceDialog* m_findReplaceDialog;
+  QAction* m_spellCheckingAct;
 
   Song m_song;
   bool m_newSong;

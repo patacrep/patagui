@@ -27,6 +27,7 @@
 class QKeyEvent;
 class QCompleter;
 class CSongHighlighter;
+class Hunspell;
 
 /**
  * \file song-code-editor.hh
@@ -59,14 +60,40 @@ public:
   void indent();
   void indentSelection();
 
+  bool isSpellCheckingEnabled() const;
+  void setSpellCheckingEnabled(const bool);
+
+  QStringList getWordPropositions(const QString &word);
+#ifdef ENABLE_SPELLCHECK
+  Hunspell* checker() const;
+public slots:
+  void setDictionary(const QLocale &locale);
+#endif
+
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
+
+signals:
+  void wordAdded(const QString &word);
 
 private slots:
   void highlightEnvironments();
   void insertCompletion(const QString &completion);
+  void insertVerse();
+  void insertChorus();
+  void insertBridge();
   void commentSelection();
   void uncommentSelection();
+
+#ifdef ENABLE_SPELLCHECK
+  void correctWord();
+  void addWord();
+  void ignoreWord();
+
+protected slots:
+  QString currentWord();
+#endif //ENABLE_SPELLCHECK
 
 private:
   void indentLine(const QTextCursor &cursor);
@@ -80,10 +107,20 @@ private:
   QCompleter* m_completer;
 
   bool m_environmentsHighlighted;
+
   QColor m_verseColor;
   QColor m_chorusColor;
   QColor m_bridgeColor;
   QColor m_scriptureColor;
+
+  bool m_isSpellCheckingEnabled;
+
+#ifdef ENABLE_SPELLCHECK
+  QList<QAction *> m_misspelledWordsActs;
+  QPoint m_lastPos;
+  QStringList m_addedWords;
+  uint m_maxSuggestedWords;
+#endif //ENABLE_SPELLCHECK
 };
 
 #endif // __SONG_CODE_EDITOR_HH__

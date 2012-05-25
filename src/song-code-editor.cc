@@ -20,6 +20,10 @@
 #include "song-highlighter.hh"
 #include "song.hh"
 
+#ifdef ENABLE_SPELLCHECK
+#include "hunspell/hunspell.hxx"
+#endif //ENABLE_SPELLCHECK
+
 #include <QSettings>
 #include <QTextCodec>
 #include <QTextBlock>
@@ -30,6 +34,10 @@
 #include <QModelIndex>
 #include <QAbstractItemModel>
 #include <QScrollBar>
+#include <QKeyEvent>
+
+#include <QAction>
+#include <QMenu>
 
 CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   : CodeEditor(parent)
@@ -40,6 +48,10 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   , m_chorusColor(QColor(252,175,62).lighter(160))
   , m_bridgeColor(QColor(114,159,207).lighter(170))
   , m_scriptureColor(QColor(173,127,168).lighter(170))
+#ifdef ENABLE_SPELLCHECK
+  , m_maxSuggestedWords(0)
+#endif
+
 {
   setUndoRedoEnabled(true);
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
@@ -97,6 +109,17 @@ void CSongCodeEditor::readSettings()
   setHighlightMode(settings.value("highlight", true).toBool());
   setLineNumberMode(settings.value("lines", true).toBool());
 
+#ifdef ENABLE_SPELLCHECK
+  m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
+  for(uint i = 0; i < m_maxSuggestedWords; ++i)
+    {
+      QAction *action = new QAction(this);
+      action->setVisible(false);
+      connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
+      m_misspelledWordsActs.append(action);
+    }
+#endif //ENABLE_SPELLCHECK
+
   settings.endGroup();
 }
 
@@ -107,6 +130,24 @@ void CSongCodeEditor::writeSettings()
 void CSongCodeEditor::installHighlighter()
 {
   m_highlighter = new CSongHighlighter(document());
+}
+
+void CSongCodeEditor::insertVerse()
+{
+  QString selection = textCursor().selectedText();
+  insertPlainText(QString("\n\\begin{verse}\n%1\n\\end{verse}\n").arg(selection)  );
+}
+
+void CSongCodeEditor::insertChorus()
+{
+  QString selection = textCursor().selectedText();
+  insertPlainText(QString("\n\\begin{chorus}\n%1\n\\end{chorus}\n").arg(selection)  );
+}
+
+void CSongCodeEditor::insertBridge()
+{
+  QString selection = textCursor().selectedText();
+  insertPlainText(QString("\n\\begin{bridge}\n%1\n\\end{bridge}\n").arg(selection)  );
 }
 
 void CSongCodeEditor::insertCompletion(const QString& completion)
@@ -369,6 +410,154 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
     }
 }
 
+#ifdef ENABLE_SPELLCHECK
+void CSongCodeEditor::setDictionary(const QLocale &locale)
+{
+  if (highlighter() == 0)
+    return;
+
+  // find the suitable dictionary based on the current song's locale
+  QString prefix;
+#if defined(Q_OS_WIN32)
+  prefix = "";
+#else
+  prefix = "/usr/share/";
+#endif //Q_OS_WIN32
+  QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
+  if (!QFile(dictionary).exists())
+    {
+      qWarning() << "Unable to find the following dictionnary: " << dictionary;
+      return;
+    }
+
+  setSpellCheckingEnabled(true);
+  highlighter()->setDictionary(dictionary);
+  connect(this, SIGNAL(wordAdded(const QString&)), highlighter(), SLOT(addWord(const QString&)));
+}
+
+QString CSongCodeEditor::currentWord()
+{
+  QTextCursor cursor = cursorForPosition(m_lastPos);
+  QString word = cursor.block().text();
+  int pos = cursor.columnNumber();
+  int end = word.indexOf(QRegExp("\\W+"),pos);
+  int begin = word.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
+  word = word.mid(begin+1,end-begin-1);
+  return word;
+}
+
+void CSongCodeEditor::correctWord()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    {
+      QString replacement = action->text();
+      QTextCursor cursor = cursorForPosition(m_lastPos);
+      QString zeile = cursor.block().text();
+      cursor.select(QTextCursor::WordUnderCursor);
+      cursor.deleteChar();
+      cursor.insertText(replacement);
+    }
+}
+
+QStringList CSongCodeEditor::getWordPropositions(const QString &word)
+{
+  if(!checker())
+    return QStringList();
+
+  QStringList wordList;
+  QByteArray encodedString;
+  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(word);
+
+  if(checker()->spell(encodedString.data()))
+    return wordList;
+
+  char ** wlst;
+  int ns = checker()->suggest(&wlst, encodedString.data());
+  if (ns > 0)
+    {
+      for (int i=0; i < ns; i++)
+	wordList.append(codec->toUnicode(wlst[i]));
+      checker()->free_list(&wlst, ns);
+    }
+  return wordList;
+}
+#endif //ENABLE_SPELLCHECK
+
+void CSongCodeEditor::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu *menu = createStandardContextMenu();
+
+  menu->addSeparator();
+  QAction *action = new QAction(tr("Comment selection"), this);
+  action->setStatusTip(tr("Comment the selection"));
+  connect(action, SIGNAL(triggered()), SLOT(commentSelection()));
+  menu->addAction(action);
+
+  action = new QAction(tr("Uncomment selection"), this);
+  action->setStatusTip(tr("Uncomment the selection"));
+  connect(action, SIGNAL(triggered()), SLOT(uncommentSelection()));
+  menu->addAction(action);
+
+#ifdef ENABLE_SPELLCHECK
+  menu->addSeparator();
+  QMenu *spellMenu = new QMenu(tr("Suggestions"));
+  m_lastPos=event->pos();
+  QString str = currentWord();
+  QStringList list = getWordPropositions(str);
+  int size = qMin(m_maxSuggestedWords, (uint)list.size());
+  if (!list.isEmpty())
+    {
+      for (int i = 0; i < size; ++i)
+	{
+	  m_misspelledWordsActs[i]->setText(list[i].trimmed());
+	  m_misspelledWordsActs[i]->setVisible(true);
+	  spellMenu->addAction(m_misspelledWordsActs[i]);
+	}
+      spellMenu->addSeparator();
+      spellMenu->addAction(tr("Add"), this, SLOT(addWord()));
+      spellMenu->addAction(tr("Ignore"), this, SLOT(ignoreWord()));
+      menu->addMenu(spellMenu);
+    }
+#endif //ENABLE_SPELLCHECK
+
+  menu->exec(event->globalPos());
+  delete menu;
+}
+
+#ifdef ENABLE_SPELLCHECK
+void CSongCodeEditor::ignoreWord()
+{
+  QString str = currentWord();
+  QByteArray encodedString;
+  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(str);
+  checker()->add(encodedString.data());
+  emit wordAdded(str);
+}
+
+void CSongCodeEditor::addWord()
+{
+  QString str = currentWord();
+  QByteArray encodedString;
+  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
+  encodedString = codec->fromUnicode(str);
+  checker()->add(encodedString.data());
+  m_addedWords.append(str);
+  emit wordAdded(str);
+}
+
+Hunspell* CSongCodeEditor::checker() const
+{
+  if(!highlighter()) return 0;
+  return highlighter()->checker();
+}
+#endif //ENABLE_SPELLCHECK
+
 void CSongCodeEditor::commentSelection()
 {
   QTextCursor cursor = textCursor();
@@ -393,6 +582,17 @@ void CSongCodeEditor::uncommentSelection()
   cursor.removeSelectedText();
   cursor.insertText(uncommentedSelection.join("\n"));
 }
+
+bool CSongCodeEditor::isSpellCheckingEnabled() const
+{
+  return m_isSpellCheckingEnabled;
+}
+
+void CSongCodeEditor::setSpellCheckingEnabled(const bool value)
+{
+  m_isSpellCheckingEnabled = value;
+}
+
 CSongHighlighter * CSongCodeEditor::highlighter() const
 {
   return m_highlighter;
