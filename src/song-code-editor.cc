@@ -123,9 +123,33 @@ void CSongCodeEditor::insertCompletion(const QString& completion)
 
 QString CSongCodeEditor::textUnderCursor() const
 {
-  QTextCursor cursor = textCursor();
-  cursor.select(QTextCursor::WordUnderCursor);
-  return cursor.selectedText();
+  QTextCursor tc = textCursor();
+  static QSet<QChar> delimiters;
+  if( delimiters.isEmpty() )
+    {
+      delimiters.insert( QChar::fromAscii(',') );
+      delimiters.insert( QChar::fromAscii('!') );
+      delimiters.insert( QChar::fromAscii('.') );
+      delimiters.insert( QChar::fromAscii(';') );
+      delimiters.insert( QChar::fromAscii('\\') );
+    }
+
+  tc.anchor();
+  while( 1 )
+    {
+      // the '-1' comes from the TextCursor always being placed between characters
+      int pos = tc.position() - 1;
+      if( pos < 0 )
+	break;
+
+      QChar ch = document()->characterAt(pos);
+      if( pos < 0 || document()->characterAt(pos) == QChar::fromAscii(' ') )
+	if( ch.isSpace() || delimiters.contains(ch) )
+	  break;
+
+      tc.movePosition( QTextCursor::Left, QTextCursor::KeepAnchor );
+    }
+  return tc.selectedText().trimmed();
 }
 
 void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
