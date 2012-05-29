@@ -1,3 +1,9 @@
+songbook-client (0.7.3) squeeze; urgency=low
+
+  * New upstream version
+
+ -- Alexandre Dupas <alexandre.dupas@gmail.com>  Tue, 29 May 2012 21:34:38 +0200
+
 songbook-client (0.7) squeeze; urgency=low
 
   * New upstream version
