@@ -24,6 +24,7 @@
 #include <QPainter>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QCheckBox>
 #include <QGroupBox>
 #include <QRadioButton>
 #include <QDialog>
@@ -32,6 +33,10 @@
 #include <QFormLayout>
 #include <QMouseEvent>
 #include <QDebug>
+
+#include <QToolButton>
+#include <QSpacerItem>
+
 
 QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
 QRegExp CDiagram::reFret("\\\\[ug]tab[\\*]?\\{.+\\{(\\d):");
@@ -53,12 +58,12 @@ CDiagram::~CDiagram()
 
 QSize CDiagram::minimumSizeHint() const
 {
-  return QSize(100, 75);
+  return QSize(100, 50);
 }
 
 QSize CDiagram::sizeHint() const
 {
-  return QSize(100, 75);
+  return QSize(100, 50);
 }
 
 QString CDiagram::toString()
@@ -80,7 +85,7 @@ QString CDiagram::toString()
     str.append("*");
 
   //the chord name such as Am
-  str.append( QString("{%1}{").arg(chord().replace(QChar(0x266D),"&")) );
+  str.append( QString("{%1}{").arg(chord()) );
   //the fret
   str.append(QString("%2").arg(fret()));
   //the strings
@@ -103,7 +108,7 @@ void CDiagram::fromString(const QString & str)
   setImportant(str.contains("*"));
 
   reChord.indexIn(str);
-  setChord(reChord.cap(1).replace("&",QChar(0x266D)));
+  setChord(reChord.cap(1));
 
   reFret.indexIn(str);
   setFret(reFret.cap(1));
@@ -126,10 +131,10 @@ void CDiagram::paintEvent(QPaintEvent *)
   painter.setRenderHint(QPainter::Antialiasing, true);
   painter.setPen(Qt::black);
 
-  int cellWidth = 14, cellHeight = 14;
+  int cellWidth = 12, cellHeight = 12;
   int width = (strings().length() - 1)*cellWidth;
   int height = 4*cellHeight;
-  int padding = 15;
+  int padding = 13;
   //draw a vertical line for each string
   for(int i=0; i<strings().length(); ++i)
     {
@@ -164,8 +169,8 @@ void CDiagram::paintEvent(QPaintEvent *)
     }
 
   //draw fret
-  QRect fretRect(padding-(cellWidth-4), padding+cellHeight/2.0, cellWidth-4, cellHeight);
-  painter.setFont(QFont("Arial", 11));
+  QRect fretRect(padding-(cellWidth-2), padding+cellHeight/2.0, cellWidth-4, cellHeight);
+  painter.setFont(QFont("Arial", 9));
   painter.drawText(fretRect, Qt::AlignCenter, fret());
 }
 
@@ -236,8 +241,8 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
 {
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
-  setMinimumWidth(120);
-  setMaximumWidth(120);
+  setMaximumWidth(100);
+  setMaximumHeight(110);
   setToolTip(m_diagram->toString());
   setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -257,6 +262,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
   addAction(action);
 
   QBoxLayout* layout = new QVBoxLayout;
+  layout->setContentsMargins(6, 6, 6, 6);
   layout->addWidget(m_chordName);
   layout->addWidget(m_diagram);
   setLayout(layout);
@@ -282,7 +288,9 @@ bool CDiagramWidget::editChord()
   QRadioButton *guitar  = new QRadioButton(tr("Guitar"));
   QRadioButton *ukulele = new QRadioButton(tr("Ukulele"));
 
-  guitar->setChecked(true);
+  guitar->setChecked(m_diagram->type() == GuitarChord);
+  ukulele->setChecked(m_diagram->type() == UkuleleChord);
+
   QVBoxLayout *instrumentLayout = new QVBoxLayout;
   instrumentLayout->addWidget(guitar);
   instrumentLayout->addWidget(ukulele);
@@ -301,10 +309,17 @@ bool CDiagramWidget::editChord()
   QLineEdit *stringsLineEdit = new QLineEdit;
   stringsLineEdit->setMaxLength(6);
   stringsLineEdit->setToolTip(tr("Symbols for each string of the guitar from lowest pitch to highest:\n"
-			      "  X: string is not to be played\n"
-			      "  0: string is to be played open\n"
-			      "  [1-9]: string is to be played on the given numbered fret."));
+				 "  X: string is not to be played\n"
+				 "  0: string is to be played open\n"
+				 "  [1-9]: string is to be played on the given numbered fret."));
+  QRegExp rx("[X\\d]+");
+  QRegExpValidator validator(rx, 0);
+  stringsLineEdit->setValidator(&validator);
   stringsLineEdit->setText(m_diagram->strings());
+
+  QCheckBox *importantCheckBox = new QCheckBox(tr("Important diagram"));
+  importantCheckBox->setToolTip(tr("Mark this diagram as important."));
+  importantCheckBox->setChecked(m_diagram->isImportant());
 
   QFormLayout *chordLayout = new QFormLayout;
   chordLayout->addRow(tr("Name:"), nameLineEdit);
@@ -314,6 +329,7 @@ bool CDiagramWidget::editChord()
   QBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(instrumentGroupBox);
   layout->addLayout(chordLayout);
+  layout->addWidget(importantCheckBox);
   layout->addWidget(buttonBox);
   dialog.setLayout(layout);
 
@@ -323,6 +339,9 @@ bool CDiagramWidget::editChord()
       m_diagram->setChord(nameLineEdit->text());
       m_diagram->setFret((fretSpinBox->value() == 0) ? "" : QString::number(fretSpinBox->value()));
       m_diagram->setStrings(stringsLineEdit->text());
+      m_diagram->setImportant(importantCheckBox->isChecked());
+      setToolTip(m_diagram->toString());
+      updateBackground();
       update();
       emit diagramChanged();
       return true;
@@ -342,39 +361,36 @@ void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void CDiagramWidget::mousePressEvent(QMouseEvent *event)
 {
-  setSelected(true);
-  emit changed();
-}
-
-void CDiagramWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-  setSelected(false);
-  emit changed();
+  emit clicked();
 }
 
 void CDiagramWidget::updateBackground()
 {
-  if ( isSelected() )
-    {
-      setBackgroundRole(QPalette::Highlight);
-    }
+  if(m_diagram->type() == GuitarChord)
+    setPalette(QPalette(QColor(114,159,207)));
+  else if(m_diagram->type() == UkuleleChord)
+    setPalette(QPalette(QColor(173,127,168)));
+
+  if ( m_diagram->isImportant() )
+    setBackgroundRole(QPalette::Button);
   else
-    {
-      if (m_diagram->isImportant())
-	setBackgroundRole(QPalette::Mid);
-      else
-	setBackgroundRole(QPalette::Base);
-    }
+    setBackgroundRole(QPalette::AlternateBase);
+
+  if ( isSelected() )
+    setBackgroundRole(QPalette::Highlight);
 }
 
 void CDiagramWidget::updateChordName()
 {
-  m_chordName->setText(QString("<b>%1</b>").arg(m_diagram->chord()));
+  m_chordName->setText(QString("<font size=\"2\"><b>%1</b></font>")
+		       .arg(m_diagram->chord().replace("&", QChar(0x266D))));
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+  m_chordName->setMaximumHeight(20);
+
   if (m_diagram->isImportant())
-    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(dark);");
+    m_chordName->setStyleSheet("border-radius: 4px; background-color: palette(dark);");
   else
-    m_chordName->setStyleSheet("margin: 2px 2px; border-radius: 6px; background-color: palette(mid);");
+    m_chordName->setStyleSheet("border-radius: 4px; background-color: palette(mid);");
 }
 
 bool CDiagramWidget::isSelected() const
@@ -399,4 +415,113 @@ QString CDiagramWidget::toString()
 ChordType CDiagramWidget::type() const
 {
   return m_diagram->type();
+}
+
+//----------------------------------------------------------------------------
+
+CDiagramArea::CDiagramArea(QWidget *parent)
+  : QWidget(parent)
+  , m_layout (new QHBoxLayout)
+  , m_addDiagramButton(0)
+  , m_spacer(0)
+{
+  m_layout->setContentsMargins(4, 4, 4, 4);
+  setLayout(m_layout);
+
+  addNewDiagramButton();
+  setFocusPolicy(Qt::StrongFocus);
+}
+
+CDiagramWidget * CDiagramArea::addDiagram()
+{
+  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", GuitarChord);
+  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
+  if (diagram->editChord())
+    {
+      m_layout->addWidget(diagram);
+      addNewDiagramButton();
+    }
+  else
+    {
+      delete diagram;
+      diagram = 0;
+    }
+  addNewDiagramButton();
+  return diagram;
+}
+
+CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const ChordType & type)
+{
+  CDiagramWidget *diagram = new CDiagramWidget(chord, type);
+  m_layout->addWidget(diagram);
+  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
+  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
+  connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
+  addNewDiagramButton();
+  return diagram;
+}
+
+void CDiagramArea::removeDiagram()
+{
+  if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender()))
+    {
+      m_layout->removeWidget(diagram);
+      disconnect(diagram,0,0,0);
+      diagram->setParent(0);
+      onDiagramChanged();
+    }
+}
+
+void CDiagramArea::addNewDiagramButton()
+{
+  if(m_addDiagramButton)
+    {
+      m_layout->removeItem(m_spacer);
+      delete m_addDiagramButton;
+    }
+
+  m_addDiagramButton = new QToolButton;
+  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
+  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
+  m_layout->addWidget(m_addDiagramButton);
+  m_spacer = new QSpacerItem(500, 20, QSizePolicy::Ignored, QSizePolicy::MinimumExpanding);
+  m_layout->addSpacerItem(m_spacer);
+}
+
+QList<CDiagramWidget*> CDiagramArea::diagrams() const
+{
+  QList<CDiagramWidget*>  list;
+  for(int i=0; i < m_layout->count(); ++i)
+    if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+      list << diagram;
+  return list;
+}
+
+void CDiagramArea::onDiagramChanged()
+{
+  emit(contentsChanged());
+}
+
+void CDiagramArea::onDiagramClicked()
+{
+  CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender());
+  diagram->setSelected(!diagram->isSelected());
+}
+
+void CDiagramArea::keyPressEvent(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_Delete)
+    {
+      bool changed = false;
+      for(int i=0; i < m_layout->count(); ++i)
+        if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+	  if(diagram->isSelected())
+            {
+	      changed = true;
+	      diagram->deleteLater();
+            }
+      if(changed)
+	onDiagramChanged();
+    }
 }

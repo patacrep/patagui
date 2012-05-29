@@ -36,7 +36,6 @@
 
 class QLineEdit;
 class QPushButton;
-class QFileDialog;
 
 class CFileChooser : public QWidget
 {
@@ -49,27 +48,20 @@ public:
   void readSettings();
   void writeSettings();
 
-  QFileDialog::AcceptMode acceptMode() const;
-  void setAcceptMode(const QFileDialog::AcceptMode &);
-
   QFileDialog::Options options() const;
   void setOptions(const QFileDialog::Options &);
 
-  QFileDialog::FileMode fileMode() const;
-  void setFileMode(const QFileDialog::FileMode &);
-
+  QString filter() const;
   void setFilter(const QString &filter);
 
   QString caption() const;
   void setCaption(const QString &caption);
 
-  QDir directory() const;
+  QString directory() const;
   void setDirectory(const QString &directory);
   void setDirectory(const QDir &directory);
 
   QString path() const;
-
-  QFileDialog* dialog() const;
 
 public slots:
   void setPath(const QString &path);
@@ -84,8 +76,10 @@ private slots:
 private:
   QLineEdit* m_lineEdit;
   QPushButton* m_button;
-  QFileDialog* m_dialog;
   QString m_caption;
+  QString m_directory;
+  QString m_filter;
+  QFileDialog::Options m_options;
 };
 
 #endif  // __FILE_CHOOSER_HH__

@@ -29,8 +29,6 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QComboBox>
-#include <QToolButton>
-#include <QSpacerItem>
 
 #include <QFileInfo>
 #include <QFile>
@@ -57,8 +55,6 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_transposeSpinBox(new QSpinBox(this))
   , m_coverLabel(new CCoverDropArea(this))
   , m_songEditor()
-  , m_addDiagramButton(0)
-  , m_spacer(0)
 {
   //do not translate combobox content since "english", "french" etc is used by LaTeX
   m_languageComboBox->addItem
@@ -73,16 +69,19 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
 
   QLabel *columnCountLabel = new QLabel(this);
   columnCountLabel->setPixmap(QIcon(":/icons/songbook/22x22/columns.png").pixmap(22,22));
+  columnCountLabel->setToolTip(tr("Number of columns for the song"));
   m_columnCountSpinBox->setToolTip(tr("Number of columns for the song"));
   m_columnCountSpinBox->setRange(1,3);
 
   QLabel *capoLabel = new QLabel(this);
   capoLabel->setPixmap(QIcon(":/icons/songbook/22x22/capo.png").pixmap(22,22));
+  capoLabel->setToolTip(tr("Fret on which the capo should be put"));
   m_capoSpinBox->setToolTip(tr("Fret on which the capo should be put"));
   m_capoSpinBox->setRange(0,9);
 
   QLabel *transposeLabel = new QLabel(this);
   transposeLabel->setPixmap(QIcon(":/icons/songbook/22x22/transpose.png").pixmap(22,22));
+  transposeLabel->setToolTip(tr("Number of half-steps by which chords are transposed"));
   m_transposeSpinBox->setToolTip(tr("Number of half-steps by which chords are transposed"));
   m_transposeSpinBox->setRange(-14,14);
 
@@ -133,19 +132,16 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   coverLayout->addWidget(m_coverLabel);
   coverLayout->addStretch();
 
-  m_diagramsLayout = new QHBoxLayout;
+  m_diagramArea = new CDiagramArea(this);
+  connect(m_diagramArea, SIGNAL(contentsChanged()),
+          SLOT(onDiagramsChanged()));
 
-  QWidget* scroll = new QWidget;
-  scroll->setLayout(m_diagramsLayout);
   QScrollArea* diagramsScrollArea = new QScrollArea;
-  diagramsScrollArea->setWidget(scroll);
+  diagramsScrollArea->setWidget(m_diagramArea);
   diagramsScrollArea->setBackgroundRole(QPalette::Dark);
   diagramsScrollArea->setWidgetResizable(true);
-  diagramsScrollArea->setMinimumWidth(350);
-  diagramsScrollArea->setMinimumHeight(150);
-  diagramsScrollArea->setMaximumHeight(160);
 
-  setMaximumHeight(160);
+  setMaximumHeight(132);
 
   QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setContentsMargins(1, 1, 1, 1);
@@ -214,22 +210,14 @@ void CSongHeaderEditor::update()
   QString gtab;
   foreach (gtab, song().gtabs)
     {
-      CDiagramWidget *diagram = new CDiagramWidget(gtab, GuitarChord);
-      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-      connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
-      m_diagramsLayout->addWidget(diagram);
+      m_diagramArea->addDiagram(gtab, GuitarChord);
     }
 
   QString utab;
   foreach (utab, song().utabs)
     {
-      CDiagramWidget *diagram = new CDiagramWidget(utab, UkuleleChord);
-      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-      connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
-      m_diagramsLayout->addWidget(diagram);
+      m_diagramArea->addDiagram(utab, UkuleleChord);
     }
-
-  addNewDiagramButton();
 }
 
 void CSongHeaderEditor::onIndexChanged(const QString &text)
@@ -287,18 +275,17 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
   emit(contentsChanged());
 }
 
-void CSongHeaderEditor::onDiagramChanged()
+void CSongHeaderEditor::onDiagramsChanged()
 {
   song().gtabs = QStringList();
-  for(int i=0; i < m_diagramsLayout->count(); ++i)
-    if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_diagramsLayout->itemAt(i)->widget()))
-      {
-	if (diagram->type() == GuitarChord)
-	  song().gtabs << diagram->toString();
-	else if (diagram->type() == UkuleleChord)
-	  song().utabs << diagram->toString();
-      }
-
+  song().utabs = QStringList();
+  foreach (CDiagramWidget *diagram, m_diagramArea->diagrams())
+    {
+      if (diagram->type() == GuitarChord)
+	song().gtabs << diagram->toString();
+      else if (diagram->type() == UkuleleChord)
+	song().utabs << diagram->toString();
+    }
   emit(contentsChanged());
 }
 
@@ -313,54 +300,12 @@ const QImage & CSongHeaderEditor::cover()
   return m_coverLabel->cover();
 }
 
-void CSongHeaderEditor::addNewDiagramButton()
-{
-  if(m_addDiagramButton)
-    {
-      m_diagramsLayout->removeItem(m_spacer);
-      delete m_addDiagramButton;
-    }
-
-  m_addDiagramButton = new QToolButton;
-  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
-  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
-  m_diagramsLayout->addWidget(m_addDiagramButton);
-  m_spacer = new QSpacerItem(500, 20, QSizePolicy::Ignored, QSizePolicy::MinimumExpanding);
-  m_diagramsLayout->addSpacerItem(m_spacer);
-}
-
-void CSongHeaderEditor::addDiagram()
-{
-  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", GuitarChord);
-  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
-  if (diagram->editChord())
-    {
-      m_diagramsLayout->addWidget(diagram);
-      addNewDiagramButton();
-    }
-  else
-    delete diagram;
-}
-
-void CSongHeaderEditor::removeDiagram()
-{
-  CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender());
-  if(diagram)
-    {
-      m_diagramsLayout->removeWidget(diagram);
-      disconnect(diagram,0,0,0);
-      diagram->setParent(0);
-      onDiagramChanged();
-    }
-}
-
 //------------------------------------------------------------------------------
 
 CCoverDropArea::CCoverDropArea(QWidget *parent)
   : QLabel(parent)
 {
-  setMinimumSize(150,150);
+  setMinimumSize(132,132);
   setFrameStyle(QFrame::Raised | QFrame::Panel);
   setLineWidth(3);
   setAlignment(Qt::AlignCenter);
@@ -372,7 +317,7 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   QPixmap pixmap;
   if(!QPixmapCache::find("cover-missing-full", &pixmap))
     {
-      pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(128, 128);
+      pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(115, 115);
       QPixmapCache::insert("cover-missing-full", pixmap);
     }
   setPixmap(pixmap);
@@ -395,9 +340,9 @@ void CCoverDropArea::dropEvent(QDropEvent *event)
 {
   const QMimeData *mimeData = event->mimeData();
 
-  if (mimeData->hasText())
+  if (mimeData->hasUrls())
     {
-      QUrl url(mimeData->text());
+      QUrl url(mimeData->urls()[0]);
       m_filename = url.toLocalFile().trimmed();
       update();
     }
@@ -483,7 +428,7 @@ void CCoverDropArea::setCover(const QImage &cover)
   if(cover.isNull())
     qWarning() << tr("CCoverDropArea::setCover invalid cover");
 
-  m_cover = cover.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 void CCoverDropArea::setCover(const QString &path)

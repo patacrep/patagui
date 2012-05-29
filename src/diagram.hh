@@ -91,7 +91,7 @@ class CDiagramWidget : public QWidget
 {
   Q_OBJECT
 
-  public:
+public:
   CDiagram* m_diagram;
 
   /// Constructor.
@@ -110,10 +110,10 @@ class CDiagramWidget : public QWidget
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event);
   virtual void mousePressEvent(QMouseEvent *event);
-  virtual void mouseReleaseEvent(QMouseEvent *event);
 
 signals:
   void changed();
+  void clicked();
   void diagramCloseRequested();
   void diagramChanged();
 
@@ -128,6 +128,48 @@ public slots:
 private:
   QLabel *m_chordName;
   bool m_selected;
+};
+
+class QSpacerItem;
+class QToolButton;
+class QBoxLayout;
+
+/**
+ * \file diagram.hh
+ * \class CDiagramArea
+ * \brief CDiagramArea contains a list of diagrams
+ *
+ */
+class CDiagramArea : public QWidget
+{
+  Q_OBJECT
+
+public:
+  CDiagramArea(QWidget *parent=0);
+
+  CDiagramWidget * addDiagram(const QString & chord, const ChordType & type);
+  QList<CDiagramWidget*> diagrams() const;
+
+protected:
+  virtual void keyPressEvent(QKeyEvent *event);
+
+private:
+  void addNewDiagramButton();
+
+private slots:
+  void onDiagramChanged();
+  void onDiagramClicked();
+  CDiagramWidget * addDiagram();
+  void removeDiagram();
+
+signals:
+  void contentsChanged();
+
+private:
+  QBoxLayout *m_layout;
+  QToolButton *m_addDiagramButton;
+  QSpacerItem *m_spacer;
+  QList<CDiagramWidget*> m_diagrams;
 };
 
 #endif // __DIAGRAM_HH__
