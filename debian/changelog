@@ -1,3 +1,13 @@
+songbook-client (0.7.3-1) wheezy; urgency=low
+
+  * Take ownership of the package and bump the standards-version
+  * With three upstream authors, no need for parenthesis around the 's'
+  * Update english manpage for better wording and correcting some spelling
+  * Update copyright for some previously unlicensed flags
+  * songbook-client is not a native debian software
+
+ -- Alexandre Dupas <alexandre.dupas@gmail.com>  Wed, 30 May 2012 01:31:43 +0200
+
 songbook-client (0.7.3) squeeze; urgency=low
 
   * New upstream version
