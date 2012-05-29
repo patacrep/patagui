@@ -426,7 +426,7 @@ void CSongCodeEditor::setDictionary(const QLocale &locale)
   QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
   if (!QFile(dictionary).exists())
     {
-      qWarning() << "Unable to find the following dictionnary: " << dictionary;
+      qWarning() << "Unable to find the following dictionary: " << dictionary;
       return;
     }
 
