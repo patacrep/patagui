@@ -137,7 +137,7 @@ CMainWindow::CMainWindow(QWidget *parent)
 
   updateTitle(songbook()->filename());
 
-  readSettings();
+  readSettings(true);
 }
 
 CMainWindow::~CMainWindow()
@@ -158,16 +158,19 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
     }
 }
 
-void CMainWindow::readSettings()
+void CMainWindow::readSettings(bool firstLaunch)
 {
   QSettings settings;
   settings.beginGroup("general");
   setStatusbarDisplayed(settings.value("statusBar", true).toBool());
   setToolBarDisplayed(settings.value("toolBar", true).toBool());
-  resize(settings.value("size", QSize(800,600)).toSize());
-  move(settings.value("pos", QPoint(200, 200)).toPoint());
-  if (settings.value("maximized", isMaximized()).toBool())
-    showMaximized();
+  if (firstLaunch)
+    {
+      resize(settings.value("size", QSize(800,600)).toSize());
+      move(settings.value("pos", QPoint(200, 200)).toPoint());
+      if (settings.value("maximized", isMaximized()).toBool())
+	showMaximized();
+    }
   settings.endGroup();
 
   settings.beginGroup("display");
@@ -211,41 +214,46 @@ void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 
 void CMainWindow::createActions()
 {
-  m_newSongAct = new QAction(tr("New Song"), this);
+  m_newSongAct = new QAction(tr("&Add Song"), this);
   m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
+  m_newSongAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
   m_newSongAct->setStatusTip(tr("Write a new song"));
-  m_newSongAct->setIconText(tr("Add"));
+  m_newSongAct->setIconText(tr("Add song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
-  m_newAct = new QAction(tr("New"), this);
+  m_newAct = new QAction(tr("&New"), this);
   m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
   m_newAct->setShortcut(QKeySequence::New);
   m_newAct->setStatusTip(tr("Create a new songbook"));
   connect(m_newAct, SIGNAL(triggered()), this, SLOT(newSongbook()));
 
-  m_openAct = new QAction(tr("Open..."), this);
+  m_openAct = new QAction(tr("&Open..."), this);
   m_openAct->setIcon(QIcon::fromTheme("document-open", QIcon(":/icons/tango/32x32/actions/document-open.png")));
   m_openAct->setShortcut(QKeySequence::Open);
   m_openAct->setStatusTip(tr("Open a songbook"));
   connect(m_openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-  m_saveAct = new QAction(tr("Save"), this);
+  m_saveAct = new QAction(tr("&Save"), this);
   m_saveAct->setShortcut(QKeySequence::Save);
   m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
   m_saveAct->setStatusTip(tr("Save the current songbook"));
   connect(m_saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
-  m_saveAsAct = new QAction(tr("Save As..."), this);
+  m_saveAsAct = new QAction(tr("Save &As..."), this);
   m_saveAsAct->setShortcut(QKeySequence::SaveAs);
   m_saveAsAct->setIcon(QIcon::fromTheme("document-save-as", QIcon(":/icons/tango/32x32/actions/document-save-as.png")));
   m_saveAsAct->setStatusTip(tr("Save the current songbook with a different name"));
   connect(m_saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-  m_documentationAct = new QAction(tr("Online documentation"), this);
+  m_documentationAct = new QAction(tr("Online &Documentation"), this);
   m_documentationAct->setShortcut(QKeySequence::HelpContents);
   m_documentationAct->setIcon(QIcon::fromTheme("help-contents", QIcon(":/icons/tango/32x32/actions/help-contents.png")));
   m_documentationAct->setStatusTip(tr("Download documentation pdf file "));
   connect(m_documentationAct, SIGNAL(triggered()), this, SLOT(documentation()));
+
+  m_bugsAct = new QAction(tr("&Report a bug"), this);
+  m_bugsAct->setStatusTip(tr("Report a bug about this application"));
+  connect(m_bugsAct, SIGNAL(triggered()), this, SLOT(reportBug()));
 
   m_aboutAct = new QAction(tr("&About"), this);
   m_aboutAct->setIcon(QIcon::fromTheme("help-about", QIcon(":/icons/tango/32x32/actions/help-about.png")));
@@ -253,7 +261,7 @@ void CMainWindow::createActions()
   m_aboutAct->setMenuRole(QAction::AboutRole);
   connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
-  m_exitAct = new QAction(tr("Quit"), this);
+  m_exitAct = new QAction(tr("&Quit"), this);
   m_exitAct->setIcon(QIcon::fromTheme("application-exit",QIcon(":/icons/tango/32x32/application-exit.png")));
   m_exitAct->setShortcut(QKeySequence::Quit);
   m_exitAct->setStatusTip(tr("Quit the program"));
@@ -266,33 +274,28 @@ void CMainWindow::createActions()
   m_preferencesAct->setMenuRole(QAction::PreferencesRole);
   connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
-  m_selectAllAct = new QAction(tr("Check all"), this);
+  m_selectAllAct = new QAction(tr("&Check all"), this);
   m_selectAllAct->setIcon(QIcon::fromTheme("select-all",QIcon(":/icons/songbook/32x32/select-all.png")));
   m_selectAllAct->setStatusTip(tr("Check all songs"));
   connect(m_selectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(checkAll()));
 
-  m_unselectAllAct = new QAction(tr("Uncheck all"), this);
+  m_unselectAllAct = new QAction(tr("&Uncheck all"), this);
   m_unselectAllAct->setIcon(QIcon::fromTheme("select-none",QIcon(":/icons/songbook/32x32/select-none.png")));
   m_unselectAllAct->setStatusTip(tr("Uncheck all songs"));
   connect(m_unselectAllAct, SIGNAL(triggered()), m_proxyModel, SLOT(uncheckAll()));
 
-  m_invertSelectionAct = new QAction(tr("Toggle all"), this);
+  m_invertSelectionAct = new QAction(tr("&Toggle all"), this);
   m_invertSelectionAct->setIcon(QIcon::fromTheme("select-invert",QIcon(":/icons/songbook/32x32/select-invert.png")));
   m_invertSelectionAct->setStatusTip(tr("Toggle the checked state of all songs"));
   connect(m_invertSelectionAct, SIGNAL(triggered()), m_proxyModel, SLOT(toggleAll()));
 
-  m_adjustColumnsAct = new QAction(tr("Auto Adjust Columns"), this);
-  m_adjustColumnsAct->setStatusTip(tr("Adjust columns to contents"));
-  connect(m_adjustColumnsAct, SIGNAL(triggered()),
-          view(), SLOT(resizeColumnsToContents()));
-
-  m_libraryUpdateAct = new QAction(tr("Update"), this);
+  m_libraryUpdateAct = new QAction(tr("&Update"), this);
   m_libraryUpdateAct->setStatusTip(tr("Update current song list from \".sg\" files"));
   m_libraryUpdateAct->setIcon(QIcon::fromTheme("view-refresh", QIcon(":/icons/tango/32x32/actions/view-refresh.png")));
   m_libraryUpdateAct->setShortcut(QKeySequence::Refresh);
   connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
 
-  m_libraryDownloadAct = new QAction(tr("Download"), this);
+  m_libraryDownloadAct = new QAction(tr("&Download"), this);
   m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
   m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/32x32/places/folder-remote.png")));
 #ifdef ENABLE_LIBRARY_DOWNLOAD
@@ -316,12 +319,14 @@ void CMainWindow::createActions()
   connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
   settings.endGroup();
 
-  m_buildAct = new QAction(tr("Build PDF"), this);
+  m_buildAct = new QAction(tr("&Build PDF"), this);
+  m_buildAct->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_B));
   m_buildAct->setIcon(QIcon::fromTheme("document-export",QIcon(":/icons/tango/32x32/mimetypes/document-export.png")));
   m_buildAct->setStatusTip(tr("Generate pdf from selected songs"));
   connect(m_buildAct, SIGNAL(triggered()), this, SLOT(build()));
 
-  m_cleanAct = new QAction(tr("Clean"), this);
+  m_cleanAct = new QAction(tr("&Clean"), this);
+  m_cleanAct->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_C));
   m_cleanAct->setIcon(QIcon::fromTheme("edit-clear", QIcon(":/icons/tango/32x32/actions/edit-clear.png")));
   m_cleanAct->setStatusTip(tr("Clean LaTeX temporary files"));
   connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
@@ -395,10 +400,10 @@ void CMainWindow::createMenus()
   QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
   viewMenu->addAction(m_toolBarViewAct);
   viewMenu->addAction(m_statusbarViewAct);
-  viewMenu->addAction(m_adjustColumnsAct);
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(m_documentationAct);
+  helpMenu->addAction(m_bugsAct);
   helpMenu->addAction(m_aboutAct);
 }
 
@@ -442,7 +447,6 @@ void CMainWindow::createToolBar()
 
 void CMainWindow::preferences()
 {
-  writeSettings();
   ConfigDialog dialog(this);
   dialog.exec();
   readSettings();
@@ -450,7 +454,15 @@ void CMainWindow::preferences()
 
 void CMainWindow::documentation()
 {
-  QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc.pdf"));
+  if (QLocale::system().language() == QLocale::French)
+    QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc_fr.pdf"));
+  else
+    QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc_en.pdf"));
+}
+
+void CMainWindow::reportBug()
+{
+  QDesktopServices::openUrl(QUrl("https://github.com/crep4ever/songbook-client/issues"));
 }
 
 void CMainWindow::about()

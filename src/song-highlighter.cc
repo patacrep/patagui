@@ -73,7 +73,8 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 		   << "\\\\Intro" << "\\\\Rythm"
 		   << "\\\\Outro" << "\\\\Bridge"
 		   << "\\\\Verse" << "\\\\Chorus"
-		   << "\\\\Pattern" << "\\\\Solo";
+		   << "\\\\Pattern" << "\\\\Solo"
+		   << "\\\\ifchorded" << "\\\\iflyrics" << "\\\\fi";
 
   foreach (const QString &pattern, keyword2Patterns)
     {
