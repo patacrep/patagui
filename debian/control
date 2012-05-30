@@ -4,6 +4,8 @@ Priority: optional
 Maintainer: Alexandre Dupas <alexandre.dupas@gmail.com>
 Build-Depends: debhelper (>= 7.0.50~), cmake (>=2.6.2), libqt4-dev (>= 4.6), libarchive-dev, asciidoc, xmlto
 Standards-Version: 3.9.3
+Vcs-Git: git://github.com/lohrun/songbook-client.git
+Vcs-Browser: https://github.com/lohrun/songbook-client
 Homepage: http://www.patacrep.com
 
 Package: songbook-client
