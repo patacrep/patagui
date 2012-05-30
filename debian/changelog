@@ -1,3 +1,10 @@
+songbook-client (0.7.3-3) wheezy; urgency=low
+
+  * Add Vcs-* fields
+  * Update gbp.conf to register git-buildpackage options
+
+ -- Alexandre Dupas <alexandre.dupas@gmail.com>  Wed, 30 May 2012 22:09:49 +0200
+
 songbook-client (0.7.3-2) wheezy; urgency=low
 
   * Add a debian/watch file as per package definition
