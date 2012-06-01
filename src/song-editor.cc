@@ -59,7 +59,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 #ifdef ENABLE_SPELLCHECK
   connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)),
-	  m_codeEditor, SLOT(setDictionary(const QLocale &)));
+	  SLOT(setDictionary(const QLocale &)));
 #endif //ENABLE_SPELLCHECK
 
   // toolBar
@@ -431,7 +431,7 @@ void CSongEditor::setSong(const Song &song)
   codeEditor()->indent();
 
 #ifdef ENABLE_SPELLCHECK
-  codeEditor()->setDictionary(song.locale);
+  setDictionary(song.locale);
 #endif //ENABLE_SPELLCHECK
 
   setNewSong(false);
@@ -474,6 +474,29 @@ void CSongEditor::setSpellCheckingEnabled(const bool value)
 {
   codeEditor()->setSpellCheckingEnabled(value);
   m_spellCheckingAct->setEnabled(value);
+  if (!value && m_spellCheckingAct->isChecked())
+    m_spellCheckingAct->setChecked(false);
+}
+
+void CSongEditor::setDictionary(const QLocale &locale)
+{
+  // find the suitable dictionary based on the current song's locale
+  QString prefix;
+#if defined(Q_OS_WIN32)
+  prefix = "";
+#else
+  prefix = "/usr/share/";
+#endif //Q_OS_WIN32
+  QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
+  if (!QFile(dictionary).exists())
+    {
+      setStatusTip(QString(tr("Unable to find the following dictionnary: %1")).arg(dictionary));
+      setSpellCheckingEnabled(false);
+      return;
+    }
+  setStatusTip("");
+  setSpellCheckingEnabled(true);
+  codeEditor()->setDictionary(dictionary);
 }
 
 void CSongEditor::installHighlighter()
