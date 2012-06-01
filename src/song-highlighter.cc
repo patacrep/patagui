@@ -192,23 +192,25 @@ bool CSongHighlighter::checkWord(const QString &word)
 
 void CSongHighlighter::setDictionary(const QString &filename)
 {
-  QFileInfo fi(filename);
-  if(filename.isEmpty() || !fi.exists() || !fi.isReadable())
-    {
-      qWarning() << tr("CSongHighlighter::setDictionary cannot read open dictionary : ") << filename;
-      return;
-    }
-
-  QString basename = QString("%1/%2").arg(fi.absolutePath()).arg(fi.baseName());
   if(m_checker)
     {
       delete m_checker;
       m_checker = 0;
     }
-  m_checker = new Hunspell(QString("%1.aff").arg(basename).toLatin1(),
-			   QString("%1.dic").arg(basename).toLatin1());
-  QString encoded = QString(m_checker->get_dic_encoding());
-  m_codec = QTextCodec::codecForName(encoded.toLatin1());
+
+  QFileInfo fi(filename);
+  if(filename.isEmpty() || !fi.exists() || !fi.isReadable())
+    {
+      qWarning() << tr("CSongHighlighter::setDictionary cannot read open dictionary : ") << filename;
+    }
+  else
+    {
+      QString basename = QString("%1/%2").arg(fi.absolutePath()).arg(fi.baseName());
+      m_checker = new Hunspell(QString("%1.aff").arg(basename).toLatin1(),
+			       QString("%1.dic").arg(basename).toLatin1());
+      QString encoded = QString(m_checker->get_dic_encoding());
+      m_codec = QTextCodec::codecForName(encoded.toLatin1());
+    }
 
   rehighlight();
 }
