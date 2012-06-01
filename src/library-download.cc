@@ -207,7 +207,8 @@ void CLibraryDownload::sslErrors(const QList<QSslError> &sslErrors)
 
 void CLibraryDownload::cancelDownload()
 {
-  m_reply->abort();
+  if (m_reply)
+    m_reply->abort();
   downloadFinished();
 }
 
