@@ -39,6 +39,11 @@ class CDiagram : public QWidget
   Q_OBJECT
 
 public:
+  enum StringCount {
+    GuitareStringCount=6,
+    UkuleleStringCount=4
+    };
+
   CDiagram(const QString & chord, const ChordType & type = GuitarChord, QWidget *parent = 0);
   ~CDiagram();
 
@@ -60,12 +65,11 @@ public:
   bool isImportant() const;
   void setImportant(bool value);
 
-  bool is_valid_chord() const;
-  int nb_rope() const;
+  bool isValidChord() const;
+  int StringCount() const;
 
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
-
 
 protected:
   void paintEvent(QPaintEvent * event);
@@ -111,10 +115,10 @@ public:
   bool isSelected() const;
   void setSelected(bool value);
 
-  QDialogButtonBox *buttonBox;
-  QRadioButton *guitar;
-  QLineEdit *stringsLineEdit;
-  QLineEdit *nameLineEdit;
+  QDialogButtonBox *m_buttonBox;
+  QRadioButton *m_guitar;
+  QLineEdit *m_stringsLineEdit;
+  QLineEdit *m_nameLineEdit;
 
   QString toString();
   ChordType type() const;
@@ -132,8 +136,8 @@ signals:
 private slots:
   void updateBackground();
   void updateChordName();
-  void update_chord();
-  void update_string_length();
+  void updateChord();
+  void updateChordStringsLineEditMaxlength();
 
 public slots:
   bool editChord();
