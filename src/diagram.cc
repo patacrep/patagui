@@ -440,7 +440,6 @@ CDiagramWidget * CDiagramArea::addDiagram()
   if (diagram->editChord())
     {
       m_layout->addWidget(diagram);
-      addNewDiagramButton();
     }
   else
     {
@@ -448,6 +447,7 @@ CDiagramWidget * CDiagramArea::addDiagram()
       diagram = 0;
     }
   addNewDiagramButton();
+  emit(contentsChanged());
   return diagram;
 }
 
@@ -459,6 +459,7 @@ CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const ChordType
   connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
   addNewDiagramButton();
+  emit(contentsChanged());
   return diagram;
 }
 
