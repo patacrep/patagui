@@ -239,6 +239,7 @@ void CLibrary::update()
   while(it.hasNext())
     paths.append(it.next());
 
+  m_parent->statusBar()->showMessage(tr("Updating the library..."));
   m_parent->progressBar()->setCancelable(false);
   m_parent->progressBar()->setTextVisible(true);
   m_parent->progressBar()->setRange(0, paths.size());
@@ -260,7 +261,7 @@ void CLibrary::update()
   m_parent->progressBar()->setTextVisible(false);
   m_parent->progressBar()->setRange(0, 0);
   m_parent->progressBar()->hide();
-  m_parent->statusBar()->showMessage(tr("Song database updated."));
+  m_parent->statusBar()->showMessage(tr("Library updated."));
   emit(wasModified());
 }
 
