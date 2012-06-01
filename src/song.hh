@@ -58,6 +58,7 @@ struct Song
   static QString toString(const Song &song);
   static QLocale::Language languageFromString(const QString &languageName = QString());
   static QString languageToString(const QLocale::Language language);
+  static QString latexToUtf8(const QString & str);
 
   static QRegExp reSgFile;
   static QRegExp reSong;
@@ -84,6 +85,10 @@ struct Song
   static QRegExp reEndChorus;
   static QRegExp reBeginScripture;
   static QRegExp reEndScripture;
+
+  static QRegExp reLatexEscapedChars;
+  static QRegExp reLatexSpaces;
+  static QRegExp reLatexDots;
 };
 
 #endif // __SONG_HH__

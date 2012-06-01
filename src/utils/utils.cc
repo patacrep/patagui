@@ -21,39 +21,13 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QDebug>
+#include <QRegExp>
 
 #include "utils.hh"
 
 namespace SbUtils
 {
-  //------------------------------------------------------------------------------
-  QString latexToUtf8(const QString & AString)
-  {
-    QString str(AString);
-    str.replace(QString("\\'e"), QString("é"));
-    str.replace(QString("\\`e"), QString("è"));
-    str.replace(QString("\\^e"), QString("ê"));
-    str.replace(QString("\\¨e"), QString("ë"));
-    str.replace(QString("\\¨i"), QString("ï"));
-    str.replace(QString("\\^i"), QString("î"));
-    str.replace(QString("\\'i"), QString("í"));
-    str.replace(QString("\\^o"), QString("ô"));
-    str.replace(QString("\\'o"), QString("ó"));
-    str.replace(QString("\\`u"), QString("ù"));
-    str.replace(QString("\\'u"), QString("ú"));
-    str.replace(QString("\\`a"), QString("à"));
-    str.replace(QString("\\^a"), QString("â"));
-    str.replace(QString("\\'a"), QString("á"));
-    str.replace(QString("\\~n"), QString("ñ"));
-    str.replace(QString("\\&"), QString("&"));
-    str.replace(QString("\\~"), QString("~"));
-    str.replace(QString("\\,"), QString(" "));
-    str.replace(QString("~"), QString(" "));
-    str.replace(QString("\\dots"), QString("..."));
 
-    return str;
-  }
-  //------------------------------------------------------------------------------
   QString filenameToString(const QString AString)
   {
     QString str(AString);
@@ -70,24 +44,17 @@ namespace SbUtils
   QString stringToFilename(const QString & AString, const QString & sep)
   {
     QString str(AString.toLower());
-    QString item;
   
     //replace whitespaces with separator
     str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
 
     //replace utf8 characters
-    QStringList list = QStringList() 
-      <<"é"<<"è"<<"ê"<<"ë";
-  
-    foreach(item, list)
-      str.replace(item, QString("e"));
-
-    str.replace(QString("à"), QString("a"));
-    str.replace(QString("â"), QString("a"));
-    str.replace(QString("ï"), QString("i"));
-    str.replace(QString("î"), QString("i"));
-    str.replace(QString("ô"), QString("o"));
-    str.replace(QString("ù"), QString("u"));
+    str.replace(QRegExp("[àâ]"), "a");
+    str.replace(QRegExp("[ïî]"), "i");
+    str.replace(QRegExp("[óô]"), "o");
+    str.replace(QRegExp("[ùúû]"), "u");
+    str.replace(QRegExp("[éèêë]"), "e");
+    str.replace(QString("ñ"), QString("n"));
     str.replace(QString("ç"), QString("c"));
 
     return str;

@@ -51,6 +51,10 @@ QRegExp Song::reEndChorus("\\\\end\\{chorus\\}");
 QRegExp Song::reBeginScripture("\\\\beginscripture");
 QRegExp Song::reEndScripture("\\\\endscripture");
 
+QRegExp Song::reLatexEscapedChars("\\\\([&~])");
+QRegExp Song::reLatexSpaces("(~|\\\\,)");
+QRegExp Song::reLatexDots("(\\{?\\\\dots\\}?|\\{?\\\\ldots\\}?)");
+
 Song Song::fromFile(const QString &path)
 {
   QFile file(path);
@@ -89,14 +93,14 @@ Song Song::fromString(const QString &text, const QString &path)
   song.columnCount = reColumnCount.cap(1).toInt();
 
   // title
-  song.title = reSgFile.cap(2);
+  song.title = latexToUtf8(reSgFile.cap(2));
 
   // options
   reArtist.indexIn(options);
-  song.artist = SbUtils::latexToUtf8(reArtist.cap(1));
+  song.artist = latexToUtf8(reArtist.cap(1));
 
   reAlbum.indexIn(options);
-  song.album = SbUtils::latexToUtf8(reAlbum.cap(1));
+  song.album = latexToUtf8(reAlbum.cap(1));
 
   reCoverName.indexIn(options);
   song.coverName = reCoverName.cap(1);
@@ -252,4 +256,13 @@ QString Song::languageToString(const QLocale::Language language)
     default:
       return "english";
     }
+}
+
+QString Song::latexToUtf8(const QString & str)
+{
+  QString result(str);
+  result.replace(reLatexEscapedChars, "\\1");
+  result.replace(reLatexSpaces, " ");
+  result.replace(reLatexDots, "...");
+  return result;
 }
