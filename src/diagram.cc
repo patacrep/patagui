@@ -27,6 +27,7 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QRadioButton>
+#include <QPushButton>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QBoxLayout>
@@ -42,6 +43,9 @@ QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
 QRegExp CDiagram::reFret("\\\\[ug]tab[\\*]?\\{.+\\{(\\d):");
 QRegExp CDiagram::reStringsFret(":([^\\}]+)");
 QRegExp CDiagram::reStringsNoFret("\\\\[ug]tab[\\*]?\\{.+\\{([^\\}]+)");
+
+  const int nb_guitar_rope = 6;
+  const int nb_ukulele_rope = 4;
 
 CDiagram::CDiagram(const QString & chord, const ChordType & type, QWidget *parent)
   : QWidget(parent)
@@ -231,6 +235,61 @@ void CDiagram::setImportant(bool value)
   m_important = value;
 }
 
+int CDiagram::nb_rope() const
+{
+  switch(m_type)
+  {
+      case  GuitarChord:
+      return  nb_guitar_rope;
+      break;
+      case  UkuleleChord:
+      return nb_ukulele_rope;
+      break;
+      default:
+      return  nb_guitar_rope;
+      break;
+  }
+}
+
+bool CDiagram::is_valid_chord() const
+{
+return (m_strings.length() == nb_rope()) and not m_chord.isEmpty();
+}
+
+void CDiagramWidget::update_string_length()
+{
+    m_diagram->setType(guitar->isChecked() ? GuitarChord : UkuleleChord);
+    stringsLineEdit->clear();
+
+      switch(m_diagram->type())
+  {
+      case  GuitarChord:
+      stringsLineEdit->setMaxLength(nb_guitar_rope);
+      break;
+      case  UkuleleChord:
+      stringsLineEdit->setMaxLength(nb_ukulele_rope);
+      break;
+      default:
+      stringsLineEdit->setMaxLength(nb_guitar_rope);
+      break;
+  }
+
+}
+
+void CDiagramWidget::update_chord()
+{
+    m_diagram->setChord(nameLineEdit->text());
+    m_diagram->setStrings(stringsLineEdit->text());
+
+    if (m_diagram->is_valid_chord())
+    {
+    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
+    else
+    {
+    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }
+}
 //----------------------------------------------------------------------------
 
 CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWidget *parent)
@@ -278,15 +337,19 @@ bool CDiagramWidget::editChord()
   QDialog dialog(this);
   dialog.setWindowTitle(tr("Chord editor"));
 
-  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
+  buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
 						     QDialogButtonBox::Cancel);
+  buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
   connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
   connect(this, SIGNAL(diagramChanged()), this, SLOT(updateChordName()));
 
   QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
-  QRadioButton *guitar  = new QRadioButton(tr("Guitar"));
+  guitar  = new QRadioButton(tr("Guitar"));
+  connect(guitar, SIGNAL(clicked(bool)), this, SLOT(update_string_length()));
   QRadioButton *ukulele = new QRadioButton(tr("Ukulele"));
+  connect(ukulele, SIGNAL(clicked(bool)), this, SLOT(update_string_length()));
 
   guitar->setChecked(m_diagram->type() == GuitarChord);
   ukulele->setChecked(m_diagram->type() == UkuleleChord);
@@ -297,17 +360,18 @@ bool CDiagramWidget::editChord()
   instrumentLayout->addStretch(1);
   instrumentGroupBox->setLayout(instrumentLayout);
 
-  QLineEdit *nameLineEdit = new QLineEdit;
+  nameLineEdit = new QLineEdit;
   nameLineEdit->setToolTip(tr("The chord name such as A&m for A-flat minor"));
   nameLineEdit->setText(m_diagram->chord());
+  connect(nameLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(update_chord()));
 
   QSpinBox *fretSpinBox = new QSpinBox;
   fretSpinBox->setToolTip(tr("Fret"));
   fretSpinBox->setRange(0,9);
   fretSpinBox->setValue(m_diagram->fret().toInt());
 
-  QLineEdit *stringsLineEdit = new QLineEdit;
-  stringsLineEdit->setMaxLength(6);
+  stringsLineEdit = new QLineEdit;
+  stringsLineEdit->setMaxLength(nb_guitar_rope);
   stringsLineEdit->setToolTip(tr("Symbols for each string of the guitar from lowest pitch to highest:\n"
 				 "  X: string is not to be played\n"
 				 "  0: string is to be played open\n"
@@ -316,6 +380,7 @@ bool CDiagramWidget::editChord()
   QRegExpValidator validator(rx, 0);
   stringsLineEdit->setValidator(&validator);
   stringsLineEdit->setText(m_diagram->strings());
+  connect(stringsLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(update_chord()));
 
   QCheckBox *importantCheckBox = new QCheckBox(tr("Important diagram"));
   importantCheckBox->setToolTip(tr("Mark this diagram as important."));
@@ -333,13 +398,12 @@ bool CDiagramWidget::editChord()
   layout->addWidget(buttonBox);
   dialog.setLayout(layout);
 
+
   if (dialog.exec() == QDialog::Accepted)
     {
-      m_diagram->setType(guitar->isChecked() ? GuitarChord : UkuleleChord);
-      m_diagram->setChord(nameLineEdit->text());
       m_diagram->setFret((fretSpinBox->value() == 0) ? "" : QString::number(fretSpinBox->value()));
-      m_diagram->setStrings(stringsLineEdit->text());
       m_diagram->setImportant(importantCheckBox->isChecked());
+
       setToolTip(m_diagram->toString());
       updateBackground();
       update();
@@ -416,6 +480,7 @@ ChordType CDiagramWidget::type() const
 {
   return m_diagram->type();
 }
+
 
 //----------------------------------------------------------------------------
 

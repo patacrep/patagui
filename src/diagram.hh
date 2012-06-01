@@ -24,6 +24,9 @@
 
 #include <QWidget>
 #include <QString>
+#include <QLineEdit>
+#include <QRadioButton>
+#include <QDialogButtonBox>
 
 /**
  * \file diagram.hh
@@ -57,8 +60,12 @@ public:
   bool isImportant() const;
   void setImportant(bool value);
 
+  bool is_valid_chord() const;
+  int nb_rope() const;
+
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
+
 
 protected:
   void paintEvent(QPaintEvent * event);
@@ -104,6 +111,11 @@ public:
   bool isSelected() const;
   void setSelected(bool value);
 
+  QDialogButtonBox *buttonBox;
+  QRadioButton *guitar;
+  QLineEdit *stringsLineEdit;
+  QLineEdit *nameLineEdit;
+
   QString toString();
   ChordType type() const;
 
@@ -120,6 +132,8 @@ signals:
 private slots:
   void updateBackground();
   void updateChordName();
+  void update_chord();
+  void update_string_length();
 
 public slots:
   bool editChord();
