@@ -490,7 +490,7 @@ void CSongEditor::setDictionary(const QLocale &locale)
   QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
   if (!QFile(dictionary).exists())
     {
-      setStatusTip(QString(tr("Unable to find the following dictionnary: %1")).arg(dictionary));
+      setStatusTip(QString(tr("Unable to find the following dictionary: %1")).arg(dictionary));
       setSpellCheckingEnabled(false);
       return;
     }

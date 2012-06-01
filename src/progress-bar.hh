@@ -33,7 +33,7 @@ class QToolButton;
  * \file progress-bar.hh
  * \class CProgressBar
  * \brief CProgressBar is a progress embedded into the CMainWindow's statusBar.
- *  This progressBar provides a cancel button that allows to cancel the action.
+ *  This progressBar provides a cancel button that allows one to cancel the action.
  */
 
 
