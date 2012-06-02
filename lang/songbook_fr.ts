@@ -74,6 +74,14 @@
     </message>
 </context>
 <context>
+    <name>CDiagramArea</name>
+    <message>
+        <location filename="../src/diagram.cc" line="482"/>
+        <source>Add a new diagram</source>
+        <translation>Ajouter un nouveau diagramme</translation>
+    </message>
+</context>
+<context>
     <name>CDiagramWidget</name>
     <message>
         <location filename="../src/diagram.cc" line="252"/>
@@ -564,6 +572,16 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
         <translation>Album</translation>
     </message>
     <message>
+        <location filename="../src/library.cc" line="242"/>
+        <source>Updating the library...</source>
+        <translation>Mise à jour de la bibliothèque...</translation>
+    </message>
+    <message>
+        <location filename="../src/library.cc" line="264"/>
+        <source>Library updated.</source>
+        <translation>Mise à jour terminée.</translation>
+    </message>
+    <message>
         <source>Cover</source>
         <translation type="obsolete">Pochette</translation>
     </message>
@@ -573,9 +591,8 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
         <translation>Langue</translation>
     </message>
     <message>
-        <location filename="../src/library.cc" line="263"/>
         <source>Song database updated.</source>
-        <translation>La base de données des chansons a été mise à jour.</translation>
+        <translation type="obsolete">La base de données des chansons a été mise à jour.</translation>
     </message>
     <message>
         <source>Inserting song : %1</source>
@@ -657,7 +674,7 @@ Do you want to proceed anyway?</source>
     </message>
     <message>
         <location filename="../src/library-download.cc" line="173"/>
-        <location filename="../src/library-download.cc" line="257"/>
+        <location filename="../src/library-download.cc" line="258"/>
         <source>Operation aborted</source>
         <translation>Opération annulée</translation>
     </message>
@@ -667,62 +684,62 @@ Do you want to proceed anyway?</source>
         <translation>Téléchargement terminé</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="235"/>
+        <location filename="../src/library-download.cc" line="236"/>
         <source>CLibraryDownload::decompress: unable to open the archive</source>
         <translation>CLibraryDownload::decompress: impossible d&apos;ouvrir l&apos;archive</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="251"/>
+        <location filename="../src/library-download.cc" line="252"/>
         <source>Existing directory</source>
         <translation>Le répertoire existe déjà</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="252"/>
+        <location filename="../src/library-download.cc" line="253"/>
         <source>The song library directory from the archive already exists in the selected install directory. Do you want to proceed anyway?</source>
         <translation>Le répertoire contenu dans l&apos;archive existe déjà dans le répertoire d&apos;installation. Êtes-vous sûr de vouloir continuer ?</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="277"/>
+        <location filename="../src/library-download.cc" line="278"/>
         <source>CLibraryDownload::findFileName : invalid network reply</source>
         <translation>CLibraryDownload::findFileName : la réponse réseau est incorrecte</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="303"/>
+        <location filename="../src/library-download.cc" line="304"/>
         <source>bytes</source>
         <translation>octets</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="308"/>
+        <location filename="../src/library-download.cc" line="309"/>
         <source>kB</source>
         <translation>Ko</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="313"/>
+        <location filename="../src/library-download.cc" line="314"/>
         <source>MB</source>
         <translation>Mo</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="315"/>
+        <location filename="../src/library-download.cc" line="316"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="320"/>
+        <location filename="../src/library-download.cc" line="321"/>
         <source>Downloading %1</source>
         <translation>Téléchargement de %1</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="322"/>
+        <location filename="../src/library-download.cc" line="323"/>
         <source> - %1</source>
         <translation> - %1</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="327"/>
+        <location filename="../src/library-download.cc" line="328"/>
         <source> of %1</source>
         <translation> sur %1</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="335"/>
+        <location filename="../src/library-download.cc" line="336"/>
         <source> (%2/s)</source>
         <translation> (%2/s)</translation>
     </message>
@@ -885,9 +902,8 @@ Do you want to proceed anyway?</source>
         <translation>À propos du Songbook Client Patacrep!</translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="473"/>
         <source>This program allows to build customized songbooks from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</source>
-        <translation>Cette application permet de construire des recueils personnalisés pour les chansons disponibles sur : &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</translation>
+        <translation type="obsolete">Cette application permet de construire des recueils personnalisés pour les chansons disponibles sur : &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="481"/>
@@ -1022,6 +1038,11 @@ Are you sure?</source>
         <location filename="../src/main-window.cc" line="328"/>
         <source>&amp;Clean</source>
         <translation>&amp;Nettoyer</translation>
+    </message>
+    <message>
+        <location filename="../src/main-window.cc" line="473"/>
+        <source>This program allows one to build customized songbooks from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</source>
+        <translation>Cette application permet de construire des recueils de chansons personnalisés d&apos;après les tablatures disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="588"/>
@@ -1868,37 +1889,37 @@ Veuillez consulter les traces de compilation pour plus de détails.</translation
 <context>
     <name>CSongCodeEditor</name>
     <message>
-        <location filename="../src/song-code-editor.cc" line="494"/>
+        <location filename="../src/song-code-editor.cc" line="479"/>
         <source>Comment selection</source>
         <translation>Commenter la sélection</translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="495"/>
+        <location filename="../src/song-code-editor.cc" line="480"/>
         <source>Comment the selection</source>
         <translation>Mettre la sélection en commentaire </translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="499"/>
+        <location filename="../src/song-code-editor.cc" line="484"/>
         <source>Uncomment selection</source>
         <translation>Décommenter la sélection</translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="500"/>
+        <location filename="../src/song-code-editor.cc" line="485"/>
         <source>Uncomment the selection</source>
         <translation>Supprimer les commentaires de la sélection</translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="506"/>
+        <location filename="../src/song-code-editor.cc" line="491"/>
         <source>Suggestions</source>
         <translation>Suggestions</translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="520"/>
+        <location filename="../src/song-code-editor.cc" line="505"/>
         <source>Add</source>
         <translation>Ajouter</translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="521"/>
+        <location filename="../src/song-code-editor.cc" line="506"/>
         <source>Ignore</source>
         <translation>Ignorer</translation>
     </message>
@@ -2072,6 +2093,11 @@ Voulez-vous sauvegarder vos changements ?</translation>
         <translation>Inconnu</translation>
     </message>
     <message>
+        <location filename="../src/song-editor.cc" line="493"/>
+        <source>Unable to find the following dictionary: %1</source>
+        <translation>Impossible de trouver le dictionnaire suivant : %1</translation>
+    </message>
+    <message>
         <source>New verse environment</source>
         <translation type="obsolete">Insère un nouveau couplet</translation>
     </message>
@@ -2178,7 +2204,7 @@ Voulez-vous sauvegarder vos changements ?</translation>
 <context>
     <name>CSongHighlighter</name>
     <message>
-        <location filename="../src/song-highlighter.cc" line="198"/>
+        <location filename="../src/song-highlighter.cc" line="204"/>
         <source>CSongHighlighter::setDictionary cannot read open dictionary : </source>
         <translation>CSongHighlighter::setDictionary impossible d&apos;ouvrir ou de lire le dictionnaire :  </translation>
     </message>
