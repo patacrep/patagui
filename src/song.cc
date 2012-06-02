@@ -22,6 +22,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QRegExp>
 
 #include <QDebug>
 
@@ -50,10 +51,6 @@ QRegExp Song::reBeginChorus("\\\\begin\\{chorus\\}");
 QRegExp Song::reEndChorus("\\\\end\\{chorus\\}");
 QRegExp Song::reBeginScripture("\\\\beginscripture");
 QRegExp Song::reEndScripture("\\\\endscripture");
-
-QRegExp Song::reLatexEscapedChars("\\\\([&~])");
-QRegExp Song::reLatexSpaces("(~|\\\\,)");
-QRegExp Song::reLatexDots("(\\{?\\\\dots\\}?|\\{?\\\\ldots\\}?)");
 
 Song Song::fromFile(const QString &path)
 {
@@ -181,13 +178,13 @@ QString Song::toString(const Song &song)
   if (song.columnCount > 0)
     text.append(QString("\\songcolumns{%1}\n").arg(song.columnCount));
 
-  text.append(QString("\\beginsong{%1}\n  [by=%2").arg(song.title).arg(song.artist));
+  text.append(QString("\\beginsong{%1}\n  [by=%2").arg(utf8ToLatex(song.title)).arg(utf8ToLatex(song.artist)));
 
   if (!song.coverName.isEmpty())
     text.append(QString(",cov=%1").arg(song.coverName));
 
   if (!song.album.isEmpty())
-    text.append(QString(",album=%1").arg(song.album));
+    text.append(QString(",album=%1").arg(utf8ToLatex(song.album)));
 
   text.append(QString("]\n\n"));
 
@@ -261,8 +258,17 @@ QString Song::languageToString(const QLocale::Language language)
 QString Song::latexToUtf8(const QString & str)
 {
   QString result(str);
-  result.replace(reLatexEscapedChars, "\\1");
-  result.replace(reLatexSpaces, " ");
-  result.replace(reLatexDots, "...");
+  result.replace(QRegExp("([^\\\\])~"), QString("\\1%1").arg(QChar(QChar::Nbsp)));
+  result.replace(QRegExp("\\\\([&~])"), "\\1");
+  result.replace(QRegExp("(\\{?\\\\dots\\}?|\\{?\\\\ldots\\}?)"),  "...");
+  return result;
+}
+
+QString Song::utf8ToLatex(const QString & str)
+{
+  QString result(str);
+  result.replace(QRegExp("([&~])"), "\\\\1");
+  result.replace(QChar(QChar::Nbsp), "~");
+  result.replace("...", "\\dots");
   return result;
 }
