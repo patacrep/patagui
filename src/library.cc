@@ -420,9 +420,7 @@ void CLibrary::deleteSong(const QString &path)
 QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 {
   QString artistInPath = SbUtils::stringToFilename(artist, "_");
-  artistInPath.remove(QRegExp("_+$"));
   QString titleInPath = SbUtils::stringToFilename(title, "_");
-  titleInPath.remove(QRegExp("_+$"));
 
   return QString("%1/songs/%2/%3.sg")
     .arg(directory().canonicalPath())

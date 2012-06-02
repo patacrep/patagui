@@ -28,25 +28,13 @@
 namespace SbUtils
 {
 
-  QString filenameToString(const QString AString)
-  {
-    QString str(AString);
-    if (str.isEmpty())
-      return str;
-
-    //Set the first letter to uppercase
-    str[0] = str[0].toUpper();
-    str.replace(QString("_"), QString(" "));
-    str.replace(QString("-"), QString(" "));
-    return str;
-  }
-  //------------------------------------------------------------------------------
   QString stringToFilename(const QString & AString, const QString & sep)
   {
     QString str(AString.toLower());
   
     //replace whitespaces with separator
     str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
+    str.remove(QRegExp("_+$"));
 
     //replace utf8 characters
     str.replace(QRegExp("[àâ]"), "a");
