@@ -47,6 +47,7 @@ namespace SbUtils
   
     //replace whitespaces with separator
     str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
+    str.remove(QRegExp("_+$"));
 
     //replace utf8 characters
     str.replace(QRegExp("[àâ]"), "a");
