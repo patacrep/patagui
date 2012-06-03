@@ -372,9 +372,9 @@ void CDiagramWidget::updateBackground()
     setPalette(QPalette(QColor(173,127,168)));
 
   if ( m_diagram->isImportant() )
-    setBackgroundRole(QPalette::Button);
+    setBackgroundRole(QPalette::Mid);
   else
-    setBackgroundRole(QPalette::AlternateBase);
+    setBackgroundRole(QPalette::Button);
 
   if ( isSelected() )
     setBackgroundRole(QPalette::Highlight);
@@ -386,11 +386,7 @@ void CDiagramWidget::updateChordName()
 		       .arg(m_diagram->chord().replace("&", QChar(0x266D))));
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   m_chordName->setMaximumHeight(20);
-
-  if (m_diagram->isImportant())
-    m_chordName->setStyleSheet("border-radius: 4px; background-color: palette(dark);");
-  else
-    m_chordName->setStyleSheet("border-radius: 4px; background-color: palette(mid);");
+  m_chordName->setStyleSheet("QLabel{ border-radius: 4px; background-color: palette(mid); }");
 }
 
 bool CDiagramWidget::isSelected() const
@@ -440,7 +436,7 @@ CDiagramWidget * CDiagramArea::addDiagram()
   if (diagram->editChord())
     {
       m_layout->addWidget(diagram);
-      addNewDiagramButton();
+      emit(contentsChanged());
     }
   else
     {
@@ -479,9 +475,11 @@ void CDiagramArea::addNewDiagramButton()
     {
       m_layout->removeItem(m_spacer);
       delete m_addDiagramButton;
+      m_addDiagramButton = 0;
     }
 
   m_addDiagramButton = new QToolButton;
+  m_addDiagramButton->setToolTip(tr("Add a new diagram"));
   m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
   connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
   m_layout->addWidget(m_addDiagramButton);

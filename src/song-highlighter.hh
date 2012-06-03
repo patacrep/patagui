@@ -49,8 +49,8 @@ public:
   /// Destructor
   ~CSongHighlighter();
 
-  /// Set the dictionnary used by the spellchecker.
-  /// @param filename the .dic file that corresponds to a hunspell dictionnary.
+  /// Set the dictionary used by the spellchecker.
+  /// @param filename the .dic file that corresponds to a hunspell dictionary.
   /// Those files are usually located in /usr/share/hunspell/.
   void setDictionary(const QString &filename);
 
@@ -60,7 +60,7 @@ public:
 
 #ifdef ENABLE_SPELLCHECK
 public slots:
-  /// Add an unrecognized word to the hunspell dictionnary
+  /// Add an unrecognized word to the hunspell dictionary
   /// so that it is not marked as incorrect anymore.
   /// @param word the word that is to be marked as correct.
   void addWord(const QString &word);

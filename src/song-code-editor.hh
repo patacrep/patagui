@@ -67,7 +67,7 @@ public:
 #ifdef ENABLE_SPELLCHECK
   Hunspell* checker() const;
 public slots:
-  void setDictionary(const QLocale &locale);
+  void setDictionary(const QString &dictionary);
 #endif
 
 protected:

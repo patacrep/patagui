@@ -411,26 +411,11 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
 }
 
 #ifdef ENABLE_SPELLCHECK
-void CSongCodeEditor::setDictionary(const QLocale &locale)
+void CSongCodeEditor::setDictionary(const QString & dictionary)
 {
   if (highlighter() == 0)
     return;
 
-  // find the suitable dictionary based on the current song's locale
-  QString prefix;
-#if defined(Q_OS_WIN32)
-  prefix = "";
-#else
-  prefix = "/usr/share/";
-#endif //Q_OS_WIN32
-  QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
-  if (!QFile(dictionary).exists())
-    {
-      qWarning() << "Unable to find the following dictionnary: " << dictionary;
-      return;
-    }
-
-  setSpellCheckingEnabled(true);
   highlighter()->setDictionary(dictionary);
   connect(this, SIGNAL(wordAdded(const QString&)), highlighter(), SLOT(addWord(const QString&)));
 }
