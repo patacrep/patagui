@@ -1,4 +1,10 @@
-songbook-client (0.7.3-4) UNRELEASED; urgency=low
+songbook-client (0.7.4-1) UNRELEASED; urgency=low
+
+  * New upstream version
+
+ -- Alexandre Dupas <alexandre.dupas@gmail.com>  Sun, 03 Jun 2012 16:58:25 +0200
+
+songbook-client (0.7.3-4) wheezy; urgency=low
 
   * Update build dependencies to add libhunspell-dev for spellchecking
 
