@@ -127,11 +127,6 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   songInformationLayout->addLayout(additionalInformationLayout);
   songInformationLayout->addStretch();
 
-  QBoxLayout *coverLayout = new QVBoxLayout();
-  coverLayout->setContentsMargins(2, 2, 2, 2);
-  coverLayout->addWidget(m_coverLabel);
-  coverLayout->addStretch();
-
   m_diagramArea = new CDiagramArea(this);
   connect(m_diagramArea, SIGNAL(contentsChanged()),
           SLOT(onDiagramsChanged()));
@@ -145,11 +140,9 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
 
   QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setContentsMargins(1, 1, 1, 1);
-  mainLayout->addLayout(coverLayout);
+  mainLayout->addWidget(m_coverLabel);
   mainLayout->addLayout(songInformationLayout);
   mainLayout->addWidget(diagramsScrollArea);
-  mainLayout->setStretchFactor(songInformationLayout, 1);
-  mainLayout->setStretchFactor(diagramsScrollArea, 2);
   setLayout(mainLayout);
 }
 
@@ -306,6 +299,7 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   : QLabel(parent)
 {
   setMinimumSize(132,132);
+  setMaximumSize(132,132);
   setFrameStyle(QFrame::Raised | QFrame::Panel);
   setLineWidth(3);
   setAlignment(Qt::AlignCenter);

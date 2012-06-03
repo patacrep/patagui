@@ -29,7 +29,6 @@
 #include <QString>
 #include <QStringList>
 #include <QLocale>
-#include <QRegExp>
 
 /** \struct Song "song.hh"
  *
@@ -58,6 +57,8 @@ struct Song
   static QString toString(const Song &song);
   static QLocale::Language languageFromString(const QString &languageName = QString());
   static QString languageToString(const QLocale::Language language);
+  static QString latexToUtf8(const QString & str);
+  static QString utf8ToLatex(const QString & str);
 
   static QRegExp reSgFile;
   static QRegExp reSong;

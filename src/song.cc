@@ -22,6 +22,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QRegExp>
 
 #include <QDebug>
 
@@ -89,14 +90,14 @@ Song Song::fromString(const QString &text, const QString &path)
   song.columnCount = reColumnCount.cap(1).toInt();
 
   // title
-  song.title = reSgFile.cap(2);
+  song.title = latexToUtf8(reSgFile.cap(2));
 
   // options
   reArtist.indexIn(options);
-  song.artist = SbUtils::latexToUtf8(reArtist.cap(1));
+  song.artist = latexToUtf8(reArtist.cap(1));
 
   reAlbum.indexIn(options);
-  song.album = SbUtils::latexToUtf8(reAlbum.cap(1));
+  song.album = latexToUtf8(reAlbum.cap(1));
 
   reCoverName.indexIn(options);
   song.coverName = reCoverName.cap(1);
@@ -153,12 +154,13 @@ Song Song::fromString(const QString &text, const QString &path)
         }
     }
   // remove blank line at the end of input
-  while (song.lyrics.last().trimmed().isEmpty())
-    {
-      if (song.lyrics.isEmpty())
-	break;
-      song.lyrics.removeLast();
-    }
+  if (!song.lyrics.isEmpty())
+    while (song.lyrics.last().trimmed().isEmpty())
+      {
+	if (song.lyrics.isEmpty())
+	  break;
+	song.lyrics.removeLast();
+      }
 
   lines = post.split("\n");
   foreach (line, lines)
@@ -176,13 +178,13 @@ QString Song::toString(const Song &song)
   if (song.columnCount > 0)
     text.append(QString("\\songcolumns{%1}\n").arg(song.columnCount));
 
-  text.append(QString("\\beginsong{%1}\n  [by=%2").arg(song.title).arg(song.artist));
+  text.append(QString("\\beginsong{%1}\n  [by=%2").arg(utf8ToLatex(song.title)).arg(utf8ToLatex(song.artist)));
 
   if (!song.coverName.isEmpty())
     text.append(QString(",cov=%1").arg(song.coverName));
 
   if (!song.album.isEmpty())
-    text.append(QString(",album=%1").arg(song.album));
+    text.append(QString(",album=%1").arg(utf8ToLatex(song.album)));
 
   text.append(QString("]\n\n"));
 
@@ -251,4 +253,22 @@ QString Song::languageToString(const QLocale::Language language)
     default:
       return "english";
     }
+}
+
+QString Song::latexToUtf8(const QString & str)
+{
+  QString result(str);
+  result.replace(QRegExp("([^\\\\])~"), QString("\\1%1").arg(QChar(QChar::Nbsp)));
+  result.replace(QRegExp("\\\\([&~])"), "\\1");
+  result.replace(QRegExp("(\\{?\\\\dots\\}?|\\{?\\\\ldots\\}?)"),  "...");
+  return result;
+}
+
+QString Song::utf8ToLatex(const QString & str)
+{
+  QString result(str);
+  result.replace(QRegExp("([&~])"), "\\\\1");
+  result.replace(QChar(QChar::Nbsp), "~");
+  result.replace("...", "\\dots");
+  return result;
 }

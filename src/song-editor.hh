@@ -87,6 +87,7 @@ public:
 public slots:
   void setModified(bool modified);
   void setNewSong(bool newSong);
+  void setDictionary(const QLocale & locale);
 
 signals:
   void labelChanged(const QString &label);

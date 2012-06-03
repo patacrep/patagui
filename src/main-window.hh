@@ -59,16 +59,16 @@ class CMainWindow : public QMainWindow
   Q_OBJECT
 
 public slots:
-  /// System call that allows to build a songbook.
+  /// System call that allows one to build a songbook.
   /// @param command : the command line
   void setBuildCommand(const QString &command);
 
-  /// System call that allows to remove temporary files
+  /// System call that allows one to remove temporary files
   /// that are generated during the compilation of a songbook.
   /// @param command : the command line
   void setCleanCommand(const QString &command);
 
-  /// System call that allows to remove temporary files and pdf files
+  /// System call that allows one to remove temporary files and pdf files
   /// that are generated during the compilation of a songbook.
   /// @param command : the command line
   void setCleanallCommand(const QString &command);

@@ -70,6 +70,14 @@
     </message>
 </context>
 <context>
+    <name>CDiagramArea</name>
+    <message>
+        <location filename="../src/diagram.cc" line="482"/>
+        <source>Add a new diagram</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CDiagramWidget</name>
     <message>
         <location filename="../src/diagram.cc" line="252"/>
@@ -458,6 +466,16 @@ Are you sure you want to continue ?</translation>
         <translation>Album</translation>
     </message>
     <message>
+        <location filename="../src/library.cc" line="242"/>
+        <source>Updating the library...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/library.cc" line="264"/>
+        <source>Library updated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cover</source>
         <translation type="obsolete">Cover</translation>
     </message>
@@ -465,11 +483,6 @@ Are you sure you want to continue ?</translation>
         <location filename="../src/library.cc" line="136"/>
         <source>Language</source>
         <translation>Language</translation>
-    </message>
-    <message>
-        <location filename="../src/library.cc" line="263"/>
-        <source>Song database updated.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Found song : %1</source>
@@ -528,7 +541,7 @@ Do you want to proceed anyway?</source>
     </message>
     <message>
         <location filename="../src/library-download.cc" line="173"/>
-        <location filename="../src/library-download.cc" line="257"/>
+        <location filename="../src/library-download.cc" line="258"/>
         <source>Operation aborted</source>
         <translation type="unfinished"></translation>
     </message>
@@ -538,62 +551,62 @@ Do you want to proceed anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="235"/>
+        <location filename="../src/library-download.cc" line="236"/>
         <source>CLibraryDownload::decompress: unable to open the archive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="251"/>
+        <location filename="../src/library-download.cc" line="252"/>
         <source>Existing directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="252"/>
+        <location filename="../src/library-download.cc" line="253"/>
         <source>The song library directory from the archive already exists in the selected install directory. Do you want to proceed anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="277"/>
+        <location filename="../src/library-download.cc" line="278"/>
         <source>CLibraryDownload::findFileName : invalid network reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="303"/>
+        <location filename="../src/library-download.cc" line="304"/>
         <source>bytes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="308"/>
+        <location filename="../src/library-download.cc" line="309"/>
         <source>kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="313"/>
+        <location filename="../src/library-download.cc" line="314"/>
         <source>MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="315"/>
+        <location filename="../src/library-download.cc" line="316"/>
         <source>%1 %2</source>
         <translation type="unfinished">%1 %2</translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="320"/>
+        <location filename="../src/library-download.cc" line="321"/>
         <source>Downloading %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="322"/>
+        <location filename="../src/library-download.cc" line="323"/>
         <source> - %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="327"/>
+        <location filename="../src/library-download.cc" line="328"/>
         <source> of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/library-download.cc" line="335"/>
+        <location filename="../src/library-download.cc" line="336"/>
         <source> (%2/s)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -734,11 +747,6 @@ Do you want to proceed anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/main-window.cc" line="473"/>
-        <source>This program allows to build customized songbooks from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/main-window.cc" line="481"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version:&lt;/b&gt; %2&lt;/p&gt;&lt;p&gt;&lt;b&gt;Authors:&lt;/b&gt; %3&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
@@ -870,6 +878,11 @@ Do you want to proceed anyway?</source>
     <message>
         <location filename="../src/main-window.cc" line="328"/>
         <source>&amp;Clean</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/main-window.cc" line="473"/>
+        <source>This program allows one to build customized songbooks from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1394,37 +1407,37 @@ You may check compilation logs for more information.</translation>
 <context>
     <name>CSongCodeEditor</name>
     <message>
-        <location filename="../src/song-code-editor.cc" line="494"/>
+        <location filename="../src/song-code-editor.cc" line="479"/>
         <source>Comment selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="495"/>
+        <location filename="../src/song-code-editor.cc" line="480"/>
         <source>Comment the selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="499"/>
+        <location filename="../src/song-code-editor.cc" line="484"/>
         <source>Uncomment selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="500"/>
+        <location filename="../src/song-code-editor.cc" line="485"/>
         <source>Uncomment the selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="506"/>
+        <location filename="../src/song-code-editor.cc" line="491"/>
         <source>Suggestions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="520"/>
+        <location filename="../src/song-code-editor.cc" line="505"/>
         <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/song-code-editor.cc" line="521"/>
+        <location filename="../src/song-code-editor.cc" line="506"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1597,6 +1610,11 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/song-editor.cc" line="493"/>
+        <source>Unable to find the following dictionary: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>New verse environment</source>
         <translation type="obsolete">New verse environment</translation>
     </message>
@@ -1663,7 +1681,7 @@ Do you want to save your changes?</source>
 <context>
     <name>CSongHighlighter</name>
     <message>
-        <location filename="../src/song-highlighter.cc" line="198"/>
+        <location filename="../src/song-highlighter.cc" line="204"/>
         <source>CSongHighlighter::setDictionary cannot read open dictionary : </source>
         <translation type="unfinished"></translation>
     </message>
