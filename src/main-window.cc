@@ -779,12 +779,14 @@ void CMainWindow::noDataNotification(const QDir &directory)
   if (library()->rowCount() > 0)
     {
       m_noDataInfo->hide();
+      m_buildAct->setEnabled(true);
     }
   else
     {
       m_noDataInfo->setMessage(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
                                   "Do you want to download the latest songs library?").arg(directory.canonicalPath()));
       m_noDataInfo->show();
+      m_buildAct->setEnabled(false);
     }
 }
 
