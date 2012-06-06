@@ -21,12 +21,12 @@
 
 #include "diagram.hh"
 #include "utils/utils.hh"
+#include "notification.hh"
 
 #include <QWidget>
 #include <QString>
 #include <QLineEdit>
 #include <QRadioButton>
-#include <QDialogButtonBox>
 
 /**
  * \file diagram.hh
@@ -40,9 +40,9 @@ class CDiagram : public QWidget
 
 public:
   enum StringCount {
-    GuitareStringCount=6,
+    GuitarStringCount=6,
     UkuleleStringCount=4
-    };
+  };
 
   CDiagram(const QString & chord, const ChordType & type = GuitarChord, QWidget *parent = 0);
   ~CDiagram();
@@ -66,7 +66,6 @@ public:
   void setImportant(bool value);
 
   bool isValidChord() const;
-  int StringCount() const;
 
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
@@ -114,11 +113,15 @@ public:
 
   bool isSelected() const;
   void setSelected(bool value);
+  int stringCount() const;
+  void updateCircleIcon(QLabel *Label, bool isValid);
 
-  QDialogButtonBox *m_buttonBox;
   QRadioButton *m_guitar;
   QLineEdit *m_stringsLineEdit;
   QLineEdit *m_nameLineEdit;
+  QLabel *m_messageLabel;
+  QLabel *m_iconChordNameValid;
+  QLabel *m_iconStringLineEditValid;
 
   QString toString();
   ChordType type() const;
@@ -137,7 +140,6 @@ private slots:
   void updateBackground();
   void updateChordName();
   void updateChord();
-  void updateChordStringsLineEditMaxlength();
 
 public slots:
   bool editChord();
