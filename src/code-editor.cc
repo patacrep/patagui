@@ -149,7 +149,11 @@ bool CodeEditor::highlightMode() const
 
 void CodeEditor::setLineNumberMode(bool value)
 {
+  if (m_lineNumberMode == value)
+    return;
+
   m_lineNumberMode = value;
+  updateLineNumberAreaWidth(0);
 }
 
 bool CodeEditor::lineNumberMode() const
