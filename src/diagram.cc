@@ -236,15 +236,12 @@ int CDiagramWidget::stringCount() const
 {
   switch (m_diagram->type())
     {
-      case GuitarChord:
-        return CDiagram::GuitarStringCount;
-      break;
-      case UkuleleChord:
-        return CDiagram::UkuleleStringCount;
-      break;
-      default:
-        return CDiagram::GuitarStringCount;
-      break;
+    case GuitarChord:
+      return CDiagram::GuitarStringCount;
+    case UkuleleChord:
+      return CDiagram::UkuleleStringCount;
+    default:
+      return CDiagram::GuitarStringCount;
     }
 }
 
@@ -253,15 +250,15 @@ bool CDiagram::isValidChord() const
   return (m_strings.length() == StringCount()) && !m_chord.isEmpty();
 }
 
-void CDiagramWidget::updateCircleIcon(QLabel *Label,bool isValid)
+void CDiagramWidget::updateCircleIcon(QLabel *label, bool isValid)
 {
     QIcon greenCircle = QIcon::fromTheme("green-circle", QIcon(":/icons/songbook/32x32/green-circle.png"));
     QIcon redCircle = QIcon::fromTheme("red-circle", QIcon(":/icons/songbook/32x32/red-circle.png"));
 
-    if(isValid)
-      Label->setPixmap(greenCircle.pixmap(24,24));
+    if (isValid)
+      label->setPixmap(greenCircle.pixmap(24,24));
     else
-      Label->setPixmap(redCircle.pixmap(24,24));
+      label->setPixmap(redCircle.pixmap(24,24));
 }
 
 void CDiagramWidget::updateChord()
@@ -340,11 +337,11 @@ bool CDiagramWidget::editChord()
   QDialog dialog(this);
   dialog.setWindowTitle(tr("Chord editor"));
 
-  QDialogButtonBox *m_buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
+  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
 						     QDialogButtonBox::Cancel);
 
-  connect(m_buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-  connect(m_buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
+  connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
   connect(this, SIGNAL(diagramChanged()), this, SLOT(updateChordName()));
 
   QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
@@ -428,7 +425,7 @@ bool CDiagramWidget::editChord()
   layout->addLayout(chordLayout);
   layout->addWidget(importantCheckBox);
   layout->addLayout(layoutInformation);
-  layout->addWidget(m_buttonBox);
+  layout->addWidget(buttonBox);
   dialog.setLayout(layout);
 
   if (dialog.exec() == QDialog::Accepted)
