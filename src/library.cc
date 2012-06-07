@@ -30,6 +30,29 @@
 
 #include <QDebug>
 
+namespace // anonymous namespace
+{
+  QString stringToFilename(const QString & string, const QString & separator)
+  {
+    QString result(string.toLower());
+
+    // replace whitespaces with separator
+    result.replace(QRegExp("\\W+"), separator);
+    result.remove(QRegExp(QString("%1+$").arg(separator)));
+
+    // replace utf8 characters
+    result.replace(QRegExp("[àâ]"), "a");
+    result.replace(QRegExp("[ïî]"), "i");
+    result.replace(QRegExp("[óô]"), "o");
+    result.replace(QRegExp("[ùúû]"), "u");
+    result.replace(QRegExp("[éèêë]"), "e");
+    result.replace(QString("ñ"), "n");
+    result.replace(QString("ç"), "c");
+
+    return result;
+  }
+}
+
 CLibrary::CLibrary(CMainWindow *parent)
   : QAbstractTableModel()
   , m_parent(parent)
@@ -435,24 +458,4 @@ QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 QString CLibrary::pathToSong(Song &song) const
 {
   return pathToSong(song.artist, song.title);
-}
-
-QString CLibrary::stringToFilename(const QString & AString, const QString & sep)
-{
-  QString str(AString.toLower());
-
-  //replace whitespaces with separator
-  str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
-  str.remove(QRegExp("_+$"));
-
-  //replace utf8 characters
-  str.replace(QRegExp("[àâ]"), "a");
-  str.replace(QRegExp("[ïî]"), "i");
-  str.replace(QRegExp("[óô]"), "o");
-  str.replace(QRegExp("[ùúû]"), "u");
-  str.replace(QRegExp("[éèêë]"), "e");
-  str.replace(QString("ñ"), QString("n"));
-  str.replace(QString("ç"), QString("c"));
-
-  return str;
 }

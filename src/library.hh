@@ -129,8 +129,6 @@ public:
   //! Destroy a song file from the library
   void deleteSong(const QString &path);
 
-  static QString stringToFilename(const QString & str, const QString & sep);
-
 public slots:
   void readSettings();
   void update();
