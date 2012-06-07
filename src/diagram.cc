@@ -272,6 +272,7 @@ bool CDiagramWidget::editChord()
 
   if (editor.exec() == QDialog::Accepted)
     {
+      m_diagram->setType(editor.chordType());
       m_diagram->setChord(editor.chordName());
       m_diagram->setStrings(editor.chordStrings());
       m_diagram->setFret(editor.chordFret());

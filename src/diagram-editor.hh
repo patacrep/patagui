@@ -21,6 +21,7 @@
 
 #include <QDialog>
 #include <QString>
+#include "diagram.hh"
 
 class QLineEdit;
 class QSpinBox;
@@ -47,6 +48,7 @@ public:
   QString chordName() const;
   QString chordStrings() const;
   QString chordFret() const;
+  CDiagram::ChordType chordType() const;
   bool isChordImportant() const;
   void setDiagram(CDiagram *diagram);
 

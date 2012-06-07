@@ -18,8 +18,6 @@
 //******************************************************************************
 #include "diagram-editor.hh"
 
-#include "diagram.hh"
-
 #include <QLabel>
 #include <QLineEdit>
 #include <QSpinBox>
@@ -117,6 +115,12 @@ QString CDiagramEditor::chordFret() const
 {
   return (m_fretSpinBox->value() == 0) ?
     "" : QString::number(m_fretSpinBox->value());
+}
+
+CDiagram::ChordType CDiagramEditor::chordType() const
+{
+  return m_guitar->isChecked() ?
+    CDiagram::GuitarChord : CDiagram::UkuleleChord;
 }
 
 bool CDiagramEditor::isChordImportant() const
