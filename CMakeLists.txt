@@ -29,6 +29,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/logs-highlighter.cc
   src/label.cc
   src/diagram.cc
+  src/diagram-editor.cc
   src/progress-bar.cc
   src/unit-property-manager.cc
   src/unit-factory.cc
@@ -64,6 +65,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/logs-highlighter.hh
   src/label.hh
   src/diagram.hh
+  src/diagram-editor.hh
   src/progress-bar.hh
   src/unit-property-manager.hh
   src/unit-factory.hh

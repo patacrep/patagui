@@ -17,27 +17,17 @@
 // 02110-1301, USA.
 //******************************************************************************
 #include "diagram.hh"
+#include "diagram-editor.hh"
 
 #include <QToolBar>
 #include <QAction>
 #include <QLabel>
 #include <QPainter>
-#include <QLineEdit>
-#include <QSpinBox>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QRadioButton>
-#include <QPushButton>
-#include <QDialog>
-#include <QDialogButtonBox>
 #include <QBoxLayout>
-#include <QFormLayout>
 #include <QMouseEvent>
 #include <QDebug>
-
 #include <QToolButton>
 #include <QSpacerItem>
-
 
 QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
 QRegExp CDiagram::reFret("\\\\[ug]tab[\\*]?\\{.+\\{(\\d):");
@@ -232,64 +222,6 @@ void CDiagram::setImportant(bool value)
   m_important = value;
 }
 
-int CDiagramWidget::stringCount() const
-{
-  switch (m_diagram->type())
-    {
-    case GuitarChord:
-      return CDiagram::GuitarStringCount;
-    case UkuleleChord:
-      return CDiagram::UkuleleStringCount;
-    default:
-      return CDiagram::GuitarStringCount;
-    }
-}
-
-bool CDiagram::isValidChord() const
-{
-  return (m_strings.length() == StringCount()) && !m_chord.isEmpty();
-}
-
-void CDiagramWidget::updateCircleIcon(QLabel *label, bool isValid)
-{
-    QIcon greenCircle = QIcon::fromTheme("green-circle", QIcon(":/icons/songbook/32x32/green-circle.png"));
-    QIcon redCircle = QIcon::fromTheme("red-circle", QIcon(":/icons/songbook/32x32/red-circle.png"));
-
-    if (isValid)
-      label->setPixmap(greenCircle.pixmap(24,24));
-    else
-      label->setPixmap(redCircle.pixmap(24,24));
-}
-
-void CDiagramWidget::updateChord()
-{
-  m_diagram->setType(m_guitar->isChecked() ? GuitarChord : UkuleleChord);
-  m_diagram->setChord(m_nameLineEdit->text());
-  m_diagram->setStrings(m_stringsLineEdit->text());
-
-  if (m_nameLineEdit->text().isEmpty())
-    {
-      m_messageLabel->setText("Choose a Chord Name\n\n");
-      updateCircleIcon(m_iconChordNameValid,false);
-
-      if (m_stringsLineEdit->text().length() != stringCount())
-        updateCircleIcon(m_iconStringLineEditValid,false);
-      else
-        updateCircleIcon(m_iconStringLineEditValid,true);
-    }
-  else if (m_stringsLineEdit->text().length() != stringCount())
-    {
-      updateCircleIcon(m_iconChordNameValid,true);
-      updateCircleIcon(m_iconStringLineEditValid,false);
-      m_messageLabel->setText("The Length of Strings\ndon't match the \nchosen instrument");
-    }
-  else
-    {
-      updateCircleIcon(m_iconChordNameValid,true);
-      updateCircleIcon(m_iconStringLineEditValid,true);
-      m_messageLabel->setText("\nChord valid\n");
-   }
-}
 //----------------------------------------------------------------------------
 
 CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWidget *parent)
@@ -304,9 +236,6 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
   setMaximumHeight(110);
   setToolTip(m_diagram->toString());
   setContextMenuPolicy(Qt::ActionsContextMenu);
-
-  updateBackground();
-  updateChordName();
 
   QAction* action = new QAction(tr("Edit"), parent);
   action->setIcon(QIcon::fromTheme("accessories-text-editor", QIcon(":/icons/tango/16x16/actions/accessories-text-editor.png")));
@@ -327,6 +256,8 @@ CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWi
   setLayout(layout);
 
   connect(this, SIGNAL(changed()), SLOT(updateBackground()));
+  connect(this, SIGNAL(changed()), SLOT(updateChordName()));
+  emit changed();
 }
 
 CDiagramWidget::~CDiagramWidget()
@@ -334,111 +265,17 @@ CDiagramWidget::~CDiagramWidget()
 
 bool CDiagramWidget::editChord()
 {
-  QDialog dialog(this);
-  dialog.setWindowTitle(tr("Chord editor"));
+  CDiagramEditor editor(this);
+  editor.setDiagram(m_diagram);
 
-  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
-						     QDialogButtonBox::Cancel);
-
-  connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-  connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
-  connect(this, SIGNAL(diagramChanged()), this, SLOT(updateChordName()));
-
-  QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
-  m_guitar  = new QRadioButton(tr("Guitar"));
-  connect(m_guitar, SIGNAL(clicked(bool)), this, SLOT(updateChord()));
-  QRadioButton *ukulele = new QRadioButton(tr("Ukulele"));
-  connect(ukulele, SIGNAL(clicked(bool)), this, SLOT(updateChord()));
-
-  m_guitar->setChecked(m_diagram->type() == GuitarChord);
-  ukulele->setChecked(m_diagram->type() == UkuleleChord);
-
-  QVBoxLayout *instrumentLayout = new QVBoxLayout;
-  instrumentLayout->addWidget(m_guitar);
-  instrumentLayout->addWidget(ukulele);
-  instrumentLayout->addStretch(1);
-  instrumentGroupBox->setLayout(instrumentLayout);
-
-  m_nameLineEdit = new QLineEdit;
-  m_nameLineEdit->setToolTip(tr("The chord name such as A&m for A-flat minor"));
-  m_nameLineEdit->setText(m_diagram->chord());
-  connect(m_nameLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(updateChord()));
-
-  QSpinBox *fretSpinBox = new QSpinBox;
-  fretSpinBox->setToolTip(tr("Fret"));
-  fretSpinBox->setRange(0,9);
-  fretSpinBox->setValue(m_diagram->fret().toInt());
-
-  m_stringsLineEdit = new QLineEdit;
-  m_stringsLineEdit->setMaxLength(CDiagram::GuitarStringCount);
-  m_stringsLineEdit->setToolTip(tr("Symbols for each string of the guitar from lowest pitch to highest:\n"
-				 "  X: string is not to be played\n"
-				 "  0: string is to be played open\n"
-				 "  [1-9]: string is to be played on the given numbered fret."));
-  QRegExp rx("[X\\d]+");
-  QRegExpValidator validator(rx, 0);
-  m_stringsLineEdit->setValidator(&validator);
-  m_stringsLineEdit->setText(m_diagram->strings());
-  connect(m_stringsLineEdit, SIGNAL(textChanged(const QString&)), this, SLOT(updateChord()));
-
-  QIcon redCircle = QIcon::fromTheme("red-circle", QIcon(":/icons/songbook/32x32/red-circle.png"));
-
-  m_iconChordNameValid = new QLabel;
-  m_iconChordNameValid->setPixmap(redCircle.pixmap(24,24));
-
-  m_iconStringLineEditValid = new QLabel;
-  m_iconStringLineEditValid->setPixmap(redCircle.pixmap(24,24));
-
-  m_messageLabel = new QLabel;
-  m_messageLabel->setText("Choose a Chord Name\n\n");
-
-  QLabel *iconeInformation = new QLabel;
-  QIcon iconInfo = QIcon::fromTheme("dialog-information");
-  iconeInformation->setPixmap(iconInfo.pixmap(48,48));
-
-  QHBoxLayout *layoutInformation = new QHBoxLayout;
-  layoutInformation->addWidget(iconeInformation);
-  layoutInformation->addWidget(m_messageLabel);
-
-  QCheckBox *importantCheckBox = new QCheckBox(tr("Important diagram"));
-  importantCheckBox->setToolTip(tr("Mark this diagram as important."));
-  importantCheckBox->setChecked(m_diagram->isImportant());
-
-  QLabel *nameLabel = new QLabel(tr("Name:"));
-  QLabel *fretLabel = new QLabel(tr("Fret:"));
-  QLabel *stringLabel = new QLabel(tr("Strings:"));
-
-  QGridLayout *chordLayout = new QGridLayout;
-  chordLayout->addWidget(nameLabel, 0, 0);
-  chordLayout->addWidget(m_nameLineEdit, 0, 1);
-  chordLayout->addWidget(m_iconChordNameValid, 0, 2);
-
-  chordLayout->addWidget(fretLabel, 1, 0);
-  chordLayout->addWidget(fretSpinBox, 1, 1);
-
-  chordLayout->addWidget(stringLabel, 2, 0);
-  chordLayout->addWidget(m_stringsLineEdit, 2, 1);
-  chordLayout->addWidget(m_iconStringLineEditValid, 2, 2);
-
-  QBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(instrumentGroupBox);
-  layout->addLayout(chordLayout);
-  layout->addWidget(importantCheckBox);
-  layout->addLayout(layoutInformation);
-  layout->addWidget(buttonBox);
-  dialog.setLayout(layout);
-
-  if (dialog.exec() == QDialog::Accepted)
+  if (editor.exec() == QDialog::Accepted)
     {
-      m_diagram->setChord(m_nameLineEdit->text());
-      m_diagram->setStrings(m_stringsLineEdit->text());
-      m_diagram->setFret((fretSpinBox->value() == 0) ? "" : QString::number(fretSpinBox->value()));
-      m_diagram->setImportant(importantCheckBox->isChecked());
-
+      m_diagram->setChord(editor.chordName());
+      m_diagram->setStrings(editor.chordStrings());
+      m_diagram->setFret(editor.chordFret());
+      m_diagram->setImportant(editor.isChordImportant());
       setToolTip(m_diagram->toString());
-      updateBackground();
-      update();
-      emit diagramChanged();
+      emit changed();
       return true;
     }
   return false;
@@ -526,7 +363,8 @@ CDiagramWidget * CDiagramArea::addDiagram()
 {
   CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", GuitarChord);
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
+  connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
+  connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
   if (diagram->editChord())
     {
       m_layout->addWidget(diagram);
@@ -546,7 +384,7 @@ CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const ChordType
   CDiagramWidget *diagram = new CDiagramWidget(chord, type);
   m_layout->addWidget(diagram);
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-  connect(diagram, SIGNAL(diagramChanged()), SLOT(onDiagramChanged()));
+  connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
   addNewDiagramButton();
   return diagram;

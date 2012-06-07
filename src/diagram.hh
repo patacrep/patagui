@@ -21,12 +21,9 @@
 
 #include "diagram.hh"
 #include "utils/utils.hh"
-#include "notification.hh"
 
 #include <QWidget>
 #include <QString>
-#include <QLineEdit>
-#include <QRadioButton>
 
 /**
  * \file diagram.hh
@@ -64,8 +61,6 @@ public:
 
   bool isImportant() const;
   void setImportant(bool value);
-
-  bool isValidChord() const;
 
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
@@ -113,15 +108,6 @@ public:
 
   bool isSelected() const;
   void setSelected(bool value);
-  int stringCount() const;
-  void updateCircleIcon(QLabel *Label, bool isValid);
-
-  QRadioButton *m_guitar;
-  QLineEdit *m_stringsLineEdit;
-  QLineEdit *m_nameLineEdit;
-  QLabel *m_messageLabel;
-  QLabel *m_iconChordNameValid;
-  QLabel *m_iconStringLineEditValid;
 
   QString toString();
   ChordType type() const;
@@ -134,12 +120,10 @@ signals:
   void changed();
   void clicked();
   void diagramCloseRequested();
-  void diagramChanged();
 
 private slots:
   void updateBackground();
   void updateChordName();
-  void updateChord();
 
 public slots:
   bool editChord();
