@@ -109,8 +109,6 @@ public:
 
   bool isChecked(const QModelIndex &index);
 
-  static bool copyFile(const QString & ASourcePath, const QString & ATargetDirectory);
-
 signals:
   void wasModified(bool modified);
   void songsChanged();
