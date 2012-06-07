@@ -283,50 +283,51 @@ bool CSongEditor::checkSongMandatoryFields()
 
   return true;
 }
+
 void CSongEditor::parseText()
 {
   m_song.lyrics.clear();
   m_song.scripture.clear();
-  bool scripture = false;
+
+  bool in_scripture = false;
+
   QStringList lines = codeEditor()->toPlainText().split("\n");
-  QString line;
-  foreach (line, lines)
+  foreach (QString line, lines)
     {
       if (Song::reBeginScripture.indexIn(line) > -1)
-	scripture = true;
+        in_scripture = true;
 
-      if (scripture)
-	{
-	  //ensures all lines in a scripture environment end with a % symbol
-	  if (!line.endsWith("%"))
-	    line = line.append("%");
-	  m_song.scripture << line;
-	}
+      if (in_scripture)
+        {
+          // ensures all lines in a scripture environment end with a % symbol
+          if (!line.endsWith("%"))
+            line = line.append("%");
+          m_song.scripture << line;
+        }
       else
-	{
-	  //add a level of indentation
-	  if (!line.isEmpty())
-	    line = line.prepend("  ");
-	  m_song.lyrics << line;
-	}
+        {
+          // add a level of indentation
+          if (!line.isEmpty())
+            line = line.prepend("  ");
+          m_song.lyrics << line;
+        }
 
       if (Song::reEndScripture.indexIn(line) > -1)
-	scripture = false;
+        in_scripture = false;
     }
 
   // remove blank line at the end of input
-    while (m_song.lyrics.last().trimmed().isEmpty())
-      {
-	if (m_song.lyrics.isEmpty())
-	  break;
-	m_song.lyrics.removeLast();
-      }
+  while (!m_song.lyrics.empty() && m_song.lyrics.last().trimmed().isEmpty())
+    {
+      m_song.lyrics.removeLast();
+    }
 
-  if (!m_song.scripture.isEmpty())
-    while (m_song.scripture.last().trimmed().isEmpty())
+  while (!m_song.scripture.isEmpty() && m_song.scripture.last().trimmed().isEmpty())
+    {
       m_song.scripture.removeLast();
+    }
 
-  //finally insert newline after endsong macro
+  // finally insert newline after endsong macro
   m_song.lyrics << QString();
 }
 
