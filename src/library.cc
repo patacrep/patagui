@@ -18,10 +18,15 @@
 //******************************************************************************
 #include "library.hh"
 
-#include <QtGui>
-
 #include "main-window.hh"
 #include "progress-bar.hh"
+
+#include <QStringListModel>
+#include <QDirIterator>
+#include <QPixmapCache>
+#include <QStatusBar>
+#include <QDesktopServices>
+#include <QSettings>
 
 #include <QDebug>
 
