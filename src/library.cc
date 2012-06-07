@@ -21,7 +21,6 @@
 #include <QtGui>
 
 #include "main-window.hh"
-#include "utils/utils.hh"
 #include "progress-bar.hh"
 
 #include <QDebug>
@@ -376,8 +375,8 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
   // update song cover information
   song.coverPath = artistDirectory.absolutePath();
   song.coverName = (!song.album.isEmpty()) ?
-    SbUtils::stringToFilename(song.album,  "-") :
-    SbUtils::stringToFilename(song.artist, "-"); //fallback on artist name
+    stringToFilename(song.album,  "-") :
+    stringToFilename(song.artist, "-"); //fallback on artist name
 
   // guess the cover filename
   QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
@@ -419,8 +418,8 @@ void CLibrary::deleteSong(const QString &path)
 
 QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 {
-  QString artistInPath = SbUtils::stringToFilename(artist, "_");
-  QString titleInPath = SbUtils::stringToFilename(title, "_");
+  QString artistInPath = stringToFilename(artist, "_");
+  QString titleInPath = stringToFilename(title, "_");
 
   return QString("%1/songs/%2/%3.sg")
     .arg(directory().canonicalPath())
@@ -431,4 +430,24 @@ QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 QString CLibrary::pathToSong(Song &song) const
 {
   return pathToSong(song.artist, song.title);
+}
+
+QString CLibrary::stringToFilename(const QString & AString, const QString & sep)
+{
+  QString str(AString.toLower());
+
+  //replace whitespaces with separator
+  str.replace(QRegExp("(\\s+)|(\\W+)"), sep);
+  str.remove(QRegExp("_+$"));
+
+  //replace utf8 characters
+  str.replace(QRegExp("[àâ]"), "a");
+  str.replace(QRegExp("[ïî]"), "i");
+  str.replace(QRegExp("[óô]"), "o");
+  str.replace(QRegExp("[ùúû]"), "u");
+  str.replace(QRegExp("[éèêë]"), "e");
+  str.replace(QString("ñ"), QString("n"));
+  str.replace(QString("ç"), QString("c"));
+
+  return str;
 }

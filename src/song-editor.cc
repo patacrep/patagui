@@ -24,7 +24,6 @@
 #include "song-code-editor.hh"
 #include "song-highlighter.hh"
 #include "library.hh"
-#include "utils/utils.hh"
 #include "utils/lineedit.hh"
 
 #include <QFile>

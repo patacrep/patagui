@@ -27,8 +27,6 @@
 
 #include <QtVariantProperty>
 
-#include "utils/utils.hh"
-
 class CLibrary;
 
 class QWidget;
@@ -110,6 +108,8 @@ public:
   virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
   bool isChecked(const QModelIndex &index);
+
+  static bool copyFile(const QString & ASourcePath, const QString & ATargetDirectory);
 
 signals:
   void wasModified(bool modified);

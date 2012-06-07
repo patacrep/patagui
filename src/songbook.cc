@@ -20,6 +20,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QMessageBox>
 
 #include <QScriptEngine>
 #include <QScriptValue>
@@ -472,7 +473,7 @@ void CSongbook::save(const QString & filename)
 	      else if(it.key() == "picture")
 		{
 		  string_value = m_fileManager->value(property);
-		  if(SbUtils::copyFile(string_value, QString("%1/img").arg(workingPath())))
+		  if (copyFile(string_value, QString("%1/img").arg(workingPath())))
 		    string_value = QFileInfo(string_value).baseName();
 
 		  if (!string_value.isEmpty())
@@ -741,4 +742,27 @@ void CSongbook::sourceModelReset()
     }
   songsToSelection();
   endResetModel();
+}
+
+bool CSongbook::copyFile(const QString & ASourcePath, const QString & ATargetDirectory)
+{
+  QFile sourceFile(ASourcePath);
+  if(sourceFile.exists())
+    {
+      QFileInfo sourceFileInfo(ASourcePath);
+      QString targetPath = QString("%1/%2").arg(ATargetDirectory).arg(sourceFileInfo.fileName());
+      QFile targetFile(targetPath);
+      QFileInfo targetFileInfo(targetPath);
+
+      //ask for confirmation
+      if( targetFile.exists() &&
+	  QMessageBox::question(NULL, QString("File conflict"),
+				QString(tr("Replace the file \"%1\" ?")).arg(targetFileInfo.fileName()),
+				QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton) == QMessageBox::Yes)
+	{
+	  targetFile.remove();
+	}
+      return sourceFile.copy(targetPath); //QFile::copy does not overwrite data
+    }
+  return false;
 }

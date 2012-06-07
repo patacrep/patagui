@@ -19,9 +19,6 @@
 #ifndef __DIAGRAM_HH__
 #define __DIAGRAM_HH__
 
-#include "diagram.hh"
-#include "utils/utils.hh"
-
 #include <QWidget>
 #include <QString>
 
@@ -36,10 +33,8 @@ class CDiagram : public QWidget
   Q_OBJECT
 
 public:
-  enum StringCount {
-    GuitarStringCount=6,
-    UkuleleStringCount=4
-  };
+  enum StringCount { GuitarStringCount=6, UkuleleStringCount=4 };
+  enum ChordType { GuitarChord, UkuleleChord };
 
   CDiagram(const QString & chord, const ChordType & type = GuitarChord, QWidget *parent = 0);
   ~CDiagram();
@@ -101,7 +96,9 @@ public:
 
   /// Constructor.
   /// @param chord a gtab macro content such as B&m}{1:X0222 representing a chord
-  CDiagramWidget(const QString & chord, const ChordType & type = GuitarChord, QWidget *parent = 0);
+  CDiagramWidget(const QString & chord,
+		 const CDiagram::ChordType & type = CDiagram::GuitarChord,
+		 QWidget *parent = 0);
 
   ///Destructor.
   ~CDiagramWidget();
@@ -110,7 +107,7 @@ public:
   void setSelected(bool value);
 
   QString toString();
-  ChordType type() const;
+  CDiagram::ChordType type() const;
 
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -151,7 +148,7 @@ class CDiagramArea : public QWidget
 public:
   CDiagramArea(QWidget *parent=0);
 
-  CDiagramWidget * addDiagram(const QString & chord, const ChordType & type);
+  CDiagramWidget * addDiagram(const QString & chord, const CDiagram::ChordType & type);
   QList<CDiagramWidget*> diagrams() const;
 
 protected:

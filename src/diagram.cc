@@ -202,12 +202,12 @@ void CDiagram::setStrings(const QString & str)
   m_strings = str;
 }
 
-ChordType CDiagram::type() const
+CDiagram::ChordType CDiagram::type() const
 {
   return m_type;
 }
 
-void CDiagram::setType(const ChordType & type)
+void CDiagram::setType(const CDiagram::ChordType & type)
 {
   m_type = type;
 }
@@ -224,7 +224,9 @@ void CDiagram::setImportant(bool value)
 
 //----------------------------------------------------------------------------
 
-CDiagramWidget::CDiagramWidget(const QString & gtab, const ChordType & type, QWidget *parent)
+CDiagramWidget::CDiagramWidget(const QString & gtab,
+			       const CDiagram::ChordType & type,
+			       QWidget *parent)
   : QWidget(parent)
   , m_diagram(new CDiagram(gtab, type))
   , m_chordName(new QLabel)
@@ -298,9 +300,9 @@ void CDiagramWidget::mousePressEvent(QMouseEvent *event)
 
 void CDiagramWidget::updateBackground()
 {
-  if(m_diagram->type() == GuitarChord)
+  if(m_diagram->type() == CDiagram::GuitarChord)
     setPalette(QPalette(QColor(114,159,207)));
-  else if(m_diagram->type() == UkuleleChord)
+  else if(m_diagram->type() == CDiagram::UkuleleChord)
     setPalette(QPalette(QColor(173,127,168)));
 
   if ( m_diagram->isImportant() )
@@ -340,7 +342,7 @@ QString CDiagramWidget::toString()
   return m_diagram->toString();
 }
 
-ChordType CDiagramWidget::type() const
+CDiagram::ChordType CDiagramWidget::type() const
 {
   return m_diagram->type();
 }
@@ -361,7 +363,7 @@ CDiagramArea::CDiagramArea(QWidget *parent)
 
 CDiagramWidget * CDiagramArea::addDiagram()
 {
-  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", GuitarChord);
+  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", CDiagram::GuitarChord);
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
@@ -379,7 +381,7 @@ CDiagramWidget * CDiagramArea::addDiagram()
   return diagram;
 }
 
-CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const ChordType & type)
+CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const CDiagram::ChordType & type)
 {
   CDiagramWidget *diagram = new CDiagramWidget(chord, type);
   m_layout->addWidget(diagram);

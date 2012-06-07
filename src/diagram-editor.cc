@@ -126,8 +126,8 @@ bool CDiagramEditor::isChordImportant() const
 
 void CDiagramEditor::setDiagram(CDiagram *diagram)
 {
-  m_guitar->setChecked(diagram->type() == GuitarChord);
-  m_ukulele->setChecked(diagram->type() == UkuleleChord);
+  m_guitar->setChecked(diagram->type() == CDiagram::GuitarChord);
+  m_ukulele->setChecked(diagram->type() == CDiagram::UkuleleChord);
   m_nameLineEdit->setText(diagram->chord());
   m_fretSpinBox->setValue(diagram->fret().toInt());
   m_stringsLineEdit->setText(diagram->strings());

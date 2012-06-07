@@ -203,13 +203,13 @@ void CSongHeaderEditor::update()
   QString gtab;
   foreach (gtab, song().gtabs)
     {
-      m_diagramArea->addDiagram(gtab, GuitarChord);
+      m_diagramArea->addDiagram(gtab, CDiagram::GuitarChord);
     }
 
   QString utab;
   foreach (utab, song().utabs)
     {
-      m_diagramArea->addDiagram(utab, UkuleleChord);
+      m_diagramArea->addDiagram(utab, CDiagram::UkuleleChord);
     }
 }
 
@@ -274,9 +274,9 @@ void CSongHeaderEditor::onDiagramsChanged()
   song().utabs = QStringList();
   foreach (CDiagramWidget *diagram, m_diagramArea->diagrams())
     {
-      if (diagram->type() == GuitarChord)
+      if (diagram->type() == CDiagram::GuitarChord)
 	song().gtabs << diagram->toString();
-      else if (diagram->type() == UkuleleChord)
+      else if (diagram->type() == CDiagram::UkuleleChord)
 	song().utabs << diagram->toString();
     }
   emit(contentsChanged());

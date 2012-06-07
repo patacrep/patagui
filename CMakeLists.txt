@@ -40,7 +40,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/filter-lineedit.cc
   src/utils/lineedit.cc
   src/utils/lineedit.cc
-  src/utils/utils.cc
   src/code-editor.cc
   src/tab-widget.cc
   src/notification.cc

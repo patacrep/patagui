@@ -20,7 +20,6 @@
 
 #include <QtGui>
 
-#include "utils/utils.hh"
 #include "label.hh"
 #include "library.hh"
 #include "library-view.hh"
@@ -44,8 +43,6 @@
 #include "make-songbook-process.hh"
 
 #include <QDebug>
-
-using namespace SbUtils;
 
 CMainWindow::CMainWindow(QWidget *parent)
   : QMainWindow(parent)

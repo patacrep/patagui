@@ -18,8 +18,6 @@
 //******************************************************************************
 #include "song.hh"
 
-#include "utils/utils.hh"
-
 #include <QFile>
 #include <QFileInfo>
 #include <QRegExp>
