@@ -138,7 +138,7 @@ bool CDiagramEditor::checkChord()
 {
   m_infoIconLabel->show();
   m_messageLabel->show();
-  QString css = QString("QLineEdit{ border: 1px solid red; border-radius: 2px; }");
+  QString css("QLineEdit{ border: 1px solid red; border-radius: 2px; }");
 
   if (m_nameLineEdit->text().isEmpty())
     {

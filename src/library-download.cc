@@ -291,7 +291,7 @@ QString CLibraryDownload::findFileName()
 
       // fallback
       if (filename.isEmpty())
-	filename = QString("songbook.tar.gz");
+	filename = "songbook.tar.gz";
     }
   return filename;
 }

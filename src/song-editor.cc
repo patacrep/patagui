@@ -263,7 +263,7 @@ void CSongEditor::save()
 
 bool CSongEditor::checkSongMandatoryFields()
 {
-  QString css = QString("QLineEdit{ border: 1px solid red; border-radius: 2px; }");
+  QString css("QLineEdit{ border: 1px solid red; border-radius: 2px; }");
 
   if (song().title.isEmpty())
     {

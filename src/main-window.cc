@@ -464,11 +464,11 @@ void CMainWindow::reportBug()
 
 void CMainWindow::about()
 {
-  QString title = QString(tr("About Patacrep! Songbook Client"));
+  QString title(tr("About Patacrep! Songbook Client"));
   QString version = QCoreApplication::applicationVersion();
 
-  QString description = QString(tr("This program allows one to build customized songbooks from "
-				   "<a href=\"http::www.patacrep.com\">www.patacrep.com</a>"));
+  QString description(tr("This program allows one to build customized songbooks from "
+			 "<a href=\"http::www.patacrep.com\">www.patacrep.com</a>"));
 
   QStringList authorsList = QStringList() << "Crep (R. Goffe)"
                                           << "Lohrun (A. Dupas)"
