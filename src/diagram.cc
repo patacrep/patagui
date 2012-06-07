@@ -72,7 +72,7 @@ QString CDiagram::toString()
       qWarning() << tr("CDiagram::toString unsupported chord type");
     }
 
-  if(isImportant())
+  if (isImportant())
     str.append("*");
 
   //the chord name such as Am
@@ -80,7 +80,7 @@ QString CDiagram::toString()
   //the fret
   str.append(QString("%2").arg(fret()));
   //the strings
-  if(!fret().isEmpty())
+  if (!fret().isEmpty())
     str.append(":");
   str.append(QString("%3}").arg(strings()));
 
@@ -89,9 +89,9 @@ QString CDiagram::toString()
 
 void CDiagram::fromString(const QString & str)
 {
-  if(str.contains("gtab"))
+  if (str.contains("gtab"))
     m_type = GuitarChord;
-  else if(str.contains("utab"))
+  else if (str.contains("utab"))
     m_type = UkuleleChord;
   else
     qWarning() << tr("CDiagram::fromString unsupported chord type");
@@ -104,7 +104,7 @@ void CDiagram::fromString(const QString & str)
   reFret.indexIn(str);
   setFret(reFret.cap(1));
 
-  if(fret().isEmpty())
+  if (fret().isEmpty())
     {
       reStringsNoFret.indexIn(str);
       setStrings(reStringsNoFret.cap(1));
@@ -127,23 +127,23 @@ void CDiagram::paintEvent(QPaintEvent *)
   int height = 4*cellHeight;
   int padding = 13;
   //draw a vertical line for each string
-  for(int i=0; i<strings().length(); ++i)
+  for (int i=0; i<strings().length(); ++i)
     {
       painter.drawLine(i*cellWidth+padding, padding, i*cellWidth+padding, height+padding);
     }
 
   //draw 5 horizontal lines
-  for(int i=0; i<5; ++i)
+  for (int i=0; i<5; ++i)
     {
       painter.drawLine(padding, i*cellHeight+padding, width+padding, i*cellHeight+padding);
     }
 
   //draw played strings
-  for(int i=0; i<strings().length(); ++i)
+  for (int i=0; i<strings().length(); ++i)
     {
       QRect stringRect(0, 0, cellWidth-4, cellHeight-4);
       int value = strings()[i].digitValue();
-      if(value == -1)
+      if (value == -1)
 	{
 	  stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3, 3 );
 	  painter.setFont(QFont("Arial", 9));
@@ -152,7 +152,7 @@ void CDiagram::paintEvent(QPaintEvent *)
       else
 	{
 	  stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3, value*cellHeight+3 );
-	  if(value == 0)
+	  if (value == 0)
 	    painter.drawEllipse(stringRect);
 	  else
 	    fillEllipse(&painter, stringRect, QBrush(QColor(Qt::black)));
@@ -300,9 +300,9 @@ void CDiagramWidget::mousePressEvent(QMouseEvent *event)
 
 void CDiagramWidget::updateBackground()
 {
-  if(m_diagram->type() == CDiagram::GuitarChord)
+  if (m_diagram->type() == CDiagram::GuitarChord)
     setPalette(QPalette(QColor(114,159,207)));
-  else if(m_diagram->type() == CDiagram::UkuleleChord)
+  else if (m_diagram->type() == CDiagram::UkuleleChord)
     setPalette(QPalette(QColor(173,127,168)));
 
   if ( m_diagram->isImportant() )
@@ -405,7 +405,7 @@ void CDiagramArea::removeDiagram()
 
 void CDiagramArea::addNewDiagramButton()
 {
-  if(m_addDiagramButton)
+  if (m_addDiagramButton)
     {
       m_layout->removeItem(m_spacer);
       delete m_addDiagramButton;
@@ -424,7 +424,7 @@ void CDiagramArea::addNewDiagramButton()
 QList<CDiagramWidget*> CDiagramArea::diagrams() const
 {
   QList<CDiagramWidget*>  list;
-  for(int i=0; i < m_layout->count(); ++i)
+  for (int i=0; i < m_layout->count(); ++i)
     if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
       list << diagram;
   return list;
@@ -446,14 +446,14 @@ void CDiagramArea::keyPressEvent(QKeyEvent *event)
   if (event->key() == Qt::Key_Delete)
     {
       bool changed = false;
-      for(int i=0; i < m_layout->count(); ++i)
+      for (int i=0; i < m_layout->count(); ++i)
         if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
-	  if(diagram->isSelected())
+	  if (diagram->isSelected())
             {
 	      changed = true;
 	      diagram->deleteLater();
             }
-      if(changed)
+      if (changed)
 	onDiagramChanged();
     }
 }

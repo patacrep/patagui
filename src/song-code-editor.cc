@@ -96,7 +96,7 @@ void CSongCodeEditor::readSettings()
 
   QFont font;
   QString fontstr = settings.value("font", QString()).toString();
-  if(fontstr.isEmpty())
+  if (fontstr.isEmpty())
     {
       font = QFont("Monospace",11);
       font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
@@ -111,7 +111,7 @@ void CSongCodeEditor::readSettings()
 
 #ifdef ENABLE_SPELLCHECK
   m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
-  for(uint i = 0; i < m_maxSuggestedWords; ++i)
+  for (uint i = 0; i < m_maxSuggestedWords; ++i)
     {
       QAction *action = new QAction(this);
       action->setVisible(false);
@@ -166,7 +166,7 @@ QString CSongCodeEditor::textUnderCursor() const
 {
   QTextCursor tc = textCursor();
   static QSet<QChar> delimiters;
-  if( delimiters.isEmpty() )
+  if ( delimiters.isEmpty() )
     {
       delimiters.insert( QChar::fromAscii(',') );
       delimiters.insert( QChar::fromAscii('!') );
@@ -176,16 +176,16 @@ QString CSongCodeEditor::textUnderCursor() const
     }
 
   tc.anchor();
-  while( 1 )
+  while ( 1 )
     {
       // the '-1' comes from the TextCursor always being placed between characters
       int pos = tc.position() - 1;
-      if( pos < 0 )
+      if ( pos < 0 )
 	break;
 
       QChar ch = document()->characterAt(pos);
-      if( pos < 0 || document()->characterAt(pos) == QChar::fromAscii(' ') )
-	if( ch.isSpace() || delimiters.contains(ch) )
+      if ( pos < 0 || document()->characterAt(pos) == QChar::fromAscii(' ') )
+ if ( ch.isSpace() || delimiters.contains(ch) )
 	  break;
 
       tc.movePosition( QTextCursor::Left, QTextCursor::KeepAnchor );
@@ -248,7 +248,7 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
 
 void CSongCodeEditor::highlightEnvironments()
 {
-  if(!environmentsHighlighted())
+  if (!environmentsHighlighted())
     return;
 
   SongEnvironment env = None;
@@ -257,16 +257,16 @@ void CSongCodeEditor::highlightEnvironments()
   QList<QTextEdit::ExtraSelection> extraSelections;
   foreach (QString line, lines)
     {
-      if(Song::reBeginVerse.indexIn(line) > -1)
+      if (Song::reBeginVerse.indexIn(line) > -1)
 	env = Verse;
-      else if(Song::reBeginChorus.indexIn(line) > -1)
+      else if (Song::reBeginChorus.indexIn(line) > -1)
 	env = Chorus;
-      else if(Song::reBeginBridge.indexIn(line) > -1)
+      else if (Song::reBeginBridge.indexIn(line) > -1)
 	env = Bridge;
-      else if(Song::reBeginScripture.indexIn(line) > -1)
+      else if (Song::reBeginScripture.indexIn(line) > -1)
 	env = Scripture;
 
-      if( ((env == Verse) && (Song::reEndVerse.indexIn(line) > -1)) ||
+      if ( ((env == Verse) && (Song::reEndVerse.indexIn(line) > -1)) ||
 	  ((env == Bridge) && (Song::reEndBridge.indexIn(line) > -1)) ||
 	  ((env == Chorus) && (Song::reEndChorus.indexIn(line) > -1)) ||
 	  ((env == Scripture) && (Song::reEndScripture.indexIn(line) > -1)) )
@@ -316,7 +316,7 @@ void CSongCodeEditor::indent()
   QTextCursor cursor = textCursor();
   cursor.beginEditBlock();
   cursor.movePosition(QTextCursor::Start);
-  while(!cursor.atEnd())
+  while (!cursor.atEnd())
     {
       indentLine(cursor);
       cursor.movePosition(QTextCursor::NextBlock);
@@ -334,18 +334,18 @@ void CSongCodeEditor::indentSelection()
 
   //swap such as the cursor "it" always points
   //to the beginning of the selection
-  if(it > cursor)
+  if (it > cursor)
     {
       it.setPosition(cursor.position());
       cursor.setPosition(cursor.anchor());
     }
 
   it.movePosition(QTextCursor::StartOfBlock);
-  while(it <= cursor)
+  while (it <= cursor)
     {
       indentLine(it);
       it.movePosition(QTextCursor::EndOfBlock);
-      if(!it.atEnd())
+      if (!it.atEnd())
 	it.movePosition(QTextCursor::NextBlock);
       else
 	break;
@@ -356,7 +356,7 @@ void CSongCodeEditor::indentSelection()
 void CSongCodeEditor::indentLine(const QTextCursor & cur)
 {
   //if line only contains whitespaces, remove them and exit
-  if(cur.block().text().trimmed().isEmpty() || cur.atStart())
+  if (cur.block().text().trimmed().isEmpty() || cur.atStart())
     {
       trimLine(cur);
       return;
@@ -372,11 +372,11 @@ void CSongCodeEditor::indentLine(const QTextCursor & cur)
       cursor.movePosition(QTextCursor::Up);
       prevLine = cursor.block().text();
     }
-  while(cursor.block().text().trimmed().isEmpty());
+  while (cursor.block().text().trimmed().isEmpty());
 
   //deduce column from previous line
   int spaces = 0;
-  while(prevLine.startsWith(" "))
+  while (prevLine.startsWith(" "))
     {
       prevLine.remove(0,1);
       ++spaces;
@@ -384,18 +384,18 @@ void CSongCodeEditor::indentLine(const QTextCursor & cur)
   int index = spaces/2;
 
   //add indentation level if previous line begins with \begin
-  if(prevLine.startsWith("\\begin"))
+  if (prevLine.startsWith("\\begin"))
     ++index;
 
   cursor = cur;
   cursor.movePosition (QTextCursor::StartOfBlock);
   //remove indentation level if current line begins with \end
-  if(cursor.block().text().contains("\\end") && index!=0)
+  if (cursor.block().text().contains("\\end") && index!=0)
     --index;
 
   //performs the correct indentation
   trimLine(cursor);
-  for(int i=0; i < index; ++i)
+  for (int i=0; i < index; ++i)
     cursor.insertText("  ");
 }
 
@@ -403,7 +403,7 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
 {
   QTextCursor cursor(cur);
   QString str  = cursor.block().text();
-  while( str.startsWith(" ") )
+  while ( str.startsWith(" ") )
     {
       cursor.deleteChar();
       str  = cursor.block().text();
@@ -447,7 +447,7 @@ void CSongCodeEditor::correctWord()
 
 QStringList CSongCodeEditor::getWordPropositions(const QString &word)
 {
-  if(!checker())
+  if (!checker())
     return QStringList();
 
   QStringList wordList;
@@ -456,7 +456,7 @@ QStringList CSongCodeEditor::getWordPropositions(const QString &word)
   QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
   encodedString = codec->fromUnicode(word);
 
-  if(checker()->spell(encodedString.data()))
+  if (checker()->spell(encodedString.data()))
     return wordList;
 
   char ** wlst;
@@ -538,7 +538,7 @@ void CSongCodeEditor::addWord()
 
 Hunspell* CSongCodeEditor::checker() const
 {
-  if(!highlighter()) return 0;
+  if (!highlighter()) return 0;
   return highlighter()->checker();
 }
 #endif //ENABLE_SPELLCHECK

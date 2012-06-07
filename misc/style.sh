@@ -2,7 +2,7 @@
 #Description: remove trailing spaces
 
 sed -i 's/[ \t]*$//' src/*.*
-sed -i 's/if(/if (/g' src/*.*
-sed -i 's/for(/for (/g' src/*.*
-sed -i 's/while(/while (/g' src/*.*
+sed -i 's/\sif(/ if (/g' src/*.*
+sed -i 's/\sfor(/ for (/g' src/*.*
+sed -i 's/\swhile(/ while (/g' src/*.*
 

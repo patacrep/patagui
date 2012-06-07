@@ -89,13 +89,13 @@ QDir CLibrary::directory() const
 
 void CLibrary::setDirectory(const QString &directory)
 {
-  if(!directory.isEmpty())
+  if (!directory.isEmpty())
     setDirectory(QDir(directory));
 }
 
 void CLibrary::setDirectory(const QDir &directory)
 {
-  if(directory != m_directory)
+  if (directory != m_directory)
     {
       m_directory = directory;
       QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
@@ -235,7 +235,7 @@ void CLibrary::update()
   QStringList paths;
 
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
-  while(it.hasNext())
+  while (it.hasNext())
     paths.append(it.next());
 
   m_parent->statusBar()->showMessage(tr("Updating the library..."));
@@ -278,7 +278,7 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 {
   m_songs << song;
 
-  if(resetModel)
+  if (resetModel)
     {
       reset();
       emit(wasModified());
@@ -382,7 +382,7 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
   QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
 
   // actually write the image
-  if(!QFile(coverFilename).exists())
+  if (!QFile(coverFilename).exists())
     cover.save(coverFilename);
 }
 

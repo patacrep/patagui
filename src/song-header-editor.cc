@@ -309,7 +309,7 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   setBackgroundRole(QPalette::Dark);
 
   QPixmap pixmap;
-  if(!QPixmapCache::find("cover-missing-full", &pixmap))
+  if (!QPixmapCache::find("cover-missing-full", &pixmap))
     {
       pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(115, 115);
       QPixmapCache::insert("cover-missing-full", pixmap);
@@ -361,12 +361,12 @@ void CCoverDropArea::clear()
 
 void CCoverDropArea::update()
 {
-  if(m_filename.isEmpty() && !song().coverPath.isEmpty() && !song().coverName.isEmpty())
+  if (m_filename.isEmpty() && !song().coverPath.isEmpty() && !song().coverName.isEmpty())
     m_filename = QString("%1/%2.jpg").arg(song().coverPath).arg(song().coverName);
 
   // display the cover art
   QFileInfo file = QFileInfo(m_filename);
-  if(file.exists())
+  if (file.exists())
     {
       song().coverPath = file.absolutePath();
       song().coverName = file.baseName();
@@ -389,7 +389,7 @@ void CCoverDropArea::selectCover()
                                                   song().coverPath,
                                                   tr("Images (*.jpg)"));
 
-  if( !filename.isEmpty() && filename != m_filename )
+  if ( !filename.isEmpty() && filename != m_filename )
     {
       m_filename = filename;
       update();
@@ -419,7 +419,7 @@ const QImage & CCoverDropArea::cover()
 
 void CCoverDropArea::setCover(const QImage &cover)
 {
-  if(cover.isNull())
+  if (cover.isNull())
     qWarning() << tr("CCoverDropArea::setCover invalid cover");
 
   m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);

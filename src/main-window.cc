@@ -713,10 +713,10 @@ void CMainWindow::makeCleanall()
 
 void CMainWindow::cancelProcess()
 {
-  if(m_builder->state() == QProcess::Running)
+  if (m_builder->state() == QProcess::Running)
     {
       m_builder->close();
-      if(m_builder->command() == buildCommand())
+      if (m_builder->command() == buildCommand())
 	makeClean();
     }
 }
@@ -898,7 +898,7 @@ void CMainWindow::cleanDialog()
   connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
 
-  if(!m_tempFilesmodel)
+  if (!m_tempFilesmodel)
     {
       m_tempFilesmodel = new QFileSystemModel;
       m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());

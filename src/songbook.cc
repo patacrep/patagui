@@ -139,7 +139,7 @@ void CSongbook::reset()
   QMap< QString, QtVariantProperty* >::const_iterator it;
   for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
     {
-      if(it.key() != "mainfontsize" && it.key() != "picture")
+      if (it.key() != "mainfontsize" && it.key() != "picture")
 	it.value()->setValue(QVariant(""));
     }
   setModified(false);
@@ -209,9 +209,9 @@ void CSongbook::changeTemplate(const QString & filename)
         QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
         while (it != m_parameters.constEnd())
           {
-	    if(it.key() == "mainfontsize")
+	    if (it.key() == "mainfontsize")
 	      oldValues.insert(it.key(),m_unitManager->valueText(it.value()));
-	    else if( it.key() == "picture")
+	    else if ( it.key() == "picture")
 	      oldValues.insert(it.key(),m_fileManager->value(it.value()));
 	    else
 	      {
@@ -461,7 +461,7 @@ void CSongbook::save(const QString & filename)
             }
 	  else //non variant types
 	    {
-	      if(it.key() == "mainfontsize")
+	      if (it.key() == "mainfontsize")
 		{
 		  string_value = m_unitManager->valueText(property);
 		  if (!string_value.isEmpty())
@@ -470,7 +470,7 @@ void CSongbook::save(const QString & filename)
 			  << string_value << "\",\n";
 		    }
 		}
-	      else if(it.key() == "picture")
+	      else if (it.key() == "picture")
 		{
 		  string_value = m_fileManager->value(property);
 		  if (copyFile(string_value, QString("%1/img").arg(workingPath())))
@@ -747,7 +747,7 @@ void CSongbook::sourceModelReset()
 bool CSongbook::copyFile(const QString & ASourcePath, const QString & ATargetDirectory)
 {
   QFile sourceFile(ASourcePath);
-  if(sourceFile.exists())
+  if (sourceFile.exists())
     {
       QFileInfo sourceFileInfo(ASourcePath);
       QString targetPath = QString("%1/%2").arg(ATargetDirectory).arg(sourceFileInfo.fileName());
@@ -755,7 +755,7 @@ bool CSongbook::copyFile(const QString & ASourcePath, const QString & ATargetDir
       QFileInfo targetFileInfo(targetPath);
 
       //ask for confirmation
-      if( targetFile.exists() &&
+      if ( targetFile.exists() &&
 	  QMessageBox::question(NULL, QString("File conflict"),
 				QString(tr("Replace the file \"%1\" ?")).arg(targetFileInfo.fileName()),
 				QMessageBox::Yes, QMessageBox::No, QMessageBox::NoButton) == QMessageBox::Yes)

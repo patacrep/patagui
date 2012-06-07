@@ -86,7 +86,7 @@ void CFileFactory::browse()
 						  tr("Open"),
 						  QDir::currentPath(),
 						  tr("Images (*.jpg)"));
-  if(!filename.isEmpty())
+  if (!filename.isEmpty())
     m_manager->setFilename(m_property, filename);
 }
 

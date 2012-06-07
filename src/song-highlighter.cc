@@ -192,14 +192,14 @@ bool CSongHighlighter::checkWord(const QString &word)
 
 void CSongHighlighter::setDictionary(const QString &filename)
 {
-  if(m_checker)
+  if (m_checker)
     {
       delete m_checker;
       m_checker = 0;
     }
 
   QFileInfo fi(filename);
-  if(filename.isEmpty() || !fi.exists() || !fi.isReadable())
+  if (filename.isEmpty() || !fi.exists() || !fi.isReadable())
     {
       qWarning() << tr("CSongHighlighter::setDictionary cannot read open dictionary : ") << filename;
     }
@@ -227,7 +227,7 @@ void CSongHighlighter::addWord(const QString & word)
 
 void CSongHighlighter::setSpellCheck(const bool value)
 {
-  if(m_isSpellCheckActive != value)
+  if (m_isSpellCheckActive != value)
     {
       m_isSpellCheckActive = value;
       rehighlight();

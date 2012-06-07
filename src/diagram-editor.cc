@@ -45,7 +45,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
 
   connect(buttonBox, SIGNAL(accepted()), SLOT(checkChord()));
   connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
-  
+
   QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
   m_guitar  = new QRadioButton(tr("Guitar"));
   m_ukulele = new QRadioButton(tr("Ukulele"));
@@ -115,7 +115,7 @@ QString CDiagramEditor::chordStrings() const
 
 QString CDiagramEditor::chordFret() const
 {
-  return (m_fretSpinBox->value() == 0) ? 
+  return (m_fretSpinBox->value() == 0) ?
     "" : QString::number(m_fretSpinBox->value());
 }
 

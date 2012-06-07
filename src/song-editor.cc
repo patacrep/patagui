@@ -292,10 +292,10 @@ void CSongEditor::parseText()
   QString line;
   foreach (line, lines)
     {
-      if(Song::reBeginScripture.indexIn(line) > -1)
+      if (Song::reBeginScripture.indexIn(line) > -1)
 	scripture = true;
 
-      if(scripture)
+      if (scripture)
 	{
 	  //ensures all lines in a scripture environment end with a % symbol
 	  if (!line.endsWith("%"))
@@ -310,7 +310,7 @@ void CSongEditor::parseText()
 	  m_song.lyrics << line;
 	}
 
-      if(Song::reEndScripture.indexIn(line) > -1)
+      if (Song::reEndScripture.indexIn(line) > -1)
 	scripture = false;
     }
 

@@ -152,7 +152,7 @@ void CMakeSongbookProcess::onFinished(int exitCode, QProcess::ExitStatus exitSta
     return;
 
   emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
-  if(!QDesktopServices::openUrl(urlToOpen()) ||
+  if (!QDesktopServices::openUrl(urlToOpen()) ||
      !QFile(urlToOpen().toLocalFile()).exists())
     emit(error(QProcess::UnknownError));
 }

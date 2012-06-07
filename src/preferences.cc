@@ -130,7 +130,7 @@ void ConfigDialog::changePage(QListWidgetItem *current,
 
 void ConfigDialog::closeEvent(QCloseEvent *event)
 {
-  for( int i = 0 ; i < m_pagesWidget->count() ; ++i )
+  for ( int i = 0 ; i < m_pagesWidget->count() ; ++i )
     {
       m_pagesWidget->widget(i)->close();
     }
@@ -426,7 +426,7 @@ EditorPage::EditorPage(QWidget *parent)
 {
   readSettings();
 
-  if(m_fontstr.isEmpty())
+  if (m_fontstr.isEmpty())
     {
       m_font = QFont("Monospace",11);
       m_font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
@@ -452,7 +452,7 @@ void EditorPage::readSettings()
   m_highlightCurrentLineCheckBox->setChecked(settings.value("highlight", true).toBool());
   m_colorEnvironmentsCheckBox->setChecked(settings.value("color-environments", true).toBool());
   m_fontstr = settings.value("font", QString()).toString();
-  if(!m_fontstr.isEmpty())
+  if (!m_fontstr.isEmpty())
     m_font.fromString(m_fontstr);
   settings.endGroup();
 }
@@ -472,7 +472,7 @@ void EditorPage::selectFont()
 {
   bool ok;
   m_font = QFontDialog::getFont(&ok, m_font, this);
-  if(ok) updateFontButton();
+  if (ok) updateFontButton();
 }
 
 void EditorPage::updateFontButton()
@@ -565,7 +565,7 @@ SongbookPage::SongbookPage(QWidget *p)
   , m_propertyEditor(new QtGroupBoxPropertyBrowser)
   , m_mainwindow(parent()->parent())
 {
-  if(!m_mainwindow)
+  if (!m_mainwindow)
     {
       qWarning() << tr("SongbookPage::SongbookPage invalid parent: can't find the mainwindow");
       return;
@@ -577,7 +577,7 @@ SongbookPage::SongbookPage(QWidget *p)
   templateComboBox->addItems(songbook->library()->templates());
 
   int index = songbook->library()->templates().indexOf(songbook->tmpl());
-  if(index == -1)
+  if (index == -1)
     index = songbook->library()->templates().indexOf("patacrep.tmpl");
   templateComboBox->setCurrentIndex(index);
 

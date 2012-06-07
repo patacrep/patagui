@@ -58,7 +58,7 @@ CodeEditor::CodeEditor(QWidget *parent) :
 
 int CodeEditor::lineNumberAreaWidth()
 {
-  if(!m_lineNumberMode)
+  if (!m_lineNumberMode)
     return 0;
 
   int digits = 1;
@@ -99,7 +99,7 @@ void CodeEditor::resizeEvent(QResizeEvent *e)
 
 QTextEdit::ExtraSelection CodeEditor::currentLineSelection()
 {
-  if(!highlightMode() || isReadOnly())
+  if (!highlightMode() || isReadOnly())
     return QTextEdit::ExtraSelection();
 
   QColor lineColor = QColor(Qt::yellow).lighter(160);
