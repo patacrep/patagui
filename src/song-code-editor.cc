@@ -185,7 +185,7 @@ QString CSongCodeEditor::textUnderCursor() const
 
       QChar ch = document()->characterAt(pos);
       if ( pos < 0 || document()->characterAt(pos) == QChar::fromAscii(' ') )
- if ( ch.isSpace() || delimiters.contains(ch) )
+	if ( ch.isSpace() || delimiters.contains(ch) )
 	  break;
 
       tc.movePosition( QTextCursor::Left, QTextCursor::KeepAnchor );
@@ -266,10 +266,10 @@ void CSongCodeEditor::highlightEnvironments()
       else if (Song::reBeginScripture.indexIn(line) > -1)
 	env = Scripture;
 
-      if ( ((env == Verse) && (Song::reEndVerse.indexIn(line) > -1)) ||
+      if (((env == Verse) && (Song::reEndVerse.indexIn(line) > -1)) ||
 	  ((env == Bridge) && (Song::reEndBridge.indexIn(line) > -1)) ||
 	  ((env == Chorus) && (Song::reEndChorus.indexIn(line) > -1)) ||
-	  ((env == Scripture) && (Song::reEndScripture.indexIn(line) > -1)) )
+	  ((env == Scripture) && (Song::reEndScripture.indexIn(line) > -1)))
 	{
 	  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
 	  extraSelections.append(environmentSelection(env, cursor));
@@ -284,7 +284,7 @@ void CSongCodeEditor::highlightEnvironments()
 }
 
 QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnvironment & env,
-							    const QTextCursor & cursor)
+								const QTextCursor & cursor)
 {
   QColor backgroundColor;
   switch(env)
@@ -549,7 +549,7 @@ void CSongCodeEditor::commentSelection()
   QStringList selection = cursor.selectedText().split(QChar(0x2029));
   QStringList commentedSelection;
   foreach (QString line, selection)
-      commentedSelection << line.prepend("%");
+    commentedSelection << line.prepend("%");
   cursor.removeSelectedText();
   cursor.insertText(commentedSelection.join("\n"));
 }

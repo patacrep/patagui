@@ -64,9 +64,9 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   m_stringsLineEdit = new QLineEdit;
   m_stringsLineEdit->setMaxLength(CDiagram::GuitarStringCount);
   m_stringsLineEdit->setToolTip(tr("Symbols for each string of the guitar from lowest pitch to highest:\n"
-				 "  X: string is not to be played\n"
-				 "  0: string is to be played open\n"
-				 "  [1-9]: string is to be played on the given numbered fret."));
+				   "  X: string is not to be played\n"
+				   "  0: string is to be played open\n"
+				   "  [1-9]: string is to be played on the given numbered fret."));
   QRegExp rx("[X\\d]+");
   QRegExpValidator validator(rx, 0);
   m_stringsLineEdit->setValidator(&validator);
