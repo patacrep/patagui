@@ -73,6 +73,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
 
   QIcon iconInfo = QIcon::fromTheme("dialog-information");
   m_infoIconLabel->setPixmap(iconInfo.pixmap(24,24));
+  m_messageLabel->setWordWrap(true);
 
   QHBoxLayout *layoutInformation = new QHBoxLayout;
   layoutInformation->addWidget(m_infoIconLabel);
