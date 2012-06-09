@@ -222,7 +222,7 @@ void CMainWindow::writeSettings()
 
 void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 {
-  m_infoSelection->setText(QString(tr("Selection: %1/%2"))
+  m_infoSelection->setText(tr("Selection: %1/%2")
 			   .arg(songbook()->selectedCount())
 			   .arg(songbook()->rowCount()));
 }
@@ -493,9 +493,9 @@ void CMainWindow::about()
                                           << "Carreau (M. Bussonnier)";
   QString authors = authorsList.join(", ");
 
-  QMessageBox::about(this, title, QString(tr("<p>%1</p>"
-					     "<p><b>Version:</b> %2</p>"
-					     "<p><b>Authors:</b> %3</p>"))
+  QMessageBox::about(this, title, tr("<p>%1</p>"
+				     "<p><b>Version:</b> %2</p>"
+				     "<p><b>Authors:</b> %3</p>")
 		     .arg(description).arg(version).arg(authors));
 }
 
@@ -509,35 +509,30 @@ bool CMainWindow::checkPdfLaTeX()
   process.start(program, arguments);
   if (!process.waitForFinished())
     {
-      errorMessage =
-	QString(tr("<p>The following program cannot be found: <i>pdflatex</i>.</p>"
-		   "<p>A <a href=\"www.latex-project.org/\">LaTeX</a> distribution supporting <i>pdflatex</i> is required "
-		   "to produce the PDF document. Such a distribution is either "
-		   "not installed or misconfigured.</p>"));
+      errorMessage = tr("<p>The following program cannot be found: <i>pdflatex</i>.</p>"
+			"<p>A <a href=\"www.latex-project.org/\">LaTeX</a> distribution supporting <i>pdflatex</i> is required "
+			"to produce the PDF document. Such a distribution is either "
+			"not installed or misconfigured.</p>");
 
 #if defined(Q_OS_WIN32)
-      errorMessage +=
-	QString(tr("<ol>"
-		   "<li>Download and install the <a href=\"http://miktex.org\"/>MikTeX</a> distribution for Windows.</li>"
-		   "<li>Verify that your PATH variable is correctly set.</li>"
-		   "</ol>"));
+      errorMessage += tr("<ol>"
+			 "<li>Download and install the <a href=\"http://miktex.org\"/>MikTeX</a> distribution for Windows.</li>"
+			 "<li>Verify that your PATH variable is correctly set.</li>"
+			 "</ol>");
 #elif defined(Q_OS_MAC)
-      errorMessage +=
-	QString(tr("<p>Download and install the <a href=\"http://www.tug.org/mactex\">MacTeX</a> distribution for Mac OS.</p>"));
+      errorMessage += tr("<p>Download and install the <a href=\"http://www.tug.org/mactex\">MacTeX</a> distribution for Mac OS.</p>");
 #else //Unix/Linux
-      errorMessage +=
-	QString(tr("<p>Download and install the following packages:</p>"
-		   "<ol>"
-		   "<li>texlive-base</li>"
-		   "<li>texlive-latex-extra</li>"
-		   "</ol>"));
+      errorMessage += tr("<p>Download and install the following packages:</p>"
+			 "<ol>"
+			 "<li>texlive-base</li>"
+			 "<li>texlive-latex-extra</li>"
+			 "</ol>");
 #endif
 
-      errorMessage +=
-	QString(tr("You can find more information in the "
-		   "<a href=\"http://www.patacrep.com/data/documents/doc_%1.pdf\">"
-		   "documentation</a>.\n")
-		.arg((QLocale::system().language() == QLocale::French)? "fr":"en"));
+      errorMessage += tr("You can find more information in the "
+			 "<a href=\"http://www.patacrep.com/data/documents/doc_%1.pdf\">"
+			 "documentation</a>.\n")
+	.arg((QLocale::system().language() == QLocale::French)? "fr":"en");
 
       QMessageBox::question(this, windowTitle(), errorMessage);
       return false;
@@ -555,33 +550,28 @@ bool CMainWindow::checkPython()
   process.start(program, arguments);
   if (!process.waitForFinished())
     {
-      errorMessage =
-	QString(tr("<p>The following program cannot be found: <i>python</i>.</p>"
-		   "<p>A version of <a href=\"www.python.org/\">Python 2</a> is required "
-		   "to produce the PDF document.</p>"));
+      errorMessage = tr("<p>The following program cannot be found: <i>python</i>.</p>"
+			"<p>A version of <a href=\"www.python.org/\">Python 2</a> is required "
+			"to produce the PDF document.</p>");
 
 #if defined(Q_OS_WIN32)
-      errorMessage +=
-	QString(tr("<ol>"
-		   "<li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Windows.</li>"
-		   "<li>Verify that your PATH variable is correctly set.</li>"
-		   "</ol>"));
+      errorMessage += tr("<ol>"
+			 "<li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Windows.</li>"
+			 "<li>Verify that your PATH variable is correctly set.</li>"
+			 "</ol>");
 #elif defined(Q_OS_MAC)
-      errorMessage +=
-	QString(tr("<ol>"
-		   "<li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Mac OS.</li>"
-		   "<li>Verify that your PATH variable is correctly set.</li>"
-		   "</ol>"));
+      errorMessage += tr("<ol>"
+			 "<li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Mac OS.</li>"
+			 "<li>Verify that your PATH variable is correctly set.</li>"
+			 "</ol>");
 #else //Unix/Linux
-      errorMessage +=
-	QString(tr("<p>Download and install the following packages: <i>python</i></p>"));
+      errorMessage += tr("<p>Download and install the following packages: <i>python</i></p>");
 #endif
 
-      errorMessage +=
-	QString(tr("You can find more information in the "
-		   "<a href=\"http://www.patacrep.com/data/documents/doc_%1.pdf\">"
-		   "documentation</a>.\n")
-		.arg((QLocale::system().language() == QLocale::French)? "fr":"en"));
+      errorMessage += tr("You can find more information in the "
+			 "<a href=\"http://www.patacrep.com/data/documents/doc_%1.pdf\">"
+			 "documentation</a>.\n")
+	.arg((QLocale::system().language() == QLocale::French)? "fr":"en");
 
       QMessageBox::question(this, windowTitle(), errorMessage);
       return false;
@@ -597,9 +587,8 @@ void CMainWindow::build()
   songbook()->songsFromSelection();
   if (songbook()->songs().isEmpty())
     {
-      if (QMessageBox::question(this, windowTitle(),
-				QString(tr("You did not select any song. \n "
-					   "Do you want to build the songbook with all songs?")),
+      if (QMessageBox::question(this, windowTitle(), tr("You did not select any song. \n "
+							"Do you want to build the songbook with all songs?"),
 				QMessageBox::Yes,
 				QMessageBox::No,
 				QMessageBox::NoButton) == QMessageBox::No)
@@ -611,7 +600,7 @@ void CMainWindow::build()
   save(true);
 
   if (!QFile(songbook()->filename()).exists())
-    statusBar()->showMessage(QString(tr("The songbook file %1 is invalid. Build aborted."))
+    statusBar()->showMessage(tr("The songbook file %1 is invalid. Build aborted.")
 			     .arg(songbook()->filename()));
 
   make();

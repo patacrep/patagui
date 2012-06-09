@@ -167,10 +167,9 @@ void CLibraryDownload::downloadFinished()
   if (QDir().exists(filename))
     {
       QMessageBox *warning
-	= new QMessageBox(QMessageBox::Warning,
-			  tr("Existing file"),
-			  QString(tr("The following archive file already exists:\n %1 \n"
-				     "Do you want to proceed anyway?")).arg(filename),
+	= new QMessageBox(QMessageBox::Warning, tr("Existing file"),
+			  tr("The following archive file already exists:\n %1 \n"
+			     "Do you want to proceed anyway?").arg(filename),
 			  QMessageBox::Yes | QMessageBox::No);
       if (warning->exec() == QMessageBox::No)
 	{

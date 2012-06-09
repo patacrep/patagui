@@ -258,7 +258,7 @@ void CSongEditor::save()
   setModified(false);
   setWindowTitle(m_song.title);
   emit(labelChanged(windowTitle()));
-  setStatusTip(QString(tr("Song saved in: %1")).arg(song().path));
+  setStatusTip(tr("Song saved in: %1").arg(song().path));
 }
 
 bool CSongEditor::checkSongMandatoryFields()
@@ -489,7 +489,7 @@ void CSongEditor::setDictionary(const QLocale &locale)
   QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
   if (!QFile(dictionary).exists())
     {
-      setStatusTip(QString(tr("Unable to find the following dictionary: %1")).arg(dictionary));
+      setStatusTip(tr("Unable to find the following dictionary: %1").arg(dictionary));
       setSpellCheckingEnabled(false);
       return;
     }
