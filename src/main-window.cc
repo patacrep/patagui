@@ -748,6 +748,7 @@ QItemSelectionModel * CMainWindow::selectionModel()
 
 void CMainWindow::songEditor(const QModelIndex &index)
 {
+  Q_UNUSED(index);
   if (!selectionModel()->hasSelection())
     {
       statusBar()->showMessage(tr("Please select a song to edit."));
@@ -840,6 +841,7 @@ QDockWidget* CMainWindow::log() const
 
 void CMainWindow::buildError(QProcess::ProcessError error)
 {
+  Q_UNUSED(error);
   log()->setVisible(true);
   statusBar()->showMessage
     (qobject_cast< CMakeSongbookProcess* >(QObject::sender())->errorMessage());

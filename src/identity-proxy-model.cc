@@ -184,16 +184,27 @@ void CIdentityProxyModel::sourceColumnsAboutToBeRemoved(const QModelIndex &paren
 
 void CIdentityProxyModel::sourceColumnsInserted(const QModelIndex &parent, int start, int end)
 {
+  Q_UNUSED(parent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
   endInsertColumns();
 }
 
 void CIdentityProxyModel::sourceColumnsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest)
 {
+  Q_UNUSED(sourceParent);
+  Q_UNUSED(sourceStart);
+  Q_UNUSED(sourceEnd);
+  Q_UNUSED(destParent);
+  Q_UNUSED(dest);
   endMoveColumns();
 }
 
 void CIdentityProxyModel::sourceColumnsRemoved(const QModelIndex &parent, int start, int end)
 {
+  Q_UNUSED(parent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
   endRemoveColumns();
 }
 
@@ -244,15 +255,26 @@ void CIdentityProxyModel::sourceRowsAboutToBeRemoved(const QModelIndex &parent, 
 
 void CIdentityProxyModel::sourceRowsInserted(const QModelIndex &parent, int start, int end)
 {
+  Q_UNUSED(parent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
   endInsertRows();
 }
 
 void CIdentityProxyModel::sourceRowsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest)
 {
+  Q_UNUSED(sourceParent);
+  Q_UNUSED(sourceStart);
+  Q_UNUSED(sourceEnd);
+  Q_UNUSED(destParent);
+  Q_UNUSED(dest);
   endMoveRows();
 }
 
 void CIdentityProxyModel::sourceRowsRemoved(const QModelIndex &parent, int start, int end)
 {
+  Q_UNUSED(parent);
+  Q_UNUSED(start);
+  Q_UNUSED(end);
   endRemoveRows();
 }

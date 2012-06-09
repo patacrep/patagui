@@ -398,11 +398,13 @@ void CCoverDropArea::selectCover()
 
 void CCoverDropArea::mousePressEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   setFrameStyle(QFrame::Sunken | QFrame::Panel);
 }
 
 void CCoverDropArea::mouseReleaseEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   setFrameStyle(QFrame::Raised | QFrame::Panel);
   selectCover();
 }

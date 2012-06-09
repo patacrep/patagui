@@ -130,6 +130,7 @@ void ConfigDialog::changePage(QListWidgetItem *current,
 
 void ConfigDialog::closeEvent(QCloseEvent *event)
 {
+  Q_UNUSED(event);
   for ( int i = 0 ; i < m_pagesWidget->count() ; ++i )
     {
       m_pagesWidget->widget(i)->close();

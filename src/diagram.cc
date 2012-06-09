@@ -291,11 +291,13 @@ void CDiagramWidget::removeChord()
 
 void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   editChord();
 }
 
 void CDiagramWidget::mousePressEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   emit clicked();
 }
 
