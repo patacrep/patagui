@@ -19,7 +19,11 @@
 
 #include "notification.hh"
 
-#include <QtGui>
+#include <QAction>
+#include <QBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QTextEdit>
 
 #include "main-window.hh"
 

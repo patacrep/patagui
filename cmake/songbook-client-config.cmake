@@ -20,12 +20,12 @@ if( CMAKE_COMPILER_IS_GNUCXX )
   add_definitions(
     -ggdb3 -fno-strict-aliasing -Wall -Wextra
     -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
-    -Wsign-compare -Wunused -Wno-unused-parameter -Wuninitialized -Winit-self
+    -Wsign-compare -Wunused -Wuninitialized -Winit-self
     -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
     -Wmissing-format-attribute -Wpacked -Wformat-security
     )
 elseif( CMAKE_CXX_COMPILER MATCHES "clang" )
-  add_definitions( -Wall -Wextra -Wno-unused-parameter )
+  add_definitions( -Wall -Wextra )
 endif()
 if(NOT WIN32)
   add_definitions( -fvisibility=hidden )

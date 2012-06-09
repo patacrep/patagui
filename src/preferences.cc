@@ -18,12 +18,27 @@
 //******************************************************************************
 #include "preferences.hh"
 
-#include <QtGui>
-#include <QtGroupBoxPropertyBrowser>
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QFontDialog>
+#include <QFormLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QSettings>
+#include <QSpinBox>
+#include <QStackedWidget>
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 #include <QNetworkProxy>
 #endif // ENABLE_LIBRARY_DOWNLOAD
+
+#include <QtGroupBoxPropertyBrowser>
 
 #include "main-window.hh"
 #include "songbook.hh"
@@ -130,6 +145,7 @@ void ConfigDialog::changePage(QListWidgetItem *current,
 
 void ConfigDialog::closeEvent(QCloseEvent *event)
 {
+  Q_UNUSED(event);
   for ( int i = 0 ; i < m_pagesWidget->count() ; ++i )
     {
       m_pagesWidget->widget(i)->close();

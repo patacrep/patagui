@@ -141,6 +141,7 @@ void CMakeSongbookProcess::onStarted()
 
 void CMakeSongbookProcess::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+  Q_UNUSED(exitCode);
   if (exitStatus != QProcess::NormalExit)
     {
       emit(message(errorMessage(), 0));
