@@ -18,12 +18,27 @@
 //******************************************************************************
 #include "preferences.hh"
 
-#include <QtGui>
-#include <QtGroupBoxPropertyBrowser>
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QFontDialog>
+#include <QFormLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QSettings>
+#include <QSpinBox>
+#include <QStackedWidget>
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 #include <QNetworkProxy>
 #endif // ENABLE_LIBRARY_DOWNLOAD
+
+#include <QtGroupBoxPropertyBrowser>
 
 #include "main-window.hh"
 #include "songbook.hh"

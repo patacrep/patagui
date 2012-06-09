@@ -18,7 +18,25 @@
 //******************************************************************************
 #include "main-window.hh"
 
-#include <QtGui>
+#include <QAction>
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QCompleter>
+#include <QCoreApplication>
+#include <QDesktopServices>
+#include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QFileSystemModel>
+#include <QListView>
+#include <QMenu>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QPlainTextEdit>
+#include <QSettings>
+#include <QStatusBar>
+#include <QTimer>
+#include <QToolBar>
 
 #include "label.hh"
 #include "library.hh"

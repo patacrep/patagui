@@ -38,10 +38,12 @@
  **
  ****************************************************************************/
 
-#include <QtGui>
-
 #include "code-editor.hh"
 
+#include <QPainter>
+#include <QTextBlock>
+
+#include <QDebug>
 
 CodeEditor::CodeEditor(QWidget *parent) :
   QPlainTextEdit(parent)

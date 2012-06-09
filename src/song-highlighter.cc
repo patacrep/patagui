@@ -17,7 +17,8 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-#include <QtGui>
+#include <QFileInfo>
+#include <QTextCodec>
 
 #include "config.hh"
 #include "song-highlighter.hh"
@@ -25,6 +26,8 @@
 #ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELLCHECK
+
+#include <QDebug>
 
 CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)

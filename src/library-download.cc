@@ -22,13 +22,17 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include <QtGlobal>
-#include <QtGui>
-
-#include <QNetworkProxy>
+#include <QBoxLayout>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QMessageBox>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
+#include <QNetworkProxy>
 #include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QSettings>
+#include <QStatusBar>
 
 #include "file-chooser.hh"
 #include "main-window.hh"

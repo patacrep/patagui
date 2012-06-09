@@ -17,7 +17,9 @@
 //******************************************************************************
 #include "library-view.hh"
 
-#include <QtGui>
+#include <QAction>
+#include <QHeaderView>
+#include <QSettings>
 
 #include "main-window.hh"
 
