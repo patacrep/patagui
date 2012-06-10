@@ -190,9 +190,6 @@ private:
 
   QItemSelectionModel * selectionModel();
 
-  bool checkPdfLaTeX();
-  bool checkPython();
-
   // Models and views
   CLibrary *m_library;
   CLibraryView *m_view;

@@ -62,6 +62,71 @@
 
 #include <QDebug>
 
+namespace // anonymous namespace
+{
+  QString checkPdfLaTeX()
+  {
+    QString message;
+    QProcess process;
+    process.start("pdflatex", QStringList() << "--version");
+    if (!process.waitForFinished())
+      {
+	QString platformSpecificMessage;
+#if defined(Q_OS_WIN32)
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install the <a href=\"http://miktex.org\"/>MikTeX</a> distribution for Windows.</li>"
+					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
+#elif defined(Q_OS_MAC)
+	platformSpecificMessage = QObject::tr("<p>Download and install the <a href=\"http://www.tug.org/mactex\">MacTeX</a> distribution for Mac OS.</p>");
+#else //Unix/Linux
+	platformSpecificMessage = QObject::tr("<p>Download and install the following packages:</p>"
+					      "<ol><li>texlive-base</li>"
+					      "<li>texlive-latex-extra</li></ol>");
+#endif
+	message = QObject::tr("<p>The following program cannot be found: <i>pdflatex</i>.</p>"
+			      "<p>A <a href=\"www.latex-project.org/\">LaTeX</a> distribution supporting <i>pdflatex</i> is required "
+			      "to produce the PDF document. Such a distribution is either "
+			      "not installed or misconfigured.</p>"
+			      "%1"
+			      "You can find more information in the "
+			      "<a href=\"http://www.patacrep.com/data/documents/doc_%2.pdf\">"
+			      "documentation</a>.\n")
+	  .arg(platformSpecificMessage)
+	  .arg((QLocale::system().language() == QLocale::French)? "fr":"en");
+      }
+    return message;
+  }
+
+  QString checkPython()
+  {
+    QString message;
+    QProcess process;
+    process.start("python", QStringList() << "--version");
+    if (!process.waitForFinished())
+      {
+	QString platformSpecificMessage;
+#if defined(Q_OS_WIN32)
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Windows.</li>"
+					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
+#elif defined(Q_OS_MAC)
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Mac OS.</li>"
+					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
+#else //Unix/Linux
+	platformSpecificMessage = QObject::tr("<p>Download and install the following packages: <i>python</i></p>");
+#endif
+	message = QObject::tr("<p>The following program cannot be found: <i>python</i>.</p>"
+			      "<p>A version of <a href=\"www.python.org/\">Python 2</a> is required "
+			      "to produce the PDF document.</p>"
+			      "%1"
+			      "You can find more information in the "
+			      "<a href=\"http://www.patacrep.com/data/documents/doc_%2.pdf\">"
+			      "documentation</a>.\n")
+	  .arg(platformSpecificMessage)
+	  .arg((QLocale::system().language() == QLocale::French)? "fr":"en");
+      }
+    return message;
+  }
+}
+
 CMainWindow::CMainWindow(QWidget *parent)
   : QMainWindow(parent)
   , m_library(new CLibrary(this))
@@ -499,90 +564,17 @@ void CMainWindow::about()
 		     .arg(description).arg(version).arg(authors));
 }
 
-bool CMainWindow::checkPdfLaTeX()
-{
-  QProcess process;
-  QString errorMessage;
-  QString program = "pdflatex";
-  QStringList arguments = QStringList() << "--version";
-
-  process.start(program, arguments);
-  if (!process.waitForFinished())
-    {
-      errorMessage = tr("<p>The following program cannot be found: <i>pdflatex</i>.</p>"
-			"<p>A <a href=\"www.latex-project.org/\">LaTeX</a> distribution supporting <i>pdflatex</i> is required "
-			"to produce the PDF document. Such a distribution is either "
-			"not installed or misconfigured.</p>");
-
-#if defined(Q_OS_WIN32)
-      errorMessage += tr("<ol>"
-			 "<li>Download and install the <a href=\"http://miktex.org\"/>MikTeX</a> distribution for Windows.</li>"
-			 "<li>Verify that your PATH variable is correctly set.</li>"
-			 "</ol>");
-#elif defined(Q_OS_MAC)
-      errorMessage += tr("<p>Download and install the <a href=\"http://www.tug.org/mactex\">MacTeX</a> distribution for Mac OS.</p>");
-#else //Unix/Linux
-      errorMessage += tr("<p>Download and install the following packages:</p>"
-			 "<ol>"
-			 "<li>texlive-base</li>"
-			 "<li>texlive-latex-extra</li>"
-			 "</ol>");
-#endif
-
-      errorMessage += tr("You can find more information in the "
-			 "<a href=\"http://www.patacrep.com/data/documents/doc_%1.pdf\">"
-			 "documentation</a>.\n")
-	.arg((QLocale::system().language() == QLocale::French)? "fr":"en");
-
-      QMessageBox::question(this, windowTitle(), errorMessage);
-      return false;
-    }
-  return true;
-}
-
-bool CMainWindow::checkPython()
-{
-  QProcess process;
-  QString errorMessage;
-  QString program = "python";
-  QStringList arguments = QStringList() << "--version";
-
-  process.start(program, arguments);
-  if (!process.waitForFinished())
-    {
-      errorMessage = tr("<p>The following program cannot be found: <i>python</i>.</p>"
-			"<p>A version of <a href=\"www.python.org/\">Python 2</a> is required "
-			"to produce the PDF document.</p>");
-
-#if defined(Q_OS_WIN32)
-      errorMessage += tr("<ol>"
-			 "<li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Windows.</li>"
-			 "<li>Verify that your PATH variable is correctly set.</li>"
-			 "</ol>");
-#elif defined(Q_OS_MAC)
-      errorMessage += tr("<ol>"
-			 "<li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Mac OS.</li>"
-			 "<li>Verify that your PATH variable is correctly set.</li>"
-			 "</ol>");
-#else //Unix/Linux
-      errorMessage += tr("<p>Download and install the following packages: <i>python</i></p>");
-#endif
-
-      errorMessage += tr("You can find more information in the "
-			 "<a href=\"http://www.patacrep.com/data/documents/doc_%1.pdf\">"
-			 "documentation</a>.\n")
-	.arg((QLocale::system().language() == QLocale::French)? "fr":"en");
-
-      QMessageBox::question(this, windowTitle(), errorMessage);
-      return false;
-    }
-  return true;
-}
-
 void CMainWindow::build()
 {
-  if (!checkPdfLaTeX() || !checkPython())
-    return;
+  QString message = checkPdfLaTeX();
+  if (message.isEmpty())
+    message = checkPython();
+
+  if (!message.isEmpty())
+    {
+      QMessageBox::warning(this, windowTitle(), message);
+      return;
+    }
 
   songbook()->songsFromSelection();
   if (songbook()->songs().isEmpty())
