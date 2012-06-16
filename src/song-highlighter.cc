@@ -228,7 +228,7 @@ void CSongHighlighter::addWord(const QString & word)
   rehighlight();
 }
 
-void CSongHighlighter::setSpellCheck(const bool value)
+void CSongHighlighter::setSpellCheckActive(const bool value)
 {
   if (m_isSpellCheckActive != value)
     {

@@ -81,8 +81,8 @@ public:
   //! Setter on the new cover property
   void setNewCover(bool newCover);
 
-  bool isSpellCheckingEnabled() const;
-  void setSpellCheckingEnabled(const bool);
+  bool isSpellCheckAvailable() const;
+  void setSpellCheckAvailable(const bool);
 
 public slots:
   void setModified(bool modified);

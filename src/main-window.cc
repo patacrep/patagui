@@ -816,7 +816,7 @@ void CMainWindow::changeTab(int index)
   if (editor != 0)
     {
       editor->actionGroup()->setEnabled(true);
-      editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
+      editor->setSpellCheckAvailable(editor->isSpellCheckAvailable());
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }

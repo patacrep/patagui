@@ -48,8 +48,8 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   , m_chorusColor(QColor(252,175,62).lighter(160))
   , m_bridgeColor(QColor(114,159,207).lighter(170))
   , m_scriptureColor(QColor(173,127,168).lighter(170))
-  , m_isSpellCheckingEnabled(false)
-  , m_isSpellCheck(false)
+  , m_isSpellCheckAvailable(false)
+  , m_isSpellCheckActive(false)
 #ifdef ENABLE_SPELLCHECK
   , m_maxSuggestedWords(0)
 #endif
@@ -489,7 +489,7 @@ void CSongCodeEditor::contextMenuEvent(QContextMenuEvent *event)
   menu->addAction(action);
 
 #ifdef ENABLE_SPELLCHECK
-  if (isSpellCheck())
+  if (isSpellCheckActive())
     {
       menu->addSeparator();
       QMenu *spellMenu = new QMenu(tr("Suggestions"));
@@ -573,24 +573,24 @@ void CSongCodeEditor::uncommentSelection()
   cursor.insertText(uncommentedSelection.join("\n"));
 }
 
-bool CSongCodeEditor::isSpellCheckingEnabled() const
+bool CSongCodeEditor::isSpellCheckAvailable() const
 {
-  return m_isSpellCheckingEnabled;
+  return m_isSpellCheckAvailable;
 }
 
-void CSongCodeEditor::setSpellCheckingEnabled(const bool value)
+void CSongCodeEditor::setSpellCheckAvailable(const bool value)
 {
-  m_isSpellCheckingEnabled = value;
+  m_isSpellCheckAvailable = value;
 }
 
-bool CSongCodeEditor::isSpellCheck() const
+bool CSongCodeEditor::isSpellCheckActive() const
 {
-  return m_isSpellCheck;
+  return m_isSpellCheckActive;
 }
 
-void CSongCodeEditor::setSpellCheck(const bool value)
+void CSongCodeEditor::setSpellCheckActive(const bool value)
 {
-  m_isSpellCheck = value;
+  m_isSpellCheckActive = value;
 }
 
 CSongHighlighter * CSongCodeEditor::highlighter() const

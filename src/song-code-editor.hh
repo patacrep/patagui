@@ -60,10 +60,10 @@ public:
   void indent();
   void indentSelection();
 
-  bool isSpellCheckingEnabled() const;
-  void setSpellCheckingEnabled(const bool);
+  bool isSpellCheckAvailable() const;
+  void setSpellCheckAvailable(const bool);
 
-  bool isSpellCheck() const;
+  bool isSpellCheckActive() const;
 
   QStringList getWordPropositions(const QString &word);
 #ifdef ENABLE_SPELLCHECK
@@ -72,7 +72,7 @@ public slots:
   void setDictionary(const QString &dictionary);
 #endif
 
-  void setSpellCheck(const bool);
+  void setSpellCheckActive(const bool);
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
@@ -117,8 +117,8 @@ private:
   QColor m_bridgeColor;
   QColor m_scriptureColor;
 
-  bool m_isSpellCheckingEnabled;
-  bool m_isSpellCheck;
+  bool m_isSpellCheckAvailable;
+  bool m_isSpellCheckActive;
 
 #ifdef ENABLE_SPELLCHECK
   QList<QAction *> m_misspelledWordsActs;

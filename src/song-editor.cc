@@ -464,14 +464,14 @@ CSongCodeEditor* CSongEditor::codeEditor() const
   return m_codeEditor;
 }
 
-bool CSongEditor::isSpellCheckingEnabled() const
+bool CSongEditor::isSpellCheckAvailable() const
 {
-  return codeEditor()->isSpellCheckingEnabled();
+  return codeEditor()->isSpellCheckAvailable();
 }
 
-void CSongEditor::setSpellCheckingEnabled(const bool value)
+void CSongEditor::setSpellCheckAvailable(const bool value)
 {
-  codeEditor()->setSpellCheckingEnabled(value);
+  codeEditor()->setSpellCheckAvailable(value);
   m_spellCheckingAct->setEnabled(value);
   if (!value && m_spellCheckingAct->isChecked())
     m_spellCheckingAct->setChecked(false);
@@ -490,11 +490,11 @@ void CSongEditor::setDictionary(const QLocale &locale)
   if (!QFile(dictionary).exists())
     {
       setStatusTip(tr("Unable to find the following dictionary: %1").arg(dictionary));
-      setSpellCheckingEnabled(false);
+      setSpellCheckAvailable(false);
       return;
     }
   setStatusTip("");
-  setSpellCheckingEnabled(true);
+  setSpellCheckAvailable(true);
   codeEditor()->setDictionary(dictionary);
 }
 
@@ -503,8 +503,8 @@ void CSongEditor::installHighlighter()
   codeEditor()->installHighlighter();
 #ifdef ENABLE_SPELLCHECK
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
-	  m_codeEditor->highlighter(), SLOT(setSpellCheck(bool)));
+	  m_codeEditor->highlighter(), SLOT(setSpellCheckActive(bool)));
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
-	  m_codeEditor, SLOT(setSpellCheck(bool)));
+	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
 #endif //ENABLE_SPELLCHECK
 }
