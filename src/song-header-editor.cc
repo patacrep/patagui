@@ -195,6 +195,11 @@ void CSongHeaderEditor::update()
   m_languageComboBox->setCurrentIndex(m_languageComboBox->findText
 				      (QLocale::languageToString(song().locale.language()),
 				       Qt::MatchContains));
+  if (song().columnCount < 1)
+    song().columnCount = 2;
+  else if (song().columnCount > 3)
+    song().columnCount = 3;
+
   m_columnCountSpinBox->setValue(song().columnCount);
   m_capoSpinBox->setValue(song().capo);
   m_transposeSpinBox->setValue(song().transpose);
