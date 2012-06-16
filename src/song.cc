@@ -141,7 +141,7 @@ Song Song::fromString(const QString &text, const QString &path)
             {
               continue;
             }
-          else
+          else if (!line.trimmed().startsWith("%"))
             {
               preliminaryFinished = true;
             }
