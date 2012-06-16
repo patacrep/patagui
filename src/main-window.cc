@@ -64,7 +64,7 @@
 
 namespace // anonymous namespace
 {
-  QString checkPdfLaTeX()
+  bool checkPdfLaTeX()
   {
     QString message;
     QProcess process;
@@ -92,11 +92,13 @@ namespace // anonymous namespace
 			      "documentation</a>.\n")
 	  .arg(platformSpecificMessage)
 	  .arg((QLocale::system().language() == QLocale::French)? "fr":"en");
+	QMessageBox::warning(0, QObject::tr("Missing program"), message);
+	return false;
       }
-    return message;
+    return true;
   }
 
-  QString checkPython()
+  bool checkPython()
   {
     QString message;
     QProcess process;
@@ -122,8 +124,10 @@ namespace // anonymous namespace
 			      "documentation</a>.\n")
 	  .arg(platformSpecificMessage)
 	  .arg((QLocale::system().language() == QLocale::French)? "fr":"en");
+	QMessageBox::warning(0, QObject::tr("Missing program"), message);
+	return false;
       }
-    return message;
+    return true;
   }
 }
 
@@ -566,15 +570,8 @@ void CMainWindow::about()
 
 void CMainWindow::build()
 {
-  QString message = checkPdfLaTeX();
-  if (message.isEmpty())
-    message = checkPython();
-
-  if (!message.isEmpty())
-    {
-      QMessageBox::warning(this, windowTitle(), message);
-      return;
-    }
+  if (!checkPdfLaTeX() || !checkPython())
+    return;
 
   songbook()->songsFromSelection();
   if (songbook()->songs().isEmpty())
