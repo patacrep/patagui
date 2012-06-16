@@ -504,5 +504,7 @@ void CSongEditor::installHighlighter()
 #ifdef ENABLE_SPELLCHECK
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_codeEditor->highlighter(), SLOT(setSpellCheck(bool)));
+  connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
+	  m_codeEditor, SLOT(setSpellCheck(bool)));
 #endif //ENABLE_SPELLCHECK
 }

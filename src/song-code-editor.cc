@@ -48,6 +48,8 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   , m_chorusColor(QColor(252,175,62).lighter(160))
   , m_bridgeColor(QColor(114,159,207).lighter(170))
   , m_scriptureColor(QColor(173,127,168).lighter(170))
+  , m_isSpellCheckingEnabled(false)
+  , m_isSpellCheck(false)
 #ifdef ENABLE_SPELLCHECK
   , m_maxSuggestedWords(0)
 #endif
@@ -487,24 +489,27 @@ void CSongCodeEditor::contextMenuEvent(QContextMenuEvent *event)
   menu->addAction(action);
 
 #ifdef ENABLE_SPELLCHECK
-  menu->addSeparator();
-  QMenu *spellMenu = new QMenu(tr("Suggestions"));
-  m_lastPos=event->pos();
-  QString str = currentWord();
-  QStringList list = getWordPropositions(str);
-  int size = qMin(m_maxSuggestedWords, (uint)list.size());
-  if (!list.isEmpty())
+  if (isSpellCheck())
     {
-      for (int i = 0; i < size; ++i)
+      menu->addSeparator();
+      QMenu *spellMenu = new QMenu(tr("Suggestions"));
+      m_lastPos=event->pos();
+      QString str = currentWord();
+      QStringList list = getWordPropositions(str);
+      int size = qMin(m_maxSuggestedWords, (uint)list.size());
+      if (!list.isEmpty())
 	{
-	  m_misspelledWordsActs[i]->setText(list[i].trimmed());
-	  m_misspelledWordsActs[i]->setVisible(true);
-	  spellMenu->addAction(m_misspelledWordsActs[i]);
+	  for (int i = 0; i < size; ++i)
+	    {
+	      m_misspelledWordsActs[i]->setText(list[i].trimmed());
+	      m_misspelledWordsActs[i]->setVisible(true);
+	      spellMenu->addAction(m_misspelledWordsActs[i]);
+	    }
+	  spellMenu->addSeparator();
+	  spellMenu->addAction(tr("Add"), this, SLOT(addWord()));
+	  spellMenu->addAction(tr("Ignore"), this, SLOT(ignoreWord()));
+	  menu->addMenu(spellMenu);
 	}
-      spellMenu->addSeparator();
-      spellMenu->addAction(tr("Add"), this, SLOT(addWord()));
-      spellMenu->addAction(tr("Ignore"), this, SLOT(ignoreWord()));
-      menu->addMenu(spellMenu);
     }
 #endif //ENABLE_SPELLCHECK
 
@@ -576,6 +581,16 @@ bool CSongCodeEditor::isSpellCheckingEnabled() const
 void CSongCodeEditor::setSpellCheckingEnabled(const bool value)
 {
   m_isSpellCheckingEnabled = value;
+}
+
+bool CSongCodeEditor::isSpellCheck() const
+{
+  return m_isSpellCheck;
+}
+
+void CSongCodeEditor::setSpellCheck(const bool value)
+{
+  m_isSpellCheck = value;
 }
 
 CSongHighlighter * CSongCodeEditor::highlighter() const

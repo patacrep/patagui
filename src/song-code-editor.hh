@@ -63,12 +63,16 @@ public:
   bool isSpellCheckingEnabled() const;
   void setSpellCheckingEnabled(const bool);
 
+  bool isSpellCheck() const;
+
   QStringList getWordPropositions(const QString &word);
 #ifdef ENABLE_SPELLCHECK
   Hunspell* checker() const;
 public slots:
   void setDictionary(const QString &dictionary);
 #endif
+
+  void setSpellCheck(const bool);
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
@@ -114,6 +118,7 @@ private:
   QColor m_scriptureColor;
 
   bool m_isSpellCheckingEnabled;
+  bool m_isSpellCheck;
 
 #ifdef ENABLE_SPELLCHECK
   QList<QAction *> m_misspelledWordsActs;
