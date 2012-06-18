@@ -250,7 +250,7 @@ void CSongEditor::save()
 
   // save the song and add it to the library list
   library()->createArtistDirectory(m_song);
-  if (isNewCover())
+  if (isNewCover() && !m_songHeaderEditor->cover().isNull())
     library()->saveCover(m_song, m_songHeaderEditor->cover());
   library()->saveSong(m_song);
 
