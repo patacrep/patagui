@@ -95,6 +95,8 @@ private:
   LineEdit *m_titleLineEdit;
   LineEdit *m_artistLineEdit;
   LineEdit *m_albumLineEdit;
+  LineEdit *m_originalSongLineEdit;
+  LineEdit *m_urlLineEdit;
   QComboBox *m_languageComboBox;
   QSpinBox *m_columnCountSpinBox;
   QSpinBox *m_capoSpinBox;

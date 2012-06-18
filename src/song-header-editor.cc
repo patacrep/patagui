@@ -49,6 +49,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_titleLineEdit(new LineEdit(this))
   , m_artistLineEdit(new LineEdit(this))
   , m_albumLineEdit(new LineEdit(this))
+  , m_originalSongLineEdit(new LineEdit(this))
+  , m_urlLineEdit(new LineEdit(this))
   , m_languageComboBox(new QComboBox(this))
   , m_columnCountSpinBox(new QSpinBox(this))
   , m_capoSpinBox(new QSpinBox(this))
@@ -91,12 +93,20 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   m_artistLineEdit->setToolTip(tr("Artist"));
   m_albumLineEdit->setMinimumWidth(150);
   m_albumLineEdit->setToolTip(tr("Album"));
+  m_originalSongLineEdit->setMinimumWidth(70);
+  m_originalSongLineEdit->setToolTip(tr("Original song"));
+  m_urlLineEdit->setMinimumWidth(150);
+  m_urlLineEdit->setToolTip(tr("Artist website"));
 
   connect(m_titleLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_artistLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_albumLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_originalSongLineEdit, SIGNAL(textEdited(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_urlLineEdit, SIGNAL(textEdited(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_languageComboBox, SIGNAL(currentIndexChanged(const QString&)),
           SLOT(onIndexChanged(const QString&)));
@@ -120,10 +130,16 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   additionalInformationLayout->addWidget(m_transposeSpinBox);
   additionalInformationLayout->addStretch();
 
+  QBoxLayout *additionalSongFieldsLayout = new QHBoxLayout();
+  additionalSongFieldsLayout->setContentsMargins(1, 1, 1, 1);
+  additionalSongFieldsLayout->addWidget(m_originalSongLineEdit);
+  additionalSongFieldsLayout->addWidget(m_urlLineEdit);
+
   QBoxLayout *songInformationLayout = new QVBoxLayout();
   songInformationLayout->addWidget(m_titleLineEdit);
   songInformationLayout->addWidget(m_artistLineEdit);
   songInformationLayout->addWidget(m_albumLineEdit);
+  songInformationLayout->addLayout(additionalSongFieldsLayout);
   songInformationLayout->addLayout(additionalInformationLayout);
   songInformationLayout->addStretch();
 
@@ -191,6 +207,16 @@ void CSongHeaderEditor::update()
     m_albumLineEdit->setInactiveText(tr("Album"));
   else
     m_albumLineEdit->setText(song().album);
+
+  if (song().originalSong.isEmpty())
+    m_originalSongLineEdit->setInactiveText(tr("Original song"));
+  else
+    m_originalSongLineEdit->setText(song().originalSong);
+
+  if (song().url.isEmpty())
+    m_urlLineEdit->setInactiveText(tr("Artist website"));
+  else
+    m_urlLineEdit->setText(song().url);
 
   m_languageComboBox->setCurrentIndex(m_languageComboBox->findText
 				      (QLocale::languageToString(song().locale.language()),
@@ -263,6 +289,14 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
   else if (currentLineEdit == m_albumLineEdit)
     {
       song().album = text;
+    }
+  else if (currentLineEdit == m_originalSongLineEdit)
+    {
+      song().originalSong = text;
+    }
+  else if (currentLineEdit == m_urlLineEdit)
+    {
+      song().url = text;
     }
   else
     {
