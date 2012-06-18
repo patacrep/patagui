@@ -41,6 +41,9 @@
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDragLeaveEvent>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QAction>
 
 #include <QDebug>
 
@@ -346,14 +349,7 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   setAcceptDrops(true);
   setToolTip(tr("Click or drop image to change cover"));
   setBackgroundRole(QPalette::Dark);
-
-  QPixmap pixmap;
-  if (!QPixmapCache::find("cover-missing-full", &pixmap))
-    {
-      pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(115, 115);
-      QPixmapCache::insert("cover-missing-full", pixmap);
-    }
-  setPixmap(pixmap);
+  setCover(QImage());
   connect(this, SIGNAL(changed()), SLOT(update()));
 }
 
@@ -404,21 +400,31 @@ void CCoverDropArea::update()
     m_filename = QString("%1/%2.jpg").arg(song().coverPath).arg(song().coverName);
 
   // display the cover art
+  QPixmap pixmap;
   QFileInfo file = QFileInfo(m_filename);
   if (file.exists())
     {
       song().coverPath = file.absolutePath();
       song().coverName = file.baseName();
-      QPixmap pixmap;
       if (!QPixmapCache::find(file.baseName()+"-full", &pixmap))
 	{
 	  setCover(file.filePath());
 	  pixmap = QPixmap::fromImage(cover());
 	  QPixmapCache::insert(file.baseName()+"-full", pixmap);
 	}
-      setPixmap(pixmap);
-      emit(coverChanged());
     }
+  else
+    {
+      song().coverPath = QString();
+      song().coverName = QString();
+      if (!QPixmapCache::find("cover-missing-full", &pixmap))
+	{
+	  pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(115, 115);
+	  QPixmapCache::insert("cover-missing-full", pixmap);
+	}
+    }
+  setPixmap(pixmap);
+  emit(coverChanged());
 }
 
 void CCoverDropArea::selectCover()
@@ -448,6 +454,18 @@ void CCoverDropArea::mouseReleaseEvent(QMouseEvent *event)
   selectCover();
 }
 
+
+void CCoverDropArea::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu *menu = new QMenu(this);
+  QAction *action = new QAction(tr("Clear cover"), this);
+  action->setStatusTip(tr("Remove the song's cover"));
+  connect(action, SIGNAL(triggered()), SLOT(clearCover()));
+  menu->addAction(action);
+  menu->exec(event->globalPos());
+  delete menu;
+}
+
 Song & CCoverDropArea::song()
 {
   return qobject_cast<CSongHeaderEditor*>(QLabel::parent())->song();
@@ -458,12 +476,19 @@ const QImage & CCoverDropArea::cover()
   return m_cover;
 }
 
+void CCoverDropArea::clearCover()
+{
+  m_cover = QImage();
+  m_filename = QString();
+  song().coverPath = QString();
+  song().coverName = QString();
+  update();
+}
+
 void CCoverDropArea::setCover(const QImage &cover)
 {
-  if (cover.isNull())
-    qWarning() << tr("CCoverDropArea::setCover invalid cover");
-
-  m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  if (!cover.isNull())
+    m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 void CCoverDropArea::setCover(const QString &path)

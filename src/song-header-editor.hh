@@ -138,6 +138,7 @@ class CCoverDropArea : public QLabel
 
 private slots:
   void selectCover();
+  void clearCover();
 
 public slots:
   void clear();
@@ -154,6 +155,7 @@ protected:
   void dropEvent(QDropEvent *event);
   virtual void mousePressEvent(QMouseEvent *event);
   virtual void mouseReleaseEvent(QMouseEvent *event);
+  virtual void contextMenuEvent(QContextMenuEvent *event);
 
 private:
   QString m_filename;
