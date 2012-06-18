@@ -27,6 +27,7 @@
 #include <QStatusBar>
 #include <QDesktopServices>
 #include <QSettings>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -409,9 +410,18 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
   // guess the cover filename
   QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
 
-  // actually write the image
-  if (!QFile(coverFilename).exists())
-    cover.save(coverFilename);
+  // ask before overwriting
+  if (QFile(coverFilename).exists())
+    {
+      int ret = QMessageBox::warning(0, tr("Songbook-Client"),
+				     tr("This file will be overwritten:\n%1\n"
+					"Are you sure?").arg(coverFilename),
+				     QMessageBox::Cancel | QMessageBox::Ok,
+				     QMessageBox::Cancel);
+      // actually write the image
+      if (ret == QMessageBox::Ok)
+	cover.save(coverFilename);
+    }
 }
 
 void CLibrary::createArtistDirectory(Song &song)
