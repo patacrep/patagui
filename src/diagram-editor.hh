@@ -54,6 +54,7 @@ public:
 
 private slots:
   bool checkChord();
+  void setStringsMaxLength(bool);
 
 private:
   //chord
