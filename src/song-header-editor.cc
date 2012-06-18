@@ -21,6 +21,7 @@
 
 #include "song-editor.hh"
 #include "diagram.hh"
+#include "library.hh"
 
 #include "utils/lineedit.hh"
 
@@ -35,6 +36,7 @@
 #include <QPixmapCache>
 #include <QPixmap>
 #include <QFileDialog>
+#include <QCompleter>
 
 #include <QUrl>
 #include <QMimeData>
@@ -192,6 +194,19 @@ LineEdit * CSongHeaderEditor::titleLineEdit() const
 LineEdit * CSongHeaderEditor::artistLineEdit() const
 {
   return m_artistLineEdit;
+}
+
+void CSongHeaderEditor::setLibrary(CLibrary * library)
+{
+  QCompleter *artistCompleter = new QCompleter;
+  artistCompleter->setModel(library->artistCompletionModel());
+  artistCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  m_artistLineEdit->setCompleter(artistCompleter);
+
+  QCompleter *albumCompleter = new QCompleter;
+  albumCompleter->setModel(library->albumCompletionModel());
+  albumCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  m_albumLineEdit->setCompleter(albumCompleter);
 }
 
 void CSongHeaderEditor::update()

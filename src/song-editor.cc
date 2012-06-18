@@ -378,6 +378,7 @@ CLibrary * CSongEditor::library() const
 void CSongEditor::setLibrary(CLibrary *library)
 {
   m_library = library;
+  m_songHeaderEditor->setLibrary(library);
 }
 
 bool CSongEditor::isModified() const
