@@ -82,7 +82,9 @@ public:
 
   QStringList templates() const;
 
-  QAbstractListModel * completionModel();
+  QAbstractListModel * completionModel() const;
+  QAbstractListModel * artistCompletionModel() const;
+  QAbstractListModel * albumCompletionModel() const;
 
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -144,6 +146,8 @@ private:
   QDir m_directory;
 
   QStringListModel *m_completionModel;
+  QStringListModel *m_artistCompletionModel;
+  QStringListModel *m_albumCompletionModel;
 
   QStringList m_templates;
   QList< Song > m_songs;

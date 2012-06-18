@@ -59,6 +59,8 @@ CLibrary::CLibrary(CMainWindow *parent)
   , m_parent(parent)
   , m_directory()
   , m_completionModel(new QStringListModel(this))
+  , m_artistCompletionModel(new QStringListModel(this))
+  , m_albumCompletionModel(new QStringListModel(this))
   , m_templates()
   , m_songs()
 {
@@ -139,9 +141,19 @@ QStringList CLibrary::templates() const
   return m_templates;
 }
 
-QAbstractListModel * CLibrary::completionModel()
+QAbstractListModel * CLibrary::completionModel() const
 {
   return m_completionModel;
+}
+
+QAbstractListModel * CLibrary::artistCompletionModel() const
+{
+  return m_artistCompletionModel;
+}
+
+QAbstractListModel * CLibrary::albumCompletionModel() const
+{
+  return m_albumCompletionModel;
 }
 
 QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int role) const
@@ -276,14 +288,24 @@ void CLibrary::update()
   addSongs(paths);
 
   QStringList wordList;
+  QStringList artistList;
+  QStringList albumList;
   for (int i = 0; i < rowCount(); ++i)
     {
       wordList << data(index(i,0),CLibrary::TitleRole).toString()
 	       << data(index(i,0),CLibrary::ArtistRole).toString()
 	       << data(index(i,0),CLibrary::PathRole).toString();
+
+      artistList << data(index(i,0),CLibrary::ArtistRole).toString();
+
+      albumList << data(index(i,0),CLibrary::AlbumRole).toString();
     }
   wordList.removeDuplicates();
+  artistList.removeDuplicates();
+  albumList.removeDuplicates();
   m_completionModel->setStringList(wordList);
+  m_artistCompletionModel->setStringList(artistList);
+  m_albumCompletionModel->setStringList(albumList);
 
   m_parent->progressBar()->setCancelable(true);
   m_parent->progressBar()->setTextVisible(false);

@@ -29,6 +29,7 @@
 class CSongEditor;
 class CCoverDropArea;
 class CDiagramArea;
+class CLibrary;
 class LineEdit;
 
 class QSpinBox;
@@ -73,6 +74,8 @@ public:
   /// Getter on the song's cover
   /// @return the cover
   const QImage & cover();
+
+  void setLibrary(CLibrary* library);
 
   LineEdit* titleLineEdit() const;
   LineEdit* artistLineEdit() const;
