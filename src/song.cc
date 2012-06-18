@@ -26,9 +26,9 @@
 
 QRegExp Song::reSgFile("(.*)\\\\begin\\{?song\\}?\\{([^\\}]+)\\}[^[]*\\[([^]]*)\\](.*)\\s*\\\\endsong(.*)");
 QRegExp Song::reSong("\\\\begin\\{?song\\}?\\{([^[\\}]+)\\}[^[]*\\[([^]]*)\\]");
-QRegExp Song::reArtist("by=([^,]+)");
-QRegExp Song::reAlbum("album=([^,]+)");
-QRegExp Song::reCoverName("cov=([^,]+)");
+QRegExp Song::reArtist("by=\\{?([^,\\{\\}]+)");
+QRegExp Song::reAlbum("album=\\{?([^,\\{\\}]+)");
+QRegExp Song::reCoverName("cov=\\{?([^,\\{\\}]+)");
 QRegExp Song::reLilypond("\\\\lilypond");
 QRegExp Song::reLanguage("\\\\selectlanguage\\{([^\\}]+)");
 QRegExp Song::reColumnCount("\\\\songcolumns\\{([^\\}]+)");
@@ -176,13 +176,13 @@ QString Song::toString(const Song &song)
   if (song.columnCount > 0)
     text.append(QString("\\songcolumns{%1}\n").arg(song.columnCount));
 
-  text.append(QString("\\beginsong{%1}\n  [by=%2").arg(utf8ToLatex(song.title)).arg(utf8ToLatex(song.artist)));
+  text.append(QString("\\beginsong{%1}\n  [by={%2}").arg(utf8ToLatex(song.title)).arg(utf8ToLatex(song.artist)));
 
   if (!song.coverName.isEmpty())
-    text.append(QString(",cov=%1").arg(song.coverName));
+    text.append(QString(",cov={%1}").arg(song.coverName));
 
   if (!song.album.isEmpty())
-    text.append(QString(",album=%1").arg(utf8ToLatex(song.album)));
+    text.append(QString(",album={%1}").arg(utf8ToLatex(song.album)));
 
   text.append(QString("]\n\n"));
 
