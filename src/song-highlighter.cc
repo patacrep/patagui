@@ -59,7 +59,8 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 		  << "\\\\nolyrics" << "\\\\musicnote"
 		  << "\\\\textnote" << "\\\\dots"
 		  << "\\\\single"  << "\\\\echo"
-		  << "\\\\transpose" << "\\\\selectlanguage";
+		  << "\\\\transpose" << "\\\\transposition"
+		  << "\\\\emph" << "\\\\selectlanguage";
 
   foreach (const QString &pattern, keywordPatterns)
     {
@@ -77,7 +78,9 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 		   << "\\\\Outro" << "\\\\Bridge"
 		   << "\\\\Verse" << "\\\\Chorus"
 		   << "\\\\Pattern" << "\\\\Solo"
-		   << "\\\\ifchorded" << "\\\\iflyrics" << "\\\\fi";
+		   << "\\\\Adlib" << "\\\\else"
+		   << "\\\\ifchorded" << "\\\\iflyrics"
+		   << "\\\\ifnorepeatchords" << "\\\\fi";
 
   foreach (const QString &pattern, keyword2Patterns)
     {
