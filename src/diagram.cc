@@ -49,12 +49,12 @@ CDiagram::~CDiagram()
 
 QSize CDiagram::minimumSizeHint() const
 {
-  return QSize(100, 50);
+  return QSize(100, 60);
 }
 
 QSize CDiagram::sizeHint() const
 {
-  return QSize(100, 50);
+  return QSize(100, 60);
 }
 
 QString CDiagram::toString()
@@ -124,18 +124,25 @@ void CDiagram::paintEvent(QPaintEvent *)
 
   int cellWidth = 12, cellHeight = 12;
   int width = (strings().length() - 1)*cellWidth;
-  int height = 4*cellHeight;
   int padding = 13;
+
+  //draw horizontal lines
+  int max = 4;
+  foreach (QChar c, strings())
+    if (c.digitValue() > max)
+      max = c.digitValue();
+
+  Q_ASSERT(max < 10);
+  for (int i=0; i<max+1; ++i)
+    {
+      painter.drawLine(padding, i*cellHeight+padding, width+padding, i*cellHeight+padding);
+    }
+
+  int height = max*cellHeight;
   //draw a vertical line for each string
   for (int i=0; i<strings().length(); ++i)
     {
       painter.drawLine(i*cellWidth+padding, padding, i*cellWidth+padding, height+padding);
-    }
-
-  //draw 5 horizontal lines
-  for (int i=0; i<5; ++i)
-    {
-      painter.drawLine(padding, i*cellHeight+padding, width+padding, i*cellHeight+padding);
     }
 
   //draw played strings
@@ -235,7 +242,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab,
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
   setMaximumWidth(100);
-  setMaximumHeight(110);
+  setMaximumHeight(120);
   setToolTip(m_diagram->toString());
   setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -322,7 +329,7 @@ void CDiagramWidget::updateChordName()
   m_chordName->setText(QString("<font size=\"2\"><b>%1</b></font>")
 		       .arg(m_diagram->chord().replace("&", QChar(0x266D))));
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-  m_chordName->setMaximumHeight(20);
+  m_chordName->setMaximumHeight(18);
   m_chordName->setStyleSheet("QLabel{ border-radius: 4px; background-color: palette(mid); }");
 }
 
