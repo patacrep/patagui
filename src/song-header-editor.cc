@@ -136,7 +136,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   diagramsScrollArea->setBackgroundRole(QPalette::Dark);
   diagramsScrollArea->setWidgetResizable(true);
 
-  setMaximumHeight(132);
+  setMaximumHeight(142);
 
   QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setContentsMargins(1, 1, 1, 1);
