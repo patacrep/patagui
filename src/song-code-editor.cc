@@ -601,6 +601,13 @@ bool CSongCodeEditor::isSpellCheckActive() const
 void CSongCodeEditor::setSpellCheckActive(const bool value)
 {
   m_isSpellCheckActive = value;
+#ifdef ENABLE_SPELLCHECK
+  // signals are blocked to prevent triggering documentWasModified
+  // it avoids marking the song as modified when words are only highlighted
+  blockSignals(true);
+  highlighter()->setSpellCheckActive(value);
+  blockSignals(false);
+#endif //ENABLE_SPELLCHECK
 }
 
 CSongHighlighter * CSongCodeEditor::highlighter() const
