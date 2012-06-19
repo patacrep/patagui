@@ -758,6 +758,14 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path)
 {
+  for (int i = 0; i < m_mainWidget->count(); ++i)
+    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(i)))
+      if (editor->song().path == path)
+	{
+	  m_mainWidget->setCurrentIndex(i);
+	  return;
+	}
+
   CSongEditor *editor = new CSongEditor(this);
   editor->setLibrary(library());
   editor->installHighlighter();
