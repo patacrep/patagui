@@ -444,6 +444,10 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
       if (ret == QMessageBox::Ok)
 	cover.save(coverFilename);
     }
+  else
+    {
+      cover.save(coverFilename);
+    }
 }
 
 void CLibrary::createArtistDirectory(Song &song)
