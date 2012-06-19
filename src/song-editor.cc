@@ -250,10 +250,12 @@ void CSongEditor::save()
 
   // save the song and add it to the library list
   library()->createArtistDirectory(m_song);
+
   if (isNewCover() && !m_songHeaderEditor->cover().isNull())
     library()->saveCover(m_song, m_songHeaderEditor->cover());
   library()->saveSong(m_song);
 
+  setNewCover(false);
   setNewSong(false);
   setModified(false);
   setWindowTitle(m_song.title);
@@ -435,6 +437,7 @@ void CSongEditor::setSong(const Song &song)
 #endif //ENABLE_SPELLCHECK
 
   setNewSong(false);
+  setNewCover(false);
   setWindowTitle(m_song.title);
   setModified(false);
 }
