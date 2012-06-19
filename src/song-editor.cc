@@ -22,7 +22,6 @@
 
 #include "song-header-editor.hh"
 #include "song-code-editor.hh"
-#include "song-highlighter.hh"
 #include "library.hh"
 #include "utils/lineedit.hh"
 
@@ -507,7 +506,7 @@ void CSongEditor::installHighlighter()
   codeEditor()->installHighlighter();
 #ifdef ENABLE_SPELLCHECK
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
-	  m_codeEditor->highlighter(), SLOT(setSpellCheckActive(bool)));
+	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
 #endif //ENABLE_SPELLCHECK

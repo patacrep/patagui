@@ -31,7 +31,6 @@ class QToolBar;
 class FindReplaceDialog;
 class CLibrary;
 class CSongCodeEditor;
-class CSongHighlighter;
 class CSongHeaderEditor;
 
 /**
