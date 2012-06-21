@@ -26,7 +26,7 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 #include <QDebug>
-#include <QToolButton>
+#include <QPushButton>
 #include <QSpacerItem>
 
 QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
@@ -362,13 +362,24 @@ CDiagram::ChordType CDiagramWidget::type() const
 CDiagramArea::CDiagramArea(QWidget *parent)
   : QWidget(parent)
   , m_layout (new QHBoxLayout)
-  , m_addDiagramButton(0)
-  , m_spacer(0)
 {
   m_layout->setContentsMargins(4, 4, 4, 4);
-  setLayout(m_layout);
 
-  addNewDiagramButton();
+  QBoxLayout *addButtonLayout = new QVBoxLayout;
+  QPushButton *addDiagramButton = new QPushButton;
+  addDiagramButton->setFlat(true);
+  addDiagramButton->setToolTip(tr("Add a new diagram"));
+  addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/48x48/actions/list-add.png")));
+  connect(addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
+  addButtonLayout->addStretch();
+  addButtonLayout->addWidget(addDiagramButton);
+
+  QBoxLayout *mainLayout = new QHBoxLayout;
+  mainLayout->addLayout(m_layout);
+  mainLayout->addStretch();
+  mainLayout->addLayout(addButtonLayout);
+  setLayout(mainLayout);
+
   setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -388,7 +399,6 @@ CDiagramWidget * CDiagramArea::addDiagram()
       delete diagram;
       diagram = 0;
     }
-  addNewDiagramButton();
   return diagram;
 }
 
@@ -399,7 +409,6 @@ CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const CDiagram:
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
-  addNewDiagramButton();
   return diagram;
 }
 
@@ -413,24 +422,6 @@ void CDiagramArea::removeDiagram()
       diagram->deleteLater();
       onDiagramChanged();
     }
-}
-
-void CDiagramArea::addNewDiagramButton()
-{
-  if (m_addDiagramButton)
-    {
-      m_layout->removeItem(m_spacer);
-      delete m_addDiagramButton;
-      m_addDiagramButton = 0;
-    }
-
-  m_addDiagramButton = new QToolButton;
-  m_addDiagramButton->setToolTip(tr("Add a new diagram"));
-  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
-  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
-  m_layout->addWidget(m_addDiagramButton);
-  m_spacer = new QSpacerItem(500, 20, QSizePolicy::Ignored, QSizePolicy::MinimumExpanding);
-  m_layout->addSpacerItem(m_spacer);
 }
 
 QList<CDiagramWidget*> CDiagramArea::diagrams() const
