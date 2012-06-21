@@ -354,8 +354,9 @@ const QImage & CSongHeaderEditor::cover()
 
 //------------------------------------------------------------------------------
 
-CCoverDropArea::CCoverDropArea(QWidget *parent)
+CCoverDropArea::CCoverDropArea(CSongHeaderEditor *parent)
   : QLabel(parent)
+  , m_parent(parent)
 {
   setMinimumSize(132,132);
   setMaximumSize(132,132);
@@ -483,9 +484,21 @@ void CCoverDropArea::contextMenuEvent(QContextMenuEvent *event)
   delete menu;
 }
 
+CSongHeaderEditor * CCoverDropArea::parent() const
+{
+  if (!m_parent)
+    qWarning() << tr("CCoverDropArea:: invalid parent");
+  return m_parent;
+}
+
+void CCoverDropArea::setParent(CSongHeaderEditor * parent)
+{
+  m_parent = parent;
+}
+
 Song & CCoverDropArea::song()
 {
-  return qobject_cast<CSongHeaderEditor*>(QLabel::parent())->song();
+  return parent()->song();
 }
 
 const QImage & CCoverDropArea::cover()

@@ -123,7 +123,7 @@ class CCoverDropArea : public QLabel
   Q_OBJECT
 
   public:
-  CCoverDropArea(QWidget *parent = 0);
+  CCoverDropArea(CSongHeaderEditor *parent);
 
   Song & song();
 
@@ -138,6 +138,9 @@ class CCoverDropArea : public QLabel
   /// Setter on the song's cover
   /// @para cover the cover as a file object
   void setCover(const QString &path);
+
+  CSongHeaderEditor * parent() const;
+  void setParent(CSongHeaderEditor *p);
 
 private slots:
   void selectCover();
@@ -163,6 +166,7 @@ protected:
 private:
   QString m_filename;
   QImage m_cover;
+  CSongHeaderEditor * m_parent;
 };
 
 #endif // __SONG_HEADER_EDITOR_HH__
