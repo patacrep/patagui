@@ -21,6 +21,7 @@
 
 #include <QAction>
 #include <QTabBar>
+#include <QMouseEvent>
 
 #include <QDebug>
 
@@ -30,6 +31,8 @@ CTabWidget::CTabWidget(QWidget *parent)
 {
   setDocumentMode(true);
 
+  setStyleSheet(" QTabWidget::tab-bar {}");
+  setTabBar(new CTabBar(this));
   updateTabBarVisibility();
 
   QAction *action;
@@ -116,4 +119,22 @@ void CTabWidget::changeTabText(const QString &text)
 
   if (index >= 0)
     setTabText(index, text);
+}
+
+//----------------------------------------------------------------------------
+
+CTabBar::CTabBar(QWidget *parent)
+  : QTabBar(parent)
+{}
+
+CTabBar::~CTabBar()
+{}
+
+void CTabBar::mouseReleaseEvent(QMouseEvent *event)
+{
+  if (event->button() == (Qt::MidButton | Qt::MiddleButton))
+    {
+      emit(tabCloseRequested(tabAt(event->pos())));
+    }
+  QTabBar::mouseReleaseEvent(event);
 }
