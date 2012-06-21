@@ -131,8 +131,6 @@ private:
   bool m_selected;
 };
 
-class QSpacerItem;
-class QToolButton;
 class QBoxLayout;
 
 /**
@@ -154,9 +152,6 @@ public:
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 
-private:
-  void addNewDiagramButton();
-
 private slots:
   void onDiagramChanged();
   void onDiagramClicked();
@@ -168,8 +163,6 @@ signals:
 
 private:
   QBoxLayout *m_layout;
-  QToolButton *m_addDiagramButton;
-  QSpacerItem *m_spacer;
   QList<CDiagramWidget*> m_diagrams;
 };
 
