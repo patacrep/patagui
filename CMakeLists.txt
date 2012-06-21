@@ -31,10 +31,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/diagram.cc
   src/diagram-editor.cc
   src/progress-bar.cc
-  src/unit-property-manager.cc
-  src/unit-factory.cc
-  src/file-property-manager.cc
-  src/file-factory.cc
   src/file-chooser.cc
   src/song-sort-filter-proxy-model.cc
   src/filter-lineedit.cc
@@ -48,6 +44,8 @@ set(SONGBOOK_CLIENT_SOURCES
   src/make-songbook-process.cc
   src/qtfindreplacedialog/findreplaceform.cpp
   src/qtfindreplacedialog/findreplacedialog.cpp
+  src/variant-factory.cc
+  src/variant-manager.cc
   )
 
 # header (moc)
@@ -66,10 +64,6 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/diagram.hh
   src/diagram-editor.hh
   src/progress-bar.hh
-  src/unit-property-manager.hh
-  src/unit-factory.hh
-  src/file-property-manager.hh
-  src/file-factory.hh
   src/file-chooser.hh
   src/song-sort-filter-proxy-model.hh
   src/filter-lineedit.hh
@@ -83,6 +77,8 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/make-songbook-process.hh
   src/qtfindreplacedialog/findreplaceform.h
   src/qtfindreplacedialog/findreplacedialog.h
+  src/variant-factory.hh
+  src/variant-manager.hh
   )
 
 # uis
