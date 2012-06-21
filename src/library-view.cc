@@ -28,6 +28,7 @@
 CLibraryView::CLibraryView(CMainWindow *parent)
   : QTableView(parent)
 {
+  setStyleSheet(" QTableView {margin: -1px -1px}");
   setShowGrid(false);
   setAlternatingRowColors(true);
   setSelectionMode(QAbstractItemView::SingleSelection);
