@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "main-window.hh"
 
+#include <QApplication>
 #include <QAction>
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -745,6 +746,15 @@ CLibrary * CMainWindow::library() const
 QItemSelectionModel * CMainWindow::selectionModel()
 {
   return view()->selectionModel();
+}
+
+void CMainWindow::middleClicked(const QModelIndex & index)
+{
+  if (QApplication::mouseButtons() == (Qt::MidButton | Qt::MiddleButton))
+    {
+      songEditor(index);
+      m_mainWidget->setCurrentIndex(0);
+    }
 }
 
 void CMainWindow::songEditor(const QModelIndex &index)

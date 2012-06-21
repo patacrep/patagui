@@ -78,6 +78,9 @@ void CLibraryView::createActions()
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)),
 	  parent(), SLOT(songEditor(const QModelIndex &)));
 
+  connect(this, SIGNAL(pressed(const QModelIndex &)),
+	  parent(), SLOT(middleClicked(const QModelIndex &)));
+
   QAction* action = new QAction(tr("Edit"), this);
   connect(action, SIGNAL(triggered()),
 	  parent(), SLOT(songEditor()));

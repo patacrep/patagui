@@ -151,6 +151,7 @@ private slots:
 
   //library
   void newSong();
+  void middleClicked(const QModelIndex &index = QModelIndex());
   void songEditor(const QModelIndex &index = QModelIndex());
   void deleteSong();
 
