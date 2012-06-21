@@ -9,6 +9,8 @@
     <file>22x22/columns.png</file>
     <file>22x22/capo.png</file>
     <file>22x22/transpose.png</file>
+    <file>22x22/fold.png</file>
+    <file>22x22/unfold.png</file>
     <file>22x22/flags/flag-en.png</file>
     <file>22x22/flags/flag-fr.png</file>
     <file>22x22/flags/flag-es.png</file>
@@ -24,6 +26,8 @@
     <file>32x32/columns.png</file>
     <file>32x32/capo.png</file>
     <file>32x32/transpose.png</file>
+    <file>32x32/fold.png</file>
+    <file>32x32/unfold.png</file>
     <file>32x32/flags/flag-en.png</file>
     <file>32x32/flags/flag-fr.png</file>
     <file>32x32/flags/flag-es.png</file>
@@ -39,6 +43,8 @@
     <file>48x48/columns.png</file>
     <file>48x48/capo.png</file>
     <file>48x48/transpose.png</file>
+    <file>48x48/fold.png</file>
+    <file>48x48/unfold.png</file>
     <file>48x48/flags/flag-en.png</file>
     <file>48x48/flags/flag-fr.png</file>
     <file>48x48/flags/flag-es.png</file>
