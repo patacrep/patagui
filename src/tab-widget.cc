@@ -104,12 +104,18 @@ void CTabWidget::updateTabBarVisibility()
 
 void CTabWidget::next()
 {
-  setCurrentIndex(currentIndex() + 1);
+  if (currentIndex() == count()-1) //last tab
+    setCurrentIndex(0); //first tab
+  else
+    setCurrentIndex(currentIndex() + 1);
 }
 
 void CTabWidget::prev()
 {
-  setCurrentIndex(currentIndex() - 1);
+  if (currentIndex() == 0) //first tab
+    setCurrentIndex(count()-1); //last tab
+  else
+    setCurrentIndex(currentIndex() - 1);
 }
 
 void CTabWidget::changeTabText(const QString &text)
