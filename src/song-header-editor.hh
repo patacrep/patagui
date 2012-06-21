@@ -25,6 +25,7 @@
 
 #include <QString>
 #include <QLabel>
+#include <QPixmap>
 
 class CSongEditor;
 class CCoverDropArea;
@@ -35,7 +36,7 @@ class LineEdit;
 class QSpinBox;
 class QComboBox;
 class QBoxLayout;
-class QToolButton;
+class QStackedLayout;
 
 /**
  * \file song-header-editor.hh
@@ -53,6 +54,8 @@ class CSongHeaderEditor : public QWidget
   Q_OBJECT
 
 public:
+  enum ViewMode { FullViewMode, MiniViewMode };
+
   /// Constructor.
   CSongHeaderEditor(QWidget *parent = 0);
   /// Destructor.
@@ -80,6 +83,8 @@ public:
   LineEdit* titleLineEdit() const;
   LineEdit* artistLineEdit() const;
 
+  QSize sizeHint() const;
+
 private slots:
   void onIndexChanged(const QString &text);
   void onTextEdited(const QString &text);
@@ -89,12 +94,15 @@ private slots:
 
 public slots:
   void update();
+  void toggleView();
 
 signals:
   void contentsChanged();
   void languageChanged(const QLocale &);
 
 private:
+  CSongEditor *m_songEditor;
+
   LineEdit *m_titleLineEdit;
   LineEdit *m_artistLineEdit;
   LineEdit *m_albumLineEdit;
@@ -106,9 +114,10 @@ private:
   QSpinBox *m_transposeSpinBox;
   CCoverDropArea *m_coverLabel;
 
-  CSongEditor *m_songEditor;
-
   CDiagramArea *m_diagramArea;
+
+  ViewMode m_viewMode;
+  QStackedLayout *m_stackedLayout;
 };
 
 
@@ -153,6 +162,7 @@ public slots:
 signals:
   void changed(const QMimeData *mimeData = 0);
   void coverChanged();
+  void miniCoverChanged(const QPixmap &);
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);
