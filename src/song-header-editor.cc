@@ -25,11 +25,13 @@
 
 #include "utils/lineedit.hh"
 
+#include <QStackedLayout>
 #include <QBoxLayout>
 #include <QScrollArea>
 #include <QLabel>
 #include <QSpinBox>
 #include <QComboBox>
+#include <QPushButton>
 
 #include <QFileInfo>
 #include <QFile>
@@ -51,6 +53,7 @@
 
 CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   : QWidget(parent)
+  , m_songEditor(0)
   , m_titleLineEdit(new LineEdit(this))
   , m_artistLineEdit(new LineEdit(this))
   , m_albumLineEdit(new LineEdit(this))
@@ -61,9 +64,10 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_capoSpinBox(new QSpinBox(this))
   , m_transposeSpinBox(new QSpinBox(this))
   , m_coverLabel(new CCoverDropArea(this))
-  , m_songEditor()
+  , m_viewMode(FullViewMode)
 {
-  //do not translate combobox content since "english", "french" etc is used by LaTeX
+  // full view
+  // do not translate combobox content since "english", "french" etc is used by LaTeX
   m_languageComboBox->addItem
     (QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")), "English");
   m_languageComboBox->addItem
@@ -157,18 +161,89 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   diagramsScrollArea->setBackgroundRole(QPalette::Dark);
   diagramsScrollArea->setWidgetResizable(true);
 
-  setMaximumHeight(142);
+  QBoxLayout *toMiniViewLayout = new QVBoxLayout;
+  QPushButton *toMiniViewButton = new QPushButton;
+  toMiniViewButton->setFlat(true);
+  toMiniViewButton->setToolTip(tr("Mini view mode"));
+  toMiniViewButton->setIcon(QIcon(":/icons/songbook/48x48/fold.png"));
+  connect(toMiniViewButton, SIGNAL(clicked()), this, SLOT(toggleView()));
+  toMiniViewLayout->addWidget(toMiniViewButton);
+  toMiniViewLayout->addStretch();
 
-  QBoxLayout *mainLayout = new QHBoxLayout;
-  mainLayout->setContentsMargins(1, 1, 1, 1);
-  mainLayout->addWidget(m_coverLabel);
-  mainLayout->addLayout(songInformationLayout);
-  mainLayout->addWidget(diagramsScrollArea);
+  QWidget *fullView = new QWidget;
+  QBoxLayout *fullViewLayout = new QHBoxLayout;
+  fullViewLayout->setContentsMargins(4, 0, 4, 0);
+  fullViewLayout->addWidget(m_coverLabel);
+  fullViewLayout->addLayout(songInformationLayout);
+  fullViewLayout->addWidget(diagramsScrollArea);
+  fullViewLayout->addLayout(toMiniViewLayout);
+  fullView->setLayout(fullViewLayout);
+
+  QBoxLayout *toFullViewLayout = new QVBoxLayout;
+  QPushButton *toFullViewButton = new QPushButton;
+  toFullViewButton->setFlat(true);
+  toFullViewButton->setToolTip(tr("Full view mode"));
+  toFullViewButton->setIcon(QIcon(":/icons/songbook/48x48/unfold.png"));
+  connect(toFullViewButton, SIGNAL(clicked()), this, SLOT(toggleView()));
+  toFullViewLayout->addWidget(toFullViewButton);
+  toFullViewLayout->addStretch();
+
+  // mini view
+  QWidget *miniView = new QWidget;
+  QLabel *miniTitle = new QLabel(m_titleLineEdit->text());
+  connect(m_titleLineEdit, SIGNAL(textChanged(const QString &)), miniTitle, SLOT(setText(const QString &)));
+  QLabel *miniArtist = new QLabel(m_artistLineEdit->text());
+  connect(m_artistLineEdit, SIGNAL(textChanged(const QString &)), miniArtist, SLOT(setText(const QString &)));
+  QLabel *miniCover = new QLabel;
+  connect(m_coverLabel, SIGNAL(miniCoverChanged(const QPixmap &)), miniCover, SLOT(setPixmap(const QPixmap &)));
+
+  QBoxLayout *miniViewLayout = new QHBoxLayout;
+  miniViewLayout->setContentsMargins(4, 0, 4, 0);
+  miniViewLayout->addWidget(miniCover);
+  miniViewLayout->addWidget(miniArtist);
+  miniViewLayout->addWidget(new QLabel(" - "));
+  miniViewLayout->addWidget(miniTitle);
+  miniViewLayout->addStretch();
+  miniViewLayout->addLayout(toFullViewLayout);
+  miniView->setLayout(miniViewLayout);
+
+  m_stackedLayout = new QStackedLayout;
+  m_stackedLayout->setContentsMargins(0, 0, 0, 0);
+  m_stackedLayout->addWidget(miniView);
+  m_stackedLayout->addWidget(fullView);
+  m_stackedLayout->setCurrentIndex(1);
+
+  QVBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->setContentsMargins(0, 0, 0, 0);
+  mainLayout->addLayout(m_stackedLayout);
   setLayout(mainLayout);
+  setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
 }
 
 CSongHeaderEditor::~CSongHeaderEditor()
 {}
+
+
+QSize CSongHeaderEditor::sizeHint() const
+{
+  return QSize(500, 150);
+}
+
+void CSongHeaderEditor::toggleView()
+{
+  if (m_viewMode == FullViewMode)
+    {
+      m_viewMode = MiniViewMode;
+      m_stackedLayout->setCurrentIndex(0);
+      setMaximumHeight(30);
+    }
+  else if (m_viewMode == MiniViewMode)
+    {
+      m_viewMode = FullViewMode;
+      m_stackedLayout->setCurrentIndex(1);
+      setMaximumHeight(150);
+    }
+}
 
 Song & CSongHeaderEditor::song()
 {
@@ -441,6 +516,7 @@ void CCoverDropArea::update()
     }
   setPixmap(pixmap);
   emit(coverChanged());
+  emit(miniCoverChanged(pixmap.scaled(28,28)));
 }
 
 void CCoverDropArea::selectCover()
