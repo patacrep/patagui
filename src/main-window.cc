@@ -569,11 +569,16 @@ void CMainWindow::build()
 
   save(true);
 
-  if (!QFile(songbook()->filename()).exists())
-    statusBar()->showMessage(tr("The songbook file %1 is invalid. Build aborted.")
-			     .arg(songbook()->filename()));
-
-  make();
+  if (QFile(songbook()->filename()).exists())
+    {
+      qobject_cast<QPlainTextEdit *>(log()->widget())->clear();
+      make();
+    }
+  else
+    {
+      statusBar()->showMessage(tr("The songbook file %1 is invalid. Build aborted.")
+			       .arg(songbook()->filename()));
+    }
 }
 
 void CMainWindow::newSongbook()
