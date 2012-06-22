@@ -192,14 +192,24 @@ void Page::setLayout(QLayout *layout)
 DisplayPage::DisplayPage(QWidget *parent)
   : Page(parent)
 {
-  QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Display Columns"));
+  QGroupBox *displayApplicationGroupBox = new QGroupBox(tr("Application"));
+  m_statusBarCheckBox = new QCheckBox(tr("Status bar"));
+  m_toolBarCheckBox = new QCheckBox(tr("Tool bar"));
+  m_compilationLogCheckBox = new QCheckBox(tr("Compilation log"));
 
+  QGroupBox *displayColumnsGroupBox = new QGroupBox(tr("Library"));
   m_titleCheckBox = new QCheckBox(tr("Title"));
   m_artistCheckBox = new QCheckBox(tr("Artist"));
   m_pathCheckBox = new QCheckBox(tr("Path"));
   m_albumCheckBox = new QCheckBox(tr("Album"));
   m_lilypondCheckBox = new QCheckBox(tr("Lilypond"));
   m_langCheckBox = new QCheckBox(tr("Language"));
+
+  QVBoxLayout *displayApplicationLayout = new QVBoxLayout;
+  displayApplicationLayout->addWidget(m_statusBarCheckBox);
+  displayApplicationLayout->addWidget(m_toolBarCheckBox);
+  displayApplicationLayout->addWidget(m_compilationLogCheckBox);
+  displayApplicationGroupBox->setLayout(displayApplicationLayout);
 
   QVBoxLayout *displayColumnsLayout = new QVBoxLayout;
   displayColumnsLayout->addWidget(m_titleCheckBox);
@@ -210,16 +220,9 @@ DisplayPage::DisplayPage(QWidget *parent)
   displayColumnsLayout->addWidget(m_langCheckBox);
   displayColumnsGroupBox->setLayout(displayColumnsLayout);
 
-  QGroupBox *displayWindowsGroupBox = new QGroupBox(tr("Display windows"));
-  m_compilationLogCheckBox = new QCheckBox(tr("Compilation log"));
-
-  QVBoxLayout *displayWindowsLayout = new QVBoxLayout;
-  displayWindowsLayout->addWidget(m_compilationLogCheckBox);
-  displayWindowsGroupBox->setLayout(displayWindowsLayout);
-
   QVBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(displayApplicationGroupBox);
   mainLayout->addWidget(displayColumnsGroupBox);
-  mainLayout->addWidget(displayWindowsGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
 
@@ -237,6 +240,8 @@ void DisplayPage::readSettings()
   m_lilypondCheckBox->setChecked(settings.value("lilypond", false).toBool());
   m_langCheckBox->setChecked(settings.value("lang", true).toBool());
   m_compilationLogCheckBox->setChecked(settings.value("logs", false).toBool());
+  m_statusBarCheckBox->setChecked(settings.value("statusBar", true).toBool());
+  m_toolBarCheckBox->setChecked(settings.value("toolBar", true).toBool());
   settings.endGroup();
 }
 
@@ -251,6 +256,8 @@ void DisplayPage::writeSettings()
   settings.setValue("lilypond", m_lilypondCheckBox->isChecked());
   settings.setValue("lang", m_langCheckBox->isChecked());
   settings.setValue("logs", m_compilationLogCheckBox->isChecked());
+  settings.setValue("statusBar", m_statusBarCheckBox->isChecked());
+  settings.setValue("toolBar", m_toolBarCheckBox->isChecked());
   settings.endGroup();
 }
 

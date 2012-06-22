@@ -166,7 +166,7 @@ private slots:
   //application
   void preferences();
   void setToolBarDisplayed(bool);
-  void setStatusbarDisplayed(bool);
+  void setStatusBarDisplayed(bool);
   void documentation();
   void reportBug();
   void about();
@@ -187,7 +187,7 @@ private:
   void createToolBar();
 
   bool isToolBarDisplayed();
-  bool isStatusbarDisplayed();
+  bool isStatusBarDisplayed();
 
   QItemSelectionModel * selectionModel();
 
@@ -210,7 +210,7 @@ private:
   // Settings
   QString m_workingPath;
   bool m_isToolBarDisplayed;
-  bool m_isStatusbarDisplayed;
+  bool m_isStatusBarDisplayed;
   QString m_buildCommand;
   QString m_cleanCommand;
   QString m_cleanallCommand;
@@ -224,8 +224,6 @@ private:
 
   // Application actions
   QAction *m_preferencesAct;
-  QAction *m_toolBarViewAct;
-  QAction *m_statusbarViewAct;
   QAction *m_documentationAct;
   QAction *m_bugsAct;
   QAction *m_aboutAct;
