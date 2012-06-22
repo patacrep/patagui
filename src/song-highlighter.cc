@@ -38,13 +38,13 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 
   //LaTeX options (overrided by chords)
   optionFormat.setFontItalic(true);
-  rule.pattern = QRegExp("\\[([^\\]]+)\\]");
+  rule.pattern = QRegExp("\\[[^\\]]+\\]");
   rule.format = optionFormat;
   highlightingRules.append(rule);
 
   //LaTeX args (bold)
   argumentFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\{([^}]+)\\}");
+  rule.pattern = QRegExp("\\{[^}]+\\}");
   rule.format = argumentFormat;
   highlightingRules.append(rule);
 
@@ -123,7 +123,7 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   //Chords (blue)
   chordFormat.setForeground(QColor(32,74,135));
   chordFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\\\\\[([^\\]]+)\\]");
+  rule.pattern = QRegExp("\\\\\\[[^\\]]+\\]");
   rule.format = chordFormat;
   highlightingRules.append(rule);
 
