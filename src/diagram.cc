@@ -376,8 +376,8 @@ CDiagramArea::CDiagramArea(QWidget *parent)
 
   QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->addLayout(m_layout);
-  mainLayout->addStretch();
   mainLayout->addLayout(addButtonLayout);
+  mainLayout->addStretch();
   setLayout(mainLayout);
 
   setFocusPolicy(Qt::StrongFocus);
