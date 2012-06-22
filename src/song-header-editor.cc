@@ -177,7 +177,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   fullViewLayout->setContentsMargins(4, 0, 4, 0);
   fullViewLayout->addWidget(m_coverLabel);
   fullViewLayout->addLayout(songInformationLayout);
-  fullViewLayout->addWidget(diagramsScrollArea);
+  fullViewLayout->addWidget(diagramsScrollArea, 1);
   fullViewLayout->addLayout(toMiniViewLayout);
   fullView->setLayout(fullViewLayout);
 
