@@ -80,6 +80,7 @@ QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
       //spinbox->setSuffix(manager->attributeValue(property, QLatin1String("unit")).toString());
       //hardcoded as the solution above does not work and we only have one type of spinbox (for font size)
       spinbox->setSuffix("pt");
+      spinbox->setRange(10, 12);
       theCreatedSpinBoxes[property].append(spinbox);
       theSpinBoxToProperty[spinbox] = property;
 
