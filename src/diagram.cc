@@ -106,7 +106,8 @@ void CDiagram::fromString(const QString & str)
 
   if (fret().isEmpty())
     {
-      reStringsNoFret.indexIn(str);
+      QString copy(str);
+      reStringsNoFret.indexIn(copy.replace("~:",""));
       setStrings(reStringsNoFret.cap(1));
     }
   else
