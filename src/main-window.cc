@@ -146,6 +146,7 @@ CMainWindow::CMainWindow(QWidget *parent)
   , m_infoSelection(new QLabel(this))
   , m_log(new QDockWidget(tr("LaTeX compilation logs")))
   , m_isToolBarDisplayed(true)
+  , m_isStatusBarDisplayed(true)
   , m_currentToolBar(0)
   , m_builder(new CMakeSongbookProcess(this))
 {
@@ -247,8 +248,6 @@ void CMainWindow::readSettings(bool firstLaunch)
 {
   QSettings settings;
   settings.beginGroup("general");
-  setStatusbarDisplayed(settings.value("statusBar", true).toBool());
-  setToolBarDisplayed(settings.value("toolBar", true).toBool());
   if (firstLaunch)
     {
       resize(settings.value("size", QSize(800,600)).toSize());
@@ -259,6 +258,8 @@ void CMainWindow::readSettings(bool firstLaunch)
   settings.endGroup();
 
   settings.beginGroup("display");
+  setStatusBarDisplayed(settings.value("statusBar", true).toBool());
+  setToolBarDisplayed(settings.value("toolBar", true).toBool());
   log()->setVisible(settings.value("logs", false).toBool());
   settings.endGroup();
 
@@ -276,8 +277,6 @@ void CMainWindow::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("general");
-  settings.setValue("statusBar", isStatusbarDisplayed());
-  settings.setValue("toolBar", isToolBarDisplayed());
   settings.setValue( "maximized", isMaximized() );
   if (!isMaximized())
     {
@@ -389,21 +388,6 @@ void CMainWindow::createActions()
   m_libraryDownloadAct->setEnabled(false);
 #endif // ENABLE_LIBRARY_DOWNLOAD
 
-  QSettings settings;
-  settings.beginGroup("general");
-  m_toolBarViewAct = new QAction(tr("ToolBar"),this);
-  m_toolBarViewAct->setStatusTip(tr("Show or hide the toolbar in the current window"));
-  m_toolBarViewAct->setCheckable(true);
-  m_toolBarViewAct->setChecked(settings.value("toolBar", true).toBool());
-  connect(m_toolBarViewAct, SIGNAL(toggled(bool)), this, SLOT(setToolBarDisplayed(bool)));
-
-  m_statusbarViewAct = new QAction(tr("Statusbar"),this);
-  m_statusbarViewAct->setStatusTip(tr("Show or hide the statusbar in the current window"));
-  m_statusbarViewAct->setCheckable(true);
-  m_statusbarViewAct->setChecked(settings.value("statusBar", true).toBool());
-  connect(m_statusbarViewAct, SIGNAL(toggled(bool)), this, SLOT(setStatusbarDisplayed(bool)));
-  settings.endGroup();
-
   m_buildAct = new QAction(tr("&Build PDF"), this);
   m_buildAct->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_B));
   m_buildAct->setIcon(QIcon::fromTheme("document-export",QIcon(":/icons/tango/32x32/mimetypes/document-export.png")));
@@ -432,15 +416,15 @@ bool CMainWindow::isToolBarDisplayed()
   return m_isToolBarDisplayed;
 }
 
-void CMainWindow::setStatusbarDisplayed(bool value)
+void CMainWindow::setStatusBarDisplayed(bool value)
 {
-  m_isStatusbarDisplayed = value;
+  m_isStatusBarDisplayed = value;
   statusBar()->setVisible(value);
 }
 
-bool CMainWindow::isStatusbarDisplayed()
+bool CMainWindow::isStatusBarDisplayed()
 {
-  return m_isStatusbarDisplayed;
+  return m_isStatusBarDisplayed;
 }
 
 void CMainWindow::closeEvent(QCloseEvent *event)
@@ -481,10 +465,6 @@ void CMainWindow::createMenus()
   m_voidEditor = new CSongEditor(this);
   m_voidEditor->actionGroup()->setEnabled(false);
   m_editorMenu->addActions(m_voidEditor->actionGroup()->actions());
-
-  QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
-  viewMenu->addAction(m_toolBarViewAct);
-  viewMenu->addAction(m_statusbarViewAct);
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(m_documentationAct);
