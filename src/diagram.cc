@@ -239,6 +239,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab,
   , m_diagram(new CDiagram(gtab, type))
   , m_chordName(new QLabel)
   , m_selected(false)
+  , m_isReadOnly(false)
 {
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
@@ -275,6 +276,9 @@ CDiagramWidget::~CDiagramWidget()
 
 bool CDiagramWidget::editChord()
 {
+  if (isReadOnly())
+    return false;
+
   CDiagramEditor editor(this);
   editor.setDiagram(m_diagram);
 
@@ -294,6 +298,9 @@ bool CDiagramWidget::editChord()
 
 void CDiagramWidget::removeChord()
 {
+  if (isReadOnly())
+    return;
+
   emit diagramCloseRequested();
 }
 
@@ -378,11 +385,27 @@ bool CDiagramWidget::isImportant() const
   return m_diagram->isImportant();
 }
 
+bool CDiagramWidget::isReadOnly() const
+{
+  return m_isReadOnly;
+}
+
+void CDiagramWidget::setReadOnly(bool value)
+{
+  m_isReadOnly = value;
+  foreach (QAction *action, actions())
+    {
+      action->setEnabled(!value);
+      action->setVisible(!value);
+    }
+}
+
 //----------------------------------------------------------------------------
 
 CDiagramArea::CDiagramArea(QWidget *parent)
   : QWidget(parent)
   , m_layout (new QHBoxLayout)
+  , m_isReadOnly(false)
 {
   m_layout->setContentsMargins(4, 4, 4, 4);
 
@@ -407,6 +430,7 @@ CDiagramArea::CDiagramArea(QWidget *parent)
 CDiagramWidget * CDiagramArea::addDiagram()
 {
   CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", CDiagram::GuitarChord);
+  diagram->setReadOnly(isReadOnly());
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
@@ -427,6 +451,7 @@ CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const CDiagram:
 {
   CDiagramWidget *diagram = new CDiagramWidget(chord, type);
   m_layout->addWidget(diagram);
+  diagram->setReadOnly(isReadOnly());
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
@@ -480,3 +505,18 @@ void CDiagramArea::keyPressEvent(QKeyEvent *event)
 	onDiagramChanged();
     }
 }
+
+bool CDiagramArea::isReadOnly() const
+{
+  return m_isReadOnly;
+}
+
+void CDiagramArea::setReadOnly(bool value)
+{
+  m_isReadOnly = value;
+  m_addDiagramButton->setVisible(!value);
+  for (int i=0; i < m_layout->count(); ++i)
+    if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+      diagram->setReadOnly(value);
+}
+
