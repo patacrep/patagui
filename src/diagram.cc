@@ -270,7 +270,8 @@ CDiagramWidget::CDiagramWidget(const QString & gtab,
 
   connect(this, SIGNAL(changed()), SLOT(updateBackground()));
   connect(this, SIGNAL(changed()), SLOT(updateChordName()));
-  emit changed();
+  updateBackground();
+  updateChordName();
 }
 
 CDiagramWidget::~CDiagramWidget()
@@ -353,7 +354,8 @@ void CDiagramWidget::setSelected(bool value)
   if ( value != m_selected )
     {
       m_selected = value;
-      emit changed();
+      updateBackground();
+      updateChordName();
     }
 }
 
