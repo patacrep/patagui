@@ -405,19 +405,21 @@ void CDiagramWidget::setReadOnly(bool value)
 
 CDiagramArea::CDiagramArea(QWidget *parent)
   : QWidget(parent)
-  , m_layout (new QHBoxLayout)
+  , m_layout (new QGridLayout)
   , m_isReadOnly(false)
+  , m_columnCount(0)
+  , m_nbDiagrams(0)
 {
   m_layout->setContentsMargins(4, 4, 4, 4);
 
   QBoxLayout *addButtonLayout = new QVBoxLayout;
-  QPushButton *addDiagramButton = new QPushButton;
-  addDiagramButton->setFlat(true);
-  addDiagramButton->setToolTip(tr("Add a new diagram"));
-  addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/48x48/actions/list-add.png")));
-  connect(addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
+  m_addDiagramButton = new QPushButton;
+  m_addDiagramButton->setFlat(true);
+  m_addDiagramButton->setToolTip(tr("Add a new diagram"));
+  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/48x48/actions/list-add.png")));
+  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
   addButtonLayout->addStretch();
-  addButtonLayout->addWidget(addDiagramButton);
+  addButtonLayout->addWidget(m_addDiagramButton);
 
   QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->addLayout(m_layout);
@@ -437,7 +439,8 @@ CDiagramWidget * CDiagramArea::addDiagram()
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
   if (diagram->editChord())
     {
-      m_layout->addWidget(diagram);
+      ++m_nbDiagrams;
+      m_layout->addWidget(diagram, m_nbDiagrams/columnCount() + m_nbSeparators, m_layout->columnCount()+1, 1, 1);
       emit(contentsChanged());
     }
   else
@@ -451,8 +454,9 @@ CDiagramWidget * CDiagramArea::addDiagram()
 CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const CDiagram::ChordType & type)
 {
   CDiagramWidget *diagram = new CDiagramWidget(chord, type);
-  m_layout->addWidget(diagram);
   diagram->setReadOnly(isReadOnly());
+  ++m_nbDiagrams;
+  m_layout->addWidget(diagram, (m_nbDiagrams-1)/columnCount() + m_nbSeparators, (m_nbDiagrams-1)%(columnCount()), 1, 1);
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
@@ -464,6 +468,7 @@ void CDiagramArea::removeDiagram()
   if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender()))
     {
       m_layout->removeWidget(diagram);
+      --m_nbDiagrams;
       disconnect(diagram,0,0,0);
       diagram->setParent(0);
       diagram->deleteLater();
@@ -533,5 +538,18 @@ void CDiagramArea::setReadOnly(bool value)
   for (int i=0; i < m_layout->count(); ++i)
     if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
       diagram->setReadOnly(value);
+}
+
+int CDiagramArea::columnCount() const
+{
+  if (m_columnCount == 0)
+    return 99;
+  else
+    return m_columnCount ;
+}
+
+void CDiagramArea::setColumnCount(int value)
+{
+  m_columnCount = value;
 }
 
