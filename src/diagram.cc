@@ -237,7 +237,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab,
 			       const CDiagram::ChordType & type,
 			       QWidget *parent)
   : QWidget(parent)
-  , m_diagram(new CDiagram(gtab, type))
+  , m_diagram(new CDiagram(gtab, type, this))
   , m_chordName(new QLabel)
   , m_selected(false)
   , m_isReadOnly(false)
