@@ -409,6 +409,7 @@ CDiagramArea::CDiagramArea(QWidget *parent)
   , m_isReadOnly(false)
   , m_columnCount(0)
   , m_nbDiagrams(0)
+  , m_nbSeparators(0)
 {
   m_layout->setContentsMargins(4, 4, 4, 4);
 
@@ -618,3 +619,28 @@ void CDiagramArea::clearFilters()
     m_layout->itemAt(i)->widget()->setVisible(true);
 }
 
+void CDiagramArea::addSeparator(const QString & str)
+{
+  QLabel *separator = new QLabel(QString("<b>%1</b>").arg(str));
+  m_layout->addWidget(separator, m_layout->rowCount(), 0, 1, columnCount());
+  ++m_nbSeparators;
+}
+
+void CDiagramArea::updateSeparatorsVisibility(int position)
+{
+  if (position < 1)
+    return;
+
+  int prev = position -1; // look backward for the position of the previous visible item
+  QLabel *currentSeparator = qobject_cast< QLabel* >(m_layout->itemAt(position)->widget());
+  // we are either starting with a separator or the last item
+  if (currentSeparator || position == m_layout->count()-1)
+    {
+      while (prev > 0 && !m_layout->itemAt(prev)->widget()->isVisible())
+	--prev;
+
+      // if previous visible element is a separator, it should be hidden
+      if (QLabel *prevSeparator = qobject_cast< QLabel* >(m_layout->itemAt(prev)->widget()))
+	prevSeparator->setVisible(false);
+    }
+}

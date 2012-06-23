@@ -171,6 +171,7 @@ public slots:
   void setStringsFilter(const QString & strings);
   void setImportantFilter(bool onlyImportant);
   void clearFilters();
+  void addSeparator(const QString & label);
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
@@ -185,11 +186,13 @@ signals:
   void contentsChanged();
 
 private:
+  void updateSeparatorsVisibility(int pos);
 
   QGridLayout *m_layout;
   bool m_isReadOnly;
   int m_columnCount;
   int m_nbDiagrams;
+  int m_nbSeparators;
   QPushButton *m_addDiagramButton;
 };
 
