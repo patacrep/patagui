@@ -140,7 +140,8 @@ private:
   bool m_isReadOnly;
 };
 
-class QBoxLayout;
+class QGridLayout;
+class QPushButton;
 
 /**
  * \file diagram.hh
@@ -160,6 +161,10 @@ public:
 
   bool isReadOnly() const;
   void setReadOnly(bool value);
+
+  int columnCount() const;
+  void setColumnCount(int value);
+
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 
@@ -173,9 +178,12 @@ signals:
   void contentsChanged();
 
 private:
-  QBoxLayout *m_layout;
-  QList<CDiagramWidget*> m_diagrams;
+
+  QGridLayout *m_layout;
   bool m_isReadOnly;
+  int m_columnCount;
+  int m_nbDiagrams;
+  QPushButton *m_addDiagramButton;
 };
 
 #endif // __DIAGRAM_HH__
