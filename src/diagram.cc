@@ -552,3 +552,69 @@ void CDiagramArea::setColumnCount(int value)
   m_columnCount = value;
 }
 
+void CDiagramArea::setTypeFilter(const CDiagram::ChordType & type)
+{
+  for (int i=0; i < m_layout->count(); ++i)
+    {
+      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+	{
+	  if (diagram->type() != type)
+	    diagram->setVisible(false);
+	}
+      updateSeparatorsVisibility(i);
+    }
+}
+
+void CDiagramArea::setNameFilter(const QString & name)
+{
+  if (name.isEmpty())
+    clearFilters();
+
+  for (int i=0; i < m_layout->count(); ++i)
+    {
+      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+	{
+	  if (!diagram->chord().contains(name))
+	    diagram->setVisible(false);
+	}
+      updateSeparatorsVisibility(i);
+    }
+}
+
+void CDiagramArea::setImportantFilter(bool onlyImportantDiagrams)
+{
+  for (int i=0; i < m_layout->count(); ++i)
+    {
+      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+	{
+	  if (diagram->isImportant() != onlyImportantDiagrams)
+	    diagram->setVisible(false);
+	  else
+	    diagram->setVisible(true);
+	}
+      updateSeparatorsVisibility(i);
+    }
+}
+
+void CDiagramArea::setStringsFilter(const QString & strings)
+{
+  if (strings.isEmpty())
+    clearFilters();
+
+  for (int i=0; i < m_layout->count(); ++i)
+    {
+      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
+	{
+	  if (!diagram->strings().contains(strings))
+	    diagram->setVisible(false);
+	}
+	updateSeparatorsVisibility(i);
+    }
+}
+
+void CDiagramArea::clearFilters()
+{
+  for (int i=0; i < m_layout->count(); ++i)
+    m_layout->itemAt(i)->widget()->setVisible(true);
+}
+
