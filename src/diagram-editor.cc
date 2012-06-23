@@ -58,8 +58,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
   m_guitar  = new QRadioButton(tr("Guitar"));
   m_ukulele = new QRadioButton(tr("Ukulele"));
-  connect(m_guitar, SIGNAL(toggled(bool)), this, SLOT(setStringsMaxLength(bool)));
-  connect(m_ukulele, SIGNAL(toggled(bool)), this, SLOT(setStringsMaxLength(bool)));
+  connect(m_guitar, SIGNAL(toggled(bool)), this, SLOT(onTypeChanged(bool)));
+  connect(m_ukulele, SIGNAL(toggled(bool)), this, SLOT(onTypeChanged(bool)));
 
   QVBoxLayout *instrumentLayout = new QVBoxLayout;
   instrumentLayout->addWidget(m_guitar);
@@ -268,7 +268,7 @@ bool CDiagramEditor::checkChord()
   return true;
 }
 
-void CDiagramEditor::setStringsMaxLength(bool checked)
+void CDiagramEditor::onTypeChanged(bool checked)
 {
   Q_UNUSED(checked);
 
