@@ -409,6 +409,7 @@ void CDiagramArea::removeDiagram()
       m_layout->removeWidget(diagram);
       disconnect(diagram,0,0,0);
       diagram->setParent(0);
+      diagram->deleteLater();
       onDiagramChanged();
     }
 }
