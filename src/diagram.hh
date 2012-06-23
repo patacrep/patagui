@@ -187,7 +187,7 @@ signals:
   void diagramClicked(CDiagramWidget * diagram);
 
 private:
-  void updateSeparatorsVisibility(int pos);
+  void updateSeparatorsVisibility();
 
   QGridLayout *m_layout;
   bool m_isReadOnly;
