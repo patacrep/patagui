@@ -18,6 +18,13 @@
 //******************************************************************************
 #include "diagram-editor.hh"
 
+#include "song.hh"
+
+#include <QFile>
+#include <QScrollArea>
+#include <QSettings>
+#include <QDir>
+
 #include <QLabel>
 #include <QLineEdit>
 #include <QSpinBox>
@@ -35,6 +42,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   : QDialog(parent)
   , m_infoIconLabel(new QLabel(this))
   , m_messageLabel(new QLabel(this))
+  , m_diagramArea(0)
 {
   setWindowTitle(tr("Chord editor"));
 
@@ -90,13 +98,79 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   chordLayout->addRow(tr("Fret:"), m_fretSpinBox);
   chordLayout->addRow(tr("Strings:"), m_stringsLineEdit);
 
-  QBoxLayout *layout = new QVBoxLayout;
-  layout->addWidget(instrumentGroupBox);
-  layout->addLayout(chordLayout);
-  layout->addWidget(m_importantCheckBox);
-  layout->addLayout(layoutInformation);
-  layout->addWidget(buttonBox);
-  setLayout(layout);
+  QSettings settings;
+  settings.beginGroup("library");
+  QString songbookDir(settings.value("workingPath", QDir::homePath()).toString());
+  settings.endGroup();
+
+  QFile file(QString("%1/tex/chords.tex").arg(songbookDir));
+
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+      // list of standard diagrams
+      m_diagramArea = new CDiagramArea(this);
+      m_diagramArea->setReadOnly(true);
+      m_diagramArea->setColumnCount(8);
+
+      connect(m_nameLineEdit, SIGNAL(textChanged(const QString &)),
+	      m_diagramArea, SLOT(setNameFilter(const QString &)));
+      connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
+	      m_diagramArea, SLOT(setStringsFilter(const QString &)));
+      connect(m_importantCheckBox, SIGNAL(toggled(bool)),
+	      m_diagramArea, SLOT(setImportantFilter(bool)));
+      connect(m_diagramArea, SIGNAL(diagramClicked(CDiagramWidget *)),
+	      this, SLOT(setDiagram(CDiagramWidget *)));
+
+      QTextStream stream (&file);
+      stream.setCodec("UTF-8");
+      QString content = stream.readAll();
+      file.close();
+
+      // parse chords.tex for gtab/utab
+      QRegExp reSeparator("\\\\chordname\\{([^\\}]+)");
+      QString line;
+      QStringList lines = content.split("\n");
+      foreach (line, lines)
+	{
+	  if (Song::reGtab.indexIn(line) != -1)
+            {
+	      m_diagramArea->addDiagram(line.simplified(), CDiagram::GuitarChord);
+            }
+	  else if (Song::reUtab.indexIn(line) != -1)
+            {
+	      m_diagramArea->addDiagram(line.simplified(), CDiagram::UkuleleChord);
+            }
+	  else if (reSeparator.indexIn(line) != -1)
+	    {
+	      m_diagramArea->addSeparator(reSeparator.cap(1).replace("\\Sharp","#").replace("\\Flat",QChar(0x266D)));
+	    }
+	}
+    }
+
+  QBoxLayout *formLayout = new QVBoxLayout;
+  formLayout->addWidget(instrumentGroupBox);
+  formLayout->addLayout(chordLayout);
+  formLayout->addWidget(m_importantCheckBox);
+  formLayout->addStretch(1);
+
+  QBoxLayout *contentLayout = new QHBoxLayout;
+  contentLayout->addLayout(formLayout);
+  if (m_diagramArea)
+    {
+      QScrollArea *scrollArea = new QScrollArea;
+      scrollArea->setWidget(m_diagramArea);
+      scrollArea->setBackgroundRole(QPalette::Base);
+      scrollArea->setWidgetResizable(true);
+      scrollArea->setMinimumWidth(455);
+      scrollArea->setMinimumHeight(420);
+      contentLayout->addWidget(scrollArea, 1);
+    }
+
+  QBoxLayout *mainLayout = new QVBoxLayout;
+  mainLayout->addLayout(contentLayout);
+  mainLayout->addLayout(layoutInformation);
+  mainLayout->addWidget(buttonBox);
+  setLayout(mainLayout);
 }
 
 CDiagramEditor::~CDiagramEditor()
@@ -138,6 +212,9 @@ void CDiagramEditor::setDiagram(CDiagramWidget *diagram)
   m_fretSpinBox->setValue(diagram->fret().toInt());
   m_stringsLineEdit->setText(diagram->strings());
   m_importantCheckBox->setChecked(diagram->isImportant());
+
+  if (m_diagramArea)
+    m_diagramArea->clearFilters();
 }
 
 bool CDiagramEditor::checkChord()
@@ -170,6 +247,18 @@ bool CDiagramEditor::checkChord()
 void CDiagramEditor::setStringsMaxLength(bool checked)
 {
   Q_UNUSED(checked);
+
+  if (m_diagramArea)
+    {
+      m_diagramArea->clearFilters();
+
+      if (m_guitar->isChecked())
+	m_diagramArea->setTypeFilter(CDiagram::GuitarChord);
+      else if (m_ukulele->isChecked())
+	m_diagramArea->setTypeFilter(CDiagram::UkuleleChord);
+    }
+
+  // set strings max length according to instrument
   if (chordType() == CDiagram::GuitarChord)
     m_stringsLineEdit->setMaxLength(CDiagram::GuitarStringCount);
   else if (chordType() == CDiagram::UkuleleChord)

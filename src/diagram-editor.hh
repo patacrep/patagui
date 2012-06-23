@@ -69,6 +69,8 @@ private:
   //info
   QLabel *m_infoIconLabel;
   QLabel *m_messageLabel;
+
+  CDiagramArea *m_diagramArea;
 };
 
 #endif // __DIAGRAM_EDITOR_HH__
