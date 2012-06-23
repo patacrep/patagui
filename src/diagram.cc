@@ -19,6 +19,7 @@
 #include "diagram.hh"
 #include "diagram-editor.hh"
 
+#include <QApplication>
 #include <QToolBar>
 #include <QAction>
 #include <QLabel>
@@ -488,6 +489,19 @@ void CDiagramArea::onDiagramClicked()
 {
   CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender());
   diagram->setSelected(!diagram->isSelected());
+
+  // multiple selection via Ctrl is allowed in non read only mode
+  if (isReadOnly() || QApplication::keyboardModifiers() != Qt::ControlModifier)
+    {
+      for (int i=0; i < m_layout->count(); ++i)
+	{
+	  CDiagramWidget *temp = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget());
+	  if (temp && temp != diagram)
+	    temp->setSelected(false);
+	}
+    }
+
+  emit(diagramClicked(diagram));
 }
 
 void CDiagramArea::keyPressEvent(QKeyEvent *event)
