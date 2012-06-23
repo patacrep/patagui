@@ -57,8 +57,8 @@ public:
   bool isImportant() const;
   void setImportant(bool value);
 
-  QSize minimumSizeHint() const;
-  QSize sizeHint() const;
+  virtual QSize minimumSizeHint() const;
+  virtual QSize sizeHint() const;
 
 protected:
   void paintEvent(QPaintEvent * event);
