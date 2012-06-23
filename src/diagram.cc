@@ -518,13 +518,13 @@ void CDiagramArea::keyPressEvent(QKeyEvent *event)
   if (event->key() == Qt::Key_Delete)
     {
       bool changed = false;
-      for (int i=0; i < m_layout->count(); ++i)
-        if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
-	  if (diagram->isSelected())
-            {
-	      changed = true;
-	      diagram->deleteLater();
-            }
+      foreach (CDiagramWidget *diagram, diagrams())
+	if (diagram->isSelected())
+	  {
+	    changed = true;
+	    diagram->deleteLater();
+	  }
+
       if (changed)
 	onDiagramChanged();
     }
@@ -559,15 +559,11 @@ void CDiagramArea::setColumnCount(int value)
 
 void CDiagramArea::setTypeFilter(const CDiagram::ChordType & type)
 {
-  for (int i=0; i < m_layout->count(); ++i)
-    {
-      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
-	{
-	  if (diagram->type() != type)
-	    diagram->setVisible(false);
-	}
-      updateSeparatorsVisibility(i);
-    }
+  foreach (CDiagramWidget *diagram, diagrams())
+    if (diagram->type() != type)
+      diagram->setVisible(false);
+
+  updateSeparatorsVisibility();
 }
 
 void CDiagramArea::setNameFilter(const QString & name)
@@ -575,30 +571,22 @@ void CDiagramArea::setNameFilter(const QString & name)
   if (name.isEmpty())
     clearFilters();
 
-  for (int i=0; i < m_layout->count(); ++i)
-    {
-      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
-	{
-	  if (!diagram->chord().contains(name))
-	    diagram->setVisible(false);
-	}
-      updateSeparatorsVisibility(i);
-    }
+  foreach (CDiagramWidget *diagram, diagrams())
+    if (!diagram->chord().contains(name))
+      diagram->setVisible(false);
+
+  updateSeparatorsVisibility();
 }
 
 void CDiagramArea::setImportantFilter(bool onlyImportantDiagrams)
 {
-  for (int i=0; i < m_layout->count(); ++i)
-    {
-      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
-	{
-	  if (diagram->isImportant() != onlyImportantDiagrams)
-	    diagram->setVisible(false);
-	  else
-	    diagram->setVisible(true);
-	}
-      updateSeparatorsVisibility(i);
-    }
+  foreach (CDiagramWidget *diagram, diagrams())
+    if (diagram->isImportant() != onlyImportantDiagrams)
+      diagram->setVisible(false);
+    else
+      diagram->setVisible(true);
+
+  updateSeparatorsVisibility();
 }
 
 void CDiagramArea::setStringsFilter(const QString & strings)
@@ -606,15 +594,11 @@ void CDiagramArea::setStringsFilter(const QString & strings)
   if (strings.isEmpty())
     clearFilters();
 
-  for (int i=0; i < m_layout->count(); ++i)
-    {
-      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(m_layout->itemAt(i)->widget()))
-	{
-	  if (!diagram->strings().contains(strings))
-	    diagram->setVisible(false);
-	}
-	updateSeparatorsVisibility(i);
-    }
+  foreach (CDiagramWidget *diagram, diagrams())
+    if (!diagram->strings().contains(strings))
+      diagram->setVisible(false);
+
+  updateSeparatorsVisibility();
 }
 
 void CDiagramArea::clearFilters()
@@ -630,21 +614,22 @@ void CDiagramArea::addSeparator(const QString & str)
   ++m_nbSeparators;
 }
 
-void CDiagramArea::updateSeparatorsVisibility(int position)
+void CDiagramArea::updateSeparatorsVisibility()
 {
-  if (position < 1)
-    return;
+  for (int position=1; position < m_layout->count(); ++position)
+    if (QLabel *currentSeparator = qobject_cast< QLabel* >(m_layout->itemAt(position)->widget()))
+      {
+	int prev = position -1; // look backward for the position of the previous visible item
+	// we are either starting with a separator or the last item
+	if (currentSeparator || position == m_layout->count()-1)
+	  {
+	    while (prev > 0 && !m_layout->itemAt(prev)->widget()->isVisible())
+	      --prev;
 
-  int prev = position -1; // look backward for the position of the previous visible item
-  QLabel *currentSeparator = qobject_cast< QLabel* >(m_layout->itemAt(position)->widget());
-  // we are either starting with a separator or the last item
-  if (currentSeparator || position == m_layout->count()-1)
-    {
-      while (prev > 0 && !m_layout->itemAt(prev)->widget()->isVisible())
-	--prev;
-
-      // if previous visible element is a separator, it should be hidden
-      if (QLabel *prevSeparator = qobject_cast< QLabel* >(m_layout->itemAt(prev)->widget()))
-	prevSeparator->setVisible(false);
-    }
+	    // if previous visible element is a separator, it should be hidden
+	    if (QLabel *prevSeparator = qobject_cast< QLabel* >(m_layout->itemAt(prev)->widget()))
+	      prevSeparator->setVisible(false);
+	  }
+      }
 }
+
