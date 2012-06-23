@@ -302,7 +302,7 @@ void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
   editChord();
 }
 
-void CDiagramWidget::mousePressEvent(QMouseEvent *event)
+void CDiagramWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   Q_UNUSED(event);
   emit clicked();
