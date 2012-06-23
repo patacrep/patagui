@@ -19,6 +19,7 @@
 #include "diagram-editor.hh"
 
 #include "song.hh"
+#include "diagram-area.hh"
 
 #include <QFile>
 #include <QScrollArea>

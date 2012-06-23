@@ -30,6 +30,7 @@ class QCheckBox;
 class QLabel;
 
 class CDiagram;
+class CDiagramArea;
 
 /**
  * \file diagram-editor.hh
