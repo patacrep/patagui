@@ -130,7 +130,7 @@ bool CDiagramEditor::isChordImportant() const
   return m_importantCheckBox->isChecked();
 }
 
-void CDiagramEditor::setDiagram(CDiagram *diagram)
+void CDiagramEditor::setDiagram(CDiagramWidget *diagram)
 {
   m_guitar->setChecked(diagram->type() == CDiagram::GuitarChord);
   m_ukulele->setChecked(diagram->type() == CDiagram::UkuleleChord);

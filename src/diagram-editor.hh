@@ -50,7 +50,9 @@ public:
   QString chordFret() const;
   CDiagram::ChordType chordType() const;
   bool isChordImportant() const;
-  void setDiagram(CDiagram *diagram);
+
+public slots:
+  void setDiagram(CDiagramWidget *diagram);
 
 private slots:
   bool checkChord();
