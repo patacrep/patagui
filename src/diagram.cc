@@ -475,6 +475,7 @@ void CDiagramArea::removeDiagram()
       --m_nbDiagrams;
       disconnect(diagram,0,0,0);
       diagram->setParent(0);
+      diagram->deleteLater();
       onDiagramChanged();
     }
 }
