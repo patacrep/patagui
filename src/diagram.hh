@@ -106,8 +106,13 @@ public:
   bool isSelected() const;
   void setSelected(bool value);
 
+  // wrapper method
   QString toString();
   CDiagram::ChordType type() const;
+  QString chord() const;
+  QString fret() const;
+  QString strings() const;
+  bool isImportant() const;
 
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event);
