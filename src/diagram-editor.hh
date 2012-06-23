@@ -51,6 +51,8 @@ public:
   CDiagram::ChordType chordType() const;
   bool isChordImportant() const;
 
+  virtual QSize sizeHint() const;
+
 public slots:
   void setDiagram(CDiagramWidget *diagram);
 

@@ -180,6 +180,14 @@ CDiagramEditor::~CDiagramEditor()
 {
 }
 
+QSize CDiagramEditor::sizeHint() const
+{
+  if (m_diagramArea)
+    return QSize(500, 420);
+  else
+    return QDialog::sizeHint();
+}
+
 void CDiagramEditor::reset()
 {
   m_guitar->setChecked(true);
