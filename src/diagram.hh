@@ -114,6 +114,9 @@ public:
   QString strings() const;
   bool isImportant() const;
 
+  bool isReadOnly() const;
+  void setReadOnly(bool value);
+
 protected:
   virtual void mouseDoubleClickEvent(QMouseEvent *event);
   virtual void mouseReleaseEvent(QMouseEvent *event);
@@ -134,6 +137,7 @@ public slots:
 private:
   QLabel *m_chordName;
   bool m_selected;
+  bool m_isReadOnly;
 };
 
 class QBoxLayout;
@@ -154,6 +158,8 @@ public:
   CDiagramWidget * addDiagram(const QString & chord, const CDiagram::ChordType & type);
   QList<CDiagramWidget*> diagrams() const;
 
+  bool isReadOnly() const;
+  void setReadOnly(bool value);
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 
@@ -169,6 +175,7 @@ signals:
 private:
   QBoxLayout *m_layout;
   QList<CDiagramWidget*> m_diagrams;
+  bool m_isReadOnly;
 };
 
 #endif // __DIAGRAM_HH__
