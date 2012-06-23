@@ -47,10 +47,13 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   setWindowTitle(tr("Chord editor"));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
-						     QDialogButtonBox::Cancel);
+						     QDialogButtonBox::Cancel |
+						     QDialogButtonBox::Reset);
 
   connect(buttonBox, SIGNAL(accepted()), SLOT(checkChord()));
   connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
+  connect(buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
+	  this, SLOT(reset()));
 
   QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
   m_guitar  = new QRadioButton(tr("Guitar"));
@@ -175,6 +178,19 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
 
 CDiagramEditor::~CDiagramEditor()
 {
+}
+
+void CDiagramEditor::reset()
+{
+  m_guitar->setChecked(true);
+  m_ukulele->setChecked(false);
+  m_nameLineEdit->clear();
+  m_stringsLineEdit->clear();
+  m_fretSpinBox->setValue(0);
+  m_importantCheckBox->setChecked(false);
+
+  if (m_diagramArea)
+    m_diagramArea->clearFilters();
 }
 
 QString CDiagramEditor::chordName() const
