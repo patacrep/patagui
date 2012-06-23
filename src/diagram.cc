@@ -357,6 +357,27 @@ CDiagram::ChordType CDiagramWidget::type() const
 {
   return m_diagram->type();
 }
+
+QString CDiagramWidget::chord() const
+{
+  return m_diagram->chord();
+}
+
+QString CDiagramWidget::fret() const
+{
+  return m_diagram->fret();
+}
+
+QString CDiagramWidget::strings() const
+{
+  return m_diagram->strings();
+}
+
+bool CDiagramWidget::isImportant() const
+{
+  return m_diagram->isImportant();
+}
+
 //----------------------------------------------------------------------------
 
 CDiagramArea::CDiagramArea(QWidget *parent)
