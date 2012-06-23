@@ -89,7 +89,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
 
   QHBoxLayout *layoutInformation = new QHBoxLayout;
   layoutInformation->addWidget(m_infoIconLabel);
-  layoutInformation->addWidget(m_messageLabel);
+  layoutInformation->addWidget(m_messageLabel, 1);
+  layoutInformation->addStretch();
   m_infoIconLabel->hide();
   m_messageLabel->hide();
 
