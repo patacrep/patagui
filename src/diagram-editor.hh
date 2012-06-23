@@ -56,7 +56,8 @@ public slots:
 
 private slots:
   bool checkChord();
-  void setStringsMaxLength(bool);
+  void onTypeChanged(bool);
+  void reset();
 
 private:
   //chord
