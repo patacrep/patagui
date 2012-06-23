@@ -184,6 +184,7 @@ private slots:
 
 signals:
   void contentsChanged();
+  void diagramClicked(CDiagramWidget * diagram);
 
 private:
   void updateSeparatorsVisibility(int pos);

@@ -281,7 +281,7 @@ bool CDiagramWidget::editChord()
     return false;
 
   CDiagramEditor editor(this);
-  editor.setDiagram(m_diagram);
+  editor.setDiagram(this);
 
   if (editor.exec() == QDialog::Accepted)
     {
