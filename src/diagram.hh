@@ -165,6 +165,13 @@ public:
   int columnCount() const;
   void setColumnCount(int value);
 
+public slots:
+  void setTypeFilter(const CDiagram::ChordType & type);
+  void setNameFilter(const QString & name);
+  void setStringsFilter(const QString & strings);
+  void setImportantFilter(bool onlyImportant);
+  void clearFilters();
+
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
 
