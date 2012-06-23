@@ -21,6 +21,7 @@
 
 #include "song-editor.hh"
 #include "diagram.hh"
+#include "diagram-area.hh"
 #include "library.hh"
 
 #include "utils/lineedit.hh"
