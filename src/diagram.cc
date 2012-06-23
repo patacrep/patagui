@@ -246,6 +246,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab,
   setAutoFillBackground(true);
   setMaximumWidth(100);
   setMaximumHeight(120);
+  setMinimumHeight(100);
   setToolTip(m_diagram->toString());
   setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -336,7 +337,7 @@ void CDiagramWidget::updateBackground()
 void CDiagramWidget::updateChordName()
 {
   m_chordName->setText(QString("<font size=\"2\"><b>%1</b></font>")
-		       .arg(m_diagram->chord().replace("&", QChar(0x266D))));
+		       .arg(m_diagram->chord().replace("&", QChar(0x266D)))); // flat symbol
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   m_chordName->setMaximumHeight(18);
   m_chordName->setStyleSheet("QLabel{ border-radius: 4px; background-color: palette(mid); }");
