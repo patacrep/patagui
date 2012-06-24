@@ -19,16 +19,56 @@
 #ifndef __DIAGRAM_AREA_HH__
 #define __DIAGRAM_AREA_HH__
 
-#include "diagram.hh"
 
 #include <QWidget>
+#include <QTableWidget>
 #include <QString>
 #include <QList>
 
-class QGridLayout;
-class QPushButton;
+#include "diagram.hh"
+
 
 class CDiagramWidget;
+
+class CTableDiagram : public QTableWidget
+{
+  Q_OBJECT
+
+public:
+  CTableDiagram(QWidget *parent=0);
+
+  int nbSeparators() const;
+
+  QList<CDiagramWidget*> diagrams() const;
+
+  virtual void setColumnCount(int value);
+  virtual void setRowCount(int value);
+
+public slots:
+  void setTypeFilter(const CDiagram::ChordType & type);
+  void setNameFilter(const QString & name);
+  void setStringsFilter(const QString & strings);
+  void setImportantFilter(bool onlyImportant);
+  void clearFilters();
+  void addSeparator(const QString & label);
+
+  void addCellWidget(int index, QWidget *widget);
+
+protected:
+  virtual void paintEvent(QPaintEvent *event);
+
+private:
+  void updateSeparatorsVisibility();
+
+private:
+  int m_fixedColumnCount;
+  int m_fixedRowCount;
+  int m_nbSeparators;
+  QList<QWidget*> m_hiddenItems;
+};
+
+
+class QPushButton;
 
 /**
  * \file diagram-area.hh
@@ -52,6 +92,11 @@ public:
   int columnCount() const;
   void setColumnCount(int value);
 
+  int rowCount() const;
+  void setRowCount(int value);
+
+  int nbSeparators() const;
+
 public slots:
   void setTypeFilter(const CDiagram::ChordType & type);
   void setNameFilter(const QString & name);
@@ -74,14 +119,11 @@ signals:
   void diagramClicked(CDiagramWidget * diagram);
 
 private:
-  void updateSeparatorsVisibility();
-
-  QGridLayout *m_layout;
   bool m_isReadOnly;
-  int m_columnCount;
-  int m_nbDiagrams;
-  int m_nbSeparators;
+  CTableDiagram *m_tableWidget;
   QPushButton *m_addDiagramButton;
+  int m_nbDiagrams;
 };
+
 
 #endif //__DIAGRAM_AREA_HH__
