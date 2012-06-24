@@ -156,6 +156,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   songInformationLayout->addStretch();
 
   m_diagramArea = new CDiagramArea(this);
+  m_diagramArea->setRowCount(1);
+  m_diagramArea->setReadOnly(false);
   connect(m_diagramArea, SIGNAL(contentsChanged()),
           SLOT(onDiagramsChanged()));
 
