@@ -159,9 +159,6 @@ void FindReplaceForm::find(bool next) {
         showError("");
     } else {
         showError(tr("no match found"));
-        // move to the beginning of the document for the next find
-        textCursor.setPosition(0);
-        textEdit->setTextCursor(textCursor);
     }
 }
 
