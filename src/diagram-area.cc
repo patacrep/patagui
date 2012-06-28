@@ -19,6 +19,8 @@
 
 #include "diagram-area.hh"
 
+#include "diagram-editor.hh"
+
 #include <QBoxLayout>
 #include <QPushButton>
 #include <QList>
@@ -26,122 +28,156 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QHeaderView>
+#include <QTableView>
+#include <QSortFilterProxyModel>
+#include <QMenu>
+#include <QAction>
 
 #include <QDebug>
 
 CDiagramArea::CDiagramArea(QWidget *parent)
   : QWidget(parent)
   , m_isReadOnly(false)
-  , m_tableWidget(new CTableDiagram)
   , m_addDiagramButton(new QPushButton)
   , m_nbDiagrams(0)
 {
   QBoxLayout *addButtonLayout = new QVBoxLayout;
-    m_addDiagramButton->setFlat(true);
+  m_addDiagramButton->setFlat(true);
   m_addDiagramButton->setToolTip(tr("Add a new diagram"));
   m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/48x48/actions/list-add.png")));
-  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
+  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(newDiagram()));
   addButtonLayout->addStretch();
   addButtonLayout->addWidget(m_addDiagramButton);
 
+  // diagram model
+  m_diagramModel = new CTableDiagram;
+
+  // proxy model (filtering)
+  m_proxyModel = new QSortFilterProxyModel;
+  m_proxyModel->setSourceModel(m_diagramModel);
+  m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+  m_proxyModel->setFilterKeyColumn(-1);
+
+  // diagram view
+  m_diagramView = new QTableView;
+  m_diagramView->setModel(m_proxyModel);
+  m_diagramView->verticalHeader()->hide();
+  m_diagramView->horizontalHeader()->hide();
+  m_diagramView->setStyleSheet("QTableView::item { border: 0px; padding: 10px;}");
+  m_diagramView->setShowGrid(false);
+  m_diagramView->setContextMenuPolicy(Qt::CustomContextMenu);
+
+  connect(m_diagramView, SIGNAL(clicked(const QModelIndex &)),
+	  this, SLOT(onViewClicked(const QModelIndex &)));
+  connect(m_diagramModel, SIGNAL(layoutChanged()),
+	  this, SLOT(resizeRows()));
+
+  connect(this, SIGNAL(layoutChanged()), this, SLOT(resizeRows()));
+  connect(this, SIGNAL(readOnlyModeChanged()), this, SLOT(update()));
+
   QBoxLayout *mainLayout = new QHBoxLayout;
-  mainLayout->addWidget(m_tableWidget, 1);
+  mainLayout->addWidget(m_diagramView, 1);
   mainLayout->addLayout(addButtonLayout);
   mainLayout->addStretch();
   setLayout(mainLayout);
 
+  update();
   setFocusPolicy(Qt::StrongFocus);
 }
 
-CDiagramWidget * CDiagramArea::addDiagram()
+void CDiagramArea::update()
 {
-  CDiagramWidget *diagram = new CDiagramWidget("\\gtab{}{0:}", CDiagram::GuitarChord);
-  if (diagram->editChord())
+  if (isReadOnly())
     {
-      diagram->setReadOnly(isReadOnly());
-      m_tableWidget->addCellWidget(++m_nbDiagrams, diagram);
-      connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-      connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
-      connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
-      emit(contentsChanged());
+      m_addDiagramButton->setVisible(false);
+      m_diagramView->setSelectionMode(QAbstractItemView::SingleSelection);
+      m_diagramView->setDragEnabled(false);
+      m_diagramView->setAcceptDrops(false);
+      m_diagramView->setDropIndicatorShown(false);
+      m_diagramView->setDragDropMode(QAbstractItemView::NoDragDrop);
+
+      disconnect(m_diagramView, SIGNAL(doubleClicked(const QModelIndex &)), 0, 0);
+      disconnect(m_diagramView, SIGNAL(customContextMenuRequested(const QPoint &)), 0, 0);
     }
   else
     {
-      delete diagram;
-      diagram = 0;
+      m_addDiagramButton->setVisible(true);
+      m_diagramView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+      m_diagramView->setDragEnabled(true);
+      m_diagramView->setAcceptDrops(true);
+      m_diagramView->setDropIndicatorShown(true);
+      m_diagramView->setDragDropMode(QAbstractItemView::InternalMove);
+
+      connect(m_diagramView, SIGNAL(doubleClicked(const QModelIndex &)),
+	      this, SLOT(editDiagram(const QModelIndex &)));
+      connect(m_diagramView, SIGNAL(customContextMenuRequested(const QPoint &)),
+	      this, SLOT(contextMenu(const QPoint &)));
     }
-  return diagram;
 }
 
-CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const CDiagram::ChordType & type)
+void CDiagramArea::onViewClicked(const QModelIndex & index)
 {
-  CDiagramWidget *diagram = new CDiagramWidget(chord, type);
-  diagram->setReadOnly(isReadOnly());
-  m_tableWidget->addCellWidget(++m_nbDiagrams, diagram);
-  connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
-  connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
-  connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
-  return diagram;
+  if (index.isValid())
+    emit(diagramClicked(m_diagramModel->getDiagram(m_proxyModel->mapToSource(index))));
 }
 
-void CDiagramArea::removeDiagram()
+void CDiagramArea::resizeRows()
 {
-  if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender()))
+  for (int i=0; i < m_diagramModel->rowCount(); ++i)
+    m_diagramView->setRowHeight(i, 120);
+}
+
+void CDiagramArea::newDiagram()
+{
+  editDiagram(QModelIndex());
+}
+
+void CDiagramArea::editDiagram(QModelIndex index)
+{
+  Q_ASSERT(!isReadOnly());
+
+  if (!index.isValid())
+    index = m_diagramView->indexAt(m_diagramView->mapFromGlobal(QCursor::pos()));
+
+  bool newDiagram = !index.isValid();
+
+  CDiagram *diagram = newDiagram ?
+    new CDiagram : m_diagramModel->getDiagram(m_proxyModel->mapToSource(index));
+
+  CDiagramEditor dialog(this);
+  dialog.setDiagram(diagram);
+
+  if (dialog.exec() == QDialog::Accepted)
     {
-      //m_tableWidget->removeCellWidget(diagram);
-      --m_nbDiagrams;
-      disconnect(diagram,0,0,0);
-      diagram->setParent(0);
-      diagram->deleteLater();
-      onDiagramChanged();
+      if (newDiagram)
+	addDiagram(dialog.diagram()->toString());
+      else
+	m_diagramModel->setData(m_proxyModel->mapToSource(index), dialog.diagram()->toString());
+
+      emit(contentsChanged());
     }
 }
 
-QList<CDiagramWidget*> CDiagramArea::diagrams() const
+void CDiagramArea::addDiagram(const QString & chord)
 {
-  return m_tableWidget->diagrams();
+  m_diagramModel->addItem(chord);
+}
+
+void CDiagramArea::removeDiagram(QModelIndex index)
+{
+  if (!index.isValid())
+    index = m_diagramView->indexAt(m_diagramView->mapFromGlobal(QCursor::pos()));
+
+  if (!index.isValid() || isReadOnly())
+    return;
+
+  m_diagramModel->removeItem(m_proxyModel->mapToSource(index));
 }
 
 void CDiagramArea::onDiagramChanged()
 {
+  Q_ASSERT(isReadOnly());
   emit(contentsChanged());
-}
-
-void CDiagramArea::onDiagramClicked()
-{
-  CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(QObject::sender());
-  diagram->setSelected(!diagram->isSelected());
-
-  // multiple selection via Ctrl is allowed in non read only mode
-  if (isReadOnly() || QApplication::keyboardModifiers() != Qt::ControlModifier)
-    {
-      for (int j=0; j < m_tableWidget->rowCount(); ++j)
-      for (int i=0; i < m_tableWidget->columnCount(); ++i)
-	{
-	  CDiagramWidget *temp = qobject_cast< CDiagramWidget* >(m_tableWidget->cellWidget(i, j));
-	  if (temp && temp != diagram)
-	    temp->setSelected(false);
-	}
-    }
-
-  emit(diagramClicked(diagram));
-}
-
-void CDiagramArea::keyPressEvent(QKeyEvent *event)
-{
-  if (event->key() == Qt::Key_Delete)
-    {
-      bool changed = false;
-      foreach (CDiagramWidget *diagram, diagrams())
-	if (diagram->isSelected())
-	  {
-	    changed = true;
-	    diagram->deleteLater();
-	  }
-
-      if (changed)
-	onDiagramChanged();
-    }
 }
 
 bool CDiagramArea::isReadOnly() const
@@ -151,102 +187,221 @@ bool CDiagramArea::isReadOnly() const
 
 void CDiagramArea::setReadOnly(bool value)
 {
-  m_isReadOnly = value;
-  m_addDiagramButton->setVisible(!value);
-  foreach (CDiagramWidget *diagram, diagrams())
-    diagram->setReadOnly(value);
+  if (m_isReadOnly != value)
+    {
+      m_isReadOnly = value;
+      emit(readOnlyModeChanged());
+    }
+}
+
+void CDiagramArea::contextMenu(const QPoint & pos)
+{
+  Q_UNUSED(pos);
+
+  QMenu menu;
+
+  QAction *action = new QAction(tr("Edit"), this);
+  connect(action, SIGNAL(triggered()), this, SLOT(editDiagram()));
+  menu.addAction(action);
+
+  action = new QAction(tr("Remove"), this);
+  connect(action, SIGNAL(triggered()), this, SLOT(removeDiagram()));
+  menu.addAction(action);
+
+  menu.exec(QCursor::pos());
 }
 
 void CDiagramArea::setTypeFilter(const CDiagram::ChordType & type)
 {
-  m_tableWidget->setTypeFilter(type);
+  m_proxyModel->setFilterRole(Qt::DisplayRole);
+  if (type == CDiagram::GuitarChord)
+    m_proxyModel->setFilterRegExp("gtab");
+  else
+    m_proxyModel->setFilterRegExp("utab");
+  emit(layoutChanged());
 }
 
 void CDiagramArea::setNameFilter(const QString & name)
 {
-  m_tableWidget->setNameFilter(name);
-}
-
-void CDiagramArea::setImportantFilter(bool onlyImportantDiagrams)
-{
-  m_tableWidget->setImportantFilter(onlyImportantDiagrams);
+  clearFilters();
+  m_proxyModel->setFilterRole(CTableDiagram::ChordRole);
+  m_proxyModel->setFilterRegExp(name);
+  emit(layoutChanged());
 }
 
 void CDiagramArea::setStringsFilter(const QString & strings)
 {
-  m_tableWidget->setStringsFilter(strings);
+  m_proxyModel->setFilterRole(CTableDiagram::StringsRole);
+  m_proxyModel->setFilterRegExp(strings);
+  emit(layoutChanged());
 }
 
 void CDiagramArea::clearFilters()
 {
-  m_tableWidget->clearFilters();
-}
-
-void CDiagramArea::addSeparator(const QString & str)
-{
-  m_tableWidget->addSeparator(str);
+  m_proxyModel->setFilterRole(Qt::DisplayRole);
+  m_proxyModel->setFilterRegExp("");
+  emit(layoutChanged());
 }
 
 void CDiagramArea::setColumnCount(int value)
 {
-  m_tableWidget->setColumnCount(value);
+  m_diagramModel->setColumnCount(value);
 }
 
 void CDiagramArea::setRowCount(int value)
 {
-  m_tableWidget->setRowCount(value);
+  m_diagramModel->setRowCount(value);
 }
 
-int CDiagramArea::nbSeparators() const
+QList< CDiagram* > CDiagramArea::diagrams()
 {
-  return m_tableWidget->nbSeparators();
+  QList< CDiagram* > list;
+  for (int i = 0; i < m_diagramModel->rowCount(); ++i)
+    for (int j = 0; j < m_diagramModel->columnCount(); ++j)
+      {
+	list << m_diagramModel->getDiagram(m_diagramModel->index(i, j));
+      }
+
+  return list;
 }
 
 //-------------------------------------------------------------------------
 
 CTableDiagram::CTableDiagram(QWidget *parent)
-  : QTableWidget(parent)
-  , m_nbSeparators(0)
+  : QAbstractTableModel(parent)
+  , m_columnCount(1)
+  , m_rowCount(1)
 {
-  setContentsMargins(4, 4, 4, 4);
-  setRowCount(1);
-  setColumnCount(1);
   m_fixedColumnCount = false;
   m_fixedRowCount = false;
+}
 
-  verticalHeader()->hide();
-  horizontalHeader()->hide();
-  setStyleSheet("QTableView::item { border: 0px; padding: 4px;}");
-  setShowGrid(true);
+CTableDiagram::~CTableDiagram()
+{
+  foreach (CDiagram* diagram, m_data)
+    delete diagram;
+  m_data.clear();
+}
+
+int CTableDiagram::columnCount(const QModelIndex &) const
+{
+  return m_columnCount;
 }
 
 void CTableDiagram::setColumnCount(int value)
 {
+  emit(layoutAboutToBeChanged());
   m_fixedColumnCount = true;
-  QTableWidget::setColumnCount(value);
+  m_columnCount = value;
+  emit(layoutChanged());
+}
+
+int CTableDiagram::rowCount(const QModelIndex &) const
+{
+  return m_rowCount;
 }
 
 void CTableDiagram::setRowCount(int value)
 {
+  emit(layoutAboutToBeChanged());
   m_fixedRowCount = true;
-  QTableWidget::setRowCount(value);
+  m_rowCount = value;
+  emit(layoutChanged());
 }
 
-void CTableDiagram::addCellWidget(int index, QWidget *widget)
+QVariant CTableDiagram::data(const QModelIndex &index, int role) const
 {
-  int row = 1, col = 1;
-  if (m_fixedColumnCount)
+  if (!index.isValid() || m_data.size()==0)
+    return QVariant();
+
+  switch (role)
     {
-      row = (index-1)/columnCount() + nbSeparators();
-      col = (index-1)%columnCount();
+    case Qt::DisplayRole:
+      return m_data[positionFromIndex(index)]->toString();
+    case Qt::DecorationRole:
+      return *(m_data[positionFromIndex(index)]->toPixmap());
+    case Qt::ToolTipRole:
+      return data(index, Qt::DisplayRole);
+    case ChordRole:
+      return m_data[positionFromIndex(index)]->chord();
+    case StringsRole:
+      return m_data[positionFromIndex(index)]->strings();
+    case ImportantRole:
+      return m_data[positionFromIndex(index)]->isImportant();
+    default:
+      return QVariant();
     }
-  if (m_fixedRowCount)
+}
+
+bool CTableDiagram::setData(const QModelIndex & index, const QVariant & value, int role)
+{
+  Q_UNUSED(role);
+
+  if (!index.isValid())
+    return false;
+
+  CDiagram *diagram = new CDiagram(value.toString());
+  if (diagram->isValid())
     {
-      row = (index-1)%rowCount();
-      col = (index-1)/rowCount() + nbSeparators();
+      int pos = positionFromIndex(index);
+      delete m_data[pos];
+      m_data[pos] = diagram;
+      return true;
     }
 
-  // dynamically expand the QTableWidget
+  delete diagram;
+  return false;
+}
+
+void CTableDiagram::insertItem(const QModelIndex & index, const QString & value)
+{
+  setColumnCount(columnCount() + 1);
+  m_fixedColumnCount = false;
+
+  CDiagram *diagram = new CDiagram(value);
+  if (diagram->isValid())
+    m_data.insert(index.column(), diagram);
+  else
+    delete diagram;
+}
+
+void CTableDiagram::removeItem(const QModelIndex & index)
+{
+  int pos = positionFromIndex(index);
+  delete m_data[pos];
+  m_data.remove(pos);
+
+  int row = indexFromPosition(m_data.size()).row();
+  int col = indexFromPosition(m_data.size()).column();
+
+  // dynamically reduce the QTableModel
+  if (rowCount() > row +1)
+    {
+      setRowCount(row + 1);
+      m_fixedRowCount = false;
+    }
+  if (columnCount() > col +1)
+    {
+      setColumnCount(col + 1);
+      m_fixedColumnCount = false;
+    }
+}
+
+void CTableDiagram::addItem(const QString & value)
+{
+  CDiagram * diagram = new CDiagram(value);
+  if (!diagram->isValid())
+    {
+      delete diagram;
+      return;
+    }
+
+  m_data.append(diagram);
+
+  int row = indexFromPosition(m_data.size()).row();
+  int col = indexFromPosition(m_data.size()).column();
+
+  // dynamically expand the QTableModel
   if (rowCount() < row +1)
     {
       setRowCount(row + 1);
@@ -257,142 +412,101 @@ void CTableDiagram::addCellWidget(int index, QWidget *widget)
       setColumnCount(col + 1);
       m_fixedColumnCount = false;
     }
-
-  setCellWidget(row, col, widget);
-  resizeRowsToContents();
-  resizeColumnsToContents();
 }
 
-QList<CDiagramWidget*> CTableDiagram::diagrams() const
+QModelIndex CTableDiagram::indexFromPosition(int position)
 {
-  QList<CDiagramWidget*> list;
-  for (int i=0; i < rowCount(); ++i)
-    for (int j=0; j < columnCount(); ++j)
-      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(cellWidget(i, j)))
-	list << diagram;
-
-  return list;
+  int row = 1, col = 1;
+  if (m_fixedColumnCount)
+    {
+      row = (position-1)/columnCount();
+      col = (position-1)%columnCount();
+    }
+  if (m_fixedRowCount)
+    {
+      row = (position-1)%rowCount();
+      col = (position-1)/rowCount();
+    }
+  return QAbstractTableModel::createIndex(row, col);
 }
 
-void CTableDiagram::setTypeFilter(const CDiagram::ChordType & type)
+int CTableDiagram::positionFromIndex(const QModelIndex & index) const
 {
-  for (int i=0; i < rowCount(); ++i)
-    for (int j=0; j < columnCount(); ++j)
-      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(cellWidget(i, j)))
-	if (diagram->type() != type)
-	  {
-	    hideRow(i);
-	    break;
-	  }
-
-  updateSeparatorsVisibility();
+  return columnCount() * index.row() + index.column();
 }
 
-void CTableDiagram::setNameFilter(const QString & name)
+CDiagram * CTableDiagram::getDiagram(const QModelIndex & index) const
 {
-  if (name.isEmpty())
-    clearFilters();
-
-  foreach (CDiagramWidget *diagram, diagrams())
-    if (!diagram->chord().contains(name))
-      {
-	diagram->setVisible(false);
-	m_hiddenItems << diagram;
-      }
-
-  updateSeparatorsVisibility();
+  return m_data[positionFromIndex(index)];
 }
 
-void CTableDiagram::setImportantFilter(bool onlyImportantDiagrams)
+Qt::DropActions CTableDiagram::supportedDropActions() const
 {
-  for (int j=0; j < columnCount(); ++j)
-    for (int i=0; i < rowCount(); ++i)
-      if (CDiagramWidget *diagram = qobject_cast< CDiagramWidget* >(cellWidget(i, j)))
-	{
-	  if (diagram->isImportant() != onlyImportantDiagrams)
-	    hideColumn(j);
-	  else
-	    showColumn(j);
-	  break;
-	}
-
-  updateSeparatorsVisibility();
+  return Qt::CopyAction | Qt::MoveAction;
 }
 
-void CTableDiagram::setStringsFilter(const QString & strings)
+Qt::DropActions CTableDiagram::supportedDragActions() const
 {
-  if (strings.isEmpty())
-    clearFilters();
-
-  foreach (CDiagramWidget *diagram, diagrams())
-    if (!diagram->strings().contains(strings))
-      {
-	diagram->setVisible(false);
-	m_hiddenItems << diagram;
-      }
-
-  updateSeparatorsVisibility();
+  return Qt::CopyAction | Qt::MoveAction;
 }
 
-void CTableDiagram::clearFilters()
+Qt::ItemFlags CTableDiagram::flags(const QModelIndex &index) const
 {
-  m_hiddenItems.clear();
+  Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);
 
-  foreach (CDiagramWidget *diagram, diagrams())
-    diagram->setVisible(true);
-
-  for (int i=0; i < rowCount(); ++i)
-    showRow(i);
-  for (int j=0; j < columnCount(); ++j)
-    showColumn(j);
-}
-
-void CTableDiagram::addSeparator(const QString & str)
-{
-  QTableWidgetItem *separator = new QTableWidgetItem(str);
-  setRowCount(rowCount()+1);
-  m_fixedRowCount=false;
-  if (rowCount() == 2)
-    setItem(0, 0, separator);
+  if (index.isValid())
+    return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
   else
-    setItem(rowCount()-1, 0, separator);
-  ++m_nbSeparators;
+    return Qt::ItemIsDropEnabled | defaultFlags;
 }
 
-int CTableDiagram::nbSeparators() const
+QStringList CTableDiagram::mimeTypes() const
 {
-  return m_nbSeparators;
+  QStringList types;
+  types << "text/plain";
+  return types;
 }
 
-void CTableDiagram::updateSeparatorsVisibility()
+QMimeData * CTableDiagram::mimeData(const QModelIndexList &indexes) const
 {
-//  for (int position = rowCount() - 1; position > 0; )
-//    {
-//      QTableWidgetItem *current = item(position, 0);
-//      // look backward for the position of the previous visible item
-//      int prev = position -1;
-//      if (current && !current->text().isEmpty())
-//	{
-//	  qDebug() << "current separator : " << current->text() << " on line " << position;
-//	  QTableWidgetItem *prevItem = item(prev, 0);
-//	  while (prev > 0 && prevItem && !prevItem->text().isEmpty() || )
-//	    {
-//	      qDebug() << "hiding row " << prev << " containing : " << prevItem->text();
-//	      hideRow(prev);
-//	      --prev;
-//	    }
-//	}
-//      position = prev;
-//    }
+  QMimeData *mimeData = new QMimeData();
+  foreach (const QModelIndex &index, indexes)
+    if (index.isValid())
+      mimeData->setText(data(index, Qt::DisplayRole).toString());
+
+  return mimeData;
 }
 
-
-void CTableDiagram::paintEvent(QPaintEvent *event)
+bool CTableDiagram::dropMimeData(const QMimeData *data, Qt::DropAction action,
+				 int row, int column, const QModelIndex &parent)
 {
-  QTableWidget::paintEvent(event);
-  // workaround for QTBUG-22490
-  // https://bugreports.qt-project.org/browse/QTBUG-22490
-  // once fixed, we can remove the m_hiddenItems list
-  foreach (QWidget *w, m_hiddenItems)
-    w->setVisible(false);
+  if (action == Qt::IgnoreAction)
+    return true;
+
+  if (!data->hasFormat("text/plain"))
+    return false;
+
+  int beginRow;
+  if (row != -1)
+    beginRow = row;
+  else if (parent.isValid())
+    beginRow = parent.row();
+  else
+    beginRow = rowCount();
+
+  int beginColumn;
+  if (column != -1)
+    beginColumn = column;
+  else if (parent.isValid())
+    beginColumn = parent.column();
+  else
+    beginColumn = columnCount();
+
+  QString newItem = data->text();
+
+  // disabled since it is still buggy
+  Q_UNUSED(beginRow); Q_UNUSED(beginColumn);
+  //insertItem(index(beginRow, beginColumn), newItem);
+
+  return true;
 }

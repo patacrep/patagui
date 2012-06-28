@@ -21,55 +21,74 @@
 
 
 #include <QWidget>
-#include <QTableWidget>
+#include <QAbstractTableModel>
+#include <QModelIndex>
 #include <QString>
 #include <QList>
+#include <QPoint>
+#include <QVector>
+#include <QMap>
 
 #include "diagram.hh"
 
 
-class CDiagramWidget;
-
-class CTableDiagram : public QTableWidget
+class CTableDiagram : public QAbstractTableModel
 {
   Q_OBJECT
 
-public:
+  public:
+  enum DiagramRoles {
+    ChordRole = Qt::UserRole + 1,
+    StringsRole = Qt::UserRole + 2,
+    TypeRole = Qt::UserRole + 3,
+    ImportantRole = Qt::UserRole + 4,
+    MaxRole = ImportantRole
+  };
+
   CTableDiagram(QWidget *parent=0);
+  ~CTableDiagram();
 
-  int nbSeparators() const;
-
-  QList<CDiagramWidget*> diagrams() const;
-
+  virtual int columnCount(const QModelIndex & index = QModelIndex()) const;
   virtual void setColumnCount(int value);
+
+  virtual int rowCount(const QModelIndex & index = QModelIndex()) const;
   virtual void setRowCount(int value);
 
+  /* drag and drop */
+  Qt::DropActions supportedDropActions() const;
+  Qt::DropActions supportedDragActions() const;
+  Qt::ItemFlags flags(const QModelIndex &index) const;
+  QStringList mimeTypes() const;
+  QMimeData * mimeData(const QModelIndexList &indexes) const;
+  bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+		    int row, int column, const QModelIndex &parent);
+
+  QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+  bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+
+  CDiagram * getDiagram(const QModelIndex &) const;
+
 public slots:
-  void setTypeFilter(const CDiagram::ChordType & type);
-  void setNameFilter(const QString & name);
-  void setStringsFilter(const QString & strings);
-  void setImportantFilter(bool onlyImportant);
-  void clearFilters();
-  void addSeparator(const QString & label);
-
-  void addCellWidget(int index, QWidget *widget);
-
-protected:
-  virtual void paintEvent(QPaintEvent *event);
+  void insertItem(const QModelIndex & index, const QString & value);
+  void removeItem(const QModelIndex & index);
+  void addItem(const QString & value);
 
 private:
-  void updateSeparatorsVisibility();
+  QModelIndex indexFromPosition(int position);
+  int positionFromIndex(const QModelIndex & index) const;
 
 private:
-  int m_fixedColumnCount;
-  int m_fixedRowCount;
-  int m_nbSeparators;
-  QList<QWidget*> m_hiddenItems;
+  bool m_fixedColumnCount;
+  bool m_fixedRowCount;
+  int m_columnCount;
+  int m_rowCount;
+  QVector<CDiagram*> m_data;
 };
 
 
 class QPushButton;
-
+class QTableView;
+class QSortFilterProxyModel;
 /**
  * \file diagram-area.hh
  * \class CDiagramArea
@@ -80,47 +99,45 @@ class CDiagramArea : public QWidget
 {
   Q_OBJECT
 
-public:
+  public:
   CDiagramArea(QWidget *parent=0);
-
-  CDiagramWidget * addDiagram(const QString & chord, const CDiagram::ChordType & type);
-  QList<CDiagramWidget*> diagrams() const;
 
   bool isReadOnly() const;
   void setReadOnly(bool value);
 
-  int columnCount() const;
   void setColumnCount(int value);
-
-  int rowCount() const;
   void setRowCount(int value);
 
-  int nbSeparators() const;
+  QList< CDiagram* > diagrams();
 
 public slots:
+  void newDiagram();
+  void addDiagram(const QString & chord);
+  void editDiagram(QModelIndex index = QModelIndex());
+  void removeDiagram(QModelIndex index = QModelIndex());
   void setTypeFilter(const CDiagram::ChordType & type);
   void setNameFilter(const QString & name);
   void setStringsFilter(const QString & strings);
-  void setImportantFilter(bool onlyImportant);
   void clearFilters();
-  void addSeparator(const QString & label);
-
-protected:
-  virtual void keyPressEvent(QKeyEvent *event);
 
 private slots:
+  void update();
+  void resizeRows();
   void onDiagramChanged();
-  void onDiagramClicked();
-  CDiagramWidget * addDiagram();
-  void removeDiagram();
+  void contextMenu(const QPoint & pos);
+  void onViewClicked(const QModelIndex &);
 
 signals:
   void contentsChanged();
-  void diagramClicked(CDiagramWidget * diagram);
+  void layoutChanged();
+  void readOnlyModeChanged();
+  void diagramClicked(CDiagram * diagram);
 
 private:
   bool m_isReadOnly;
-  CTableDiagram *m_tableWidget;
+  CTableDiagram *m_diagramModel;
+  QSortFilterProxyModel *m_proxyModel;
+  QTableView *m_diagramView;
   QPushButton *m_addDiagramButton;
   int m_nbDiagrams;
 };
