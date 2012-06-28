@@ -78,66 +78,7 @@ private:
   static QRegExp reStringsNoFret;
 };
 
-class QMouseEvent;
-class QLabel;
-
-/**
- * \file diagram.hh
- * \class CDiagramWidget
- * \brief CDiagramWidget embeds a CDiagram and related actions
- *
- */
-class CDiagramWidget : public QWidget
-{
-  Q_OBJECT
 
 public:
-  CDiagram* m_diagram;
-
-  /// Constructor.
-  /// @param chord a gtab macro content such as B&m}{1:X0222 representing a chord
-  CDiagramWidget(const QString & chord,
-		 const CDiagram::ChordType & type = CDiagram::GuitarChord,
-		 QWidget *parent = 0);
-
-  ///Destructor.
-  ~CDiagramWidget();
-
-  bool isSelected() const;
-  void setSelected(bool value);
-
-  // wrapper method
-  QString toString();
-  CDiagram::ChordType type() const;
-  QString chord() const;
-  QString fret() const;
-  QString strings() const;
-  bool isImportant() const;
-
-  bool isReadOnly() const;
-  void setReadOnly(bool value);
-
-protected:
-  virtual void mouseDoubleClickEvent(QMouseEvent *event);
-  virtual void mouseReleaseEvent(QMouseEvent *event);
-
-signals:
-  void changed();
-  void clicked();
-  void diagramCloseRequested();
-
-private slots:
-  void updateBackground();
-  void updateChordName();
-
-public slots:
-  bool editChord();
-  void removeChord();
-
-private:
-  QLabel *m_chordName;
-  bool m_selected;
-  bool m_isReadOnly;
 };
-
 #endif // __DIAGRAM_HH__
