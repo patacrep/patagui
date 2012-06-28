@@ -19,8 +19,15 @@
 #ifndef __DIAGRAM_HH__
 #define __DIAGRAM_HH__
 
-#include <QWidget>
+#include <QObject>
 #include <QString>
+#include <QPixmap>
+#include <QSize>
+#include <QBrush>
+#include <QRegExp>
+
+
+class QPainter;
 
 /**
  * \file diagram.hh
@@ -28,7 +35,7 @@
  * \brief CDiagram is a widget representing a guitar/ukulele chord diagram
  *
  */
-class CDiagram : public QWidget
+class CDiagram : public QObject
 {
   Q_OBJECT
 
@@ -36,11 +43,13 @@ public:
   enum StringCount { GuitarStringCount=6, UkuleleStringCount=4 };
   enum ChordType { GuitarChord, UkuleleChord };
 
-  CDiagram(const QString & chord, const ChordType & type = GuitarChord, QWidget *parent = 0);
+  CDiagram(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
   ~CDiagram();
 
   QString toString();
   void fromString(const QString & gtab);
+
+  QPixmap* toPixmap();
 
   QString chord() const;
   void setChord(const QString & name);
@@ -57,11 +66,6 @@ public:
   bool isImportant() const;
   void setImportant(bool value);
 
-  virtual QSize minimumSizeHint() const;
-  virtual QSize sizeHint() const;
-
-protected:
-  void paintEvent(QPaintEvent * event);
 
 private:
   void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
@@ -78,6 +82,7 @@ private:
   static QRegExp reStringsNoFret;
 };
 
+  QPixmap *m_pixmap;
 
 public:
 };

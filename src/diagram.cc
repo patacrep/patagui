@@ -19,6 +19,9 @@
 #include "diagram.hh"
 #include "diagram-editor.hh"
 
+#include <QPixmap>
+#include <QPixmapCache>
+#include <QRect>
 #include <QPainter>
 #include <QDebug>
 
@@ -27,27 +30,17 @@ QRegExp CDiagram::reFret("\\\\[ug]tab[\\*]?\\{.+\\{(\\d):");
 QRegExp CDiagram::reStringsFret(":([^\\}]+)");
 QRegExp CDiagram::reStringsNoFret("\\\\[ug]tab[\\*]?\\{.+\\{([^\\}]+)");
 
-CDiagram::CDiagram(const QString & chord, const ChordType & type, QWidget *parent)
-  : QWidget(parent)
-  , m_type(type)
+CDiagram::CDiagram(const QString & chord, QObject *parent)
+  : QObject(parent)
+  , m_pixmap(0)
 {
   fromString(chord);
-  setBackgroundRole(QPalette::Base);
-  setAutoFillBackground(true);
 }
 
 CDiagram::~CDiagram()
 {
-}
-
-QSize CDiagram::minimumSizeHint() const
-{
-  return QSize(100, 60);
-}
-
-QSize CDiagram::sizeHint() const
-{
-  return QSize(100, 60);
+  delete m_pixmap;
+  m_pixmap = 0;
 }
 
 QString CDiagram::toString()
@@ -72,7 +65,7 @@ QString CDiagram::toString()
   str.append( QString("{%1}{").arg(chord()) );
   //the fret
   str.append(QString("%2").arg(fret()));
-  //the strings
+  //the strings such as X32010 (C chord)
   if (!fret().isEmpty())
     str.append(":");
   str.append(QString("%3}").arg(strings()));
@@ -110,60 +103,96 @@ void CDiagram::fromString(const QString & str)
     }
 }
 
-void CDiagram::paintEvent(QPaintEvent *)
 {
-  QPainter painter(this);
-  painter.setRenderHint(QPainter::Antialiasing, true);
-  painter.setPen(Qt::black);
 
-  int cellWidth = 12, cellHeight = 12;
-  int width = (strings().length() - 1)*cellWidth;
-  int padding = 13;
+QPixmap* CDiagram::toPixmap()
+{
+  if (m_pixmap)
+    return m_pixmap;
 
-  //draw horizontal lines
-  int max = 4;
-  foreach (QChar c, strings())
-    if (c.digitValue() > max)
-      max = c.digitValue();
+  if (!isValid())
+    return 0;
 
-  Q_ASSERT(max < 10);
-  for (int i=0; i<max+1; ++i)
+  m_pixmap = new QPixmap(100, 120);
+  m_pixmap->fill(Qt::white);
+
+  if (!QPixmapCache::find(toString(), m_pixmap))
     {
-      painter.drawLine(padding, i*cellHeight+padding, width+padding, i*cellHeight+padding);
-    }
+      QPainter painter;
+      painter.begin(m_pixmap);
+      painter.setRenderHint(QPainter::Antialiasing, true);
 
-  int height = max*cellHeight;
-  //draw a vertical line for each string
-  for (int i=0; i<strings().length(); ++i)
-    {
-      painter.drawLine(i*cellWidth+padding, padding, i*cellWidth+padding, height+padding);
-    }
+      int cellWidth = 12, cellHeight = 12;
+      int width = (strings().length() - 1)*cellWidth;
+      int padding = 13;
 
-  //draw played strings
-  for (int i=0; i<strings().length(); ++i)
-    {
-      QRect stringRect(0, 0, cellWidth-4, cellHeight-4);
-      int value = strings()[i].digitValue();
-      if (value == -1)
+      //draw chord name
+      painter.setPen(QPen(Qt::white));
+      QRect chordRect(10, padding, 70, 10+padding);
+      QPainterPath path;
+      path.addRoundedRect(chordRect, 4, 4);
+      painter.setFont(QFont("Helvetica [Cronyx]", 10, QFont::Bold));
+      painter.drawText(chordRect, Qt::AlignCenter, chord().replace("&", QChar(0x266D)));
+
+
+      //draw horizontal lines
+      int max = 4;
+      foreach (QChar c, strings())
+	if (c.digitValue() > max)
+	  max = c.digitValue();
+
+      // grid background
+      int hOffset = (type() == GuitarChord) ? 0 : cellWidth; //offset from the left
+      int vOffset = 45; //offset from the top
+      QRect gridRect(4, vOffset, 80, cellHeight*max+padding+5);
+
+      painter.setPen(QPen(Qt::black));
+      painter.fillRect(gridRect, QBrush(QColor(Qt::white)));
+
+      Q_ASSERT(max < 10);
+      for (int i=0; i<max+1; ++i)
 	{
-	  stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3, 3 );
-	  painter.setFont(QFont("Arial", 9));
-	  painter.drawText(stringRect, Qt::AlignCenter, "X");
+	  painter.drawLine(padding+hOffset, i*cellHeight+padding+vOffset, width+padding+hOffset, i*cellHeight+padding+vOffset);
 	}
-      else
+
+      int height = max*cellHeight;
+      //draw a vertical line for each string
+      for (int i=0; i<strings().length(); ++i)
 	{
-	  stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3, value*cellHeight+3 );
-	  if (value == 0)
-	    painter.drawEllipse(stringRect);
+	  painter.drawLine(i*cellWidth+padding+hOffset, padding+vOffset, i*cellWidth+padding+hOffset, height+padding+vOffset);
+	}
+
+      //draw played strings
+      for (int i=0; i<strings().length(); ++i)
+	{
+	  QRect stringRect(0, 0, cellWidth-4, cellHeight-4);
+	  int value = strings()[i].digitValue();
+	  if (value == -1)
+	    {
+	      stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3+hOffset, 3+vOffset );
+	      painter.setFont(QFont("Arial", 9));
+	      painter.drawText(stringRect, Qt::AlignCenter, "X");
+	    }
 	  else
-	    fillEllipse(&painter, stringRect, QBrush(QColor(Qt::black)));
+	    {
+	      stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3+hOffset, value*cellHeight+3+vOffset );
+	      if (value == 0)
+		painter.drawEllipse(stringRect);
+	      else
+		fillEllipse(&painter, stringRect, QBrush(QColor(Qt::black)));
+	    }
 	}
+
+      //draw fret
+      QRect fretRect(padding-(cellWidth-2)+hOffset, padding+(cellHeight+vOffset)/2.0, cellWidth-4, cellHeight+vOffset);
+      painter.setFont(QFont("Arial", 9));
+      painter.drawText(fretRect, Qt::AlignCenter, fret());
+
+      painter.end();
+      QPixmapCache::insert(toString(), *m_pixmap);
     }
 
-  //draw fret
-  QRect fretRect(padding-(cellWidth-2), padding+cellHeight/2.0, cellWidth-4, cellHeight);
-  painter.setFont(QFont("Arial", 9));
-  painter.drawText(fretRect, Qt::AlignCenter, fret());
+  return m_pixmap;
 }
 
 void CDiagram::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush)
