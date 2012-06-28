@@ -192,7 +192,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   toFullViewLayout->addStretch();
 
   // mini view
-  QWidget *miniView = new QWidget;
+  QWidget *miniView = new QWidget(this);
   QLabel *miniTitle = new QLabel(m_titleLineEdit->text());
   connect(m_titleLineEdit, SIGNAL(textChanged(const QString &)), miniTitle, SLOT(setText(const QString &)));
   QLabel *miniArtist = new QLabel(m_artistLineEdit->text());
@@ -224,7 +224,9 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
 }
 
 CSongHeaderEditor::~CSongHeaderEditor()
-{}
+{
+  delete  m_diagramArea;
+}
 
 
 QSize CSongHeaderEditor::sizeHint() const
@@ -330,13 +332,13 @@ void CSongHeaderEditor::update()
   QString gtab;
   foreach (gtab, song().gtabs)
     {
-      m_diagramArea->addDiagram(gtab, CDiagram::GuitarChord);
+      m_diagramArea->addDiagram(gtab);
     }
 
   QString utab;
   foreach (utab, song().utabs)
     {
-      m_diagramArea->addDiagram(utab, CDiagram::UkuleleChord);
+      m_diagramArea->addDiagram(utab);
     }
 }
 
@@ -407,7 +409,7 @@ void CSongHeaderEditor::onDiagramsChanged()
 {
   song().gtabs = QStringList();
   song().utabs = QStringList();
-  foreach (CDiagramWidget *diagram, m_diagramArea->diagrams())
+  foreach (CDiagram *diagram, m_diagramArea->diagrams())
     {
       if (diagram->type() == CDiagram::GuitarChord)
 	song().gtabs << diagram->toString();

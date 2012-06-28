@@ -135,20 +135,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
       QString line;
       QStringList lines = content.split("\n");
       foreach (line, lines)
-	{
-	  if (Song::reGtab.indexIn(line) != -1)
-            {
-	      m_diagramArea->addDiagram(line.simplified(), CDiagram::GuitarChord);
-            }
-	  else if (Song::reUtab.indexIn(line) != -1)
-            {
-	      m_diagramArea->addDiagram(line.simplified(), CDiagram::UkuleleChord);
-            }
-	  else if (reSeparator.indexIn(line) != -1)
-	    {
-	      m_diagramArea->addSeparator(reSeparator.cap(1).replace("\\Sharp","#").replace("\\Flat",QChar(0x266D)));
-	    }
-	}
+	if (Song::reGtab.indexIn(line) != -1 || Song::reUtab.indexIn(line) != -1)
+	  m_diagramArea->addDiagram(line.simplified());
     }
 
   QBoxLayout *formLayout = new QVBoxLayout;
@@ -165,8 +153,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
       scrollArea->setWidget(m_diagramArea);
       scrollArea->setBackgroundRole(QPalette::Base);
       scrollArea->setWidgetResizable(true);
-      scrollArea->setMinimumWidth(455);
-      scrollArea->setMinimumHeight(420);
+      scrollArea->setMinimumWidth(440);
+      scrollArea->setMinimumHeight(400);
       contentLayout->addWidget(scrollArea, 1);
     }
 
@@ -271,6 +259,9 @@ bool CDiagramEditor::checkChord()
       return false;
     }
   m_stringsLineEdit->setStyleSheet(QString());
+
+  if (!diagram()->isValid())
+    qWarning() << tr("CDiagramEditor::checkChord() an invalid diagram has been accepted: ") << diagram()->toString();
 
   accept();
   return true;
