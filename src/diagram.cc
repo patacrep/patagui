@@ -25,10 +25,8 @@
 #include <QPainter>
 #include <QDebug>
 
-QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
-QRegExp CDiagram::reFret("\\\\[ug]tab[\\*]?\\{.+\\{(\\d):");
-QRegExp CDiagram::reStringsFret(":([^\\}]+)");
-QRegExp CDiagram::reStringsNoFret("\\\\[ug]tab[\\*]?\\{.+\\{([^\\}]+)");
+QRegExp CDiagram::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
+QRegExp CDiagram::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
 
 CDiagram::CDiagram(const QString & chord, QObject *parent)
   : QObject(parent)
@@ -77,6 +75,8 @@ QString CDiagram::toString()
 
 void CDiagram::fromString(const QString & str)
 {
+  QString copy(str);
+
   if (str.contains("gtab"))
     m_type = GuitarChord;
   else if (str.contains("utab"))
@@ -86,22 +86,16 @@ void CDiagram::fromString(const QString & str)
 
   setImportant(str.contains("*"));
 
-  reChord.indexIn(str);
-  setChord(reChord.cap(1));
-
-  reFret.indexIn(str);
-  setFret(reFret.cap(1));
-
-  if (fret().isEmpty())
+  if (reChordWithFret.indexIn(str) != -1)
     {
-      QString copy(str);
-      reStringsNoFret.indexIn(copy.replace("~:",""));
-      setStrings(reStringsNoFret.cap(1));
+      setChord(reChordWithFret.cap(1));
+      setFret(reChordWithFret.cap(2));
+      setStrings(reChordWithFret.cap(3));
     }
-  else
+  else if (reChordWithoutFret.indexIn(copy.remove("~:")) != -1)
     {
-      reStringsFret.indexIn(str);
-      setStrings(reStringsFret.cap(1));
+      setChord(reChordWithoutFret.cap(1));
+      setStrings(reChordWithoutFret.cap(2));
     }
 
   if (chord().isEmpty())

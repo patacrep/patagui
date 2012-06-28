@@ -79,17 +79,12 @@ private:
   QString m_fret;
   QString m_strings;
   bool m_important;
-
-  static QRegExp reChord;
-  static QRegExp reFret;
-  static QRegExp reStringsFret;
-  static QRegExp reStringsNoFret;
-};
-
   bool m_isValid;
   bool m_drawBorder;
   QPixmap *m_pixmap;
 
 public:
+  static QRegExp reChordWithFret;
+  static QRegExp reChordWithoutFret;
 };
 #endif // __DIAGRAM_HH__
