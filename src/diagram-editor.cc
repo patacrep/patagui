@@ -44,6 +44,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   , m_infoIconLabel(new QLabel(this))
   , m_messageLabel(new QLabel(this))
   , m_diagramArea(0)
+  , m_diagram(0)
 {
   setWindowTitle(tr("Chord editor"));
 
@@ -121,10 +122,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
 	      m_diagramArea, SLOT(setNameFilter(const QString &)));
       connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
 	      m_diagramArea, SLOT(setStringsFilter(const QString &)));
-      connect(m_importantCheckBox, SIGNAL(toggled(bool)),
-	      m_diagramArea, SLOT(setImportantFilter(bool)));
-      connect(m_diagramArea, SIGNAL(diagramClicked(CDiagramWidget *)),
-	      this, SLOT(setDiagram(CDiagramWidget *)));
+      connect(m_diagramArea, SIGNAL(diagramClicked(CDiagram *)),
+	      this, SLOT(setDiagram(CDiagram *)));
 
       QTextStream stream (&file);
       stream.setCodec("UTF-8");
@@ -230,8 +229,10 @@ bool CDiagramEditor::isChordImportant() const
   return m_importantCheckBox->isChecked();
 }
 
-void CDiagramEditor::setDiagram(CDiagramWidget *diagram)
+void CDiagramEditor::setDiagram(CDiagram *diagram)
 {
+  m_diagram = diagram;
+
   m_guitar->setChecked(diagram->type() == CDiagram::GuitarChord);
   m_ukulele->setChecked(diagram->type() == CDiagram::UkuleleChord);
   m_nameLineEdit->setText(diagram->chord());
@@ -241,6 +242,11 @@ void CDiagramEditor::setDiagram(CDiagramWidget *diagram)
 
   if (m_diagramArea)
     m_diagramArea->clearFilters();
+}
+
+CDiagram * CDiagramEditor::diagram() const
+{
+  return m_diagram;
 }
 
 bool CDiagramEditor::checkChord()

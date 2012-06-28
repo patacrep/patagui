@@ -54,8 +54,10 @@ public:
 
   virtual QSize sizeHint() const;
 
+  CDiagram * diagram() const;
+
 public slots:
-  void setDiagram(CDiagramWidget *diagram);
+  void setDiagram(CDiagram *diagram);
 
 private slots:
   bool checkChord();
@@ -75,6 +77,7 @@ private:
   QLabel *m_messageLabel;
 
   CDiagramArea *m_diagramArea;
+  CDiagram *m_diagram;
 };
 
 #endif // __DIAGRAM_EDITOR_HH__
