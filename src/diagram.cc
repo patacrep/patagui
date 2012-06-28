@@ -32,6 +32,8 @@ QRegExp CDiagram::reStringsNoFret("\\\\[ug]tab[\\*]?\\{.+\\{([^\\}]+)");
 
 CDiagram::CDiagram(const QString & chord, QObject *parent)
   : QObject(parent)
+  , m_isValid(true)
+  , m_drawBorder(false)
   , m_pixmap(0)
 {
   fromString(chord);
@@ -80,7 +82,7 @@ void CDiagram::fromString(const QString & str)
   else if (str.contains("utab"))
     m_type = UkuleleChord;
   else
-    qWarning() << tr("CDiagram::fromString unsupported chord type");
+    m_isValid = false;
 
   setImportant(str.contains("*"));
 
@@ -101,9 +103,15 @@ void CDiagram::fromString(const QString & str)
       reStringsFret.indexIn(str);
       setStrings(reStringsFret.cap(1));
     }
+
+  if (chord().isEmpty())
+    m_isValid = false;
 }
 
+bool CDiagram::isValid() const
 {
+  return m_isValid;
+}
 
 QPixmap* CDiagram::toPixmap()
 {
@@ -131,9 +139,20 @@ QPixmap* CDiagram::toPixmap()
       QRect chordRect(10, padding, 70, 10+padding);
       QPainterPath path;
       path.addRoundedRect(chordRect, 4, 4);
+      painter.fillPath(path, color());
       painter.setFont(QFont("Helvetica [Cronyx]", 10, QFont::Bold));
       painter.drawText(chordRect, Qt::AlignCenter, chord().replace("&", QChar(0x266D)));
 
+      //border
+      if (m_drawBorder)
+	{
+	  painter.setPen(QPen(color()));
+	  painter.setBrush(QBrush());
+	  QPainterPath border;
+	  QRect borderRect(3, padding-5, 82, 110);
+	  border.addRoundedRect(borderRect, 4, 4);
+	  painter.drawPath(border);
+	}
 
       //draw horizontal lines
       int max = 4;
@@ -200,6 +219,33 @@ void CDiagram::fillEllipse(QPainter* painter, const QRect & rect, const QBrush &
   QPainterPath path;
   path.addEllipse(rect.topLeft().x(), rect.topLeft().y(), rect.width(), rect.height());;
   painter->fillPath(path, brush);
+}
+
+QColor CDiagram::color()
+{
+  QColor color;
+
+  if (isImportant())
+    {
+      if (type() == GuitarChord)
+	color = QColor(32, 74, 135);
+      else if (type() == UkuleleChord)
+	color = QColor(92, 53, 102);
+    }
+  else
+    {
+      if (type() == GuitarChord)
+	color = QColor(114, 159, 207);
+      else if (type() == UkuleleChord)
+	color = QColor(173, 127, 168);
+    }
+
+  return color;
+}
+
+void CDiagram::setDrawBorder(bool value)
+{
+  m_drawBorder = value;
 }
 
 QString CDiagram::chord() const

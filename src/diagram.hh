@@ -46,6 +46,8 @@ public:
   CDiagram(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
   ~CDiagram();
 
+  bool isValid() const;
+
   QString toString();
   void fromString(const QString & gtab);
 
@@ -66,6 +68,8 @@ public:
   bool isImportant() const;
   void setImportant(bool value);
 
+  QColor color();
+  void setDrawBorder(bool value);
 
 private:
   void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
@@ -82,6 +86,8 @@ private:
   static QRegExp reStringsNoFret;
 };
 
+  bool m_isValid;
+  bool m_drawBorder;
   QPixmap *m_pixmap;
 
 public:
