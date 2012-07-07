@@ -18,15 +18,13 @@
 //******************************************************************************
 #include "song-editor.hh"
 
-#include "qtfindreplacedialog/findreplacedialog.h"
-
+#include "find-replace-dialog.hh"
 #include "song-header-editor.hh"
 #include "song-code-editor.hh"
 #include "library.hh"
 #include "utils/lineedit.hh"
 
 #include <QFile>
-#include <QMenu>
 #include <QToolBar>
 #include <QAction>
 #include <QActionGroup>
@@ -121,12 +119,12 @@ CSongEditor::CSongEditor(QWidget *parent)
   toolBar()->addSeparator();
 
   //find and replace
-  m_findReplaceDialog = new FindReplaceDialog(this);
+  m_findReplaceDialog = new CFindReplaceDialog(this);
   m_findReplaceDialog->setModal(false);
-  m_findReplaceDialog->setTextEdit(codeEditor());
+  m_findReplaceDialog->setTextEditor(codeEditor());
 
   action = new QAction(tr("Search and Replace"), this);
-  action->setShortcut(QKeySequence::Find);
+  action->setShortcut(QKeySequence::Replace);
   action->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
   action->setStatusTip(tr("Find some text and replace it"));
   connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
@@ -195,14 +193,13 @@ void CSongEditor::readSettings()
 {
   QSettings settings;
   settings.beginGroup("editor");
-  m_findReplaceDialog->readSettings(settings);
+  m_findReplaceDialog->readSettings();
   settings.endGroup();
 }
 
 void CSongEditor::writeSettings()
 {
-  QSettings settings;
-  m_findReplaceDialog->writeSettings(settings);
+  m_findReplaceDialog->writeSettings();
 }
 
 QActionGroup* CSongEditor::actionGroup() const

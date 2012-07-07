@@ -112,7 +112,7 @@ private:
   QToolBar *m_toolBar;
   QActionGroup *m_actions;
 
-  FindReplaceDialog* m_findReplaceDialog;
+  CFindReplaceDialog* m_findReplaceDialog;
   QAction* m_spellCheckingAct;
 
   Song m_song;
