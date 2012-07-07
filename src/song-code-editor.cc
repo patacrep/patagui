@@ -61,9 +61,6 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   setUndoRedoEnabled(true);
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
 
-  CSongHighlighter *highlighter = new CSongHighlighter(document());
-  Q_UNUSED(highlighter);
-
   QStringList wordList = QStringList()
     << "\\begin{verse}" << "\\end{verse}"
     << "\\begin{verse*}" << "\\end{verse*}"
@@ -139,7 +136,8 @@ void CSongCodeEditor::writeSettings()
 
 void CSongCodeEditor::installHighlighter()
 {
-  m_highlighter = new CSongHighlighter(document());
+  if (!m_highlighter)
+    m_highlighter = new CSongHighlighter(document());
 }
 
 void CSongCodeEditor::insertVerse()
