@@ -20,7 +20,7 @@
 #include "song-header-editor.hh"
 
 #include "song-editor.hh"
-#include "diagram.hh"
+#include "chord.hh"
 #include "diagram-area.hh"
 #include "library.hh"
 
@@ -411,12 +411,12 @@ void CSongHeaderEditor::onDiagramsChanged()
 {
   song().gtabs = QStringList();
   song().utabs = QStringList();
-  foreach (CDiagram *diagram, m_diagramArea->diagrams())
+  foreach (CChord *chord, m_diagramArea->diagrams())
     {
-      if (diagram->type() == CDiagram::GuitarChord)
-	song().gtabs << diagram->toString();
-      else if (diagram->type() == CDiagram::UkuleleChord)
-	song().utabs << diagram->toString();
+      if (chord->instrument() == CChord::Guitar)
+	song().gtabs << chord->toString();
+      else if (chord->instrument() == CChord::Ukulele)
+	song().utabs << chord->toString();
     }
   emit(contentsChanged());
 }

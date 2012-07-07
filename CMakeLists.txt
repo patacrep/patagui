@@ -28,7 +28,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/song-highlighter.cc
   src/logs-highlighter.cc
   src/label.cc
-  src/diagram.cc
+  src/chord.cc
   src/diagram-area.cc
   src/diagram-editor.cc
   src/progress-bar.cc
@@ -62,7 +62,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/song-highlighter.hh
   src/logs-highlighter.hh
   src/label.hh
-  src/diagram.hh
+  src/chord.hh
   src/diagram-area.hh
   src/diagram-editor.hh
   src/progress-bar.hh

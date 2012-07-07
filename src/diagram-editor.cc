@@ -44,7 +44,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   , m_infoIconLabel(new QLabel(this))
   , m_messageLabel(new QLabel(this))
   , m_diagramArea(0)
-  , m_diagram(0)
+  , m_chord(0)
 {
   setWindowTitle(tr("Chord editor"));
 
@@ -60,8 +60,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
   m_guitar  = new QRadioButton(tr("Guitar"));
   m_ukulele = new QRadioButton(tr("Ukulele"));
-  connect(m_guitar, SIGNAL(toggled(bool)), this, SLOT(onTypeChanged(bool)));
-  connect(m_ukulele, SIGNAL(toggled(bool)), this, SLOT(onTypeChanged(bool)));
+  connect(m_guitar, SIGNAL(toggled(bool)), this, SLOT(onInstrumentChanged(bool)));
+  connect(m_ukulele, SIGNAL(toggled(bool)), this, SLOT(onInstrumentChanged(bool)));
 
   QVBoxLayout *instrumentLayout = new QVBoxLayout;
   instrumentLayout->addWidget(m_guitar);
@@ -122,8 +122,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
 	      m_diagramArea, SLOT(setNameFilter(const QString &)));
       connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
 	      m_diagramArea, SLOT(setStringsFilter(const QString &)));
-      connect(m_diagramArea, SIGNAL(diagramClicked(CDiagram *)),
-	      this, SLOT(setDiagram(CDiagram *)));
+      connect(m_diagramArea, SIGNAL(diagramClicked(CChord *)),
+	      this, SLOT(setChord(CChord *)));
 
       QTextStream stream (&file);
       stream.setCodec("UTF-8");
@@ -206,10 +206,10 @@ QString CDiagramEditor::chordFret() const
     "" : QString::number(m_fretSpinBox->value());
 }
 
-CDiagram::ChordType CDiagramEditor::chordType() const
+CChord::Instrument CDiagramEditor::chordInstrument() const
 {
   return m_guitar->isChecked() ?
-    CDiagram::GuitarChord : CDiagram::UkuleleChord;
+    CChord::Guitar : CChord::Ukulele;
 }
 
 bool CDiagramEditor::isChordImportant() const
@@ -217,24 +217,24 @@ bool CDiagramEditor::isChordImportant() const
   return m_importantCheckBox->isChecked();
 }
 
-void CDiagramEditor::setDiagram(CDiagram *diagram)
+void CDiagramEditor::setChord(CChord *chord)
 {
-  m_diagram = diagram;
+  m_chord = chord;
 
-  m_guitar->setChecked(diagram->type() == CDiagram::GuitarChord);
-  m_ukulele->setChecked(diagram->type() == CDiagram::UkuleleChord);
-  m_nameLineEdit->setText(diagram->chord());
-  m_fretSpinBox->setValue(diagram->fret().toInt());
-  m_stringsLineEdit->setText(diagram->strings());
-  m_importantCheckBox->setChecked(diagram->isImportant());
+  m_guitar->setChecked(chord->instrument() == CChord::Guitar);
+  m_ukulele->setChecked(chord->instrument() == CChord::Ukulele);
+  m_nameLineEdit->setText(chord->name());
+  m_fretSpinBox->setValue(chord->fret().toInt());
+  m_stringsLineEdit->setText(chord->strings());
+  m_importantCheckBox->setChecked(chord->isImportant());
 
   if (m_diagramArea)
     m_diagramArea->clearFilters();
 }
 
-CDiagram * CDiagramEditor::diagram() const
+CChord * CDiagramEditor::chord() const
 {
-  return m_diagram;
+  return m_chord;
 }
 
 bool CDiagramEditor::checkChord()
@@ -251,8 +251,8 @@ bool CDiagramEditor::checkChord()
     }
   m_nameLineEdit->setStyleSheet(QString());
 
-  if ((m_guitar->isChecked()  && m_stringsLineEdit->text().length() != CDiagram::GuitarStringCount) ||
-      (m_ukulele->isChecked() && m_stringsLineEdit->text().length() != CDiagram::UkuleleStringCount))
+  if ((m_guitar->isChecked()  && m_stringsLineEdit->text().length() != CChord::GuitarStringCount) ||
+      (m_ukulele->isChecked() && m_stringsLineEdit->text().length() != CChord::UkuleleStringCount))
     {
       m_stringsLineEdit->setStyleSheet(css);
       m_messageLabel->setText(tr("The number of strings doesn't match the chosen instrument"));
@@ -260,14 +260,14 @@ bool CDiagramEditor::checkChord()
     }
   m_stringsLineEdit->setStyleSheet(QString());
 
-  if (!diagram()->isValid())
-    qWarning() << tr("CDiagramEditor::checkChord() an invalid diagram has been accepted: ") << diagram()->toString();
+  if (!chord()->isValid())
+    qWarning() << tr("CDiagramEditor::checkChord() an invalid chord has been accepted: ") << chord()->toString();
 
   accept();
   return true;
 }
 
-void CDiagramEditor::onTypeChanged(bool checked)
+void CDiagramEditor::onInstrumentChanged(bool checked)
 {
   Q_UNUSED(checked);
 
@@ -276,14 +276,14 @@ void CDiagramEditor::onTypeChanged(bool checked)
       m_diagramArea->clearFilters();
 
       if (m_guitar->isChecked())
-	m_diagramArea->setTypeFilter(CDiagram::GuitarChord);
+	m_diagramArea->setTypeFilter(CChord::Guitar);
       else if (m_ukulele->isChecked())
-	m_diagramArea->setTypeFilter(CDiagram::UkuleleChord);
+	m_diagramArea->setTypeFilter(CChord::Ukulele);
     }
 
   // set strings max length according to instrument
-  if (chordType() == CDiagram::GuitarChord)
-    m_stringsLineEdit->setMaxLength(CDiagram::GuitarStringCount);
-  else if (chordType() == CDiagram::UkuleleChord)
-    m_stringsLineEdit->setMaxLength(CDiagram::UkuleleStringCount);
+  if (chordInstrument() == CChord::Guitar)
+    m_stringsLineEdit->setMaxLength(CChord::GuitarStringCount);
+  else if (chordInstrument() == CChord::Ukulele)
+    m_stringsLineEdit->setMaxLength(CChord::UkuleleStringCount);
 }
