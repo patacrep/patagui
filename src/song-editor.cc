@@ -131,6 +131,10 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_actions->addAction(action);
   toolBar()->addAction(action);
 
+  action = new QAction(tr("Search"), this);
+  action->setShortcut(QKeySequence::Find);
+  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(toggleQuickSearch()));
+
   //spellchecking
   m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
   m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));

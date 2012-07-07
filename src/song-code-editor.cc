@@ -19,6 +19,7 @@
 #include "song-code-editor.hh"
 #include "song-highlighter.hh"
 #include "song.hh"
+#include "search-widget.hh"
 
 #ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
@@ -36,6 +37,7 @@
 #include <QAbstractItemModel>
 #include <QScrollBar>
 #include <QKeyEvent>
+#include <QResizeEvent>
 
 #include <QAction>
 #include <QMenu>
@@ -54,7 +56,7 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
 #ifdef ENABLE_SPELLCHECK
   , m_maxSuggestedWords(0)
 #endif
-
+  , m_quickSearch(new CSearchWidget(this))
 {
   setUndoRedoEnabled(true);
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
@@ -86,6 +88,7 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   m_completer->setCompletionMode(QCompleter::PopupCompletion);
   QObject::connect(m_completer, SIGNAL(activated(QString)),
 		   this, SLOT(insertCompletion(QString)));
+
   readSettings();
 }
 
@@ -93,6 +96,7 @@ CSongCodeEditor::~CSongCodeEditor()
 {
   delete m_highlighter;
   delete m_completer;
+  delete m_quickSearch;
 }
 
 void CSongCodeEditor::readSettings()
@@ -227,6 +231,7 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
       return;
     }
 
+
   bool isShortcut = ((event->modifiers() & Qt::ControlModifier) && event->key() == Qt::Key_Space); // CTRL+Space
   if (!completer() || !isShortcut) // do not process the shortcut when we have a completer
     QPlainTextEdit::keyPressEvent(event);
@@ -256,6 +261,17 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
   cr.setWidth(completer()->popup()->sizeHintForColumn(0)
 	      + completer()->popup()->verticalScrollBar()->sizeHint().width());
   completer()->complete(cr); // popup it up!
+}
+
+void CSongCodeEditor::resizeEvent(QResizeEvent *event)
+{
+  Q_UNUSED(event);
+  m_quickSearch->move(width() - 345, 4);
+}
+
+void CSongCodeEditor::toggleQuickSearch()
+{
+  m_quickSearch->setVisible(!m_quickSearch->isVisible());
 }
 
 void CSongCodeEditor::highlightEnvironments()
