@@ -409,6 +409,8 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
     {
       cursor.deleteChar();
       str  = cursor.block().text();
+      if (str.isEmpty())
+	break;
     }
 }
 
