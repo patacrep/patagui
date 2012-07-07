@@ -29,17 +29,17 @@
 #include <QVector>
 #include <QMap>
 
-#include "diagram.hh"
+#include "chord.hh"
 
 
 /*!
   \file diagram-area.hh
   \class CTableDiagram
-  \brief CTableDiagram is a table model that contains CDiagrams
+  \brief CTableDiagram is a table model that contains CChord objects.
 
   A CTableDiagram presents data on a grid where the number of rows or
   columns is specified with setRowCount() or setColumnCount(). Adding
-  a new data element (CDiagram) to the model does not require
+  a new data element (CChord) to the model does not require
   indicating its position on the grid as this is automatically
   computed.
 
@@ -74,7 +74,7 @@ class CTableDiagram : public QAbstractTableModel
 
   public:
   enum DiagramRoles {
-    ChordRole = Qt::UserRole + 1,
+    NameRole = Qt::UserRole + 1,
     StringsRole = Qt::UserRole + 2,
     TypeRole = Qt::UserRole + 3,
     ImportantRole = Qt::UserRole + 4,
@@ -102,7 +102,7 @@ class CTableDiagram : public QAbstractTableModel
   QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
   bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
 
-  CDiagram * getDiagram(const QModelIndex &) const;
+  CChord * getDiagram(const QModelIndex &) const;
 
 public slots:
   void insertItem(const QModelIndex & index, const QString & value);
@@ -118,7 +118,7 @@ private:
   bool m_fixedRowCount;
   int m_columnCount;
   int m_rowCount;
-  QVector<CDiagram*> m_data;
+  QVector<CChord*> m_data;
 };
 
 
@@ -172,8 +172,8 @@ class QSortFilterProxyModel;
 
   The list of chords in a CDiagramArea can be filtered by methods such
   as setTypeFilter(), setNameFilter() and setStringsFilter() that will
-  only display rows that contain chords whose CDiagram::instrument(),
-  CDiagram::name() and CDiagram::strings() match the filter. In the
+  only display rows that contain chords whose CChord::instrument(),
+  CChord::name() and CChord::strings() match the filter. In the
   dialog from diagram-editor.cc, those slots are thus connected to the
   QLineEdit widgets:
 
@@ -222,7 +222,7 @@ class CDiagramArea : public QWidget
     Returns all the chords. Note that it returns chords from the model, not the view;
     thus, filtered chords are also included.
   */
-  QList< CDiagram* > diagrams();
+  QList< CChord* > diagrams();
 
 public slots:
   /*!
@@ -255,7 +255,7 @@ public slots:
     Filters rows that contain chords whose instrument matches \a type.
     \sa setNameFilter, setStringsFilter
   */
-  void setTypeFilter(const CDiagram::ChordType & type);
+  void setTypeFilter(const CChord::Instrument & type);
 
   /*!
     Filters rows that contain chords whose name matches \a name.
@@ -307,7 +307,7 @@ signals:
   /*!
     This signal is emitted when a chord from the list is clicked.
   */
-  void diagramClicked(CDiagram * diagram);
+  void diagramClicked(CChord * diagram);
 
 private:
   bool m_isReadOnly;

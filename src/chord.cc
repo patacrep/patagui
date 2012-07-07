@@ -16,7 +16,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
-#include "diagram.hh"
+#include "chord.hh"
 #include "diagram-editor.hh"
 
 #include <QPixmap>
@@ -25,10 +25,10 @@
 #include <QPainter>
 #include <QDebug>
 
-QRegExp CDiagram::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
-QRegExp CDiagram::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
+QRegExp CChord::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
+QRegExp CChord::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
 
-CDiagram::CDiagram(const QString & chord, QObject *parent)
+CChord::CChord(const QString & chord, QObject *parent)
   : QObject(parent)
   , m_isValid(true)
   , m_drawBorder(false)
@@ -37,32 +37,32 @@ CDiagram::CDiagram(const QString & chord, QObject *parent)
   fromString(chord);
 }
 
-CDiagram::~CDiagram()
+CChord::~CChord()
 {
   delete m_pixmap;
   m_pixmap = 0;
 }
 
-QString CDiagram::toString()
+QString CChord::toString()
 {
   QString str;
-  switch(m_type)
+  switch(m_instrument)
     {
-    case GuitarChord:
+    case Guitar:
       str.append("\\gtab");
       break;
-    case UkuleleChord:
+    case Ukulele:
       str.append("\\utab");
       break;
     default:
-      qWarning() << tr("CDiagram::toString unsupported chord type");
+      qWarning() << tr("CChord::toString unsupported chord type");
     }
 
   if (isImportant())
     str.append("*");
 
   //the chord name such as Am
-  str.append( QString("{%1}{").arg(chord()) );
+  str.append( QString("{%1}{").arg(name()) );
   //the fret
   str.append(QString("%2").arg(fret()));
   //the strings such as X32010 (C chord)
@@ -73,14 +73,14 @@ QString CDiagram::toString()
   return str;
 }
 
-void CDiagram::fromString(const QString & str)
+void CChord::fromString(const QString & str)
 {
   QString copy(str);
 
   if (str.contains("gtab"))
-    m_type = GuitarChord;
+    m_instrument = Guitar;
   else if (str.contains("utab"))
-    m_type = UkuleleChord;
+    m_instrument = Ukulele;
   else
     m_isValid = false;
 
@@ -88,26 +88,26 @@ void CDiagram::fromString(const QString & str)
 
   if (reChordWithFret.indexIn(str) != -1)
     {
-      setChord(reChordWithFret.cap(1));
+      setName(reChordWithFret.cap(1));
       setFret(reChordWithFret.cap(2));
       setStrings(reChordWithFret.cap(3));
     }
   else if (reChordWithoutFret.indexIn(copy.remove("~:")) != -1)
     {
-      setChord(reChordWithoutFret.cap(1));
+      setName(reChordWithoutFret.cap(1));
       setStrings(reChordWithoutFret.cap(2));
     }
 
-  if (chord().isEmpty())
+  if (name().isEmpty())
     m_isValid = false;
 }
 
-bool CDiagram::isValid() const
+bool CChord::isValid() const
 {
   return m_isValid;
 }
 
-QPixmap* CDiagram::toPixmap()
+QPixmap* CChord::toPixmap()
 {
   if (m_pixmap)
     return m_pixmap;
@@ -135,7 +135,7 @@ QPixmap* CDiagram::toPixmap()
       path.addRoundedRect(chordRect, 4, 4);
       painter.fillPath(path, color());
       painter.setFont(QFont("Helvetica [Cronyx]", 10, QFont::Bold));
-      painter.drawText(chordRect, Qt::AlignCenter, chord().replace("&", QChar(0x266D)));
+      painter.drawText(chordRect, Qt::AlignCenter, name().replace("&", QChar(0x266D)));
 
       //border
       if (m_drawBorder)
@@ -155,7 +155,7 @@ QPixmap* CDiagram::toPixmap()
 	  max = c.digitValue();
 
       // grid background
-      int hOffset = (type() == GuitarChord) ? 0 : cellWidth; //offset from the left
+      int hOffset = (instrument() == Guitar) ? 0 : cellWidth; //offset from the left
       int vOffset = 45; //offset from the top
       QRect gridRect(4, vOffset, 80, cellHeight*max+padding+5);
 
@@ -208,86 +208,86 @@ QPixmap* CDiagram::toPixmap()
   return m_pixmap;
 }
 
-void CDiagram::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush)
+void CChord::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush)
 {
   QPainterPath path;
   path.addEllipse(rect.topLeft().x(), rect.topLeft().y(), rect.width(), rect.height());;
   painter->fillPath(path, brush);
 }
 
-QColor CDiagram::color()
+QColor CChord::color()
 {
   QColor color;
 
   if (isImportant())
     {
-      if (type() == GuitarChord)
+      if (instrument() == Guitar)
 	color = QColor(32, 74, 135);
-      else if (type() == UkuleleChord)
+      else if (instrument() == Ukulele)
 	color = QColor(92, 53, 102);
     }
   else
     {
-      if (type() == GuitarChord)
+      if (instrument() == Guitar)
 	color = QColor(114, 159, 207);
-      else if (type() == UkuleleChord)
+      else if (instrument() == Ukulele)
 	color = QColor(173, 127, 168);
     }
 
   return color;
 }
 
-void CDiagram::setDrawBorder(bool value)
+void CChord::setDrawBorder(bool value)
 {
   m_drawBorder = value;
 }
 
-QString CDiagram::chord() const
+QString CChord::name() const
 {
-  return m_chord;
+  return m_name;
 }
 
-void CDiagram::setChord(const QString & str)
+void CChord::setName(const QString & str)
 {
-  m_chord = str;
+  m_name = str;
 }
 
-QString CDiagram::fret() const
+QString CChord::fret() const
 {
   return m_fret;
 }
 
-void CDiagram::setFret(const QString & str)
+void CChord::setFret(const QString & str)
 {
   m_fret = str;
 }
 
-QString CDiagram::strings() const
+QString CChord::strings() const
 {
   return m_strings;
 }
 
-void CDiagram::setStrings(const QString & str)
+void CChord::setStrings(const QString & str)
 {
   m_strings = str;
 }
 
-CDiagram::ChordType CDiagram::type() const
+CChord::Instrument CChord::instrument() const
 {
-  return m_type;
+  return m_instrument;
 }
 
-void CDiagram::setType(const CDiagram::ChordType & type)
+void CChord::setInstrument(const CChord::Instrument & instru)
 {
-  m_type = type;
+  m_instrument = instru;
 }
 
-bool CDiagram::isImportant() const
+bool CChord::isImportant() const
 {
   return m_important;
 }
 
-void CDiagram::setImportant(bool value)
+void CChord::setImportant(bool value)
 {
   m_important = value;
 }

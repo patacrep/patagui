@@ -21,7 +21,7 @@
 
 #include <QDialog>
 #include <QString>
-#include "diagram.hh"
+#include "chord.hh"
 
 class QLineEdit;
 class QSpinBox;
@@ -29,7 +29,7 @@ class QRadioButton;
 class QCheckBox;
 class QLabel;
 
-class CDiagram;
+class CChord;
 class CDiagramArea;
 
 /*!
@@ -39,12 +39,12 @@ class CDiagramArea;
 
   The CDiagramEditor class provides a dialog widget for editing or
   creating chords. It is composed of a form where fields are the
-  properties of a CDiagram object and of a list of common chords (a
+  properties of a CChord object and of a list of common chords (a
   CDiagramArea object) that may be selected.
 
   \image html chord-editor.png
 
-  \sa CDiagram, CDiagramArea
+  \sa CChord, CDiagramArea
 */
 class CDiagramEditor : public QDialog
 {
@@ -75,7 +75,7 @@ public:
   /*!
     Returns the instrument of the chord.
   */
-  CDiagram::ChordType chordType() const;
+  CChord::Instrument chordInstrument() const;
 
   /*!
     Returns the \a true if chord is important; \a false otherwise.
@@ -88,20 +88,20 @@ public:
   virtual QSize sizeHint() const;
 
   /*!
-    Returns the CDiagram object associated with the dialog.
+    Returns the CChord object associated with the dialog.
   */
-  CDiagram * diagram() const;
+  CChord * chord() const;
 
 public slots:
   /*!
     Associates the CDiagram object \a diagram with dialog.
     The properties of \a diagram are used to fill the form of the dialog.
   */
-  void setDiagram(CDiagram *diagram);
+  void setChord(CChord *chord);
 
 private slots:
   bool checkChord();
-  void onTypeChanged(bool);
+  void onInstrumentChanged(bool);
   void reset();
 
 private:
@@ -117,7 +117,7 @@ private:
   QLabel *m_messageLabel;
 
   CDiagramArea *m_diagramArea;
-  CDiagram *m_diagram;
+  CChord *m_chord;
 };
 
 #endif // __DIAGRAM_EDITOR_HH__

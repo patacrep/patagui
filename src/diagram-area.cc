@@ -139,20 +139,20 @@ void CDiagramArea::editDiagram(QModelIndex index)
   if (!index.isValid())
     index = m_diagramView->indexAt(m_diagramView->mapFromGlobal(QCursor::pos()));
 
-  bool newDiagram = !index.isValid();
+  bool newChord = !index.isValid();
 
-  CDiagram *diagram = newDiagram ?
-    new CDiagram : m_diagramModel->getDiagram(m_proxyModel->mapToSource(index));
+  CChord *chord = newChord ?
+    new CChord : m_diagramModel->getDiagram(m_proxyModel->mapToSource(index));
 
   CDiagramEditor dialog(this);
-  dialog.setDiagram(diagram);
+  dialog.setChord(chord);
 
   if (dialog.exec() == QDialog::Accepted)
     {
-      if (newDiagram)
-	addDiagram(dialog.diagram()->toString());
+      if (newChord)
+	addDiagram(dialog.chord()->toString());
       else
-	m_diagramModel->setData(m_proxyModel->mapToSource(index), dialog.diagram()->toString());
+	m_diagramModel->setData(m_proxyModel->mapToSource(index), dialog.chord()->toString());
 
       emit(contentsChanged());
     }
@@ -211,10 +211,10 @@ void CDiagramArea::contextMenu(const QPoint & pos)
   menu.exec(QCursor::pos());
 }
 
-void CDiagramArea::setTypeFilter(const CDiagram::ChordType & type)
+void CDiagramArea::setTypeFilter(const CChord::Instrument & type)
 {
   m_proxyModel->setFilterRole(Qt::DisplayRole);
-  if (type == CDiagram::GuitarChord)
+  if (type == CChord::Guitar)
     m_proxyModel->setFilterRegExp("gtab");
   else
     m_proxyModel->setFilterRegExp("utab");
@@ -224,7 +224,7 @@ void CDiagramArea::setTypeFilter(const CDiagram::ChordType & type)
 void CDiagramArea::setNameFilter(const QString & name)
 {
   clearFilters();
-  m_proxyModel->setFilterRole(CTableDiagram::ChordRole);
+  m_proxyModel->setFilterRole(CTableDiagram::NameRole);
   m_proxyModel->setFilterRegExp(name);
   emit(layoutChanged());
 }
@@ -253,9 +253,9 @@ void CDiagramArea::setRowCount(int value)
   m_diagramModel->setRowCount(value);
 }
 
-QList< CDiagram* > CDiagramArea::diagrams()
+QList< CChord* > CDiagramArea::diagrams()
 {
-  QList< CDiagram* > list;
+  QList< CChord* > list;
   for (int i = 0; i < m_diagramModel->rowCount(); ++i)
     for (int j = 0; j < m_diagramModel->columnCount(); ++j)
       {
@@ -278,7 +278,7 @@ CTableDiagram::CTableDiagram(QWidget *parent)
 
 CTableDiagram::~CTableDiagram()
 {
-  foreach (CDiagram* diagram, m_data)
+  foreach (CChord* diagram, m_data)
     delete diagram;
   m_data.clear();
 }
@@ -322,8 +322,8 @@ QVariant CTableDiagram::data(const QModelIndex &index, int role) const
       return *(m_data[positionFromIndex(index)]->toPixmap());
     case Qt::ToolTipRole:
       return data(index, Qt::DisplayRole);
-    case ChordRole:
-      return m_data[positionFromIndex(index)]->chord();
+    case NameRole:
+      return m_data[positionFromIndex(index)]->name();
     case StringsRole:
       return m_data[positionFromIndex(index)]->strings();
     case ImportantRole:
@@ -340,7 +340,7 @@ bool CTableDiagram::setData(const QModelIndex & index, const QVariant & value, i
   if (!index.isValid())
     return false;
 
-  CDiagram *diagram = new CDiagram(value.toString());
+  CChord *diagram = new CChord(value.toString());
   if (diagram->isValid())
     {
       int pos = positionFromIndex(index);
@@ -358,7 +358,7 @@ void CTableDiagram::insertItem(const QModelIndex & index, const QString & value)
   setColumnCount(columnCount() + 1);
   m_fixedColumnCount = false;
 
-  CDiagram *diagram = new CDiagram(value);
+  CChord *diagram = new CChord(value);
   if (diagram->isValid())
     m_data.insert(index.column(), diagram);
   else
@@ -389,7 +389,7 @@ void CTableDiagram::removeItem(const QModelIndex & index)
 
 void CTableDiagram::addItem(const QString & value)
 {
-  CDiagram * diagram = new CDiagram(value);
+  CChord * diagram = new CChord(value);
   if (!diagram->isValid())
     {
       delete diagram;
@@ -435,7 +435,7 @@ int CTableDiagram::positionFromIndex(const QModelIndex & index) const
   return columnCount() * index.row() + index.column();
 }
 
-CDiagram * CTableDiagram::getDiagram(const QModelIndex & index) const
+CChord * CTableDiagram::getDiagram(const QModelIndex & index) const
 {
   return m_data[positionFromIndex(index)];
 }

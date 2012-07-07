@@ -16,8 +16,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
-#ifndef __DIAGRAM_HH__
-#define __DIAGRAM_HH__
+#ifndef __CHORD_HH__
+#define __CHORD_HH__
 
 #include <QObject>
 #include <QString>
@@ -30,9 +30,9 @@
 class QPainter;
 
 /*!
-  \file diagram.hh
-  \class CDiagram
-  \brief CDiagram is an object representing a guitar/ukulele chord diagram
+  \file chord.hh
+  \class CChord
+  \brief CChord is an object representing a guitar/ukulele chord
 
   A chord has a text and a graphical representation.
 
@@ -52,10 +52,8 @@ class QPainter;
 
   \image html chord.png
 
-  //Todo : rename CDiagram -> CChord
-  // rename type -> instrument
-  */
-class CDiagram : public QObject
+*/
+class CChord : public QObject
 {
   Q_OBJECT
 
@@ -70,19 +68,19 @@ class CDiagram : public QObject
   };
 
   /*!
-    \enum ChordType
-    This enum type indicates the instrument from which this chord is meant to be played.
+    \enum Instrument
+    This enum type lists supported instruments.
   */
-  enum ChordType {
-    GuitarChord, /*!< guitar. */
-    UkuleleChord /*!< ukulele. */
+  enum Instrument {
+    Guitar, /*!< guitar. */
+    Ukulele /*!< ukulele. */
   };
 
   /// Constructor.
-  CDiagram(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
+  CChord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
 
   /// Destructor.
-  ~CDiagram();
+  ~CChord();
 
   /*!
     Returns true if the chord is valid; false otherwise. A valid
@@ -92,7 +90,7 @@ class CDiagram : public QObject
   bool isValid() const;
 
   /*!
-    Returns the string representation of the diagram.
+    Returns the string representation of the chord.
     \sa fromString
   */
   QString toString();
@@ -115,13 +113,13 @@ class CDiagram : public QObject
     \code \\gtab{E&m}{5:X02210} \endcode returns E&m.
     \sa setChord
   */
-  QString chord() const;
+  QString name() const;
 
   /*!
     Sets the chord name \a name.
     \sa chord
   */
-  void setChord(const QString & name);
+  void setName(const QString & name);
 
   /*!
     Returns the fret number.
@@ -154,16 +152,16 @@ class CDiagram : public QObject
   /*!
     Returns the instrument of the chord.
     For example, given a E-flat minor chord
-    \code \gtab{E&m}{5:X02210} \endcode returns ChordType::GuitarChord.
+    \code \gtab{E&m}{5:X02210} \endcode returns Instrument::Guitar.
     \sa setType
   */
-  ChordType type() const;
+  Instrument instrument() const;
 
   /*!
     Sets the instrument \a instrument.
     \sa type
   */
-  void setType(const ChordType & instrument);
+  void setInstrument(const Instrument & instrument);
 
   /*!
     Returns true if the chord is important; false otherwise. Non
@@ -197,8 +195,8 @@ class CDiagram : public QObject
 private:
   void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
 
-  ChordType m_type;
-  QString m_chord;
+  Instrument m_instrument;
+  QString m_name;
   QString m_fret;
   QString m_strings;
   bool m_important;
@@ -210,4 +208,4 @@ public:
   static QRegExp reChordWithFret;
   static QRegExp reChordWithoutFret;
 };
-#endif // __DIAGRAM_HH__
+#endif // __CHORD_HH__
