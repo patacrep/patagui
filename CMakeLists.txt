@@ -43,8 +43,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
   src/make-songbook-process.cc
-  src/qtfindreplacedialog/findreplaceform.cpp
-  src/qtfindreplacedialog/findreplacedialog.cpp
+  src/find-replace-dialog.cc
   src/variant-factory.cc
   src/variant-manager.cc
   )
@@ -77,16 +76,13 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
   src/make-songbook-process.hh
-  src/qtfindreplacedialog/findreplaceform.h
-  src/qtfindreplacedialog/findreplacedialog.h
+  src/find-replace-dialog.hh
   src/variant-factory.hh
   src/variant-manager.hh
   )
 
 # uis
 set(SONGBOOK_CLIENT_UIS
-  src/qtfindreplacedialog/findreplacedialog.ui
-  src/qtfindreplacedialog/findreplaceform.ui
   )
 
 # resources (rcs)
