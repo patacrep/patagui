@@ -32,31 +32,71 @@ class QLabel;
 class CDiagram;
 class CDiagramArea;
 
-/**
- * \file diagram-editor.hh
- * \class CDiagramEditor
- * \brief CDiagramEditor is a dialog that edits chord diagrams
- *
- */
+/*!
+  \file diagram-editor.hh
+  \class CDiagramEditor
+  \brief CDiagramEditor is a dialog for editing or creating chords
+
+  The CDiagramEditor class provides a dialog widget for editing or
+  creating chords. It is composed of a form where fields are the
+  properties of a CDiagram object and of a list of common chords (a
+  CDiagramArea object) that may be selected.
+
+  \image html chord-editor.png
+
+  \sa CDiagram, CDiagramArea
+*/
 class CDiagramEditor : public QDialog
 {
   Q_OBJECT
 
 public:
+  /// Constructor.
   CDiagramEditor(QWidget *parent=0);
+
+  /// Destructor.
   ~CDiagramEditor();
 
+  /*!
+    Returns the name of the chord.
+  */
   QString chordName() const;
+
+  /*!
+    Returns the strings of the chord.
+  */
   QString chordStrings() const;
+
+  /*!
+    Returns the fret of the chord.
+  */
   QString chordFret() const;
+
+  /*!
+    Returns the instrument of the chord.
+  */
   CDiagram::ChordType chordType() const;
+
+  /*!
+    Returns the \a true if chord is important; \a false otherwise.
+  */
   bool isChordImportant() const;
 
+  /*!
+    Returns the preferred size for the dialog.
+  */
   virtual QSize sizeHint() const;
 
+  /*!
+    Returns the CDiagram object associated with the dialog.
+  */
   CDiagram * diagram() const;
 
 public slots:
+  /*!
+    Associates the CDiagram object \a diagram with dialog.
+    The properties of \a diagram are used to fill the form of the dialog.
+  */
   void setDiagram(CDiagram *diagram);
 
 private slots:

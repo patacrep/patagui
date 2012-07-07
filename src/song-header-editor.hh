@@ -38,17 +38,23 @@ class QComboBox;
 class QBoxLayout;
 class QStackedLayout;
 
-/**
- * \file song-header-editor.hh
- * \class CSongHeaderEditor
- * \brief CSongHeaderEditor is a widget that manages a Song metadata in a CSongEditor
- *
- * A Song is composed of a header (metadata) and a body (lyrics).
- * The CSongHeaderEditor hides the plain text of the song's header to present them
- * in a more user-friendly way through appropriated QWidgets that allow to
- * fill the fields such as artist name, album, cover, capo etc.
- *
- */
+/*!
+  \file song-header-editor.hh
+  \class CSongHeaderEditor
+  \brief CSongHeaderEditor is a widget that manages a Song metadata in a CSongEditor
+
+  A Song is composed of a header (metadata) and a body (lyrics).
+  The CSongHeaderEditor hides the plain text of the song's header to present them
+  in a more user-friendly way through appropriated QWidgets that allow to
+  fill the fields such as artist name, album, cover, capo etc.
+
+  Two different views can be toggled:
+  \li the full-view mode allows to edit the song metadata
+  \image html song-header-editor-full.png
+  \li the mini-view mode saves vertical space and provides minimal read-only information
+  \image html song-header-editor-mini.png
+
+*/
 class CSongHeaderEditor : public QWidget
 {
   Q_OBJECT
@@ -78,11 +84,25 @@ public:
   /// @return the cover
   const QImage & cover();
 
+  /*!
+    Sets the library \a library. The library is used to provide
+    completion models for title and artist line edits.
+  */
   void setLibrary(CLibrary* library);
 
+  /*!
+    Returns the title line edit widget.
+  */
   LineEdit* titleLineEdit() const;
+
+  /*!
+    Returns the artist line edit widget.
+  */
   LineEdit* artistLineEdit() const;
 
+  /*!
+    Returns the preferred size of the widget.
+  */
   QSize sizeHint() const;
 
 private slots:
@@ -93,7 +113,14 @@ private slots:
   void onCoverChanged();
 
 public slots:
+  /*!
+    Updates the elements of the header from the song contents.
+  */
   void update();
+
+  /*!
+    Toggles between full-view mode and mini-view mode.
+  */
   void toggleView();
 
 signals:
@@ -127,6 +154,21 @@ class QDragMoveEvent;
 class QDragLeaveEvent;
 class QDragDropEvent;
 
+/*!
+  \file song-header-editor.hh
+  \class CCoverDropArea
+  \brief CCoverDropArea displays the cover of a song.
+
+  The cover area displays the cover of a song within a raised box. If
+  there is no cover to display, it displays a generic image-missing
+  icon. Clicking on the area prompts a file picker dialog where an
+  external \a .jpg cover can be selected. The cover area also accepts
+  drops from local \a .jpg files.
+
+  \image html cover-drop-area.png
+  \image html cover-drop-area2.png
+
+*/
 class CCoverDropArea : public QLabel
 {
   Q_OBJECT
@@ -141,12 +183,12 @@ class CCoverDropArea : public QLabel
   const QImage & cover();
 
   /// Setter on the song's cover
-  /// @para cover the cover as an image object
+  /// @param cover the cover as an image object
   void setCover(const QImage &cover);
 
   /// Setter on the song's cover
-  /// @para cover the cover as a file object
-  void setCover(const QString &path);
+  /// @param cover the cover as a file object
+  void setCover(const QString &cover);
 
   CSongHeaderEditor * parent() const;
   void setParent(CSongHeaderEditor *p);

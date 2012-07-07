@@ -24,25 +24,22 @@
 #include <QTabBar>
 #include <QString>
 
-/**
- * \file tab-widget.hh
- * \class CTabWidget
- * \brief CTabWidget is a widget representing a tab in the mainwindow
- *
- * \image html tab-widget.png
- *
- * Note that a tab-widget is a generic widget that is a plain
- * container but from the application point of view, two kinds of tabs
- * should be distinguished :
- *
- * \li The library tab displays the list of
- * songs that may be used for a songbook. There is only one single
- * library tab.
- * \li A song-editor tab displays the contents of a song
- * and acts as a specialized text editor for sg files. There may be a
- * tab for each available song.
- *
- */
+/*!
+  \file tab-widget.hh
+  \class CTabWidget
+  \brief CTabWidget is a widget representing a tab in the mainwindow
+
+  Note that a tab-widget is a generic widget that is a plain
+  container but from the application point of view, two kinds of tabs
+  should be distinguished :
+
+  \li The library tab displays the list of
+  songs that may be used for a songbook. There is only one single
+  library tab.
+  \li A song-editor tab displays the contents of a song
+  and acts as a specialized text editor for sg files. There may be a
+  tab for each available song.
+*/
 
 class CTabWidget : public QTabWidget
 {
@@ -53,7 +50,14 @@ class CTabWidget : public QTabWidget
 	     WRITE setSelectionBehaviorOnAdd)
 
 public:
-  enum SelectionBehavior { SelectCurrent, SelectNew };
+  /*!
+    \enum SelectionBehavior
+    This enum type is used to determine focus for new tabs.
+  */
+    enum SelectionBehavior {
+    SelectCurrent, /*!< this will keep focus on the current tab. */
+    SelectNew /*!< this will shift focus on the new tab. */
+  };
 
   /// Constructor.
   CTabWidget(QWidget *parent=0);
@@ -61,56 +65,82 @@ public:
   /// Destructor.
   virtual ~CTabWidget();
 
-  /// Add a new tab.
-  /// The tab's label is the title of the parent widget's window.
-  /// @param widget the parent widget
+  /*!
+    Add a new tab with \a widget as his parent and returns
+    the new tab position in the bar.
+    The tab's label is the title of the parent widget's window.
+  */
   int addTab(QWidget *widget);
 
-  /// Add a new tab with a label.
-  /// @param widget the parent widget
-  /// @param label the tab label
+  /*!
+    Add a new tab with a title \a label and \a widget as its parent.
+  */
   int addTab(QWidget *widget, const QString &label);
 
-  /// Getter on the selection behavior when the tab is added.
-  /// This defines if the focus should be set on the tab
-  /// when it is added.
-  /// @return the selection behavior mode
+  /*!
+    Returns the selection behavior to apply when a new tab is added.
+    \sa setSelectionBehaviorOnAdd, SelectionBehavior
+  */
   SelectionBehavior selectionBehaviorOnAdd() const;
 
-  /// Setter on the selection behavior when the tab is added.
-  /// This defines if the focus should be set on the tab
-  /// when it is added.
-  /// @param behavior the selection behavior mode
+  /*!
+    Sets the selection behavior to apply when a new tab is added.
+    This defines if the focus should be set on the tab or kept on current tab.
+    \sa selectionBehaviorOnAdd, SelectionBehavior
+  */
   void setSelectionBehaviorOnAdd(SelectionBehavior behavior);
 
 public slots:
-  /// Close the current tab.
+  /*!
+    Close the current tab.
+  */
   void closeTab();
 
-  /// Close the tab at a given index.
-  /// @param index a tab index
+  /*!
+    Close the tab at a given index.
+    @param index a tab index
+  */
   void closeTab(int index);
 
-  /// The current tab becomes the next tab on the right.
+  /*!
+    The current tab becomes the next tab on the right.
+  */
   void prev();
 
-  /// The current tab becomes the previous tab on the left.
+  /*!
+    The current tab becomes the previous tab on the left.
+  */
   void next();
 
-  /// Change the tab label.
-  /// @param text the new label
+  /*!
+    Change the tab label.
+    @param text the new label
+  */
   void changeTabText(const QString &text);
 
 protected:
-  /// Hide or display the tab bar.
-  /// The tab bar is hidden when there is only the library tab
-  /// to be displayed (no song-editor tabs).
+  /*!
+    Hide or display the tab bar.
+    The tab bar is hidden when there is only the library tab
+    to be displayed (no song-editor tabs).
+  */
   void updateTabBarVisibility();
 
 private:
   SelectionBehavior m_selectionBehaviorOnAdd; ///> focus policy on new tabs
 };
 
+
+/*!
+  \file tab-widget.hh
+  \class CTabBar
+  \brief CTabBar is the widget representing the tabs in the mainwindow
+
+  A CTabBar allows tabs to be closed when middle-clicked with a mouse.
+
+  \image html tab-widget.png
+
+*/
 class CTabBar : public QTabBar
 {
   Q_OBJECT
@@ -122,6 +152,10 @@ public:
   ~CTabBar();
 
 protected:
+  /*!
+    Reimplements QTabBar::mouseReleaseEvent to close
+    tabs when they are middle-clicked.
+  */
   virtual void mouseReleaseEvent(QMouseEvent *event);
 };
 

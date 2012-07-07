@@ -17,26 +17,38 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-/**
- * \file song-item-delegate.hh
- *
- * Class for Song Item Delegate.
- *
- */
 #ifndef __SONG_ITEM_DELEGATE_HH__
 #define __SONG_ITEM_DELEGATE_HH__
 
 #include <QStyledItemDelegate>
 
+/*!
+  \file song-item-delegate.hh
+  \class CSongItemDelegate
+  \brief CSongItemDelegate draws items from CLibraryView.
+
+  Items are rows corresponding to a song and are composed of several
+  columns for title, artist, album, language  etc.
+*/
 class CSongItemDelegate : public QStyledItemDelegate
 {
   Q_OBJECT
 
 public:
+  /// Constructor.
   CSongItemDelegate(QObject *parent = 0);
+
+  /// Destructor.
   ~CSongItemDelegate();
 
+  /*!
+    Draws the song item at position \a index.
+  */
   virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+  /*!
+    Returns a fixed size hint for columns 2 and 5 (lilypond and language columns).
+  */
   virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 

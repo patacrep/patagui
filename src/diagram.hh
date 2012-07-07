@@ -29,46 +29,169 @@
 
 class QPainter;
 
-/**
- * \file diagram.hh
- * \class CDiagram
- * \brief CDiagram is a widget representing a guitar/ukulele chord diagram
- *
- */
+/*!
+  \file diagram.hh
+  \class CDiagram
+  \brief CDiagram is an object representing a guitar/ukulele chord diagram
+
+  A chord has a text and a graphical representation.
+
+  The text representation follows the syntax introduced by the Songs
+  LaTeX Package (http://songs.sourceforge.net):
+  \code
+  \gtab{<name>}{<fret>:<strings>}
+  \endcode
+
+  Regarding its graphical representation, a chord is a grid (diagram)
+  where vertical lines correspond to strings and horizontal lines to
+  frets:
+
+  \li filled circles indicate frets to be pinched
+  \li empty circles indicate a string that should be played open
+  \li X indicate strings that should not be played
+
+  \image html chord.png
+
+  //Todo : rename CDiagram -> CChord
+  // rename type -> instrument
+  */
 class CDiagram : public QObject
 {
   Q_OBJECT
 
-public:
-  enum StringCount { GuitarStringCount=6, UkuleleStringCount=4 };
-  enum ChordType { GuitarChord, UkuleleChord };
+  public:
+  /*!
+    \enum StringCount
+    This enum type indicates the number of strings of an instrumuent.
+  */
+  enum StringCount {
+    GuitarStringCount=6, /*!< guitar: 6 */
+    UkuleleStringCount=4 /*!< ukulele: 4 */
+  };
 
+  /*!
+    \enum ChordType
+    This enum type indicates the instrument from which this chord is meant to be played.
+  */
+  enum ChordType {
+    GuitarChord, /*!< guitar. */
+    UkuleleChord /*!< ukulele. */
+  };
+
+  /// Constructor.
   CDiagram(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
+
+  /// Destructor.
   ~CDiagram();
 
+  /*!
+    Returns true if the chord is valid; false otherwise. A valid
+    chord has a non-empty chord name and a number of strings that
+    matches its instrument.
+  */
   bool isValid() const;
 
+  /*!
+    Returns the string representation of the diagram.
+    \sa fromString
+  */
   QString toString();
+
+  /*!
+    Builds a chord from a string.
+    \sa toString
+  */
   void fromString(const QString & gtab);
 
+  /*!
+    Returns the graphical representation (diagram) of the chord.
+    \sa toString
+  */
   QPixmap* toPixmap();
 
+  /*!
+    Returns the chord name.
+    For example, given a E-flat minor chord
+    \code \\gtab{E&m}{5:X02210} \endcode returns E&m.
+    \sa setChord
+  */
   QString chord() const;
+
+  /*!
+    Sets the chord name \a name.
+    \sa chord
+  */
   void setChord(const QString & name);
 
+  /*!
+    Returns the fret number.
+    For example, given a E-flat minor chord
+    \code \gtab{E&m}{5:X02210} \endcode returns 5.
+    \sa setFret
+  */
   QString fret() const;
+
+  /*!
+    Sets the fret number \a fret.
+    \sa fret
+  */
   void setFret(const QString & fret);
 
+  /*!
+    Returns the chord strings.
+    For example, given a E-flat minor chord
+    \code \gtab{E&m}{5:X02210} \endcode returns X02210.
+    \sa setStrings
+  */
   QString strings() const;
-  void setStrings(const QString & chord);
 
+  /*!
+    Sets the strings \a strings.
+    \sa strings
+  */
+  void setStrings(const QString & strings);
+
+  /*!
+    Returns the instrument of the chord.
+    For example, given a E-flat minor chord
+    \code \gtab{E&m}{5:X02210} \endcode returns ChordType::GuitarChord.
+    \sa setType
+  */
   ChordType type() const;
-  void setType(const ChordType & type);
 
+  /*!
+    Sets the instrument \a instrument.
+    \sa type
+  */
+  void setType(const ChordType & instrument);
+
+  /*!
+    Returns true if the chord is important; false otherwise. Non
+    important chords are well-known fingering for usual chords such as
+    \code \gtab{C}{X32010} \endcode
+    \sa setImportant
+  */
   bool isImportant() const;
+
+  /*!
+    Marks a chord as important; default is false.
+    \sa isImportant
+  */
   void setImportant(bool value);
 
+  /*!
+    Returns the chord color.
+    The color is based on the instrument (guitar: blue; ukulele: purple)
+    and whether or not it is important (yes: dark; no: light).
+    \sa setType, setImportant
+  */
   QColor color();
+
+  /*!
+    Draws a rounded path around the whole diagram if \a value is true.
+    Default is false. The rounded path takes the color of the chord.
+    \sa color
+  */
   void setDrawBorder(bool value);
 
 private:

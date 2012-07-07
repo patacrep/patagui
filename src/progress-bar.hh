@@ -17,10 +17,6 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-/**
- * \file file-chooser.hh
- */
-
 #ifndef __PROGRESS_BAR_HH__
 #define __PROGRESS_BAR_HH__
 
@@ -29,37 +25,81 @@
 class QProgressBar;
 class QToolButton;
 
-/**
- * \file progress-bar.hh
- * \class CProgressBar
- * \brief CProgressBar is a progress embedded into the CMainWindow's statusBar.
- *  This progressBar provides a cancel button that allows one to cancel the action.
- */
+/*!
+  \file progress-bar.hh
+  \class CProgressBar
+  \brief CProgressBar is a custom cancelable progress bar.
 
+  A CProgressBar object displays a QProgressBar with a "cancel" button
+  if it is cancelable.
+
+  If the "cancel" button is clicked, the signal canceled() is emitted
+  and the CProgressBar object is hidden.
+
+  \image html progress-bar.png
+*/
 
 class CProgressBar : public QWidget
 {
   Q_OBJECT
 
 public:
+  /// Constructor.
   CProgressBar(QWidget* parent=0);
+
+  /// Destructor.
   ~CProgressBar();
 
-  //  QProgressBar * progressBar() const;
-
 public:
+  /*!
+    Sets the range for the progress bar.
+    \sa QProgressBar::setRange
+  */
   void setRange(int start, int stop);
+
+  /*!
+    Sets the visibility of the text over the progress bar to \a value.
+    \sa QProgressBar::setTextVisible
+  */
   void setTextVisible(bool value);
 
+  /*!
+    Returns \a true if the action of the progress can be canceled; \a false otherwise.
+    \sa setCancelable
+  */
   bool isCancelable() const;
-  void setCancelable(bool);
+
+  /*!
+    Sets the cancelable property of the progress bar to \a value.
+    \sa isCancelable
+  */
+  void setCancelable(bool value);
 
 public slots:
+  /*!
+    Shows the progress bar.
+    The cancel button is shown if the progress bar is cancelable.
+    \sa hide
+  */
   void show();
+
+  /*!
+    Hides the progress bar.
+    \sa show
+  */
   void hide();
+
+  /*!
+    Sets the current progress of the progress bar.
+    \sa QProgressBar::setValue
+  */
   void setValue(int value);
 
 signals:
+  /*!
+    This signal is emitted when the cancel button is clicked.
+    \sa cancelable, setCancelable
+  */
   void canceled();
 
 private slots:
