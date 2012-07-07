@@ -44,6 +44,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/song-item-delegate.cc
   src/make-songbook-process.cc
   src/find-replace-dialog.cc
+  src/search-widget.cc
   src/variant-factory.cc
   src/variant-manager.cc
   )
@@ -77,6 +78,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/song-item-delegate.hh
   src/make-songbook-process.hh
   src/find-replace-dialog.hh
+  src/search-widget.hh
   src/variant-factory.hh
   src/variant-manager.hh
   )

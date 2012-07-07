@@ -28,6 +28,7 @@ class QKeyEvent;
 class QCompleter;
 class CSongHighlighter;
 class Hunspell;
+class CSearchWidget;
 /*!
   \file song-code-editor.hh
   \class CSongCodeEditor
@@ -73,10 +74,13 @@ public slots:
   void setDictionary(const QString &dictionary);
 #endif
 
+public slots:
   void setSpellCheckActive(const bool);
+  void toggleQuickSearch();
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event);
+  virtual void resizeEvent(QResizeEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
 
 signals:
@@ -127,6 +131,8 @@ private:
   QStringList m_addedWords;
   uint m_maxSuggestedWords;
 #endif //ENABLE_SPELLCHECK
+
+  CSearchWidget *m_quickSearch;
 };
 
 #endif // __SONG_CODE_EDITOR_HH__
