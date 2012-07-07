@@ -28,12 +28,13 @@ class QKeyEvent;
 class QCompleter;
 class CSongHighlighter;
 class Hunspell;
+/*!
+  \file song-code-editor.hh
+  \class CSongCodeEditor
+  \brief CSongCodeEditor is the widget to edit a song's content
 
-/**
- * \file song-code-editor.hh
- * \class CSongCodeEditor
- * \brief CSongCodeEditor is the widget to edit a song's content
- *
+  \image html song-code-editor.png
+
  */
 class CSongCodeEditor : public CodeEditor
 {

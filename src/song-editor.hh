@@ -28,23 +28,23 @@
 class QAction;
 class QActionGroup;
 class QToolBar;
-class FindReplaceDialog;
+class CFindReplaceDialog;
 class CLibrary;
 class CSongCodeEditor;
 class CSongHeaderEditor;
 
-/**
- * \file song-editor.hh
- * \class CSongEditor
- * \brief CSongEditor is the widget that allows to write a song
- *
- * A CSongEditor is embedded into a CTabWidget and is composed of:
- *  \li a CSongHeaderEditor that manages the song metadata
- *  \li a CSongCodeEditor that manages the body of the song
- *
- * \image html song-editor.png
- *
- */
+/*!
+  \file song-editor.hh
+  \class CSongEditor
+  \brief CSongEditor is the widget that allows to write a song
+
+  A CSongEditor is embedded into a CTabWidget and is composed of:
+   \li a CSongHeaderEditor that manages the song metadata
+   \li a CSongCodeEditor that manages the body of the song
+
+  \image html song-editor.png
+
+*/
 class CSongEditor : public QWidget
 {
   Q_OBJECT

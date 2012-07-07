@@ -29,11 +29,12 @@
 #include <QToolButton>
 #include "utils/lineedit.hh"
 
-/**
- * \file filter-lineedit.hh
- * \class CClearButton
- * \brief CClearButton is the clear button that resets the content of a CFilterLineEdit
- */
+/*!
+  \file filter-lineedit.hh
+  \class CClearButton
+  \brief CClearButton is the clear button that resets the content of a CFilterLineEdit
+  \image html mag-button.png
+*/
 class CClearButton : public QToolButton
 {
   Q_OBJECT
@@ -52,11 +53,12 @@ private:
   QImage m_icon;
 };
 
-/**
- * \file filter-lineedit.hh
- * \class CMagButton
- * \brief CMagButton is the magnify button in a CFilterLineEdit widget
- */
+/*!
+  \file filter-lineedit.hh
+  \class CMagButton
+  \brief CMagButton is the magnify button in a CFilterLineEdit widget
+  \image html mag-button.png
+*/
 class CMagButton : public QToolButton
 {
   Q_OBJECT
@@ -75,23 +77,24 @@ private:
 class QAction;
 class CSongSortFilterProxyModel;
 
-/**
- * \file filter-lineedit.hh
- * \class CFilterLineEdit
- * \brief CFilterLineEdit is a QLineEdit widget that allows one to filter results in the songs library
- *
- * The filter updates the songs library view so that it only displays songs that match
- * the user input.
- *
- * The filter only applies on artist/title/album columns.
- *
- * A CFilterLineEdit widget contains a CMagButton on the left that allows one to
- * access quick filters functions (such as search by songs' language) and a CClearButton
- * on the right that resets its content (only dispayed when there is some user input).
- *
- * \image html filter.png
- *
- */
+/*!
+  \file filter-lineedit.hh
+  \class CFilterLineEdit
+  \brief CFilterLineEdit is a QLineEdit widget that allows one to filter results in the songs library
+
+  The filter updates the songs library view so that it only displays songs that match
+  the user input.
+
+  The filter only applies on artist/title/album columns as provided
+  by the CLibrary::completionModel().
+
+  A CFilterLineEdit widget contains a CMagButton on the left that allows one to
+  access quick filters functions (such as search by songs' language) and a CClearButton
+  on the right that resets its content (only dispayed when there is some user input).
+
+  \image html filter.png
+
+*/
 class CFilterLineEdit : public LineEdit
 {
   Q_OBJECT

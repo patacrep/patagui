@@ -34,35 +34,43 @@ class QStringListModel;
 class QPixmap;
 class CMainWindow;
 
-/**
- * \file library.hh
- * \class CLibrary
- * \brief CLibrary is the base model that corresponds to the list of songs
- *
- * A CLibrary is a list of Song (.sg files) that are fetched from a
- * local directory.
- * This model is used to build an intermediate model (CSongSortFilterProxyModel)
- * that allows filtering options, and is then presented in the library tab (CTabWidget)
- * of the main window (CMainWindow) through its associated view (CLibraryView).
- *
- */
+/*!
+  \file library.hh
+  \class CLibrary
+  \brief CLibrary is the base model that corresponds to the list of songs
+
+  A CLibrary is a list of Song objects (structure representing .sg
+  files) that are fetched from a local directory.
+
+  This model is used to build an intermediate model
+  (CSongSortFilterProxyModel) that allows filtering options, and is
+  then presented in the library tab (CTabWidget) of the main window
+  (CMainWindow) through its associated view (CLibraryView).
+
+*/
+
 class CLibrary : public QAbstractTableModel
 {
   Q_OBJECT
   Q_PROPERTY(QDir directory READ directory WRITE setDirectory)
 
 public:
+  /*!
+    \enum Roles
+    Each Song in the CLibrary has a set of data elements associated with it, each with its own role.
+    The roles are used by the view to indicate to the model which type of data it needs.
+  */
   enum Roles {
-    TitleRole = Qt::UserRole + 1,
-    ArtistRole = Qt::UserRole + 2,
-    AlbumRole = Qt::UserRole + 3,
-    CoverRole = Qt::UserRole + 4,
-    LilypondRole = Qt::UserRole + 5,
-    LanguageRole = Qt::UserRole + 6,
-    PathRole = Qt::UserRole + 7,
-    CoverSmallRole = Qt::UserRole + 8,
-    CoverFullRole = Qt::UserRole + 9,
-    RelativePathRole = Qt::UserRole + 10,
+    TitleRole = Qt::UserRole + 1, /*!< the title of the song item.*/
+    ArtistRole = Qt::UserRole + 2, /*!< the artist of the song item.*/
+    AlbumRole = Qt::UserRole + 3, /*!< the album of the song item.*/
+    CoverRole = Qt::UserRole + 4, /*!< the cover of the song item.*/
+    LilypondRole = Qt::UserRole + 5, /*!< whether or not the song item contains lilypond music sheets.*/
+    LanguageRole = Qt::UserRole + 6, /*!< the language of the song item.*/
+    PathRole = Qt::UserRole + 7, /*!< the absolute path to the .sg file corresponding to the song item.*/
+    CoverSmallRole = Qt::UserRole + 8, /*!< the thumbnail cover (22x22) of the song item.*/
+    CoverFullRole = Qt::UserRole + 9, /*!< the full cover (128x128) of the song item.*/
+    RelativePathRole = Qt::UserRole + 10, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
     MaxRole = RelativePathRole
   };
 
@@ -82,17 +90,67 @@ public:
 
   QStringList templates() const;
 
+  /*!
+    Returns the completion model associated with the library.
+    The completion model isi based on the list of words from
+    title, artist and album columns.
+    \sa artistCompletionModel, albumCompletionModel
+  */
   QAbstractListModel * completionModel() const;
+
+  /*!
+    Returns the artist completion model associated with the library.
+    The completion model is based on the list of words from the artist column.
+    \sa completionModel, albumCompletionModel
+  */
   QAbstractListModel * artistCompletionModel() const;
+
+  /*!
+    Returns the album completion model associated with the library.
+    The completion model is based on the list of words from the album column.
+    \sa completionModel, artistCompletionModel
+  */
   QAbstractListModel * albumCompletionModel() const;
 
+  /*!
+    Reimplements QAbstractTableModel::headerData.
+    \sa data
+  */
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+
+  /*!
+    Reimplements QAbstractTableModel::data.
+    Returns the data at position \a index for the given \a role.
+    \sa headerData
+  */
   QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
+  /*!
+    Reimplements QAbstractTableModel::rowCount.
+    Returns the number of Song items in the library.
+    \sa columnCount
+  */
   virtual int rowCount(const QModelIndex &index = QModelIndex()) const;
+
+  /*!
+    Reimplements QAbstractTableModel::columnCount.
+    Returns \a 6 as the number of columns for a song item
+    (title, artist, path, album, lilypond, language).
+    \sa rowCount
+  */
   virtual int columnCount(const QModelIndex &index = QModelIndex()) const;
 
+  /*!
+    Returns the absolute path of an .sg file from \a artist and \a title names.
+    Following the songbook convention, the song "Hello world!" from artist "Unknown" would
+    be located in \a /path/to/songbook/songs/unknown/hello_world.sg".
+   */
   QString pathToSong(const QString &artist, const QString &title) const;
+
+  /*!
+    This is a convenience method that returns the absolute path of
+    an .sg file from a Song object.
+  */
   QString pathToSong(Song &song) const;
 
   //! Add a song to the library list
