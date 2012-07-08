@@ -108,15 +108,15 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   m_urlLineEdit->setMinimumWidth(150);
   m_urlLineEdit->setToolTip(tr("Artist website"));
 
-  connect(m_titleLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_titleLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
-  connect(m_artistLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_artistLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
-  connect(m_albumLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_albumLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
-  connect(m_originalSongLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_originalSongLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
-  connect(m_urlLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_urlLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_languageComboBox, SIGNAL(currentIndexChanged(const QString&)),
           SLOT(onIndexChanged(const QString&)));
