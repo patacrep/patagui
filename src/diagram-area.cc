@@ -269,8 +269,8 @@ QList< CChord* > CDiagramArea::diagrams()
 
 CTableDiagram::CTableDiagram(QWidget *parent)
   : QAbstractTableModel(parent)
-  , m_columnCount(1)
-  , m_rowCount(1)
+  , m_columnCount(0)
+  , m_rowCount(0)
 {
   m_fixedColumnCount = false;
   m_fixedRowCount = false;
