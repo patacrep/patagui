@@ -263,8 +263,8 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
 
 void CSongCodeEditor::resizeEvent(QResizeEvent *event)
 {
-  Q_UNUSED(event);
   m_quickSearch->move(width() - 345, 4);
+  CodeEditor::resizeEvent(event);
 }
 
 void CSongCodeEditor::toggleQuickSearch()
