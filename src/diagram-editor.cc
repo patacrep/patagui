@@ -219,6 +219,9 @@ bool CDiagramEditor::isChordImportant() const
 
 void CDiagramEditor::setChord(CChord *chord)
 {
+  if (!chord)
+    return;
+
   m_chord = chord;
 
   m_guitar->setChecked(chord->instrument() == CChord::Guitar);
