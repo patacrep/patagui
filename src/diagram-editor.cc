@@ -131,7 +131,6 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
       file.close();
 
       // parse chords.tex for gtab/utab
-      QRegExp reSeparator("\\\\chordname\\{([^\\}]+)");
       QString line;
       QStringList lines = content.split("\n");
       foreach (line, lines)
