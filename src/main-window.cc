@@ -108,10 +108,10 @@ namespace // anonymous namespace
       {
 	QString platformSpecificMessage;
 #if defined(Q_OS_WIN32)
-	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Windows.</li>"
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\">Python 2.X</a> for Windows.</li>"
 					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
 #elif defined(Q_OS_MAC)
-	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Mac OS.</li>"
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\">Python 2.X</a> for Mac OS.</li>"
 					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
 #else //Unix/Linux
 	platformSpecificMessage = QObject::tr("<p>Download and install the following packages: <i>python</i></p>");
