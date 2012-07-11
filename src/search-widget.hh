@@ -60,6 +60,18 @@ class CSearchWidget : public QFrame
   */
   void readSettings();
 
+  /*!
+    Sets the focus on the line edit.
+  */
+  void setFocus();
+
+  /*!
+    Performs find() when hitting the return key.
+    If the escape key is pressed, forward event to parent.
+    \sa find
+  */
+  void keyPressEvent(QKeyEvent *event);
+
 public slots:
   /*!
     Finds the next occurrence in the editor's contents

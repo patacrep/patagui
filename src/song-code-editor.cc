@@ -207,7 +207,13 @@ QString CSongCodeEditor::textUnderCursor() const
 
 void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
 {
-  if (completer() && completer()->popup()->isVisible())
+  if (m_quickSearch->isVisible() && event->key() == Qt::Key_Escape)
+    {
+      m_quickSearch->hide();
+      setFocus();
+      return;
+    }
+  else if (completer() && completer()->popup()->isVisible())
     {
       // The following keys are forwarded by the completer to the widget
       switch (event->key())
@@ -270,6 +276,10 @@ void CSongCodeEditor::resizeEvent(QResizeEvent *event)
 void CSongCodeEditor::toggleQuickSearch()
 {
   m_quickSearch->setVisible(!m_quickSearch->isVisible());
+  if (m_quickSearch->isVisible())
+    m_quickSearch->setFocus();
+  else
+    setFocus();
 }
 
 void CSongCodeEditor::highlightEnvironments()

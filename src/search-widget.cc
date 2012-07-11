@@ -76,6 +76,27 @@ CSearchWidget::CSearchWidget(QWidget *parent)
 CSearchWidget::~CSearchWidget()
 {}
 
+void CSearchWidget::setFocus()
+{
+  m_findLineEdit->setFocus();
+}
+
+void CSearchWidget::keyPressEvent(QKeyEvent *event)
+{
+  switch (event->key())
+    {
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+      find();
+      return;
+    case Qt::Key_Escape:
+      event->ignore();
+      return;
+    default:
+      return;
+    }
+}
+
 void CSearchWidget::readSettings()
 {
   QSettings settings;
