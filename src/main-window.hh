@@ -44,33 +44,38 @@ class QSortFilterProxyModel;
 class QFileSystemModel;
 class QLabel;
 
-/**
- * \file main-window.hh
- * \class CMainWindow
- * \brief CMainWindow is the base class of the application.
- *
- * \image html main-window.png
- *
- * Class for the main window of the application.
- *
- */
+/*!
+  \file main-window.hh
+  \class CMainWindow
+  \brief CMainWindow is the base class of the application.
+ 
+  \image html main-window.png
+ 
+  Class for the main window of the application.
+*/
 class CMainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public slots:
-  /// System call that allows one to build a songbook.
-  /// @param command : the command line
+  /*! 
+    Sets \a command as the command line to build a PDF.
+    \sa setCleanCommand, setCleanallCommand
+  */
   void setBuildCommand(const QString &command);
 
-  /// System call that allows one to remove temporary files
-  /// that are generated during the compilation of a songbook.
-  /// @param command : the command line
+  /*!
+    Sets \a command as the command line to remove temporary files
+    that are generated during the compilation of a songbook.
+    \sa setBuildCommand, setCleanallCommand
+  */
   void setCleanCommand(const QString &command);
 
-  /// System call that allows one to remove temporary files and pdf files
-  /// that are generated during the compilation of a songbook.
-  /// @param command : the command line
+  /*!
+    Sets \a command as the command line to remove temporary files
+    and PDF files that are generated during the compilation of a songbook.
+    \sa setBuildCommand, setCleanCommand
+   */
   void setCleanallCommand(const QString &command);
 
 public:
@@ -80,51 +85,73 @@ public:
   /// Destructor.
   ~CMainWindow();
 
-  /// Getter on the progress bar that is embedded in the status bar.
-  /// @return the progress bar
+  /*!
+    Returns the progress bar that is embedded in the status bar.
+  */
   CProgressBar * progressBar() const;
 
-  /// Getter on the LaTeX compilation logs widget that
-  /// displays terminal output of the compilation process.
-  /// \image html logs.png
-  /// @return the logs widget
+  /*! 
+    Returns the dock widget that displays LaTeX compilation logs.
+    \image html logs.png
+  */
   QDockWidget * log() const;
 
-  /// Getter on the songs' library view.
-  /// @return the songs' library view
+  /*! 
+    Returns the library view.
+  */
   CLibraryView * view() const;
 
-  /// Getter on the songs' library.
-  /// @return the songs' library
+  /*!
+    Returns the library.
+  */
   CLibrary * library() const;
 
-  /// Getter on songs' library.
-  /// @return the songs' library
+  /*! 
+    Returns the current songbook.
+  */
   CSongbook * songbook() const;
 
-  /// Getter on the songbook directory.
-  /// @return the path to the songbook directory
+  /*!
+    Returns the directory of the songbook.
+  */
   const QString workingPath();
 
-  /// Getter on the songbook build command.
-  /// @return the command line
+  /*!
+    Returns the songbook build command.
+    \sa setBuildCommand
+  */
   const QString & buildCommand() const;
 
-  /// Getter on the songbook clean command.
-  /// @return the command line
+  /*!
+    Returns the songbook clean command.
+    \sa setCleanCommand
+  */
   const QString & cleanCommand() const;
 
-  /// Getter on the songbook cleanall command.
-  /// @return the command line
+  /*! 
+    Returns the songbook cleanall command.
+    \sa setCleanallCommand
+  */
   const QString & cleanallCommand() const;
 
-  /// Calls pdflatex to build the songbook
+  /*! 
+    Calls pdflatex to build the songbook.
+    \sa makeClean, makeCleanall
+  */
   void make();
 
-  /// Remove LaTeX temporary files
+  /*!
+    Removes LaTeX temporary files (*.aux *.log etc.)
+    that are generated in the songbook directory during the make().
+    \sa make, makeCleanall
+  */
   void makeClean();
 
-  /// Remove LaTeX temporary files and pdf files
+  /*!
+    Removes LaTeX temporary files (*.aux *.log etc.) and PDF files
+    that are generated in the songbook directory during the make().
+    \sa make, makeClean
+  */
   void makeCleanall();
 
 protected:
