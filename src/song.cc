@@ -25,7 +25,6 @@
 #include <QDebug>
 
 QRegExp Song::reSgFile("(.*)\\\\begin\\{?song\\}?\\{([^\\}]+)\\}[^[]*\\[([^]]*)\\](.*)\\s*\\\\endsong(.*)");
-QRegExp Song::reSong("\\\\begin\\{?song\\}?\\{([^[\\}]+)\\}[^[]*\\[([^]]*)\\]");
 QRegExp Song::reArtist("by=\\{?([^,\\{\\}]+)");
 QRegExp Song::reAlbum("album=\\{?([^,\\{\\}]+)");
 QRegExp Song::reOriginalSong("original=\\{?([^,\\{\\}]+)");

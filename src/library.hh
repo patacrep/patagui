@@ -84,10 +84,27 @@ public:
   bool checkSongbookPath(const QString & path);
   QString findSongbookPath();
 
+  /*!
+    Returns the directory of the library.
+    \sa setDirectory
+  */
   QDir directory() const;
+
+  /*!
+    Sets \a directory as the directory for the library.
+    \sa directory
+  */
   void setDirectory(const QString &directory);
+
+  /*!
+    Sets \a directory as the directory for the library.
+    \sa directory
+  */
   void setDirectory(const QDir &directory);
 
+  /*!
+    Returns the list of available templates (*.tmpl files).
+  */
   QStringList templates() const;
 
   /*!
@@ -153,40 +170,76 @@ public:
   */
   QString pathToSong(Song &song) const;
 
-  //! Add a song to the library list
+  /*!
+    Adds a the song \a song to the library.
+    If \a reset is \a true, the whole library is parsed again.
+    \sa addSongs
+  */
   void addSong(const Song &song, bool reset=false);
 
-  //! Add a song to the library list
+  /*!
+    A Song object is built from the file \a path
+    and is added to the library.
+    \sa addSongs
+  */
   void addSong(const QString &path);
 
-  //! Add songs to the library list
+  /*!
+    Song objects are built from the files in \a paths
+    and are added to the library.
+    \sa addSong
+  */
   void addSongs(const QStringList &paths);
 
-  //! Look if the song is already in the library list
+  /*!
+    Returns \a true if the song \a path is already in the library.
+    \sa addSong, removeSong
+  */
   bool containsSong(const QString &path);
 
-  //! Remove a song from the library list
+  /*!
+    Removes the song \a path from the library.
+    \sa addSong, addSongs
+  */
   void removeSong(const QString &path);
 
-  //! Get the song index from the library list
+  /*! Returns the index of the song \path
+    from the library.
+    \sa getSong
+  */
   int getSongIndex(const QString &path) const;
 
-  //! Get a song from the library list
+  /*!
+    Returns the Song object whose path is \path from the library.
+    \sa getSongIndex
+  */
   Song getSong(const QString &path) const;
 
-  //! Load a song from a file in the library
+  /*!
+    Loads a Song object in the library from the file \path.
+  */
   void loadSong(const QString &path, Song *song);
 
-  //! Create the artist directory for the current library (if required)
+  /*!
+    Creates the artist subdirectory for the song \a song (if required).
+  */
   void createArtistDirectory(Song &song);
 
-  //! Save a song in the library (update the song path if required)
+  /*!
+    Saves the song \a song in the library (update the song path if required).
+    \sa saveCover
+  */
   void saveSong(Song &song);
 
-  //! Save a cover in the library (update the cover path if required)
+  /*!
+    Saves the cover \a cover in the library directory (update the cover path if required).
+    \sa saveSong
+  */
   void saveCover(Song &song, const QImage &cover);
 
-  //! Destroy a song file from the library
+  /*!
+    Removes the file \a path from the library.
+  */
   void deleteSong(const QString &path);
 
 public slots:
