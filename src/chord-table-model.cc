@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-CTableDiagram::CTableDiagram(QObject *parent)
+CChordTableModel::CChordTableModel(QObject *parent)
   : QAbstractTableModel(parent)
   , m_columnCount(0)
   , m_rowCount(0)
@@ -33,19 +33,19 @@ CTableDiagram::CTableDiagram(QObject *parent)
   m_fixedRowCount = false;
 }
 
-CTableDiagram::~CTableDiagram()
+CChordTableModel::~CChordTableModel()
 {
   foreach (CChord* diagram, m_data)
     delete diagram;
   m_data.clear();
 }
 
-int CTableDiagram::columnCount(const QModelIndex &) const
+int CChordTableModel::columnCount(const QModelIndex &) const
 {
   return m_columnCount;
 }
 
-void CTableDiagram::setColumnCount(int value)
+void CChordTableModel::setColumnCount(int value)
 {
   emit(layoutAboutToBeChanged());
   m_fixedColumnCount = true;
@@ -53,12 +53,12 @@ void CTableDiagram::setColumnCount(int value)
   emit(layoutChanged());
 }
 
-int CTableDiagram::rowCount(const QModelIndex &) const
+int CChordTableModel::rowCount(const QModelIndex &) const
 {
   return m_rowCount;
 }
 
-void CTableDiagram::setRowCount(int value)
+void CChordTableModel::setRowCount(int value)
 {
   emit(layoutAboutToBeChanged());
   m_fixedRowCount = true;
@@ -66,7 +66,7 @@ void CTableDiagram::setRowCount(int value)
   emit(layoutChanged());
 }
 
-QVariant CTableDiagram::data(const QModelIndex &index, int role) const
+QVariant CChordTableModel::data(const QModelIndex &index, int role) const
 {
   if (!index.isValid() || m_data.size()==0)
     return QVariant();
@@ -90,7 +90,7 @@ QVariant CTableDiagram::data(const QModelIndex &index, int role) const
     }
 }
 
-bool CTableDiagram::setData(const QModelIndex & index, const QVariant & value, int role)
+bool CChordTableModel::setData(const QModelIndex & index, const QVariant & value, int role)
 {
   Q_UNUSED(role);
 
@@ -110,7 +110,7 @@ bool CTableDiagram::setData(const QModelIndex & index, const QVariant & value, i
   return false;
 }
 
-void CTableDiagram::insertItem(const QModelIndex & index, const QString & value)
+void CChordTableModel::insertItem(const QModelIndex & index, const QString & value)
 {
   setColumnCount(columnCount() + 1);
   m_fixedColumnCount = false;
@@ -122,7 +122,7 @@ void CTableDiagram::insertItem(const QModelIndex & index, const QString & value)
     delete diagram;
 }
 
-void CTableDiagram::removeItem(const QModelIndex & index)
+void CChordTableModel::removeItem(const QModelIndex & index)
 {
   int pos = positionFromIndex(index);
   delete m_data[pos];
@@ -144,7 +144,7 @@ void CTableDiagram::removeItem(const QModelIndex & index)
     }
 }
 
-void CTableDiagram::addItem(const QString & value)
+void CChordTableModel::addItem(const QString & value)
 {
   CChord * diagram = new CChord(value);
   if (!diagram->isValid())
@@ -171,7 +171,7 @@ void CTableDiagram::addItem(const QString & value)
     }
 }
 
-QModelIndex CTableDiagram::indexFromPosition(int position)
+QModelIndex CChordTableModel::indexFromPosition(int position)
 {
   int row = 1, col = 1;
   if (m_fixedColumnCount)
@@ -187,27 +187,27 @@ QModelIndex CTableDiagram::indexFromPosition(int position)
   return QAbstractTableModel::createIndex(row, col);
 }
 
-int CTableDiagram::positionFromIndex(const QModelIndex & index) const
+int CChordTableModel::positionFromIndex(const QModelIndex & index) const
 {
   return columnCount() * index.row() + index.column();
 }
 
-CChord * CTableDiagram::getDiagram(const QModelIndex & index) const
+CChord * CChordTableModel::getDiagram(const QModelIndex & index) const
 {
   return m_data[positionFromIndex(index)];
 }
 
-Qt::DropActions CTableDiagram::supportedDropActions() const
+Qt::DropActions CChordTableModel::supportedDropActions() const
 {
   return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::DropActions CTableDiagram::supportedDragActions() const
+Qt::DropActions CChordTableModel::supportedDragActions() const
 {
   return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::ItemFlags CTableDiagram::flags(const QModelIndex &index) const
+Qt::ItemFlags CChordTableModel::flags(const QModelIndex &index) const
 {
   Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);
 
@@ -217,14 +217,14 @@ Qt::ItemFlags CTableDiagram::flags(const QModelIndex &index) const
     return Qt::ItemIsDropEnabled | defaultFlags;
 }
 
-QStringList CTableDiagram::mimeTypes() const
+QStringList CChordTableModel::mimeTypes() const
 {
   QStringList types;
   types << "text/plain";
   return types;
 }
 
-QMimeData * CTableDiagram::mimeData(const QModelIndexList &indexes) const
+QMimeData * CChordTableModel::mimeData(const QModelIndexList &indexes) const
 {
   QMimeData *mimeData = new QMimeData();
   foreach (const QModelIndex &index, indexes)
@@ -234,7 +234,7 @@ QMimeData * CTableDiagram::mimeData(const QModelIndexList &indexes) const
   return mimeData;
 }
 
-bool CTableDiagram::dropMimeData(const QMimeData *data, Qt::DropAction action,
+bool CChordTableModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 				 int row, int column, const QModelIndex &parent)
 {
   if (action == Qt::IgnoreAction)

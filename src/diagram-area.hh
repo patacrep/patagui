@@ -32,14 +32,14 @@
 class QPushButton;
 class QTableView;
 class QSortFilterProxyModel;
-class CTableDiagram;
+class CChordTableModel;
 
 /*!
   \file diagram-area.hh
   \class CDiagramArea
   \brief CDiagramArea is a widget displaying a list of chords
 
-  A CDiagramArea embeds a QTableView based upon a CTableDiagram model.
+  A CDiagramArea embeds a QTableView based upon a CChordTableModel model.
   A CDiagramArea can be defined as read-only or editable through
   setReadOnly() and is usually placed as a widget inside a scrolling
   area:
@@ -219,7 +219,7 @@ signals:
 
 private:
   bool m_isReadOnly;
-  CTableDiagram *m_diagramModel;
+  CChordTableModel *m_diagramModel;
   QSortFilterProxyModel *m_proxyModel;
   QTableView *m_diagramView;
   QPushButton *m_addDiagramButton;

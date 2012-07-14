@@ -28,10 +28,10 @@ class CChord;
 
 /*!
   \file chord-table-model.hh
-  \class CTableDiagram
-  \brief CTableDiagram is a table model that contains CChord objects.
+  \class CChordTableModel
+  \brief CChordTableModel is a table model that contains CChord objects.
 
-  A CTableDiagram presents data on a grid where the number of rows or
+  A CChordTableModel presents data on a grid where the number of rows or
   columns is specified with setRowCount() or setColumnCount(). Adding
   a new data element (CChord) to the model does not require
   indicating its position on the grid as this is automatically
@@ -41,7 +41,7 @@ class CChord;
   but a single row:
 
   \code
-  CTableDiagram *model = new CTableDiagram;
+  CChordTableModel *model = new CChordTableModel;
   model->setRowCount(1);
   model->addItem("\gtab{C}{X32010}");
   model->addItem("\gtab{Am}{X02210}");
@@ -54,7 +54,7 @@ class CChord;
   number of rows (thus, the D chord is displayed on the second row):
 
   \code
-  CTableDiagram *model = new CTableDiagram;
+  CChordTableModel *model = new CChordTableModel;
   model->setRowCount(3);
   model->addItem("\gtab{C}{X32010}");
   model->addItem("\gtab{Am}{X02210}");
@@ -62,29 +62,29 @@ class CChord;
   model->addItem("\gtab{D}{XX0232}");
   \endcode
 */
-class CTableDiagram : public QAbstractTableModel
+class CChordTableModel : public QAbstractTableModel
 {
   Q_OBJECT
 
   public:
   /*!
-    \enum DiagramRoles
+    \enum ChordRoles
     Each CChord object the model has a set of data elements associated with it, each with its own role.
     The roles are used by the view to indicate to the model which type of data it needs.
   */
-  enum DiagramRoles {
+  enum ChordRoles {
     NameRole = Qt::UserRole + 1, /*!< the name of the chord.*/
     StringsRole = Qt::UserRole + 2, /*!< the strings sequence of the chord.*/
-    TypeRole = Qt::UserRole + 3, /*!< the instrument of the chord.*/
+    InstrumentRole = Qt::UserRole + 3, /*!< the instrument of the chord.*/
     ImportantRole = Qt::UserRole + 4, /*!< whether the chord is important.*/
     MaxRole = ImportantRole
   };
 
   /// Constructor.
-  CTableDiagram(QObject *parent=0);
+  CChordTableModel(QObject *parent=0);
 
   /// Destructor.
-  ~CTableDiagram();
+  ~CChordTableModel();
 
   /*!
     Returns the number of columns.
