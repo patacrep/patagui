@@ -142,7 +142,7 @@ class CChordTableModel : public QAbstractTableModel
     Returns the CChord object at position \a index.
     \sa data, setData
    */
-  CChord * getDiagram(const QModelIndex & index) const;
+  CChord * getChord(const QModelIndex & index) const;
 
 public slots:
   void insertItem(const QModelIndex & index, const QString & value);

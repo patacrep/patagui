@@ -40,7 +40,6 @@ CDiagramArea::CDiagramArea(QWidget *parent)
   : QWidget(parent)
   , m_isReadOnly(false)
   , m_addDiagramButton(new QPushButton)
-  , m_nbDiagrams(0)
 {
   QBoxLayout *addButtonLayout = new QVBoxLayout;
   m_addDiagramButton->setFlat(true);
@@ -119,7 +118,7 @@ void CDiagramArea::update()
 void CDiagramArea::onViewClicked(const QModelIndex & index)
 {
   if (index.isValid())
-    emit(diagramClicked(m_diagramModel->getDiagram(m_proxyModel->mapToSource(index))));
+    emit(diagramClicked(m_diagramModel->getChord(m_proxyModel->mapToSource(index))));
 }
 
 void CDiagramArea::resizeRows()
@@ -143,7 +142,7 @@ void CDiagramArea::editDiagram(QModelIndex index)
   bool newChord = !index.isValid();
 
   CChord *chord = newChord ?
-    new CChord : m_diagramModel->getDiagram(m_proxyModel->mapToSource(index));
+    new CChord : m_diagramModel->getChord(m_proxyModel->mapToSource(index));
 
   CDiagramEditor dialog(this);
   dialog.setChord(chord);
@@ -254,13 +253,13 @@ void CDiagramArea::setRowCount(int value)
   m_diagramModel->setRowCount(value);
 }
 
-QList< CChord* > CDiagramArea::diagrams()
+QList< CChord* > CDiagramArea::chords()
 {
   QList< CChord* > list;
   for (int i = 0; i < m_diagramModel->rowCount(); ++i)
     for (int j = 0; j < m_diagramModel->columnCount(); ++j)
       {
-	list << m_diagramModel->getDiagram(m_diagramModel->index(i, j));
+	list << m_diagramModel->getChord(m_diagramModel->index(i, j));
       }
 
   return list;
