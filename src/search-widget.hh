@@ -39,7 +39,10 @@ class CSearchWidget : public QFrame
 {
   Q_OBJECT
   public:
+  /// Constructor.
   CSearchWidget(QWidget *parent = 0);
+
+  /// Destructor.
   virtual ~CSearchWidget();
 
   /*!

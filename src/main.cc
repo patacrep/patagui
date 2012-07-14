@@ -47,6 +47,7 @@
 #include "../macos_specific/sparkle/src/SparkleAutoUpdater.h"
 #endif
 
+/// Main routine of the application
 int main(int argc, char *argv[])
 {
   // MacOSX needs to instanciate the application first to get the path

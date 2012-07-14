@@ -40,7 +40,10 @@ class CFindReplaceDialog : public QDialog
 {
   Q_OBJECT
   public:
+  /// Constructor.
   CFindReplaceDialog(QWidget *parent = 0);
+
+  /// Destructor.
   virtual ~CFindReplaceDialog();
 
   /*!
