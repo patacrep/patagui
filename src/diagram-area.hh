@@ -130,7 +130,7 @@ class CDiagramArea : public QWidget
     Returns all the chords. Note that it returns chords from the model, not the view;
     thus, filtered chords are also included.
   */
-  QList< CChord* > diagrams();
+  QList< CChord* > chords();
 
 public slots:
   /*!
@@ -223,7 +223,6 @@ private:
   QSortFilterProxyModel *m_proxyModel;
   QTableView *m_diagramView;
   QPushButton *m_addDiagramButton;
-  int m_nbDiagrams;
 };
 
 

@@ -35,8 +35,8 @@ CChordTableModel::CChordTableModel(QObject *parent)
 
 CChordTableModel::~CChordTableModel()
 {
-  foreach (CChord* diagram, m_data)
-    delete diagram;
+  foreach (CChord* chord, m_data)
+    delete chord;
   m_data.clear();
 }
 
@@ -97,16 +97,16 @@ bool CChordTableModel::setData(const QModelIndex & index, const QVariant & value
   if (!index.isValid())
     return false;
 
-  CChord *diagram = new CChord(value.toString());
-  if (diagram->isValid())
+  CChord *chord = new CChord(value.toString());
+  if (chord->isValid())
     {
       int pos = positionFromIndex(index);
       delete m_data[pos];
-      m_data[pos] = diagram;
+      m_data[pos] = chord;
       return true;
     }
 
-  delete diagram;
+  delete chord;
   return false;
 }
 
@@ -115,11 +115,11 @@ void CChordTableModel::insertItem(const QModelIndex & index, const QString & val
   setColumnCount(columnCount() + 1);
   m_fixedColumnCount = false;
 
-  CChord *diagram = new CChord(value);
-  if (diagram->isValid())
-    m_data.insert(index.column(), diagram);
+  CChord *chord = new CChord(value);
+  if (chord->isValid())
+    m_data.insert(index.column(), chord);
   else
-    delete diagram;
+    delete chord;
 }
 
 void CChordTableModel::removeItem(const QModelIndex & index)
@@ -146,14 +146,14 @@ void CChordTableModel::removeItem(const QModelIndex & index)
 
 void CChordTableModel::addItem(const QString & value)
 {
-  CChord * diagram = new CChord(value);
-  if (!diagram->isValid())
+  CChord * chord = new CChord(value);
+  if (!chord->isValid())
     {
-      delete diagram;
+      delete chord;
       return;
     }
 
-  m_data.append(diagram);
+  m_data.append(chord);
 
   int row = indexFromPosition(m_data.size()).row();
   int col = indexFromPosition(m_data.size()).column();
@@ -192,7 +192,7 @@ int CChordTableModel::positionFromIndex(const QModelIndex & index) const
   return columnCount() * index.row() + index.column();
 }
 
-CChord * CChordTableModel::getDiagram(const QModelIndex & index) const
+CChord * CChordTableModel::getChord(const QModelIndex & index) const
 {
   return m_data[positionFromIndex(index)];
 }
