@@ -51,7 +51,7 @@ CDiagramArea::CDiagramArea(QWidget *parent)
   addButtonLayout->addWidget(m_addDiagramButton);
 
   // diagram model
-  m_diagramModel = new CTableDiagram();
+  m_diagramModel = new CChordTableModel();
 
   // proxy model (filtering)
   m_proxyModel = new QSortFilterProxyModel;
@@ -225,14 +225,14 @@ void CDiagramArea::setTypeFilter(const CChord::Instrument & type)
 void CDiagramArea::setNameFilter(const QString & name)
 {
   clearFilters();
-  m_proxyModel->setFilterRole(CTableDiagram::NameRole);
+  m_proxyModel->setFilterRole(CChordTableModel::NameRole);
   m_proxyModel->setFilterRegExp(name);
   emit(layoutChanged());
 }
 
 void CDiagramArea::setStringsFilter(const QString & strings)
 {
-  m_proxyModel->setFilterRole(CTableDiagram::StringsRole);
+  m_proxyModel->setFilterRole(CChordTableModel::StringsRole);
   m_proxyModel->setFilterRegExp(strings);
   emit(layoutChanged());
 }
