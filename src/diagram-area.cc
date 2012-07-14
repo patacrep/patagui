@@ -25,9 +25,6 @@
 #include <QBoxLayout>
 #include <QPushButton>
 #include <QList>
-#include <QApplication>
-#include <QKeyEvent>
-#include <QLabel>
 #include <QHeaderView>
 #include <QTableView>
 #include <QSortFilterProxyModel>
