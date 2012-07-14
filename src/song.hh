@@ -101,11 +101,11 @@ struct Song
   /*!
     Extracts the contents of a .sg file.
     This regular expression captures 5 fields:
-    \li everything before \beginsong (prefix)
+    \li everything before \\beginsong (prefix)
     \li the song title
     \li the song options (such as artist name, album, cover etc) (options)
     \li the song contents
-    \li everything after \endsong (post)    
+    \li everything after \\endsong (post)
    */
   static QRegExp reSgFile;
 

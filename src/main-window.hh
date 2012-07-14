@@ -48,9 +48,9 @@ class QLabel;
   \file main-window.hh
   \class CMainWindow
   \brief CMainWindow is the base class of the application.
- 
+
   \image html main-window.png
- 
+
   Class for the main window of the application.
 */
 class CMainWindow : public QMainWindow
@@ -58,7 +58,7 @@ class CMainWindow : public QMainWindow
   Q_OBJECT
 
 public slots:
-  /*! 
+  /*!
     Sets \a command as the command line to build a PDF.
     \sa setCleanCommand, setCleanallCommand
   */
@@ -90,13 +90,13 @@ public:
   */
   CProgressBar * progressBar() const;
 
-  /*! 
+  /*!
     Returns the dock widget that displays LaTeX compilation logs.
     \image html logs.png
   */
   QDockWidget * log() const;
 
-  /*! 
+  /*!
     Returns the library view.
   */
   CLibraryView * view() const;
@@ -106,7 +106,7 @@ public:
   */
   CLibrary * library() const;
 
-  /*! 
+  /*!
     Returns the current songbook.
   */
   CSongbook * songbook() const;
@@ -128,13 +128,13 @@ public:
   */
   const QString & cleanCommand() const;
 
-  /*! 
+  /*!
     Returns the songbook cleanall command.
     \sa setCleanallCommand
   */
   const QString & cleanallCommand() const;
 
-  /*! 
+  /*!
     Calls pdflatex to build the songbook.
     \sa makeClean, makeCleanall
   */
@@ -155,6 +155,9 @@ public:
   void makeCleanall();
 
 protected:
+  /*!
+    Saves settings before closing the application.
+  */
   void closeEvent(QCloseEvent *event);
 
 private slots:

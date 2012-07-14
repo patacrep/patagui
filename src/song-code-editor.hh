@@ -43,47 +43,137 @@ class CSongCodeEditor : public CodeEditor
   Q_ENUMS(SongEnvironment)
 
 public:
-  enum SongEnvironment { Verse, Bridge, Chorus, Scripture, None };
+  /*!
+    \enum SongEnvironment
+    This enum type describes available LaTeX environments in a song.
+    Environments are usually enclosed within
+    \\begin{environment} and \\end{environment} macros.
+  */
+  enum SongEnvironment {
+    Verse, /*!< verse environment. */
+    Bridge, /*!< bridge environment. */
+    Chorus, /*!< chorus environment. */
+    Scripture, /*!< scripture environment. */
+    None /*!< no environment. */
+  };
 
+  /// Constructor.
   CSongCodeEditor(QWidget *parent = 0);
+
+  /// Destructor.
   ~CSongCodeEditor();
 
+  /*!
+    Reads editor settings (ie, font, line numbers etc.).
+    \sa writeSettings
+  */
   void readSettings();
+
+  /*!
+    Writes editor settings (ie, font, line numbers etc.).
+    \sa readSettings
+  */
   void writeSettings();
 
+  /*!
+    Creates and associates the syntax highlighter with the song.
+    \sa highlighter
+  */
   void installHighlighter();
 
+  /*!
+    Returns the syntax highlighter.
+    \sa installHighlighter
+  */
   CSongHighlighter* highlighter() const;
+
+  /*!
+    Returns the macro completer. The completer is a pop-up menu
+    that suggests common macros for convenience.
+  */
   QCompleter* completer() const;
 
+  /*!
+    Returns \a true if a backgroundColor is set for environments; \a false otherwise.
+    \sa setEnvironmentsHighlighted
+  */
   bool environmentsHighlighted() const;
-  void setEnvironmentsHighlighted(bool);
 
+  /*!
+    Sets a background color for environments if \a value is \a true.
+    \sa environmentsHighlighted
+  */
+  void setEnvironmentsHighlighted(bool value);
+
+  /*!
+    Performs indentation for the whole text in the editor.
+    Indentation is 2 whitespaces. A new environment adds a level of indentation.
+    \sa indentSelection
+  */
   void indent();
+
+  /*!
+    Performs indentation for the current selection.
+    \sa indent
+  */
   void indentSelection();
 
+  /*!
+    Returns \a true if spell-checking is available
+    (ie, a hunspell dictionary matching the language of the song does exist).
+    \sa setSpellCheckAvailable
+  */
   bool isSpellCheckAvailable() const;
-  void setSpellCheckAvailable(const bool);
 
+  /*!
+    Sets the availabilty of spell-checking to \a value.
+    (ie, a hunspell dictionary matching the language of the song does exist).
+    \sa isSpellCheckAvailable
+  */
+  void setSpellCheckAvailable(const bool value);
+
+  /*!
+    Returns \a true if spell-checking is active; \a false otherwise.
+    \sa isSpellCheckAvailable
+  */
   bool isSpellCheckActive() const;
 
-  QStringList getWordPropositions(const QString &word);
-#ifdef ENABLE_SPELLCHECK
-  Hunspell* checker() const;
 public slots:
-  void setDictionary(const QString &dictionary);
-#endif
+  /*!
+    Highlights mispelled words according to \a value.
+    \sa isSpellCheckActive
+  */
+  void setSpellCheckActive(const bool value);
 
-public slots:
-  void setSpellCheckActive(const bool);
+  /*!
+    Toggle the visibility of the quick search widget.
+  */
   void toggleQuickSearch();
 
 protected:
+  /*!
+    Performs indentation when hitting the tab key.
+    Pops-up completer when hitting the ctrl+space key.
+    \sa indent, completer
+  */
   virtual void keyPressEvent(QKeyEvent *event);
+
+  /*!
+    Reimplements CodeEditor::resizeEvent to move the
+    quick search widget in the top-right corner of the editor.
+  */
   virtual void resizeEvent(QResizeEvent *event);
+
+  /*!
+    Provides custom context menu with specific actions that are relevant for song edition.
+    For example, comment/uncomment selection, spell-checking options etc.
+  */
   void contextMenuEvent(QContextMenuEvent *event);
 
 signals:
+  /*!
+    This signal is emitted when a word \a word is added to the spellchecker dictionary.
+  */
   void wordAdded(const QString &word);
 
 private slots:
@@ -96,12 +186,29 @@ private slots:
   void uncommentSelection();
 
 #ifdef ENABLE_SPELLCHECK
+public:
+  /*!
+    Returns the Hunspell spell-checker associated with this song.
+    \sa isSpellCheckAvailable, isSpellCheckActive
+  */
+  Hunspell* checker() const;
+
+public slots:
+  /*!
+    Uses the file \a dictionary for spell-checking.
+    A \a dictionary is a .dic file for Hunspell.
+    \sa checker, isSpellCheckAvailable, isSpellCheckActive
+  */
+  void setDictionary(const QString &dictionary);
+
+private slots:
+  QString currentWord();
   void correctWord();
   void addWord();
   void ignoreWord();
 
-protected slots:
-  QString currentWord();
+private:
+  QStringList getWordPropositions(const QString &word);
 #endif //ENABLE_SPELLCHECK
 
 private:

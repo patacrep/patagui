@@ -73,21 +73,51 @@ class CTableDiagram : public QAbstractTableModel
   Q_OBJECT
 
   public:
+  /*!
+    \enum DiagramRoles
+    Each CChord object the model has a set of data elements associated with it, each with its own role.
+    The roles are used by the view to indicate to the model which type of data it needs.
+  */
   enum DiagramRoles {
-    NameRole = Qt::UserRole + 1,
-    StringsRole = Qt::UserRole + 2,
-    TypeRole = Qt::UserRole + 3,
-    ImportantRole = Qt::UserRole + 4,
+    NameRole = Qt::UserRole + 1, /*!< the name of the chord.*/
+    StringsRole = Qt::UserRole + 2, /*!< the strings sequence of the chord.*/
+    TypeRole = Qt::UserRole + 3, /*!< the instrument of the chord.*/
+    ImportantRole = Qt::UserRole + 4, /*!< whether the chord is important.*/
     MaxRole = ImportantRole
   };
 
+  /// Constructor.
   CTableDiagram(QWidget *parent=0);
+
+  /// Destructor.
   ~CTableDiagram();
 
+  /*!
+    Returns the number of columns.
+    \sa setColumnCount, rowCount, setRowCount
+  */
   virtual int columnCount(const QModelIndex & index = QModelIndex()) const;
+
+  /*!
+    Sets the number of columns to \a value.
+    Calling this method defines a "fixed" column count mode which means
+    that any item that is added afterwards will start a new row if necessary.
+    \sa columnCount, rowCount, setRowCount
+  */
   virtual void setColumnCount(int value);
 
+  /*!
+    Returns the number of rows.
+    \sa setRowCount, columnCount, setColumnCount
+  */
   virtual int rowCount(const QModelIndex & index = QModelIndex()) const;
+
+    /*!
+    Sets the number of rows to \a value.
+    Calling this method defines a "fixed" row count mode which means
+    that any item that is added afterwards will start a new column if necessary.
+    \sa rowCount, columnCount, setColumnCount
+  */
   virtual void setRowCount(int value);
 
   /* drag and drop */
@@ -99,10 +129,26 @@ class CTableDiagram : public QAbstractTableModel
   bool dropMimeData(const QMimeData *data, Qt::DropAction action,
 		    int row, int column, const QModelIndex &parent);
 
+  /*!
+    Reimplements QAbstractTableModel::data().
+    Returns the item (CChord object) at position \a index according to the role \a role.
+    \sa setData
+   */
   QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+
+  /*!
+    Reimplements QAbstractTableModel::setData().
+    Sets the value \a value of the item (CChord object) at position \a index for the role \a role.
+    \sa data
+   */
   bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
 
-  CChord * getDiagram(const QModelIndex &) const;
+
+  /*!
+    Returns the CChord object at position \a index.
+    \sa data, setData
+   */
+  CChord * getDiagram(const QModelIndex & index) const;
 
 public slots:
   void insertItem(const QModelIndex & index, const QString & value);

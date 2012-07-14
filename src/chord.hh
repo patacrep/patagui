@@ -204,7 +204,6 @@ private:
   bool m_drawBorder;
   QPixmap *m_pixmap;
 
-public:
   static QRegExp reChordWithFret;
   static QRegExp reChordWithoutFret;
 };

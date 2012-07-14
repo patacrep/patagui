@@ -60,13 +60,24 @@ class ConfigDialog : public QDialog
   Q_OBJECT
 
 public:
+  /// Constructor.
   ConfigDialog(QWidget* parent=0);
+
+  /*!
+    Returns the parent widget (which is the main window of the application).
+  */
   CMainWindow* parent() const;
 
 public slots:
+  /*!
+    Changes the configuration page from \a previous to \a current.
+  */
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 
 protected:
+  /*!
+    Saves all pages settings before closing.
+  */
   void closeEvent(QCloseEvent *event);
 
 private:
@@ -82,12 +93,23 @@ class Page : public QScrollArea
 {
   Q_OBJECT
 public:
+  /// Constructor.
   Page(QWidget *parent=0);
+
+  /*!
+    Returns the parent widget (which is the ConfigDialog object).
+  */
   ConfigDialog * parent() const;
 
+  /*!
+    Applies the layout \a layout to the current page.
+  */
   void setLayout(QLayout *layout);
 
 protected:
+  /*!
+    Saves settings before closing the page.
+  */
   void closeEvent(QCloseEvent *event);
 
 private:
@@ -108,6 +130,7 @@ class DisplayPage : public Page
   Q_OBJECT
 
 public:
+  /// Constructor.
   DisplayPage(QWidget *parent=0);
 
 private:
@@ -136,6 +159,7 @@ class OptionsPage : public Page
   Q_OBJECT
 
 public:
+  /// Constructor.
   OptionsPage(QWidget *parent=0);
 
 private slots:
@@ -167,6 +191,7 @@ class EditorPage : public Page
   Q_OBJECT
 
 public:
+  /// Constructor.
   EditorPage(QWidget *parent=0);
 
 private slots:
@@ -195,6 +220,7 @@ class NetworkPage : public Page
   Q_OBJECT
 
 public:
+  /// Constructor.
   NetworkPage(QWidget *parent=0);
 
 private:
@@ -217,6 +243,7 @@ class SongbookPage : public Page
   Q_OBJECT
 
 public:
+  /// Constructor.
   SongbookPage(QWidget *parent=0);
 
 private slots:

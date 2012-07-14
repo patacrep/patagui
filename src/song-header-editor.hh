@@ -60,7 +60,14 @@ class CSongHeaderEditor : public QWidget
   Q_OBJECT
 
 public:
-  enum ViewMode { FullViewMode, MiniViewMode };
+  /*!
+    \enum ViewMode
+    This enum describes available view modes for CSongHeaderEditor objects.
+  */
+  enum ViewMode {
+    FullViewMode, /*!< full view: displays cover, song options and chords (editable). */
+    MiniViewMode  /*!< mini view: displays mini cover, artist and title (read-only). */
+  };
 
   /// Constructor.
   CSongHeaderEditor(QWidget *parent = 0);
@@ -124,7 +131,14 @@ public slots:
   void toggleView();
 
 signals:
+  /*!
+    This signal is emitted when any of the contents in the header is changed.
+  */
   void contentsChanged();
+
+  /*!
+    This signal is emitted when the language of the song is changed.
+  */
   void languageChanged(const QLocale &);
 
 private:
@@ -174,23 +188,43 @@ class CCoverDropArea : public QLabel
   Q_OBJECT
 
   public:
+  /// Constructor.
   CCoverDropArea(CSongHeaderEditor *parent);
 
+  /*!
+    Returns the Song object associated with this cover.
+  */
   Song & song();
 
-  /// Getter on the song's cover
-  /// @return the cover
+  /*!
+    Returns the cover of the song.
+    \sa setCover
+  */
   const QImage & cover();
 
-  /// Setter on the song's cover
-  /// @param cover the cover as an image object
+  /*!
+    Sets \a cover as the cover of the song.
+    \sa cover
+  */
   void setCover(const QImage &cover);
 
-  /// Setter on the song's cover
-  /// @param cover the cover as a file object
-  void setCover(const QString &cover);
+  /*!
+    Sets the file at (absolute) path \a filename as the cover of the song.
+    A .jpg file is expected.
+    \sa cover
+  */
+  void setCover(const QString &filename);
 
+  /*!
+    Returns the parent widget.
+    \sa setParent
+  */
   CSongHeaderEditor * parent() const;
+
+  /*!
+    Sets \a p as the parent object.
+    \sa parent
+  */
   void setParent(CSongHeaderEditor *p);
 
 private slots:
@@ -198,13 +232,34 @@ private slots:
   void clearCover();
 
 public slots:
+  /*!
+    Resets the background of the cover area.
+  */
   void clear();
+
+  /*!
+    Updates the cover-related fields of the song according to current image.
+  */
   void update();
 
 signals:
+  /*!
+    This signal is emitted whenever new data is dragged within the cover area.
+    \sa coverChanged, miniCoverChanged
+  */
   void changed(const QMimeData *mimeData = 0);
+
+  /*!
+    This signal is emitted whenever a new cover image is displayed.
+    \sa coverChanged, miniCoverChanged
+  */
   void coverChanged();
-  void miniCoverChanged(const QPixmap &);
+
+  /*!
+    This signal is emitted whenever a new cover image is displayed.
+    \sa coverChanged, miniCoverChanged
+  */
+  void miniCoverChanged(const QPixmap & thumbnail);
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);

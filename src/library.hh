@@ -203,20 +203,20 @@ public:
   */
   void removeSong(const QString &path);
 
-  /*! Returns the index of the song \path
+  /*! Returns the index of the song \a path
     from the library.
     \sa getSong
   */
   int getSongIndex(const QString &path) const;
 
   /*!
-    Returns the Song object whose path is \path from the library.
+    Returns the Song object whose path is \a path from the library.
     \sa getSongIndex
   */
   Song getSong(const QString &path) const;
 
   /*!
-    Loads a Song object in the library from the file \path.
+    Loads a Song object in the library from the file \a path.
   */
   void loadSong(const QString &path, Song *song);
 

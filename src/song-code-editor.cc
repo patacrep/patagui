@@ -476,7 +476,6 @@ void CSongCodeEditor::correctWord()
     {
       QString replacement = action->text();
       QTextCursor cursor = cursorForPosition(m_lastPos);
-      QString zeile = cursor.block().text();
       cursor.select(QTextCursor::WordUnderCursor);
       cursor.deleteChar();
       cursor.insertText(replacement);
