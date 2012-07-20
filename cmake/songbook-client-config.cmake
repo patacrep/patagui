@@ -1,7 +1,7 @@
 set(PROJECT_NAME songbook-client)
 
 # If ${SOURCE_DIR} is a git repository VERSION is set to
-# `git describe` later.
+# `git describe --tags` later.
 set(VERSION devel)
 
 set(CODENAME "")
