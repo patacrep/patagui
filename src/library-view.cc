@@ -28,6 +28,7 @@
 CLibraryView::CLibraryView(CMainWindow *parent)
   : QTableView(parent)
 {
+  setStyleSheet(" QTableView {margin: -1px -1px}");
   setShowGrid(false);
   setAlternatingRowColors(true);
   setSelectionMode(QAbstractItemView::SingleSelection);
@@ -76,6 +77,9 @@ void CLibraryView::createActions()
 {
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)),
 	  parent(), SLOT(songEditor(const QModelIndex &)));
+
+  connect(this, SIGNAL(pressed(const QModelIndex &)),
+	  parent(), SLOT(middleClicked(const QModelIndex &)));
 
   QAction* action = new QAction(tr("Edit"), this);
   connect(action, SIGNAL(triggered()),

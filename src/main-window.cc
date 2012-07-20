@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "main-window.hh"
 
+#include <QApplication>
 #include <QAction>
 #include <QBoxLayout>
 #include <QCheckBox>
@@ -588,11 +589,16 @@ void CMainWindow::build()
 
   save(true);
 
-  if (!QFile(songbook()->filename()).exists())
-    statusBar()->showMessage(tr("The songbook file %1 is invalid. Build aborted.")
-			     .arg(songbook()->filename()));
-
-  make();
+  if (QFile(songbook()->filename()).exists())
+    {
+      qobject_cast<QPlainTextEdit *>(log()->widget())->clear();
+      make();
+    }
+  else
+    {
+      statusBar()->showMessage(tr("The songbook file %1 is invalid. Build aborted.")
+			       .arg(songbook()->filename()));
+    }
 }
 
 void CMainWindow::newSongbook()
@@ -742,6 +748,15 @@ QItemSelectionModel * CMainWindow::selectionModel()
   return view()->selectionModel();
 }
 
+void CMainWindow::middleClicked(const QModelIndex & index)
+{
+  if (QApplication::mouseButtons() == (Qt::MidButton | Qt::MiddleButton))
+    {
+      songEditor(index);
+      m_mainWidget->setCurrentIndex(0);
+    }
+}
+
 void CMainWindow::songEditor(const QModelIndex &index)
 {
   Q_UNUSED(index);
@@ -758,6 +773,14 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path)
 {
+  for (int i = 0; i < m_mainWidget->count(); ++i)
+    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(i)))
+      if (editor->song().path == path)
+	{
+	  m_mainWidget->setCurrentIndex(i);
+	  return;
+	}
+
   CSongEditor *editor = new CSongEditor(this);
   editor->setLibrary(library());
   editor->installHighlighter();

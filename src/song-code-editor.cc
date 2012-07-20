@@ -24,6 +24,7 @@
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELLCHECK
 
+#include <QtGlobal>
 #include <QSettings>
 #include <QTextCodec>
 #include <QTextBlock>
@@ -58,9 +59,6 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   setUndoRedoEnabled(true);
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
 
-  CSongHighlighter *highlighter = new CSongHighlighter(document());
-  Q_UNUSED(highlighter);
-
   QStringList wordList = QStringList()
     << "\\begin{verse}" << "\\end{verse}"
     << "\\begin{verse*}" << "\\end{verse*}"
@@ -75,7 +73,10 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
     << "\\Intro" << "\\Rythm"
     << "\\Outro" << "\\Bridge"
     << "\\Verse" << "\\Chorus"
-    << "\\Pattern" << "\\Solo";
+    << "\\Pattern" << "\\Solo"
+    << "\\Adlib" << "\\emph"
+    << "\\ifchorded" << "\\ifnorepeatchords"
+    << "\\else" << "\\fi";
 
   m_completer = new QCompleter(wordList, this);
   m_completer->setWidget(this);
@@ -131,7 +132,8 @@ void CSongCodeEditor::writeSettings()
 
 void CSongCodeEditor::installHighlighter()
 {
-  m_highlighter = new CSongHighlighter(document());
+  if (!m_highlighter)
+    m_highlighter = new CSongHighlighter(document());
 }
 
 void CSongCodeEditor::insertVerse()
@@ -154,12 +156,9 @@ void CSongCodeEditor::insertBridge()
 
 void CSongCodeEditor::insertCompletion(const QString& completion)
 {
-  if (completer()->widget() != this)
-    return;
+  Q_ASSERT(completer()->widget() == this);
   QTextCursor cursor = textCursor();
   int extra = completion.length() - completer()->completionPrefix().length();
-  cursor.movePosition(QTextCursor::Left);
-  cursor.movePosition(QTextCursor::EndOfWord);
   cursor.insertText(completion.right(extra));
   setTextCursor(cursor);
 }
@@ -167,14 +166,19 @@ void CSongCodeEditor::insertCompletion(const QString& completion)
 QString CSongCodeEditor::textUnderCursor() const
 {
   QTextCursor tc = textCursor();
+  if (tc.atBlockStart())
+    return QString();
+
   static QSet<QChar> delimiters;
   if ( delimiters.isEmpty() )
     {
       delimiters.insert( QChar::fromAscii(',') );
       delimiters.insert( QChar::fromAscii('!') );
+      delimiters.insert( QChar::fromAscii('?') );
       delimiters.insert( QChar::fromAscii('.') );
       delimiters.insert( QChar::fromAscii(';') );
-      delimiters.insert( QChar::fromAscii('\\') );
+      delimiters.insert( QChar::fromAscii('{') );
+      delimiters.insert( QChar::fromAscii('}') );
     }
 
   tc.anchor();
@@ -186,9 +190,11 @@ QString CSongCodeEditor::textUnderCursor() const
 	break;
 
       QChar ch = document()->characterAt(pos);
-      if ( pos < 0 || document()->characterAt(pos) == QChar::fromAscii(' ') )
-	if ( ch.isSpace() || delimiters.contains(ch) )
-	  break;
+      if ( ch.isSpace() || delimiters.contains(ch) )
+	break;
+
+      if (tc.atBlockStart())
+	break;
 
       tc.movePosition( QTextCursor::Left, QTextCursor::KeepAnchor );
     }
@@ -197,12 +203,7 @@ QString CSongCodeEditor::textUnderCursor() const
 
 void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
 {
-  if (event->key() == Qt::Key_Tab)
-    {
-      indentSelection();
-      return;
-    }
-  else if (completer() && completer()->popup()->isVisible())
+  if (completer() && completer()->popup()->isVisible())
     {
       // The following keys are forwarded by the completer to the widget
       switch (event->key())
@@ -210,12 +211,18 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
 	case Qt::Key_Enter:
 	case Qt::Key_Return:
 	case Qt::Key_Escape:
+	case Qt::Key_Tab:
 	case Qt::Key_Backtab:
 	  event->ignore();
 	  return; // let the completer do default behavior
 	default:
 	  break;
 	}
+    }
+  else if (event->key() == Qt::Key_Tab)
+    {
+      indentSelection();
+      return;
     }
 
   bool isShortcut = ((event->modifiers() & Qt::ControlModifier) && event->key() == Qt::Key_Space); // CTRL+Space
@@ -226,11 +233,12 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
   if (!completer() || (ctrlOrShift && event->text().isEmpty()))
     return;
 
-  static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+  static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]-="); // end of word
+
   bool hasModifier = (event->modifiers() != Qt::NoModifier) && !ctrlOrShift;
   QString completionPrefix = textUnderCursor();
 
-  if (!isShortcut && (hasModifier || event->text().isEmpty()|| completionPrefix.length() < 3
+  if (!isShortcut && (hasModifier || event->text().isEmpty() || completionPrefix.length() < 1
 		      || eow.contains(event->text().right(1))))
     {
       completer()->popup()->hide();
@@ -409,6 +417,8 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
     {
       cursor.deleteChar();
       str  = cursor.block().text();
+      if (str.isEmpty())
+	break;
     }
 }
 
@@ -591,6 +601,13 @@ bool CSongCodeEditor::isSpellCheckActive() const
 void CSongCodeEditor::setSpellCheckActive(const bool value)
 {
   m_isSpellCheckActive = value;
+#ifdef ENABLE_SPELLCHECK
+  // signals are blocked to prevent triggering documentWasModified
+  // it avoids marking the song as modified when words are only highlighted
+  blockSignals(true);
+  highlighter()->setSpellCheckActive(value);
+  blockSignals(false);
+#endif //ENABLE_SPELLCHECK
 }
 
 CSongHighlighter * CSongCodeEditor::highlighter() const

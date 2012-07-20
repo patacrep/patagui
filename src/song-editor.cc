@@ -22,7 +22,6 @@
 
 #include "song-header-editor.hh"
 #include "song-code-editor.hh"
-#include "song-highlighter.hh"
 #include "library.hh"
 #include "utils/lineedit.hh"
 
@@ -250,10 +249,12 @@ void CSongEditor::save()
 
   // save the song and add it to the library list
   library()->createArtistDirectory(m_song);
-  if (isNewCover())
+
+  if (isNewCover() && !m_songHeaderEditor->cover().isNull())
     library()->saveCover(m_song, m_songHeaderEditor->cover());
   library()->saveSong(m_song);
 
+  setNewCover(false);
   setNewSong(false);
   setModified(false);
   setWindowTitle(m_song.title);
@@ -378,6 +379,7 @@ CLibrary * CSongEditor::library() const
 void CSongEditor::setLibrary(CLibrary *library)
 {
   m_library = library;
+  m_songHeaderEditor->setLibrary(library);
 }
 
 bool CSongEditor::isModified() const
@@ -434,6 +436,7 @@ void CSongEditor::setSong(const Song &song)
 #endif //ENABLE_SPELLCHECK
 
   setNewSong(false);
+  setNewCover(false);
   setWindowTitle(m_song.title);
   setModified(false);
 }
@@ -503,7 +506,7 @@ void CSongEditor::installHighlighter()
   codeEditor()->installHighlighter();
 #ifdef ENABLE_SPELLCHECK
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
-	  m_codeEditor->highlighter(), SLOT(setSpellCheckActive(bool)));
+	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
 #endif //ENABLE_SPELLCHECK

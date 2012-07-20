@@ -38,13 +38,13 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 
   //LaTeX options (overrided by chords)
   optionFormat.setFontItalic(true);
-  rule.pattern = QRegExp("\\[([^\\]]+)\\]");
+  rule.pattern = QRegExp("\\[[^\\]]+\\]");
   rule.format = optionFormat;
   highlightingRules.append(rule);
 
   //LaTeX args (bold)
   argumentFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\{([^}]+)\\}");
+  rule.pattern = QRegExp("\\{[^}]+\\}");
   rule.format = argumentFormat;
   highlightingRules.append(rule);
 
@@ -59,7 +59,8 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 		  << "\\\\nolyrics" << "\\\\musicnote"
 		  << "\\\\textnote" << "\\\\dots"
 		  << "\\\\single"  << "\\\\echo"
-		  << "\\\\transpose" << "\\\\selectlanguage";
+		  << "\\\\transpose" << "\\\\transposition"
+		  << "\\\\emph" << "\\\\selectlanguage";
 
   foreach (const QString &pattern, keywordPatterns)
     {
@@ -77,7 +78,9 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 		   << "\\\\Outro" << "\\\\Bridge"
 		   << "\\\\Verse" << "\\\\Chorus"
 		   << "\\\\Pattern" << "\\\\Solo"
-		   << "\\\\ifchorded" << "\\\\iflyrics" << "\\\\fi";
+		   << "\\\\Adlib" << "\\\\else"
+		   << "\\\\ifchorded" << "\\\\iflyrics"
+		   << "\\\\ifnorepeatchords" << "\\\\fi";
 
   foreach (const QString &pattern, keyword2Patterns)
     {
@@ -120,7 +123,7 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   //Chords (blue)
   chordFormat.setForeground(QColor(32,74,135));
   chordFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\\\\\[([^\\]]+)\\]");
+  rule.pattern = QRegExp("\\\\\\[[^\\]]+\\]");
   rule.format = chordFormat;
   highlightingRules.append(rule);
 

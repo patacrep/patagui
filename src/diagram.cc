@@ -26,7 +26,7 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 #include <QDebug>
-#include <QToolButton>
+#include <QPushButton>
 #include <QSpacerItem>
 
 QRegExp CDiagram::reChord("\\\\[ug]tab[\\*]?\\{([^\\}]+)");
@@ -49,12 +49,12 @@ CDiagram::~CDiagram()
 
 QSize CDiagram::minimumSizeHint() const
 {
-  return QSize(100, 50);
+  return QSize(100, 60);
 }
 
 QSize CDiagram::sizeHint() const
 {
-  return QSize(100, 50);
+  return QSize(100, 60);
 }
 
 QString CDiagram::toString()
@@ -106,7 +106,8 @@ void CDiagram::fromString(const QString & str)
 
   if (fret().isEmpty())
     {
-      reStringsNoFret.indexIn(str);
+      QString copy(str);
+      reStringsNoFret.indexIn(copy.replace("~:",""));
       setStrings(reStringsNoFret.cap(1));
     }
   else
@@ -124,18 +125,25 @@ void CDiagram::paintEvent(QPaintEvent *)
 
   int cellWidth = 12, cellHeight = 12;
   int width = (strings().length() - 1)*cellWidth;
-  int height = 4*cellHeight;
   int padding = 13;
+
+  //draw horizontal lines
+  int max = 4;
+  foreach (QChar c, strings())
+    if (c.digitValue() > max)
+      max = c.digitValue();
+
+  Q_ASSERT(max < 10);
+  for (int i=0; i<max+1; ++i)
+    {
+      painter.drawLine(padding, i*cellHeight+padding, width+padding, i*cellHeight+padding);
+    }
+
+  int height = max*cellHeight;
   //draw a vertical line for each string
   for (int i=0; i<strings().length(); ++i)
     {
       painter.drawLine(i*cellWidth+padding, padding, i*cellWidth+padding, height+padding);
-    }
-
-  //draw 5 horizontal lines
-  for (int i=0; i<5; ++i)
-    {
-      painter.drawLine(padding, i*cellHeight+padding, width+padding, i*cellHeight+padding);
     }
 
   //draw played strings
@@ -235,7 +243,7 @@ CDiagramWidget::CDiagramWidget(const QString & gtab,
   setBackgroundRole(QPalette::Base);
   setAutoFillBackground(true);
   setMaximumWidth(100);
-  setMaximumHeight(110);
+  setMaximumHeight(120);
   setToolTip(m_diagram->toString());
   setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -295,7 +303,7 @@ void CDiagramWidget::mouseDoubleClickEvent(QMouseEvent *event)
   editChord();
 }
 
-void CDiagramWidget::mousePressEvent(QMouseEvent *event)
+void CDiagramWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   Q_UNUSED(event);
   emit clicked();
@@ -322,7 +330,7 @@ void CDiagramWidget::updateChordName()
   m_chordName->setText(QString("<font size=\"2\"><b>%1</b></font>")
 		       .arg(m_diagram->chord().replace("&", QChar(0x266D))));
   m_chordName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-  m_chordName->setMaximumHeight(20);
+  m_chordName->setMaximumHeight(18);
   m_chordName->setStyleSheet("QLabel{ border-radius: 4px; background-color: palette(mid); }");
 }
 
@@ -354,13 +362,24 @@ CDiagram::ChordType CDiagramWidget::type() const
 CDiagramArea::CDiagramArea(QWidget *parent)
   : QWidget(parent)
   , m_layout (new QHBoxLayout)
-  , m_addDiagramButton(0)
-  , m_spacer(0)
 {
   m_layout->setContentsMargins(4, 4, 4, 4);
-  setLayout(m_layout);
 
-  addNewDiagramButton();
+  QBoxLayout *addButtonLayout = new QVBoxLayout;
+  QPushButton *addDiagramButton = new QPushButton;
+  addDiagramButton->setFlat(true);
+  addDiagramButton->setToolTip(tr("Add a new diagram"));
+  addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/48x48/actions/list-add.png")));
+  connect(addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
+  addButtonLayout->addStretch();
+  addButtonLayout->addWidget(addDiagramButton);
+
+  QBoxLayout *mainLayout = new QHBoxLayout;
+  mainLayout->addLayout(m_layout);
+  mainLayout->addLayout(addButtonLayout);
+  mainLayout->addStretch();
+  setLayout(mainLayout);
+
   setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -380,7 +399,6 @@ CDiagramWidget * CDiagramArea::addDiagram()
       delete diagram;
       diagram = 0;
     }
-  addNewDiagramButton();
   return diagram;
 }
 
@@ -391,7 +409,6 @@ CDiagramWidget * CDiagramArea::addDiagram(const QString & chord, const CDiagram:
   connect(diagram, SIGNAL(diagramCloseRequested()), SLOT(removeDiagram()));
   connect(diagram, SIGNAL(changed()), SLOT(onDiagramChanged()));
   connect(diagram, SIGNAL(clicked()), SLOT(onDiagramClicked()));
-  addNewDiagramButton();
   return diagram;
 }
 
@@ -402,26 +419,9 @@ void CDiagramArea::removeDiagram()
       m_layout->removeWidget(diagram);
       disconnect(diagram,0,0,0);
       diagram->setParent(0);
+      diagram->deleteLater();
       onDiagramChanged();
     }
-}
-
-void CDiagramArea::addNewDiagramButton()
-{
-  if (m_addDiagramButton)
-    {
-      m_layout->removeItem(m_spacer);
-      delete m_addDiagramButton;
-      m_addDiagramButton = 0;
-    }
-
-  m_addDiagramButton = new QToolButton;
-  m_addDiagramButton->setToolTip(tr("Add a new diagram"));
-  m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
-  connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(addDiagram()));
-  m_layout->addWidget(m_addDiagramButton);
-  m_spacer = new QSpacerItem(500, 20, QSizePolicy::Ignored, QSizePolicy::MinimumExpanding);
-  m_layout->addSpacerItem(m_spacer);
 }
 
 QList<CDiagramWidget*> CDiagramArea::diagrams() const
