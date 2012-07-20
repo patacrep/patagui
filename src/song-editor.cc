@@ -481,6 +481,7 @@ void CSongEditor::setSpellCheckAvailable(const bool value)
     m_spellCheckingAct->setChecked(false);
 }
 
+#ifdef ENABLE_SPELLCHECK
 void CSongEditor::setDictionary(const QLocale &locale)
 {
   // find the suitable dictionary based on the current song's locale
@@ -501,6 +502,7 @@ void CSongEditor::setDictionary(const QLocale &locale)
   setSpellCheckAvailable(true);
   codeEditor()->setDictionary(dictionary);
 }
+#endif //ENABLE_SPELLCHECK
 
 void CSongEditor::installHighlighter()
 {
