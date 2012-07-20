@@ -78,6 +78,10 @@ public slots:
    */
   void setCleanallCommand(const QString &command);
 
+  void songEditor(const QString &filename);
+
+  void open(const QString &filename);
+
 public:
   /// Constructor.
   CMainWindow(QWidget *parent=0);
@@ -185,7 +189,6 @@ private slots:
   void songEditor(const QModelIndex &index = QModelIndex());
   void deleteSong();
 
-  void songEditor(const QString &filename);
   void deleteSong(const QString &filename);
   void updateNotification(const QString &path);
   void noDataNotification(const QDir &directory);

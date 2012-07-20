@@ -586,14 +586,19 @@ void CMainWindow::newSongbook()
   updateTitle(songbook()->filename());
 }
 
+void CMainWindow::open(const QString & filename)
+{
+  songbook()->load(filename);
+  updateTitle(songbook()->filename());
+}
+
 void CMainWindow::open()
 {
   QString filename = QFileDialog::getOpenFileName(this,
                                                   tr("Open"),
                                                   QString("%1/books").arg(workingPath()),
                                                   tr("Songbook (*.sb)"));
-  songbook()->load(filename);
-  updateTitle(songbook()->filename());
+  open(filename);
 }
 
 void CMainWindow::save(bool forced)
@@ -764,7 +769,12 @@ void CMainWindow::songEditor(const QString &path)
   editor->setLibrary(library());
   editor->installHighlighter();
   if (!path.isEmpty())
-    editor->setSong(library()->getSong(path));
+    {
+      if (library()->getSongIndex(path) == -1)
+	library()->addSongs(QStringList() << path);
+
+      editor->setSong(library()->getSong(path));
+    }
 
   connect(editor, SIGNAL(labelChanged(const QString&)),
 	  m_mainWidget, SLOT(changeTabText(const QString&)));
