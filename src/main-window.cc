@@ -36,7 +36,6 @@
 #include <QPlainTextEdit>
 #include <QSettings>
 #include <QStatusBar>
-#include <QTimer>
 #include <QToolBar>
 
 #include "label.hh"
@@ -270,7 +269,7 @@ void CMainWindow::readSettings(bool firstLaunch)
   settings.endGroup();
 
   view()->readSettings();
-  QTimer::singleShot(100, library(), SLOT(readSettings()));
+  library()->readSettings();
 }
 
 void CMainWindow::writeSettings()
