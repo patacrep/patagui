@@ -14,6 +14,12 @@ This is a Qt4/C++ client that allows to pick up songs from the patacrep songbook
 >     make && sudo make install
 >     songbook-client
 
+# Documentation
+* User manual: http://www.patacrep.com/data/documents/doc_en.pdf
+  Sources: http://github.com/crep4ever/songbook-documentation.git
+* Developer manual: http://www.patacrep.com/data/songbook-client/doc/
+>     doxygen Doxyfile
+
 # Contact & Forums
 * http://www.patacrep.com
 * crep@team-on-fire.com
