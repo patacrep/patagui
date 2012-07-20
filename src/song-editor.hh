@@ -86,7 +86,9 @@ public:
 public slots:
   void setModified(bool modified);
   void setNewSong(bool newSong);
+#ifdef ENABLE_SPELLCHECK
   void setDictionary(const QLocale & locale);
+#endif //ENABLE_SPELLCHECK
 
 signals:
   void labelChanged(const QString &label);
