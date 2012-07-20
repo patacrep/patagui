@@ -136,5 +136,18 @@ int main(int argc, char *argv[])
 
   CMainWindow mainWindow;
   mainWindow.show();
+
+  foreach (const QString & arg, arguments)
+    {
+      if (arg.endsWith(".sb") && QFile(arg).exists())
+	{
+	  mainWindow.open(arg);
+	}
+      if (arg.endsWith(".sg") && QFile(arg).exists())
+	{
+	  mainWindow.songEditor(arg);
+	}
+    }
+
   return application.exec();
 }
