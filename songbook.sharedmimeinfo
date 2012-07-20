@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+   <mime-type type="text/songbook">
+     <comment>A songbook file for Patacrep songbooks</comment>
+     <icon name="text/songbook:x-patacrep-book"></icon>
+     <glob pattern="*.sb"/>
+   </mime-type>
+</mime-info>
