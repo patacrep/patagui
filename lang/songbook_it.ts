@@ -853,7 +853,7 @@ Vuoi creare il canzoniere con tutte le canzoni?</translation>
     <message>
         <location filename="../src/main-window.cc" line="309"/>
         <source>&amp;New</source>
-        <translation>&amp;Nuova</translation>
+        <translation>&amp;Nuovo</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="315"/>
@@ -1188,7 +1188,7 @@ Would you like to scan for available songs ?</translation>
     <message>
         <location filename="../src/main-window.cc" line="356"/>
         <source>&amp;Preferences</source>
-        <translation>&amp;Preferenze</translation>
+        <translation>&amp;Opzioni</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="343"/>
