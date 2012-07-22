@@ -264,6 +264,8 @@ QString Song::languageToString(const QLocale::Language language)
       return "spanish";
     case QLocale::Portuguese:
       return "portuguese";
+    case QLocale::Italian:
+      return "italian";
     default:
       return "english";
     }
