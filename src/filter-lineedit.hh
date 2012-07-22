@@ -108,6 +108,8 @@ public slots:
   void filterLanguageSpanish();
   /// Only display songs written in Portuguese.
   void filterLanguagePortuguese();
+  /// Only display songs written in Italian.
+  void filterLanguageItalian();
 
 public:
   /// Constructor.

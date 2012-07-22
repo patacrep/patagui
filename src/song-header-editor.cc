@@ -77,6 +77,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
     (QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")), "Spanish");
   m_languageComboBox->addItem
     (QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")), "Portuguese");
+  m_languageComboBox->addItem
+    (QIcon::fromTheme("flag-it", QIcon(":/icons/songbook/22x22/flags/flag-it.png")), "Italian");
   m_languageComboBox->setToolTip(tr("Language"));
 
   QLabel *columnCountLabel = new QLabel(this);
