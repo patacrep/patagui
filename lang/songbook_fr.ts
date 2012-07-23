@@ -35,32 +35,32 @@
 <context>
     <name>CCoverDropArea</name>
     <message>
-        <location filename="../src/song-header-editor.cc" line="365"/>
+        <location filename="../src/song-header-editor.cc" line="367"/>
         <source>Click or drop image to change cover</source>
         <translation>Cliquez ou déposez une image pour changer la pochette</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="394"/>
+        <location filename="../src/song-header-editor.cc" line="396"/>
         <source>CCoverDropArea::dropEvent cannot display dropped data</source>
         <translation>CCoverDropArea::dropEvent impossible d&apos;afficher le données déposées</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="448"/>
+        <location filename="../src/song-header-editor.cc" line="450"/>
         <source>Select cover</source>
         <translation>Sélection d&apos;une pochette</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="450"/>
+        <location filename="../src/song-header-editor.cc" line="452"/>
         <source>Images (*.jpg)</source>
         <translation>Images (*.jpg)</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="476"/>
+        <location filename="../src/song-header-editor.cc" line="478"/>
         <source>Clear cover</source>
         <translation>Supprimer la pochette</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="477"/>
+        <location filename="../src/song-header-editor.cc" line="479"/>
         <source>Remove the song&apos;s cover</source>
         <translation>Supprime la pochette de la chanson</translation>
     </message>
@@ -589,7 +589,17 @@ Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&qu
         <translation>Sélectionner/Déselectionner les chansons en portugais</translation>
     </message>
     <message>
+        <location filename="../src/filter-lineedit.cc" line="207"/>
+        <source>italian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/filter-lineedit.cc" line="208"/>
+        <source>Select/Unselect songs in italian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/filter-lineedit.cc" line="215"/>
         <source>Filter</source>
         <translation>Filtrer</translation>
     </message>
@@ -2180,7 +2190,7 @@ Voulez-vous sauvegarder vos changements ?</translation>
         <translation>Inconnu</translation>
     </message>
     <message>
-        <location filename="../src/song-editor.cc" line="495"/>
+        <location filename="../src/song-editor.cc" line="496"/>
         <source>Unable to find the following dictionary: %1</source>
         <translation>Impossible de trouver le dictionnaire suivant : %1</translation>
     </message>
@@ -2235,7 +2245,7 @@ Voulez-vous sauvegarder vos changements ?</translation>
         <translation type="obsolete">Portugais</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="75"/>
+        <location filename="../src/song-header-editor.cc" line="77"/>
         <source>Language</source>
         <translation>Langue</translation>
     </message>
@@ -2252,50 +2262,50 @@ Voulez-vous sauvegarder vos changements ?</translation>
         <translation type="obsolete">Transposition</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="79"/>
-        <location filename="../src/song-header-editor.cc" line="80"/>
+        <location filename="../src/song-header-editor.cc" line="81"/>
+        <location filename="../src/song-header-editor.cc" line="82"/>
         <source>Number of columns for the song</source>
         <translation>Nombre de colonnes pour la chanson</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="85"/>
-        <location filename="../src/song-header-editor.cc" line="86"/>
+        <location filename="../src/song-header-editor.cc" line="87"/>
+        <location filename="../src/song-header-editor.cc" line="88"/>
         <source>Fret on which the capo should be put</source>
         <translation>Frette sur laquelle le capo doit être placé</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="91"/>
-        <location filename="../src/song-header-editor.cc" line="92"/>
+        <location filename="../src/song-header-editor.cc" line="93"/>
+        <location filename="../src/song-header-editor.cc" line="94"/>
         <source>Number of half-steps by which chords are transposed</source>
         <translation>Nombre de demi-tons par lesquels les accords doivent être transposés</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="96"/>
-        <location filename="../src/song-header-editor.cc" line="215"/>
+        <location filename="../src/song-header-editor.cc" line="98"/>
+        <location filename="../src/song-header-editor.cc" line="217"/>
         <source>Song title</source>
         <translation>Titre de la chanson</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="98"/>
-        <location filename="../src/song-header-editor.cc" line="220"/>
+        <location filename="../src/song-header-editor.cc" line="100"/>
+        <location filename="../src/song-header-editor.cc" line="222"/>
         <source>Artist</source>
         <translation>Artiste</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="100"/>
-        <location filename="../src/song-header-editor.cc" line="225"/>
+        <location filename="../src/song-header-editor.cc" line="102"/>
+        <location filename="../src/song-header-editor.cc" line="227"/>
         <source>Album</source>
         <translation>Album</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="102"/>
-        <location filename="../src/song-header-editor.cc" line="230"/>
+        <location filename="../src/song-header-editor.cc" line="104"/>
+        <location filename="../src/song-header-editor.cc" line="232"/>
         <source>Original song</source>
         <translation>Chanson originale</translation>
     </message>
     <message>
-        <location filename="../src/song-header-editor.cc" line="104"/>
-        <location filename="../src/song-header-editor.cc" line="235"/>
+        <location filename="../src/song-header-editor.cc" line="106"/>
+        <location filename="../src/song-header-editor.cc" line="237"/>
         <source>Artist website</source>
         <translation>Site internet de l&apos;artiste</translation>
     </message>
