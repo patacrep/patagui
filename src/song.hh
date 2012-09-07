@@ -43,6 +43,7 @@ struct Song
   QString path; /*!< the path of the .sg file (absolute).*/
   QLocale locale; /*!< the locale of the song.*/
   bool isLilypond; /*!< \a true if the song contains lilypond sheets.*/
+  bool isWebsite; /*!< \a true if the song contains a link to the website of the artist.*/
   int columnCount; /*!< the number of columns of the song in the PDF.*/
   int capo; /*!< the capo of the song.*/
   int transpose; /*!< the transposition information.*/

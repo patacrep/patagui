@@ -146,6 +146,7 @@ private:
   QCheckBox *m_pathCheckBox;
   QCheckBox *m_albumCheckBox;
   QCheckBox *m_lilypondCheckBox;
+  QCheckBox *m_websiteCheckBox;
   QCheckBox *m_langCheckBox;
 };
 

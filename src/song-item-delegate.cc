@@ -78,7 +78,24 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
           }
       }
       break;
-    case 4:
+    case 3:
+      {
+        if (index.model()->data(index, CLibrary::WebsiteRole).toBool())
+          {
+            QPixmap pixmap;
+            if (!QPixmapCache::find("website", &pixmap))
+              {
+		pixmap = QIcon::fromTheme("applications-internet", QIcon(":/icons/tango/22x22/apps/applications-internet.png")).pixmap(22,22);
+		QPixmapCache::insert("website", pixmap);
+	      }
+	    QApplication::style()->drawItemPixmap(painter,
+						  opt.rect,
+						  Qt::AlignCenter,
+						  pixmap);
+          }
+      }
+      break;
+    case 5:
       {
         // draw the cover
         QPixmap pixmap;
@@ -110,7 +127,7 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
                                             textColor);
       }
       break;
-    case 5:
+    case 6:
       {
         QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
 	QString locale = QLocale(lang).name();

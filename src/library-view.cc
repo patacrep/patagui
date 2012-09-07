@@ -57,9 +57,10 @@ void CLibraryView::readSettings()
   setColumnHidden(0, !settings.value("title", true).toBool());
   setColumnHidden(1, !settings.value("artist", true).toBool());
   setColumnHidden(2, !settings.value("lilypond", false).toBool());
-  setColumnHidden(3, !settings.value("path", false).toBool());
-  setColumnHidden(4, !settings.value("album", true).toBool());
-  setColumnHidden(5, !settings.value("lang", true).toBool());
+  setColumnHidden(3, !settings.value("website", false).toBool());
+  setColumnHidden(4, !settings.value("path", false).toBool());
+  setColumnHidden(5, !settings.value("album", true).toBool());
+  setColumnHidden(6, !settings.value("lang", true).toBool());
   settings.endGroup();
 }
 
@@ -97,7 +98,8 @@ void CLibraryView::resizeColumns()
   horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
   horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
   horizontalHeader()->setResizeMode(2, QHeaderView::ResizeToContents);
-  horizontalHeader()->setResizeMode(3, QHeaderView::Stretch);
+  horizontalHeader()->setResizeMode(3, QHeaderView::ResizeToContents);
   horizontalHeader()->setResizeMode(4, QHeaderView::Stretch);
-  horizontalHeader()->setResizeMode(5, QHeaderView::ResizeToContents);
+  horizontalHeader()->setResizeMode(5, QHeaderView::Stretch);
+  horizontalHeader()->setResizeMode(6, QHeaderView::ResizeToContents);
 }

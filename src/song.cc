@@ -103,6 +103,7 @@ Song Song::fromString(const QString &text, const QString &path)
 
   reUrl.indexIn(options);
   song.url = reUrl.cap(1);
+  song.isWebsite = !song.url.isEmpty();
 
   reCoverName.indexIn(options);
   song.coverName = reCoverName.cap(1);

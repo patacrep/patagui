@@ -66,11 +66,12 @@ public:
     AlbumRole = Qt::UserRole + 3, /*!< the album of the song item.*/
     CoverRole = Qt::UserRole + 4, /*!< the cover of the song item.*/
     LilypondRole = Qt::UserRole + 5, /*!< whether or not the song item contains lilypond music sheets.*/
-    LanguageRole = Qt::UserRole + 6, /*!< the language of the song item.*/
-    PathRole = Qt::UserRole + 7, /*!< the absolute path to the .sg file corresponding to the song item.*/
-    CoverSmallRole = Qt::UserRole + 8, /*!< the thumbnail cover (22x22) of the song item.*/
-    CoverFullRole = Qt::UserRole + 9, /*!< the full cover (128x128) of the song item.*/
-    RelativePathRole = Qt::UserRole + 10, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
+    WebsiteRole = Qt::UserRole + 6, /*!< whether or not the song item contains a link to the website of the artist.*/
+    LanguageRole = Qt::UserRole + 7, /*!< the language of the song item.*/
+    PathRole = Qt::UserRole + 8, /*!< the absolute path to the .sg file corresponding to the song item.*/
+    CoverSmallRole = Qt::UserRole + 9, /*!< the thumbnail cover (22x22) of the song item.*/
+    CoverFullRole = Qt::UserRole + 10, /*!< the full cover (128x128) of the song item.*/
+    RelativePathRole = Qt::UserRole + 11, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
     MaxRole = RelativePathRole
   };
 
@@ -151,8 +152,8 @@ public:
 
   /*!
     Reimplements QAbstractTableModel::columnCount.
-    Returns \a 6 as the number of columns for a song item
-    (title, artist, path, album, lilypond, language).
+    Returns \a 7 as the number of columns for a song item
+    (title, artist, path, album, lilypond, website, language).
     \sa rowCount
   */
   virtual int columnCount(const QModelIndex &index = QModelIndex()) const;
