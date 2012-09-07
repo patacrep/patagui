@@ -169,10 +169,12 @@ QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int rol
 	case 2:
 	  return tr("Lilypond");
 	case 3:
-	  return tr("Path");
+	  return tr("Website");
 	case 4:
-	  return tr("Album");
+	  return tr("Path");
 	case 5:
+	  return tr("Album");
+	case 6:
 	  return tr("Language");
 	}
     }
@@ -196,10 +198,12 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	case 2:
 	  return data(index, LilypondRole);
 	case 3:
-	  return data(index, PathRole);
+	  return data(index, WebsiteRole);
 	case 4:
+	  return data(index, PathRole);
+	case 5:
 	  return data(index, AlbumRole);
-        case 5:
+        case 6:
           return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
 	}
       break;
@@ -208,6 +212,8 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
         {
         case 2:
           return tr("Lilypond music sheet");
+        case 3:
+          return tr("Artist website");
         case 5:
           return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
         default:
@@ -226,6 +232,8 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	.arg(m_songs[index.row()].coverName);
     case LilypondRole:
       return m_songs[index.row()].isLilypond;
+    case WebsiteRole:
+      return m_songs[index.row()].isWebsite;
     case LanguageRole:
       return qVariantFromValue(m_songs[index.row()].locale.language());
     case PathRole:
@@ -322,7 +330,7 @@ int CLibrary::rowCount(const QModelIndex &) const
 
 int CLibrary::columnCount(const QModelIndex &) const
 {
-  return 6;
+  return 7;
 }
 
 void CLibrary::addSong(const Song &song, bool resetModel)
