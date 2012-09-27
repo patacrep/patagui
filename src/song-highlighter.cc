@@ -31,8 +31,9 @@
 
 CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
-  , m_checker(NULL)
+  , m_checker(0)
   , m_isSpellCheckActive(false)
+  , m_codec(0)
 {
   HighlightingRule rule;
 
@@ -189,11 +190,9 @@ void CSongHighlighter::spellCheck(const QString &text)
 
 bool CSongHighlighter::checkWord(const QString &word)
 {
-  int check;
   QByteArray encodedString;
   encodedString = m_codec->fromUnicode(word);
-  check = m_checker->spell(encodedString.data());
-  return bool(check);
+  return m_checker->spell(encodedString.data());
 }
 
 void CSongHighlighter::setDictionary(const QString &filename)
