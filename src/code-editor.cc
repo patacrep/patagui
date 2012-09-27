@@ -60,7 +60,7 @@ CodeEditor::CodeEditor(QWidget *parent) :
 
 int CodeEditor::lineNumberAreaWidth()
 {
-  if (!m_lineNumberMode)
+  if (!lineNumberMode())
     return 0;
 
   int digits = 1;
