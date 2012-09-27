@@ -37,34 +37,6 @@
 
 #include <QDebug>
 
-namespace // anonymous namespace
-{
-  bool copyFile(const QString & sourcePath, const QString & targetPath)
-  {
-    QFile sourceFile(sourcePath);
-    if (!sourceFile.exists())
-      return false;
-
-    QDir targetDirectory(targetPath);
-    if (!targetDirectory.exists())
-      return false;
-
-    const QString fileName = sourceFile.fileName();
-
-    // ask for confirmation before removinf the existing file
-    if (targetDirectory.exists(fileName)
-        && QMessageBox::question(0, QObject::tr("The file already exists"),
-                                 QObject::tr("Do you want to replace the file \"%1\" ?").arg(fileName),
-                                 QMessageBox::Yes, QMessageBox::No,
-                                 QMessageBox::NoButton) ==  QMessageBox::Yes)
-      {
-        targetDirectory.remove(fileName);
-      }
-    // QFile::copy does not overwrite data
-    return sourceFile.copy(targetDirectory.filePath(fileName));
-  }
-}
-
 CSongbook::CSongbook(QObject *parent)
   : CIdentityProxyModel(parent)
   , m_library()
