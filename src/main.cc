@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
   AutoUpdater *updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
   if (updater)
     updater->checkForUpdates();
+  delete updater;
 #endif // USE_SPARKLE
 
   if (helpFlag)
