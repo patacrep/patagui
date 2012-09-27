@@ -202,7 +202,7 @@ void CSongbook::changeTemplate(const QString & filename)
         while (it != m_parameters.constEnd())
           {
 	    oldValues.insert(it.key(), it.value()->value());
-            it++;
+            ++it;
           }
         m_parameters.clear();
         m_propertyManager->clear();
