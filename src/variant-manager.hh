@@ -45,7 +45,7 @@ public:
 
     virtual QStringList attributes(int propertyType) const;
     virtual int attributeType(int propertyType, const QString &attribute) const;
-    virtual QVariant attributeValue(const QtProperty *property, const QString &attribute);
+    virtual QVariant attributeValue(const QtProperty *property, const QString &attribute) const;
 
 
     static int filePathTypeId();

@@ -99,7 +99,7 @@ int VariantManager::attributeType(int propertyType, const QString &attribute) co
   return QtVariantPropertyManager::attributeType(propertyType, attribute);
 }
 
-QVariant VariantManager::attributeValue(const QtProperty *property, const QString &attribute)
+QVariant VariantManager::attributeValue(const QtProperty *property, const QString &attribute) const
 {
   if (theValues.contains(property))
     {
