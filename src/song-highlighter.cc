@@ -172,18 +172,18 @@ void CSongHighlighter::spellCheck(const QString &text)
 
   QStringList list = str.split(QRegExp("([^\\w,^\\\\]|(?=\\\\))+"),
 			       QString::SkipEmptyParts);
-  int l, number;
+
   foreach (str, list)
     if (str.length()>1 && !str.startsWith('\\') && !checkWord(str))
       {
-	number = text.count(QRegExp("\\b" + str + "\\b"));
-	l=-1;
+	int number = text.count(QRegExp("\\b" + str + "\\b"));
+	int line = -1;
 	// underline all incorrect occurences of misspelled word
 	for (int j=0; j < number; ++j)
 	  {
-	    l = text.indexOf(QRegExp("\\b" + str + "\\b"),l+1);
-	    if (l>=0)
-	      setFormat(l, str.length(), m_spellCheckFormat);
+	    line = text.indexOf(QRegExp("\\b" + str + "\\b"), line+1);
+	    if (line >= 0)
+	      setFormat(line, str.length(), m_spellCheckFormat);
 	  }
       }
 }
