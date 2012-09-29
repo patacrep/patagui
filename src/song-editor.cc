@@ -141,6 +141,9 @@ CSongEditor::CSongEditor(QWidget *parent)
   m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
   m_spellCheckingAct->setCheckable(true);
   m_spellCheckingAct->setEnabled(false);
+#ifndef ENABLE_SPELLCHECK
+  m_spellCheckingAct->setVisible(false);
+#endif //ENABLE_SPELLCHECK
   m_actions->addAction(action);
   toolBar()->addAction(m_spellCheckingAct);
 
