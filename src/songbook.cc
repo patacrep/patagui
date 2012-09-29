@@ -20,6 +20,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QMessageBox>
 
 #include <QScriptEngine>
 #include <QScriptValue>
@@ -29,14 +30,40 @@
 #include <QtAbstractPropertyManager>
 
 #include "qtpropertymanager.h"
-#include "unit-property-manager.hh"
-#include "unit-factory.hh"
-#include "file-property-manager.hh"
-#include "file-factory.hh"
+#include "variant-manager.hh"
+#include "variant-factory.hh"
 
 #include "library.hh"
 
 #include <QDebug>
+
+namespace // anonymous namespace
+{
+  bool copyFile(const QString & sourcePath, const QString & targetPath)
+  {
+    QFile sourceFile(sourcePath);
+    if (!sourceFile.exists())
+      return false;
+
+    QDir targetDirectory(targetPath);
+    if (!targetDirectory.exists())
+      return false;
+
+    const QString fileName = sourceFile.fileName();
+
+    // ask for confirmation before removinf the existing file
+    if (targetDirectory.exists(fileName)
+        && QMessageBox::question(0, QObject::tr("The file already exists"),
+                                 QObject::tr("Do you want to replace the file \"%1\" ?").arg(fileName),
+                                 QMessageBox::Yes, QMessageBox::No,
+                                 QMessageBox::NoButton) ==  QMessageBox::Yes)
+      {
+        targetDirectory.remove(fileName);
+      }
+    // QFile::copy does not overwrite data
+    return sourceFile.copy(targetDirectory.filePath(fileName));
+  }
+}
 
 CSongbook::CSongbook(QObject *parent)
   : CIdentityProxyModel(parent)
@@ -46,9 +73,7 @@ CSongbook::CSongbook(QObject *parent)
   , m_selectedSongs()
   , m_songs()
   , m_modified()
-  , m_propertyManager(new QtVariantPropertyManager())
-  , m_unitManager(new CUnitPropertyManager())
-  , m_fileManager(new CFilePropertyManager())
+  , m_propertyManager(new VariantManager())
   , m_groupManager()
   , m_parameters()
   , m_mandatoryParameters()
@@ -58,8 +83,6 @@ CSongbook::CSongbook(QObject *parent)
 CSongbook::~CSongbook()
 {
   delete m_propertyManager;
-  delete m_unitManager;
-  delete m_fileManager;
 }
 
 CLibrary * CSongbook::library() const
@@ -137,10 +160,8 @@ void CSongbook::reset()
 
   QMap< QString, QtVariantProperty* >::const_iterator it;
   for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
-    {
-      if(it.key() != "mainfontsize" && it.key() != "picture")
-	it.value()->setValue(QVariant(""));
-    }
+    it.value()->setValue(QVariant(""));
+
   setModified(false);
 }
 
@@ -208,14 +229,7 @@ void CSongbook::changeTemplate(const QString & filename)
         QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
         while (it != m_parameters.constEnd())
           {
-	    if(it.key() == "mainfontsize")
-	      oldValues.insert(it.key(),m_unitManager->valueText(it.value()));
-	    else if( it.key() == "picture")
-	      oldValues.insert(it.key(),m_fileManager->value(it.value()));
-	    else
-	      {
-		oldValues.insert(it.key(), it.value()->value());
-	      }
+	    oldValues.insert(it.key(), it.value()->value());
             it++;
           }
         m_parameters.clear();
@@ -261,15 +275,15 @@ void CSongbook::changeTemplate(const QString & filename)
               else if (svType.toString() == QString("flag"))
                 propertyType = QtVariantPropertyManager::flagTypeId();
               else if (svType.toString() == QString("font"))
-                propertyType = CUnitPropertyManager::id();
+                propertyType = VariantManager::unitTypeId();
               else if (svType.toString() == QString("file"))
-                propertyType = CFilePropertyManager::id();
+                propertyType = VariantManager::filePathTypeId();
               else
                 propertyType = QVariant::String;
 
               // add new property
               item = m_propertyManager
-                ->addProperty(propertyType, svDescription.toString());
+		->addProperty(propertyType, svDescription.toString());
 
               // retrieve existing or default value
               if (oldValues.contains(svName.toString()))
@@ -315,26 +329,22 @@ void CSongbook::changeTemplate(const QString & filename)
                       oldValue = QVariant(flags);
                     }
                 }
-	      else if (propertyType == m_unitManager->id())
-		{
-		  item = static_cast<QtVariantProperty*>(m_unitManager->addProperty(svDescription.toString()));
-		  m_unitManager->setSuffix(item, " pt");
-		  m_unitManager->setRange(item, 10, 12);
-		}
-	      else if (propertyType == m_fileManager->id())
-		{
-		  item = static_cast<QtVariantProperty*>(m_fileManager->addProperty(svDescription.toString()));
-		  if (oldValue.isValid())
-		    m_fileManager->setFilename(item, oldValue.toString());
-		}
-
               // set the existing or default value
-              if (oldValue.isValid() &&
-		  propertyType != m_unitManager->id() &&
-		  propertyType != m_fileManager->id())
-                {
-                  item->setValue(oldValue);
-                }
+              if (oldValue.isValid())
+		item->setValue(oldValue);
+
+              if (propertyType == VariantManager::filePathTypeId())
+		{
+		  if (svName.toString() == "picture")
+		    item->setAttribute("filter", "Image files (*.jpg)");
+		  else if (svName.toString() == "license")
+		    item->setAttribute("filter", "TeX files (*.tex)");
+		}
+	      if (propertyType == VariantManager::unitTypeId())
+		{
+		  if (svName.toString() == "mainfontsize")
+		    item->setAttribute("unit", "pt");
+		}
 
               // insert the property into the list of parameters
               m_parameters.insert(svName.toString(), item);
@@ -360,9 +370,7 @@ void CSongbook::changeTemplate(const QString & filename)
 
 void CSongbook::initializeEditor(QtGroupBoxPropertyBrowser *editor)
 {
-  editor->setFactoryForManager(m_propertyManager, new QtVariantEditorFactory());
-  editor->setFactoryForManager(m_unitManager, new CUnitFactory());
-  editor->setFactoryForManager(m_fileManager, new CFileFactory());
+  editor->setFactoryForManager(m_propertyManager, new VariantFactory());
 
   QtProperty *item;
   foreach(item, m_mandatoryParameters)
@@ -411,7 +419,7 @@ void CSongbook::save(const QString & filename)
             {
               color_value = value.value< QColor >();
               string_value = color_value.name();
-              string_value.remove(0,1);
+	      string_value.remove(0,1);
               if (!string_value.isEmpty())
                 {
                   out << "\"" << it.key() << "\" : \"#"
@@ -458,29 +466,24 @@ void CSongbook::save(const QString & filename)
 		  << (activatedFlags.join("\",\n    \""))
 		  << "\"\n  ],\n";
             }
-	  else //non variant types
-	    {
-	      if(it.key() == "mainfontsize")
-		{
-		  string_value = m_unitManager->valueText(property);
-		  if (!string_value.isEmpty())
-		    {
-		      out << "\"" << it.key() << "\" : \""
-			  << string_value << "\",\n";
-		    }
-		}
-	      else if(it.key() == "picture")
-		{
-		  string_value = m_fileManager->value(property);
-		  if(SbUtils::copyFile(string_value, QString("%1/img").arg(workingPath())))
-		    string_value = QFileInfo(string_value).baseName();
-
-		  if (!string_value.isEmpty())
-		    {
-		      out << "\"" << it.key() << "\" : \""
-			  << string_value << "\",\n";
-		    }
-		}
+          else if (type == VariantManager::filePathTypeId())
+            {
+	      QFileInfo fi(value.toString());
+              string_value = fi.baseName();
+              if (!string_value.isEmpty())
+                {
+		  out << "\"" << it.key() << "\" : \""
+                      << string_value.replace('\\',"\\\\") << "\",\n";
+                }
+	    }
+          else if (type == VariantManager::unitTypeId())
+            {
+              string_value = value.toString();
+              if (!string_value.isEmpty())
+                {
+		  out << "\"" << it.key() << "\" : \""
+                      << string_value.replace('\\',"\\\\") << "\",\n";
+                }
 	    }
           ++it;
         }
@@ -529,7 +532,7 @@ void CSongbook::load(const QString & filename)
             }
 
           // template specific properties
-          QtProperty *property;
+          QtVariantProperty *property;
           int type;
           QVariant value;
           QMap< QString, QtVariantProperty* >::const_iterator it;
@@ -542,6 +545,7 @@ void CSongbook::load(const QString & filename)
                   type = m_propertyManager->propertyType(property);
                   value = sv.toVariant();
                   QVariant stringValues;
+
                   if (type == QtVariantPropertyManager::enumTypeId())
                     {
                       stringValues = m_propertyManager->attributeValue(property, "enumNames");
@@ -564,6 +568,7 @@ void CSongbook::load(const QString & filename)
                         }
                       value = QVariant(flags);
                     }
+
                   m_propertyManager->setValue(property, value);
                 }
             }

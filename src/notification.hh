@@ -22,7 +22,6 @@
 
 #include <QDockWidget>
 #include <QString>
-#include "utils/utils.hh"
 
 class CMainWindow;
 class QTextEdit;
@@ -45,6 +44,8 @@ class CNotification : public QDockWidget
   Q_OBJECT
 
 public:
+  enum Priority { LowPriority, MediumPriority, HighPriority };
+
   /// Constructor
   CNotification(QWidget* parent);
 
@@ -65,14 +66,14 @@ public:
   /// As a result, the icon and color background of the notification area may change
   /// to highlight this level of priority.
   /// @return the priority
-  SbPriority priority() const;
+  Priority priority() const;
 
   /// Setter on the notification priority.
   /// The priority indicates the level of importance of the notification.
   /// As a result, the icon and color background of the notification area may change
   /// to highlight this level of priority.
   /// @param level the priority level
-  void setPriority(const SbPriority & level);
+  void setPriority(const Priority & level);
 
   /// Add an action to the notification.
   /// Actions result in QPushButtons on the right side,
@@ -91,7 +92,7 @@ private:
 
   QTextEdit* m_textEdit; ///< widget containing icon and message
   QBoxLayout* m_layout;  ///< notification layout
-  SbPriority m_priority; ///< notification priority level
+  Priority m_priority; ///< notification priority level
 };
 
 #endif // __NOTIFICATION_HH__

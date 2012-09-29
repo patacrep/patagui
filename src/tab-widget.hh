@@ -21,6 +21,7 @@
 #define __TAB_WIDGET_HH__
 
 #include <QTabWidget>
+#include <QTabBar>
 #include <QString>
 
 /**
@@ -108,6 +109,20 @@ protected:
 
 private:
   SelectionBehavior m_selectionBehaviorOnAdd; ///> focus policy on new tabs
+};
+
+class CTabBar : public QTabBar
+{
+  Q_OBJECT
+
+public:
+  /// Constructor.
+  CTabBar(QWidget *parent=0);
+  /// Destructor.
+  ~CTabBar();
+
+protected:
+  virtual void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif  // __TAB_WIDGET_HH__

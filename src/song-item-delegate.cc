@@ -44,7 +44,7 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
   QPalette::ColorRole textColor = QPalette::NoRole;
   opt.state &= ~QStyle::State_HasFocus;
-  if(opt.state & QStyle::State_Selected)
+  if (opt.state & QStyle::State_Selected)
     {
       if (opt.state & QStyle::State_Active)
 	{

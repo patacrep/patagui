@@ -18,9 +18,27 @@
 //******************************************************************************
 #include "main-window.hh"
 
-#include <QtGui>
+#include <QApplication>
+#include <QAction>
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QCompleter>
+#include <QCoreApplication>
+#include <QDesktopServices>
+#include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QFileSystemModel>
+#include <QListView>
+#include <QMenu>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QPlainTextEdit>
+#include <QSettings>
+#include <QStatusBar>
+#include <QTimer>
+#include <QToolBar>
 
-#include "utils/utils.hh"
 #include "label.hh"
 #include "library.hh"
 #include "library-view.hh"
@@ -45,7 +63,74 @@
 
 #include <QDebug>
 
-using namespace SbUtils;
+namespace // anonymous namespace
+{
+  bool checkPdfLaTeX()
+  {
+    QString message;
+    QProcess process;
+    process.start("pdflatex", QStringList() << "--version");
+    if (!process.waitForFinished())
+      {
+	QString platformSpecificMessage;
+#if defined(Q_OS_WIN32)
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install the <a href=\"http://miktex.org\"/>MikTeX</a> distribution for Windows.</li>"
+					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
+#elif defined(Q_OS_MAC)
+	platformSpecificMessage = QObject::tr("<p>Download and install the <a href=\"http://www.tug.org/mactex\">MacTeX</a> distribution for Mac OS.</p>");
+#else //Unix/Linux
+	platformSpecificMessage = QObject::tr("<p>Download and install the following packages:</p>"
+					      "<ol><li>texlive-base</li>"
+					      "<li>texlive-latex-extra</li></ol>");
+#endif
+	message = QObject::tr("<p>The following program cannot be found: <i>pdflatex</i>.</p>"
+			      "<p>A <a href=\"www.latex-project.org/\">LaTeX</a> distribution supporting <i>pdflatex</i> is required "
+			      "to produce the PDF document. Such a distribution is either "
+			      "not installed or misconfigured.</p>"
+			      "%1"
+			      "You can find more information in the "
+			      "<a href=\"http://www.patacrep.com/data/documents/doc_%2.pdf\">"
+			      "documentation</a>.\n")
+	  .arg(platformSpecificMessage)
+	  .arg((QLocale::system().language() == QLocale::French)? "fr":"en");
+	QMessageBox::warning(0, QObject::tr("Missing program"), message);
+	return false;
+      }
+    return true;
+  }
+
+  bool checkPython()
+  {
+    QString message;
+    QProcess process;
+    process.start("python", QStringList() << "--version");
+    if (!process.waitForFinished())
+      {
+	QString platformSpecificMessage;
+#if defined(Q_OS_WIN32)
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Windows.</li>"
+					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
+#elif defined(Q_OS_MAC)
+	platformSpecificMessage = QObject::tr("<ol><li>Download and install <a href=\"http://www.python.org/download\"</a>Python 2.X</a> for Mac OS.</li>"
+					      "<li>Verify that your PATH variable is correctly set.</li></ol>");
+#else //Unix/Linux
+	platformSpecificMessage = QObject::tr("<p>Download and install the following packages: <i>python</i></p>");
+#endif
+	message = QObject::tr("<p>The following program cannot be found: <i>python</i>.</p>"
+			      "<p>A version of <a href=\"www.python.org/\">Python 2</a> is required "
+			      "to produce the PDF document.</p>"
+			      "%1"
+			      "You can find more information in the "
+			      "<a href=\"http://www.patacrep.com/data/documents/doc_%2.pdf\">"
+			      "documentation</a>.\n")
+	  .arg(platformSpecificMessage)
+	  .arg((QLocale::system().language() == QLocale::French)? "fr":"en");
+	QMessageBox::warning(0, QObject::tr("Missing program"), message);
+	return false;
+      }
+    return true;
+  }
+}
 
 CMainWindow::CMainWindow(QWidget *parent)
   : QMainWindow(parent)
@@ -207,7 +292,7 @@ void CMainWindow::writeSettings()
 
 void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 {
-  m_infoSelection->setText(QString(tr("Selection: %1/%2"))
+  m_infoSelection->setText(tr("Selection: %1/%2")
 			   .arg(songbook()->selectedCount())
 			   .arg(songbook()->rowCount()));
 }
@@ -467,31 +552,33 @@ void CMainWindow::reportBug()
 
 void CMainWindow::about()
 {
-  QString title = QString(tr("About Patacrep! Songbook Client"));
+  QString title(tr("About Patacrep! Songbook Client"));
   QString version = QCoreApplication::applicationVersion();
 
-  QString description = QString(tr("This program allows one to build customized songbooks from "
-				   "<a href=\"http::www.patacrep.com\">www.patacrep.com</a>"));
+  QString description(tr("This program allows one to build customized songbooks from "
+			 "<a href=\"http::www.patacrep.com\">www.patacrep.com</a>"));
 
   QStringList authorsList = QStringList() << "Crep (R. Goffe)"
                                           << "Lohrun (A. Dupas)"
                                           << "Carreau (M. Bussonnier)";
   QString authors = authorsList.join(", ");
 
-  QMessageBox::about(this, title, QString(tr("<p>%1</p>"
-					     "<p><b>Version:</b> %2</p>"
-					     "<p><b>Authors:</b> %3</p>"))
+  QMessageBox::about(this, title, tr("<p>%1</p>"
+				     "<p><b>Version:</b> %2</p>"
+				     "<p><b>Authors:</b> %3</p>")
 		     .arg(description).arg(version).arg(authors));
 }
 
 void CMainWindow::build()
 {
+  if (!checkPdfLaTeX() || !checkPython())
+    return;
+
   songbook()->songsFromSelection();
   if (songbook()->songs().isEmpty())
     {
-      if (QMessageBox::question(this, windowTitle(),
-				QString(tr("You did not select any song. \n "
-                       "Do you want to build the songbook with all songs?")),
+      if (QMessageBox::question(this, windowTitle(), tr("You did not select any song. \n "
+							"Do you want to build the songbook with all songs?"),
 				QMessageBox::Yes,
 				QMessageBox::No,
 				QMessageBox::NoButton) == QMessageBox::No)
@@ -502,11 +589,16 @@ void CMainWindow::build()
 
   save(true);
 
-  if (!QFile(songbook()->filename()).exists())
-    statusBar()->showMessage(QString(tr("The songbook file %1 is invalid. Build aborted."))
-			     .arg(songbook()->filename()));
-
-  make();
+  if (QFile(songbook()->filename()).exists())
+    {
+      qobject_cast<QPlainTextEdit *>(log()->widget())->clear();
+      make();
+    }
+  else
+    {
+      statusBar()->showMessage(tr("The songbook file %1 is invalid. Build aborted.")
+			       .arg(songbook()->filename()));
+    }
 }
 
 void CMainWindow::newSongbook()
@@ -623,10 +715,10 @@ void CMainWindow::makeCleanall()
 
 void CMainWindow::cancelProcess()
 {
-  if(m_builder->state() == QProcess::Running)
+  if (m_builder->state() == QProcess::Running)
     {
       m_builder->close();
-      if(m_builder->command() == buildCommand())
+      if (m_builder->command() == buildCommand())
 	makeClean();
     }
 }
@@ -656,8 +748,18 @@ QItemSelectionModel * CMainWindow::selectionModel()
   return view()->selectionModel();
 }
 
+void CMainWindow::middleClicked(const QModelIndex & index)
+{
+  if (QApplication::mouseButtons() == (Qt::MidButton | Qt::MiddleButton))
+    {
+      songEditor(index);
+      m_mainWidget->setCurrentIndex(0);
+    }
+}
+
 void CMainWindow::songEditor(const QModelIndex &index)
 {
+  Q_UNUSED(index);
   if (!selectionModel()->hasSelection())
     {
       statusBar()->showMessage(tr("Please select a song to edit."));
@@ -671,6 +773,14 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path)
 {
+  for (int i = 0; i < m_mainWidget->count(); ++i)
+    if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(i)))
+      if (editor->song().path == path)
+	{
+	  m_mainWidget->setCurrentIndex(i);
+	  return;
+	}
+
   CSongEditor *editor = new CSongEditor(this);
   editor->setLibrary(library());
   editor->installHighlighter();
@@ -729,7 +839,7 @@ void CMainWindow::changeTab(int index)
   if (editor != 0)
     {
       editor->actionGroup()->setEnabled(true);
-      editor->setSpellCheckingEnabled(editor->isSpellCheckingEnabled());
+      editor->setSpellCheckAvailable(editor->isSpellCheckAvailable());
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
@@ -750,6 +860,7 @@ QDockWidget* CMainWindow::log() const
 
 void CMainWindow::buildError(QProcess::ProcessError error)
 {
+  Q_UNUSED(error);
   log()->setVisible(true);
   statusBar()->showMessage
     (qobject_cast< CMakeSongbookProcess* >(QObject::sender())->errorMessage());
@@ -779,12 +890,14 @@ void CMainWindow::noDataNotification(const QDir &directory)
   if (library()->rowCount() > 0)
     {
       m_noDataInfo->hide();
+      m_buildAct->setEnabled(true);
     }
   else
     {
       m_noDataInfo->setMessage(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
                                   "Do you want to download the latest songs library?").arg(directory.canonicalPath()));
       m_noDataInfo->show();
+      m_buildAct->setEnabled(false);
     }
 }
 
@@ -806,7 +919,7 @@ void CMainWindow::cleanDialog()
   connect(buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(buttonBox, SIGNAL(rejected()), &dialog, SLOT(close()));
 
-  if(!m_tempFilesmodel)
+  if (!m_tempFilesmodel)
     {
       m_tempFilesmodel = new QFileSystemModel;
       m_tempFilesmodel->setRootPath(library()->directory().canonicalPath());

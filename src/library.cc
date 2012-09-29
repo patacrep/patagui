@@ -18,19 +18,49 @@
 //******************************************************************************
 #include "library.hh"
 
-#include <QtGui>
-
 #include "main-window.hh"
-#include "utils/utils.hh"
 #include "progress-bar.hh"
 
+#include <QStringListModel>
+#include <QDirIterator>
+#include <QPixmapCache>
+#include <QStatusBar>
+#include <QDesktopServices>
+#include <QSettings>
+#include <QMessageBox>
+
 #include <QDebug>
+
+namespace // anonymous namespace
+{
+  QString stringToFilename(const QString & string, const QString & separator)
+  {
+    QString result(string.toLower());
+
+    // replace whitespaces with separator
+    result.replace(QRegExp("\\W+"), separator);
+    result.remove(QRegExp(QString("%1+$").arg(separator)));
+
+    // replace utf8 characters
+    result.replace(QRegExp("[àâ]"), "a");
+    result.replace(QRegExp("[ïî]"), "i");
+    result.replace(QRegExp("[óô]"), "o");
+    result.replace(QRegExp("[ùúû]"), "u");
+    result.replace(QRegExp("[éèêë]"), "e");
+    result.replace(QString("ñ"), "n");
+    result.replace(QString("ç"), "c");
+
+    return result;
+  }
+}
 
 CLibrary::CLibrary(CMainWindow *parent)
   : QAbstractTableModel()
   , m_parent(parent)
   , m_directory()
   , m_completionModel(new QStringListModel(this))
+  , m_artistCompletionModel(new QStringListModel(this))
+  , m_albumCompletionModel(new QStringListModel(this))
   , m_templates()
   , m_songs()
 {
@@ -90,13 +120,13 @@ QDir CLibrary::directory() const
 
 void CLibrary::setDirectory(const QString &directory)
 {
-  if(!directory.isEmpty())
+  if (!directory.isEmpty())
     setDirectory(QDir(directory));
 }
 
 void CLibrary::setDirectory(const QDir &directory)
 {
-  if(directory != m_directory)
+  if (directory != m_directory)
     {
       m_directory = directory;
       QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
@@ -111,9 +141,19 @@ QStringList CLibrary::templates() const
   return m_templates;
 }
 
-QAbstractListModel * CLibrary::completionModel()
+QAbstractListModel * CLibrary::completionModel() const
 {
   return m_completionModel;
+}
+
+QAbstractListModel * CLibrary::artistCompletionModel() const
+{
+  return m_artistCompletionModel;
+}
+
+QAbstractListModel * CLibrary::albumCompletionModel() const
+{
+  return m_albumCompletionModel;
 }
 
 QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int role) const
@@ -236,7 +276,7 @@ void CLibrary::update()
   QStringList paths;
 
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
-  while(it.hasNext())
+  while (it.hasNext())
     paths.append(it.next());
 
   m_parent->statusBar()->showMessage(tr("Updating the library..."));
@@ -248,14 +288,24 @@ void CLibrary::update()
   addSongs(paths);
 
   QStringList wordList;
+  QStringList artistList;
+  QStringList albumList;
   for (int i = 0; i < rowCount(); ++i)
     {
       wordList << data(index(i,0),CLibrary::TitleRole).toString()
 	       << data(index(i,0),CLibrary::ArtistRole).toString()
 	       << data(index(i,0),CLibrary::PathRole).toString();
+
+      artistList << data(index(i,0),CLibrary::ArtistRole).toString();
+
+      albumList << data(index(i,0),CLibrary::AlbumRole).toString();
     }
   wordList.removeDuplicates();
+  artistList.removeDuplicates();
+  albumList.removeDuplicates();
   m_completionModel->setStringList(wordList);
+  m_artistCompletionModel->setStringList(artistList);
+  m_albumCompletionModel->setStringList(albumList);
 
   m_parent->progressBar()->setCancelable(true);
   m_parent->progressBar()->setTextVisible(false);
@@ -279,7 +329,7 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 {
   m_songs << song;
 
-  if(resetModel)
+  if (resetModel)
     {
       reset();
       emit(wasModified());
@@ -376,15 +426,28 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
   // update song cover information
   song.coverPath = artistDirectory.absolutePath();
   song.coverName = (!song.album.isEmpty()) ?
-    SbUtils::stringToFilename(song.album,  "-") :
-    SbUtils::stringToFilename(song.artist, "-"); //fallback on artist name
+    stringToFilename(song.album,  "-") :
+    stringToFilename(song.artist, "-"); //fallback on artist name
 
   // guess the cover filename
   QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
 
-  // actually write the image
-  if(!QFile(coverFilename).exists())
-    cover.save(coverFilename);
+  // ask before overwriting
+  if (QFile(coverFilename).exists())
+    {
+      int ret = QMessageBox::warning(0, tr("Songbook-Client"),
+				     tr("This file will be overwritten:\n%1\n"
+					"Are you sure?").arg(coverFilename),
+				     QMessageBox::Cancel | QMessageBox::Ok,
+				     QMessageBox::Cancel);
+      // actually write the image
+      if (ret == QMessageBox::Ok)
+	cover.save(coverFilename);
+    }
+  else
+    {
+      cover.save(coverFilename);
+    }
 }
 
 void CLibrary::createArtistDirectory(Song &song)
@@ -419,8 +482,8 @@ void CLibrary::deleteSong(const QString &path)
 
 QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 {
-  QString artistInPath = SbUtils::stringToFilename(artist, "_");
-  QString titleInPath = SbUtils::stringToFilename(title, "_");
+  QString artistInPath = stringToFilename(artist, "_");
+  QString titleInPath = stringToFilename(title, "_");
 
   return QString("%1/songs/%2/%3.sg")
     .arg(directory().canonicalPath())

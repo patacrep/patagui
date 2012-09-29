@@ -19,7 +19,11 @@
 
 #include "notification.hh"
 
-#include <QtGui>
+#include <QAction>
+#include <QBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QTextEdit>
 
 #include "main-window.hh"
 
@@ -86,12 +90,12 @@ void CNotification::addAction(QAction* action)
   m_layout->insertWidget(0, button);
 }
 
-SbPriority CNotification::priority() const
+CNotification::Priority CNotification::priority() const
 {
   return  m_priority;
 }
 
-void CNotification::setPriority(const SbPriority & value)
+void CNotification::setPriority(const CNotification::Priority & value)
 {
   m_priority = value;
   changeBackground();

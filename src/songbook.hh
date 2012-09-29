@@ -27,16 +27,12 @@
 
 #include <QtVariantProperty>
 
-#include "utils/utils.hh"
-
 class CLibrary;
 
 class QWidget;
 class QComboBox;
 class QtGroupBoxPropertyBrowser;
 class QtGroupPropertyManager;
-class CUnitPropertyManager;
-class CFilePropertyManager;
 
 /**
  * \file songbook.hh
@@ -130,8 +126,6 @@ private:
   bool m_modified;
 
   QtVariantPropertyManager *m_propertyManager;
-  CUnitPropertyManager *m_unitManager;
-  CFilePropertyManager *m_fileManager;
   QtGroupPropertyManager *m_groupManager;
 
   QMap< QString, QtVariantProperty* > m_parameters;

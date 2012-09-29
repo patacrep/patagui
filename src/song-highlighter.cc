@@ -17,7 +17,8 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-#include <QtGui>
+#include <QFileInfo>
+#include <QTextCodec>
 
 #include "config.hh"
 #include "song-highlighter.hh"
@@ -25,6 +26,8 @@
 #ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELLCHECK
+
+#include <QDebug>
 
 CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
@@ -35,13 +38,13 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 
   //LaTeX options (overrided by chords)
   optionFormat.setFontItalic(true);
-  rule.pattern = QRegExp("\\[([^\\]]+)\\]");
+  rule.pattern = QRegExp("\\[[^\\]]+\\]");
   rule.format = optionFormat;
   highlightingRules.append(rule);
 
   //LaTeX args (bold)
   argumentFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\{([^}]+)\\}");
+  rule.pattern = QRegExp("\\{[^}]+\\}");
   rule.format = argumentFormat;
   highlightingRules.append(rule);
 
@@ -56,7 +59,8 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 		  << "\\\\nolyrics" << "\\\\musicnote"
 		  << "\\\\textnote" << "\\\\dots"
 		  << "\\\\single"  << "\\\\echo"
-		  << "\\\\transpose" << "\\\\selectlanguage";
+		  << "\\\\transpose" << "\\\\transposition"
+		  << "\\\\emph" << "\\\\selectlanguage";
 
   foreach (const QString &pattern, keywordPatterns)
     {
@@ -74,7 +78,9 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 		   << "\\\\Outro" << "\\\\Bridge"
 		   << "\\\\Verse" << "\\\\Chorus"
 		   << "\\\\Pattern" << "\\\\Solo"
-		   << "\\\\ifchorded" << "\\\\iflyrics" << "\\\\fi";
+		   << "\\\\Adlib" << "\\\\else"
+		   << "\\\\ifchorded" << "\\\\iflyrics"
+		   << "\\\\ifnorepeatchords" << "\\\\fi";
 
   foreach (const QString &pattern, keyword2Patterns)
     {
@@ -117,7 +123,7 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   //Chords (blue)
   chordFormat.setForeground(QColor(32,74,135));
   chordFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\\\\\[([^\\]]+)\\]");
+  rule.pattern = QRegExp("\\\\\\[[^\\]]+\\]");
   rule.format = chordFormat;
   highlightingRules.append(rule);
 
@@ -192,14 +198,14 @@ bool CSongHighlighter::checkWord(const QString &word)
 
 void CSongHighlighter::setDictionary(const QString &filename)
 {
-  if(m_checker)
+  if (m_checker)
     {
       delete m_checker;
       m_checker = 0;
     }
 
   QFileInfo fi(filename);
-  if(filename.isEmpty() || !fi.exists() || !fi.isReadable())
+  if (filename.isEmpty() || !fi.exists() || !fi.isReadable())
     {
       qWarning() << tr("CSongHighlighter::setDictionary cannot read open dictionary : ") << filename;
     }
@@ -225,9 +231,9 @@ void CSongHighlighter::addWord(const QString & word)
   rehighlight();
 }
 
-void CSongHighlighter::setSpellCheck(const bool value)
+void CSongHighlighter::setSpellCheckActive(const bool value)
 {
-  if(m_isSpellCheckActive != value)
+  if (m_isSpellCheckActive != value)
     {
       m_isSpellCheckActive = value;
       rehighlight();
