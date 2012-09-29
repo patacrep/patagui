@@ -101,11 +101,6 @@ set(SONGBOOK_CLIENT_RCS
 
 find_package(Qt4 REQUIRED)
 set(QT_USE_QTSCRIPT true)
-
-if(ENABLE_SVG_SUPPORT)
-  set(QT_USE_QTSVG true)
-endif()
-
 set(QT_USE_QTSVG true)
 
 if(ENABLE_LIBRARY_DOWNLOAD)
