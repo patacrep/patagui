@@ -31,10 +31,13 @@ class QPushButton;
 /*!
   \file file-chooser.hh
   \class CFileChooser
-  \brief CFileChooser is a small widget composed of a QLineEdit and a QPushButton to pick up a file.
+  \brief CFileChooser is a inline widget to select a path.
 
-  The QLineEdit object displays a path to a file and the "browse"
-  QPushButton is connected to a QFileDialog.
+  The CFileChooser is composed of two widgets:
+
+    1) a QLineEdit which displays the currently selected path;
+
+    2) a QPushButton which allow to select the path through a dialog.
 
   \image html file-chooser.png
 */
@@ -50,18 +53,6 @@ public:
   ~CFileChooser();
 
   /*!
-    Tries to restore the path previously selected.
-    \sa writeSettings
-  */
-  void readSettings();
-
-  /*!
-    Saves the selected path.
-    \sa readSettings
-  */
-  void writeSettings();
-
-  /*!
     Returns the options of the QFileDialog .
     \sa setOptions
   */
@@ -71,7 +62,7 @@ public:
     Sets the options of the QFileDialog .
     \sa options
   */
-  void setOptions(const QFileDialog::Options &);
+  void setOptions(const QFileDialog::Options &options);
 
   /*!
     Returns the filter of the QFileDialog.
@@ -144,6 +135,7 @@ private:
   QPushButton* m_button;
   QString m_caption;
   QString m_directory;
+  QString m_path;
   QString m_filter;
   QFileDialog::Options m_options;
 };
