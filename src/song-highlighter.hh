@@ -67,7 +67,7 @@ public slots:
 
   /// Define whether the spellchecker is active or not.
   /// @param state true if the spellchecker is active, false otherwise.
-  void setSpellCheck(const bool state);
+  void setSpellCheckActive(const bool state);
 #endif //ENABLE_SPELLCHECK
 
 protected:

@@ -21,6 +21,7 @@
 
 #include "song-editor.hh"
 #include "diagram.hh"
+#include "library.hh"
 
 #include "utils/lineedit.hh"
 
@@ -35,12 +36,16 @@
 #include <QPixmapCache>
 #include <QPixmap>
 #include <QFileDialog>
+#include <QCompleter>
 
 #include <QUrl>
 #include <QMimeData>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QDragLeaveEvent>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QAction>
 
 #include <QDebug>
 
@@ -49,6 +54,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_titleLineEdit(new LineEdit(this))
   , m_artistLineEdit(new LineEdit(this))
   , m_albumLineEdit(new LineEdit(this))
+  , m_originalSongLineEdit(new LineEdit(this))
+  , m_urlLineEdit(new LineEdit(this))
   , m_languageComboBox(new QComboBox(this))
   , m_columnCountSpinBox(new QSpinBox(this))
   , m_capoSpinBox(new QSpinBox(this))
@@ -65,6 +72,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
     (QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")), "Spanish");
   m_languageComboBox->addItem
     (QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")), "Portuguese");
+  m_languageComboBox->addItem
+    (QIcon::fromTheme("flag-it", QIcon(":/icons/songbook/22x22/flags/flag-it.png")), "Italian");
   m_languageComboBox->setToolTip(tr("Language"));
 
   QLabel *columnCountLabel = new QLabel(this);
@@ -91,12 +100,20 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   m_artistLineEdit->setToolTip(tr("Artist"));
   m_albumLineEdit->setMinimumWidth(150);
   m_albumLineEdit->setToolTip(tr("Album"));
+  m_originalSongLineEdit->setMinimumWidth(70);
+  m_originalSongLineEdit->setToolTip(tr("Original song"));
+  m_urlLineEdit->setMinimumWidth(150);
+  m_urlLineEdit->setToolTip(tr("Artist website"));
 
-  connect(m_titleLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_titleLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
-  connect(m_artistLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_artistLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
-  connect(m_albumLineEdit, SIGNAL(textEdited(const QString&)),
+  connect(m_albumLineEdit, SIGNAL(textChanged(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_originalSongLineEdit, SIGNAL(textChanged(const QString&)),
+          SLOT(onTextEdited(const QString&)));
+  connect(m_urlLineEdit, SIGNAL(textChanged(const QString&)),
           SLOT(onTextEdited(const QString&)));
   connect(m_languageComboBox, SIGNAL(currentIndexChanged(const QString&)),
           SLOT(onIndexChanged(const QString&)));
@@ -120,10 +137,16 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   additionalInformationLayout->addWidget(m_transposeSpinBox);
   additionalInformationLayout->addStretch();
 
+  QBoxLayout *additionalSongFieldsLayout = new QHBoxLayout();
+  additionalSongFieldsLayout->setContentsMargins(1, 1, 1, 1);
+  additionalSongFieldsLayout->addWidget(m_originalSongLineEdit);
+  additionalSongFieldsLayout->addWidget(m_urlLineEdit);
+
   QBoxLayout *songInformationLayout = new QVBoxLayout();
   songInformationLayout->addWidget(m_titleLineEdit);
   songInformationLayout->addWidget(m_artistLineEdit);
   songInformationLayout->addWidget(m_albumLineEdit);
+  songInformationLayout->addLayout(additionalSongFieldsLayout);
   songInformationLayout->addLayout(additionalInformationLayout);
   songInformationLayout->addStretch();
 
@@ -136,7 +159,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   diagramsScrollArea->setBackgroundRole(QPalette::Dark);
   diagramsScrollArea->setWidgetResizable(true);
 
-  setMaximumHeight(132);
+  setMaximumHeight(142);
 
   QBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setContentsMargins(1, 1, 1, 1);
@@ -175,6 +198,19 @@ LineEdit * CSongHeaderEditor::artistLineEdit() const
   return m_artistLineEdit;
 }
 
+void CSongHeaderEditor::setLibrary(CLibrary * library)
+{
+  QCompleter *artistCompleter = new QCompleter;
+  artistCompleter->setModel(library->artistCompletionModel());
+  artistCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  m_artistLineEdit->setCompleter(artistCompleter);
+
+  QCompleter *albumCompleter = new QCompleter;
+  albumCompleter->setModel(library->albumCompletionModel());
+  albumCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+  m_albumLineEdit->setCompleter(albumCompleter);
+}
+
 void CSongHeaderEditor::update()
 {
   if (song().title.isEmpty())
@@ -192,9 +228,24 @@ void CSongHeaderEditor::update()
   else
     m_albumLineEdit->setText(song().album);
 
+  if (song().originalSong.isEmpty())
+    m_originalSongLineEdit->setInactiveText(tr("Original song"));
+  else
+    m_originalSongLineEdit->setText(song().originalSong);
+
+  if (song().url.isEmpty())
+    m_urlLineEdit->setInactiveText(tr("Artist website"));
+  else
+    m_urlLineEdit->setText(song().url);
+
   m_languageComboBox->setCurrentIndex(m_languageComboBox->findText
 				      (QLocale::languageToString(song().locale.language()),
 				       Qt::MatchContains));
+  if (song().columnCount < 1)
+    song().columnCount = 2;
+  else if (song().columnCount > 3)
+    song().columnCount = 3;
+
   m_columnCountSpinBox->setValue(song().columnCount);
   m_capoSpinBox->setValue(song().capo);
   m_transposeSpinBox->setValue(song().transpose);
@@ -203,13 +254,13 @@ void CSongHeaderEditor::update()
   QString gtab;
   foreach (gtab, song().gtabs)
     {
-      m_diagramArea->addDiagram(gtab, GuitarChord);
+      m_diagramArea->addDiagram(gtab, CDiagram::GuitarChord);
     }
 
   QString utab;
   foreach (utab, song().utabs)
     {
-      m_diagramArea->addDiagram(utab, UkuleleChord);
+      m_diagramArea->addDiagram(utab, CDiagram::UkuleleChord);
     }
 }
 
@@ -259,6 +310,14 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
     {
       song().album = text;
     }
+  else if (currentLineEdit == m_originalSongLineEdit)
+    {
+      song().originalSong = text;
+    }
+  else if (currentLineEdit == m_urlLineEdit)
+    {
+      song().url = text;
+    }
   else
     {
       qWarning() << "CSongHeaderEditor::onTextEdited unknow sender";
@@ -274,9 +333,9 @@ void CSongHeaderEditor::onDiagramsChanged()
   song().utabs = QStringList();
   foreach (CDiagramWidget *diagram, m_diagramArea->diagrams())
     {
-      if (diagram->type() == GuitarChord)
+      if (diagram->type() == CDiagram::GuitarChord)
 	song().gtabs << diagram->toString();
-      else if (diagram->type() == UkuleleChord)
+      else if (diagram->type() == CDiagram::UkuleleChord)
 	song().utabs << diagram->toString();
     }
   emit(contentsChanged());
@@ -307,14 +366,7 @@ CCoverDropArea::CCoverDropArea(QWidget *parent)
   setAcceptDrops(true);
   setToolTip(tr("Click or drop image to change cover"));
   setBackgroundRole(QPalette::Dark);
-
-  QPixmap pixmap;
-  if(!QPixmapCache::find("cover-missing-full", &pixmap))
-    {
-      pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(115, 115);
-      QPixmapCache::insert("cover-missing-full", pixmap);
-    }
-  setPixmap(pixmap);
+  setCover(QImage());
   connect(this, SIGNAL(changed()), SLOT(update()));
 }
 
@@ -361,25 +413,35 @@ void CCoverDropArea::clear()
 
 void CCoverDropArea::update()
 {
-  if(m_filename.isEmpty() && !song().coverPath.isEmpty() && !song().coverName.isEmpty())
+  if (m_filename.isEmpty() && !song().coverPath.isEmpty() && !song().coverName.isEmpty())
     m_filename = QString("%1/%2.jpg").arg(song().coverPath).arg(song().coverName);
 
   // display the cover art
+  QPixmap pixmap;
   QFileInfo file = QFileInfo(m_filename);
-  if(file.exists())
+  if (file.exists())
     {
       song().coverPath = file.absolutePath();
       song().coverName = file.baseName();
-      QPixmap pixmap;
       if (!QPixmapCache::find(file.baseName()+"-full", &pixmap))
 	{
 	  setCover(file.filePath());
 	  pixmap = QPixmap::fromImage(cover());
 	  QPixmapCache::insert(file.baseName()+"-full", pixmap);
 	}
-      setPixmap(pixmap);
-      emit(coverChanged());
     }
+  else
+    {
+      song().coverPath = QString();
+      song().coverName = QString();
+      if (!QPixmapCache::find("cover-missing-full", &pixmap))
+	{
+	  pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/128x128/status/image-missing.png")).pixmap(115, 115);
+	  QPixmapCache::insert("cover-missing-full", pixmap);
+	}
+    }
+  setPixmap(pixmap);
+  emit(coverChanged());
 }
 
 void CCoverDropArea::selectCover()
@@ -389,7 +451,7 @@ void CCoverDropArea::selectCover()
                                                   song().coverPath,
                                                   tr("Images (*.jpg)"));
 
-  if( !filename.isEmpty() && filename != m_filename )
+  if ( !filename.isEmpty() && filename != m_filename )
     {
       m_filename = filename;
       update();
@@ -398,13 +460,27 @@ void CCoverDropArea::selectCover()
 
 void CCoverDropArea::mousePressEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   setFrameStyle(QFrame::Sunken | QFrame::Panel);
 }
 
 void CCoverDropArea::mouseReleaseEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   setFrameStyle(QFrame::Raised | QFrame::Panel);
   selectCover();
+}
+
+
+void CCoverDropArea::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu *menu = new QMenu(this);
+  QAction *action = new QAction(tr("Clear cover"), this);
+  action->setStatusTip(tr("Remove the song's cover"));
+  connect(action, SIGNAL(triggered()), SLOT(clearCover()));
+  menu->addAction(action);
+  menu->exec(event->globalPos());
+  delete menu;
 }
 
 Song & CCoverDropArea::song()
@@ -417,12 +493,19 @@ const QImage & CCoverDropArea::cover()
   return m_cover;
 }
 
+void CCoverDropArea::clearCover()
+{
+  m_cover = QImage();
+  m_filename = QString();
+  song().coverPath = QString();
+  song().coverName = QString();
+  update();
+}
+
 void CCoverDropArea::setCover(const QImage &cover)
 {
-  if(cover.isNull())
-    qWarning() << tr("CCoverDropArea::setCover invalid cover");
-
-  m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  if (!cover.isNull())
+    m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 void CCoverDropArea::setCover(const QString &path)

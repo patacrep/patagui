@@ -83,7 +83,7 @@ void CFileChooser::browse()
     selection = QFileDialog::getOpenFileName
       (this, caption(), directory(), filter(), 0, options());
 
-  if(!selection.isEmpty())
+  if (!selection.isEmpty())
     setPath(selection);
 }
 
@@ -140,7 +140,7 @@ QString CFileChooser::path() const
 
 void CFileChooser::setPath(const QString &path)
 {
-  if( QString::compare(this->path(), path, Qt::CaseSensitive) )
+  if ( QString::compare(this->path(), path, Qt::CaseSensitive) )
     m_lineEdit->setText(path);
 
   QFileInfo fileInfo(path);

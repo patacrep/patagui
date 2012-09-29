@@ -29,17 +29,13 @@ set(SONGBOOK_CLIENT_SOURCES
   src/logs-highlighter.cc
   src/label.cc
   src/diagram.cc
+  src/diagram-editor.cc
   src/progress-bar.cc
-  src/unit-property-manager.cc
-  src/unit-factory.cc
-  src/file-property-manager.cc
-  src/file-factory.cc
   src/file-chooser.cc
   src/song-sort-filter-proxy-model.cc
   src/filter-lineedit.cc
   src/utils/lineedit.cc
   src/utils/lineedit.cc
-  src/utils/utils.cc
   src/code-editor.cc
   src/tab-widget.cc
   src/notification.cc
@@ -48,6 +44,8 @@ set(SONGBOOK_CLIENT_SOURCES
   src/make-songbook-process.cc
   src/qtfindreplacedialog/findreplaceform.cpp
   src/qtfindreplacedialog/findreplacedialog.cpp
+  src/variant-factory.cc
+  src/variant-manager.cc
   )
 
 # header (moc)
@@ -64,11 +62,8 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/logs-highlighter.hh
   src/label.hh
   src/diagram.hh
+  src/diagram-editor.hh
   src/progress-bar.hh
-  src/unit-property-manager.hh
-  src/unit-factory.hh
-  src/file-property-manager.hh
-  src/file-factory.hh
   src/file-chooser.hh
   src/song-sort-filter-proxy-model.hh
   src/filter-lineedit.hh
@@ -82,6 +77,8 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/make-songbook-process.hh
   src/qtfindreplacedialog/findreplaceform.h
   src/qtfindreplacedialog/findreplacedialog.h
+  src/variant-factory.hh
+  src/variant-manager.hh
   )
 
 # uis
@@ -166,10 +163,12 @@ target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 # {{{ Internationalization
 set (TRANSLATIONS
   lang/songbook_en.ts
+  lang/songbook_it.ts
   lang/songbook_fr.ts)
 
 set (COMPILED_TRANSLATIONS
   lang/songbook_fr.qm
+  lang/songbook_it.qm
   lang/songbook_en.qm)
 
 add_custom_target(

@@ -22,13 +22,17 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include <QtGlobal>
-#include <QtGui>
-
-#include <QNetworkProxy>
+#include <QBoxLayout>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QMessageBox>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
+#include <QNetworkProxy>
 #include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QSettings>
+#include <QStatusBar>
 
 #include "file-chooser.hh"
 #include "main-window.hh"
@@ -163,10 +167,9 @@ void CLibraryDownload::downloadFinished()
   if (QDir().exists(filename))
     {
       QMessageBox *warning
-	= new QMessageBox(QMessageBox::Warning,
-			  tr("Existing file"),
-			  QString(tr("The following archive file already exists:\n %1 \n"
-				     "Do you want to proceed anyway?")).arg(filename),
+	= new QMessageBox(QMessageBox::Warning, tr("Existing file"),
+			  tr("The following archive file already exists:\n %1 \n"
+			     "Do you want to proceed anyway?").arg(filename),
 			  QMessageBox::Yes | QMessageBox::No);
       if (warning->exec() == QMessageBox::No)
 	{
@@ -291,7 +294,7 @@ QString CLibraryDownload::findFileName()
 
       // fallback
       if (filename.isEmpty())
-	filename = QString("songbook.tar.gz");
+	filename = "songbook.tar.gz";
     }
   return filename;
 }

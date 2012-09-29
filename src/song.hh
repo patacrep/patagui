@@ -39,6 +39,8 @@ struct Song
   QString title;
   QString artist;
   QString album;
+  QString originalSong;
+  QString url;
   QString coverName;
   QString coverPath;
   QString path;
@@ -64,6 +66,8 @@ struct Song
   static QRegExp reSong;
   static QRegExp reArtist;
   static QRegExp reAlbum;
+  static QRegExp reOriginalSong;
+  static QRegExp reUrl;
   static QRegExp reCoverName;
   static QRegExp reLilypond;
   static QRegExp reLanguage;

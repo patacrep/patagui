@@ -31,7 +31,6 @@ class QToolBar;
 class FindReplaceDialog;
 class CLibrary;
 class CSongCodeEditor;
-class CSongHighlighter;
 class CSongHeaderEditor;
 
 /**
@@ -81,13 +80,15 @@ public:
   //! Setter on the new cover property
   void setNewCover(bool newCover);
 
-  bool isSpellCheckingEnabled() const;
-  void setSpellCheckingEnabled(const bool);
+  bool isSpellCheckAvailable() const;
+  void setSpellCheckAvailable(const bool);
 
 public slots:
   void setModified(bool modified);
   void setNewSong(bool newSong);
+#ifdef ENABLE_SPELLCHECK
   void setDictionary(const QLocale & locale);
+#endif //ENABLE_SPELLCHECK
 
 signals:
   void labelChanged(const QString &label);

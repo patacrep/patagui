@@ -17,8 +17,9 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-#include <QtGui>
 #include "logs-highlighter.hh"
+
+#include <QDebug>
 
 CLogsHighlighter::CLogsHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)

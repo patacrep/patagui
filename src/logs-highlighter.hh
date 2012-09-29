@@ -25,7 +25,6 @@
 #include <QTextCharFormat>
 
 class QTextDocument;
-class Hunspell;
 
 /**
  * \file logs-highlighter.hh
