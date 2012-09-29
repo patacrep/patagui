@@ -51,9 +51,6 @@ a_find_program(HOSTNAME_EXECUTABLE hostname FALSE)
 a_find_program(ASCIIDOC_EXECUTABLE asciidoc FALSE)
 a_find_program(XMLTO_EXECUTABLE xmlto FALSE)
 a_find_program(GZIP_EXECUTABLE gzip FALSE)
-
-# pkg-config
-include(FindPkgConfig)
 # }}}
 
 if(ENABLE_LIBRARY_DOWNLOAD)
