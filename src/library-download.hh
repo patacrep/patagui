@@ -54,6 +54,14 @@ public:
   /// Destructor.
   ~CLibraryDownload();
 
+  /// Restore the last parameters
+  /// \sa writeSettings
+  void readSettings();
+
+  /// Save the current parameters
+  /// \sa readSettings
+  void writeSettings();
+
   /// Save some data as a new file.
   /// @param filename : filename of the new file on disk
   /// @param data : the data to be saved

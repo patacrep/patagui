@@ -41,14 +41,15 @@
 
 #include <QDebug>
 
-CLibraryDownload::CLibraryDownload(CMainWindow *p)
-  : QDialog(p)
+CLibraryDownload::CLibraryDownload(CMainWindow *parent)
+  : QDialog(parent)
   , m_manager()
   , m_reply(0)
   , m_url()
   , m_path()
 {
   setWindowTitle(tr("Download"));
+  setAttribute(Qt::WA_DeleteOnClose);
 
   m_manager = new QNetworkAccessManager(this);
 
@@ -64,15 +65,15 @@ CLibraryDownload::CLibraryDownload(CMainWindow *p)
     QNetworkProxy proxy;
     if (hostname.isEmpty())
       {
-	proxy.setType(QNetworkProxy::NoProxy);
+        proxy.setType(QNetworkProxy::NoProxy);
       }
     else
       {
-	proxy.setType(QNetworkProxy::HttpProxy);
-	proxy.setHostName(hostname);
-	proxy.setPort(port.toInt());
-	proxy.setUser(user);
-	proxy.setPassword(password);
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(hostname);
+        proxy.setPort(port.toInt());
+        proxy.setUser(user);
+        proxy.setPassword(password);
       }
     QNetworkProxy::setApplicationProxy(proxy);
   }
@@ -102,12 +103,31 @@ CLibraryDownload::CLibraryDownload(CMainWindow *p)
   vlayout->addWidget(buttonBox);
   setLayout(vlayout);
 
-  connect(parent()->progressBar(), SIGNAL(canceled()),
-	  this, SLOT(cancelDownload()));
+  connect(parent->progressBar(), SIGNAL(canceled()),
+          this, SLOT(cancelDownload()));
+
+  readSettings();
 }
 
 CLibraryDownload::~CLibraryDownload()
 {
+  writeSettings();
+}
+
+void CLibraryDownload::readSettings()
+{
+  QSettings settings;
+  settings.beginGroup("download");
+  m_path->setPath(settings.value("path", QDir::homePath()).toString());
+  settings.endGroup();
+}
+
+void CLibraryDownload::writeSettings()
+{
+  QSettings settings;
+  settings.beginGroup("download");
+  settings.setValue("path", m_path->path());
+  settings.endGroup();
 }
 
 bool CLibraryDownload::saveToDisk(const QString &filename, QIODevice *data)
