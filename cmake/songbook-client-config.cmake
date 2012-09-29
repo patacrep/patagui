@@ -10,7 +10,6 @@ set(CODENAME "")
 
 option(GENERATE_MANPAGES "generate manpages" ON)
 option(COMPRESS_MANPAGES "compress manpages" ON)
-option(ENABLE_SVG_SUPPORT "allow to use SVG icons fallback" ON)
 option(ENABLE_LIBRARY_DOWNLOAD "allow the application to download songbooks" ON)
 option(ENABLE_SPELLCHECK "allow the application to apply spellchecking within song-editor" ON)
 
