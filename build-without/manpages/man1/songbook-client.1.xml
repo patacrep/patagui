@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<refentry lang="en">
+<refentryinfo>
+    <title>songbook-client(1)</title>
+</refentryinfo>
+<refmeta>
+<refentrytitle>songbook-client</refentrytitle>
+<manvolnum>1</manvolnum>
+<refmiscinfo class="source">&#160;</refmiscinfo>
+<refmiscinfo class="manual">&#160;</refmiscinfo>
+</refmeta>
+<refnamediv>
+    <refname>songbook-client</refname>
+    <refpurpose>graphical library manager for Patacrep's songbook</refpurpose>
+</refnamediv>
+<refsynopsisdiv id="_synopsis">
+<simpara><emphasis role="strong">songbook-client</emphasis> [<emphasis role="strong">--version</emphasis>] [<emphasis role="strong">-h</emphasis> | <emphasis role="strong">--help</emphasis>]</simpara>
+</refsynopsisdiv>
+<refsect1 id="_description">
+<title>DESCRIPTION</title>
+<simpara><emphasis role="strong">songbook-client</emphasis> is a graphical frontend to the Patacrep! songbook
+application that allows to handle the song selection and appearance
+customization of a songbook. The embedded editor allows to add, remove
+and modify the songs in the available library. Finally a build option
+allows to create nice high quality pdf documents, directly from the
+GUI interface.</simpara>
+</refsect1>
+<refsect1 id="_options">
+<title>OPTIONS</title>
+<variablelist>
+<varlistentry>
+<term>
+<emphasis role="strong">--version</emphasis>
+</term>
+<listitem>
+<simpara>
+    Display version information.
+</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<emphasis role="strong">-h</emphasis>, <emphasis role="strong">--help</emphasis>
+</term>
+<listitem>
+<simpara>
+    Print a help message and exit.
+</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</refsect1>
+<refsect1 id="_bugs">
+<title>BUGS</title>
+<simpara>Not that we know of, but feel free to make us</simpara>
+</refsect1>
+<refsect1 id="_authors">
+<title>AUTHORS</title>
+<simpara>Romain Goffe &lt;<ulink url="mailto:romain.goffe@gmail.com">romain.goffe@gmail.com</ulink>&gt;,
+Alexandre Dupas &lt;<ulink url="mailto:alexandre.dupas@gmail.com">alexandre.dupas@gmail.com</ulink>&gt;, and others.</simpara>
+</refsect1>
+<refsect1 id="_www">
+<title>WWW</title>
+<simpara><ulink url="http://www.patacrep.com">http://www.patacrep.com</ulink></simpara>
+</refsect1>
+</refentry>

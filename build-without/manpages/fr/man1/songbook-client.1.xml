@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<?asciidoc-toc?>
+<?asciidoc-numbered?>
+<refentry lang="en">
+<refentryinfo>
+    <title>songbook-client(1)</title>
+</refentryinfo>
+<refmeta>
+<refentrytitle>songbook-client</refentrytitle>
+<manvolnum>1</manvolnum>
+<refmiscinfo class="source">&#160;</refmiscinfo>
+<refmiscinfo class="manual">&#160;</refmiscinfo>
+</refmeta>
+<refnamediv>
+    <refname>songbook-client</refname>
+    <refpurpose>gestionnaire graphique pour carnets de chants</refpurpose>
+</refnamediv>
+<refsynopsisdiv id="_synopsis">
+<simpara><emphasis role="strong">songbook-client</emphasis> [<emphasis role="strong">--version</emphasis>] [<emphasis role="strong">-h</emphasis> | <emphasis role="strong">--help</emphasis>]</simpara>
+</refsynopsisdiv>
+<refsect1 id="_description">
+<title>DESCRIPTION</title>
+<simpara><emphasis role="strong">songbook-client</emphasis> est une interface graphique pour l&#8217;application du
+carnet de chant Patacrep! qui permet de manipuler la sélection de
+chansons et de personnaliser l&#8217;apparence d&#8217;un carnet de
+chant. L'éditeur intégré permet d&#8217;ajouter, de supprimer et de modifier
+des chansons dans la bibliothèque disponible. Enfin une option de création
+permet de produire des recueils de chansons de qualité directement depuis
+l&#8217;interface.</simpara>
+</refsect1>
+<refsect1 id="_options">
+<title>OPTIONS</title>
+<variablelist>
+<varlistentry>
+<term>
+<emphasis role="strong">--version</emphasis>
+</term>
+<listitem>
+<simpara>
+    Affiche les informations de version.
+</simpara>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>
+<emphasis role="strong">-h</emphasis>, <emphasis role="strong">--help</emphasis>
+</term>
+<listitem>
+<simpara>
+    Affiche un message d&#8217;aide et s&#8217;arrête.
+</simpara>
+</listitem>
+</varlistentry>
+</variablelist>
+</refsect1>
+<refsect1 id="_bugs">
+<title>BUGS</title>
+<simpara>Reportez les bugs à l&#8217;adresse suivante :
+<ulink url="http://github.com/crep4ever/songbook-client/issues">http://github.com/crep4ever/songbook-client/issues</ulink></simpara>
+</refsect1>
+<refsect1 id="_authors">
+<title>AUTHORS</title>
+<simpara>Romain Goffe &lt;<ulink url="mailto:romain.goffe@gmail.com">romain.goffe@gmail.com</ulink>&gt;,
+Alexandre Dupas &lt;<ulink url="mailto:alexandre.dupas@gmail.com">alexandre.dupas@gmail.com</ulink>&gt;, et d&#8217;autres.</simpara>
+</refsect1>
+<refsect1 id="_www">
+<title>WWW</title>
+<simpara><ulink url="http://www.patacrep.com">http://www.patacrep.com</ulink></simpara>
+</refsect1>
+</refentry>
