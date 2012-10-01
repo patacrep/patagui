@@ -31,11 +31,14 @@ CFileChooser::CFileChooser(QWidget *parent)
   , m_lineEdit(0)
   , m_button(0)
   , m_caption(QCoreApplication::applicationName())
+  , m_directory(QDir::homePath())
+  , m_path("")
+  , m_filter("")
   , m_options(0)
 {
   m_lineEdit = new QLineEdit();
   connect(m_lineEdit, SIGNAL(textChanged(const QString &)),
-	  this, SLOT(setPath(const QString &)));
+          this, SLOT(setPath(const QString &)));
 
   m_button = new QPushButton(tr("Browse"));
   connect(m_button, SIGNAL(clicked()), SLOT(browse()));
@@ -46,42 +49,19 @@ CFileChooser::CFileChooser(QWidget *parent)
   // disable layout's margin to have a proper "one widget" appeareance
   layout->setContentsMargins(0, 0, 0, 0);
   setLayout(layout);
-
-  readSettings();
 }
 
 CFileChooser::~CFileChooser()
 {
-  writeSettings();
-}
-
-void CFileChooser::readSettings()
-{
-  QSettings settings;
-  settings.beginGroup("dialog");
-  setDirectory(settings.value("directory", QDir::homePath()).toString());
-  setPath(settings.value("path", directory()).toString());
-  settings.endGroup();
-}
-
-void CFileChooser::writeSettings()
-{
-  QSettings settings;
-  settings.beginGroup("dialog");
-  settings.setValue("directory", directory());
-  settings.setValue("path", path());
-  settings.endGroup();
 }
 
 void CFileChooser::browse()
 {
   QString selection;
-  if ((options() & QFileDialog::ShowDirsOnly) == QFileDialog::ShowDirsOnly)
-    selection = QFileDialog::getExistingDirectory
-      (this, caption(), directory());
+  if (options() & QFileDialog::ShowDirsOnly)
+    selection = QFileDialog::getExistingDirectory(this, caption(), directory());
   else
-    selection = QFileDialog::getOpenFileName
-      (this, caption(), directory(), filter(), 0, options());
+    selection = QFileDialog::getOpenFileName(this, caption(), directory(), filter(), 0, options());
 
   if (!selection.isEmpty())
     setPath(selection);
@@ -135,19 +115,22 @@ void CFileChooser::setDirectory(const QDir &directory)
 
 QString CFileChooser::path() const
 {
-  return m_lineEdit->text();
+  return m_path;
 }
 
 void CFileChooser::setPath(const QString &path)
 {
-  if ( QString::compare(this->path(), path, Qt::CaseSensitive) )
-    m_lineEdit->setText(path);
+  if (QString::compare(m_path, path, Qt::CaseSensitive) == 0)
+    return;
 
-  QFileInfo fileInfo(path);
+  m_path = path;
+  m_lineEdit->setText(m_path);
+
+  QFileInfo fileInfo(m_path);
   if (fileInfo.isDir())
-    setDirectory(path);
+    setDirectory(m_path);
   else
     setDirectory(fileInfo.dir());
 
-  emit(pathChanged(path));
+  emit(pathChanged(m_path));
 }
