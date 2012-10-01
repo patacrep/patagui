@@ -384,7 +384,7 @@ void CMainWindow::createActions()
 #ifdef ENABLE_LIBRARY_DOWNLOAD
   connect(m_libraryDownloadAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
 #else // ENABLE_LIBRARY_DOWNLOAD
-  m_libraryDownloadAct->setEnabled(false);
+  m_libraryDownloadAct->setVisible(false);
 #endif // ENABLE_LIBRARY_DOWNLOAD
 
   m_buildAct = new QAction(tr("&Build PDF"), this);
