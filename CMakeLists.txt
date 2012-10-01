@@ -188,7 +188,7 @@ add_custom_target(
 if(GENERATE_MANPAGES)
 
   set(SONGBOOK_CLIENT_MAN_SRCS
-    ${SOURCE_DIR}/debian/manpages/songbook-client.1.txt
+    ${SOURCE_DIR}/manpages/songbook-client.1.txt
     )
 
   set(SONGBOOK_CLIENT_MAN_LANGS default fr)
