@@ -85,7 +85,7 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             QPixmap pixmap;
             if (!QPixmapCache::find("website", &pixmap))
               {
-		pixmap = QIcon::fromTheme("applications-internet", QIcon(":/icons/tango/22x22/apps/applications-internet.png")).pixmap(22,22);
+		pixmap = QIcon(":/icons/songbook/22x22/applications-internet.png").pixmap(22,22);
 		QPixmapCache::insert("website", pixmap);
 	      }
 	    QApplication::style()->drawItemPixmap(painter,
