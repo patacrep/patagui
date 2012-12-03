@@ -170,7 +170,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   QPushButton *toMiniViewButton = new QPushButton;
   toMiniViewButton->setFlat(true);
   toMiniViewButton->setToolTip(tr("Mini view mode"));
-  toMiniViewButton->setIcon(QIcon(":/icons/songbook/48x48/fold.png"));
+  toMiniViewButton->setIcon(QIcon::fromTheme("go-up", QIcon(":/icons/songbook/48x48/fold.png")));
   connect(toMiniViewButton, SIGNAL(clicked()), this, SLOT(toggleView()));
   toMiniViewLayout->addWidget(toMiniViewButton);
   toMiniViewLayout->addStretch();
@@ -188,7 +188,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   QPushButton *toFullViewButton = new QPushButton;
   toFullViewButton->setFlat(true);
   toFullViewButton->setToolTip(tr("Full view mode"));
-  toFullViewButton->setIcon(QIcon(":/icons/songbook/48x48/unfold.png"));
+  toFullViewButton->setIcon(QIcon::fromTheme("go-down", QIcon(":/icons/songbook/48x48/unfold.png")));
   connect(toFullViewButton, SIGNAL(clicked()), this, SLOT(toggleView()));
   toFullViewLayout->addWidget(toFullViewButton);
   toFullViewLayout->addStretch();
