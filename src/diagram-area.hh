@@ -26,13 +26,14 @@
 #include <QList>
 #include <QPoint>
 #include <QVector>
-
+#include <QList>
 #include "chord.hh"
 
 class QPushButton;
 class QTableView;
 class QSortFilterProxyModel;
 class CChordListModel;
+class QDeclarativeView;
 
 /*!
   \file diagram-area.hh
@@ -220,9 +221,12 @@ signals:
 private:
   bool m_isReadOnly;
   CChordListModel *m_diagramModel;
+  QList<QObject*> m_diagramModel2;
   QSortFilterProxyModel *m_proxyModel;
   QTableView *m_diagramView;
+  QDeclarativeView *m_diagramView2;
   QPushButton *m_addDiagramButton;
+  uint m_chordId;
 };
 
 

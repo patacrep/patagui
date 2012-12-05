@@ -31,12 +31,20 @@
 #include <QMenu>
 #include <QAction>
 
+#include <QUrl>
+#include <QDeclarativeView>
+#include <QDeclarativeEngine>
+#include <QDeclarativeComponent>
+#include <QDeclarativeContext>
+#include <QDeclarativeItem>
+
 #include <QDebug>
 
 CDiagramArea::CDiagramArea(QWidget *parent)
   : QWidget(parent)
   , m_isReadOnly(false)
   , m_addDiagramButton(new QPushButton)
+  , m_chordId(0)
 {
   QBoxLayout *addButtonLayout = new QVBoxLayout;
   m_addDiagramButton->setFlat(true);
@@ -54,6 +62,11 @@ CDiagramArea::CDiagramArea(QWidget *parent)
   m_proxyModel->setSourceModel(m_diagramModel);
   m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
   m_proxyModel->setFilterKeyColumn(-1);
+
+
+  // qml gridview
+  m_diagramView2 = new QDeclarativeView;
+  m_diagramView2->setResizeMode(QDeclarativeView::SizeRootObjectToView);
 
   // diagram view
   m_diagramView = new QTableView;
@@ -73,7 +86,8 @@ CDiagramArea::CDiagramArea(QWidget *parent)
   connect(this, SIGNAL(readOnlyModeChanged()), this, SLOT(update()));
 
   QBoxLayout *mainLayout = new QHBoxLayout;
-  mainLayout->addWidget(m_diagramView, 1);
+  //mainLayout->addWidget(m_diagramView, 1);
+  mainLayout->addWidget(m_diagramView2, 1);
   mainLayout->addLayout(addButtonLayout);
   mainLayout->addStretch();
   setLayout(mainLayout);
@@ -158,6 +172,11 @@ void CDiagramArea::editDiagram(QModelIndex index)
 void CDiagramArea::addDiagram(const QString & chord)
 {
   m_diagramModel->addItem(chord);
+
+  m_diagramModel2.append(new CChord(chord, m_chordId++));
+  QDeclarativeContext *ctxt = m_diagramView2->rootContext();
+  ctxt->setContextProperty("chordModel", QVariant::fromValue(m_diagramModel2));
+  m_diagramView2->setSource(QUrl::fromLocalFile("qml/Grid.qml"));
 }
 
 void CDiagramArea::removeDiagram(QModelIndex index)
