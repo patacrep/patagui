@@ -21,13 +21,7 @@
 
 #include <QObject>
 #include <QString>
-#include <QPixmap>
-#include <QSize>
-#include <QBrush>
 #include <QRegExp>
-
-
-class QPainter;
 
 /*!
   \file chord.hh
@@ -104,12 +98,6 @@ class CChord : public QObject
     \sa toString
   */
   void fromString(const QString & gtab);
-
-  /*!
-    Returns the graphical representation (diagram) of the chord.
-    \sa toString
-  */
-  QPixmap* toPixmap();
 
   /*!
     Returns the chord name.
@@ -194,21 +182,6 @@ class CChord : public QObject
   */
   void setImportant(bool value);
 
-  /*!
-    Returns the chord color.
-    The color is based on the instrument (guitar: blue; ukulele: purple)
-    and whether or not it is important (yes: dark; no: light).
-    \sa setType, setImportant
-  */
-  QColor color();
-
-  /*!
-    Draws a rounded path around the whole diagram if \a value is true.
-    Default is false. The rounded path takes the color of the chord.
-    \sa color
-  */
-  void setDrawBorder(bool value);
-
 signals:
   void nameChanged();
   void fretChanged();
@@ -216,16 +189,12 @@ signals:
   void idChanged();
 
 private:
-  void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
-
   Instrument m_instrument;
   QString m_name;
   QString m_fret;
   QString m_strings;
   bool m_important;
   bool m_isValid;
-  bool m_drawBorder;
-  QPixmap *m_pixmap;
   uint m_id;
 
   static QRegExp reChordWithFret;

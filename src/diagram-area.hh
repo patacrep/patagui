@@ -24,15 +24,8 @@
 #include <QModelIndex>
 #include <QString>
 #include <QList>
-#include <QPoint>
-#include <QVector>
-#include <QList>
-#include "chord.hh"
 
 class QPushButton;
-class QTableView;
-class QSortFilterProxyModel;
-class CChordListModel;
 class QDeclarativeView;
 
 /*!
@@ -115,23 +108,7 @@ class CDiagramArea : public QWidget
   */
   void setReadOnly(bool value);
 
-  /*!
-    Forces the list of chords to be displayed on \a value columns.
-    \sa setRowCount
-  */
-  void setColumnCount(int value);
-
-  /*!
-    Forces the list of chords to be displayed on \a value rows.
-    \sa setColumnCount
-  */
-  void setRowCount(int value);
-
-  /*!
-    Returns all the chords. Note that it returns chords from the model, not the view;
-    thus, filtered chords are also included.
-  */
-  QList< CChord* > chords();
+  QList<QObject*> chords() const;
 
 public slots:
   /*!
@@ -160,36 +137,9 @@ public slots:
   */
   void removeDiagram(QModelIndex index = QModelIndex());
 
-  /*!
-    Filters rows that contain chords whose instrument matches \a type.
-    \sa setNameFilter, setStringsFilter
-  */
-  void setTypeFilter(const CChord::Instrument & type);
-
-  /*!
-    Filters rows that contain chords whose name matches \a name.
-    \sa setTypeFilter, setStringsFilter
-  */
-  void setNameFilter(const QString & name);
-
-  /*!
-    Filters rows that contain chords whose strings matches \a strings.
-    \sa setTypeFilter, setNameFilter
-  */
-  void setStringsFilter(const QString & strings);
-
-  /*!
-    Removes all filters.
-    \sa setTypeFilter, setNameFilter, setStringsFilter
-  */
-  void clearFilters();
-
 private slots:
   void update();
-  void resizeRows();
   void onDiagramChanged();
-  void contextMenu(const QPoint & pos);
-  void onViewClicked(const QModelIndex &);
 
 signals:
   /*!
@@ -201,30 +151,15 @@ signals:
   void contentsChanged();
 
   /*!
-    This signal is emitted when the contents of the model changes
-    such as when removing, adding or filtering diagrams.
-    \sa removeDiagram, newDiagram
-  */
-  void layoutChanged();
-
-  /*!
     This signal is emitted when the read-only property changes.
     \sa isReadOnly, setReadOnly
   */
   void readOnlyModeChanged();
 
-  /*!
-    This signal is emitted when a chord from the list is clicked.
-  */
-  void diagramClicked(CChord * diagram);
-
 private:
   bool m_isReadOnly;
-  CChordListModel *m_diagramModel;
-  QList<QObject*> m_diagramModel2;
-  QSortFilterProxyModel *m_proxyModel;
-  QTableView *m_diagramView;
-  QDeclarativeView *m_diagramView2;
+  QList<QObject*> m_diagramModel;
+  QDeclarativeView *m_diagramView;
   QPushButton *m_addDiagramButton;
   uint m_chordId;
 };

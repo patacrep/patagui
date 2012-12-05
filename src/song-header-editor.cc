@@ -156,7 +156,6 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   songInformationLayout->addStretch();
 
   m_diagramArea = new CDiagramArea(this);
-  m_diagramArea->setRowCount(1);
   m_diagramArea->setReadOnly(false);
   connect(m_diagramArea, SIGNAL(contentsChanged()),
           SLOT(onDiagramsChanged()));
@@ -411,8 +410,9 @@ void CSongHeaderEditor::onDiagramsChanged()
 {
   song().gtabs = QStringList();
   song().utabs = QStringList();
-  foreach (CChord *chord, m_diagramArea->chords())
+  foreach (QObject *item, m_diagramArea->chords())
     {
+      CChord *chord = (CChord*) item;
       if (chord->instrument() == CChord::Guitar)
 	song().gtabs << chord->toString();
       else if (chord->instrument() == CChord::Ukulele)

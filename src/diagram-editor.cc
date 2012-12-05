@@ -116,14 +116,6 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
       // list of standard diagrams
       m_diagramArea = new CDiagramArea(this);
       m_diagramArea->setReadOnly(true);
-      m_diagramArea->setColumnCount(8);
-
-      connect(m_nameLineEdit, SIGNAL(textChanged(const QString &)),
-	      m_diagramArea, SLOT(setNameFilter(const QString &)));
-      connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
-	      m_diagramArea, SLOT(setStringsFilter(const QString &)));
-      connect(m_diagramArea, SIGNAL(diagramClicked(CChord *)),
-	      this, SLOT(setChord(CChord *)));
 
       QTextStream stream (&file);
       stream.setCodec("UTF-8");
@@ -184,9 +176,6 @@ void CDiagramEditor::reset()
   m_stringsLineEdit->clear();
   m_fretSpinBox->setValue(0);
   m_importantCheckBox->setChecked(false);
-
-  if (m_diagramArea)
-    m_diagramArea->clearFilters();
 }
 
 QString CDiagramEditor::chordName() const
@@ -229,9 +218,6 @@ void CDiagramEditor::setChord(CChord *chord)
   m_fretSpinBox->setValue(chord->fret().toInt());
   m_stringsLineEdit->setText(chord->strings());
   m_importantCheckBox->setChecked(chord->isImportant());
-
-  if (m_diagramArea)
-    m_diagramArea->clearFilters();
 }
 
 CChord * CDiagramEditor::chord() const
@@ -272,16 +258,6 @@ bool CDiagramEditor::checkChord()
 void CDiagramEditor::onInstrumentChanged(bool checked)
 {
   Q_UNUSED(checked);
-
-  if (m_diagramArea)
-    {
-      m_diagramArea->clearFilters();
-
-      if (m_guitar->isChecked())
-	m_diagramArea->setTypeFilter(CChord::Guitar);
-      else if (m_ukulele->isChecked())
-	m_diagramArea->setTypeFilter(CChord::Ukulele);
-    }
 
   // set strings max length according to instrument
   if (chordInstrument() == CChord::Guitar)

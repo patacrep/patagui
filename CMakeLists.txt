@@ -31,7 +31,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/chord.cc
   src/diagram-area.cc
   src/diagram-editor.cc
-  src/chord-table-model.cc
   src/progress-bar.cc
   src/file-chooser.cc
   src/song-sort-filter-proxy-model.cc
@@ -66,7 +65,6 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/chord.hh
   src/diagram-area.hh
   src/diagram-editor.hh
-  src/chord-table-model.hh
   src/progress-bar.hh
   src/file-chooser.hh
   src/song-sort-filter-proxy-model.hh
