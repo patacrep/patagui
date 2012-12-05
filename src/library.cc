@@ -213,7 +213,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
         case 2:
           return tr("Lilypond music sheet");
         case 3:
-          return tr("Artist website");
+          return m_songs[index.row()].url;
         case 5:
           return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
         default:
