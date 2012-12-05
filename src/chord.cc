@@ -28,11 +28,12 @@
 QRegExp CChord::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
 QRegExp CChord::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
 
-CChord::CChord(const QString & chord, QObject *parent)
+CChord::CChord(const QString & chord, uint id,  QObject *parent)
   : QObject(parent)
   , m_isValid(true)
   , m_drawBorder(false)
   , m_pixmap(0)
+  , m_id(id)
 {
   fromString(chord);
 }
@@ -101,6 +102,7 @@ void CChord::fromString(const QString & str)
   if (name().isEmpty())
     m_isValid = false;
 }
+
 
 bool CChord::isValid() const
 {
@@ -249,7 +251,25 @@ QString CChord::name() const
 
 void CChord::setName(const QString & str)
 {
-  m_name = str;
+  if (m_name != str)
+    {
+      m_name = str;
+      emit nameChanged();
+    }
+}
+
+uint CChord::id() const
+{
+  return m_id;
+}
+
+void CChord::setId(uint value)
+{
+  if (m_id != value)
+    {
+      m_id = value;
+      emit idChanged();
+    }
 }
 
 QString CChord::fret() const
@@ -259,7 +279,11 @@ QString CChord::fret() const
 
 void CChord::setFret(const QString & str)
 {
-  m_fret = str;
+  if (m_fret != str)
+    {
+      m_fret = str;
+      emit fretChanged();
+    }
 }
 
 QString CChord::strings() const
@@ -269,7 +293,11 @@ QString CChord::strings() const
 
 void CChord::setStrings(const QString & str)
 {
-  m_strings = str;
+  if (m_strings != str)
+    {
+      m_strings = str;
+      emit stringsChanged();
+    }
 }
 
 CChord::Instrument CChord::instrument() const

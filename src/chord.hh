@@ -56,13 +56,17 @@ class QPainter;
 class CChord : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
+  Q_PROPERTY(QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
+  Q_PROPERTY(uint id READ id WRITE setId NOTIFY idChanged)
 
-  public:
+    public:
   /*!
     \enum StringCount
     This enum type indicates the number of strings of an instrumuent.
   */
-  enum StringCount {
+    enum StringCount {
     GuitarStringCount=6, /*!< guitar: 6 */
     UkuleleStringCount=4 /*!< ukulele: 4 */
   };
@@ -77,7 +81,7 @@ class CChord : public QObject
   };
 
   /// Constructor.
-  CChord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
+  CChord(const QString & chord = "\\gtab{}{0:}", uint id=0, QObject *parent = 0);
 
   /// Destructor.
   ~CChord();
@@ -120,6 +124,19 @@ class CChord : public QObject
     \sa chord
   */
   void setName(const QString & name);
+
+  /*!
+    Returns the chord id.
+    \sa setId
+  */
+  uint id() const;
+
+  /*!
+    Sets the chord id \a value.
+    \sa setId
+  */
+  void setId(uint value);
+
 
   /*!
     Returns the fret number.
@@ -192,6 +209,12 @@ class CChord : public QObject
   */
   void setDrawBorder(bool value);
 
+signals:
+  void nameChanged();
+  void fretChanged();
+  void stringsChanged();
+  void idChanged();
+
 private:
   void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
 
@@ -203,8 +226,10 @@ private:
   bool m_isValid;
   bool m_drawBorder;
   QPixmap *m_pixmap;
+  uint m_id;
 
   static QRegExp reChordWithFret;
   static QRegExp reChordWithoutFret;
 };
+
 #endif // __CHORD_HH__
