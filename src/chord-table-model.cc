@@ -24,8 +24,8 @@
 
 #include <QDebug>
 
-CChordTableModel::CChordTableModel(QObject *parent)
-  : QAbstractTableModel(parent)
+CChordListModel::CChordListModel(QObject *parent)
+  : QAbstractListModel(parent)
   , m_columnCount(0)
   , m_rowCount(0)
 {
@@ -33,19 +33,19 @@ CChordTableModel::CChordTableModel(QObject *parent)
   m_fixedRowCount = false;
 }
 
-CChordTableModel::~CChordTableModel()
+CChordListModel::~CChordListModel()
 {
   foreach (CChord* chord, m_data)
     delete chord;
   m_data.clear();
 }
 
-int CChordTableModel::columnCount(const QModelIndex &) const
+int CChordListModel::columnCount(const QModelIndex &) const
 {
   return m_columnCount;
 }
 
-void CChordTableModel::setColumnCount(int value)
+void CChordListModel::setColumnCount(int value)
 {
   emit(layoutAboutToBeChanged());
   m_fixedColumnCount = true;
@@ -53,12 +53,12 @@ void CChordTableModel::setColumnCount(int value)
   emit(layoutChanged());
 }
 
-int CChordTableModel::rowCount(const QModelIndex &) const
+int CChordListModel::rowCount(const QModelIndex &) const
 {
   return m_rowCount;
 }
 
-void CChordTableModel::setRowCount(int value)
+void CChordListModel::setRowCount(int value)
 {
   emit(layoutAboutToBeChanged());
   m_fixedRowCount = true;
@@ -66,7 +66,7 @@ void CChordTableModel::setRowCount(int value)
   emit(layoutChanged());
 }
 
-QVariant CChordTableModel::data(const QModelIndex &index, int role) const
+QVariant CChordListModel::data(const QModelIndex &index, int role) const
 {
   if (!index.isValid() || m_data.size()==0)
     return QVariant();
@@ -90,7 +90,7 @@ QVariant CChordTableModel::data(const QModelIndex &index, int role) const
     }
 }
 
-bool CChordTableModel::setData(const QModelIndex & index, const QVariant & value, int role)
+bool CChordListModel::setData(const QModelIndex & index, const QVariant & value, int role)
 {
   Q_UNUSED(role);
 
@@ -110,7 +110,7 @@ bool CChordTableModel::setData(const QModelIndex & index, const QVariant & value
   return false;
 }
 
-void CChordTableModel::insertItem(const QModelIndex & index, const QString & value)
+void CChordListModel::insertItem(const QModelIndex & index, const QString & value)
 {
   setColumnCount(columnCount() + 1);
   m_fixedColumnCount = false;
@@ -122,7 +122,7 @@ void CChordTableModel::insertItem(const QModelIndex & index, const QString & val
     delete chord;
 }
 
-void CChordTableModel::removeItem(const QModelIndex & index)
+void CChordListModel::removeItem(const QModelIndex & index)
 {
   int pos = positionFromIndex(index);
   delete m_data[pos];
@@ -131,7 +131,7 @@ void CChordTableModel::removeItem(const QModelIndex & index)
   int row = indexFromPosition(m_data.size()).row();
   int col = indexFromPosition(m_data.size()).column();
 
-  // dynamically reduce the QTableModel
+  // dynamically reduce the QListModel
   if (rowCount() > row +1)
     {
       setRowCount(row + 1);
@@ -144,7 +144,7 @@ void CChordTableModel::removeItem(const QModelIndex & index)
     }
 }
 
-void CChordTableModel::addItem(const QString & value)
+void CChordListModel::addItem(const QString & value)
 {
   CChord * chord = new CChord(value);
   if (!chord->isValid())
@@ -158,7 +158,7 @@ void CChordTableModel::addItem(const QString & value)
   int row = indexFromPosition(m_data.size()).row();
   int col = indexFromPosition(m_data.size()).column();
 
-  // dynamically expand the QTableModel
+  // dynamically expand the QListModel
   if (rowCount() < row +1)
     {
       setRowCount(row + 1);
@@ -171,7 +171,7 @@ void CChordTableModel::addItem(const QString & value)
     }
 }
 
-QModelIndex CChordTableModel::indexFromPosition(int position)
+QModelIndex CChordListModel::indexFromPosition(int position)
 {
   int row = 1, col = 1;
   if (m_fixedColumnCount)
@@ -184,32 +184,32 @@ QModelIndex CChordTableModel::indexFromPosition(int position)
       row = (position-1)%rowCount();
       col = (position-1)/rowCount();
     }
-  return QAbstractTableModel::createIndex(row, col);
+  return QAbstractListModel::createIndex(row, col);
 }
 
-int CChordTableModel::positionFromIndex(const QModelIndex & index) const
+int CChordListModel::positionFromIndex(const QModelIndex & index) const
 {
   return columnCount() * index.row() + index.column();
 }
 
-CChord * CChordTableModel::getChord(const QModelIndex & index) const
+CChord * CChordListModel::getChord(const QModelIndex & index) const
 {
   return m_data[positionFromIndex(index)];
 }
 
-Qt::DropActions CChordTableModel::supportedDropActions() const
+Qt::DropActions CChordListModel::supportedDropActions() const
 {
   return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::DropActions CChordTableModel::supportedDragActions() const
+Qt::DropActions CChordListModel::supportedDragActions() const
 {
   return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::ItemFlags CChordTableModel::flags(const QModelIndex &index) const
+Qt::ItemFlags CChordListModel::flags(const QModelIndex &index) const
 {
-  Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);
+  Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
 
   if (index.isValid())
     return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
@@ -217,14 +217,14 @@ Qt::ItemFlags CChordTableModel::flags(const QModelIndex &index) const
     return Qt::ItemIsDropEnabled | defaultFlags;
 }
 
-QStringList CChordTableModel::mimeTypes() const
+QStringList CChordListModel::mimeTypes() const
 {
   QStringList types;
   types << "text/plain";
   return types;
 }
 
-QMimeData * CChordTableModel::mimeData(const QModelIndexList &indexes) const
+QMimeData * CChordListModel::mimeData(const QModelIndexList &indexes) const
 {
   QMimeData *mimeData = new QMimeData();
   foreach (const QModelIndex &index, indexes)
@@ -234,7 +234,7 @@ QMimeData * CChordTableModel::mimeData(const QModelIndexList &indexes) const
   return mimeData;
 }
 
-bool CChordTableModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
+bool CChordListModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
 				 int row, int column, const QModelIndex &parent)
 {
   if (action == Qt::IgnoreAction)

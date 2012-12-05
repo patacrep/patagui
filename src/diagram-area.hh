@@ -32,7 +32,7 @@
 class QPushButton;
 class QTableView;
 class QSortFilterProxyModel;
-class CChordTableModel;
+class CChordListModel;
 
 /*!
   \file diagram-area.hh
@@ -219,7 +219,7 @@ signals:
 
 private:
   bool m_isReadOnly;
-  CChordTableModel *m_diagramModel;
+  CChordListModel *m_diagramModel;
   QSortFilterProxyModel *m_proxyModel;
   QTableView *m_diagramView;
   QPushButton *m_addDiagramButton;
