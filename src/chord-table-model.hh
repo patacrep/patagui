@@ -19,7 +19,7 @@
 #ifndef __CHORD_TABLE_MODEL_HH__
 #define __CHORD_TABLE_MODEL_HH__
 
-#include <QAbstractTableModel>
+#include <QAbstractListModel>
 #include <QModelIndex>
 #include <QString>
 #include <QVector>
@@ -28,10 +28,10 @@ class CChord;
 
 /*!
   \file chord-table-model.hh
-  \class CChordTableModel
-  \brief CChordTableModel is a table model that contains CChord objects.
+  \class CChordListModel
+  \brief CChordListModel is a table model that contains CChord objects.
 
-  A CChordTableModel presents data on a grid where the number of rows or
+  A CChordListModel presents data on a grid where the number of rows or
   columns is specified with setRowCount() or setColumnCount(). Adding
   a new data element (CChord) to the model does not require
   indicating its position on the grid as this is automatically
@@ -41,7 +41,7 @@ class CChord;
   but a single row:
 
   \code
-  CChordTableModel *model = new CChordTableModel;
+  CChordListModel *model = new CChordListModel;
   model->setRowCount(1);
   model->addItem("\gtab{C}{X32010}");
   model->addItem("\gtab{Am}{X02210}");
@@ -54,7 +54,7 @@ class CChord;
   number of rows (thus, the D chord is displayed on the second row):
 
   \code
-  CChordTableModel *model = new CChordTableModel;
+  CChordListModel *model = new CChordListModel;
   model->setRowCount(3);
   model->addItem("\gtab{C}{X32010}");
   model->addItem("\gtab{Am}{X02210}");
@@ -62,7 +62,7 @@ class CChord;
   model->addItem("\gtab{D}{XX0232}");
   \endcode
 */
-class CChordTableModel : public QAbstractTableModel
+class CChordListModel : public QAbstractListModel
 {
   Q_OBJECT
 
@@ -81,10 +81,10 @@ class CChordTableModel : public QAbstractTableModel
   };
 
   /// Constructor.
-  CChordTableModel(QObject *parent=0);
+  CChordListModel(QObject *parent=0);
 
   /// Destructor.
-  ~CChordTableModel();
+  ~CChordListModel();
 
   /*!
     Returns the number of columns.
@@ -124,14 +124,14 @@ class CChordTableModel : public QAbstractTableModel
 		    int row, int column, const QModelIndex &parent);
 
   /*!
-    Reimplements QAbstractTableModel::data().
+    Reimplements QAbstractListModel::data().
     Returns the item (CChord object) at position \a index according to the role \a role.
     \sa setData
    */
   QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
   /*!
-    Reimplements QAbstractTableModel::setData().
+    Reimplements QAbstractListModel::setData().
     Sets the value \a value of the item (CChord object) at position \a index for the role \a role.
     \sa data
    */
