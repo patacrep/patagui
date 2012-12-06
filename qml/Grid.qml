@@ -87,7 +87,6 @@ Rectangle {
 		    }
 		    //draw played strings
 		    var circle = Qt.createComponent('Circle.qml');
-		    var cross = Qt.createComponent('Cross.qml');
 		    for (var i=0; i < chordStrings.length; i++) {
 			var stringValue = String(parseInt(chordStrings.charAt(i)), 10);
 			//console.log("reading string value " + stringValue + " from chord " + name);
@@ -104,7 +103,7 @@ Rectangle {
 			    object.y = -10;
 			} else {
 			    //non played string
-			    var object = cross.createObject(diagram);
+			    var object = Qt.createQmlObject('import QtQuick 1.0; Text {text: "X";}', diagram);
 			    object.x = ( (i-1)*cellwidth)+cellwidth/2.0 +3;
 			    object.y = -15;
 			}
