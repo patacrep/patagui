@@ -109,6 +109,8 @@ Rectangle {
 			    object.y = -15;
 			}
 		    }
+		    //draw chord fret
+		    var object = Qt.createQmlObject('import QtQuick 1.0; Text {x: -10; text: chordFret;}', diagram);
 		}
 	    }
         }
