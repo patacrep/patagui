@@ -36,7 +36,7 @@ Rectangle {
 	    MouseArea {
 		anchors.fill: parent
 		onClicked: {
-		    //console.log("diagram: " + name + " (" + id + ")" + " has been clicked");
+		    //console.log("diagram: " + chordName + " (" + chordId + ")" + " has been clicked");
 		    view.currentIndex = index;
 		}
             }
@@ -55,7 +55,7 @@ Rectangle {
             Text {
                 anchors { verticalCenter: chordNameRectangle.verticalCenter ; horizontalCenter: parent.horizontalCenter }
 		color: "white"; font.bold: true;
-                text: name
+                text: chordName
             }
 
 	    //diagram
@@ -78,7 +78,7 @@ Rectangle {
 			object.x = 0;
 			object.y = i * cellheight;
 		    }
-		    for (var i=0; i < strings.length-1; i++) {
+		    for (var i=0; i < chordStrings.length-1; i++) {
 			var object = component.createObject(diagram);
 			object.width  = cellwidth;
 			object.height = 60;
@@ -88,8 +88,8 @@ Rectangle {
 		    //draw played strings
 		    var circle = Qt.createComponent('Circle.qml');
 		    var cross = Qt.createComponent('Cross.qml');
-		    for (var i=0; i < strings.length; i++) {
-			var stringValue = String(parseInt(strings[i]), 10);
+		    for (var i=0; i < chordStrings.length; i++) {
+			var stringValue = String(parseInt(chordStrings.charAt(i)), 10);
 			//console.log("reading string value " + stringValue + " from chord " + name);
 			if (stringValue > 0) {
 			    //played string

@@ -51,11 +51,11 @@
 class CChord : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-  Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
-  Q_PROPERTY(QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
-  Q_PROPERTY(uint id READ id WRITE setId NOTIFY idChanged)
+  Q_PROPERTY(QString chordName READ name WRITE setName NOTIFY nameChanged)
+  Q_PROPERTY(QString chordFret READ fret WRITE setFret NOTIFY fretChanged)
+  Q_PROPERTY(QString chordStrings READ strings WRITE setStrings NOTIFY stringsChanged)
   Q_PROPERTY(QColor chordColor READ color CONSTANT)
+  Q_PROPERTY(uint chordId READ id WRITE setId NOTIFY idChanged)
 
     public:
   /*!
