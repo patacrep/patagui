@@ -69,6 +69,7 @@ Rectangle {
 		    var cellwidth = 15;
 		    var cellheight = 15
 
+		    //draw the diagram grid
 		    var component = Qt.createComponent('Rectangle.qml');
 		    for (var i=0; i < 4; i++) {
 			var object = component.createObject(diagram);
@@ -84,27 +85,30 @@ Rectangle {
 			object.x = i * cellwidth;
 			object.y = 0;
 		    }
+		    //draw played strings
 		    var circle = Qt.createComponent('Circle.qml');
 		    var cross = Qt.createComponent('Cross.qml');
 		    for (var i=0; i < strings.length; i++) {
 			var stringValue = String(parseInt(strings[i]), 10);
 			//console.log("reading string value " + stringValue + " from chord " + name);
 			if (stringValue > 0) {
+			    //played string
 			    var object = circle.createObject(diagram);
 			    object.x =  i*cellwidth - cellwidth/2.0 + 3;
 			    object.y = (stringValue -1)*cellheight + 3;
 			    object.color = "black";
 			} else if (stringValue == 0) {
+			    //empty string
 			    var object = circle.createObject(diagram);
 			    object.x = ( (i-1)*cellwidth)+cellwidth/2.0 +3;
 			    object.y = -10;
 			} else {
+			    //non played string
 			    var object = cross.createObject(diagram);
 			    object.x = ( (i-1)*cellwidth)+cellwidth/2.0 +3;
 			    object.y = -15;
 			}
 		    }
-		    
 		}
 	    }
         }
