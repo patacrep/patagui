@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QString>
 #include <QRegExp>
+#include <QColor>
 
 /*!
   \file chord.hh
@@ -54,6 +55,7 @@ class CChord : public QObject
   Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
   Q_PROPERTY(QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
   Q_PROPERTY(uint id READ id WRITE setId NOTIFY idChanged)
+  Q_PROPERTY(QColor chordColor READ color CONSTANT)
 
     public:
   /*!
@@ -181,6 +183,8 @@ class CChord : public QObject
     \sa isImportant
   */
   void setImportant(bool value);
+
+  QColor color();
 
 signals:
   void nameChanged();

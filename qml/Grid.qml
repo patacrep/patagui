@@ -47,7 +47,7 @@ Rectangle {
 		y: 10;
 	    	width: 80;	
 		height: 25; 
-		color: "darkblue";
+		color: chordColor;
 		radius: 4;
                 anchors { horizontalCenter: parent.horizontalCenter }
 	    }

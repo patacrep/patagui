@@ -177,3 +177,25 @@ void CChord::setImportant(bool value)
 {
   m_important = value;
 }
+
+QColor CChord::color()
+{
+  QColor color;
+
+  if (isImportant())
+    {
+      if (instrument() == Guitar)
+	color = QColor(32, 74, 135);
+      else if (instrument() == Ukulele)
+	color = QColor(92, 53, 102);
+    }
+  else
+    {
+      if (instrument() == Guitar)
+	color = QColor(114, 159, 207);
+      else if (instrument() == Ukulele)
+	color = QColor(173, 127, 168);
+    }
+
+  return color;
+}
