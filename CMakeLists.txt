@@ -164,12 +164,14 @@ target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 set (TRANSLATIONS
   lang/songbook_en.ts
   lang/songbook_it.ts
-  lang/songbook_fr.ts)
+  lang/songbook_fr.ts
+  lang/songbook_cs.ts)
 
 set (COMPILED_TRANSLATIONS
   lang/songbook_fr.qm
   lang/songbook_it.qm
-  lang/songbook_en.qm)
+  lang/songbook_en.qm
+  lang/songbook_cs.qm)
 
 add_custom_target(
   translations_target
