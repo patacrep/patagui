@@ -166,9 +166,7 @@ public:
 private slots:
   void checkSongbookPath(const QString &path);
   void checkLibraryPath(const QString &path);
-  void resetBuildCommand();
-  void resetCleanCommand();
-  void resetCleanallCommand();
+  void resetCommands();
 
 private:
   void readSettings();
