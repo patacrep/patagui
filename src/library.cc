@@ -76,7 +76,7 @@ void CLibrary::readSettings()
 {
   QSettings settings;
   settings.beginGroup("library");
-  setDirectory(settings.value("workingPath", findSongbookPath()).toString());
+  setDirectory(settings.value("libraryPath", findSongbookPath()).toString());
   settings.endGroup();
 }
 
@@ -84,17 +84,14 @@ void CLibrary::writeSettings()
 {
   QSettings settings;
   settings.beginGroup("library");
-  settings.setValue("workingPath", directory().absolutePath());
+  settings.setValue("libraryPath", directory().absolutePath());
   settings.endGroup();
 }
 
 bool CLibrary::checkSongbookPath(const QString &path)
 {
   QDir directory(path);
-  return directory.exists()
-    && directory.exists("makefile")
-    && directory.exists("songbook.py")
-    && directory.exists("songs");
+  return directory.exists() && directory.exists("songs");
 }
 
 QString CLibrary::findSongbookPath()
@@ -126,7 +123,7 @@ void CLibrary::setDirectory(const QString &directory)
 
 void CLibrary::setDirectory(const QDir &directory)
 {
-  if (directory != m_directory)
+  if (directory.absolutePath() != m_directory.absolutePath())
     {
       m_directory = directory;
       QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
