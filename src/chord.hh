@@ -120,23 +120,10 @@ class CChord : public QObject
   QString name() const;
 
   /*!
-    Sets the chord name \a name.
-    \sa chord
-  */
-  void setName(const QString & name);
-
-  /*!
     Returns the chord id.
     \sa setId
   */
   uint id() const;
-
-  /*!
-    Sets the chord id \a value.
-    \sa setId
-  */
-  void setId(uint value);
-
 
   /*!
     Returns the fret number.
@@ -147,24 +134,12 @@ class CChord : public QObject
   QString fret() const;
 
   /*!
-    Sets the fret number \a fret.
-    \sa fret
-  */
-  void setFret(const QString & fret);
-
-  /*!
     Returns the chord strings.
     For example, given a E-flat minor chord
     \code \gtab{E&m}{5:X02210} \endcode returns X02210.
     \sa setStrings
   */
   QString strings() const;
-
-  /*!
-    Sets the strings \a strings.
-    \sa strings
-  */
-  void setStrings(const QString & strings);
 
   /*!
     Returns the instrument of the chord.
@@ -175,24 +150,12 @@ class CChord : public QObject
   Instrument instrument() const;
 
   /*!
-    Sets the instrument \a instrument.
-    \sa type
-  */
-  void setInstrument(const Instrument & instrument);
-
-  /*!
     Returns true if the chord is important; false otherwise. Non
     important chords are well-known fingering for usual chords such as
     \code \gtab{C}{X32010} \endcode
     \sa setImportant
   */
   bool isImportant() const;
-
-  /*!
-    Marks a chord as important; default is false.
-    \sa isImportant
-  */
-  void setImportant(bool value);
 
   /*!
     Returns the chord color.
@@ -208,6 +171,43 @@ class CChord : public QObject
     \sa color
   */
   void setDrawBorder(bool value);
+
+public slots:
+  /*!
+    Sets the chord name \a name.
+    \sa chord
+  */
+  void setName(const QString & name);
+
+  /*!
+    Sets the strings \a strings.
+    \sa strings
+  */
+  void setStrings(const QString & strings);
+
+  /*!
+    Sets the fret number \a fret.
+    \sa fret
+  */
+  void setFret(const QString & fret);
+
+  /*!
+    Sets the chord id \a value.
+    \sa setId
+  */
+  void setId(uint value);
+
+  /*!
+    Sets the instrument \a instrument.
+    \sa type
+  */
+  void setInstrument(const Instrument & instrument);
+
+  /*!
+    Marks a chord as important; default is false.
+    \sa isImportant
+  */
+  void setImportant(bool value);
 
 signals:
   void nameChanged();
