@@ -75,7 +75,7 @@ CLibrary::~CLibrary()
 void CLibrary::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("library");
+  settings.beginGroup("general");
   setDirectory(settings.value("libraryPath", findSongbookPath()).toString());
   settings.endGroup();
 }
@@ -83,7 +83,7 @@ void CLibrary::readSettings()
 void CLibrary::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("library");
+  settings.beginGroup("general");
   settings.setValue("libraryPath", directory().absolutePath());
   settings.endGroup();
 }

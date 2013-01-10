@@ -642,8 +642,8 @@ void CMainWindow::updateTitle(const QString &filename)
 const QString CMainWindow::workingPath()
 {
   QSettings settings;
-  settings.beginGroup("library");
-  QString path = settings.value("workingPath", QDir::homePath()).toString();
+  settings.beginGroup("general");
+  QString path = settings.value("songbookPath", QDir::homePath()).toString();
   settings.endGroup();
   return path;
 }
