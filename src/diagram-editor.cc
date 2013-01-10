@@ -81,6 +81,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
 				   "  X: string is not to be played\n"
 				   "  0: string is to be played open\n"
 				   "  [1-9]: string is to be played on the given numbered fret."));
+
   QRegExp rx("[X\\d]+");
   QRegExpValidator *validator = new QRegExpValidator(rx, 0);
   m_stringsLineEdit->setValidator(validator);
@@ -105,8 +106,8 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   chordLayout->addRow(tr("Strings:"), m_stringsLineEdit);
 
   QSettings settings;
-  settings.beginGroup("library");
-  QString songbookDir(settings.value("workingPath", QDir::homePath()).toString());
+  settings.beginGroup("general");
+  QString songbookDir(settings.value("songbookPath", QDir::homePath()).toString());
   settings.endGroup();
 
   QFile file(QString("%1/tex/chords.tex").arg(songbookDir));
@@ -229,6 +230,13 @@ void CDiagramEditor::setChord(CChord *chord)
   m_fretSpinBox->setValue(chord->fret().toInt());
   m_stringsLineEdit->setText(chord->strings());
   m_importantCheckBox->setChecked(chord->isImportant());
+
+  connect(m_nameLineEdit, SIGNAL(textChanged(const QString &)),
+	  m_chord, SLOT(setName(const QString &)));
+  connect(m_fretSpinBox, SIGNAL(valueChanged(const QString &)),
+	  m_chord, SLOT(setFret(const QString &)));
+  connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
+	  m_chord, SLOT(setStrings(const QString &)));
 
   if (m_diagramArea)
     m_diagramArea->clearFilters();
