@@ -20,7 +20,7 @@
 #include "diagram-area.hh"
 
 #include "diagram-editor.hh"
-#include "chord-table-model.hh"
+#include "chord-list-model.hh"
 
 #include <QBoxLayout>
 #include <QPushButton>

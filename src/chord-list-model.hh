@@ -16,8 +16,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 // 02110-1301, USA.
 //******************************************************************************
-#ifndef __CHORD_TABLE_MODEL_HH__
-#define __CHORD_TABLE_MODEL_HH__
+#ifndef __CHORD_LIST_MODEL_HH__
+#define __CHORD_LIST_MODEL_HH__
 
 #include <QAbstractListModel>
 #include <QModelIndex>
@@ -27,9 +27,9 @@
 class CChord;
 
 /*!
-  \file chord-table-model.hh
+  \file chord-list-model.hh
   \class CChordListModel
-  \brief CChordListModel is a table model that contains CChord objects.
+  \brief CChordListModel is a list model that contains CChord objects.
 
   A CChordListModel presents data on a grid where the number of rows or
   columns is specified with setRowCount() or setColumnCount(). Adding
@@ -161,4 +161,4 @@ private:
   QVector<CChord*> m_data;
 };
 
-#endif //__CHORD_TABLE_MODEL_HH__
+#endif //__CHORD_LIST_MODEL_HH__
