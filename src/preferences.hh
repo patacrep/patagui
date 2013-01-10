@@ -164,7 +164,7 @@ public:
   OptionsPage(QWidget *parent=0);
 
 private slots:
-  void checkWorkingPath(const QString &path);
+  void checkSongbookPath(const QString &path);
   void checkLibraryPath(const QString &path);
   void resetBuildCommand();
   void resetCleanCommand();
@@ -174,8 +174,8 @@ private:
   void readSettings();
   void writeSettings();
 
-  CFileChooser *m_workingPath;
-  QLabel *m_workingPathValid;
+  CFileChooser *m_songbookPath;
+  QLabel *m_songbookPathValid;
 
   CFileChooser *m_libraryPath;
   QLabel *m_libraryPathValid;

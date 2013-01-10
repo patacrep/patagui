@@ -270,26 +270,26 @@ void DisplayPage::writeSettings()
 
 OptionsPage::OptionsPage(QWidget *parent)
   : Page(parent)
-  , m_workingPath(0)
-  , m_workingPathValid(new QLabel)
+  , m_songbookPath(0)
+  , m_songbookPathValid(new QLabel)
   , m_libraryPath(0)
   , m_libraryPathValid(new QLabel)
   , m_buildCommand(0)
   , m_cleanCommand(0)
   , m_cleanallCommand(0)
 {
-  m_workingPath = new CFileChooser();
-  m_workingPath->setMinimumWidth(400);
-  m_workingPath->setOptions(QFileDialog::ShowDirsOnly);
-  m_workingPath->setCaption(tr("Songbook path"));
+  m_songbookPath = new CFileChooser();
+  m_songbookPath->setMinimumWidth(300);
+  m_songbookPath->setOptions(QFileDialog::ShowDirsOnly);
+  m_songbookPath->setCaption(tr("Songbook path"));
 
   m_libraryPath = new CFileChooser();
-  m_libraryPath->setMinimumWidth(400);
+  m_libraryPath->setMinimumWidth(300);
   m_libraryPath->setOptions(QFileDialog::ShowDirsOnly);
-  m_libraryPath->setCaption(tr("Songs Library path"));
+  m_libraryPath->setCaption(tr("Library path"));
 
-  connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
-          this, SLOT(checkWorkingPath(const QString&)));
+  connect(m_songbookPath, SIGNAL(pathChanged(const QString&)),
+          this, SLOT(checkSongbookPath(const QString&)));
 
   connect(m_libraryPath, SIGNAL(pathChanged(const QString&)),
           this, SLOT(checkLibraryPath(const QString&)));
@@ -300,23 +300,23 @@ OptionsPage::OptionsPage(QWidget *parent)
 
   readSettings();
 
-  // working path
-  QGroupBox *workingPathGroupBox
-    = new QGroupBox(tr("Directory for Patacrep Songbook"));
+  // Global paths
+  QGroupBox *pathGroupBox
+    = new QGroupBox(tr("Directories"));
 
-  checkWorkingPath(m_workingPath->path());
+  checkSongbookPath(m_songbookPath->path());
   checkLibraryPath(m_libraryPath->path());
 
-  QLayout *workingPathLayout = new QVBoxLayout;
-  workingPathLayout->addWidget(m_workingPath);
-  workingPathLayout->addWidget(m_workingPathValid);
-  workingPathLayout->addWidget(m_libraryPath);
-  workingPathLayout->addWidget(m_libraryPathValid);
-  workingPathGroupBox->setLayout(workingPathLayout);
+  QFormLayout *pathLayout = new QFormLayout;
+  pathLayout->addRow(tr("Songbook:"), m_songbookPath);
+  pathLayout->addRow(m_songbookPathValid);
+  pathLayout->addRow(tr("Library:"), m_libraryPath);
+  pathLayout->addRow(m_libraryPathValid);
+  pathGroupBox->setLayout(pathLayout);
 
   // external tools
   QGroupBox *toolsGroupBox
-    = new QGroupBox(tr("External tools"));
+    = new QGroupBox(tr("Songbook commands"));
 
   QBoxLayout *toolsLayout = new QVBoxLayout;
   QBoxLayout *buildCommandLayout = new QHBoxLayout;
@@ -342,7 +342,7 @@ OptionsPage::OptionsPage(QWidget *parent)
 
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(workingPathGroupBox);
+  mainLayout->addWidget(pathGroupBox);
   mainLayout->addWidget(toolsGroupBox);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
@@ -351,9 +351,9 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("library");
-  m_workingPath->setPath(settings.value("workingPath", QDir::homePath()).toString());
-  m_libraryPath->setPath(settings.value("libraryPath", m_workingPath->path()).toString());
+  settings.beginGroup("general");
+  m_songbookPath->setPath(settings.value("songbookPath", QDir::homePath()).toString());
+  m_libraryPath->setPath(settings.value("libraryPath", m_songbookPath->path()).toString());
   settings.endGroup();
 
   settings.beginGroup("tools");
@@ -366,8 +366,8 @@ void OptionsPage::readSettings()
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("library");
-  settings.setValue("workingPath", m_workingPath->path());
+  settings.beginGroup("general");
+  settings.setValue("songbookPath", m_songbookPath->path());
   settings.setValue("libraryPath", m_libraryPath->path());
   settings.endGroup();
 
@@ -378,7 +378,7 @@ void OptionsPage::writeSettings()
   settings.endGroup();
 }
 
-void OptionsPage::checkWorkingPath(const QString &path)
+void OptionsPage::checkSongbookPath(const QString &path)
 {
   QDir directory(path);
 
@@ -428,7 +428,7 @@ void OptionsPage::checkWorkingPath(const QString &path)
     {
       mask = mask.arg("green").arg("");
     }
-  m_workingPathValid->setText(mask.arg(message));
+  m_songbookPathValid->setText(mask.arg(message));
 }
 
 void OptionsPage::checkLibraryPath(const QString &path)
