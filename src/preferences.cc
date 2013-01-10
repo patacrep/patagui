@@ -318,27 +318,16 @@ OptionsPage::OptionsPage(QWidget *parent)
   QGroupBox *toolsGroupBox
     = new QGroupBox(tr("Songbook commands"));
 
-  QBoxLayout *toolsLayout = new QVBoxLayout;
-  QBoxLayout *buildCommandLayout = new QHBoxLayout;
-  QPushButton *buildCommandResetButton = new QPushButton(tr("reset"), this);
-  buildCommandLayout->addWidget(m_buildCommand);
-  buildCommandLayout->addWidget(buildCommandResetButton);
-  toolsLayout->addLayout(buildCommandLayout);
-  QBoxLayout *cleanCommandLayout = new QHBoxLayout;
-  QPushButton *cleanCommandResetButton = new QPushButton(tr("reset"), this);
-  cleanCommandLayout->addWidget(m_cleanCommand);
-  cleanCommandLayout->addWidget(cleanCommandResetButton);
-  toolsLayout->addLayout(cleanCommandLayout);
-  QBoxLayout *cleanallCommandLayout = new QHBoxLayout;
-  QPushButton *cleanallCommandResetButton = new QPushButton(tr("reset"), this);
-  cleanallCommandLayout->addWidget(m_cleanallCommand);
-  cleanallCommandLayout->addWidget(cleanallCommandResetButton);
-  toolsLayout->addLayout(cleanallCommandLayout);
-  toolsGroupBox->setLayout(toolsLayout);
+  QFormLayout *toolsLayout = new QFormLayout;
+  toolsLayout->addRow(tr("Build:"), m_buildCommand);
+  toolsLayout->addRow(tr("Clean:"), m_cleanCommand);
+  toolsLayout->addRow(tr("Cleanall:"), m_cleanallCommand);
 
-  connect(buildCommandResetButton, SIGNAL(clicked()), SLOT(resetBuildCommand()));
-  connect(cleanCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanCommand()));
-  connect(cleanallCommandResetButton, SIGNAL(clicked()), SLOT(resetCleanallCommand()));
+  QPushButton *resetButton = new QPushButton(tr("Reset to defaults"), this);
+  connect(resetButton, SIGNAL(clicked()), SLOT(resetCommands()));
+  toolsLayout->addRow(resetButton);
+
+  toolsGroupBox->setLayout(toolsLayout);
 
   // main layout
   QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -480,18 +469,10 @@ void OptionsPage::checkLibraryPath(const QString &path)
   m_libraryPathValid->setText(mask.arg(message));
 }
 
-void OptionsPage::resetBuildCommand()
+void OptionsPage::resetCommands()
 {
   m_buildCommand->setText(PLATFORM_BUILD_COMMAND);
-}
-
-void OptionsPage::resetCleanCommand()
-{
   m_cleanCommand->setText(PLATFORM_CLEAN_COMMAND);
-}
-
-void OptionsPage::resetCleanallCommand()
-{
   m_cleanallCommand->setText(PLATFORM_CLEANALL_COMMAND);
 }
 
