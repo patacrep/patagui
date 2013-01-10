@@ -243,13 +243,8 @@ bool CChordListModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
   if (!data->hasFormat("text/plain"))
     return false;
 
-  int beginRow;
-  if (row != -1)
-    beginRow = row;
-  else if (parent.isValid())
-    beginRow = parent.row();
-  else
-    beginRow = rowCount();
+  if (row > 1)
+    return false;
 
   int beginColumn;
   if (column != -1)
@@ -260,10 +255,13 @@ bool CChordListModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
     beginColumn = columnCount();
 
   QString newItem = data->text();
-
-  // disabled since it is still buggy
-  Q_UNUSED(beginRow); Q_UNUSED(beginColumn);
-  //insertItem(index(beginRow, beginColumn), newItem);
+  insertItem(index(0, beginColumn), newItem);
+  for(int j=0; j<columnCount(); ++j)
+    if (m_data[j]->toString() == newItem && j != beginColumn)
+      {
+	removeItem(index(0, j));
+	return true;
+      }
 
   return true;
 }
