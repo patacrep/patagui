@@ -147,9 +147,9 @@ void CDiagramArea::editDiagram(QModelIndex index)
   if (dialog.exec() == QDialog::Accepted)
     {
       if (newChord)
-	addDiagram(dialog.chord()->toString());
+	addDiagram(chord->toString());
       else
-	m_diagramModel->setData(m_proxyModel->mapToSource(index), dialog.chord()->toString());
+	m_diagramModel->setData(m_proxyModel->mapToSource(index), chord->toString());
 
       emit(contentsChanged());
     }
