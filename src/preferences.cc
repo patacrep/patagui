@@ -271,20 +271,28 @@ void DisplayPage::writeSettings()
 OptionsPage::OptionsPage(QWidget *parent)
   : Page(parent)
   , m_workingPath(0)
-  , m_workingPathValid(0)
+  , m_workingPathValid(new QLabel)
+  , m_libraryPath(0)
+  , m_libraryPathValid(new QLabel)
   , m_buildCommand(0)
   , m_cleanCommand(0)
   , m_cleanallCommand(0)
 {
-  m_workingPathValid = new QLabel;
-
   m_workingPath = new CFileChooser();
   m_workingPath->setMinimumWidth(400);
   m_workingPath->setOptions(QFileDialog::ShowDirsOnly);
   m_workingPath->setCaption(tr("Songbook path"));
 
+  m_libraryPath = new CFileChooser();
+  m_libraryPath->setMinimumWidth(400);
+  m_libraryPath->setOptions(QFileDialog::ShowDirsOnly);
+  m_libraryPath->setCaption(tr("Songs Library path"));
+
   connect(m_workingPath, SIGNAL(pathChanged(const QString&)),
           this, SLOT(checkWorkingPath(const QString&)));
+
+  connect(m_libraryPath, SIGNAL(pathChanged(const QString&)),
+          this, SLOT(checkLibraryPath(const QString&)));
 
   m_buildCommand = new QLineEdit(this);
   m_cleanCommand = new QLineEdit(this);
@@ -297,10 +305,13 @@ OptionsPage::OptionsPage(QWidget *parent)
     = new QGroupBox(tr("Directory for Patacrep Songbook"));
 
   checkWorkingPath(m_workingPath->path());
+  checkLibraryPath(m_libraryPath->path());
 
   QLayout *workingPathLayout = new QVBoxLayout;
   workingPathLayout->addWidget(m_workingPath);
   workingPathLayout->addWidget(m_workingPathValid);
+  workingPathLayout->addWidget(m_libraryPath);
+  workingPathLayout->addWidget(m_libraryPathValid);
   workingPathGroupBox->setLayout(workingPathLayout);
 
   // external tools
@@ -342,6 +353,7 @@ void OptionsPage::readSettings()
   QSettings settings;
   settings.beginGroup("library");
   m_workingPath->setPath(settings.value("workingPath", QDir::homePath()).toString());
+  m_libraryPath->setPath(settings.value("libraryPath", m_workingPath->path()).toString());
   settings.endGroup();
 
   settings.beginGroup("tools");
@@ -356,6 +368,7 @@ void OptionsPage::writeSettings()
   QSettings settings;
   settings.beginGroup("library");
   settings.setValue("workingPath", m_workingPath->path());
+  settings.setValue("libraryPath", m_libraryPath->path());
   settings.endGroup();
 
   settings.beginGroup("tools");
@@ -386,18 +399,9 @@ void OptionsPage::checkWorkingPath(const QString &path)
     {
       message = tr("songbook software (songbook.py) not found");
     }
-  else if (!directory.exists("songs"))
-    {
-      message = tr("songs/ directory not found");
-    }
   else if (!directory.exists("img"))
     {
       message = tr("img/ directory not found");
-    }
-  else if (!directory.exists("lilypond"))
-    {
-      error = false;
-      message = tr("lilypond/ directory not found");
     }
   else if (!directory.exists("utils"))
     {
@@ -425,6 +429,55 @@ void OptionsPage::checkWorkingPath(const QString &path)
       mask = mask.arg("green").arg("");
     }
   m_workingPathValid->setText(mask.arg(message));
+}
+
+void OptionsPage::checkLibraryPath(const QString &path)
+{
+  QDir directory(path);
+
+  bool error = true;
+  bool warning = true;
+
+  QString message;
+
+  if (!directory.exists())
+    {
+      message = tr("the directory does not exist");
+    }
+  else if (!directory.exists("songs"))
+    {
+      message = tr("songs/ directory not found");
+    }
+  else if (!directory.exists("img"))
+    {
+      message = tr("img/ directory not found");
+    }
+  else if (!directory.exists("lilypond"))
+    {
+      error = false;
+      message = tr("lilypond/ directory not found");
+    }
+  else
+    {
+      error = false;
+      warning = false;
+      message = tr("The directory is valid");
+    }
+
+  QString mask("<font color=%1>%2%3.</font>");
+  if (error)
+    {
+      mask = mask.arg("red").arg(tr("Error: "));
+    }
+  else if (warning)
+    {
+      mask = mask.arg("orange").arg(tr("Warning: "));
+    }
+  else
+    {
+      mask = mask.arg("green").arg("");
+    }
+  m_libraryPathValid->setText(mask.arg(message));
 }
 
 void OptionsPage::resetBuildCommand()

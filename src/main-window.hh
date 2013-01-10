@@ -120,6 +120,13 @@ public:
   */
   const QString workingPath();
 
+
+  /*!
+    Getter on the songs library directory.
+    @return the path to the songs/ directory
+  */
+  const QString libraryPath();
+
   /*!
     Returns the songbook build command.
     \sa setBuildCommand

@@ -641,6 +641,15 @@ void CMainWindow::updateTitle(const QString &filename)
 
 const QString CMainWindow::workingPath()
 {
+  QSettings settings;
+  settings.beginGroup("library");
+  QString path = settings.value("workingPath", QDir::homePath()).toString();
+  settings.endGroup();
+  return path;
+}
+
+const QString CMainWindow::libraryPath()
+{
   return library()->directory().canonicalPath();
 }
 
@@ -657,7 +666,9 @@ void CMainWindow::make()
   m_builder->setProcessEnvironment(environment);
 
   QString command = buildCommand();
-  m_builder->setCommand(command.replace("%target", target).replace("%basename", basename));
+  m_builder->setCommand(command.replace("%target", target)
+			.replace("%basename", basename)
+			.replace("%library", libraryPath() + "/"));
 
   m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
   m_builder->setStartMessage(tr("Building %1.").arg(target));

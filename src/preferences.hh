@@ -33,7 +33,7 @@
 #define PLATFORM_CLEAN_COMMAND "macos/clean.sh"
 #define PLATFORM_CLEANALL_COMMAND "macos/cleanall.sh"
 #else //Unix/Linux
-#define PLATFORM_BUILD_COMMAND "make %target"
+#define PLATFORM_BUILD_COMMAND "make LIBRARY=%library %target"
 #define PLATFORM_CLEAN_COMMAND "make clean"
 #define PLATFORM_CLEANALL_COMMAND "make cleanall"
 #endif
@@ -165,6 +165,7 @@ public:
 
 private slots:
   void checkWorkingPath(const QString &path);
+  void checkLibraryPath(const QString &path);
   void resetBuildCommand();
   void resetCleanCommand();
   void resetCleanallCommand();
@@ -175,6 +176,9 @@ private:
 
   CFileChooser *m_workingPath;
   QLabel *m_workingPathValid;
+
+  CFileChooser *m_libraryPath;
+  QLabel *m_libraryPathValid;
 
   QLineEdit *m_buildCommand;
   QLineEdit *m_cleanCommand;
