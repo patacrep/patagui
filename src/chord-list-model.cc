@@ -17,7 +17,7 @@
 // 02110-1301, USA.
 //******************************************************************************
 
-#include "chord-table-model.hh"
+#include "chord-list-model.hh"
 #include "chord.hh"
 
 #include <QMimeData>
