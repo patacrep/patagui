@@ -114,10 +114,11 @@ void CChordListModel::insertItem(const QModelIndex & index, const QString & valu
 {
   setColumnCount(columnCount() + 1);
   m_fixedColumnCount = false;
+  int pos = index.column() < 0 ? columnCount()-1 : index.column();
 
   CChord *chord = new CChord(value);
   if (chord->isValid())
-    m_data.insert(index.column(), chord);
+    m_data.insert(pos, chord);
   else
     delete chord;
 }
