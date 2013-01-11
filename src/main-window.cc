@@ -934,7 +934,7 @@ void CMainWindow::cleanDialog()
   view->setModel(m_tempFilesmodel);
   view->setRootIndex(m_tempFilesmodel->index(library()->directory().canonicalPath()));
 
-  QCheckBox* cleanAllButton = new QCheckBox("Also remove pdf files", this);
+  QCheckBox* cleanAllButton = new QCheckBox(tr("Also remove pdf files"), this);
   updateTempFilesView(cleanAllButton->checkState());
   connect(cleanAllButton, SIGNAL(stateChanged(int)), this, SLOT(updateTempFilesView(int)));
 
