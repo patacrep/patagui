@@ -237,6 +237,10 @@ void CDiagramEditor::setChord(CChord *chord)
 	  m_chord, SLOT(setFret(const QString &)));
   connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
 	  m_chord, SLOT(setStrings(const QString &)));
+  connect(m_guitar, SIGNAL(toggled(bool)),
+	  m_chord, SLOT(switchInstrument(bool)));
+  connect(m_ukulele, SIGNAL(toggled(bool)),
+	  m_chord, SLOT(switchInstrument(bool)));
 
   if (m_diagramArea)
     m_diagramArea->clearFilters();
