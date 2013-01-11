@@ -307,7 +307,22 @@ CChord::Instrument CChord::instrument() const
 
 void CChord::setInstrument(const CChord::Instrument & instru)
 {
-  m_instrument = instru;
+  if (m_instrument != instru)
+    {
+      m_instrument = instru;
+      emit instrumentChanged();
+    }
+}
+
+void CChord::switchInstrument(bool value)
+{
+  if (value)
+    {
+      if (instrument() == Guitar)
+	setInstrument(Ukulele);
+      else
+	setInstrument(Guitar);
+    }
 }
 
 bool CChord::isImportant() const

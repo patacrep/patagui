@@ -204,6 +204,12 @@ public slots:
   void setInstrument(const Instrument & instrument);
 
   /*!
+    Toggle instrument between Guitar and Ukulele if \a value is true.
+    \sa instrumet, setInstrument
+  */
+  void switchInstrument(bool value);
+
+  /*!
     Marks a chord as important; default is false.
     \sa isImportant
   */
@@ -213,6 +219,7 @@ signals:
   void nameChanged();
   void fretChanged();
   void stringsChanged();
+  void instrumentChanged();
   void idChanged();
 
 private:
