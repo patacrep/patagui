@@ -181,7 +181,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   hide(); // required to hide some widgets from the code editor
 
   // the editor is set for new song by default
-  setWindowTitle("New song");
+  setWindowTitle(tr("New song"));
   setNewSong(true);
 
   readSettings();
