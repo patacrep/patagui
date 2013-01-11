@@ -586,17 +586,20 @@ Hunspell* CSongCodeEditor::checker() const
 void CSongCodeEditor::commentSelection()
 {
   QTextCursor cursor = textCursor();
+  cursor.beginEditBlock();
   QStringList selection = cursor.selectedText().split(QChar(0x2029));
   QStringList commentedSelection;
   foreach (QString line, selection)
     commentedSelection << line.prepend("%");
   cursor.removeSelectedText();
   cursor.insertText(commentedSelection.join("\n"));
+  cursor.endEditBlock();
 }
 
 void CSongCodeEditor::uncommentSelection()
 {
   QTextCursor cursor = textCursor();
+  cursor.beginEditBlock();
   QStringList selection = cursor.selectedText().split(QChar(0x2029));
   QStringList uncommentedSelection;
   foreach (QString line, selection)
@@ -606,6 +609,7 @@ void CSongCodeEditor::uncommentSelection()
       uncommentedSelection << line;
   cursor.removeSelectedText();
   cursor.insertText(uncommentedSelection.join("\n"));
+  cursor.endEditBlock();
 }
 
 bool CSongCodeEditor::isSpellCheckAvailable() const
