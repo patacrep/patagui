@@ -157,11 +157,7 @@ Song Song::fromString(const QString &text, const QString &path)
 	song.lyrics.removeLast();
       }
 
-  lines = post.split("\n");
-  foreach (line, lines)
-    {
-      song.scripture << line;
-    }
+  song.scripture << post.split("\n");
 
   return song;
 }
@@ -263,7 +259,7 @@ QString Song::latexToUtf8(const QString & str)
   QString result(str);
   result.replace(QRegExp("([^\\\\])~"), QString("\\1%1").arg(QChar(QChar::Nbsp)));
   result.replace(QRegExp("\\\\([&~])"), "\\1");
-  result.replace(QRegExp("(\\{?\\\\dots\\}?|\\{?\\\\ldots\\}?)"),  "...");
+  result.replace(QRegExp("\\{?\\\\l?dots\\}?"),  "...");
   result.replace("\\%",  "%");
   return result;
 }

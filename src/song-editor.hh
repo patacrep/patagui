@@ -49,8 +49,6 @@ public:
   virtual void setSpellCheckAvailable(const bool);
   virtual void setHighlighter(CSongHighlighter *highlighter);
   virtual void setFindReplaceDialog(CFindReplaceDialog *dialog);
-  virtual CSongCodeEditor* codeEditor() const;
-  virtual void setFocus();
 
 protected:
   QAction *m_saveAct;
@@ -146,8 +144,8 @@ private:
   void saveNewSong();
   void createNewSong();
 
-  CSongCodeEditor *m_codeEditor;
   CSongHeaderEditor *m_songHeaderEditor;
+  CSongCodeEditor *m_codeEditor;
   CFindReplaceDialog* m_findReplaceDialog;
 
   Song m_song;

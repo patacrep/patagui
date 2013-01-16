@@ -174,20 +174,6 @@ void CEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
   Q_UNUSED(dialog);
 }
 
-CSongCodeEditor* CEditor::codeEditor() const
-{
-  return 0;
-}
-
-void CEditor::setFocus()
-{
-  if (codeEditor())
-    {
-      qDebug() << "set focus";
-      codeEditor()->setFocus();
-    }
-}
-
 
 CSongEditor::CSongEditor(QWidget *parent)
   : CEditor(parent)

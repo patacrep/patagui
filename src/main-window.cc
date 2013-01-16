@@ -869,7 +869,6 @@ void CMainWindow::changeTab(int index)
 	  m_findReplaceDialog->readSettings();
 	}
       editor->setFindReplaceDialog(m_findReplaceDialog);
-      editor->setFocus();
     }
   else
     {
