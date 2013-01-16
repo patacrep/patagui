@@ -190,33 +190,6 @@ void CDiagramEditor::reset()
     m_diagramArea->clearFilters();
 }
 
-QString CDiagramEditor::chordName() const
-{
-  return m_nameLineEdit->text();
-}
-
-QString CDiagramEditor::chordStrings() const
-{
-  return m_stringsLineEdit->text();
-}
-
-QString CDiagramEditor::chordFret() const
-{
-  return (m_fretSpinBox->value() == 0) ?
-    "" : QString::number(m_fretSpinBox->value());
-}
-
-CChord::Instrument CDiagramEditor::chordInstrument() const
-{
-  return m_guitar->isChecked() ?
-    CChord::Guitar : CChord::Ukulele;
-}
-
-bool CDiagramEditor::isChordImportant() const
-{
-  return m_importantCheckBox->isChecked();
-}
-
 void CDiagramEditor::setChord(CChord *chord)
 {
   if (!chord)
@@ -296,8 +269,8 @@ void CDiagramEditor::onInstrumentChanged(bool checked)
     }
 
   // set strings max length according to instrument
-  if (chordInstrument() == CChord::Guitar)
+  if (m_guitar->isChecked())
     m_stringsLineEdit->setMaxLength(CChord::GuitarStringCount);
-  else if (chordInstrument() == CChord::Ukulele)
+  else
     m_stringsLineEdit->setMaxLength(CChord::UkuleleStringCount);
 }

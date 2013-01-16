@@ -58,31 +58,6 @@ public:
   ~CDiagramEditor();
 
   /*!
-    Returns the name of the chord.
-  */
-  QString chordName() const;
-
-  /*!
-    Returns the strings of the chord.
-  */
-  QString chordStrings() const;
-
-  /*!
-    Returns the fret of the chord.
-  */
-  QString chordFret() const;
-
-  /*!
-    Returns the instrument of the chord.
-  */
-  CChord::Instrument chordInstrument() const;
-
-  /*!
-    Returns the \a true if chord is important; \a false otherwise.
-  */
-  bool isChordImportant() const;
-
-  /*!
     Returns the preferred size for the dialog.
   */
   virtual QSize sizeHint() const;
