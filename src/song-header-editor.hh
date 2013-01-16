@@ -92,10 +92,10 @@ public:
   const QImage & cover();
 
   /*!
-    Sets the library \a library. The library is used to provide
-    completion models for title and artist line edits.
+    Sets the artist and album completers from the library \a library.
+    Those completers are set on album and artist line edits.
   */
-  void setLibrary(CLibrary* library);
+  void setLibraryCompleters(CLibrary* library);
 
   /*!
     Returns the title line edit widget.

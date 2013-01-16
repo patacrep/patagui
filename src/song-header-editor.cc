@@ -278,7 +278,7 @@ LineEdit * CSongHeaderEditor::artistLineEdit() const
   return m_artistLineEdit;
 }
 
-void CSongHeaderEditor::setLibrary(CLibrary * library)
+void CSongHeaderEditor::setLibraryCompleters(CLibrary * library)
 {
   QCompleter *artistCompleter = new QCompleter;
   artistCompleter->setModel(library->artistCompletionModel());
