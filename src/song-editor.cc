@@ -383,7 +383,7 @@ CLibrary * CSongEditor::library() const
 void CSongEditor::setLibrary(CLibrary *library)
 {
   m_library = library;
-  m_songHeaderEditor->setLibrary(library);
+  m_songHeaderEditor->setLibraryCompleters(library);
 }
 
 bool CSongEditor::isModified() const
