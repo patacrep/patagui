@@ -750,7 +750,7 @@ QItemSelectionModel * CMainWindow::selectionModel()
 
 void CMainWindow::middleClicked(const QModelIndex & index)
 {
-  if (QApplication::mouseButtons() == (Qt::MidButton | Qt::MiddleButton))
+  if (QApplication::mouseButtons() == Qt::MidButton)
     {
       songEditor(index);
       m_mainWidget->setCurrentIndex(0);
