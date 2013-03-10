@@ -30,7 +30,6 @@
 class CSongEditor;
 class CCoverDropArea;
 class CDiagramArea;
-class CLibrary;
 class LineEdit;
 
 class QSpinBox;
@@ -92,12 +91,6 @@ public:
   const QImage & cover();
 
   /*!
-    Sets the artist and album completers from the library \a library.
-    Those completers are set on album and artist line edits.
-  */
-  void setLibraryCompleters(CLibrary* library);
-
-  /*!
     Returns the title line edit widget.
   */
   LineEdit* titleLineEdit() const;
@@ -142,6 +135,13 @@ signals:
   void languageChanged(const QLocale &);
 
 private:
+
+  /*!
+    Sets the artist and album completers from the library.
+    Those completers are set on album and artist line edits.
+  */
+  void setLibraryCompleters();
+
   CSongEditor *m_songEditor;
 
   LineEdit *m_titleLineEdit;

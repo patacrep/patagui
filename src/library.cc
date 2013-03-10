@@ -63,6 +63,7 @@ CLibrary::CLibrary()
   , m_completionModel(new QStringListModel(this))
   , m_artistCompletionModel(new QStringListModel(this))
   , m_albumCompletionModel(new QStringListModel(this))
+  , m_urlCompletionModel(new QStringListModel(this))
   , m_templates()
   , m_songs()
 {
@@ -155,6 +156,11 @@ QAbstractListModel * CLibrary::albumCompletionModel() const
   return m_albumCompletionModel;
 }
 
+QAbstractListModel * CLibrary::urlCompletionModel() const
+{
+  return m_urlCompletionModel;
+}
+
 QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int role) const
 {
   if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
@@ -197,7 +203,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	case 2:
 	  return data(index, LilypondRole);
 	case 3:
-	  return data(index, WebsiteRole);
+	  return data(index, UrlRole);
 	case 4:
 	  return data(index, PathRole);
 	case 5:
@@ -212,7 +218,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
         case 2:
           return tr("Lilypond music sheet");
         case 3:
-          return m_songs[index.row()].url;
+          return QString("http://%1").arg(m_songs[index.row()].url);
         case 5:
           return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
         default:
@@ -233,6 +239,8 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
       return m_songs[index.row()].isLilypond;
     case WebsiteRole:
       return m_songs[index.row()].isWebsite;
+    case UrlRole:
+      return m_songs[index.row()].url;
     case LanguageRole:
       return qVariantFromValue(m_songs[index.row()].locale.language());
     case PathRole:
@@ -294,25 +302,24 @@ void CLibrary::update()
 
   addSongs(paths);
 
-  QStringList wordList;
-  QStringList artistList;
-  QStringList albumList;
+  QStringList wordList, artistList, albumList, urlList;
   for (int i = 0; i < rowCount(); ++i)
     {
-      wordList << data(index(i,0),CLibrary::TitleRole).toString()
-	       << data(index(i,0),CLibrary::ArtistRole).toString()
-	       << data(index(i,0),CLibrary::PathRole).toString();
-
-      artistList << data(index(i,0),CLibrary::ArtistRole).toString();
-
-      albumList << data(index(i,0),CLibrary::AlbumRole).toString();
+      wordList   << data(index(i,0), CLibrary::TitleRole).toString()
+	         << data(index(i,0), CLibrary::ArtistRole).toString()
+	         << data(index(i,0), CLibrary::PathRole).toString();
+      artistList << data(index(i,0), CLibrary::ArtistRole).toString();
+      albumList  << data(index(i,0), CLibrary::AlbumRole).toString();
+      urlList    << data(index(i,0), CLibrary::UrlRole).toString();
     }
   wordList.removeDuplicates();
   artistList.removeDuplicates();
   albumList.removeDuplicates();
+  urlList.removeDuplicates();
   m_completionModel->setStringList(wordList);
   m_artistCompletionModel->setStringList(artistList);
   m_albumCompletionModel->setStringList(albumList);
+  m_urlCompletionModel->setStringList(urlList);
 
   m_parent->progressBar()->setCancelable(true);
   m_parent->progressBar()->setTextVisible(false);
