@@ -28,7 +28,6 @@
 #include <QtVariantProperty>
 
 class CLibrary;
-
 class QWidget;
 class QComboBox;
 class QtGroupBoxPropertyBrowser;
@@ -148,12 +147,6 @@ public:
   QString workingPath() const;
 
   /*!
-    Associates the library \a library with this songbook.
-    \sa library
-  */
-  void setLibrary(CLibrary *library);
-
-  /*!
     Returns the library.
     \sa setLibrary
   */
@@ -224,7 +217,6 @@ private slots:
   void sourceModelReset();
 
 private:
-  CLibrary *m_library;
   QString m_filename;
   QString m_tmpl;
 

@@ -232,7 +232,6 @@ private:
   QItemSelectionModel * selectionModel();
 
   // Models and views
-  CLibrary *m_library;
   CLibraryView *m_view;
   CSongbook *m_songbook;
   QSortFilterProxyModel *m_proxyModel;

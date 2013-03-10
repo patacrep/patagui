@@ -207,7 +207,7 @@ void CLibraryDownload::downloadFinished()
 	{
 	  QDir::setCurrent(dir.absolutePath());
 	  if (decompress(filepath, dir))
-	    parent()->library()->setDirectory(dir);
+	    CLibrary::getInstance()->setDirectory(dir);
 
 	  QDir::setCurrent(oldCurrent.absolutePath());
 	}
