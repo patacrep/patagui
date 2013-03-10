@@ -123,8 +123,10 @@ void CFileChooser::setPath(const QString &path)
   if (QString::compare(m_path, path, Qt::CaseSensitive) == 0)
     return;
 
+  if (m_lineEdit->text() != path)
+    m_lineEdit->setText(path);
+
   m_path = path;
-  m_lineEdit->setText(m_path);
 
   QFileInfo fileInfo(m_path);
   if (fileInfo.isDir())
