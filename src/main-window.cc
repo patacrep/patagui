@@ -457,7 +457,7 @@ void CMainWindow::createMenus()
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
 
-  m_voidEditor = new CSongEditor(this);
+  m_voidEditor = new CEditor(this);
   m_voidEditor->actionGroup()->setEnabled(false);
   m_editorMenu->addActions(m_voidEditor->actionGroup()->actions());
 
@@ -830,7 +830,7 @@ void CMainWindow::closeTab(int index)
 void CMainWindow::changeTab(int index)
 {
   m_editorMenu->clear();
-  CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index));
+  CEditor *editor = qobject_cast< CEditor* >(m_mainWidget->widget(index));
   if (editor != 0)
     {
       editor->actionGroup()->setEnabled(true);

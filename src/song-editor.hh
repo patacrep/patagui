@@ -33,6 +33,39 @@ class CLibrary;
 class CSongCodeEditor;
 class CSongHeaderEditor;
 
+class CEditor : public QWidget
+{
+  Q_OBJECT
+
+public:
+  CEditor(QWidget *parent = 0);
+  virtual ~CEditor();
+
+  QToolBar * toolBar() const;
+  QActionGroup * actionGroup() const;
+
+  virtual bool isSpellCheckAvailable() const;
+  virtual void setSpellCheckAvailable(const bool);
+
+protected:
+  QAction *m_saveAct;
+  QAction *m_cutAct;
+  QAction *m_copyAct;
+  QAction *m_pasteAct;
+  QAction *m_undoAct;
+  QAction *m_redoAct;
+  QAction *m_replaceAct;
+  QAction *m_searchAct;
+  QAction *m_verseAct;
+  QAction *m_chorusAct;
+  QAction *m_bridgeAct;
+  QAction* m_spellCheckingAct;
+
+private:
+  QActionGroup *m_actions;
+  QToolBar *m_toolBar;
+};
+
 /*!
   \file song-editor.hh
   \class CSongEditor
@@ -45,7 +78,7 @@ class CSongHeaderEditor;
   \image html song-editor.png
 
 */
-class CSongEditor : public QWidget
+class CSongEditor : public CEditor
 {
   Q_OBJECT
   Q_PROPERTY(bool newSong READ isNewSong WRITE setNewSong)
@@ -55,11 +88,7 @@ public:
   CSongEditor(QWidget *parent = 0);
   ~CSongEditor();
 
-  QToolBar * toolBar() const;
   CLibrary * library() const;
-  void setLibrary(CLibrary *library);
-
-  QActionGroup * actionGroup() const;
 
   void readSettings();
   void writeSettings();
@@ -80,8 +109,8 @@ public:
   //! Setter on the new cover property
   void setNewCover(bool newCover);
 
-  bool isSpellCheckAvailable() const;
-  void setSpellCheckAvailable(const bool);
+  virtual bool isSpellCheckAvailable() const;
+  virtual void setSpellCheckAvailable(const bool);
 
 public slots:
   void setModified(bool modified);
@@ -110,16 +139,12 @@ private:
 
   CSongCodeEditor *m_codeEditor;
   CSongHeaderEditor *m_songHeaderEditor;
-  CLibrary *m_library;
-  QToolBar *m_toolBar;
-  QActionGroup *m_actions;
-
   CFindReplaceDialog* m_findReplaceDialog;
-  QAction* m_spellCheckingAct;
 
   Song m_song;
   bool m_newSong;
   bool m_newCover;
 };
+
 
 #endif // __SONG_EDITOR_HH__

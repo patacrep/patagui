@@ -30,7 +30,7 @@ class CSongbook;
 class CLibrary;
 class CLibraryView;
 class CTabWidget;
-class CSongEditor;
+class CEditor;
 class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
@@ -256,7 +256,7 @@ private:
 
   // Menus
   QMenu *m_editorMenu;
-  CSongEditor *m_voidEditor;
+  CEditor *m_voidEditor;
   QToolBar *m_libraryToolBar;
   QToolBar *m_currentToolBar;
   QToolBar *m_mainToolBar;

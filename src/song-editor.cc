@@ -35,14 +35,135 @@
 
 #include <QDebug>
 
-CSongEditor::CSongEditor(QWidget *parent)
+CEditor::CEditor(QWidget *parent)
   : QWidget(parent)
+  , m_actions(new QActionGroup(this))
+{
+  // toolBar
+  m_toolBar = new QToolBar(tr("Edition tools"), this);
+  m_toolBar->setMovable(false);
+  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+
+  // actions
+  m_saveAct = new QAction(tr("Save"), this);
+  m_saveAct->setShortcut(QKeySequence::Save);
+  m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
+  m_saveAct->setStatusTip(tr("Save modifications"));
+  m_actions->addAction(m_saveAct);
+  toolBar()->addAction(m_saveAct);
+
+  //copy paste
+  m_cutAct = new QAction(tr("Cut"), this);
+  m_cutAct->setShortcut(QKeySequence::Cut);
+  m_cutAct->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
+  m_cutAct->setStatusTip(tr("Cut the selection"));
+  m_actions->addAction(m_cutAct);
+  toolBar()->addAction(m_cutAct);
+
+  m_copyAct = new QAction(tr("Copy"), this);
+  m_copyAct->setShortcut(QKeySequence::Copy);
+  m_copyAct->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
+  m_copyAct->setStatusTip(tr("Copy the selection"));
+  m_actions->addAction(m_copyAct);
+  toolBar()->addAction(m_copyAct);
+
+  m_pasteAct = new QAction(tr("Paste"), this);
+  m_pasteAct->setShortcut(QKeySequence::Paste);
+  m_pasteAct->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
+  m_pasteAct->setStatusTip(tr("Paste clipboard content"));
+  m_actions->addAction(m_pasteAct);
+  toolBar()->addAction(m_pasteAct);
+
+  toolBar()->addSeparator();
+
+  //undo redo
+  m_undoAct = new QAction(tr("Undo"), this);
+  m_undoAct->setShortcut(QKeySequence::Undo);
+  m_undoAct->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
+  m_undoAct->setStatusTip(tr("Undo modifications"));
+  m_actions->addAction(m_undoAct);
+  toolBar()->addAction(m_undoAct);
+
+  m_redoAct = new QAction(tr("Redo"), this);
+  m_redoAct->setShortcut(QKeySequence::Redo);
+  m_redoAct->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
+  m_redoAct->setStatusTip(tr("Redo modifications"));
+  m_actions->addAction(m_redoAct);
+  toolBar()->addAction(m_redoAct);
+
+  m_replaceAct = new QAction(tr("Search and Replace"), this);
+  m_replaceAct->setShortcut(QKeySequence::Replace);
+  m_replaceAct->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
+  m_replaceAct->setStatusTip(tr("Find some text and replace it"));
+  m_actions->addAction(m_replaceAct);
+  toolBar()->addAction(m_replaceAct);
+
+  m_searchAct = new QAction(tr("Search"), this);
+  m_searchAct->setShortcut(QKeySequence::Find);
+
+  //spellchecking
+  m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
+  m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
+  m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
+  m_spellCheckingAct->setCheckable(true);
+  m_spellCheckingAct->setEnabled(false);
+#ifndef ENABLE_SPELLCHECK
+  m_spellCheckingAct->setVisible(false);
+#endif //ENABLE_SPELLCHECK
+  m_actions->addAction(m_spellCheckingAct);
+  toolBar()->addAction(m_spellCheckingAct);
+
+  toolBar()->addSeparator();
+
+  //songbook
+  m_verseAct = new QAction(tr("Verse"), this);
+  m_verseAct->setToolTip(tr("Insert a new verse"));
+  m_verseAct->setStatusTip(tr("Insert a new verse"));
+  m_actions->addAction(m_verseAct);
+  toolBar()->addAction(m_verseAct);
+
+  m_chorusAct = new QAction(tr("Chorus"), this);
+  m_chorusAct->setToolTip(tr("Insert a new chorus"));
+  m_chorusAct->setStatusTip(tr("Insert a new chorus"));
+  m_actions->addAction(m_chorusAct);
+  toolBar()->addAction(m_chorusAct);
+
+  m_bridgeAct = new QAction(tr("Bridge"), this);
+  m_bridgeAct->setToolTip(tr("Insert a new bridge"));
+  m_bridgeAct->setStatusTip(tr("Insert a new bridge"));
+  m_actions->addAction(m_bridgeAct);
+  toolBar()->addAction(m_bridgeAct);
+}
+
+CEditor::~CEditor()
+{
+  delete m_toolBar;
+  delete m_actions;
+}
+
+QToolBar * CEditor::toolBar() const
+{
+  return m_toolBar;
+}
+
+QActionGroup* CEditor::actionGroup() const
+{
+  return m_actions;
+}
+
+bool CEditor::isSpellCheckAvailable() const
+{
+  return false;
+}
+
+void CEditor::setSpellCheckAvailable(const bool)
+{}
+
+
+CSongEditor::CSongEditor(QWidget *parent)
+  : CEditor(parent)
   , m_codeEditor(0)
   , m_songHeaderEditor(0)
-  , m_library(0)
-  , m_toolBar(0)
-  , m_actions(new QActionGroup(this))
-  , m_spellCheckingAct(new QAction(this))
   , m_song()
   , m_newSong(true)
   , m_newCover(false)
@@ -58,118 +179,23 @@ CSongEditor::CSongEditor(QWidget *parent)
 	  SLOT(setDictionary(const QLocale &)));
 #endif //ENABLE_SPELLCHECK
 
-  // toolBar
-  m_toolBar = new QToolBar(tr("Song edition tools"), this);
-  m_toolBar->setMovable(false);
-  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
-
-  // actions
-  QAction* action = new QAction(tr("Save"), this);
-  action->setShortcut(QKeySequence::Save);
-  action->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
-  action->setStatusTip(tr("Save modifications"));
-  connect(action, SIGNAL(triggered()), SLOT(save()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  //copy paste
-  action = new QAction(tr("Cut"), this);
-  action->setShortcut(QKeySequence::Cut);
-  action->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
-  action->setStatusTip(tr("Cut the selection"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(cut()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  action = new QAction(tr("Copy"), this);
-  action->setShortcut(QKeySequence::Copy);
-  action->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
-  action->setStatusTip(tr("Copy the selection"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(copy()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  action = new QAction(tr("Paste"), this);
-  action->setShortcut(QKeySequence::Paste);
-  action->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
-  action->setStatusTip(tr("Paste clipboard content"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(paste()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  toolBar()->addSeparator();
-
-  //undo redo
-  action = new QAction(tr("Undo"), this);
-  action->setShortcut(QKeySequence::Undo);
-  action->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
-  action->setStatusTip(tr("Undo modifications"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(undo()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  action = new QAction(tr("Redo"), this);
-  action->setShortcut(QKeySequence::Redo);
-  action->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
-  action->setStatusTip(tr("Redo modifications"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(redo()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  toolBar()->addSeparator();
-
   //find and replace
   m_findReplaceDialog = new CFindReplaceDialog(this);
   m_findReplaceDialog->setModal(false);
   m_findReplaceDialog->setTextEditor(codeEditor());
 
-  action = new QAction(tr("Search and Replace"), this);
-  action->setShortcut(QKeySequence::Replace);
-  action->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
-  action->setStatusTip(tr("Find some text and replace it"));
-  connect(action, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  action = new QAction(tr("Search"), this);
-  action->setShortcut(QKeySequence::Find);
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(toggleQuickSearch()));
-
-  //spellchecking
-  m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
-  m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
-  m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
-  m_spellCheckingAct->setCheckable(true);
-  m_spellCheckingAct->setEnabled(false);
-#ifndef ENABLE_SPELLCHECK
-  m_spellCheckingAct->setVisible(false);
-#endif //ENABLE_SPELLCHECK
-  m_actions->addAction(action);
-  toolBar()->addAction(m_spellCheckingAct);
-
-  toolBar()->addSeparator();
-
-  //songbook
-  action = new QAction(tr("Verse"), this);
-  action->setToolTip(tr("Insert a new verse"));
-  action->setStatusTip(tr("Insert a new verse"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(insertVerse()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  action = new QAction(tr("Chorus"), this);
-  action->setToolTip(tr("Insert a new chorus"));
-  action->setStatusTip(tr("Insert a new chorus"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(insertChorus()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
-
-  action = new QAction(tr("Bridge"), this);
-  action->setToolTip(tr("Insert a new bridge"));
-  action->setStatusTip(tr("Insert a new bridge"));
-  connect(action, SIGNAL(triggered()), codeEditor(), SLOT(insertBridge()));
-  m_actions->addAction(action);
-  toolBar()->addAction(action);
+  //connects
+  connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
+  connect(m_cutAct, SIGNAL(triggered()), codeEditor(), SLOT(cut()));
+  connect(m_copyAct, SIGNAL(triggered()), codeEditor(), SLOT(copy()));
+  connect(m_pasteAct, SIGNAL(triggered()), codeEditor(), SLOT(paste()));
+  connect(m_undoAct, SIGNAL(triggered()), codeEditor(), SLOT(undo()));
+  connect(m_redoAct, SIGNAL(triggered()), codeEditor(), SLOT(redo()));
+  connect(m_replaceAct, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
+  connect(m_searchAct, SIGNAL(triggered()), codeEditor(), SLOT(toggleQuickSearch()));
+  connect(m_verseAct, SIGNAL(triggered()), codeEditor(), SLOT(insertVerse()));
+  connect(m_chorusAct, SIGNAL(triggered()), codeEditor(), SLOT(insertChorus()));
+  connect(m_bridgeAct, SIGNAL(triggered()), codeEditor(), SLOT(insertBridge()));
 
   QBoxLayout *mainLayout = new QVBoxLayout();
   mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -191,8 +217,6 @@ CSongEditor::~CSongEditor()
 {
   delete m_codeEditor;
   delete m_songHeaderEditor;
-  delete m_toolBar;
-  delete m_actions;
   delete m_findReplaceDialog;
 }
 
@@ -207,11 +231,6 @@ void CSongEditor::readSettings()
 void CSongEditor::writeSettings()
 {
   m_findReplaceDialog->writeSettings();
-}
-
-QActionGroup* CSongEditor::actionGroup() const
-{
-  return m_actions;
 }
 
 void CSongEditor::closeEvent(QCloseEvent *event)
@@ -370,20 +389,9 @@ void CSongEditor::documentWasModified()
   setModified(true);
 }
 
-QToolBar * CSongEditor::toolBar() const
-{
-  return m_toolBar;
-}
-
 CLibrary * CSongEditor::library() const
 {
-  return m_library;
-}
-
-void CSongEditor::setLibrary(CLibrary *library)
-{
-  m_library = library;
-  m_songHeaderEditor->setLibraryCompleters(library);
+  return CLibrary::getInstance();
 }
 
 bool CSongEditor::isModified() const
