@@ -73,11 +73,12 @@ public:
     CoverRole = Qt::UserRole + 4, /*!< the cover of the song item.*/
     LilypondRole = Qt::UserRole + 5, /*!< whether or not the song item contains lilypond music sheets.*/
     WebsiteRole = Qt::UserRole + 6, /*!< whether or not the song item contains a link to the website of the artist.*/
-    LanguageRole = Qt::UserRole + 7, /*!< the language of the song item.*/
-    PathRole = Qt::UserRole + 8, /*!< the absolute path to the .sg file corresponding to the song item.*/
-    CoverSmallRole = Qt::UserRole + 9, /*!< the thumbnail cover (22x22) of the song item.*/
-    CoverFullRole = Qt::UserRole + 10, /*!< the full cover (128x128) of the song item.*/
-    RelativePathRole = Qt::UserRole + 11, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
+    UrlRole = Qt::UserRole + 7, /*!< the url of the artist website.*/
+    LanguageRole = Qt::UserRole + 8, /*!< the language of the song item.*/
+    PathRole = Qt::UserRole + 9, /*!< the absolute path to the .sg file corresponding to the song item.*/
+    CoverSmallRole = Qt::UserRole + 10, /*!< the thumbnail cover (22x22) of the song item.*/
+    CoverFullRole = Qt::UserRole + 11, /*!< the full cover (128x128) of the song item.*/
+    RelativePathRole = Qt::UserRole + 12, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
     MaxRole = RelativePathRole
   };
 
@@ -92,8 +93,6 @@ public:
 
   void writeSettings();
 
-  bool checkSongbookPath(const QString & path);
-  QString findSongbookPath();
 
   /*!
     Returns the directory of the library.
@@ -120,25 +119,29 @@ public:
 
   /*!
     Returns the completion model associated with the library.
-    The completion model isi based on the list of words from
+    The completion model is based on the list of words from
     title, artist and album columns.
-    \sa artistCompletionModel, albumCompletionModel
+    \sa artistCompletionModel, albumCompletionModel, urlCompletionModel
   */
   QAbstractListModel * completionModel() const;
 
   /*!
-    Returns the artist completion model associated with the library.
-    The completion model is based on the list of words from the artist column.
-    \sa completionModel, albumCompletionModel
+    Returns a model based on the list (without duplicates) of artists.
+    \sa completionModel, albumCompletionModel, urlCompletionModel
   */
   QAbstractListModel * artistCompletionModel() const;
 
   /*!
-    Returns the album completion model associated with the library.
-    The completion model is based on the list of words from the album column.
-    \sa completionModel, artistCompletionModel
+    Returns a model based on the list (without duplicates) of albums.
+    \sa completionModel, artistCompletionModel, urlCompletionModel
   */
   QAbstractListModel * albumCompletionModel() const;
+
+  /*!
+    Returns a model based on the list (without duplicates) of urls.
+    \sa completionModel, artistCompletionModel, albumCompletionModel
+  */
+  QAbstractListModel * urlCompletionModel() const;
 
   /*!
     Reimplements QAbstractTableModel::headerData.
@@ -264,12 +267,17 @@ signals:
 protected:
 
 private:
+
+  bool checkSongbookPath(const QString & path);
+  QString findSongbookPath();
+
   CMainWindow *m_parent;
   QDir m_directory;
 
   QStringListModel *m_completionModel;
   QStringListModel *m_artistCompletionModel;
   QStringListModel *m_albumCompletionModel;
+  QStringListModel *m_urlCompletionModel;
 
   QStringList m_templates;
   QList< Song > m_songs;

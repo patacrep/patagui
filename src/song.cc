@@ -102,7 +102,9 @@ Song Song::fromString(const QString &text, const QString &path)
   song.originalSong = latexToUtf8(reOriginalSong.cap(1));
 
   reUrl.indexIn(options);
-  song.url = reUrl.cap(1);
+  song.url = reUrl.cap(1).replace("http://","");
+  if (song.url.endsWith("/"))
+    song.url.chop(1);
   song.isWebsite = !song.url.isEmpty();
 
   reCoverName.indexIn(options);

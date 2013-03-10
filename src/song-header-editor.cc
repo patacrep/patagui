@@ -67,6 +67,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   , m_coverLabel(new CCoverDropArea(this))
   , m_viewMode(FullViewMode)
 {
+
   // full view
   // do not translate combobox content since "english", "french" etc is used by LaTeX
   m_languageComboBox->addItem
@@ -223,6 +224,8 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   mainLayout->addLayout(m_stackedLayout);
   setLayout(mainLayout);
   setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+
+  setLibraryCompleters();
 }
 
 CSongHeaderEditor::~CSongHeaderEditor()
@@ -278,17 +281,23 @@ LineEdit * CSongHeaderEditor::artistLineEdit() const
   return m_artistLineEdit;
 }
 
-void CSongHeaderEditor::setLibraryCompleters(CLibrary * library)
+void CSongHeaderEditor::setLibraryCompleters()
 {
-  QCompleter *artistCompleter = new QCompleter;
-  artistCompleter->setModel(library->artistCompletionModel());
-  artistCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-  m_artistLineEdit->setCompleter(artistCompleter);
+  CLibrary *library = CLibrary::getInstance();
+  QCompleter *completer = new QCompleter;
+  completer->setModel(library->artistCompletionModel());
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  m_artistLineEdit->setCompleter(completer);
 
-  QCompleter *albumCompleter = new QCompleter;
-  albumCompleter->setModel(library->albumCompletionModel());
-  albumCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-  m_albumLineEdit->setCompleter(albumCompleter);
+  completer = new QCompleter;
+  completer->setModel(library->albumCompletionModel());
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  m_albumLineEdit->setCompleter(completer);
+
+  completer = new QCompleter;
+  completer->setModel(library->urlCompletionModel());
+  completer->setCaseSensitivity(Qt::CaseInsensitive);
+  m_urlLineEdit->setCompleter(completer);
 }
 
 void CSongHeaderEditor::update()
@@ -396,7 +405,7 @@ void CSongHeaderEditor::onTextEdited(const QString &text)
     }
   else if (currentLineEdit == m_urlLineEdit)
     {
-      song().url = text;
+      song().url = QString("http://%1").arg(text);
     }
   else
     {
