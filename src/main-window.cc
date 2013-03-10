@@ -133,7 +133,6 @@ namespace // anonymous namespace
 
 CMainWindow::CMainWindow(QWidget *parent)
   : QMainWindow(parent)
-  , m_library(new CLibrary(this))
   , m_view(new CLibraryView(this))
   , m_songbook(new CSongbook(this))
   , m_proxyModel(new CSongSortFilterProxyModel(this))
@@ -151,12 +150,10 @@ CMainWindow::CMainWindow(QWidget *parent)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
+  CLibrary::getInstance()->setParent(this);
 
-  connect(m_library, SIGNAL(directoryChanged(const QDir &)),
+  connect(library(), SIGNAL(directoryChanged(const QDir &)),
 	  SLOT(noDataNotification(const QDir &)));
-
-  // songbook (title, authors, song list)
-  m_songbook->setLibrary(m_library);
 
   connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
   connect(m_songbook, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
@@ -172,7 +169,7 @@ CMainWindow::CMainWindow(QWidget *parent)
   m_view->setModel(m_proxyModel);
   m_view->setItemDelegate(new CSongItemDelegate);
   m_view->resizeColumns();
-  connect(m_library, SIGNAL(wasModified()), m_view, SLOT(update()));
+  connect(library(), SIGNAL(wasModified()), m_view, SLOT(update()));
 
   // compilation log
   QPlainTextEdit* logs = new QPlainTextEdit;
@@ -227,7 +224,6 @@ CMainWindow::CMainWindow(QWidget *parent)
 
 CMainWindow::~CMainWindow()
 {
-  delete m_library;
   delete m_songbook;
 }
 
@@ -735,7 +731,7 @@ CLibraryView * CMainWindow::view() const
 
 CLibrary * CMainWindow::library() const
 {
-  return m_library;
+  return CLibrary::getInstance();
 }
 
 QItemSelectionModel * CMainWindow::selectionModel()
@@ -777,7 +773,6 @@ void CMainWindow::songEditor(const QString &path)
 	}
 
   CSongEditor *editor = new CSongEditor(this);
-  editor->setLibrary(library());
   editor->installHighlighter();
   if (!path.isEmpty())
     {

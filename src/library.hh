@@ -54,6 +54,12 @@ class CLibrary : public QAbstractTableModel
   Q_OBJECT
   Q_PROPERTY(QDir directory READ directory WRITE setDirectory)
 
+private:
+  /// Constructor.
+  CLibrary();
+  /// Destructor.
+  ~CLibrary();
+
 public:
   /*!
     \enum Roles
@@ -75,10 +81,14 @@ public:
     MaxRole = RelativePathRole
   };
 
-  /// Constructor.
-  CLibrary(CMainWindow* parent);
-  /// Destructor.
-  ~CLibrary();
+  static CLibrary *getInstance()
+  {
+    if (!_singleton)
+      _singleton = new CLibrary();
+    return _singleton;
+  }
+
+  void setParent(CMainWindow *parent);
 
   void writeSettings();
 
@@ -263,6 +273,8 @@ private:
 
   QStringList m_templates;
   QList< Song > m_songs;
+
+  static CLibrary *_singleton;
 };
 
 Q_DECLARE_METATYPE(QLocale::Language)

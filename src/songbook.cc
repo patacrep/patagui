@@ -39,7 +39,6 @@
 
 CSongbook::CSongbook(QObject *parent)
   : CIdentityProxyModel(parent)
-  , m_library()
   , m_filename()
   , m_tmpl()
   , m_selectedSongs()
@@ -50,7 +49,9 @@ CSongbook::CSongbook(QObject *parent)
   , m_parameters()
   , m_mandatoryParameters()
   , m_advancedParameters()
-{}
+{
+  setSourceModel(library());
+}
 
 CSongbook::~CSongbook()
 {
@@ -59,16 +60,7 @@ CSongbook::~CSongbook()
 
 CLibrary * CSongbook::library() const
 {
-  return m_library;
-}
-
-void CSongbook::setLibrary(CLibrary *library)
-{
-  if (library && library != m_library)
-    {
-      m_library = library;
-      setSourceModel(library);
-    }
+  return CLibrary::getInstance();
 }
 
 QString CSongbook::filename() const

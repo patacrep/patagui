@@ -54,9 +54,11 @@ namespace // anonymous namespace
   }
 }
 
-CLibrary::CLibrary(CMainWindow *parent)
+CLibrary *CLibrary::_singleton = 0;
+
+CLibrary::CLibrary()
   : QAbstractTableModel()
-  , m_parent(parent)
+  , m_parent(0)
   , m_directory()
   , m_completionModel(new QStringListModel(this))
   , m_artistCompletionModel(new QStringListModel(this))
@@ -499,4 +501,9 @@ QString CLibrary::pathToSong(const QString &artist, const QString &title) const
 QString CLibrary::pathToSong(Song &song) const
 {
   return pathToSong(song.artist, song.title);
+}
+
+void CLibrary::setParent(CMainWindow *parent)
+{
+  m_parent = parent;
 }
