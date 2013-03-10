@@ -277,6 +277,7 @@ QString Song::latexToUtf8(const QString & str)
   result.replace(QRegExp("([^\\\\])~"), QString("\\1%1").arg(QChar(QChar::Nbsp)));
   result.replace(QRegExp("\\\\([&~])"), "\\1");
   result.replace(QRegExp("(\\{?\\\\dots\\}?|\\{?\\\\ldots\\}?)"),  "...");
+  result.replace("\\%",  "%");
   return result;
 }
 
@@ -286,5 +287,6 @@ QString Song::utf8ToLatex(const QString & str)
   result.replace(QRegExp("([&~])"), "\\\\1");
   result.replace(QChar(QChar::Nbsp), "~");
   result.replace("...", "\\dots");
+  result.replace("%", "\\%");
   return result;
 }
