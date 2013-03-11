@@ -135,7 +135,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
       QString line;
       QStringList lines = content.split("\n");
       foreach (line, lines)
-	if (Song::reGtab.indexIn(line) != -1 || Song::reUtab.indexIn(line) != -1)
+	if (line.contains("\\gtab") || line.contains("\\utab"))
 	  m_diagramArea->addDiagram(line.simplified());
     }
 
