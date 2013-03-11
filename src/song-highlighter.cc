@@ -94,13 +94,13 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   environmentFormat.setFontWeight(QFont::Bold);
   environmentFormat.setForeground(QColor(78,154,6));
 
-  QList<QRegExp> regexps;
-  regexps << Song::reBegin << Song::reEnd
-	  << Song::reBeginScripture << Song::reEndScripture;
+  QStringList delimiters;
+  delimiters << "\\\\begin" << "\\\\end"
+	     << "\\\\beginscripture" << "\\\\endscripture";
 
-  foreach (const QRegExp &regexp, regexps)
+  foreach (QString str, delimiters)
     {
-      rule.pattern = regexp;
+      rule.pattern = QRegExp(str);
       rule.format = environmentFormat;
       highlightingRules.append(rule);
     }
