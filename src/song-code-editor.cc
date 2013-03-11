@@ -287,32 +287,32 @@ void CSongCodeEditor::highlightEnvironments()
   if (!environmentsHighlighted())
     return;
 
-  SongEnvironment env = None;
+  bool environment = false;
   QTextCursor cursor(document());
   QStringList lines = toPlainText().split("\n");
   QList<QTextEdit::ExtraSelection> extraSelections;
   foreach (QString line, lines)
     {
-      if (Song::reBeginVerse.indexIn(line) > -1)
-	env = Verse;
-      else if (Song::reBeginChorus.indexIn(line) > -1)
-	env = Chorus;
-      else if (Song::reBeginBridge.indexIn(line) > -1)
-	env = Bridge;
-      else if (Song::reBeginScripture.indexIn(line) > -1)
-	env = Scripture;
+      if (line.contains("\\begin"))
+	environment = true;
 
-      if (((env == Verse) && (Song::reEndVerse.indexIn(line) > -1)) ||
-	  ((env == Bridge) && (Song::reEndBridge.indexIn(line) > -1)) ||
-	  ((env == Chorus) && (Song::reEndChorus.indexIn(line) > -1)) ||
-	  ((env == Scripture) && (Song::reEndScripture.indexIn(line) > -1)))
+      if (environment && line.contains("\\end"))
 	{
 	  cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
-	  extraSelections.append(environmentSelection(env, cursor));
+
+	  if (line.contains("verse"))
+	    extraSelections.append(environmentSelection(Verse, cursor));
+	  else if (line.contains("chorus"))
+	    extraSelections.append(environmentSelection(Chorus, cursor));
+	  else if (line.contains("bridge"))
+	    extraSelections.append(environmentSelection(Bridge, cursor));
+	  else if (line.contains("scripture"))
+	    extraSelections.append(environmentSelection(Scripture, cursor));
+
 	  cursor.movePosition(QTextCursor::PreviousBlock, QTextCursor::KeepAnchor);
-	  env = None;
+	  environment = false;
 	}
-      cursor.movePosition(QTextCursor::NextBlock, (env != None)?
+      cursor.movePosition(QTextCursor::NextBlock, environment?
 			  QTextCursor::KeepAnchor : QTextCursor::MoveAnchor);
     }
   extraSelections.append(currentLineSelection());

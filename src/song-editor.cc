@@ -318,7 +318,7 @@ void CSongEditor::parseText()
   QStringList lines = codeEditor()->toPlainText().split("\n");
   foreach (QString line, lines)
     {
-      if (Song::reBeginScripture.indexIn(line) > -1)
+      if (line.contains("\\beginscripture"))
         in_scripture = true;
 
       if (in_scripture)
@@ -336,7 +336,7 @@ void CSongEditor::parseText()
           m_song.lyrics << line;
         }
 
-      if (Song::reEndScripture.indexIn(line) > -1)
+      if (line.contains("\\endscripture"))
         in_scripture = false;
     }
 

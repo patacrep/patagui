@@ -179,56 +179,6 @@ struct Song
     Extracts utab macros (ukulele diagrams) that are used for CChord objects.
   */
   static QRegExp reUtab;
-
-  /*!
-    Finds starting LaTeX environments.
-  */
-  static QRegExp reBegin;
-
-  /*!
-    Finds ending LaTeX environments.
-  */
-  static QRegExp reEnd;
-
-  /*!
-    Finds starting verse environments.
-  */
-  static QRegExp reBeginVerse;
-
-  /*!
-    Finds ending verse environments.
-  */
-  static QRegExp reEndVerse;
-
-  /*!
-    Finds starting bridge environments.
-  */
-  static QRegExp reBeginBridge;
-
-  /*!
-    Finds ending bridge environments.
-  */
-  static QRegExp reEndBridge;
-
-  /*!
-    Finds starting chorus environments.
-  */
-  static QRegExp reBeginChorus;
-
-  /*!
-    Finds ending chorus environments.
-  */
-  static QRegExp reEndChorus;
-
-  /*!
-    Finds starting scripture environments.
-  */
-  static QRegExp reBeginScripture;
-
-  /*!
-    Finds ending scripture environments.
-  */
-  static QRegExp reEndScripture;
 };
 
 #endif // __SONG_HH__
