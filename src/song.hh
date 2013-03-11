@@ -166,11 +166,6 @@ struct Song
   static QRegExp reCover;
 
   /*!
-    Finds blank lines.
-  */
-  static QRegExp reBlankLine;
-
-  /*!
     Extracts gtab macros (guitar diagrams) that are used for CChord objects.
   */
   static QRegExp reGtab;
