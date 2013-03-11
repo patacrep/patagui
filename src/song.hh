@@ -164,16 +164,6 @@ struct Song
     Extracts the cover filename associated with the song from a .sg file.
   */
   static QRegExp reCover;
-
-  /*!
-    Extracts gtab macros (guitar diagrams) that are used for CChord objects.
-  */
-  static QRegExp reGtab;
-
-  /*!
-    Extracts utab macros (ukulele diagrams) that are used for CChord objects.
-  */
-  static QRegExp reUtab;
 };
 
 #endif // __SONG_HH__
