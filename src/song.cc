@@ -36,7 +36,6 @@ QRegExp Song::reColumnCount("\\\\songcolumns\\{([^\\}]+)");
 QRegExp Song::reCapo("\\\\capo\\{([^\\}]+)");
 QRegExp Song::reTranspose("\\\\transpose\\{([^\\}]+)");
 QRegExp Song::reCover("\\\\cover");
-QRegExp Song::reBlankLine("^\\s*$");
 QRegExp Song::reGtab("(\\\\gtab\\*?\\{[^\\}]+\\}\\{[^\\}]+\\})");
 QRegExp Song::reUtab("(\\\\utab\\*?\\{[^\\}]+\\}\\{[^\\}]+\\})");
 
@@ -136,7 +135,7 @@ Song Song::fromString(const QString &text, const QString &path)
               song.utabs << reUtab.cap(1);
               continue;
             }
-          else if (reCover.indexIn(line) != -1 || reBlankLine.indexIn(line) != -1)
+          else if (reCover.indexIn(line) != -1 || line.trimmed().isEmpty())
             {
               continue;
             }
