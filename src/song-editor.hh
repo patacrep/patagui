@@ -41,8 +41,8 @@ public:
   CEditor(QWidget *parent = 0);
   virtual ~CEditor();
 
-  QToolBar * toolBar() const;
-  QActionGroup * actionGroup() const;
+  virtual QToolBar * toolBar() const;
+  virtual QActionGroup * actionGroup() const;
 
   virtual bool isSpellCheckAvailable() const;
   virtual void setSpellCheckAvailable(const bool);
@@ -60,8 +60,6 @@ protected:
   QAction *m_chorusAct;
   QAction *m_bridgeAct;
   QAction* m_spellCheckingAct;
-
-private:
   QActionGroup *m_actions;
   QToolBar *m_toolBar;
 };
@@ -108,6 +106,9 @@ public:
 
   //! Setter on the new cover property
   void setNewCover(bool newCover);
+
+  virtual QToolBar * toolBar() const;
+  virtual QActionGroup * actionGroup() const;
 
   virtual bool isSpellCheckAvailable() const;
   virtual void setSpellCheckAvailable(const bool);
