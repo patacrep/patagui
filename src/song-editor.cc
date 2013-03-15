@@ -143,11 +143,13 @@ CEditor::~CEditor()
 
 QToolBar * CEditor::toolBar() const
 {
+  m_toolBar->setVisible(false);
   return m_toolBar;
 }
 
 QActionGroup* CEditor::actionGroup() const
 {
+  m_actions->setEnabled(false);
   return m_actions;
 }
 
@@ -524,4 +526,16 @@ void CSongEditor::installHighlighter()
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
 #endif //ENABLE_SPELLCHECK
+}
+
+QActionGroup* CSongEditor::actionGroup() const
+{
+  m_actions->setEnabled(true);
+  return m_actions;
+}
+
+QToolBar * CSongEditor::toolBar() const
+{
+  m_toolBar->setVisible(true);
+  return m_toolBar;
 }

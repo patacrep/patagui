@@ -225,6 +225,7 @@ CMainWindow::CMainWindow(QWidget *parent)
 CMainWindow::~CMainWindow()
 {
   delete m_songbook;
+  delete m_voidEditor;
 }
 
 void CMainWindow::switchToolBar(QToolBar *toolBar)
@@ -458,7 +459,6 @@ void CMainWindow::createMenus()
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
 
   m_voidEditor = new CEditor(this);
-  m_voidEditor->actionGroup()->setEnabled(false);
   m_editorMenu->addActions(m_voidEditor->actionGroup()->actions());
 
   QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -833,15 +833,12 @@ void CMainWindow::changeTab(int index)
   CEditor *editor = qobject_cast< CEditor* >(m_mainWidget->widget(index));
   if (editor != 0)
     {
-      editor->actionGroup()->setEnabled(true);
-      editor->setSpellCheckAvailable(editor->isSpellCheckAvailable());
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
     }
   else
     {
       editor = m_voidEditor;
-      editor->actionGroup()->setEnabled(false);
       switchToolBar(m_libraryToolBar);
       m_saveAct->setShortcutContext(Qt::WindowShortcut);
     }
