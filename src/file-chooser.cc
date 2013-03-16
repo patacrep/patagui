@@ -24,6 +24,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QBoxLayout>
+#include <QCompleter>
+#include <QDirModel>
 #include <QSettings>
 
 CFileChooser::CFileChooser(QWidget *parent)
@@ -37,6 +39,11 @@ CFileChooser::CFileChooser(QWidget *parent)
   , m_options(0)
 {
   m_lineEdit = new QLineEdit();
+  QCompleter *completer = new QCompleter(this);
+  completer->setModel(new QDirModel(completer));
+  completer->setCompletionMode(QCompleter::InlineCompletion);
+  m_lineEdit->setCompleter(completer);
+
   connect(m_lineEdit, SIGNAL(textChanged(const QString &)),
           this, SLOT(setPath(const QString &)));
 
