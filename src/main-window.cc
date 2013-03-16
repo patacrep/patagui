@@ -301,6 +301,13 @@ void CMainWindow::createActions()
   m_newSongAct->setIconText(tr("Add song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
+  m_importSongAct = new QAction(tr("&Import Songs"), this);
+  m_importSongAct->setIcon(QIcon::fromTheme("document-import",QIcon(":/icons/tango/32x32/mimetypes/document-import.png")));
+  m_importSongAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_I));
+  m_importSongAct->setStatusTip(tr("Import a song in the library"));
+  m_importSongAct->setIconText(tr("Import song"));
+  connect(m_importSongAct, SIGNAL(triggered()), this, SLOT(importSongs()));
+
   m_newAct = new QAction(tr("&New"), this);
   m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
   m_newAct->setShortcut(QKeySequence::New);
@@ -448,6 +455,7 @@ void CMainWindow::createMenus()
 
   QMenu *libraryMenu = menuBar()->addMenu(tr("&Library"));
   libraryMenu->addAction(m_newSongAct);
+  libraryMenu->addAction(m_importSongAct);
   libraryMenu->addSeparator();
   libraryMenu->addAction(m_selectAllAct);
   libraryMenu->addAction(m_unselectAllAct);
@@ -790,6 +798,15 @@ void CMainWindow::songEditor(const QString &path)
 void CMainWindow::newSong()
 {
   songEditor(QString());
+}
+
+void CMainWindow::importSongs()
+{
+  QStringList filenames = QFileDialog::getOpenFileNames(this,
+							tr("Import songs"),
+							QDir::homePath(),
+							tr("Songs (*.sg)"));
+  library()->importSongs(filenames);
 }
 
 void CMainWindow::deleteSong()
