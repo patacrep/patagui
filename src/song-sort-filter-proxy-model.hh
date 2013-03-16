@@ -145,6 +145,8 @@ protected:
   bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 
 private:
+  bool m_onlySelected;
+  bool m_onlyNotSelected;
   QString m_filterString;
   QSet< QLocale::Language > m_languageFilter;
   QSet< QLocale::Language > m_negativeLanguageFilter;

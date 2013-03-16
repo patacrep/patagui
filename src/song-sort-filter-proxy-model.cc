@@ -25,6 +25,8 @@
 
 CSongSortFilterProxyModel::CSongSortFilterProxyModel(QObject *parent)
   : QSortFilterProxyModel(parent)
+  , m_onlySelected(false)
+  , m_onlyNotSelected(false)
   , m_filterString()
   , m_languageFilter()
   , m_negativeLanguageFilter()
@@ -42,26 +44,42 @@ void CSongSortFilterProxyModel::setFilterString(const QString &filterString)
   clearNegativeLanguageFilter();
   clearKeywordFilter();
 
-  // parse the :keyword parameters and create the appropriate filter
-  QRegExp langFilter("!?:(\\w{2})\\s?");
-  int pos = 0;
-  while ((pos = langFilter.indexIn(m_filterString, pos)) != -1)
-    {
-      QString language = langFilter.cap(1);
-      QLocale locale(language);
-      if (langFilter.cap(0).startsWith("!"))
-        {
-          insertNegativeLanguageFilter(locale.language());
-        }
-      else
-        {
-          insertLanguageFilter(locale.language());
-        }
-      pos += langFilter.matchedLength();
-    }
+  m_onlySelected = false;
+  m_onlyNotSelected = false;
 
   QString filter = m_filterString;
-  filter.remove(langFilter);
+  if (filter.contains("!:selection"))
+    {
+      m_onlyNotSelected = true;
+      filter.remove("!:selection");
+    }
+  else if (filter.contains(":selection"))
+    {
+      m_onlySelected = true;
+      filter.remove(":selection");
+    }
+  else if (!filter.contains(":se")) //:se(lection) would be removed
+    {
+      // parse the :keyword parameters and create the appropriate filter
+      QRegExp langFilter("!?:(\\w{2})\\s?");
+      int pos = 0;
+      while ((pos = langFilter.indexIn(m_filterString, pos)) != -1)
+	{
+	  QString language = langFilter.cap(1);
+	  QLocale locale(language);
+	  if (langFilter.cap(0).startsWith("!"))
+	    {
+	      insertNegativeLanguageFilter(locale.language());
+	    }
+	  else
+	    {
+	      insertLanguageFilter(locale.language());
+	    }
+	  pos += langFilter.matchedLength();
+	}
+
+      filter.remove(langFilter);
+    }
   m_keywordFilter << filter.split(" ");
   invalidateFilter();
 }
@@ -80,7 +98,7 @@ bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     {
       foreach (QString keyword, m_keywordFilter)
         {
-          if (keyword.startsWith("!"))
+	  if (keyword.startsWith("!"))
             {
               keyword.remove("!");
               if (sourceModel()->data(index, CLibrary::TitleRole).toString().contains(keyword, Qt::CaseInsensitive)
@@ -104,6 +122,12 @@ bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
 
   if (!m_languageFilter.isEmpty())
     accept = accept && m_languageFilter.contains(qVariantValue< QLocale::Language >(sourceModel()->data(index, CLibrary::LanguageRole)));
+
+  if (m_onlySelected)
+    accept = accept && qobject_cast< CSongbook* >(sourceModel())->isChecked(index);
+
+  if (m_onlyNotSelected)
+    accept = accept && !qobject_cast< CSongbook* >(sourceModel())->isChecked(index);
 
   return accept;
 }
