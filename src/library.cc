@@ -30,6 +30,7 @@
 #include <QMessageBox>
 
 #include <QDebug>
+#include <QElapsedTimer>
 
 namespace // anonymous namespace
 {
@@ -352,6 +353,8 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 
 void CLibrary::addSongs(const QStringList &paths)
 {
+  QElapsedTimer t;
+  t.start();
   Song song;
   int songCount = 0;
   // run through the library songs files
@@ -362,6 +365,8 @@ void CLibrary::addSongs(const QStringList &paths)
       loadSong(filepath.next(), &song);
       addSong(song);
     }
+
+  qDebug() << " **** "<< t.elapsed() ;
   reset();
   emit(wasModified());
 }
@@ -461,6 +466,24 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
   else
     {
       cover.save(coverFilename);
+    }
+}
+
+void CLibrary::importSongs(const QStringList & filenames)
+{
+  Song song;
+  QImage coverImage;
+  foreach(const QString & filename, filenames)
+    {
+      song = Song::fromFile(filename);
+      QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
+
+      createArtistDirectory(song);
+
+      if (QFile(coverFilename).exists() && coverImage.load(coverFilename))
+	saveCover(song, coverImage);
+
+      saveSong(song);
     }
 }
 

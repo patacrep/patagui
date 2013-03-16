@@ -192,6 +192,7 @@ private slots:
 
   //library
   void newSong();
+  void importSongs();
   void middleClicked(const QModelIndex &index = QModelIndex());
   void songEditor(const QModelIndex &index = QModelIndex());
   void deleteSong();
@@ -280,6 +281,7 @@ private:
 
   // Library action
   QAction *m_newSongAct;
+  QAction *m_importSongAct;
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;

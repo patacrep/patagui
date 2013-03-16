@@ -205,6 +205,8 @@ public:
   */
   void addSongs(const QStringList &paths);
 
+  void importSongs(const QStringList & filenames);
+
   /*!
     Returns \a true if the song \a path is already in the library.
     \sa addSong, removeSong
