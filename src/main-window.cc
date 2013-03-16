@@ -294,11 +294,11 @@ void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 
 void CMainWindow::createActions()
 {
-  m_newSongAct = new QAction(tr("&Add Song"), this);
+  m_newSongAct = new QAction(tr("&New Song"), this);
   m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
   m_newSongAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
   m_newSongAct->setStatusTip(tr("Write a new song"));
-  m_newSongAct->setIconText(tr("Add song"));
+  m_newSongAct->setIconText(tr("Write a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
   m_importSongAct = new QAction(tr("&Import Songs"), this);
