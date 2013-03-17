@@ -21,6 +21,7 @@
 #define __LIBRARY_HH__
 
 #include "song.hh"
+#include "singleton.hh"
 
 #include <QAbstractTableModel>
 #include <QString>
@@ -49,10 +50,12 @@ class CMainWindow;
 
 */
 
-class CLibrary : public QAbstractTableModel
+class CLibrary : public QAbstractTableModel, public Singleton<CLibrary>
 {
   Q_OBJECT
   Q_PROPERTY(QDir directory READ directory WRITE setDirectory)
+
+  friend class Singleton<CLibrary>;
 
 private:
   /// Constructor.
@@ -81,13 +84,6 @@ public:
     RelativePathRole = Qt::UserRole + 12, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
     MaxRole = RelativePathRole
   };
-
-  static CLibrary *getInstance()
-  {
-    if (!_singleton)
-      _singleton = new CLibrary();
-    return _singleton;
-  }
 
   void setParent(CMainWindow *parent);
 
@@ -286,8 +282,6 @@ private:
 
   QStringList m_templates;
   QList< Song > m_songs;
-
-  static CLibrary *_singleton;
 };
 
 Q_DECLARE_METATYPE(QLocale::Language)

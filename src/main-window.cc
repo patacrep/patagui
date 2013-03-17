@@ -150,7 +150,7 @@ CMainWindow::CMainWindow(QWidget *parent)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
-  CLibrary::getInstance()->setParent(this);
+  CLibrary::instance()->setParent(this);
 
   connect(library(), SIGNAL(directoryChanged(const QDir &)),
 	  SLOT(noDataNotification(const QDir &)));
@@ -739,7 +739,7 @@ CLibraryView * CMainWindow::view() const
 
 CLibrary * CMainWindow::library() const
 {
-  return CLibrary::getInstance();
+  return CLibrary::instance();
 }
 
 QItemSelectionModel * CMainWindow::selectionModel()

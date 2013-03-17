@@ -55,7 +55,6 @@ namespace // anonymous namespace
   }
 }
 
-CLibrary *CLibrary::_singleton = 0;
 
 CLibrary::CLibrary()
   : QAbstractTableModel()
