@@ -74,7 +74,11 @@ CSearchWidget::CSearchWidget(QWidget *parent)
 }
 
 CSearchWidget::~CSearchWidget()
-{}
+{
+  delete m_findLineEdit;
+  delete m_findPrevButton;
+  delete m_findNextButton;
+}
 
 void CSearchWidget::setFocus()
 {
