@@ -39,6 +39,8 @@ CEditor::CEditor(QWidget *parent)
   : QWidget(parent)
   , m_actions(new QActionGroup(this))
 {
+  setAttribute(Qt::WA_DeleteOnClose);
+
   // toolBar
   m_toolBar = new QToolBar(tr("Edition tools"), this);
   m_toolBar->setMovable(false);
@@ -182,9 +184,7 @@ CSongEditor::CSongEditor(QWidget *parent)
 #endif //ENABLE_SPELLCHECK
 
   //find and replace
-  m_findReplaceDialog = new CFindReplaceDialog(this);
-  m_findReplaceDialog->setModal(false);
-  m_findReplaceDialog->setTextEditor(codeEditor());
+  m_findReplaceDialog = 0;
 
   //connects
   connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
@@ -193,11 +193,11 @@ CSongEditor::CSongEditor(QWidget *parent)
   connect(m_pasteAct, SIGNAL(triggered()), codeEditor(), SLOT(paste()));
   connect(m_undoAct, SIGNAL(triggered()), codeEditor(), SLOT(undo()));
   connect(m_redoAct, SIGNAL(triggered()), codeEditor(), SLOT(redo()));
-  connect(m_replaceAct, SIGNAL(triggered()), m_findReplaceDialog, SLOT(show()));
   connect(m_searchAct, SIGNAL(triggered()), codeEditor(), SLOT(toggleQuickSearch()));
   connect(m_verseAct, SIGNAL(triggered()), codeEditor(), SLOT(insertVerse()));
   connect(m_chorusAct, SIGNAL(triggered()), codeEditor(), SLOT(insertChorus()));
   connect(m_bridgeAct, SIGNAL(triggered()), codeEditor(), SLOT(insertBridge()));
+  connect(m_replaceAct, SIGNAL(triggered()), SLOT(findReplaceDialog()));
 
   QBoxLayout *mainLayout = new QVBoxLayout();
   mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -219,20 +219,17 @@ CSongEditor::~CSongEditor()
 {
   delete m_codeEditor;
   delete m_songHeaderEditor;
-  delete m_findReplaceDialog;
+  if (m_findReplaceDialog)
+    delete m_findReplaceDialog;
 }
 
 void CSongEditor::readSettings()
-{
-  QSettings settings;
-  settings.beginGroup("editor");
-  m_findReplaceDialog->readSettings();
-  settings.endGroup();
-}
+{}
 
 void CSongEditor::writeSettings()
 {
-  m_findReplaceDialog->writeSettings();
+  if (m_findReplaceDialog)
+    m_findReplaceDialog->writeSettings();
 }
 
 void CSongEditor::closeEvent(QCloseEvent *event)
@@ -538,4 +535,16 @@ QToolBar * CSongEditor::toolBar() const
 {
   m_toolBar->setVisible(true);
   return m_toolBar;
+}
+
+void CSongEditor::findReplaceDialog()
+{
+  if (!m_findReplaceDialog)
+    {
+      m_findReplaceDialog = new CFindReplaceDialog(this);
+      m_findReplaceDialog->setModal(false);
+      m_findReplaceDialog->setTextEditor(codeEditor());
+      m_findReplaceDialog->readSettings();
+    }
+  m_findReplaceDialog->show();
 }
