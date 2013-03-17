@@ -223,12 +223,6 @@ private:
   QCompleter* m_completer;
 
   bool m_environmentsHighlighted;
-
-  QColor m_verseColor;
-  QColor m_chorusColor;
-  QColor m_bridgeColor;
-  QColor m_scriptureColor;
-
   bool m_isSpellCheckAvailable;
   bool m_isSpellCheckActive;
 
@@ -240,6 +234,11 @@ private:
 #endif //ENABLE_SPELLCHECK
 
   CSearchWidget *m_quickSearch;
+
+  const static QColor _verseColor;
+  const static QColor _chorusColor;
+  const static QColor _bridgeColor;
+  const static QColor _scriptureColor;
 };
 
 #endif // __SONG_CODE_EDITOR_HH__

@@ -21,21 +21,22 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QRegExp>
+#include <QColor>
 
 #include <QDebug>
 
-QRegExp Song::reSgFile("(.*)\\\\begin\\{?song\\}?\\{([^\\}]+)\\}[^[]*\\[([^]]*)\\](.*)\\s*\\\\endsong(.*)");
-QRegExp Song::reArtist("by=\\{?([^,\\{\\}]+)");
-QRegExp Song::reAlbum("album=\\{?([^,\\{\\}]+)");
-QRegExp Song::reOriginalSong("original=\\{?([^,\\{\\}]+)");
-QRegExp Song::reUrl("url=\\{?([^,\\{\\}]+)");
-QRegExp Song::reCoverName("cov=\\{?([^,\\{\\}]+)");
-QRegExp Song::reLilypond("\\\\lilypond");
-QRegExp Song::reLanguage("\\\\selectlanguage\\{([^\\}]+)");
-QRegExp Song::reColumnCount("\\\\songcolumns\\{([^\\}]+)");
-QRegExp Song::reCapo("\\\\capo\\{([^\\}]+)");
-QRegExp Song::reTranspose("\\\\transpose\\{([^\\}]+)");
-QRegExp Song::reCover("\\\\cover");
+const QRegExp Song::reSgFile("(.*)\\\\begin\\{?song\\}?\\{([^\\}]+)\\}[^[]*\\[([^]]*)\\](.*)\\s*\\\\endsong(.*)");
+const QRegExp Song::reArtist("by=\\{?([^,\\{\\}]+)");
+const QRegExp Song::reAlbum("album=\\{?([^,\\{\\}]+)");
+const QRegExp Song::reOriginalSong("original=\\{?([^,\\{\\}]+)");
+const QRegExp Song::reUrl("url=\\{?([^,\\{\\}]+)");
+const QRegExp Song::reCoverName("cov=\\{?([^,\\{\\}]+)");
+const QRegExp Song::reLilypond("\\\\lilypond");
+const QRegExp Song::reLanguage("\\\\selectlanguage\\{([^\\}]+)");
+const QRegExp Song::reColumnCount("\\\\songcolumns\\{([^\\}]+)");
+const QRegExp Song::reCapo("\\\\capo\\{([^\\}]+)");
+const QRegExp Song::reTranspose("\\\\transpose\\{([^\\}]+)");
+const QRegExp Song::reCover("\\\\cover");
 
 Song Song::fromFile(const QString &path)
 {
