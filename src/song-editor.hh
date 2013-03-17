@@ -131,6 +131,7 @@ private slots:
   //write modifications of the textEdit into sg file.
   void save();
   void documentWasModified();
+  void findReplaceDialog();
 
 private:
   void parseText();
