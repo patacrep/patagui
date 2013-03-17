@@ -14,7 +14,10 @@ option(ENABLE_LIBRARY_DOWNLOAD "allow the application to download songbooks" ON)
 option(ENABLE_SPELLCHECK "allow the application to apply spellchecking within song-editor" ON)
 
 # {{{ CFLAGS
-if( CMAKE_COMPILER_IS_GNUCXX )
+if (CMAKE_BUILD_TYPE MATCHES "Release")
+  message(STATUS "Compiling in Release mode")
+  add_definitions(-O2 -march=native)
+elseif( CMAKE_COMPILER_IS_GNUCXX )
   # Add additional GCC options.
   add_definitions(
     -ggdb3 -fno-strict-aliasing -Wall -Wextra
@@ -26,6 +29,7 @@ if( CMAKE_COMPILER_IS_GNUCXX )
 elseif( CMAKE_CXX_COMPILER MATCHES "clang" )
   add_definitions( -Wall -Wextra )
 endif()
+
 if(NOT WIN32)
   add_definitions( -fvisibility=hidden )
 endif()
