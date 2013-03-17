@@ -37,6 +37,7 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QToolBar>
+#include <QDesktopServices>
 
 #include "label.hh"
 #include "library.hh"
@@ -130,6 +131,8 @@ namespace // anonymous namespace
     return true;
   }
 }
+
+const QString CMainWindow::_cachePath(QString("%1/songbook-client").arg(QDesktopServices::storageLocation(QDesktopServices::CacheLocation)));
 
 CMainWindow::CMainWindow(QWidget *parent)
   : QMainWindow(parent)

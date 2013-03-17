@@ -291,6 +291,9 @@ private:
   QAction *m_invertSelectionAct;
   QAction *m_libraryUpdateAct;
   QAction *m_libraryDownloadAct;
+
+public:
+  const static QString _cachePath;
 };
 
 #endif  // __MAIN_WINDOW_HH__
