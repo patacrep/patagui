@@ -58,6 +58,11 @@ CodeEditor::CodeEditor(QWidget *parent) :
   updateLineNumberAreaWidth(0);
 }
 
+CodeEditor::~CodeEditor()
+{
+  delete lineNumberArea;
+}
+
 int CodeEditor::lineNumberAreaWidth()
 {
   if (!lineNumberMode())
