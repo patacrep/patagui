@@ -108,62 +108,62 @@ struct Song
     \li the song contents
     \li everything after \\endsong (post)
    */
-  static QRegExp reSgFile;
+  const static QRegExp reSgFile;
 
   /*!
     Extracts the artist of the song from a .sg file.
   */
-  static QRegExp reArtist;
+  const static QRegExp reArtist;
 
   /*!
     Extracts the album of the song from a .sg file.
   */
-  static QRegExp reAlbum;
+  const static QRegExp reAlbum;
 
   /*!
     Extracts the original song of the song from a .sg file.
   */
-  static QRegExp reOriginalSong;
+  const static QRegExp reOriginalSong;
 
   /*!
     Extracts the artist website of the song from a .sg file.
   */
-  static QRegExp reUrl;
+  const static QRegExp reUrl;
 
   /*!
     Extracts the cover of the song from a .sg file.
   */
-  static QRegExp reCoverName;
+  const static QRegExp reCoverName;
 
   /*!
     Looks for lilypond macros within a .sg file.
   */
-  static QRegExp reLilypond;
+  const static QRegExp reLilypond;
 
   /*!
     Extracts the language of the song from a .sg file.
   */
-  static QRegExp reLanguage;
+  const static QRegExp reLanguage;
 
   /*!
     Extracts the number of columns of the song from a .sg file.
   */
-  static QRegExp reColumnCount;
+  const static QRegExp reColumnCount;
 
   /*!
     Extracts the capo of the song from a .sg file.
   */
-  static QRegExp reCapo;
+  const static QRegExp reCapo;
 
   /*!
     Extracts the transposition information of the song from a .sg file.
   */
-  static QRegExp reTranspose;
+  const static QRegExp reTranspose;
 
   /*!
     Extracts the cover filename associated with the song from a .sg file.
   */
-  static QRegExp reCover;
+  const static QRegExp reCover;
 };
 
 #endif // __SONG_HH__

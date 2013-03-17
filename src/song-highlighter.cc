@@ -29,6 +29,43 @@
 
 #include <QDebug>
 
+const QRegExp CSongHighlighter::reLaTeXOption("\\[[^\\]]+\\]");
+const QRegExp CSongHighlighter::reLaTeXArgument("\\{[^}]+\\}");
+
+const QRegExp CSongHighlighter::reChordsPattern("\\\\\\[[^\\]]+\\]");
+const QRegExp CSongHighlighter::reCommentsPattern("%[^\n]*");
+
+const QStringList CSongHighlighter::_keywordPatterns(QStringList()
+						     << "\\\\gtab"     << "\\\\utab"
+						     << "\\\\rep"      << "\\\\lilypond"
+						     << "\\\\image"    << "\\\\songcolumns"
+						     << "\\\\cover"    << "\\\\capo"
+						     << "\\\\nolyrics" << "\\\\musicnote"
+						     << "\\\\textnote" << "\\\\dots"
+						     << "\\\\single"  << "\\\\echo"
+						     << "\\\\transpose" << "\\\\transposition"
+						     << "\\\\emph" << "\\\\selectlanguage");
+
+const QStringList CSongHighlighter::_keyword2Patterns(QStringList()
+						      << "\\\\Intro" << "\\\\Rythm"
+						      << "\\\\Outro" << "\\\\Bridge"
+						      << "\\\\Verse" << "\\\\Chorus"
+						      << "\\\\Pattern" << "\\\\Solo"
+						      << "\\\\Adlib" << "\\\\else"
+						      << "\\\\ifchorded" << "\\\\iflyrics"
+						      << "\\\\ifnorepeatchords" << "\\\\fi");
+
+const QStringList CSongHighlighter::_delimiters(QStringList()
+						 << "\\\\begin" << "\\\\end"
+						 << "\\\\beginscripture" << "\\\\endscripture");
+
+const QColor CSongHighlighter::_keywords1Color(QColor(206,92,0)); //orange
+const QColor CSongHighlighter::_keywords2Color(QColor(164,0,0)); //red
+const QColor CSongHighlighter::_environmentsColor(QColor(78,154,6)); //green
+const QColor CSongHighlighter::_commentsColor(QColor(136,138,133)); //grey
+const QColor CSongHighlighter::_quotesColor(QColor(92,53,102)); //violet
+const QColor CSongHighlighter::_chordsColor(QColor(32,74,135)); //blue
+
 CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
   , m_checker(0)
@@ -39,31 +76,20 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 
   //LaTeX options (overrided by chords)
   optionFormat.setFontItalic(true);
-  rule.pattern = QRegExp("\\[[^\\]]+\\]");
+  rule.pattern = reLaTeXOption;
   rule.format = optionFormat;
   highlightingRules.append(rule);
 
   //LaTeX args (bold)
   argumentFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\{[^}]+\\}");
+  rule.pattern = reLaTeXArgument;
   rule.format = argumentFormat;
   highlightingRules.append(rule);
 
   // Keywords1 (orange)
-  keywordFormat.setForeground(QColor(206,92,0));
+  keywordFormat.setForeground(_keywords1Color);
   keywordFormat.setFontWeight(QFont::Bold);
-  QStringList keywordPatterns;
-  keywordPatterns << "\\\\gtab"     << "\\\\utab"
-		  << "\\\\rep"      << "\\\\lilypond"
-		  << "\\\\image"    << "\\\\songcolumns"
-		  << "\\\\cover"    << "\\\\capo"
-		  << "\\\\nolyrics" << "\\\\musicnote"
-		  << "\\\\textnote" << "\\\\dots"
-		  << "\\\\single"  << "\\\\echo"
-		  << "\\\\transpose" << "\\\\transposition"
-		  << "\\\\emph" << "\\\\selectlanguage";
-
-  foreach (const QString &pattern, keywordPatterns)
+  foreach (const QString &pattern, _keywordPatterns)
     {
       rule.pattern = QRegExp(pattern);
       rule.format = keywordFormat;
@@ -71,19 +97,9 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
     }
 
   // Keywords2 (red)
-  keyword2Format.setForeground(QColor(164,0,0));
+  keyword2Format.setForeground(_keywords2Color);
   keyword2Format.setFontWeight(QFont::Bold);
-  QStringList keyword2Patterns;
-  keyword2Patterns << "\\\\bar"
-		   << "\\\\Intro" << "\\\\Rythm"
-		   << "\\\\Outro" << "\\\\Bridge"
-		   << "\\\\Verse" << "\\\\Chorus"
-		   << "\\\\Pattern" << "\\\\Solo"
-		   << "\\\\Adlib" << "\\\\else"
-		   << "\\\\ifchorded" << "\\\\iflyrics"
-		   << "\\\\ifnorepeatchords" << "\\\\fi";
-
-  foreach (const QString &pattern, keyword2Patterns)
+  foreach (const QString &pattern, _keyword2Patterns)
     {
       rule.pattern = QRegExp(pattern);
       rule.format = keyword2Format;
@@ -92,13 +108,8 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 
   //Environments (bold, green)
   environmentFormat.setFontWeight(QFont::Bold);
-  environmentFormat.setForeground(QColor(78,154,6));
-
-  QStringList delimiters;
-  delimiters << "\\\\begin" << "\\\\end"
-	     << "\\\\beginscripture" << "\\\\endscripture";
-
-  foreach (QString str, delimiters)
+  environmentFormat.setForeground(_environmentsColor);
+  foreach (QString str, _delimiters)
     {
       rule.pattern = QRegExp(str);
       rule.format = environmentFormat;
@@ -106,13 +117,13 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
     }
 
   //Comments (grey)
-  singleLineCommentFormat.setForeground(QColor(136,138,133));
-  rule.pattern = QRegExp("%[^\n]*");
+  singleLineCommentFormat.setForeground(_commentsColor);
+  rule.pattern = reCommentsPattern;
   rule.format = singleLineCommentFormat;
   highlightingRules.append(rule);
 
   //Quotations (violet)
-  quotationFormat.setForeground(QColor(92,53,102));
+  quotationFormat.setForeground(_quotesColor);
   rule.pattern = QRegExp("\".*\"");
   rule.format = quotationFormat;
   highlightingRules.append(rule);
@@ -122,9 +133,9 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   highlightingRules.append(rule);
 
   //Chords (blue)
-  chordFormat.setForeground(QColor(32,74,135));
+  chordFormat.setForeground(_chordsColor);
   chordFormat.setFontWeight(QFont::Bold);
-  rule.pattern = QRegExp("\\\\\\[[^\\]]+\\]");
+  rule.pattern = reChordsPattern;
   rule.format = chordFormat;
   highlightingRules.append(rule);
 

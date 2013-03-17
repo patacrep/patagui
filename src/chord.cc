@@ -25,8 +25,13 @@
 #include <QPainter>
 #include <QDebug>
 
-QRegExp CChord::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
-QRegExp CChord::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
+const QRegExp CChord::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
+const QRegExp CChord::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
+
+const QColor CChord::_guitarChordColor(QColor(114, 159, 207));
+const QColor CChord::_importantGuitarChordColor(QColor(32, 74, 135));
+const QColor CChord::_ukuleleChordColor(QColor(173, 127, 168));
+const QColor CChord::_importantUkuleleChordColor(QColor(92, 53, 102));
 
 CChord::CChord(const QString & chord, uint id,  QObject *parent)
   : QObject(parent)
@@ -219,24 +224,22 @@ void CChord::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & b
 
 QColor CChord::color()
 {
-  QColor color;
-
   if (isImportant())
     {
       if (instrument() == Guitar)
-	color = QColor(32, 74, 135);
+	return _importantGuitarChordColor;
       else if (instrument() == Ukulele)
-	color = QColor(92, 53, 102);
+	return _importantUkuleleChordColor;
     }
   else
     {
       if (instrument() == Guitar)
-	color = QColor(114, 159, 207);
+	return _guitarChordColor;
       else if (instrument() == Ukulele)
-	color = QColor(173, 127, 168);
+	return _ukuleleChordColor;
     }
 
-  return color;
+  return QColor(Qt::white);
 }
 
 void CChord::setDrawBorder(bool value)

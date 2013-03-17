@@ -235,8 +235,13 @@ private:
   QPixmap *m_pixmap;
   uint m_id;
 
-  static QRegExp reChordWithFret;
-  static QRegExp reChordWithoutFret;
+  const static QRegExp reChordWithFret;
+  const static QRegExp reChordWithoutFret;
+
+  const static QColor _guitarChordColor;
+  const static QColor _importantGuitarChordColor;
+  const static QColor _ukuleleChordColor;
+  const static QColor _importantUkuleleChordColor;
 };
 
 #endif // __CHORD_HH__

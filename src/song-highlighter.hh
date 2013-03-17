@@ -108,6 +108,23 @@ private:
   bool m_isSpellCheckActive;
   QTextCharFormat m_spellCheckFormat;
   QTextCodec *m_codec;
+
+  const static QRegExp reLaTeXOption;
+  const static QRegExp reLaTeXArgument;
+
+  const static QRegExp reChordsPattern;
+  const static QRegExp reCommentsPattern;
+
+  const static QStringList _keywordPatterns;
+  const static QStringList _keyword2Patterns;
+  const static QStringList _delimiters;
+
+  const static QColor _keywords1Color;
+  const static QColor _keywords2Color;
+  const static QColor _environmentsColor;
+  const static QColor _commentsColor;
+  const static QColor _quotesColor;
+  const static QColor _chordsColor;
 };
 
 #endif // __HIGHLIGHTER_HH__

@@ -42,15 +42,16 @@
 #include <QAction>
 #include <QMenu>
 
+const QColor CSongCodeEditor::_verseColor(QColor(138,226,52).lighter(180));
+const QColor CSongCodeEditor::_chorusColor(QColor(252,175,62).lighter(160));
+const QColor CSongCodeEditor::_bridgeColor(QColor(114,159,207).lighter(170));
+const QColor CSongCodeEditor::_scriptureColor(QColor(173,127,168).lighter(170));
+
 CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   : CodeEditor(parent)
   , m_highlighter(0)
   , m_completer(0)
   , m_environmentsHighlighted(true)
-  , m_verseColor(QColor(138,226,52).lighter(180))
-  , m_chorusColor(QColor(252,175,62).lighter(160))
-  , m_bridgeColor(QColor(114,159,207).lighter(170))
-  , m_scriptureColor(QColor(173,127,168).lighter(170))
   , m_isSpellCheckAvailable(false)
   , m_isSpellCheckActive(false)
 #ifdef ENABLE_SPELLCHECK
@@ -326,16 +327,16 @@ QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnviro
   switch(env)
     {
     case Verse:
-      backgroundColor = m_verseColor;
+      backgroundColor = _verseColor;
       break;
     case Bridge:
-      backgroundColor = m_bridgeColor;
+      backgroundColor = _bridgeColor;
       break;
     case Chorus:
-      backgroundColor = m_chorusColor;
+      backgroundColor = _chorusColor;
       break;
     case Scripture:
-      backgroundColor = m_scriptureColor;
+      backgroundColor = _scriptureColor;
       break;
     default:
       break;
