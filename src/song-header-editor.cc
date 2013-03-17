@@ -283,7 +283,7 @@ LineEdit * CSongHeaderEditor::artistLineEdit() const
 
 void CSongHeaderEditor::setLibraryCompleters()
 {
-  CLibrary *library = CLibrary::getInstance();
+  CLibrary *library = CLibrary::instance();
   QCompleter *completer = new QCompleter;
   completer->setModel(library->artistCompletionModel());
   completer->setCaseSensitivity(Qt::CaseInsensitive);

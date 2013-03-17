@@ -20,6 +20,8 @@
 #ifndef __MAIN_WINDOW_HH__
 #define __MAIN_WINDOW_HH__
 
+#include "singleton.hh"
+
 #include <QMainWindow>
 
 #include <QModelIndex>
@@ -53,9 +55,11 @@ class QLabel;
 
   Class for the main window of the application.
 */
-class CMainWindow : public QMainWindow
+class CMainWindow : public QMainWindow, public Singleton<CMainWindow>
 {
   Q_OBJECT
+
+  friend class Singleton<CMainWindow>;
 
 public slots:
   /*!

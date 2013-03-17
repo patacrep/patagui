@@ -60,7 +60,7 @@ CSongbook::~CSongbook()
 
 CLibrary * CSongbook::library() const
 {
-  return CLibrary::getInstance();
+  return CLibrary::instance();
 }
 
 QString CSongbook::filename() const
