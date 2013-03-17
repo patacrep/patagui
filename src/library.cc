@@ -537,3 +537,78 @@ void CLibrary::setParent(CMainWindow *parent)
 {
   m_parent = parent;
 }
+
+QString CLibrary::checkPath(const QString &path)
+{
+  QDir directory(path);
+
+  bool error = true;
+  bool warning = true;
+
+  QString message;
+
+  if (!directory.exists())
+    {
+      message = tr("the directory does not exist");
+    }
+  else if (!directory.exists("songs"))
+    {
+      message = tr("songs/ directory not found");
+    }
+  else if (!directory.exists("img"))
+    {
+      message = tr("img/ directory not found");
+    }
+  else if (!directory.exists("lilypond"))
+    {
+      error = false;
+      message = tr("lilypond/ directory not found");
+    }
+  else
+    {
+      error = false;
+      // look for sg files
+      QStringList songs;
+      recursiveFindFiles(QString("%1/songs/").arg(path), QStringList() << "*.sg", songs);
+      uint nbSongs = songs.count();
+      if (nbSongs > 0)
+	{
+	  warning = false;
+	  message = QString(tr("%1 songs found in this library")).arg(nbSongs);
+	}
+      else
+	{
+	  message = tr("The library is valid but does not contain any song");
+	}
+    }
+
+  QString mask("<font color=%1>%2%3.</font>");
+  if (error)
+    {
+      mask = mask.arg("red").arg(tr("Error: "));
+    }
+  else if (warning)
+    {
+      mask = mask.arg("orange").arg(tr("Warning: "));
+    }
+  else
+    {
+      mask = mask.arg("green").arg("");
+    }
+  return mask.arg(message);
+}
+
+void CLibrary::recursiveFindFiles(const QString & path, const QStringList& filters,
+				       QStringList& files)
+{
+  QDir directory(path);
+  files << directory.entryList(filters, QDir::Files);
+
+  QStringList subdirectories = directory.entryList
+    (QStringList(), QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+
+  foreach (const QString & subdirectory, subdirectories)
+    {
+      recursiveFindFiles(QString("%1/%2/").arg(directory.absolutePath()).arg(subdirectory), filters, files);
+    }
+}

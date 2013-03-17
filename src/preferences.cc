@@ -422,51 +422,7 @@ void OptionsPage::checkSongbookPath(const QString &path)
 
 void OptionsPage::checkLibraryPath(const QString &path)
 {
-  QDir directory(path);
-
-  bool error = true;
-  bool warning = true;
-
-  QString message;
-
-  if (!directory.exists())
-    {
-      message = tr("the directory does not exist");
-    }
-  else if (!directory.exists("songs"))
-    {
-      message = tr("songs/ directory not found");
-    }
-  else if (!directory.exists("img"))
-    {
-      message = tr("img/ directory not found");
-    }
-  else if (!directory.exists("lilypond"))
-    {
-      error = false;
-      message = tr("lilypond/ directory not found");
-    }
-  else
-    {
-      error = false;
-      warning = false;
-      message = tr("The directory is valid");
-    }
-
-  QString mask("<font color=%1>%2%3.</font>");
-  if (error)
-    {
-      mask = mask.arg("red").arg(tr("Error: "));
-    }
-  else if (warning)
-    {
-      mask = mask.arg("orange").arg(tr("Warning: "));
-    }
-  else
-    {
-      mask = mask.arg("green").arg("");
-    }
-  m_libraryPathValid->setText(mask.arg(message));
+  m_libraryPathValid->setText(CLibrary::checkPath(path));
 }
 
 void OptionsPage::resetCommands()
