@@ -222,6 +222,9 @@ CMainWindow::CMainWindow(QWidget *parent)
 
   updateTitle(songbook()->filename());
 
+  // make cache directory for the application
+  QDir().mkpath(_cachePath);
+
   readSettings(true);
 }
 
