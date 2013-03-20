@@ -29,7 +29,7 @@ class QComboBox;
 class QCheckBox;
 
 /*!
-  \file song-header-editor.hh
+  \file find-replace-dialog.hh
   \class CFindReplaceDialog
   \brief CFindReplaceDialog is a find and replace dialog.
 
