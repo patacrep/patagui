@@ -52,12 +52,7 @@
 #include "song-item-delegate.hh"
 #include "preferences.hh"
 #include "progress-bar.hh"
-
-#include "config.hh"
-
-#ifdef ENABLE_LIBRARY_DOWNLOAD
-#include "library-download.hh"
-#endif // ENABLE_LIBRARY_DOWNLOAD
+#include "import-dialog.hh"
 
 #include "make-songbook-process.hh"
 
@@ -307,12 +302,12 @@ void CMainWindow::createActions()
   m_newSongAct->setIconText(tr("Write a new song"));
   connect(m_newSongAct, SIGNAL(triggered()), this, SLOT(newSong()));
 
-  m_importSongAct = new QAction(tr("&Import Songs"), this);
-  m_importSongAct->setIcon(QIcon::fromTheme("document-import",QIcon(":/icons/tango/32x32/mimetypes/document-import.png")));
-  m_importSongAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_I));
-  m_importSongAct->setStatusTip(tr("Import a song in the library"));
-  m_importSongAct->setIconText(tr("Import song"));
-  connect(m_importSongAct, SIGNAL(triggered()), this, SLOT(importSongs()));
+  m_importSongsAct = new QAction(tr("&Import Songs"), this);
+  m_importSongsAct->setIcon(QIcon::fromTheme("document-import",QIcon(":/icons/tango/32x32/actions/document-import.png")));
+  m_importSongsAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_I));
+  m_importSongsAct->setStatusTip(tr("Import songs in the library"));
+  m_importSongsAct->setIconText(tr("Import songs"));
+  connect(m_importSongsAct, SIGNAL(triggered()), this, SLOT(importSongsDialog()));
 
   m_newAct = new QAction(tr("&New"), this);
   m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
@@ -388,15 +383,6 @@ void CMainWindow::createActions()
   m_libraryUpdateAct->setShortcut(QKeySequence::Refresh);
   connect(m_libraryUpdateAct, SIGNAL(triggered()), library(), SLOT(update()));
 
-  m_libraryDownloadAct = new QAction(tr("&Download"), this);
-  m_libraryDownloadAct->setStatusTip(tr("Download songs from remote location"));
-  m_libraryDownloadAct->setIcon(QIcon::fromTheme("folder-remote", QIcon(":/icons/tango/32x32/places/folder-remote.png")));
-#ifdef ENABLE_LIBRARY_DOWNLOAD
-  connect(m_libraryDownloadAct, SIGNAL(triggered()), this, SLOT(downloadDialog()));
-#else // ENABLE_LIBRARY_DOWNLOAD
-  m_libraryDownloadAct->setVisible(false);
-#endif // ENABLE_LIBRARY_DOWNLOAD
-
   m_buildAct = new QAction(tr("&Build PDF"), this);
   m_buildAct->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_B));
   m_buildAct->setIcon(QIcon::fromTheme("document-export",QIcon(":/icons/tango/32x32/mimetypes/document-export.png")));
@@ -461,13 +447,12 @@ void CMainWindow::createMenus()
 
   QMenu *libraryMenu = menuBar()->addMenu(tr("&Library"));
   libraryMenu->addAction(m_newSongAct);
-  libraryMenu->addAction(m_importSongAct);
+  libraryMenu->addAction(m_importSongsAct);
   libraryMenu->addSeparator();
   libraryMenu->addAction(m_selectAllAct);
   libraryMenu->addAction(m_unselectAllAct);
   libraryMenu->addAction(m_invertSelectionAct);
   libraryMenu->addSeparator();
-  libraryMenu->addAction(m_libraryDownloadAct);
   libraryMenu->addAction(m_libraryUpdateAct);
 
   m_editorMenu = menuBar()->addMenu(tr("&Editor"));
@@ -806,13 +791,18 @@ void CMainWindow::newSong()
   songEditor(QString());
 }
 
-void CMainWindow::importSongs()
+void CMainWindow::importSongsDialog()
 {
-  QStringList filenames = QFileDialog::getOpenFileNames(this,
-							tr("Import songs"),
-							QDir::homePath(),
-							tr("Songs (*.sg)"));
-  library()->importSongs(filenames);
+  QStringList newSongs;
+  CImportDialog *dialog = new CImportDialog(this);
+  connect(dialog, SIGNAL(songsReadyToBeImported(const QStringList&)),
+	  this, SLOT(importSongs(const QStringList&)));
+  dialog->exec();
+}
+
+void CMainWindow::importSongs(const QStringList & songs)
+{
+  library()->importSongs(songs);
 }
 
 void CMainWindow::deleteSong()
@@ -899,7 +889,7 @@ void CMainWindow::noDataNotification(const QDir &directory)
   if (!m_noDataInfo)
     {
       m_noDataInfo = new CNotification(this);
-      m_noDataInfo->addAction(m_libraryDownloadAct);
+      m_noDataInfo->addAction(m_importSongsAct);
     }
 
   if (library()->rowCount() > 0)
@@ -914,14 +904,6 @@ void CMainWindow::noDataNotification(const QDir &directory)
       m_noDataInfo->show();
       m_buildAct->setEnabled(false);
     }
-}
-
-void CMainWindow::downloadDialog()
-{
-#ifdef ENABLE_LIBRARY_DOWNLOAD
-  CLibraryDownload *libraryDownload = new CLibraryDownload(this);
-  libraryDownload->exec();
-#endif
 }
 
 void CMainWindow::cleanDialog()
