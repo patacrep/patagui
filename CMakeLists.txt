@@ -48,6 +48,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/search-widget.cc
   src/variant-factory.cc
   src/variant-manager.cc
+  src/diff_match_patch/diff_match_patch.cpp
   )
 
 # header (moc)
