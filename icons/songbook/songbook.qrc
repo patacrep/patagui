@@ -19,6 +19,7 @@
     <file>22x22/x-patacrep-song.png</file>
     <file>22x22/x-patacrep-book.png</file>
     <file>22x22/applications-internet.png</file>
+    <file>22x22/git.png</file>
 
     <file>32x32/song.png</file>
     <file>32x32/book.png</file>
@@ -39,6 +40,7 @@
     <file>32x32/x-patacrep-song.png</file>
     <file>32x32/x-patacrep-book.png</file>
     <file>32x32/applications-internet.png</file>
+    <file>32x32/git.png</file>
 
     <file>48x48/song.png</file>
     <file>48x48/book.png</file>
@@ -59,6 +61,7 @@
     <file>48x48/x-patacrep-song.png</file>
     <file>48x48/x-patacrep-book.png</file>
     <file>48x48/applications-internet.png</file>
+    <file>48x48/git.png</file>
 
     <file>256x256/songbook-client.png</file>
     <file>256x256/book.png</file>
@@ -67,5 +70,6 @@
     <file>src/x-patacrep-book.svg</file>
     <file>src/songbook-client.svg</file>
     <file>src/applications-internet.svg</file>
+    <file>src/git.svg</file>
  </qresource>
 </RCC>
