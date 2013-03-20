@@ -48,6 +48,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/search-widget.cc
   src/variant-factory.cc
   src/variant-manager.cc
+  src/import-dialog.cc
   src/diff_match_patch/diff_match_patch.cpp
   )
 
@@ -84,6 +85,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/search-widget.hh
   src/variant-factory.hh
   src/variant-manager.hh
+  src/import-dialog.hh
   )
 
 # uis
@@ -107,8 +109,6 @@ set(QT_USE_QTSVG true)
 if(ENABLE_LIBRARY_DOWNLOAD)
   set(QT_USE_QTNETWORK true)
   include_directories(${LibArchive_INCLUDE_DIRS})
-  LIST(APPEND SONGBOOK_CLIENT_SOURCES src/library-download.cc)
-  LIST(APPEND SONGBOOK_CLIENT_QT_HEADER src/library-download.hh)
   LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
 endif()
 

@@ -185,10 +185,6 @@ private slots:
   void closeTab(int index);
   void changeTab(int index);
 
-  /// Displays a dialog to download a remote songbook.
-  /// \image html download.png
-  void downloadDialog();
-
   /// Displays a dialog to remove temporary LaTeX files.
   /// \image html clean.png
   void cleanDialog();
@@ -196,7 +192,8 @@ private slots:
 
   //library
   void newSong();
-  void importSongs();
+  void importSongs(const QStringList & songs);
+  void importSongsDialog();
   void middleClicked(const QModelIndex &index = QModelIndex());
   void songEditor(const QModelIndex &index = QModelIndex());
   void deleteSong();
@@ -285,12 +282,11 @@ private:
 
   // Library action
   QAction *m_newSongAct;
-  QAction *m_importSongAct;
+  QAction *m_importSongsAct;
   QAction *m_selectAllAct;
   QAction *m_unselectAllAct;
   QAction *m_invertSelectionAct;
   QAction *m_libraryUpdateAct;
-  QAction *m_libraryDownloadAct;
 
 public:
   const static QString _cachePath;
