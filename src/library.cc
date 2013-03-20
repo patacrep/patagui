@@ -20,6 +20,7 @@
 
 #include "main-window.hh"
 #include "progress-bar.hh"
+#include "conflict-dialog.hh"
 
 #include <QStringListModel>
 #include <QDirIterator>
@@ -28,6 +29,7 @@
 #include <QDesktopServices>
 #include <QSettings>
 #include <QMessageBox>
+#include <QMap>
 
 #include <QDebug>
 #include <QElapsedTimer>
@@ -471,19 +473,17 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
 void CLibrary::importSongs(const QStringList & filenames)
 {
   Song song;
-  QImage coverImage;
+  QMap<QString, QString> sourceTargetMap;
   foreach(const QString & filename, filenames)
     {
       song = Song::fromFile(filename);
-      QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
-
-      createArtistDirectory(song);
-
-      if (QFile(coverFilename).exists() && coverImage.load(coverFilename))
-	saveCover(song, coverImage);
-
-      saveSong(song);
+      sourceTargetMap.insert(filename, pathToSong(song));
     }
+
+  CConflictDialog dialog(CMainWindow::instance());
+  dialog.setSourceTargetFiles(sourceTargetMap);
+  if (dialog.conflictsFound() && dialog.exec())
+    update();
 }
 
 void CLibrary::createArtistDirectory(Song &song)

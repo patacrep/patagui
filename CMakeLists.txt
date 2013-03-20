@@ -49,6 +49,7 @@ set(SONGBOOK_CLIENT_SOURCES
   src/variant-factory.cc
   src/variant-manager.cc
   src/import-dialog.cc
+  src/conflict-dialog.cc
   src/diff_match_patch/diff_match_patch.cpp
   )
 
@@ -86,6 +87,7 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/variant-factory.hh
   src/variant-manager.hh
   src/import-dialog.hh
+  src/conflict-dialog.hh
   )
 
 # uis
