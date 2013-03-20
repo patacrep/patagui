@@ -601,7 +601,9 @@ void CLibrary::recursiveFindFiles(const QString & path, const QStringList& filte
 				       QStringList& files)
 {
   QDir directory(path);
-  files << directory.entryList(filters, QDir::Files);
+  QFileInfoList fiList = QFileInfoList() << directory.entryInfoList(filters, QDir::Files);
+  foreach (const QFileInfo& fi, fiList)
+    files << fi.absoluteFilePath();
 
   QStringList subdirectories = directory.entryList
     (QStringList(), QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);

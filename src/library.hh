@@ -256,6 +256,8 @@ public:
 
   static QString checkPath(const QString & path);
 
+  static void recursiveFindFiles(const QString & path, const QStringList& filters, QStringList& files);
+
 public slots:
   void readSettings();
   void update();
@@ -270,7 +272,6 @@ private:
 
   bool checkSongbookPath(const QString & path);
   QString findSongbookPath();
-  static void recursiveFindFiles(const QString & path, const QStringList& filters, QStringList& files);
 
   CMainWindow *m_parent;
   QDir m_directory;
