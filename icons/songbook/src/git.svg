@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.48.4 r9939"
+   width="97"
+   height="188"
+   version="1.0"
+   sodipodi:docname="share_resources_gitlogo.svg"
+   inkscape:export-filename="/home/crep/git/songbook-client/icons/songbook/22x22/git.png"
+   inkscape:export-xdpi="20.41"
+   inkscape:export-ydpi="20.41">
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="Git Logo">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     inkscape:window-height="632"
+     inkscape:window-width="1098"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="1.421736"
+     inkscape:cx="21.184159"
+     inkscape:cy="156.01757"
+     inkscape:window-x="174"
+     inkscape:window-y="60"
+     inkscape:current-layer="svg2"
+     showguides="false"
+     showgrid="false"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <g
+     id="g1915">
+    <path
+       style="fill:none"
+       d="M 0,94 C 0,62.666667 0,31.333333 0,0 c 32.333333,0 64.666667,0 97,0 0,62.666667 0,125.33333 0,188 -32.333333,0 -64.666667,0 -97,0 0,-31.33333 0,-62.66667 0,-94 z"
+       id="path1919"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#2e3436;fill-opacity:1"
+       d="M 37.664899,184.58554 C 21.623759,182.15324 7.827617,169.08144 3.9839647,153.39818 1.0774644,139.14657 3.0107625,122.7055 13.283246,111.70759 c 4.672532,-4.68551 10.785828,-7.95849 17.155284,-9.67268 3.72115,-1.44698 6.003139,-0.0533 4.941871,4.00924 -8.86e-4,5.46601 -0.204541,10.93253 -0.05494,16.39807 -9.456032,1.48318 -16.448192,11.76149 -14.480724,21.13617 0.828317,8.66554 6.533097,17.23694 15.350105,19.29047 10.988646,3.34351 23.680972,2.09013 33.257222,-4.43572 8.248787,-7.17003 8.123684,-20.02742 3.152809,-29.0444 -1.900198,-3.9853 -6.998405,-7.539 -11.104875,-6.69897 0,5.93674 0,11.87349 0,17.81023 -5.402137,0 -10.804273,0 -16.20641,0 0,-12.95855 0,-25.91711 0,-38.87566 16.358927,0 32.717853,0 49.07678,0 0,4.65996 0,9.31993 0,13.97989 -4.480798,0.0414 -8.961597,0.0829 -13.442395,0.12434 9.14422,5.01095 12.876303,15.83945 13.234206,25.72203 0.257759,7.75916 0.21077,15.99503 -4.077734,22.80072 -7.651492,12.96134 -22.727932,20.72992 -37.657339,20.48754 -4.920247,0.16522 -9.844748,0.0396 -14.762209,-0.15332 z"
+       id="path1927"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#a40000;fill-opacity:1"
+       d="M 2.6030317,93.90175 2.5,73.5 l 92,0 L 94.489423,94 2.6030317,93.90175 z"
+       id="path1925"
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#4e9a06;fill-opacity:1"
+       d="M 37.666668,66.333336 37.666668,44.5 2,44.5 l 0,-19 35.666668,0 0,-24.5 L 59,1 l 0,24.5 35.5,0 0,19 -35.5,0 -0.351683,21.787772 -20.981649,0.04556 z"
+       id="path1917"
+       sodipodi:nodetypes="ccccccccccccc"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>
