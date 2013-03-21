@@ -457,11 +457,10 @@ void CImportDialog::downloadFinished()
 	  if (decompress(filepath, dir))
 	    {
 	      CLibrary::recursiveFindFiles(dir.absolutePath(), QStringList() << "*.sg", m_songsToBeImported);
+	      showMessage(tr("Download completed"));
 	      emit(songsReadyToBeImported(m_songsToBeImported));
 	    }
-
 	  QDir::setCurrent(oldCurrent.absolutePath());
-	  showMessage(tr("Download completed"));
 	}
       // remove the downloaded archive after decompressing
       dir.remove(filepath);
