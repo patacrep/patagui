@@ -79,7 +79,7 @@ public:
     Creates and associates the syntax highlighter with the song.
     \sa highlighter
   */
-  void installHighlighter();
+  void setHighlighter(CSongHighlighter *highlighter);
 
   /*!
     Returns the syntax highlighter.

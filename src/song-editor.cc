@@ -163,6 +163,11 @@ bool CEditor::isSpellCheckAvailable() const
 void CEditor::setSpellCheckAvailable(const bool)
 {}
 
+void CEditor::setHighlighter(CSongHighlighter *highlighter)
+{
+  Q_UNUSED(highlighter);
+}
+
 
 CSongEditor::CSongEditor(QWidget *parent)
   : CEditor(parent)
@@ -514,9 +519,9 @@ void CSongEditor::setDictionary(const QLocale &locale)
 }
 #endif //ENABLE_SPELLCHECK
 
-void CSongEditor::installHighlighter()
+void CSongEditor::setHighlighter(CSongHighlighter *highlighter)
 {
-  codeEditor()->installHighlighter();
+  codeEditor()->setHighlighter(highlighter);
 #ifdef ENABLE_SPELLCHECK
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_codeEditor, SLOT(setSpellCheckActive(bool)));

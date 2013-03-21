@@ -39,6 +39,7 @@ class CFilterLineEdit;
 class CNotification;
 class CProgressBar;
 class CMakeSongbookProcess;
+class CSongHighlighter;
 
 class QPlainTextEdit;
 class QItemSelectionModel;
@@ -258,7 +259,6 @@ private:
 
   // Menus
   QMenu *m_editorMenu;
-  CEditor *m_voidEditor;
   QToolBar *m_libraryToolBar;
   QToolBar *m_currentToolBar;
   QToolBar *m_mainToolBar;
@@ -290,6 +290,9 @@ private:
 
 public:
   const static QString _cachePath;
+  //Editor
+  CEditor *m_voidEditor;
+  CSongHighlighter *m_songHighlighter;
 };
 
 #endif  // __MAIN_WINDOW_HH__

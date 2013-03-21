@@ -44,6 +44,7 @@
 #include "library-view.hh"
 #include "songbook.hh"
 #include "song-editor.hh"
+#include "song-highlighter.hh"
 #include "logs-highlighter.hh"
 #include "filter-lineedit.hh"
 #include "song-sort-filter-proxy-model.hh"
@@ -145,6 +146,7 @@ CMainWindow::CMainWindow(QWidget *parent)
   , m_isStatusBarDisplayed(true)
   , m_currentToolBar(0)
   , m_builder(new CMakeSongbookProcess(this))
+  , m_songHighlighter(0)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
@@ -772,7 +774,6 @@ void CMainWindow::songEditor(const QString &path)
 	}
 
   CSongEditor *editor = new CSongEditor(this);
-  editor->installHighlighter();
   if (!path.isEmpty())
     {
       if (library()->getSongIndex(path) == -1)
@@ -848,6 +849,9 @@ void CMainWindow::changeTab(int index)
     {
       switchToolBar(editor->toolBar());
       m_saveAct->setShortcutContext(Qt::WidgetShortcut);
+      if (!m_songHighlighter)
+	m_songHighlighter = new CSongHighlighter;
+      editor->setHighlighter(m_songHighlighter);
     }
   else
     {
