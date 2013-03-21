@@ -482,8 +482,11 @@ void CLibrary::importSongs(const QStringList & filenames)
 
   CConflictDialog dialog(CMainWindow::instance());
   dialog.setSourceTargetFiles(sourceTargetMap);
-  if (dialog.conflictsFound() && dialog.exec())
-    update();
+  if (dialog.conflictsFound() && dialog.exec() == QDialog::Accepted)
+    {
+      update();
+      m_parent->statusBar()->showMessage(tr("Import songs completed"));
+    }
 }
 
 void CLibrary::createArtistDirectory(Song &song)
