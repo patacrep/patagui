@@ -60,7 +60,6 @@ namespace // anonymous namespace
 
 CLibrary::CLibrary()
   : QAbstractTableModel()
-  , m_parent(0)
   , m_directory()
   , m_completionModel(new QStringListModel(this))
   , m_artistCompletionModel(new QStringListModel(this))
@@ -296,11 +295,11 @@ void CLibrary::update()
   while (it.hasNext())
     paths.append(it.next());
 
-  m_parent->statusBar()->showMessage(tr("Updating the library..."));
-  m_parent->progressBar()->setCancelable(false);
-  m_parent->progressBar()->setTextVisible(true);
-  m_parent->progressBar()->setRange(0, paths.size());
-  m_parent->progressBar()->show();
+  showMessage(tr("Updating the library..."));
+  progressBar()->setCancelable(false);
+  progressBar()->setTextVisible(true);
+  progressBar()->setRange(0, paths.size());
+  progressBar()->show();
 
   addSongs(paths);
 
@@ -323,11 +322,11 @@ void CLibrary::update()
   m_albumCompletionModel->setStringList(albumList);
   m_urlCompletionModel->setStringList(urlList);
 
-  m_parent->progressBar()->setCancelable(true);
-  m_parent->progressBar()->setTextVisible(false);
-  m_parent->progressBar()->setRange(0, 0);
-  m_parent->progressBar()->hide();
-  m_parent->statusBar()->showMessage(tr("Library updated."));
+  progressBar()->setCancelable(true);
+  progressBar()->setTextVisible(false);
+  progressBar()->setRange(0, 0);
+  progressBar()->hide();
+  showMessage(tr("Library updated."));
   emit(wasModified());
 }
 
@@ -362,7 +361,7 @@ void CLibrary::addSongs(const QStringList &paths)
   QStringListIterator filepath(paths);
   while (filepath.hasNext())
     {
-      m_parent->progressBar()->setValue(++songCount);
+      progressBar()->setValue(++songCount);
       loadSong(filepath.next(), &song);
       addSong(song);
     }
@@ -485,7 +484,7 @@ void CLibrary::importSongs(const QStringList & filenames)
   if (dialog.conflictsFound() && dialog.exec() == QDialog::Accepted)
     {
       update();
-      m_parent->statusBar()->showMessage(tr("Import songs completed"));
+      showMessage(tr("Import songs completed"));
     }
 }
 
@@ -535,9 +534,14 @@ QString CLibrary::pathToSong(Song &song) const
   return pathToSong(song.artist, song.title);
 }
 
-void CLibrary::setParent(CMainWindow *parent)
+CProgressBar* CLibrary::progressBar() const
 {
-  m_parent = parent;
+  return CMainWindow::instance()->progressBar();
+}
+
+void CLibrary::showMessage(const QString & message)
+{
+  CMainWindow::instance()->statusBar()->showMessage(message);
 }
 
 QString CLibrary::checkPath(const QString &path)
