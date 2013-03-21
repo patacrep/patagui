@@ -32,7 +32,6 @@
 #include <QMap>
 
 #include <QDebug>
-#include <QElapsedTimer>
 
 namespace // anonymous namespace
 {
@@ -353,8 +352,6 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 
 void CLibrary::addSongs(const QStringList &paths)
 {
-  QElapsedTimer t;
-  t.start();
   Song song;
   int songCount = 0;
   // run through the library songs files
@@ -366,7 +363,6 @@ void CLibrary::addSongs(const QStringList &paths)
       addSong(song);
     }
 
-  qDebug() << " **** "<< t.elapsed() ;
   reset();
   emit(wasModified());
 }
