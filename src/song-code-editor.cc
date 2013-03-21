@@ -49,7 +49,6 @@ const QColor CSongCodeEditor::_scriptureColor(QColor(173,127,168).lighter(170));
 
 CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   : CodeEditor(parent)
-  , m_highlighter(0)
   , m_completer(0)
   , m_environmentsHighlighted(true)
   , m_isSpellCheckAvailable(false)
@@ -92,7 +91,6 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
 
 CSongCodeEditor::~CSongCodeEditor()
 {
-  delete m_highlighter;
   delete m_completer;
   delete m_quickSearch;
 }
@@ -135,10 +133,9 @@ void CSongCodeEditor::writeSettings()
 {
 }
 
-void CSongCodeEditor::installHighlighter()
+void CSongCodeEditor::setHighlighter(CSongHighlighter *highlighter)
 {
-  if (!m_highlighter)
-    m_highlighter = new CSongHighlighter(document());
+  highlighter->setDocument(document());
 }
 
 void CSongCodeEditor::insertVerse()

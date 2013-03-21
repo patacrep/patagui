@@ -32,6 +32,7 @@ class CFindReplaceDialog;
 class CLibrary;
 class CSongCodeEditor;
 class CSongHeaderEditor;
+class CSongHighlighter;
 
 class CEditor : public QWidget
 {
@@ -46,6 +47,7 @@ public:
 
   virtual bool isSpellCheckAvailable() const;
   virtual void setSpellCheckAvailable(const bool);
+  virtual void setHighlighter(CSongHighlighter *highlighter);
 
 protected:
   QAction *m_saveAct;
@@ -91,7 +93,7 @@ public:
   void readSettings();
   void writeSettings();
 
-  void installHighlighter();
+  virtual void setHighlighter(CSongHighlighter *highlighter);
 
   Song & song();
   void setSong(const Song &song);
