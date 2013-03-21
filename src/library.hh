@@ -33,7 +33,7 @@ class QAbstractListModel;
 class QStringListModel;
 
 class QPixmap;
-class CMainWindow;
+class CProgressBar;
 
 /*!
   \file library.hh
@@ -84,8 +84,6 @@ public:
     RelativePathRole = Qt::UserRole + 12, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
     MaxRole = RelativePathRole
   };
-
-  void setParent(CMainWindow *parent);
 
   void writeSettings();
 
@@ -258,6 +256,9 @@ public:
 
   static void recursiveFindFiles(const QString & path, const QStringList& filters, QStringList& files);
 
+  CProgressBar *progressBar() const;
+  void showMessage(const QString &);
+
 public slots:
   void readSettings();
   void update();
@@ -273,7 +274,6 @@ private:
   bool checkSongbookPath(const QString & path);
   QString findSongbookPath();
 
-  CMainWindow *m_parent;
   QDir m_directory;
 
   QStringListModel *m_completionModel;
