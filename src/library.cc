@@ -475,7 +475,7 @@ void CLibrary::importSongs(const QStringList & filenames)
       sourceTargetMap.insert(filename, pathToSong(song));
     }
 
-  CConflictDialog dialog(CMainWindow::instance());
+  CConflictDialog dialog(parent());
   dialog.setSourceTargetFiles(sourceTargetMap);
   if (dialog.conflictsFound() && dialog.exec() == QDialog::Accepted)
     {
@@ -532,12 +532,22 @@ QString CLibrary::pathToSong(Song &song) const
 
 CProgressBar* CLibrary::progressBar() const
 {
-  return CMainWindow::instance()->progressBar();
+  return parent()->progressBar();
 }
 
 void CLibrary::showMessage(const QString & message)
 {
-  CMainWindow::instance()->statusBar()->showMessage(message);
+  parent()->statusBar()->showMessage(message);
+}
+
+CMainWindow* CLibrary::parent() const
+{
+  return m_parent;
+}
+
+void CLibrary::setParent(CMainWindow *parent)
+{
+  m_parent = parent;
 }
 
 QString CLibrary::checkPath(const QString &path)

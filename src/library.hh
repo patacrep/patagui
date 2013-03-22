@@ -34,6 +34,7 @@ class QStringListModel;
 
 class QPixmap;
 class CProgressBar;
+class CMainWindow;
 
 /*!
   \file library.hh
@@ -259,6 +260,9 @@ public:
   CProgressBar *progressBar() const;
   void showMessage(const QString &);
 
+  CMainWindow* parent() const;
+  void setParent(CMainWindow* parent);
+
 public slots:
   void readSettings();
   void update();
@@ -270,7 +274,7 @@ signals:
 protected:
 
 private:
-
+  CMainWindow *m_parent;
   bool checkSongbookPath(const QString & path);
   QString findSongbookPath();
 

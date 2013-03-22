@@ -51,9 +51,10 @@ CConflictDialog::CConflictDialog(QWidget *parent)
   , m_albumLabel(new QLabel)
   , m_coverLabel(new QLabel)
   , m_pixmap(new QPixmap(42, 42))
-  , m_fileCopier(new CFileCopier())
+  , m_fileCopier(new CFileCopier(parent))
 {
   setWindowTitle(tr("Resolve conflicts"));
+  setParent(static_cast<CMainWindow*>(parent));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel);
   connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
@@ -70,7 +71,7 @@ CConflictDialog::CConflictDialog(QWidget *parent)
   connect(m_diffButton, SIGNAL(clicked()), SLOT(showDiff()));
   buttonBox->addButton(m_diffButton, QDialogButtonBox::ActionRole);
 
-  connect(CMainWindow::instance()->progressBar(), SIGNAL(canceled()), SLOT(cancelCopy()));
+  connect(progressBar(), SIGNAL(canceled()), SLOT(cancelCopy()));
   
   m_conflictView->setColumnWidth(0, 290);
   m_conflictView->setColumnWidth(1, 290);
@@ -129,6 +130,26 @@ CConflictDialog::~CConflictDialog()
   delete m_fileCopier;
 }
 
+void CConflictDialog::setParent(CMainWindow* parent)
+{
+  m_parent = parent;
+}
+
+CMainWindow* CConflictDialog::parent() const
+{
+  return m_parent;
+}
+
+CProgressBar* CConflictDialog::progressBar() const
+{
+  return parent()->progressBar();
+}
+
+void CConflictDialog::showMessage(const QString & message)
+{
+  parent()->statusBar()->showMessage(message);
+}
+
 void CConflictDialog::updateItemDetails(QTableWidgetItem* item)
 {
   QString path = item->data(Qt::ToolTipRole).toString();
@@ -161,9 +182,7 @@ void CConflictDialog::openItem(QTableWidgetItem* item)
       !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::EditRole).toString())) &&
       !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::WhatsThisRole).toString())) )
     {
-      CMainWindow::instance()->statusBar()->showMessage
-	(tr("Can't open: %1")
-	 .arg(item->data(Qt::DisplayRole).toString()));
+      showMessage(tr("Can't open: %1").arg(item->data(Qt::DisplayRole).toString()));
     }
 }
 
@@ -298,7 +317,7 @@ bool CConflictDialog::resolve()
 	  QFile target(it.value());
 	  if (!target.remove())
 	    {
-	    CMainWindow::instance()->statusBar()->showMessage
+	      parent()->statusBar()->showMessage
 	      (tr("An unexpected error occured while removing: %1")
 	       .arg(target.fileName()));
 	    }

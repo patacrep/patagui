@@ -64,6 +64,7 @@ CImportDialog::CImportDialog(QWidget *parent)
   , m_songsToBeImported(QStringList())
 {
   setWindowTitle(tr("Import songs"));
+  setParent(static_cast<CMainWindow*>(parent));
 
   QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
   connect(buttonBox, SIGNAL(accepted()), SLOT(acceptDialog()));
@@ -221,6 +222,17 @@ void CImportDialog::writeSettings()
   settings.endGroup();
 }
 
+
+CMainWindow* CImportDialog::parent() const
+{
+  return m_parent;
+}
+
+void CImportDialog::setParent(CMainWindow* parent)
+{
+  m_parent = parent;
+}
+
 void CImportDialog::checkLibraryPath(const QString & path)
 {
   m_libraryPathValid->setText(CLibrary::checkPath(path));
@@ -272,7 +284,7 @@ void CImportDialog::openItem(QListWidgetItem* item)
       !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::EditRole).toString())) &&
       !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::WhatsThisRole).toString())) )
     {
-      CMainWindow::instance()->statusBar()->showMessage
+      parent()->statusBar()->showMessage
 	(tr("Can't open: %1")
 	 .arg(item->data(Qt::DisplayRole).toString()));
     }
@@ -351,12 +363,12 @@ bool CImportDialog::acceptDialog()
 
 CProgressBar* CImportDialog::progressBar() const
 {
-  return CMainWindow::instance()->progressBar();
+  return parent()->progressBar();
 }
 
 void CImportDialog::showMessage(const QString & message)
 {
-  CMainWindow::instance()->statusBar()->showMessage(message);
+  parent()->statusBar()->showMessage(message);
 }
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
