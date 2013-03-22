@@ -37,6 +37,7 @@ class QPixmap;
 class CProgressBar;
 class CFileCopier;
 
+
 /*!
   \file conflict-dialog.hh
   \class CConflictDialog
@@ -61,6 +62,12 @@ class CConflictDialog : public QDialog
 
   bool conflictsFound() const;
 
+  CMainWindow* parent() const;
+  void setParent(CMainWindow* parent);
+
+  void showMessage(const QString & );
+  CProgressBar* progressBar() const;
+
 public slots:
   bool resolve();
   void showDiff();
@@ -71,6 +78,7 @@ private slots:
   void cancelCopy();
 
 private:
+  CMainWindow *m_parent;
   bool m_conflictsFound;
   QMap< QString, QString> m_conflicts;
   QMap< QString, QString> m_noConflicts;
@@ -99,8 +107,9 @@ class CFileCopier : public QObject
   
   public:
 
-  CFileCopier() : m_cancelCopy(false)
+  CFileCopier(QWidget *parent) : m_cancelCopy(false)
   {
+    setParent(static_cast<CMainWindow*>(parent));
   }
 
   void setSourceTargets(QMap<QString, QString> &files)
@@ -113,6 +122,16 @@ class CFileCopier : public QObject
     return m_cancelCopy;
   }
 
+  CMainWindow* parent() const
+  {
+    return m_parent;
+  }
+
+  void setParent(CMainWindow* parent)
+  {
+    m_parent = parent;
+  }
+
   void setCancelCopy(bool value)
   {
     m_cancelCopy = value;
@@ -122,7 +141,7 @@ class CFileCopier : public QObject
   void copy()
   {
     int count = 0;
-    CProgressBar * progressBar = CMainWindow::instance()->progressBar();
+    CProgressBar * progressBar = parent()->progressBar();
     progressBar->setRange(0, m_sourceTargets.size());
     progressBar->show();
 
@@ -136,7 +155,7 @@ class CFileCopier : public QObject
 	QFile target(it.value());
 	if (!target.exists() && !source.copy(target.fileName()))
 	  {
-	    CMainWindow::instance()->statusBar()->showMessage
+	    parent()->statusBar()->showMessage
 	      (tr("An unexpected error occured while copying: %1 to %2")
 	       .arg(source.fileName())
 	       .arg(target.fileName()));
@@ -148,6 +167,7 @@ class CFileCopier : public QObject
   }
 
 private:
+  CMainWindow *m_parent;
   bool m_cancelCopy;
   QMap<QString, QString> m_sourceTargets;
 };

@@ -45,6 +45,7 @@ class QNetworkReply;
 
 class CProgressBar;
 class CFileChooser;
+class CMainWindow;
 
 /*!
   \file import-dialog.hh
@@ -71,6 +72,9 @@ class CImportDialog : public QDialog
 
   CProgressBar* progressBar() const;
   void showMessage(const QString & message);
+
+  CMainWindow* parent() const;
+  void setParent(CMainWindow* parent);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
   void initDownload();
@@ -119,6 +123,7 @@ private:
   void setLocalSubWidgetsVisible(const bool value);
   void setNetworkSubWidgetsVisible(const bool value);
 
+  CMainWindow *m_parent;
   CFileChooser *m_libraryPath;
   QLabel *m_libraryPathValid;
 
