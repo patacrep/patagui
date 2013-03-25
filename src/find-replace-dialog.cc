@@ -44,6 +44,8 @@ CFindReplaceDialog::CFindReplaceDialog(QWidget *parent)
   , m_replaceButton(new QPushButton(tr("&Replace")))
   , m_replaceAllButton(new QPushButton(tr("Replace &all")))
 {
+  qDebug() << "new find replace dialog constructor";
+  setModal(false);
   m_findComboBox->setEditable(true);
   m_replaceComboBox->setEditable(true);
   connect(m_findComboBox, SIGNAL(textChanged(const QString &)),

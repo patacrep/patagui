@@ -48,6 +48,7 @@ public:
   virtual bool isSpellCheckAvailable() const;
   virtual void setSpellCheckAvailable(const bool);
   virtual void setHighlighter(CSongHighlighter *highlighter);
+  virtual void setFindReplaceDialog(CFindReplaceDialog *dialog);
 
 protected:
   QAction *m_saveAct;
@@ -114,6 +115,8 @@ public:
 
   virtual bool isSpellCheckAvailable() const;
   virtual void setSpellCheckAvailable(const bool);
+
+  void setFindReplaceDialog(CFindReplaceDialog *dialog);
 
 public slots:
   void setModified(bool modified);

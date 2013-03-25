@@ -168,11 +168,17 @@ void CEditor::setHighlighter(CSongHighlighter *highlighter)
   Q_UNUSED(highlighter);
 }
 
+void CEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
+{
+  Q_UNUSED(dialog);
+}
+
 
 CSongEditor::CSongEditor(QWidget *parent)
   : CEditor(parent)
   , m_codeEditor(0)
   , m_songHeaderEditor(0)
+  , m_findReplaceDialog(0)
   , m_song()
   , m_newSong(true)
   , m_newCover(false)
@@ -187,9 +193,6 @@ CSongEditor::CSongEditor(QWidget *parent)
   connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)),
 	  SLOT(setDictionary(const QLocale &)));
 #endif //ENABLE_SPELLCHECK
-
-  //find and replace
-  m_findReplaceDialog = 0;
 
   //connects
   connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
@@ -224,8 +227,6 @@ CSongEditor::~CSongEditor()
 {
   delete m_codeEditor;
   delete m_songHeaderEditor;
-  if (m_findReplaceDialog)
-    delete m_findReplaceDialog;
 }
 
 void CSongEditor::readSettings()
@@ -233,8 +234,6 @@ void CSongEditor::readSettings()
 
 void CSongEditor::writeSettings()
 {
-  if (m_findReplaceDialog)
-    m_findReplaceDialog->writeSettings();
 }
 
 void CSongEditor::closeEvent(QCloseEvent *event)
@@ -545,11 +544,19 @@ QToolBar * CSongEditor::toolBar() const
 void CSongEditor::findReplaceDialog()
 {
   if (!m_findReplaceDialog)
-    {
-      m_findReplaceDialog = new CFindReplaceDialog(this);
-      m_findReplaceDialog->setModal(false);
-      m_findReplaceDialog->setTextEditor(codeEditor());
-      m_findReplaceDialog->readSettings();
-    }
+    return;
+
   m_findReplaceDialog->show();
+}
+
+void CSongEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
+{
+  if (!dialog)
+    return;
+
+  if( dialog != m_findReplaceDialog)
+    {
+      m_findReplaceDialog = dialog;
+      m_findReplaceDialog->setTextEditor(codeEditor());
+    }
 }
