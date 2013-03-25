@@ -858,7 +858,7 @@ void CMainWindow::changeTab(int index)
       // install highlighter
       if (!m_songHighlighter)
 	{
-	  m_songHighlighter = new CSongHighlighter(this);
+	  m_songHighlighter = new CSongHighlighter;
 	}
       editor->setHighlighter(m_songHighlighter);
 

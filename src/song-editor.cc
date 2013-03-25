@@ -446,10 +446,6 @@ void CSongEditor::setSong(const Song &song)
   codeEditor()->setPlainText(songContent);
   codeEditor()->indent();
 
-#ifdef ENABLE_SPELLCHECK
-  setDictionary(song.locale);
-#endif //ENABLE_SPELLCHECK
-
   setNewSong(false);
   setNewCover(false);
   setWindowTitle(m_song.title);
@@ -520,13 +516,13 @@ void CSongEditor::setDictionary(const QLocale &locale)
 
 void CSongEditor::setHighlighter(CSongHighlighter *highlighter)
 {
-  codeEditor()->setHighlighter(highlighter);
 #ifdef ENABLE_SPELLCHECK
   connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
 	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
-  connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
-	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
+
+  setDictionary(song().locale);
 #endif //ENABLE_SPELLCHECK
+  codeEditor()->setHighlighter(highlighter);
 }
 
 QActionGroup* CSongEditor::actionGroup() const
