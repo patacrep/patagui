@@ -38,6 +38,7 @@ class CNotification;
 class CProgressBar;
 class CMakeSongbookProcess;
 class CSongHighlighter;
+class CFindReplaceDialog;
 
 class QPlainTextEdit;
 class QItemSelectionModel;
@@ -284,11 +285,13 @@ private:
   QAction *m_invertSelectionAct;
   QAction *m_libraryUpdateAct;
 
-public:
-  const static QString _cachePath;
   //Editor
   CEditor *m_voidEditor;
   CSongHighlighter *m_songHighlighter;
+  CFindReplaceDialog *m_findReplaceDialog;
+
+public:
+  const static QString _cachePath;
 };
 
 #endif  // __MAIN_WINDOW_HH__
