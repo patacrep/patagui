@@ -155,15 +155,17 @@ CSongHighlighter::~CSongHighlighter()
 
 void CSongHighlighter::highlightBlock(const QString &text)
 {
-  foreach (const HighlightingRule &rule, highlightingRules) {
-    QRegExp expression(rule.pattern);
-    int index = expression.indexIn(text);
-    while (index >= 0) {
-      int length = expression.matchedLength();
-      setFormat(index, length, rule.format);
-      index = expression.indexIn(text, index + length);
+  foreach (const HighlightingRule &rule, highlightingRules)
+    {
+      QRegExp expression(rule.pattern);
+      int index = expression.indexIn(text);
+      while (index >= 0)
+	{
+	  int length = expression.matchedLength();
+	  setFormat(index, length, rule.format);
+	  index = expression.indexIn(text, index + length);
+	}
     }
-  }
   setCurrentBlockState(0);
 
 #ifdef ENABLE_SPELLCHECK
@@ -201,6 +203,9 @@ void CSongHighlighter::spellCheck(const QString &text)
 
 bool CSongHighlighter::checkWord(const QString &word)
 {
+  if (!m_codec)
+    return false;
+
   QByteArray encodedString;
   encodedString = m_codec->fromUnicode(word);
   return m_checker->spell(encodedString.data());
