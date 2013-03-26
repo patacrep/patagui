@@ -174,26 +174,39 @@ void CEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
   Q_UNUSED(dialog);
 }
 
+CSongCodeEditor* CEditor::codeEditor() const
+{
+  return 0;
+}
+
+void CEditor::setFocus()
+{
+  if (codeEditor())
+    {
+      qDebug() << "set focus";
+      codeEditor()->setFocus();
+    }
+}
+
 
 CSongEditor::CSongEditor(QWidget *parent)
   : CEditor(parent)
-  , m_codeEditor(0)
   , m_songHeaderEditor(0)
+  , m_codeEditor(0)
   , m_findReplaceDialog(0)
   , m_song()
   , m_newSong(true)
   , m_newCover(false)
 {
-  m_codeEditor = new CSongCodeEditor(this);
-  connect(m_codeEditor, SIGNAL(textChanged()), SLOT(documentWasModified()));
-
   m_songHeaderEditor = new CSongHeaderEditor(this);
-  m_songHeaderEditor->setSongEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
 #ifdef ENABLE_SPELLCHECK
   connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)),
 	  SLOT(setDictionary(const QLocale &)));
 #endif //ENABLE_SPELLCHECK
+
+  m_codeEditor = new CSongCodeEditor(this);
+  connect(m_codeEditor, SIGNAL(textChanged()), SLOT(documentWasModified()));
 
   //connects
   connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
@@ -431,7 +444,7 @@ void CSongEditor::setSong(const Song &song)
   m_song = song;
 
   // update the header editor
-  m_songHeaderEditor->update();
+  m_songHeaderEditor->setSong(song);
 
   // update the text editor
   QString songContent;

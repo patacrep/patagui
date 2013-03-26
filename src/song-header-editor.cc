@@ -54,7 +54,6 @@
 
 CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
   : QWidget(parent)
-  , m_songEditor(0)
   , m_titleLineEdit(new LineEdit(this))
   , m_artistLineEdit(new LineEdit(this))
   , m_albumLineEdit(new LineEdit(this))
@@ -257,17 +256,12 @@ void CSongHeaderEditor::toggleView()
 
 Song & CSongHeaderEditor::song()
 {
-  return songEditor()->song();
+  return m_song;
 }
 
-CSongEditor * CSongHeaderEditor::songEditor() const
+void CSongHeaderEditor::setSong(const Song &song)
 {
-  return m_songEditor;
-}
-
-void CSongHeaderEditor::setSongEditor(CSongEditor *songEditor)
-{
-  m_songEditor = songEditor;
+  m_song = song;
   update();
 }
 
@@ -432,7 +426,7 @@ void CSongHeaderEditor::onDiagramsChanged()
 
 void CSongHeaderEditor::onCoverChanged()
 {
-  songEditor()->setNewCover(true);
+  emit(newCover());
   emit(contentsChanged());
 }
 

@@ -79,7 +79,6 @@ CDiagramArea::CDiagramArea(QWidget *parent)
   setLayout(mainLayout);
 
   update();
-  setFocusPolicy(Qt::StrongFocus);
 }
 
 void CDiagramArea::update()
