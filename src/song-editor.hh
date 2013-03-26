@@ -49,6 +49,8 @@ public:
   virtual void setSpellCheckAvailable(const bool);
   virtual void setHighlighter(CSongHighlighter *highlighter);
   virtual void setFindReplaceDialog(CFindReplaceDialog *dialog);
+  virtual CSongCodeEditor* codeEditor() const;
+  virtual void setFocus();
 
 protected:
   QAction *m_saveAct;

@@ -27,7 +27,6 @@
 #include <QLabel>
 #include <QPixmap>
 
-class CSongEditor;
 class CCoverDropArea;
 class CDiagramArea;
 class LineEdit;
@@ -73,18 +72,14 @@ public:
   /// Destructor.
   ~CSongHeaderEditor();
 
-  /// Getter on the song from whose metadata is used
+  /// Getter on the song whose metadata is used
   /// to build this instance of CSongHeaderEditor.
   /// @return the Song
   Song & song();
 
-  /// Getter on the embedding SongEditor
-  /// @return the embedding song editor
-  CSongEditor * songEditor() const;
-
-  /// Setter on the embedding SongEditor
-  /// @param songEditor the embedding song editor
-  void setSongEditor(CSongEditor *songEditor);
+  /// Setter on the song
+  /// @param song the song
+  void setSong(const Song &song);
 
   /// Getter on the song's cover
   /// @return the cover
@@ -134,6 +129,8 @@ signals:
   */
   void languageChanged(const QLocale &);
 
+  void newCover();
+
 private:
 
   /*!
@@ -142,7 +139,7 @@ private:
   */
   void setLibraryCompleters();
 
-  CSongEditor *m_songEditor;
+  Song m_song;
 
   LineEdit *m_titleLineEdit;
   LineEdit *m_artistLineEdit;
