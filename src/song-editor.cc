@@ -102,6 +102,7 @@ CEditor::CEditor(QWidget *parent)
 
   m_searchAct = new QAction(tr("Search"), this);
   m_searchAct->setShortcut(QKeySequence::Find);
+  m_actions->addAction(m_searchAct);
 
   //spellchecking
   m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
