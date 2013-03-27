@@ -136,11 +136,11 @@ void CSongCodeEditor::writeSettings()
 
 void CSongCodeEditor::setHighlighter(CSongHighlighter *highlighter)
 {
-  if (highlighter && m_highlighter != highlighter)
-    {
-      m_highlighter = highlighter;
-      m_highlighter->setDocument(document());
-    }
+  if (!highlighter)
+    return;
+
+  m_highlighter = highlighter;
+  m_highlighter->setDocument(document());
 }
 
 void CSongCodeEditor::insertVerse()
