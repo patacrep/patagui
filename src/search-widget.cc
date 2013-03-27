@@ -42,18 +42,18 @@ CSearchWidget::CSearchWidget(QWidget *parent)
 
   m_findPrevButton->setFlat(true);
   m_findPrevButton->setMaximumWidth(20);
-  m_findPrevButton->setIcon(QIcon::fromTheme("go-up", QIcon(":/icons/songbook/48x48/fold.png")));
+  m_findPrevButton->setIcon(QIcon::fromTheme("go-up", QIcon(":/icons/songbook/22x22/fold.png")));
   connect(m_findPrevButton, SIGNAL(clicked()), SLOT(find()));
 
   m_findNextButton->setFlat(true);
   m_findNextButton->setMaximumWidth(20);
-  m_findNextButton->setIcon(QIcon::fromTheme("go-down", QIcon(":/icons/songbook/48x48/unfold.png")));
+  m_findNextButton->setIcon(QIcon::fromTheme("go-down", QIcon(":/icons/songbook/22x22/unfold.png")));
   connect(m_findNextButton, SIGNAL(clicked()), SLOT(find()));
 
   QPushButton *closeButton = new QPushButton(this);
   closeButton->setFlat(true);
   closeButton->setMaximumWidth(20);
-  closeButton->setIcon(QIcon::fromTheme("window-close", QIcon(":/icons/tango/48x48/actions/window-close.png")));
+  closeButton->setIcon(QIcon::fromTheme("window-close", QIcon(":/icons/tango/22x22/actions/window-close.png")));
   connect(closeButton, SIGNAL(clicked()), SLOT(close()));
 
   QBoxLayout *layout = new QHBoxLayout;
