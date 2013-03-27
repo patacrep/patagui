@@ -219,8 +219,9 @@ private:
   QTextEdit::ExtraSelection environmentSelection(const SongEnvironment & env,
 						 const QTextCursor & cursor);
 
-  CSongHighlighter* m_highlighter;
   QCompleter* m_completer;
+  CSongHighlighter* m_highlighter;
+  CSearchWidget *m_quickSearch;
 
   bool m_environmentsHighlighted;
   bool m_isSpellCheckAvailable;
@@ -233,12 +234,11 @@ private:
   uint m_maxSuggestedWords;
 #endif //ENABLE_SPELLCHECK
 
-  CSearchWidget *m_quickSearch;
-
   const static QColor _verseColor;
   const static QColor _chorusColor;
   const static QColor _bridgeColor;
   const static QColor _scriptureColor;
+  const static QStringList _completerWordList;
 };
 
 #endif // __SONG_CODE_EDITOR_HH__
