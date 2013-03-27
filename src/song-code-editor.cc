@@ -47,21 +47,7 @@ const QColor CSongCodeEditor::_chorusColor(QColor(252,175,62).lighter(160));
 const QColor CSongCodeEditor::_bridgeColor(QColor(114,159,207).lighter(170));
 const QColor CSongCodeEditor::_scriptureColor(QColor(173,127,168).lighter(170));
 
-CSongCodeEditor::CSongCodeEditor(QWidget *parent)
-  : CodeEditor(parent)
-  , m_completer(0)
-  , m_environmentsHighlighted(true)
-  , m_isSpellCheckAvailable(false)
-  , m_isSpellCheckActive(false)
-#ifdef ENABLE_SPELLCHECK
-  , m_maxSuggestedWords(0)
-#endif
-  , m_quickSearch(new CSearchWidget(this))
-{
-  setUndoRedoEnabled(true);
-  connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
-
-  QStringList wordList = QStringList()
+const QStringList CSongCodeEditor::_completerWordList = QStringList()
     << "\\begin{verse}" << "\\end{verse}"
     << "\\begin{verse*}" << "\\end{verse*}"
     << "\\begin{chorus}" << "\\end{chorus}"
@@ -80,7 +66,22 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
     << "\\ifchorded" << "\\ifnorepeatchords"
     << "\\else" << "\\fi";
 
-  m_completer = new QCompleter(wordList, this);
+CSongCodeEditor::CSongCodeEditor(QWidget *parent)
+  : CodeEditor(parent)
+  , m_completer(0)
+  , m_highlighter(0)
+  , m_quickSearch(new CSearchWidget(this))
+  , m_environmentsHighlighted(true)
+  , m_isSpellCheckAvailable(false)
+  , m_isSpellCheckActive(false)
+#ifdef ENABLE_SPELLCHECK
+  , m_maxSuggestedWords(0)
+#endif
+{
+  setUndoRedoEnabled(true);
+  connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
+
+  m_completer = new QCompleter(_completerWordList, this);
   m_completer->setWidget(this);
   m_completer->setCompletionMode(QCompleter::PopupCompletion);
   QObject::connect(m_completer, SIGNAL(activated(QString)),
