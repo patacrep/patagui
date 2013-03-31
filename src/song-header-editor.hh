@@ -129,7 +129,7 @@ signals:
   */
   void languageChanged(const QLocale &);
 
-  void newCover();
+  void newCover(bool);
 
 private:
 

@@ -426,7 +426,7 @@ void CSongHeaderEditor::onDiagramsChanged()
 
 void CSongHeaderEditor::onCoverChanged()
 {
-  emit(newCover());
+  emit(newCover(true));
   emit(contentsChanged());
 }
 
