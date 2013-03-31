@@ -141,6 +141,7 @@ void CSongCodeEditor::setHighlighter(CSongHighlighter *highlighter)
 
   m_highlighter = highlighter;
   m_highlighter->setDocument(document());
+  setSpellCheckActive(m_highlighter->isSpellCheckActive());
 }
 
 void CSongCodeEditor::insertVerse()
