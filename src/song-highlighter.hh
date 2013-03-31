@@ -58,8 +58,11 @@ public:
   /// @return the hunspell spellchecker
   Hunspell* checker() const;
 
-#ifdef ENABLE_SPELLCHECK
 public slots:
+#ifdef ENABLE_SPELLCHECK
+
+  bool isSpellCheckActive() const;
+
   /// Add an unrecognized word to the hunspell dictionary
   /// so that it is not marked as incorrect anymore.
   /// @param word the word that is to be marked as correct.

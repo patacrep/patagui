@@ -255,6 +255,11 @@ void CSongHighlighter::setSpellCheckActive(const bool value)
     }
 }
 
+bool CSongHighlighter::isSpellCheckActive() const
+{
+  return m_isSpellCheckActive;
+}
+
 Hunspell* CSongHighlighter::checker() const
 {
   return m_checker;
