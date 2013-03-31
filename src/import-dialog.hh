@@ -92,6 +92,9 @@ class CImportDialog : public QDialog
   /// @return true if the operation succeeded, false otherwise
   bool decompress(const QString &filename, QDir &directory);
 
+  /// (http://github.com/libarchive/libarchive).
+  int copy_data(struct archive *ar, struct archive *aw);
+
 public slots:
   /// Handles common errors and dialog at the end of the downloading operation
   /// such as conflicts with filenames or failed download.
