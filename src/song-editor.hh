@@ -107,9 +107,6 @@ public:
   //! Getter on the new cover property
   bool isNewCover() const;
 
-  //! Setter on the new cover property
-  void setNewCover(bool newCover);
-
   virtual QToolBar * toolBar() const;
   virtual QActionGroup * actionGroup() const;
 
@@ -121,6 +118,10 @@ public:
 public slots:
   void setModified(bool modified);
   void setNewSong(bool newSong);
+
+  //! Setter on the new cover property
+  void setNewCover(bool newCover);
+
 #ifdef ENABLE_SPELLCHECK
   void setDictionary(const QLocale & locale);
 #endif //ENABLE_SPELLCHECK

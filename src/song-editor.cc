@@ -186,6 +186,7 @@ CSongEditor::CSongEditor(QWidget *parent)
 {
   m_songHeaderEditor = new CSongHeaderEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
+  connect(m_songHeaderEditor, SIGNAL(newCover(bool)), SLOT(setNewCover(bool)));
 #ifdef ENABLE_SPELLCHECK
   connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)),
 	  SLOT(setDictionary(const QLocale &)));
