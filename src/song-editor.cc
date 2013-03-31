@@ -183,6 +183,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_song()
   , m_newSong(true)
   , m_newCover(false)
+  , m_text("")
 {
   m_songHeaderEditor = new CSongHeaderEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
@@ -390,7 +391,16 @@ void CSongEditor::createNewSong()
 
 void CSongEditor::documentWasModified()
 {
-  setModified(true);
+  // this is a workaround for a bug that set the song modified
+  // as soon as the tab gets the focus
+  // the test and m_text variable should be removed
+  CSongCodeEditor *editor = qobject_cast<CSongCodeEditor* >(QObject::sender());
+  if (editor && m_text != codeEditor()->toPlainText())
+    {
+      // codeEditor sent textChanged and content _really_ differs
+      m_text = codeEditor()->toPlainText();
+      setModified(true);
+    }
 }
 
 CLibrary * CSongEditor::library() const
