@@ -504,8 +504,10 @@ bool CImportDialog::decompress(const QString &filename, QDir &directory)
 {
   QDir dir;
   struct archive *archive;
+  struct archive *ext;
   struct archive_entry *entry;
   int flags;
+  int r;
 
   /* Select which attributes we want to restore. */
   flags = ARCHIVE_EXTRACT_TIME;
@@ -516,27 +518,78 @@ bool CImportDialog::decompress(const QString &filename, QDir &directory)
   archive = archive_read_new();
   archive_read_support_format_all(archive);
   archive_read_support_compression_all(archive);
+  ext = archive_write_disk_new();
+  archive_write_disk_set_options(ext, flags);
+  archive_write_disk_set_standard_lookup(ext);
 
-  if (archive_read_open_filename(archive, qPrintable( filename ), 10240))
+  if ((r = archive_read_open_filename(archive, filename.toStdString().c_str(), 10240)))
     {
-      showMessage(tr("Unable to open the archive %1").arg(filename));
+      showMessage(tr("Unable to open the archive: %1").arg(filename));
       return false;
     }
 
-  bool first = true;
-  while (archive_read_next_header(archive, &entry) == ARCHIVE_OK)
+  do
     {
-      // update the directory
-      if (first)
+      r = archive_read_next_header(archive, &entry);
+      if (r == ARCHIVE_EOF)
+	break;
+      if (r != ARCHIVE_OK)
+	showMessage(tr("Error: %1").arg(archive_error_string(archive)));
+      if (r < ARCHIVE_WARN)
+	return false;
+
+      r = archive_write_header(ext, entry);
+      if (r != ARCHIVE_OK)
+	showMessage(tr("Error: %1").arg(archive_error_string(ext)));
+      else if (archive_entry_size(entry) > 0)
 	{
-	  first = false;
-	  // the first entry is supposed to be the main directory
-	  directory = QDir().absoluteFilePath(archive_entry_pathname(entry));
+	  copy_data(archive, ext);
+	  if (r != ARCHIVE_OK)
+	    showMessage(tr("Error: %1").arg(archive_error_string(ext)));
+	  if (r < ARCHIVE_WARN)
+	    return false;
 	}
-      archive_read_extract(archive, entry, flags);
+
+      r = archive_write_finish_entry(ext);
+      if (r != ARCHIVE_OK)
+	{
+	  showMessage(tr("Error: %1").arg(archive_error_string(ext)));
+	}
+      if (r < ARCHIVE_WARN)
+	return false;
     }
-  archive_read_finish(archive);
+  while (true);
+
+  archive_read_close(archive);
+  archive_read_free(archive);
+  archive_write_close(ext);
+  archive_write_free(ext);
   return true;
+}
+
+int CImportDialog::copy_data(struct archive *ar, struct archive *aw)
+{
+  int r;
+  const void *buff;
+  size_t size;
+  off_t offset;
+
+  do
+    {
+      r = archive_read_data_block(ar, &buff, &size, &offset);
+      if (r == ARCHIVE_EOF)
+	return (ARCHIVE_OK);
+      if (r != ARCHIVE_OK)
+	return (r);
+
+      r = archive_write_data_block(aw, buff, size, offset);
+      if (r != ARCHIVE_OK)
+	{
+	  showMessage(tr("Error: %1").arg(archive_error_string(aw)));
+	  return (r);
+	}
+    }
+  while (true);
 }
 
 QString CImportDialog::findFileName()
