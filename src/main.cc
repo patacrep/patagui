@@ -38,9 +38,11 @@
 #include <QLocale>
 #include <QDir>
 #include <QTextStream>
+#include <QDebug>
 
-#include "main-window.hh"
 #include "config.hh"
+#include "main-window.hh"
+#include "library.hh"
 
 #ifdef USE_SPARKLE
 #include "../macos_specific/sparkle/src/CocoaInitializer.h"
@@ -138,6 +140,7 @@ int main(int argc, char *argv[])
   CMainWindow mainWindow;
   mainWindow.show();
 
+  QStringList songsToBeImported;
   foreach (const QString & arg, arguments)
     {
       if (arg.endsWith(".sb") && QFile(arg).exists())
@@ -146,9 +149,12 @@ int main(int argc, char *argv[])
 	}
       if (arg.endsWith(".sg") && QFile(arg).exists())
 	{
+	  songsToBeImported << arg;
 	  mainWindow.songEditor(arg);
 	}
     }
+  if (songsToBeImported.isEmpty())
+    CLibrary::instance()->importSongs(songsToBeImported);
 
   return application.exec();
 }
