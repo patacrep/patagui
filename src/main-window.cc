@@ -127,6 +127,42 @@ namespace // anonymous namespace
       }
     return true;
   }
+
+  bool removeDirectoryRecursively(const QDir & directory)
+  {
+    bool error = false;
+    if (directory.exists())
+      {
+	QFileInfoList entries = directory.entryInfoList
+	  (QDir::NoDotAndDotDot | QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::Files);
+
+	int count = entries.size();
+	for (int index = 0; index < count && !error; ++index)
+	  {
+	    QFileInfo entryInfo = entries[index];
+	    QString path = entryInfo.absoluteFilePath();
+	    if (entryInfo.isDir())
+	      {
+		error = removeDirectoryRecursively(QDir(path));
+	      }
+	    else
+	      {
+		QFile file(path);
+		if (!file.remove())
+		  {
+		    qWarning() << QObject::tr("Can't remove file: %1 from cache directory").arg(path);
+		    error = true;
+		  }
+	      }
+	  }
+	if (!directory.rmdir(directory.absolutePath()))
+	  {
+	    qWarning() << QObject::tr("Can't remove directory: %1 from cache directory").arg(directory.absolutePath());
+	    error = true;
+	  }
+      }
+    return error;
+  }
 }
 
 const QString CMainWindow::_cachePath(QString("%1/songbook-client").arg(QDesktopServices::storageLocation(QDesktopServices::CacheLocation)));
@@ -221,7 +257,8 @@ CMainWindow::CMainWindow(QWidget *parent)
 
   updateTitle(songbook()->filename());
 
-  // make cache directory for the application
+  // make a clean cache directory for the application
+  removeDirectoryRecursively(QDir(_cachePath));
   QDir().mkpath(_cachePath);
 
   readSettings(true);
