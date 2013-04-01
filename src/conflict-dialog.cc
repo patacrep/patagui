@@ -239,7 +239,8 @@ void CConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files
     }
   
   m_conflictView->setRowCount(row);
-  updateItemDetails(m_conflictView->itemAt(0, 0));
+  if (row > 0)
+    updateItemDetails(m_conflictView->itemAt(0, 0));
 }
 
 bool CConflictDialog::conflictsFound() const
