@@ -90,7 +90,7 @@ class CImportDialog : public QDialog
   /// @param filename : filename of the compressed archive
   /// @param directory : the directory resulting from the decompression
   /// @return true if the operation succeeded, false otherwise
-  bool decompress(const QString &filename, QDir &directory);
+  bool decompress(const QString &filename);
 
   /// (http://github.com/libarchive/libarchive).
   int copy_data(struct archive *ar, struct archive *aw);
