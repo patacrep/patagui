@@ -466,7 +466,7 @@ void CImportDialog::downloadFinished()
       if (saveToDisk(filepath, m_reply))
 	{
 	  QDir::setCurrent(dir.absolutePath());
-	  if (decompress(filepath, dir))
+	  if (decompress(filepath))
 	    {
 	      CLibrary::recursiveFindFiles(dir.absolutePath(), QStringList() << "*.sg", m_songsToBeImported);
 	      showMessage(tr("Download completed"));
@@ -500,9 +500,8 @@ void CImportDialog::cancelDownload()
 
 // Uses the code sample proposed in the libarchive documentation
 // http://code.google.com/p/libarchive/wiki/Examples#A_Complete_Extractor
-bool CImportDialog::decompress(const QString &filename, QDir &directory)
+bool CImportDialog::decompress(const QString &filename)
 {
-  QDir dir;
   struct archive *archive;
   struct archive *ext;
   struct archive_entry *entry;
