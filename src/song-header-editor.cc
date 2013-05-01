@@ -321,9 +321,9 @@ void CSongHeaderEditor::update()
   else
     m_urlLineEdit->setText(song().url);
 
-  m_languageComboBox->setCurrentIndex(m_languageComboBox->findText
-				      (QLocale::languageToString(song().locale.language()),
-				       Qt::MatchContains));
+  QString language = QLocale::languageToString(song().locale.language());
+  m_languageComboBox->setCurrentIndex(m_languageComboBox->findText(language, Qt::MatchContains));
+
   if (song().columnCount < 1)
     song().columnCount = 2;
   else if (song().columnCount > 3)

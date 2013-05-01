@@ -35,29 +35,32 @@ const QRegExp CSongHighlighter::reLaTeXArgument("\\{[^}]+\\}");
 const QRegExp CSongHighlighter::reChordsPattern("\\\\\\[[^\\]]+\\]");
 const QRegExp CSongHighlighter::reCommentsPattern("%[^\n]*");
 
-const QStringList CSongHighlighter::_keywordPatterns(QStringList()
-						     << "\\\\gtab"     << "\\\\utab"
-						     << "\\\\rep"      << "\\\\lilypond"
-						     << "\\\\image"    << "\\\\songcolumns"
-						     << "\\\\cover"    << "\\\\capo"
-						     << "\\\\nolyrics" << "\\\\musicnote"
-						     << "\\\\textnote" << "\\\\dots"
-						     << "\\\\single"  << "\\\\echo"
-						     << "\\\\transpose" << "\\\\transposition"
-						     << "\\\\emph" << "\\\\selectlanguage");
+const QStringList CSongHighlighter::_keywordPatterns
+(QStringList()
+ << "\\\\gtab" << "\\\\utab"
+ << "\\\\rep" << "\\\\lilypond"
+ << "\\\\image" << "\\\\songcolumns"
+ << "\\\\cover" << "\\\\capo"
+ << "\\\\nolyrics" << "\\\\musicnote"
+ << "\\\\textnote" << "\\\\dots"
+ << "\\\\single" << "\\\\echo"
+ << "\\\\transpose" << "\\\\transposition"
+ << "\\\\emph" << "\\\\selectlanguage");
 
-const QStringList CSongHighlighter::_keyword2Patterns(QStringList()
-						      << "\\\\Intro" << "\\\\Rythm"
-						      << "\\\\Outro" << "\\\\Bridge"
-						      << "\\\\Verse" << "\\\\Chorus"
-						      << "\\\\Pattern" << "\\\\Solo"
-						      << "\\\\Adlib" << "\\\\else"
-						      << "\\\\ifchorded" << "\\\\iflyrics"
-						      << "\\\\ifnorepeatchords" << "\\\\fi");
+const QStringList CSongHighlighter::_keyword2Patterns
+(QStringList()
+ << "\\\\Intro" << "\\\\Rythm"
+ << "\\\\Outro" << "\\\\Bridge"
+ << "\\\\Verse" << "\\\\Chorus"
+ << "\\\\Pattern" << "\\\\Solo"
+ << "\\\\Adlib" << "\\\\else"
+ << "\\\\ifchorded" << "\\\\iflyrics"
+ << "\\\\ifnorepeatchords" << "\\\\fi");
 
-const QStringList CSongHighlighter::_delimiters(QStringList()
-						 << "\\\\begin" << "\\\\end"
-						 << "\\\\beginscripture" << "\\\\endscripture");
+const QStringList CSongHighlighter::_delimiters
+(QStringList()
+ << "\\\\begin" << "\\\\end"
+ << "\\\\beginscripture" << "\\\\endscripture");
 
 const QColor CSongHighlighter::_keywords1Color(QColor(206,92,0)); //orange
 const QColor CSongHighlighter::_keywords2Color(QColor(164,0,0)); //red
@@ -222,7 +225,9 @@ void CSongHighlighter::setDictionary(const QString &filename)
   QFileInfo fi(filename);
   if (filename.isEmpty() || !fi.exists() || !fi.isReadable())
     {
-      qWarning() << tr("CSongHighlighter::setDictionary cannot read open dictionary : ") << filename;
+      qWarning() << tr("CSongHighlighter::setDictionary cannot open dictionary : ") << filename;
+      delete m_checker;
+      m_checker = 0;
     }
   else
     {

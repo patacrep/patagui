@@ -70,7 +70,7 @@ public:
   /// Constructor.
   CSongHeaderEditor(QWidget *parent = 0);
   /// Destructor.
-  ~CSongHeaderEditor();
+  virtual ~CSongHeaderEditor();
 
   /// Getter on the song whose metadata is used
   /// to build this instance of CSongHeaderEditor.
@@ -107,11 +107,13 @@ private slots:
   void onDiagramsChanged();
   void onCoverChanged();
 
-public slots:
+private:
   /*!
     Updates the elements of the header from the song contents.
   */
   void update();
+
+public slots:
 
   /*!
     Toggles between full-view mode and mini-view mode.
