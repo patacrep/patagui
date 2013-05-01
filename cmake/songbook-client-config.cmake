@@ -24,7 +24,7 @@ elseif( CMAKE_COMPILER_IS_GNUCXX )
     -Wchar-subscripts -Wundef -Wcast-align -Wwrite-strings
     -Wsign-compare -Wunused -Wuninitialized -Winit-self
     -Wpointer-arith -Wredundant-decls -Wformat-nonliteral
-    -Wmissing-format-attribute -Wpacked -Wformat-security
+    -Wmissing-format-attribute -Wformat-security
     )
 elseif( CMAKE_CXX_COMPILER MATCHES "clang" )
   add_definitions( -Wall -Wextra )
