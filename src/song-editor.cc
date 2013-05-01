@@ -20,6 +20,7 @@
 
 #include "find-replace-dialog.hh"
 #include "song-header-editor.hh"
+#include "song-highlighter.hh"
 #include "song-code-editor.hh"
 #include "library.hh"
 #include "utils/lineedit.hh"
@@ -183,7 +184,6 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_song()
   , m_newSong(true)
   , m_newCover(false)
-  , m_text("")
 {
   m_songHeaderEditor = new CSongHeaderEditor(this);
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
@@ -194,7 +194,7 @@ CSongEditor::CSongEditor(QWidget *parent)
 #endif //ENABLE_SPELLCHECK
 
   m_codeEditor = new CSongCodeEditor(this);
-  connect(m_codeEditor, SIGNAL(textChanged()), SLOT(documentWasModified()));
+  connect(m_codeEditor->document(), SIGNAL(modificationChanged(bool)), SLOT(setModified(bool)));
 
   //connects
   connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
@@ -207,6 +207,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   connect(m_verseAct, SIGNAL(triggered()), codeEditor(), SLOT(insertVerse()));
   connect(m_chorusAct, SIGNAL(triggered()), codeEditor(), SLOT(insertChorus()));
   connect(m_bridgeAct, SIGNAL(triggered()), codeEditor(), SLOT(insertBridge()));
+  connect(m_spellCheckingAct, SIGNAL(toggled(bool)), m_codeEditor, SLOT(setSpellCheckActive(bool)));
   connect(m_replaceAct, SIGNAL(triggered()), SLOT(findReplaceDialog()));
 
   QBoxLayout *mainLayout = new QVBoxLayout();
@@ -391,16 +392,7 @@ void CSongEditor::createNewSong()
 
 void CSongEditor::documentWasModified()
 {
-  // this is a workaround for a bug that set the song modified
-  // as soon as the tab gets the focus
-  // the test and m_text variable should be removed
-  CSongCodeEditor *editor = qobject_cast<CSongCodeEditor* >(QObject::sender());
-  if (editor && m_text != codeEditor()->toPlainText())
-    {
-      // codeEditor sent textChanged and content _really_ differs
-      m_text = codeEditor()->toPlainText();
-      setModified(true);
-    }
+  setModified(true);
 }
 
 CLibrary * CSongEditor::library() const
@@ -513,27 +505,30 @@ void CSongEditor::setDictionary(const QLocale &locale)
   prefix = "/usr/share/";
 #endif //Q_OS_WIN32
   QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
-  if (!QFile(dictionary).exists())
+  if (QFile(dictionary).exists())
     {
+      setStatusTip("");
+      codeEditor()->setDictionary(dictionary);
+      setSpellCheckAvailable(true);
+    }
+  else
+    {
+      qDebug() << "CSongEditor::setDictionary Unable to find the following dictionary: %1";
       setStatusTip(tr("Unable to find the following dictionary: %1").arg(dictionary));
       setSpellCheckAvailable(false);
-      return;
     }
-  setStatusTip("");
-  setSpellCheckAvailable(true);
-  codeEditor()->setDictionary(dictionary);
 }
 #endif //ENABLE_SPELLCHECK
 
 void CSongEditor::setHighlighter(CSongHighlighter *highlighter)
 {
-#ifdef ENABLE_SPELLCHECK
-  connect(m_spellCheckingAct, SIGNAL(toggled(bool)),
-	  m_codeEditor, SLOT(setSpellCheckActive(bool)));
+  if (!highlighter)
+    return;
 
-  setDictionary(song().locale);
-#endif //ENABLE_SPELLCHECK
+  bool state = isModified();
   codeEditor()->setHighlighter(highlighter);
+  setDictionary(song().locale);
+  setModified(state);
 }
 
 QActionGroup* CSongEditor::actionGroup() const
@@ -565,5 +560,6 @@ void CSongEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
     {
       m_findReplaceDialog = dialog;
       m_findReplaceDialog->setTextEditor(codeEditor());
+      m_codeEditor->setFocus();
     }
 }

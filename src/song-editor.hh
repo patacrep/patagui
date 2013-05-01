@@ -152,8 +152,6 @@ private:
   Song m_song;
   bool m_newSong;
   bool m_newCover;
-
-  QString m_text;
 };
 
 

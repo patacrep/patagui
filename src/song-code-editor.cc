@@ -80,7 +80,6 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
 {
   setUndoRedoEnabled(true);
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
-
   m_completer = new QCompleter(_completerWordList, this);
   m_completer->setWidget(this);
   m_completer->setCompletionMode(QCompleter::PopupCompletion);
@@ -139,9 +138,23 @@ void CSongCodeEditor::setHighlighter(CSongHighlighter *highlighter)
   if (!highlighter)
     return;
 
+  bool first = !m_highlighter;
+  QTextDocument *previousDocument = highlighter->document();
+  bool state = false;
+  if (previousDocument)
+    state = previousDocument->isModified();
+
   m_highlighter = highlighter;
   m_highlighter->setDocument(document());
-  setSpellCheckActive(m_highlighter->isSpellCheckActive());
+  
+  // removing the highlighter from previous document
+  // should not change its state
+  if (previousDocument)
+    previousDocument->setModified(state);
+
+  if (first)
+    connect(this, SIGNAL(wordAdded(const QString&)),
+	    m_highlighter, SLOT(addWord(const QString&)));
 }
 
 void CSongCodeEditor::insertVerse()
@@ -455,11 +468,10 @@ void CSongCodeEditor::trimLine(const QTextCursor & cur)
 #ifdef ENABLE_SPELLCHECK
 void CSongCodeEditor::setDictionary(const QString & dictionary)
 {
-  if (highlighter() == 0)
+  if (!highlighter())
     return;
 
   highlighter()->setDictionary(dictionary);
-  connect(this, SIGNAL(wordAdded(const QString&)), highlighter(), SLOT(addWord(const QString&)));
 }
 
 QString CSongCodeEditor::currentWord()
@@ -561,7 +573,7 @@ void CSongCodeEditor::ignoreWord()
 {
   QString str = currentWord();
   QByteArray encodedString;
-  QString spell_encoding=QString(checker()->get_dic_encoding());
+  QString spell_encoding = QString(checker()->get_dic_encoding());
   QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
   encodedString = codec->fromUnicode(str);
   checker()->add(encodedString.data());
@@ -633,13 +645,14 @@ bool CSongCodeEditor::isSpellCheckActive() const
 
 void CSongCodeEditor::setSpellCheckActive(const bool value)
 {
-  m_isSpellCheckActive = value;
 #ifdef ENABLE_SPELLCHECK
-  // signals are blocked to prevent triggering documentWasModified
-  // it avoids marking the song as modified when words are only highlighted
-  blockSignals(true);
-  highlighter()->setSpellCheckActive(value);
-  blockSignals(false);
+  if (isSpellCheckAvailable() && highlighter())
+    {
+      m_isSpellCheckActive = value;
+      bool state = highlighter()->document()->isModified();
+      highlighter()->setSpellCheckActive(value);
+      highlighter()->document()->setModified(state);
+    }
 #endif //ENABLE_SPELLCHECK
 }
 
