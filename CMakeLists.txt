@@ -37,7 +37,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/song-sort-filter-proxy-model.cc
   src/filter-lineedit.cc
   src/utils/lineedit.cc
-  src/utils/lineedit.cc
   src/code-editor.cc
   src/tab-widget.cc
   src/notification.cc
