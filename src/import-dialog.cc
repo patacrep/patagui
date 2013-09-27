@@ -569,14 +569,13 @@ bool CImportDialog::decompress(const QString &filename)
 
 int CImportDialog::copy_data(struct archive *ar, struct archive *aw)
 {
-  int r;
   const void *buff;
   size_t size;
   off_t offset;
 
   do
     {
-      r = archive_read_data_block(ar, &buff, &size, &offset);
+      int r = archive_read_data_block(ar, &buff, &size, &offset);
       if (r == ARCHIVE_EOF)
 	return (ARCHIVE_OK);
       if (r != ARCHIVE_OK)
