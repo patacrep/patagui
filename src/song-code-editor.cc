@@ -407,8 +407,7 @@ void CSongCodeEditor::indentSelection()
 
 void CSongCodeEditor::indentLine(const QTextCursor & cur)
 {
-  //if line only contains whitespaces, remove them and exit
-  if (cur.block().text().trimmed().isEmpty() || cur.atStart())
+  if (cur.atStart())
     {
       trimLine(cur);
       return;
@@ -447,15 +446,15 @@ void CSongCodeEditor::indentLine(const QTextCursor & cur)
 
   //performs the correct indentation
   trimLine(cursor);
-  for (int i=0; i < index; ++i)
+  for (int i = 0; i < index; ++i)
     cursor.insertText("  ");
 }
 
 void CSongCodeEditor::trimLine(const QTextCursor & cur)
 {
   QTextCursor cursor(cur);
-  QString str  = cursor.block().text();
-  while ( str.startsWith(" ") )
+  QString str = cursor.block().text();
+  while (str.startsWith(" "))
     {
       cursor.deleteChar();
       str  = cursor.block().text();
