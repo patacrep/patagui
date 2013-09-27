@@ -195,6 +195,8 @@ CImportDialog::~CImportDialog()
   delete m_urlLineEdit;
   
   delete m_fileList;
+
+  delete m_manager;
 }
 
 void CImportDialog::readSettings()
@@ -374,32 +376,31 @@ void CImportDialog::showMessage(const QString & message)
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 void CImportDialog::initDownload()
 {
+  delete m_manager;
   m_manager = new QNetworkAccessManager(this);
 
-  {
-    QSettings settings;
-    settings.beginGroup("proxy");
-    QString hostname = settings.value("hostname", QString()).toString();
-    QString port = settings.value("port", QString()).toString();
-    QString user = settings.value("user", QString()).toString();
-    QString password = settings.value("password", QString()).toString();
-    settings.endGroup();
+  QSettings settings;
+  settings.beginGroup("proxy");
+  QString hostname = settings.value("hostname", QString()).toString();
+  QString port = settings.value("port", QString()).toString();
+  QString user = settings.value("user", QString()).toString();
+  QString password = settings.value("password", QString()).toString();
+  settings.endGroup();
 
-    QNetworkProxy proxy;
-    if (hostname.isEmpty())
-      {
-        proxy.setType(QNetworkProxy::NoProxy);
-      }
-    else
-      {
-        proxy.setType(QNetworkProxy::HttpProxy);
-        proxy.setHostName(hostname);
-        proxy.setPort(port.toInt());
-        proxy.setUser(user);
-        proxy.setPassword(password);
-      }
-    QNetworkProxy::setApplicationProxy(proxy);
-  }
+  QNetworkProxy proxy;
+  if (hostname.isEmpty())
+    {
+      proxy.setType(QNetworkProxy::NoProxy);
+    }
+  else
+    {
+      proxy.setType(QNetworkProxy::HttpProxy);
+      proxy.setHostName(hostname);
+      proxy.setPort(port.toInt());
+      proxy.setUser(user);
+      proxy.setPassword(password);
+    }
+  QNetworkProxy::setApplicationProxy(proxy);
   
   connect(progressBar(), SIGNAL(canceled()),
           this, SLOT(cancelDownload()));
