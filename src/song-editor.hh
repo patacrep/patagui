@@ -28,11 +28,12 @@
 class QAction;
 class QActionGroup;
 class QToolBar;
-class CFindReplaceDialog;
 class CLibrary;
 class CSongCodeEditor;
 class CSongHeaderEditor;
 class CSongHighlighter;
+class CFindReplaceDialog;
+class Hunspell;
 
 class CEditor : public QWidget
 {
@@ -46,7 +47,6 @@ public:
   virtual QActionGroup * actionGroup() const;
 
   virtual void setHighlighter(CSongHighlighter *highlighter);
-  virtual void setFindReplaceDialog(CFindReplaceDialog *dialog);
 
 protected:
   QAction *m_saveAct;
@@ -110,8 +110,6 @@ public:
 
   virtual bool isSpellCheckAvailable() const;
   virtual void setSpellCheckAvailable(const bool);
-
-  virtual void setFindReplaceDialog(CFindReplaceDialog *dialog);
 
 public slots:
   void setModified(bool modified);

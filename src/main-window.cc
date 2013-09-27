@@ -54,7 +54,6 @@
 #include "preferences.hh"
 #include "progress-bar.hh"
 #include "import-dialog.hh"
-#include "find-replace-dialog.hh"
 #include "make-songbook-process.hh"
 
 #include <QDebug>
@@ -183,7 +182,6 @@ CMainWindow::CMainWindow(QWidget *parent)
   , m_currentToolBar(0)
   , m_builder(new CMakeSongbookProcess(this))
   , m_songHighlighter(0)
-  , m_findReplaceDialog(0)
 {
   setWindowTitle("Patacrep Songbook Client");
   setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
@@ -324,9 +322,6 @@ void CMainWindow::writeSettings()
 
   library()->writeSettings();
   view()->writeSettings();
-
-  if (m_findReplaceDialog)
-    m_findReplaceDialog->writeSettings();
 }
 
 void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
@@ -902,14 +897,6 @@ void CMainWindow::changeTab(int index)
 	  m_songHighlighter = new CSongHighlighter;
 	}
       editor->setHighlighter(m_songHighlighter);
-
-      // install find/replace dialog
-      if (!m_findReplaceDialog)
-	{
-	  m_findReplaceDialog = new CFindReplaceDialog(this);
-	  m_findReplaceDialog->readSettings();
-	}
-      editor->setFindReplaceDialog(m_findReplaceDialog);
     }
   else
     {

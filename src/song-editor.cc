@@ -162,11 +162,6 @@ void CEditor::setHighlighter(CSongHighlighter *highlighter)
   Q_UNUSED(highlighter);
 }
 
-void CEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
-{
-  Q_UNUSED(dialog);
-}
-
 
 CSongEditor::CSongEditor(QWidget *parent)
   : CEditor(parent)
@@ -187,6 +182,11 @@ CSongEditor::CSongEditor(QWidget *parent)
 
   m_codeEditor = new CSongCodeEditor(this);
   connect(m_codeEditor->document(), SIGNAL(modificationChanged(bool)), SLOT(setModified(bool)));
+
+
+  m_findReplaceDialog = new CFindReplaceDialog(this);
+  m_findReplaceDialog->setTextEditor(codeEditor());
+  m_findReplaceDialog->readSettings();
 
   //connects
   connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
@@ -547,21 +547,6 @@ QToolBar * CSongEditor::toolBar() const
 
 void CSongEditor::findReplaceDialog()
 {
-  if (!m_findReplaceDialog)
-    return;
-
-  m_findReplaceDialog->show();
-}
-
-void CSongEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
-{
-  if (!dialog)
-    return;
-
-  if (dialog != m_findReplaceDialog)
-    {
-      m_findReplaceDialog = dialog;
-      m_findReplaceDialog->setTextEditor(codeEditor());
-      m_codeEditor->setFocus();
-    }
+  if (m_findReplaceDialog)
+    m_findReplaceDialog->show();
 }
