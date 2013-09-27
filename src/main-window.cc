@@ -55,7 +55,6 @@
 #include "progress-bar.hh"
 #include "import-dialog.hh"
 #include "find-replace-dialog.hh"
-
 #include "make-songbook-process.hh"
 
 #include <QDebug>
@@ -807,6 +806,10 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path)
 {
+  if (path.isEmpty())
+    return;
+
+  // if path an editor already corresponds to path, focus on it
   for (int i = 0; i < m_mainWidget->count(); ++i)
     if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(i)))
       if (editor->song().path == path)
@@ -815,15 +818,16 @@ void CMainWindow::songEditor(const QString &path)
 	  return;
 	}
 
+  // create a new editor
   CSongEditor *editor = new CSongEditor(this);
-  if (!path.isEmpty())
-    {
-      if (library()->getSongIndex(path) == -1)
-	library()->addSongs(QStringList() << path);
 
-      editor->setSong(library()->getSong(path));
-    }
+  // if the song does not exist within the library, add it
+  if (library()->getSongIndex(path) == -1)
+    library()->addSongs(QStringList() << path);
 
+  editor->setSong(library()->getSong(path));
+
+  // create the corresponding tab
   connect(editor, SIGNAL(labelChanged(const QString&)),
 	  m_mainWidget, SLOT(changeTabText(const QString&)));
   m_mainWidget->addTab(editor);
