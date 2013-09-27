@@ -309,7 +309,7 @@ void CSongCodeEditor::highlightEnvironments()
   QList<QTextEdit::ExtraSelection> extraSelections;
   foreach (QString line, lines)
     {
-      if (line.contains("\\begin"))
+      if (line.contains("\\begin") && !line.contains("repeatedchords"))
 	environment = true;
 
       if (environment && line.contains("\\end"))
