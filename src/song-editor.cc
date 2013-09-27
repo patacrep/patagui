@@ -438,8 +438,10 @@ void CSongEditor::setSong(const Song &song)
       songContent.append(QString("%1\n").arg(line));
     }
 
+  codeEditor()->setUndoRedoEnabled(false);
   codeEditor()->setPlainText(songContent);
   codeEditor()->indent();
+  codeEditor()->setUndoRedoEnabled(true);
 
   setNewSong(false);
   setNewCover(false);

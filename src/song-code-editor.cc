@@ -77,7 +77,6 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   , m_maxSuggestedWords(0)
 #endif
 {
-  setUndoRedoEnabled(true);
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
   m_completer = new QCompleter(_completerWordList, this);
   m_completer->setWidget(this);
