@@ -73,7 +73,6 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
   , m_quickSearch(new CSearchWidget(this))
   , m_environmentsHighlighted(true)
   , m_isSpellCheckAvailable(false)
-  , m_isSpellCheckActive(false)
 #ifdef ENABLE_SPELLCHECK
   , m_maxSuggestedWords(0)
 #endif
@@ -594,9 +593,12 @@ void CSongCodeEditor::addWord()
 
 Hunspell* CSongCodeEditor::checker() const
 {
-  if (!highlighter()) return 0;
+  if (!highlighter())
+    return 0;
+
   return highlighter()->checker();
 }
+
 #endif //ENABLE_SPELLCHECK
 
 void CSongCodeEditor::commentSelection()
@@ -640,7 +642,10 @@ void CSongCodeEditor::setSpellCheckAvailable(const bool value)
 
 bool CSongCodeEditor::isSpellCheckActive() const
 {
-  return m_isSpellCheckActive;
+  if (!highlighter())
+    return false;
+
+  return highlighter()->isSpellCheckActive();
 }
 
 void CSongCodeEditor::setSpellCheckActive(const bool value)
@@ -648,10 +653,7 @@ void CSongCodeEditor::setSpellCheckActive(const bool value)
 #ifdef ENABLE_SPELLCHECK
   if (isSpellCheckAvailable() && highlighter())
     {
-      m_isSpellCheckActive = value;
-      bool state = highlighter()->document()->isModified();
       highlighter()->setSpellCheckActive(value);
-      highlighter()->document()->setModified(state);
     }
 #endif //ENABLE_SPELLCHECK
 }

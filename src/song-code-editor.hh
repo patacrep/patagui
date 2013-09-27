@@ -225,7 +225,6 @@ private:
 
   bool m_environmentsHighlighted;
   bool m_isSpellCheckAvailable;
-  bool m_isSpellCheckActive;
 
 #ifdef ENABLE_SPELLCHECK
   QList<QAction *> m_misspelledWordsActs;

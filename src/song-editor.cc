@@ -110,11 +110,11 @@ CEditor::CEditor(QWidget *parent)
   m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
   m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
   m_spellCheckingAct->setCheckable(true);
-  m_spellCheckingAct->setEnabled(false);
 #ifndef ENABLE_SPELLCHECK
   m_spellCheckingAct->setVisible(false);
 #endif //ENABLE_SPELLCHECK
-  m_actions->addAction(m_spellCheckingAct);
+  // Qt bug? -> can't uncheck action if it belongs to m_actionsGroup
+  //m_actions->addAction(m_spellCheckingAct);
   toolBar()->addAction(m_spellCheckingAct);
 
   toolBar()->addSeparator();
@@ -156,14 +156,6 @@ QActionGroup* CEditor::actionGroup() const
   m_actions->setEnabled(false);
   return m_actions;
 }
-
-bool CEditor::isSpellCheckAvailable() const
-{
-  return false;
-}
-
-void CEditor::setSpellCheckAvailable(const bool)
-{}
 
 void CEditor::setHighlighter(CSongHighlighter *highlighter)
 {
@@ -207,7 +199,7 @@ CSongEditor::CSongEditor(QWidget *parent)
   connect(m_verseAct, SIGNAL(triggered()), codeEditor(), SLOT(insertVerse()));
   connect(m_chorusAct, SIGNAL(triggered()), codeEditor(), SLOT(insertChorus()));
   connect(m_bridgeAct, SIGNAL(triggered()), codeEditor(), SLOT(insertBridge()));
-  connect(m_spellCheckingAct, SIGNAL(toggled(bool)), m_codeEditor, SLOT(setSpellCheckActive(bool)));
+  connect(m_spellCheckingAct, SIGNAL(toggled(bool)), SLOT(toggleSpellCheckActive(bool)));
   connect(m_replaceAct, SIGNAL(triggered()), SLOT(findReplaceDialog()));
 
   QBoxLayout *mainLayout = new QVBoxLayout();
@@ -488,10 +480,18 @@ bool CSongEditor::isSpellCheckAvailable() const
 
 void CSongEditor::setSpellCheckAvailable(const bool value)
 {
-  codeEditor()->setSpellCheckAvailable(value);
-  m_spellCheckingAct->setEnabled(value);
-  if (!value && m_spellCheckingAct->isChecked())
+  // Uncheck action before disabling it
+  if (!value)
     m_spellCheckingAct->setChecked(false);
+
+  m_spellCheckingAct->setEnabled(value);
+
+  codeEditor()->setSpellCheckAvailable(value);
+}
+
+void CSongEditor::toggleSpellCheckActive(bool value)
+{
+  codeEditor()->setSpellCheckActive(value);
 }
 
 #ifdef ENABLE_SPELLCHECK
@@ -505,17 +505,21 @@ void CSongEditor::setDictionary(const QLocale &locale)
   prefix = "/usr/share/";
 #endif //Q_OS_WIN32
   QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
-  if (QFile(dictionary).exists())
+
+  setSpellCheckAvailable(QFile(dictionary).exists());
+
+  if (isSpellCheckAvailable())
     {
       setStatusTip("");
       codeEditor()->setDictionary(dictionary);
-      setSpellCheckAvailable(true);
+
+      // update action 'checked' state according to highlighter's
+      if (codeEditor()->highlighter())
+	m_spellCheckingAct->setChecked(codeEditor()->highlighter()->isSpellCheckActive());
     }
   else
     {
-      qDebug() << "CSongEditor::setDictionary Unable to find the following dictionary: %1";
       setStatusTip(tr("Unable to find the following dictionary: %1").arg(dictionary));
-      setSpellCheckAvailable(false);
     }
 }
 #endif //ENABLE_SPELLCHECK
@@ -525,10 +529,8 @@ void CSongEditor::setHighlighter(CSongHighlighter *highlighter)
   if (!highlighter)
     return;
 
-  bool state = isModified();
   codeEditor()->setHighlighter(highlighter);
   setDictionary(song().locale);
-  setModified(state);
 }
 
 QActionGroup* CSongEditor::actionGroup() const
@@ -556,7 +558,7 @@ void CSongEditor::setFindReplaceDialog(CFindReplaceDialog *dialog)
   if (!dialog)
     return;
 
-  if( dialog != m_findReplaceDialog)
+  if (dialog != m_findReplaceDialog)
     {
       m_findReplaceDialog = dialog;
       m_findReplaceDialog->setTextEditor(codeEditor());

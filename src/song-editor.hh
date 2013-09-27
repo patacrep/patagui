@@ -45,8 +45,6 @@ public:
   virtual QToolBar * toolBar() const;
   virtual QActionGroup * actionGroup() const;
 
-  virtual bool isSpellCheckAvailable() const;
-  virtual void setSpellCheckAvailable(const bool);
   virtual void setHighlighter(CSongHighlighter *highlighter);
   virtual void setFindReplaceDialog(CFindReplaceDialog *dialog);
 
@@ -113,7 +111,7 @@ public:
   virtual bool isSpellCheckAvailable() const;
   virtual void setSpellCheckAvailable(const bool);
 
-  void setFindReplaceDialog(CFindReplaceDialog *dialog);
+  virtual void setFindReplaceDialog(CFindReplaceDialog *dialog);
 
 public slots:
   void setModified(bool modified);
@@ -125,6 +123,8 @@ public slots:
 #ifdef ENABLE_SPELLCHECK
   void setDictionary(const QLocale & locale);
 #endif //ENABLE_SPELLCHECK
+
+  void toggleSpellCheckActive(bool);
 
 signals:
   void labelChanged(const QString &label);
