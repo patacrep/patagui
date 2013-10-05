@@ -517,7 +517,7 @@ bool CImportDialog::decompress(const QString &filename)
 
   archive = archive_read_new();
   archive_read_support_format_all(archive);
-  archive_read_support_compression_all(archive);
+  archive_read_support_filter_all(archive);
   ext = archive_write_disk_new();
   archive_write_disk_set_options(ext, flags);
   archive_write_disk_set_standard_lookup(ext);
