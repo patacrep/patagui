@@ -35,7 +35,6 @@ CClearButton::CClearButton(QWidget *parent)
   setMinimumSize(22, 22);
   setVisible(false);
 
-#if QT_VERSION >= 0x040600
   // First check for a style icon
   if (m_icon.isNull())
     {
@@ -46,7 +45,6 @@ CClearButton::CClearButton(QWidget *parent)
       if (!icon.isNull())
 	m_icon = icon.pixmap(16, 16).toImage();
     }
-#endif
 }
 
 void CClearButton::textChanged(const QString &text)
@@ -93,10 +91,9 @@ CMagButton::CMagButton(QWidget *parent)
 {
   setCursor(Qt::ArrowCursor);
   setFocusPolicy(Qt::NoFocus);
-  setToolTip(tr("Filter by language"));
+  setToolTip(tr("Enter search request"));
   setMinimumSize(22, 22);
   setVisible(true);
-  setPopupMode(QToolButton::InstantPopup);
 }
 
 void CMagButton::paintEvent(QPaintEvent *event)
@@ -130,6 +127,26 @@ void CMagButton::paintEvent(QPaintEvent *event)
   painter.drawLine(padding+circleRadius, padding+circleRadius, width() - padding, width() - padding);
 }
 
+CLocaleButton::CLocaleButton(QWidget *parent)
+  : QToolButton(parent)
+{
+  setCursor(Qt::ArrowCursor);
+  setFocusPolicy(Qt::NoFocus);
+  setToolTip(tr("Filter by language"));
+  setMinimumSize(44, 22);
+  setVisible(true);
+  setIcon(QIcon::fromTheme("preferences-desktop-locale", QIcon(":/icons/tango/22x22/apps/preferences-desktop-locale.png")));
+  setAutoRaise(false);
+  setPopupMode(QToolButton::InstantPopup);
+
+  QString style("QToolButton {"
+                "border: none;"
+		"pressed {border: 1px}"
+                "}");
+
+  setStyleSheet(style);
+}
+
 CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   : LineEdit(parent)
   , m_menu(new QMenu)
@@ -137,6 +154,7 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
 {
   CClearButton *clearButton = new CClearButton(this);
   CMagButton *magButton = new CMagButton(this);
+  CLocaleButton *localeButton = new CLocaleButton(this);
   QString style("QListView, QLineEdit {"
                 "selection-color: white; "
                 "border: 2px groove gray;"
@@ -171,10 +189,11 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
   connect(this, SIGNAL(textChanged(const QString&)),
 	  clearButton, SLOT(textChanged(const QString&)));
   addWidget(clearButton, RightSide);
-  addWidget(magButton, LeftSide);
 
-  magButton->setMenu(m_menu);
-  connect(magButton, SIGNAL(clicked()), magButton, SLOT(showMenu()));
+  addWidget(localeButton, LeftSide);
+
+  localeButton->setMenu(m_menu);
+  connect(localeButton, SIGNAL(clicked()), localeButton, SLOT(showMenu()));
 
   QAction *action = new QAction(tr("english"), this);
   action->setStatusTip(tr("Select/Unselect songs in english"));

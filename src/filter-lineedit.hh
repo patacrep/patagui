@@ -74,6 +74,22 @@ private:
   QImage m_icon;
 };
 
+/*!
+  \file filter-lineedit.hh
+  \class CLocaleButton
+  \brief CLocaleButton is the "flag" button in a CFilterLineEdit widget
+  that triggers a popup to filter songs by language
+*/
+class CLocaleButton : public QToolButton
+{
+  Q_OBJECT
+
+public:
+  /// Constructor.
+  CLocaleButton(QWidget *parent = 0);
+};
+
+
 class QAction;
 class CSongSortFilterProxyModel;
 
