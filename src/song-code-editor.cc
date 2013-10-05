@@ -20,6 +20,7 @@
 #include "song-highlighter.hh"
 #include "song.hh"
 #include "search-widget.hh"
+#include "utils/tango-colors.hh"
 
 #ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
@@ -42,10 +43,10 @@
 #include <QAction>
 #include <QMenu>
 
-const QColor CSongCodeEditor::_verseColor(QColor(138,226,52).lighter(180));
-const QColor CSongCodeEditor::_chorusColor(QColor(252,175,62).lighter(160));
-const QColor CSongCodeEditor::_bridgeColor(QColor(114,159,207).lighter(170));
-const QColor CSongCodeEditor::_scriptureColor(QColor(173,127,168).lighter(170));
+const QColor CSongCodeEditor::_verseColor(_TangoChameleon1.lighter(180));
+const QColor CSongCodeEditor::_chorusColor(_TangoOrange1.lighter(160));
+const QColor CSongCodeEditor::_bridgeColor(_TangoSkyBlue1.lighter(170));
+const QColor CSongCodeEditor::_scriptureColor(_TangoPlum1.lighter(170));
 
 const QStringList CSongCodeEditor::_completerWordList = QStringList()
     << "\\begin{verse}" << "\\end{verse}"
