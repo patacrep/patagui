@@ -113,7 +113,7 @@ bool Patch::isNull() const {
 /**
  * Emmulate GNU diff's format.
  * Header: @@ -382,8 +481,9 @@
- * Indicies are printed as 1-based, not 0-based.
+ * Indices are printed as 1-based, not 0-based.
  * @return The GNU diff string
  */
 QString Patch::toString() {

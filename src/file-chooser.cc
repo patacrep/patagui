@@ -53,7 +53,7 @@ CFileChooser::CFileChooser(QWidget *parent)
   QLayout *layout = new QHBoxLayout;
   layout->addWidget(m_lineEdit);
   layout->addWidget(m_button);
-  // disable layout's margin to have a proper "one widget" appeareance
+  // disable layout's margin to have a proper "one widget" appearance
   layout->setContentsMargins(0, 0, 0, 0);
   setLayout(layout);
 }

@@ -51,7 +51,7 @@ const QStringList CSongHighlighter::_keywordPatterns
 
 const QStringList CSongHighlighter::_keyword2Patterns
 (QStringList()
- << "\\\\Intro" << "\\\\Rythm"
+ << "\\\\Intro" << "\\\\Rhythm"
  << "\\\\Outro" << "\\\\Bridge"
  << "\\\\Verse" << "\\\\Chorus"
  << "\\\\Pattern" << "\\\\Solo"
@@ -196,7 +196,7 @@ void CSongHighlighter::spellCheck(const QString &text)
       {
 	int number = text.count(QRegExp("\\b" + str + "\\b"));
 	int line = -1;
-	// underline all incorrect occurences of misspelled word
+	// underline all incorrect occurrences of misspelled word
 	for (int j=0; j < number; ++j)
 	  {
 	    line = text.indexOf(QRegExp("\\b" + str + "\\b"), line+1);

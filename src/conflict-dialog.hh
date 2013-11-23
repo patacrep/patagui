@@ -156,7 +156,7 @@ class CFileCopier : public QObject
 	if (!target.exists() && !source.copy(target.fileName()))
 	  {
 	    parent()->statusBar()->showMessage
-	      (tr("An unexpected error occured while copying: %1 to %2")
+	      (tr("An unexpected error occurred while copying: %1 to %2")
 	       .arg(source.fileName())
 	       .arg(target.fileName()));
 	  }

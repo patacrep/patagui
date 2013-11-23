@@ -178,7 +178,7 @@ private slots:
   void onStarted();
 
   /*!
-    Emits exit message and try opening the url if successfull.
+    Emits exit message and try opening the url if successful.
     \sa message, url, errorMessage, successMessage
   */
   void onFinished(int exitCode, QProcess::ExitStatus exitStatus);

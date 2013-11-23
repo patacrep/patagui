@@ -140,7 +140,7 @@ public:
 
 public slots:
   /*!
-    Highlights mispelled words according to \a value.
+    Highlights misspelled words according to \a value.
     \sa isSpellCheckActive
   */
   void setSpellCheckActive(const bool value);
