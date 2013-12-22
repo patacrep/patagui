@@ -18,6 +18,7 @@
 //******************************************************************************
 #include "chord.hh"
 #include "diagram-editor.hh"
+#include "utils/tango-colors.hh"
 
 #include <QPixmap>
 #include <QPixmapCache>
@@ -28,10 +29,10 @@
 const QRegExp CChord::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
 const QRegExp CChord::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
 
-const QColor CChord::_guitarChordColor(QColor(114, 159, 207));
-const QColor CChord::_importantGuitarChordColor(QColor(32, 74, 135));
-const QColor CChord::_ukuleleChordColor(QColor(173, 127, 168));
-const QColor CChord::_importantUkuleleChordColor(QColor(92, 53, 102));
+const QColor CChord::_guitarChordColor(_TangoSkyBlue1);
+const QColor CChord::_importantGuitarChordColor(_TangoSkyBlue3);
+const QColor CChord::_ukuleleChordColor(_TangoPlum1);
+const QColor CChord::_importantUkuleleChordColor(_TangoPlum3);
 
 CChord::CChord(const QString & chord, uint id,  QObject *parent)
   : QObject(parent)

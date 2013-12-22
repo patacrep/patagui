@@ -27,6 +27,8 @@
 #include "hunspell/hunspell.hxx"
 #endif //ENABLE_SPELLCHECK
 
+#include "utils/tango-colors.hh"
+
 #include <QDebug>
 
 const QRegExp CSongHighlighter::reLaTeXOption("\\[[^\\]]+\\]");
@@ -49,7 +51,7 @@ const QStringList CSongHighlighter::_keywordPatterns
 
 const QStringList CSongHighlighter::_keyword2Patterns
 (QStringList()
- << "\\\\Intro" << "\\\\Rythm"
+ << "\\\\Intro" << "\\\\Rhythm"
  << "\\\\Outro" << "\\\\Bridge"
  << "\\\\Verse" << "\\\\Chorus"
  << "\\\\Pattern" << "\\\\Solo"
@@ -62,12 +64,12 @@ const QStringList CSongHighlighter::_delimiters
  << "\\\\begin" << "\\\\end"
  << "\\\\beginscripture" << "\\\\endscripture");
 
-const QColor CSongHighlighter::_keywords1Color(QColor(206,92,0)); //orange
-const QColor CSongHighlighter::_keywords2Color(QColor(164,0,0)); //red
-const QColor CSongHighlighter::_environmentsColor(QColor(78,154,6)); //green
-const QColor CSongHighlighter::_commentsColor(QColor(136,138,133)); //grey
-const QColor CSongHighlighter::_quotesColor(QColor(92,53,102)); //violet
-const QColor CSongHighlighter::_chordsColor(QColor(32,74,135)); //blue
+const QColor CSongHighlighter::_keywords1Color(_TangoOrange3); //orange
+const QColor CSongHighlighter::_keywords2Color(_TangoScarletRed3); //red
+const QColor CSongHighlighter::_environmentsColor(_TangoChameleon3); //green
+const QColor CSongHighlighter::_commentsColor(_TangoAluminium4); //grey
+const QColor CSongHighlighter::_quotesColor(_TangoPlum3); //violet
+const QColor CSongHighlighter::_chordsColor(_TangoSkyBlue3); //blue
 
 CSongHighlighter::CSongHighlighter(QTextDocument *parent)
   : QSyntaxHighlighter(parent)
@@ -194,7 +196,7 @@ void CSongHighlighter::spellCheck(const QString &text)
       {
 	int number = text.count(QRegExp("\\b" + str + "\\b"));
 	int line = -1;
-	// underline all incorrect occurences of misspelled word
+	// underline all incorrect occurrences of misspelled word
 	for (int j=0; j < number; ++j)
 	  {
 	    line = text.indexOf(QRegExp("\\b" + str + "\\b"), line+1);

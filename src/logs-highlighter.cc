@@ -18,6 +18,7 @@
 //******************************************************************************
 
 #include "logs-highlighter.hh"
+#include "utils/tango-colors.hh"
 
 #include <QDebug>
 
@@ -30,7 +31,7 @@ CLogsHighlighter::CLogsHighlighter(QTextDocument *parent)
   //files (light blue)
   QStringList extensions;
   extensions << "pdf" << "jpg" << "png" << "ly" << "sg";
-  m_latexFileFormat.setForeground(QColor(114,159,207));
+  m_latexFileFormat.setForeground(_TangoSkyBlue1);
 
   foreach (const QString &extension, extensions)
     {
@@ -40,14 +41,14 @@ CLogsHighlighter::CLogsHighlighter(QTextDocument *parent)
     }
 
   //errors (light red)
-  m_latexErrorFormat.setForeground(QColor(239,41,41));
+  m_latexErrorFormat.setForeground(_TangoScarletRed1);
 
   rule.pattern = QRegExp("^!.*");
   rule.format = m_latexErrorFormat;
   highlightingRules.append(rule);
 
   //warnings (light orange)
-  m_latexWarningFormat.setForeground(QColor(252,175,62));
+  m_latexWarningFormat.setForeground(_TangoOrange1);
 
   rule.pattern = QRegExp("^.*(W|w)arning.*$");
   rule.format = m_latexWarningFormat;
@@ -60,14 +61,16 @@ CLogsHighlighter::~CLogsHighlighter()
 
 void CLogsHighlighter::highlightBlock(const QString &text)
 {
-  foreach (const HighlightingRule &rule, highlightingRules) {
-    QRegExp expression(rule.pattern);
-    int index = expression.indexIn(text);
-    while (index >= 0) {
-      int length = expression.matchedLength();
-      setFormat(index, length, rule.format);
-      index = expression.indexIn(text, index + length);
+  foreach (const HighlightingRule &rule, highlightingRules)
+    {
+      QRegExp expression(rule.pattern);
+      int index = expression.indexIn(text);
+      while (index >= 0)
+	{
+	  int length = expression.matchedLength();
+	  setFormat(index, length, rule.format);
+	  index = expression.indexIn(text, index + length);
+	}
     }
-  }
   setCurrentBlockState(0);
 }

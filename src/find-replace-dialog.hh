@@ -91,7 +91,7 @@ public slots:
   void replace();
 
   /*!
-    Replace all occurences in the editor.
+    Replace all occurrences in the editor.
     \sa find, replace
   */
   void replaceAll();

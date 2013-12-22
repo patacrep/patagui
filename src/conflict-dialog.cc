@@ -319,7 +319,7 @@ bool CConflictDialog::resolve()
 	  if (!target.remove())
 	    {
 	      parent()->statusBar()->showMessage
-	      (tr("An unexpected error occured while removing: %1")
+	      (tr("An unexpected error occurred while removing: %1")
 	       .arg(target.fileName()));
 	    }
 	  ++it;
