@@ -692,15 +692,14 @@ void CMainWindow::make()
   m_builder->setWorkingDirectory(workingPath());
 
   QString basename = QFileInfo(songbook()->filename()).baseName();
-  QString target = QString("%1.pdf").arg(basename);
+  QString target = QString("%1.sb").arg(basename);
 
   QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
   environment.insert("LATEX_OPTIONS", "-halt-on-error");
   m_builder->setProcessEnvironment(environment);
 
   QString command = buildCommand();
-  m_builder->setCommand(command.replace("%target", target)
-			.replace("%basename", basename)
+  m_builder->setCommand(command.replace("%target", songbook()->filename())
 			.replace("%library", libraryPath() + "/"));
 
   m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
