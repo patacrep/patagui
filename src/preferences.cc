@@ -380,10 +380,6 @@ void OptionsPage::checkSongbookPath(const QString &path)
     {
       message = tr("the directory does not exist");
     }
-  else if (!directory.exists("makefile"))
-    {
-      message = tr("makefile not found");
-    }
   else if (!directory.exists("songbook.py"))
     {
       message = tr("songbook software (songbook.py) not found");
