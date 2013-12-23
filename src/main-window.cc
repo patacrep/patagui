@@ -76,7 +76,15 @@ namespace // anonymous namespace
 #else //Unix/Linux
 	platformSpecificMessage = QObject::tr("<p>Download and install the following packages:</p>"
 					      "<ol><li>texlive-base</li>"
-					      "<li>texlive-latex-extra</li></ol>");
+					      "<li>texlive-latex-extra</li>"
+					      "<li>texlive-latex-extra</li>"
+					      "<li>texlive-fonts-extra</li>"
+					      "<li>texlive-lang-french</li>"
+					      "<li>texlive-lang-english</li>"
+					      "<li>texlive-lang-spanish</li>"
+					      "<li>texlive-lang-italian</li>"
+					      "<li>texlive-lang-portuguese</li>"
+					      "</ol>");
 #endif
 	message = QObject::tr("<p>The following program cannot be found: <i>pdflatex</i>.</p>"
 			      "<p>A <a href=\"www.latex-project.org/\">LaTeX</a> distribution supporting <i>pdflatex</i> is required "
