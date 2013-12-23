@@ -41,7 +41,16 @@ class CFileCopier;
 /*!
   \file conflict-dialog.hh
   \class CConflictDialog
-  \brief CConflictDialog is a dialog to solve conflict when copying already existing files.
+  \brief CConflictDialog is a dialog to solve conflicts when importing already existing songs.
+
+  A conflict dialog displays side-by-side two list of songs
+  \li source: the list of conflictig songs that are being imported
+  \li target: the list of already existing songs from the current library
+
+  The dialog then presents actions to:
+  \li overwrite (replace target with source)
+  \li preserve  (keep target and ignore source)
+  \li show differences (a diff view that relies on the <a href="http://code.google.com/p/google-diff-match-patch/">diff_match_patch</a> library)
 
   \image html conflict-dialog.png
 
@@ -58,18 +67,52 @@ class CConflictDialog : public QDialog
   /// Destructor.
   virtual ~CConflictDialog();
 
+  /*!
+    Define \a map as the double list of existing / to be imported files
+    Key: path to source file (new song)
+    Value: path to target file (existing song)
+  */
   void setSourceTargetFiles(const QMap< QString, QString > &map);
 
+  /*!
+    Determines whether there are some conflicts between
+    source and target files. Returns \a true if
+    there are some conflicting names, \a false otherwise.
+  */
   bool conflictsFound() const;
 
+  /*!
+    Returns the parent window of this dialog.
+  */
   CMainWindow* parent() const;
+
+  /*!
+    Sets \a parent as the parent window of this dialog.
+  */
   void setParent(CMainWindow* parent);
 
+  /*!
+    Display an informative message in the status
+    bar of the parent window.
+  */
   void showMessage(const QString & );
+
+  /*!
+    Returns the progress bar of the parent window.
+  */
   CProgressBar* progressBar() const;
 
 public slots:
+  /*!
+    Resolves existing conflicts by overwriting
+    target files with source files
+  */
   bool resolve();
+
+  /*!
+    Displays differences between conflicting
+    source and target files in a new dialog
+  */
   void showDiff();
 
 private slots:
