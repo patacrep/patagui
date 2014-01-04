@@ -67,7 +67,7 @@ public:
   virtual QActionGroup * actionGroup() const;
 
   /*!
-    Associates this editor with an \highlighter
+    Associates this editor with an \a highlighter
     that applies syntaxic coloration onto its contents
   */
   virtual void setHighlighter(CSongHighlighter *highlighter);
