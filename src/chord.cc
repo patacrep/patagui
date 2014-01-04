@@ -34,7 +34,7 @@ const QColor CChord::_importantGuitarChordColor(_TangoSkyBlue3);
 const QColor CChord::_ukuleleChordColor(_TangoPlum1);
 const QColor CChord::_importantUkuleleChordColor(_TangoPlum3);
 
-CChord::CChord(const QString & chord, uint id,  QObject *parent)
+CChord::CChord(const QString & chord, QObject *parent)
   : QObject(parent)
   , m_isValid(true)
   , m_drawBorder(false)

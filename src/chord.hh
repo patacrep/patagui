@@ -80,7 +80,7 @@ class CChord : public QObject
   };
 
   /// Constructor.
-  CChord(const QString & chord = "\\gtab{}{0:}", uint id=0, QObject *parent = 0);
+  CChord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
 
   /// Destructor.
   ~CChord();
