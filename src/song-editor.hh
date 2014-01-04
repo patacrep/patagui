@@ -109,7 +109,7 @@ protected:
   /// Underline mispelled words
   QAction* m_spellCheckingAct;
 
-private:
+protected:
   QActionGroup *m_actions;
   QToolBar *m_toolBar;
 };
