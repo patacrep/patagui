@@ -106,7 +106,7 @@ class CChordListModel : public QAbstractListModel
   */
   virtual int rowCount(const QModelIndex & index = QModelIndex()) const;
 
-    /*!
+  /*!
     Sets the number of rows to \a value.
     Calling this method defines a "fixed" row count mode which means
     that any item that is added afterwards will start a new column if necessary.
@@ -115,6 +115,7 @@ class CChordListModel : public QAbstractListModel
   virtual void setRowCount(int value);
 
   /* drag and drop */
+
   Qt::DropActions supportedDropActions() const;
   Qt::DropActions supportedDragActions() const;
   Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -127,26 +128,38 @@ class CChordListModel : public QAbstractListModel
     Reimplements QAbstractListModel::data().
     Returns the item (CChord object) at position \a index according to the role \a role.
     \sa setData
-   */
+  */
   QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
   /*!
     Reimplements QAbstractListModel::setData().
     Sets the value \a value of the item (CChord object) at position \a index for the role \a role.
     \sa data
-   */
+  */
   bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
 
 
   /*!
     Returns the CChord object at position \a index.
     \sa data, setData
-   */
+  */
   CChord * getChord(const QModelIndex & index) const;
 
 public slots:
+  /*!
+    Insert the string \a value that represents a chord
+    at position \a index
+  */
   void insertItem(const QModelIndex & index, const QString & value);
+
+  /*!
+    Remove the chord at position \a index
+  */
   void removeItem(const QModelIndex & index);
+
+  /*!
+    Append a chord in its string representation to the model
+  */
   void addItem(const QString & value);
 
 private:
