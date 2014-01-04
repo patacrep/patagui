@@ -158,37 +158,48 @@ class CFileCopier : public QObject
   
   public:
 
+  /// Constructor
   CFileCopier(QWidget *parent) : m_cancelCopy(false)
   {
     setParent(static_cast<CMainWindow*>(parent));
   }
 
+  /// Define \a files as the list of source / target files to be copied
   void setSourceTargets(QMap<QString, QString> &files)
   {
     m_sourceTargets = files;
   }
 
+  /// Returns \a true if the copy can be interrupted
   bool cancelCopy() const
   {
     return m_cancelCopy;
   }
 
+  /// Returns the parent widget
   CMainWindow* parent() const
   {
     return m_parent;
   }
 
+  /// Defines the parent widget
   void setParent(CMainWindow* parent)
   {
     m_parent = parent;
   }
 
+  /// If value is \a true, the copy can be interrupted
   void setCancelCopy(bool value)
   {
     m_cancelCopy = value;
   }
  
   public slots:
+
+  /*!
+    Performs the copy operation of sources to targets
+    \sa setSourceTargets
+  */
   void copy()
   {
     int count = 0;
