@@ -92,10 +92,10 @@ class CConflictDialog : public QDialog
   void setParent(CMainWindow* parent);
 
   /*!
-    Display an informative message in the status
+    Display an informative \a message in the status
     bar of the parent window.
   */
-  void showMessage(const QString & );
+  void showMessage(const QString & message);
 
   /*!
     Returns the progress bar of the parent window.
@@ -104,14 +104,17 @@ class CConflictDialog : public QDialog
 
 public slots:
   /*!
-    Resolves existing conflicts by overwriting
-    target files with source files
+    Resolves existing conflicts according to
+    the desired action (overwriting / preserving)
   */
   bool resolve();
 
   /*!
     Displays differences between conflicting
     source and target files in a new dialog
+
+    \image html conflict-diff.png
+
   */
   void showDiff();
 
@@ -144,6 +147,11 @@ private:
   CFileCopier *m_fileCopier;
 };
 
+/*!
+  \file conflict-dialog.hh
+  \class CFileCopier
+  \brief CFileCopier manages the copy of potentially conflicting files
+*/
 class CFileCopier : public QObject
 {
   Q_OBJECT

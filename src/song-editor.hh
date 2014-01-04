@@ -35,32 +35,81 @@ class CSongHighlighter;
 class CFindReplaceDialog;
 class Hunspell;
 
+/*!
+  \file song-editor.hh
+  \class CEditor
+  \brief CEditor is an abstract song editor.
+
+  A CEditor defines an editor that contains:
+   \li a list of actions in a toolbar
+   \li a highlighter to apply syntaxic coloration onto its contents
+*/
 class CEditor : public QWidget
 {
   Q_OBJECT
 
 public:
+  /// Constructor
   CEditor(QWidget *parent = 0);
+
+  /// Destructor
   virtual ~CEditor();
 
+  /*!
+    Returns the toolbar of the editor.
+  */
   virtual QToolBar * toolBar() const;
+
+  /*!
+    Returns a group that contains every action
+    in the toolbar.
+  */
   virtual QActionGroup * actionGroup() const;
 
+  /*!
+    Associates this editor with an \highlighter
+    that applies syntaxic coloration onto its contents
+  */
   virtual void setHighlighter(CSongHighlighter *highlighter);
 
 protected:
+  /// Save contents
   QAction *m_saveAct;
+
+  /// Cut current selection to clipboard
   QAction *m_cutAct;
+
+  /// Copy current selection to clipboard
   QAction *m_copyAct;
+
+  /// Paste selection from clipboard
   QAction *m_pasteAct;
+
+  /// Undo previous action
   QAction *m_undoAct;
+
+  /// Redo previous undone action
   QAction *m_redoAct;
+
+  /// Replace a text string with another
   QAction *m_replaceAct;
+
+  /// Search a text string
   QAction *m_searchAct;
+
+  /// Insert new verse environment
   QAction *m_verseAct;
+
+  /// Insert new chorus environment
   QAction *m_chorusAct;
+
+  /// Insert new bridge environment
   QAction *m_bridgeAct;
+
+  /// Underline mispelled words
   QAction* m_spellCheckingAct;
+
+private:
   QActionGroup *m_actions;
   QToolBar *m_toolBar;
 };
