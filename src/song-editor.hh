@@ -190,7 +190,6 @@ private:
   void parseText();
   bool checkSongMandatoryFields();
   void saveNewSong();
-  void createNewSong();
 
   CSongHeaderEditor *m_songHeaderEditor;
   CSongCodeEditor *m_codeEditor;

@@ -173,6 +173,8 @@ CSongEditor::CSongEditor(QWidget *parent)
   , m_newCover(false)
 {
   m_songHeaderEditor = new CSongHeaderEditor(this);
+  m_songHeaderEditor->setSong(m_song);
+
   connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
   connect(m_songHeaderEditor, SIGNAL(newCover(bool)), SLOT(setNewCover(bool)));
 #ifdef ENABLE_SPELLCHECK
@@ -262,6 +264,9 @@ void CSongEditor::closeEvent(QCloseEvent *event)
 
 void CSongEditor::save()
 {
+  if (isNewSong())
+    return saveNewSong();
+
   if (!checkSongMandatoryFields())
     return;
 
@@ -358,6 +363,8 @@ void CSongEditor::saveNewSong()
   if (!isNewSong())
     return;
 
+  m_song = m_songHeaderEditor->song();
+
   if (m_song.title.isEmpty() || m_song.artist.isEmpty())
     {
       qDebug() << "Error: " << m_song.title << " " << m_song.artist;
@@ -368,18 +375,9 @@ void CSongEditor::saveNewSong()
       qDebug() << "Warning: " << m_song.title << " " << m_song.artist;
       return;
     }
-  createNewSong();
-}
-
-void CSongEditor::createNewSong()
-{
-  if (!isNewSong())
-    return;
-
-  //add the song to the library
-  library()->addSong(m_song, true);
 
   setNewSong(false);
+  save();
 }
 
 void CSongEditor::documentWasModified()
@@ -413,6 +411,7 @@ void CSongEditor::setModified(bool modified)
       setWindowTitle(windowTitle().remove(" *"));
       emit(labelChanged(windowTitle()));
     }
+
 }
 
 Song & CSongEditor::song()
