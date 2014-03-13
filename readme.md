@@ -1,5 +1,5 @@
 > Unfortunately, songbook-gui is currently not maintained: it should not work
-> with the current version of done on
+> with the current version of
 > [songbook-core](http://github.com/patacrep/songbook-core) and
 > [songbook-data](http://github.com/patacrep/songbook-data). These new
 > development are not far ahead of a working version, but do not have time right
