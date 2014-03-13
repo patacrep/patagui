@@ -8,7 +8,7 @@
 > We keep this project in mind, and we would like it to be maintained again
 > (either by us or by you), but we do not have the time to do so...
 > 
-> However, latest versions ([core 3.7.2](https://github.com/patacrep/songbook-core/releases/tag/patacrep_3.7.2) and [gui 9.7.9](https://github.com/patacrep/songbook-gui/releases/tag/0.7.9)) should still work. Enjoy!
+> However, latest versions ([core 3.7.2](https://github.com/patacrep/songbook-core/releases/tag/patacrep_3.7.2) and [gui 0.7.9](https://github.com/patacrep/songbook-gui/releases/tag/0.7.9)) should still work. Enjoy!
 
 # Description
 This is a Qt4/C++ client that allows to pick up songs from the patacrep songbook database to build personalized songbooks.
