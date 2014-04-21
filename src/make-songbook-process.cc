@@ -153,7 +153,15 @@ void CMakeSongbookProcess::onFinished(int exitCode, QProcess::ExitStatus exitSta
     return;
 
   emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
-  if (!QFile(urlToOpen().toLocalFile()).exists() ||
-      !QDesktopServices::openUrl(urlToOpen()))
-    emit(error(QProcess::UnknownError));
+  if (!QFile(urlToOpen().toLocalFile()).exists())
+    {
+      qWarning() << tr("File [%1] does not exist.").arg(urlToOpen().toLocalFile());
+      emit(error(QProcess::UnknownError));
+    }
+
+  if (!QDesktopServices::openUrl(urlToOpen()))
+    {
+      qWarning() << tr("Can't open [%1].").arg(urlToOpen().toLocalFile());
+      emit(error(QProcess::UnknownError));
+    }
 }
