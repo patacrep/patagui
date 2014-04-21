@@ -709,7 +709,7 @@ void CMainWindow::make()
   m_builder->setCommand(command.replace("%target", songbook()->filename())
 			.replace("%library", libraryPath() + "/"));
 
-  m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
+  m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2.pdf").arg(workingPath()).arg(basename))));
   m_builder->setStartMessage(tr("Generating %1.").arg(target));
   m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
   m_builder->setErrorMessage(tr("Error while generating [%1]. Please check logs for more information.").arg(target));

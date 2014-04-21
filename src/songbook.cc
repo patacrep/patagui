@@ -139,7 +139,7 @@ void CSongbook::changeTemplate(const QString & filename)
 
   // reserved template parameters
   QStringList reservedParameters;
-  reservedParameters << "name" << "template" << "songs" << "songslist";
+  reservedParameters << "name" << "template" << "content";
 
   // read template file
   QFile file(QString("%1/templates/%2").arg(workingPath()).arg(templateFilename));
@@ -354,6 +354,11 @@ void CSongbook::save(const QString & filename)
       QTextStream out(&file);
       out.setCodec("UTF-8");
       out << "{\n";
+      out << "\"template\" : \"data.tex\",\n";
+      out << "\"lang\" : \"french\",\n";
+      out << "\"bookoptions\" : [\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
+      out << "\"authwords\" : {\"sep\" : []},\n";
+      out << "\"datadir\" : \""<< library()->directory().absolutePath() << "\",\n";
 
       if (!tmpl().isEmpty())
         out << "\"template\" : \"" << tmpl() << "\",\n";
@@ -452,7 +457,7 @@ void CSongbook::save(const QString & filename)
           ++it;
         }
 
-      out << "\"songs\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
+      out << "\"content\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
       file.close();
       setModified(false);
       setFilename(filename);
@@ -538,7 +543,7 @@ void CSongbook::load(const QString & filename)
             }
 
           // songs property (if not an array, the value can be "all")
-          sv = object.property("songs");
+          sv = object.property("content");
           if (sv.isValid())
             {
               QStringList items;
