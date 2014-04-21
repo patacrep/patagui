@@ -37,7 +37,6 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QToolBar>
-#include <QDesktopServices>
 
 #include "label.hh"
 #include "library.hh"
@@ -711,9 +710,9 @@ void CMainWindow::make()
 			.replace("%library", libraryPath() + "/"));
 
   m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2").arg(workingPath()).arg(target))));
-  m_builder->setStartMessage(tr("Building %1.").arg(target));
+  m_builder->setStartMessage(tr("Generating %1.").arg(target));
   m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
-  m_builder->setErrorMessage(tr("Error during the building of %1, please check the log.").arg(target));
+  m_builder->setErrorMessage(tr("Error while generating [%1]. Please check logs for more information.").arg(target));
 
   m_builder->execute();
 }
