@@ -20,14 +20,29 @@
 #ifndef __SINGLETON_HH__
 #define __SINGLETON_HH__
 
+/*!
+  \file singleton.hh
+  \class Singleton
+  \brief Simple implementation of singleton design pattern
+
+  Singleton class that ensures a single instance
+  for the songs library.
+*/
+
 template <typename T>
 class Singleton
 {
 protected:
+  /// Constructor
   Singleton(){}
+
+  /// Destructor
   ~Singleton(){}
 
 public:
+  /*!
+    Returns the only instance of this class
+  */
   static T *instance()
   {
     if (!_singleton)

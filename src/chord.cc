@@ -34,12 +34,11 @@ const QColor CChord::_importantGuitarChordColor(_TangoSkyBlue3);
 const QColor CChord::_ukuleleChordColor(_TangoPlum1);
 const QColor CChord::_importantUkuleleChordColor(_TangoPlum3);
 
-CChord::CChord(const QString & chord, uint id,  QObject *parent)
+CChord::CChord(const QString & chord, QObject *parent)
   : QObject(parent)
   , m_isValid(true)
   , m_drawBorder(false)
   , m_pixmap(0)
-  , m_id(id)
 {
   fromString(chord);
 }
@@ -259,20 +258,6 @@ void CChord::setName(const QString & str)
     {
       m_name = str;
       emit nameChanged();
-    }
-}
-
-uint CChord::id() const
-{
-  return m_id;
-}
-
-void CChord::setId(uint value)
-{
-  if (m_id != value)
-    {
-      m_id = value;
-      emit idChanged();
     }
 }
 

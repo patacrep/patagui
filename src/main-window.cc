@@ -76,7 +76,15 @@ namespace // anonymous namespace
 #else //Unix/Linux
 	platformSpecificMessage = QObject::tr("<p>Download and install the following packages:</p>"
 					      "<ol><li>texlive-base</li>"
-					      "<li>texlive-latex-extra</li></ol>");
+					      "<li>texlive-latex-extra</li>"
+					      "<li>texlive-latex-extra</li>"
+					      "<li>texlive-fonts-extra</li>"
+					      "<li>texlive-lang-french</li>"
+					      "<li>texlive-lang-english</li>"
+					      "<li>texlive-lang-spanish</li>"
+					      "<li>texlive-lang-italian</li>"
+					      "<li>texlive-lang-portuguese</li>"
+					      "</ol>");
 #endif
 	message = QObject::tr("<p>The following program cannot be found: <i>pdflatex</i>.</p>"
 			      "<p>A <a href=\"www.latex-project.org/\">LaTeX</a> distribution supporting <i>pdflatex</i> is required "
@@ -800,10 +808,7 @@ void CMainWindow::songEditor(const QModelIndex &index)
 
 void CMainWindow::songEditor(const QString &path)
 {
-  if (path.isEmpty())
-    return;
-
-  // if path an editor already corresponds to path, focus on it
+  // if an editor already corresponds to path, focus on it
   for (int i = 0; i < m_mainWidget->count(); ++i)
     if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(i)))
       if (editor->song().path == path)
@@ -815,11 +820,14 @@ void CMainWindow::songEditor(const QString &path)
   // create a new editor
   CSongEditor *editor = new CSongEditor(this);
 
-  // if the song does not exist within the library, add it
-  if (library()->getSongIndex(path) == -1)
-    library()->addSongs(QStringList() << path);
+  if (!path.isEmpty())
+    {
+      // if the song does not exist within the library, add it
+      if (library()->getSongIndex(path) == -1)
+	library()->addSongs(QStringList() << path);
 
-  editor->setSong(library()->getSong(path));
+      editor->setSong(library()->getSong(path));
+    }
 
   // create the corresponding tab
   connect(editor, SIGNAL(labelChanged(const QString&)),

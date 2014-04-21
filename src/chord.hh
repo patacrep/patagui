@@ -59,7 +59,6 @@ class CChord : public QObject
   Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
   Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
   Q_PROPERTY(QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
-  Q_PROPERTY(uint id READ id WRITE setId NOTIFY idChanged)
 
     public:
   /*!
@@ -81,7 +80,7 @@ class CChord : public QObject
   };
 
   /// Constructor.
-  CChord(const QString & chord = "\\gtab{}{0:}", uint id=0, QObject *parent = 0);
+  CChord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
 
   /// Destructor.
   ~CChord();
@@ -118,13 +117,6 @@ class CChord : public QObject
     \sa setChord
   */
   QString name() const;
-
-  /*!
-    Returns the chord id.
-    \sa setId
-  */
-  uint id() const;
-
   /*!
     Returns the fret number.
     For example, given a E-flat minor chord
@@ -192,12 +184,6 @@ public slots:
   void setFret(const QString & fret);
 
   /*!
-    Sets the chord id \a value.
-    \sa setId
-  */
-  void setId(uint value);
-
-  /*!
     Sets the instrument \a instrument.
     \sa type
   */
@@ -216,11 +202,25 @@ public slots:
   void setImportant(bool value);
 
 signals:
+  /*!
+    This signal is emitted when the chord name changes
+  */
   void nameChanged();
+
+  /*!
+    This signal is emitted when the chord frets changes
+  */
   void fretChanged();
+
+  /*!
+    This signal is emitted when the chord strings changes
+  */
   void stringsChanged();
+
+  /*!
+    This signal is emitted when the chord instrument changes
+  */
   void instrumentChanged();
-  void idChanged();
 
 private:
   void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
@@ -233,7 +233,6 @@ private:
   bool m_isValid;
   bool m_drawBorder;
   QPixmap *m_pixmap;
-  uint m_id;
 
   const static QRegExp reChordWithFret;
   const static QRegExp reChordWithoutFret;

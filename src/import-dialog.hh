@@ -54,8 +54,8 @@ class CMainWindow;
 
   Songs may be imported from local (.sg) files or from a remote url.
 
-  \image html import-dialog.png
-
+  \image html import-dialog01.png
+  \image html import-dialog02.png
 */
 class CImportDialog : public QDialog
 {

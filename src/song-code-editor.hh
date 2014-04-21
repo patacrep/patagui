@@ -147,6 +147,7 @@ public slots:
 
   /*!
     Toggle the visibility of the quick search widget.
+    \image html quick-search.png
   */
   void toggleQuickSearch();
 

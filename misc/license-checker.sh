@@ -168,7 +168,7 @@ cd $SDIR
 j=$(egrep ' ' $BINCOPYRIGHT |grep -v '#'|wc -l)
 if [ $j != 0 ]
 then
-	echor "le fichier de définition de license contient des espace, assrez vous qu'il ne contien que des tabulations !"
+	echor "Le fichier de définition de license contient des espace, assurez vous qu'il ne contienne que des tabulations !"
 	egrep ' ' $BINCOPYRIGHT|grep -v '#'
 	exit -1;
 fi
@@ -177,7 +177,7 @@ fi
 j=$(egrep '[[:blank:]][[:blank:]]' $BINCOPYRIGHT |grep -v '#'|wc -l)
 if [ $j != 0 ]
 then
-	echo -e $ROUGE "le fichier de définition de license contient des doubles tabulations ! merci de les retirés! vérifiez les lignes suiventes :" $NORMAL
+	echo -e $ROUGE "Le fichier de définition de license contient des doubles tabulations ! Merci de les retirer! Vérifiez les lignes suiventes :" $NORMAL
 	egrep '[[:blank:]][[:blank:]]' $BINCOPYRIGHT |grep -v '#'
 	exit -1;
 fi
@@ -208,12 +208,12 @@ for i in $tf ; do
 	fi
 	if [ -d $i ]
 	then
-		echo -e $BLEU "dou you really think you can copyright a directory ?" $i
+		echo -e $BLEU "Do you really think you can copyright a directory ?" $i
 	fi
 
 done
 cd - > /dev/null
-echo -e $BLEU "you have"
+echo -e $BLEU "You have"
 echo -e $BLEU "$badtextfiles source file(s) with an issue on the copyright and/or license"
 echo -e $BLEU "$badbinaryfiles binary file(s) with no license or not appearing in the copyright file"
 echo -e $BLEU "$nexfile non existing files listed in the copyright file" $NORMAL
