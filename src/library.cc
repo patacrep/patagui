@@ -287,7 +287,7 @@ void CLibrary::update()
 
   // get the path of each song in the library
   QStringList filter = QStringList() << "*.sg";
-  QString path = directory().absoluteFilePath("songs/");
+  QString path = directory().absolutePath();
   QStringList paths;
 
   QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
@@ -519,7 +519,7 @@ QString CLibrary::pathToSong(const QString &artist, const QString &title) const
   QString artistInPath = stringToFilename(artist, "_");
   QString titleInPath = stringToFilename(title, "_");
 
-  return QString("%1/songs/%2/%3.sg")
+  return QString("%1/%2/%3.sg")
     .arg(directory().canonicalPath())
     .arg(artistInPath)
     .arg(titleInPath);
@@ -563,25 +563,12 @@ QString CLibrary::checkPath(const QString &path)
     {
       message = tr("the directory does not exist");
     }
-  else if (!directory.exists("songs"))
-    {
-      message = tr("songs/ directory not found");
-    }
-  else if (!directory.exists("img"))
-    {
-      message = tr("img/ directory not found");
-    }
-  else if (!directory.exists("lilypond"))
-    {
-      error = false;
-      message = tr("lilypond/ directory not found");
-    }
   else
     {
       error = false;
       // look for sg files
       QStringList songs;
-      recursiveFindFiles(QString("%1/songs/").arg(path), QStringList() << "*.sg", songs);
+      recursiveFindFiles(path, QStringList() << "*.sg", songs);
       uint nbSongs = songs.count();
       if (nbSongs > 0)
 	{

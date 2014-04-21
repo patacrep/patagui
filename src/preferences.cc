@@ -380,18 +380,9 @@ void OptionsPage::checkSongbookPath(const QString &path)
     {
       message = tr("the directory does not exist");
     }
-  else if (!directory.exists("songbook.py"))
+  else if (!directory.exists("songbook"))
     {
-      message = tr("songbook software (songbook.py) not found");
-    }
-  else if (!directory.exists("img"))
-    {
-      message = tr("img/ directory not found");
-    }
-  else if (!directory.exists("utils"))
-    {
-      error = false;
-      message = tr("utils/ directory not found");
+      message = tr("songbook executable not found");
     }
   else
     {
