@@ -33,9 +33,9 @@
 #define PLATFORM_CLEAN_COMMAND "macos/clean.sh"
 #define PLATFORM_CLEANALL_COMMAND "macos/cleanall.sh"
 #else //Unix/Linux
-#define PLATFORM_BUILD_COMMAND "./songbook.py --songbook %target --library %library "
-#define PLATFORM_CLEAN_COMMAND "./songbook.py --clean"
-#define PLATFORM_CLEANALL_COMMAND "./songbook.py --cleanall"
+#define PLATFORM_BUILD_COMMAND "./songbook %target --data-dir %library "
+#define PLATFORM_CLEAN_COMMAND "./songbook --steps clean"
+#define PLATFORM_CLEANALL_COMMAND "./songbook --steps clean"
 #endif
 
 #include "config.hh"
