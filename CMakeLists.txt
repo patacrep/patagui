@@ -7,6 +7,8 @@ set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
+#set(QTDIR/QT_QMAKE_EXECUTABLE /Applications/Qt/5.3/clang_64/bin/qmake)
+
 if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
   message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/songbook-client-config.cmake")
 endif()
@@ -103,9 +105,11 @@ set(SONGBOOK_CLIENT_RCS
 
 # }}}
 
-find_package(Qt4 REQUIRED)
-set(QT_USE_QTSCRIPT true)
-set(QT_USE_QTSVG true)
+find_package(Qt5 CONFIG REQUIRED Core Gui Widgets Script Svg)
+message("LOADED Qt5")
+message(${Qt5Widgets_LIBRARIES})
+#set(QT_USE_QTSCRIPT true)
+#set(QT_USE_QTSVG true)
 
 if(ENABLE_LIBRARY_DOWNLOAD)
   set(QT_USE_QTNETWORK true)
@@ -118,7 +122,7 @@ if(ENABLE_SPELLCHECK)
   LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
 endif()
 
-include(${QT_USE_FILE})
+# include(${QT_USE_FILE})
 
 include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
@@ -129,9 +133,9 @@ include_directories(
   )
 
 # process Qt special files
-qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
-qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
-qt4_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
+qt5_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
+qt5_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
+qt5_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
 
 # {{{ Apple specific stuff
 if(APPLE)

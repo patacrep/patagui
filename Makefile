@@ -7,6 +7,8 @@ else
     ECHO=@:
 endif
 
+CMAKE_ARGS="-DQT_QMAKE_EXECUTABLE:PATH=/Applications/Qt/5.3/clang_64/bin/qmake"
+
 TARGETS=songbook-client
 BUILDLN=build
 
