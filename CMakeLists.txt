@@ -7,8 +7,6 @@ set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
-#set(QTDIR/QT_QMAKE_EXECUTABLE /Applications/Qt/5.3/clang_64/bin/qmake)
-
 if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
   message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/songbook-client-config.cmake")
 endif()
@@ -105,9 +103,9 @@ set(SONGBOOK_CLIENT_RCS
 
 # }}}
 
-find_package(Qt5 CONFIG REQUIRED Core Gui Widgets Script Svg)
-message("LOADED Qt5")
-message(${Qt5Widgets_LIBRARIES})
+find_package(Qt5 CONFIG REQUIRED Widgets Script Svg)
+LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES};${Qt5Svg_LIBRARIES})
+
 #set(QT_USE_QTSCRIPT true)
 #set(QT_USE_QTSVG true)
 
@@ -160,7 +158,8 @@ if(WIN32)
 endif(WIN32)
 
 list(APPEND LIBRARIES ${QT_LIBRARIES})
-
+message("Qt Libraries = ${QT_LIBRARIES}")
+#message("Test = ${SONGBOOK_CLIENT_SOURCES}")
 target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 
 # {{{ Internationalization
