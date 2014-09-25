@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     versionFlag = true;
 
   // Localization
-  QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")) ;
+  QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8")) ;
   QDir translationDirectory;
   QString translationFilename = QString("songbook_%1.qm").arg(QLocale::system().name().split('_').first());
   QString directory;

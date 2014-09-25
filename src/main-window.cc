@@ -26,6 +26,7 @@
 #include <QCompleter>
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QStandardPaths>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -170,7 +171,7 @@ namespace // anonymous namespace
   }
 }
 
-const QString CMainWindow::_cachePath(QString("%1/songbook-client").arg(QDesktopServices::storageLocation(QDesktopServices::CacheLocation)));
+const QString CMainWindow::_cachePath(QString("%1/songbook-client").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
 
 CMainWindow::CMainWindow(QWidget *parent)
   : QMainWindow(parent)
