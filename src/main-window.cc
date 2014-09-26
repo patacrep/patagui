@@ -248,7 +248,7 @@ CMainWindow::CMainWindow(QWidget *parent)
   connect(m_builder, SIGNAL(aboutToStart()),
           progressBar(), SLOT(show()));
   connect(m_builder, SIGNAL(aboutToStart()),
-          statusBar(), SLOT(clear()));
+          statusBar(), SLOT(clearMessage()));
   connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
           SLOT(showMessage(const QString &, int)));
   connect(m_builder, SIGNAL(finished(int, QProcess::ExitStatus)),

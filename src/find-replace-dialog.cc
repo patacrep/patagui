@@ -47,7 +47,7 @@ CFindReplaceDialog::CFindReplaceDialog(QWidget *parent)
   setModal(false);
   m_findComboBox->setEditable(true);
   m_replaceComboBox->setEditable(true);
-  connect(m_findComboBox, SIGNAL(textChanged(const QString &)),
+  connect(m_findComboBox, SIGNAL(editTextChanged(const QString &)),
 	  this, SLOT(onValueChanged(const QString &)));
 
   // button box

@@ -345,8 +345,14 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 
   if (resetModel)
     {
-      reset();
+      // Modified due to change in QAbstractItemModel
+      beginResetModel();
       emit(wasModified());
+      endResetModel();
+      
+      // Original Code
+      //reset();
+      //emit(wasModified());
     }
 }
 
@@ -363,8 +369,14 @@ void CLibrary::addSongs(const QStringList &paths)
       addSong(song);
     }
 
-  reset();
+  // Modified due to change in QAbstractItemModel
+  beginResetModel();
   emit(wasModified());
+  endResetModel();
+  
+  // Original Code
+  //reset();
+  //emit(wasModified());
 }
 
 void CLibrary::addSong(const QString &path)
@@ -383,8 +395,14 @@ void CLibrary::removeSong(const QString &path)
           break;
         }
     }
-  reset();
+  // Modified due to change in QAbstractItemModel
+  beginResetModel();
   emit(wasModified());
+  endResetModel();
+  
+  // Original Code
+  //reset();
+  //emit(wasModified());
 }
 
 Song CLibrary::getSong(const QString &path) const

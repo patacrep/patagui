@@ -118,10 +118,10 @@ bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     }
 
   if (!m_negativeLanguageFilter.isEmpty())
-    accept = accept && !m_negativeLanguageFilter.contains(qVariantValue< QLocale::Language >(sourceModel()->data(index, CLibrary::LanguageRole)));
+    accept = accept && !m_negativeLanguageFilter.contains(sourceModel()->data(index, CLibrary::LanguageRole).value< QLocale::Language >());
 
   if (!m_languageFilter.isEmpty())
-    accept = accept && m_languageFilter.contains(qVariantValue< QLocale::Language >(sourceModel()->data(index, CLibrary::LanguageRole)));
+    accept = accept && m_languageFilter.contains(sourceModel()->data(index, CLibrary::LanguageRole).value< QLocale::Language >());
 
   if (m_onlySelected)
     accept = accept && qobject_cast< CSongbook* >(sourceModel())->isChecked(index);

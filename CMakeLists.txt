@@ -103,7 +103,7 @@ set(SONGBOOK_CLIENT_RCS
 
 # }}}
 
-find_package(Qt5 CONFIG REQUIRED Widgets Script Svg)
+find_package(Qt5 CONFIG REQUIRED Network Widgets Script Svg)
 LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES};${Qt5Svg_LIBRARIES})
 
 #set(QT_USE_QTSCRIPT true)
@@ -111,6 +111,7 @@ LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES};${Qt5Svg
 
 if(ENABLE_LIBRARY_DOWNLOAD)
   set(QT_USE_QTNETWORK true)
+  LIST(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES})
   include_directories(${LibArchive_INCLUDE_DIRS})
   LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
 endif()
@@ -158,7 +159,7 @@ if(WIN32)
 endif(WIN32)
 
 list(APPEND LIBRARIES ${QT_LIBRARIES})
-message("Qt Libraries = ${QT_LIBRARIES}")
+#message("Qt Libraries = ${QT_LIBRARIES}")
 #message("Test = ${SONGBOOK_CLIENT_SOURCES}")
 target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 

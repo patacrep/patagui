@@ -98,7 +98,7 @@ Song Song::fromString(const QString &text, const QString &path)
   song.coverName = reCoverName.cap(1);
 
   // content
-  song.isLilypond = QBool(reLilypond.indexIn(content) > -1);
+  song.isLilypond = bool(reLilypond.indexIn(content) > -1);
 
   //locale
   reLanguage.indexIn(prefix);

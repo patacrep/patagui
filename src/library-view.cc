@@ -95,11 +95,11 @@ void CLibraryView::createActions()
 
 void CLibraryView::resizeColumns()
 {
-  horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-  horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
-  horizontalHeader()->setResizeMode(2, QHeaderView::ResizeToContents);
-  horizontalHeader()->setResizeMode(3, QHeaderView::ResizeToContents);
-  horizontalHeader()->setResizeMode(4, QHeaderView::Stretch);
-  horizontalHeader()->setResizeMode(5, QHeaderView::Stretch);
-  horizontalHeader()->setResizeMode(6, QHeaderView::ResizeToContents);
+  horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+  horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+  horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+  horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+  horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+  horizontalHeader()->setSectionResizeMode(5, QHeaderView::Stretch);
+  horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 }

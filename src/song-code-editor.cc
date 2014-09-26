@@ -192,13 +192,13 @@ QString CSongCodeEditor::textUnderCursor() const
   static QSet<QChar> delimiters;
   if ( delimiters.isEmpty() )
     {
-      delimiters.insert( QChar::fromAscii(',') );
-      delimiters.insert( QChar::fromAscii('!') );
-      delimiters.insert( QChar::fromAscii('?') );
-      delimiters.insert( QChar::fromAscii('.') );
-      delimiters.insert( QChar::fromAscii(';') );
-      delimiters.insert( QChar::fromAscii('{') );
-      delimiters.insert( QChar::fromAscii('}') );
+      delimiters.insert( QChar::fromLatin1(',') );
+      delimiters.insert( QChar::fromLatin1('!') );
+      delimiters.insert( QChar::fromLatin1('?') );
+      delimiters.insert( QChar::fromLatin1('.') );
+      delimiters.insert( QChar::fromLatin1(';') );
+      delimiters.insert( QChar::fromLatin1('{') );
+      delimiters.insert( QChar::fromLatin1('}') );
     }
 
   tc.anchor();
