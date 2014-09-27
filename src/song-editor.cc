@@ -531,7 +531,9 @@ void CSongEditor::setHighlighter(CSongHighlighter *highlighter)
     return;
 
   codeEditor()->setHighlighter(highlighter);
+  #ifdef ENABLE_SPELLCHECK
   setDictionary(song().locale);
+  #endif //ENABLE_SPELLCHECK
 }
 
 QActionGroup* CSongEditor::actionGroup() const

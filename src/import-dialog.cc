@@ -195,8 +195,10 @@ CImportDialog::~CImportDialog()
   delete m_urlLineEdit;
   
   delete m_fileList;
-
+  
+  #ifdef ENABLE_LIBRARY_DOWNLOAD
   delete m_manager;
+  #endif // ENABLE_LIBRARY_DOWNLOAD
 }
 
 void CImportDialog::readSettings()

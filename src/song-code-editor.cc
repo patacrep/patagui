@@ -639,6 +639,7 @@ void CSongCodeEditor::setSpellCheckAvailable(const bool value)
   m_isSpellCheckAvailable = value;
 }
 
+#ifdef ENABLE_SPELLCHECK
 bool CSongCodeEditor::isSpellCheckActive() const
 {
   if (!highlighter())
@@ -646,6 +647,7 @@ bool CSongCodeEditor::isSpellCheckActive() const
 
   return highlighter()->isSpellCheckActive();
 }
+#endif // ENABLE_SPELLCHECK
 
 void CSongCodeEditor::setSpellCheckActive(const bool value)
 {
