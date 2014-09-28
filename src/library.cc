@@ -101,7 +101,7 @@ QString CLibrary::findSongbookPath()
 {
   QStringList paths;
   paths << QString("%1/songbook").arg(QDir::homePath())
-	<< QString("%1/songbook").arg(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+	<< QString("%1/songbook").arg(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
 
   QString path;
   foreach(path, paths)
@@ -209,7 +209,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	case 5:
 	  return data(index, AlbumRole);
         case 6:
-          return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
+          return QLocale::languageToString(data(index, LanguageRole).value< QLocale::Language >());
 	}
       break;
     case Qt::ToolTipRole:
@@ -220,7 +220,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
         case 3:
           return QString("http://%1").arg(m_songs[index.row()].url);
         case 5:
-          return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
+          return QLocale::languageToString(data(index, LanguageRole).value< QLocale::Language >());
         default:
           return QVariant();
         }
@@ -345,8 +345,14 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 
   if (resetModel)
     {
-      reset();
+      // Modified due to change in QAbstractItemModel
+      beginResetModel();
       emit(wasModified());
+      endResetModel();
+      
+      // Original Code
+      //reset();
+      //emit(wasModified());
     }
 }
 
@@ -363,8 +369,14 @@ void CLibrary::addSongs(const QStringList &paths)
       addSong(song);
     }
 
-  reset();
+  // Modified due to change in QAbstractItemModel
+  beginResetModel();
   emit(wasModified());
+  endResetModel();
+  
+  // Original Code
+  //reset();
+  //emit(wasModified());
 }
 
 void CLibrary::addSong(const QString &path)
@@ -383,8 +395,14 @@ void CLibrary::removeSong(const QString &path)
           break;
         }
     }
-  reset();
+  // Modified due to change in QAbstractItemModel
+  beginResetModel();
   emit(wasModified());
+  endResetModel();
+  
+  // Original Code
+  //reset();
+  //emit(wasModified());
 }
 
 Song CLibrary::getSong(const QString &path) const

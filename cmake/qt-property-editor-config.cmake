@@ -35,14 +35,14 @@ set(
 # Process MOC on QtPropertyEditor headers
 foreach(file ${qtpropertyeditor_HEADER_NEED_MOCS})
   string(REGEX REPLACE "${qpe_DIR}/(.*)\\.h" "${qpe_BUILD_DIR}/moc_\\1.cpp" moc_file "${file}" )
-  qt4_generate_moc(${file} ${moc_file})
+  qt5_generate_moc(${file} ${moc_file})
   set(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
 endforeach(file)
 
 # Process MOC on QtPropertyEditor srcs
 foreach(file ${qtpropertyeditor_SRCS_NEED_MOCS})
   string(REGEX REPLACE "${qpe_DIR}/(.*)\\.cpp" "${qpe_BUILD_DIR}/\\1.moc" moc_file "${file}" )
-  qt4_generate_moc(${file} ${moc_file})
+  qt5_generate_moc(${file} ${moc_file})
   set(qtpropertyeditor_MOC ${qtpropertyeditor_MOC} ${moc_file})
 endforeach(file)
 
@@ -53,7 +53,7 @@ set_source_files_properties(${qtpropertyeditor_MOC}
 
 # qtpropertybrowserutils_p.h is a special file, do not treat him as the other
 # header files.
-qt4_generate_moc(
+qt5_generate_moc(
   ${qpe_DIR}/qtpropertybrowserutils_p.h
   ${qpe_BUILD_DIR}/moc_qtpropertybrowserutils_p.cpp
 )
@@ -63,7 +63,7 @@ set(qtpropertyeditor_MOC
   ${qpe_BUILD_DIR}/moc_qtpropertybrowserutils_p.cpp
 )
 
-qt4_add_resources(qtpropertyeditor_RESOURCES ${qpe_DIR}/qtpropertybrowser.qrc)
+qt5_add_resources(qtpropertyeditor_RESOURCES ${qpe_DIR}/qtpropertybrowser.qrc)
 
 set(QT_PROPERTY_EDITOR_SOURCES
   ${qtpropertyeditor_SRCS}

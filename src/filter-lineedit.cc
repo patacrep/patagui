@@ -115,7 +115,7 @@ void CMagButton::paintEvent(QPaintEvent *event)
   QPalette p = palette();
 
   QPen pen(QColor::fromRgb(85,85,85));
-  pen.setWidth(2.9);
+  pen.setWidthF(2.9);
 
   // draw circle
   painter.setPen(pen);
