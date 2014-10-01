@@ -39,13 +39,13 @@ class VariantFactory : public QtVariantEditorFactory
 public:
     VariantFactory(QObject *parent = 0)
         : QtVariantEditorFactory(parent)
-            { }
+    { }
 
     virtual ~VariantFactory();
 protected:
     virtual void connectPropertyManager(QtVariantPropertyManager *manager);
     virtual QWidget *createEditor(QtVariantPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                                  QWidget *parent);
     virtual void disconnectPropertyManager(QtVariantPropertyManager *manager);
 private slots:
     void slotPropertyChanged(QtProperty *property, const QVariant &value);

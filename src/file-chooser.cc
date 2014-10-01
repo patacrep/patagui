@@ -29,33 +29,33 @@
 #include <QSettings>
 
 CFileChooser::CFileChooser(QWidget *parent)
-  : QWidget(parent)
-  , m_lineEdit(0)
-  , m_button(0)
-  , m_caption(QCoreApplication::applicationName())
-  , m_directory(QDir::homePath())
-  , m_path("")
-  , m_filter("")
-  , m_options(0)
+    : QWidget(parent)
+    , m_lineEdit(0)
+    , m_button(0)
+    , m_caption(QCoreApplication::applicationName())
+    , m_directory(QDir::homePath())
+    , m_path("")
+    , m_filter("")
+    , m_options(0)
 {
-  m_lineEdit = new QLineEdit();
-  QCompleter *completer = new QCompleter(this);
-  completer->setModel(new QDirModel(completer));
-  completer->setCompletionMode(QCompleter::InlineCompletion);
-  m_lineEdit->setCompleter(completer);
+    m_lineEdit = new QLineEdit();
+    QCompleter *completer = new QCompleter(this);
+    completer->setModel(new QDirModel(completer));
+    completer->setCompletionMode(QCompleter::InlineCompletion);
+    m_lineEdit->setCompleter(completer);
 
-  connect(m_lineEdit, SIGNAL(textChanged(const QString &)),
-          this, SLOT(setPath(const QString &)));
+    connect(m_lineEdit, SIGNAL(textChanged(const QString &)),
+            this, SLOT(setPath(const QString &)));
 
-  m_button = new QPushButton(tr("Browse"));
-  connect(m_button, SIGNAL(clicked()), SLOT(browse()));
+    m_button = new QPushButton(tr("Browse"));
+    connect(m_button, SIGNAL(clicked()), SLOT(browse()));
 
-  QLayout *layout = new QHBoxLayout;
-  layout->addWidget(m_lineEdit);
-  layout->addWidget(m_button);
-  // disable layout's margin to have a proper "one widget" appearance
-  layout->setContentsMargins(0, 0, 0, 0);
-  setLayout(layout);
+    QLayout *layout = new QHBoxLayout;
+    layout->addWidget(m_lineEdit);
+    layout->addWidget(m_button);
+    // disable layout's margin to have a proper "one widget" appearance
+    layout->setContentsMargins(0, 0, 0, 0);
+    setLayout(layout);
 }
 
 CFileChooser::~CFileChooser()
@@ -64,82 +64,82 @@ CFileChooser::~CFileChooser()
 
 void CFileChooser::browse()
 {
-  QString selection;
-  if (options() & QFileDialog::ShowDirsOnly)
-    selection = QFileDialog::getExistingDirectory(this, caption(), directory());
-  else
-    selection = QFileDialog::getOpenFileName(this, caption(), directory(), filter(), 0, options());
+    QString selection;
+    if (options() & QFileDialog::ShowDirsOnly)
+        selection = QFileDialog::getExistingDirectory(this, caption(), directory());
+    else
+        selection = QFileDialog::getOpenFileName(this, caption(), directory(), filter(), 0, options());
 
-  if (!selection.isEmpty())
-    setPath(selection);
+    if (!selection.isEmpty())
+        setPath(selection);
 }
 
 QFileDialog::Options CFileChooser::options() const
 {
-  return m_options;
+    return m_options;
 }
 
 void CFileChooser::setOptions(const QFileDialog::Options &opts)
 {
-  m_options = opts;
+    m_options = opts;
 }
 
 QString CFileChooser::filter() const
 {
-  return m_filter;
+    return m_filter;
 }
 
 void CFileChooser::setFilter(const QString &filter)
 {
-  m_filter = filter;
+    m_filter = filter;
 }
 
 QString CFileChooser::caption() const
 {
-  return m_caption;
+    return m_caption;
 }
 
 void CFileChooser::setCaption(const QString &caption)
 {
-  m_caption = caption;
+    m_caption = caption;
 }
 
 QString CFileChooser::directory() const
 {
-  return m_directory;
+    return m_directory;
 }
 
 void CFileChooser::setDirectory(const QString &directory)
 {
-  m_directory = directory;
+    m_directory = directory;
 }
 
 void CFileChooser::setDirectory(const QDir &directory)
 {
-  m_directory = directory.absolutePath();
+    m_directory = directory.absolutePath();
 }
 
 
 QString CFileChooser::path() const
 {
-  return m_path;
+    return m_path;
 }
 
 void CFileChooser::setPath(const QString &path)
 {
-  if (QString::compare(m_path, path, Qt::CaseSensitive) == 0)
-    return;
+    if (QString::compare(m_path, path, Qt::CaseSensitive) == 0)
+        return;
 
-  if (m_lineEdit->text() != path)
-    m_lineEdit->setText(path);
+    if (m_lineEdit->text() != path)
+        m_lineEdit->setText(path);
 
-  m_path = path;
+    m_path = path;
 
-  QFileInfo fileInfo(m_path);
-  if (fileInfo.isDir())
-    setDirectory(m_path);
-  else
-    setDirectory(fileInfo.dir());
+    QFileInfo fileInfo(m_path);
+    if (fileInfo.isDir())
+        setDirectory(m_path);
+    else
+        setDirectory(fileInfo.dir());
 
-  emit(pathChanged(m_path));
+    emit(pathChanged(m_path));
 }

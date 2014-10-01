@@ -35,291 +35,291 @@ const QColor CChord::_ukuleleChordColor(_TangoPlum1);
 const QColor CChord::_importantUkuleleChordColor(_TangoPlum3);
 
 CChord::CChord(const QString & chord, QObject *parent)
-  : QObject(parent)
-  , m_isValid(true)
-  , m_drawBorder(false)
-  , m_pixmap(0)
+    : QObject(parent)
+    , m_isValid(true)
+    , m_drawBorder(false)
+    , m_pixmap(0)
 {
-  fromString(chord);
+    fromString(chord);
 }
 
 CChord::~CChord()
 {
-  delete m_pixmap;
-  m_pixmap = 0;
+    delete m_pixmap;
+    m_pixmap = 0;
 }
 
 QString CChord::toString()
 {
-  QString str;
-  switch(m_instrument)
+    QString str;
+    switch(m_instrument)
     {
     case Guitar:
-      str.append("\\gtab");
-      break;
+        str.append("\\gtab");
+        break;
     case Ukulele:
-      str.append("\\utab");
-      break;
+        str.append("\\utab");
+        break;
     default:
-      qWarning() << tr("CChord::toString unsupported chord type");
+        qWarning() << tr("CChord::toString unsupported chord type");
     }
 
-  if (isImportant())
-    str.append("*");
+    if (isImportant())
+        str.append("*");
 
-  //the chord name such as Am
-  str.append( QString("{%1}{").arg(name()) );
-  //the fret
-  str.append(QString("%2").arg(fret()));
-  //the strings such as X32010 (C chord)
-  if (!fret().isEmpty())
-    str.append(":");
-  str.append(QString("%3}").arg(strings()));
+    //the chord name such as Am
+    str.append( QString("{%1}{").arg(name()) );
+    //the fret
+    str.append(QString("%2").arg(fret()));
+    //the strings such as X32010 (C chord)
+    if (!fret().isEmpty())
+        str.append(":");
+    str.append(QString("%3}").arg(strings()));
 
-  return str;
+    return str;
 }
 
 void CChord::fromString(const QString & str)
 {
-  QString copy(str);
+    QString copy(str);
 
-  if (str.contains("gtab"))
-    m_instrument = Guitar;
-  else if (str.contains("utab"))
-    m_instrument = Ukulele;
-  else
-    m_isValid = false;
+    if (str.contains("gtab"))
+        m_instrument = Guitar;
+    else if (str.contains("utab"))
+        m_instrument = Ukulele;
+    else
+        m_isValid = false;
 
-  setImportant(str.contains("*"));
+    setImportant(str.contains("*"));
 
-  if (reChordWithFret.indexIn(str) != -1)
+    if (reChordWithFret.indexIn(str) != -1)
     {
-      setName(reChordWithFret.cap(1));
-      setFret(reChordWithFret.cap(2));
-      setStrings(reChordWithFret.cap(3));
+        setName(reChordWithFret.cap(1));
+        setFret(reChordWithFret.cap(2));
+        setStrings(reChordWithFret.cap(3));
     }
-  else if (reChordWithoutFret.indexIn(copy.remove("~:")) != -1)
+    else if (reChordWithoutFret.indexIn(copy.remove("~:")) != -1)
     {
-      setName(reChordWithoutFret.cap(1));
-      setStrings(reChordWithoutFret.cap(2));
+        setName(reChordWithoutFret.cap(1));
+        setStrings(reChordWithoutFret.cap(2));
     }
 
-  if (name().isEmpty())
-    m_isValid = false;
+    if (name().isEmpty())
+        m_isValid = false;
 }
 
 
 bool CChord::isValid() const
 {
-  return m_isValid;
+    return m_isValid;
 }
 
 QPixmap* CChord::toPixmap()
 {
-  if (m_pixmap)
-    return m_pixmap;
+    if (m_pixmap)
+        return m_pixmap;
 
-  if (!isValid())
-    return 0;
+    if (!isValid())
+        return 0;
 
-  m_pixmap = new QPixmap(100, 120);
-  m_pixmap->fill(Qt::white);
+    m_pixmap = new QPixmap(100, 120);
+    m_pixmap->fill(Qt::white);
 
-  if (!QPixmapCache::find(toString(), m_pixmap))
+    if (!QPixmapCache::find(toString(), m_pixmap))
     {
-      QPainter painter;
-      painter.begin(m_pixmap);
-      painter.setRenderHint(QPainter::Antialiasing, true);
+        QPainter painter;
+        painter.begin(m_pixmap);
+        painter.setRenderHint(QPainter::Antialiasing, true);
 
-      int cellWidth = 12, cellHeight = 12;
-      int width = (strings().length() - 1)*cellWidth;
-      int padding = 13;
+        int cellWidth = 12, cellHeight = 12;
+        int width = (strings().length() - 1)*cellWidth;
+        int padding = 13;
 
-      //draw chord name
-      painter.setPen(QPen(Qt::white));
-      QRect chordRect(10, padding, 70, 10+padding);
-      QPainterPath path;
-      path.addRoundedRect(chordRect, 4, 4);
-      painter.fillPath(path, color());
-      painter.setFont(QFont("Helvetica [Cronyx]", 10, QFont::Bold));
-      painter.drawText(chordRect, Qt::AlignCenter, name().replace("&", QChar(0x266D)));
+        //draw chord name
+        painter.setPen(QPen(Qt::white));
+        QRect chordRect(10, padding, 70, 10+padding);
+        QPainterPath path;
+        path.addRoundedRect(chordRect, 4, 4);
+        painter.fillPath(path, color());
+        painter.setFont(QFont("Helvetica [Cronyx]", 10, QFont::Bold));
+        painter.drawText(chordRect, Qt::AlignCenter, name().replace("&", QChar(0x266D)));
 
-      //border
-      if (m_drawBorder)
-	{
-	  painter.setPen(QPen(color()));
-	  painter.setBrush(QBrush());
-	  QPainterPath border;
-	  QRect borderRect(3, padding-5, 82, 110);
-	  border.addRoundedRect(borderRect, 4, 4);
-	  painter.drawPath(border);
-	}
+        //border
+        if (m_drawBorder)
+        {
+            painter.setPen(QPen(color()));
+            painter.setBrush(QBrush());
+            QPainterPath border;
+            QRect borderRect(3, padding-5, 82, 110);
+            border.addRoundedRect(borderRect, 4, 4);
+            painter.drawPath(border);
+        }
 
-      //draw horizontal lines
-      int max = 4;
-      foreach (QChar c, strings())
-	if (c.digitValue() > max)
-	  max = c.digitValue();
+        //draw horizontal lines
+        int max = 4;
+        foreach (QChar c, strings())
+            if (c.digitValue() > max)
+                max = c.digitValue();
 
-      // grid background
-      int hOffset = (instrument() == Guitar) ? 0 : cellWidth; //offset from the left
-      int vOffset = 45; //offset from the top
-      QRect gridRect(4, vOffset, 80, cellHeight*max+padding+5);
+        // grid background
+        int hOffset = (instrument() == Guitar) ? 0 : cellWidth; //offset from the left
+        int vOffset = 45; //offset from the top
+        QRect gridRect(4, vOffset, 80, cellHeight*max+padding+5);
 
-      painter.setPen(QPen(Qt::black));
-      painter.fillRect(gridRect, QBrush(QColor(Qt::white)));
+        painter.setPen(QPen(Qt::black));
+        painter.fillRect(gridRect, QBrush(QColor(Qt::white)));
 
-      Q_ASSERT(max < 10);
-      for (int i=0; i<max+1; ++i)
-	{
-	  painter.drawLine(padding+hOffset, i*cellHeight+padding+vOffset, width+padding+hOffset, i*cellHeight+padding+vOffset);
-	}
+        Q_ASSERT(max < 10);
+        for (int i=0; i<max+1; ++i)
+        {
+            painter.drawLine(padding+hOffset, i*cellHeight+padding+vOffset, width+padding+hOffset, i*cellHeight+padding+vOffset);
+        }
 
-      int height = max*cellHeight;
-      //draw a vertical line for each string
-      for (int i=0; i<strings().length(); ++i)
-	{
-	  painter.drawLine(i*cellWidth+padding+hOffset, padding+vOffset, i*cellWidth+padding+hOffset, height+padding+vOffset);
-	}
+        int height = max*cellHeight;
+        //draw a vertical line for each string
+        for (int i=0; i<strings().length(); ++i)
+        {
+            painter.drawLine(i*cellWidth+padding+hOffset, padding+vOffset, i*cellWidth+padding+hOffset, height+padding+vOffset);
+        }
 
-      //draw played strings
-      for (int i=0; i<strings().length(); ++i)
-	{
-	  QRect stringRect(0, 0, cellWidth-4, cellHeight-4);
-	  int value = strings()[i].digitValue();
-	  if (value == -1)
-	    {
-	      stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3+hOffset, 3+vOffset );
-	      painter.setFont(QFont("Arial", 9));
-	      painter.drawText(stringRect, Qt::AlignCenter, "X");
-	    }
-	  else
-	    {
-	      stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3+hOffset, value*cellHeight+3+vOffset );
-	      if (value == 0)
-		painter.drawEllipse(stringRect);
-	      else
-		fillEllipse(&painter, stringRect, QBrush(QColor(Qt::black)));
-	    }
-	}
+        //draw played strings
+        for (int i=0; i<strings().length(); ++i)
+        {
+            QRect stringRect(0, 0, cellWidth-4, cellHeight-4);
+            int value = strings()[i].digitValue();
+            if (value == -1)
+            {
+                stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3+hOffset, 3+vOffset );
+                painter.setFont(QFont("Arial", 9));
+                painter.drawText(stringRect, Qt::AlignCenter, "X");
+            }
+            else
+            {
+                stringRect.moveTo( (i*cellWidth)+cellWidth/2.0 +3+hOffset, value*cellHeight+3+vOffset );
+                if (value == 0)
+                    painter.drawEllipse(stringRect);
+                else
+                    fillEllipse(&painter, stringRect, QBrush(QColor(Qt::black)));
+            }
+        }
 
-      //draw fret
-      QRect fretRect(padding-(cellWidth-2)+hOffset, padding+(cellHeight+vOffset)/2.0, cellWidth-4, cellHeight+vOffset);
-      painter.setFont(QFont("Arial", 9));
-      painter.drawText(fretRect, Qt::AlignCenter, fret());
+        //draw fret
+        QRect fretRect(padding-(cellWidth-2)+hOffset, padding+(cellHeight+vOffset)/2.0, cellWidth-4, cellHeight+vOffset);
+        painter.setFont(QFont("Arial", 9));
+        painter.drawText(fretRect, Qt::AlignCenter, fret());
 
-      painter.end();
-      QPixmapCache::insert(toString(), *m_pixmap);
+        painter.end();
+        QPixmapCache::insert(toString(), *m_pixmap);
     }
 
-  return m_pixmap;
+    return m_pixmap;
 }
 
 void CChord::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush)
 {
-  QPainterPath path;
-  path.addEllipse(rect.topLeft().x(), rect.topLeft().y(), rect.width(), rect.height());;
-  painter->fillPath(path, brush);
+    QPainterPath path;
+    path.addEllipse(rect.topLeft().x(), rect.topLeft().y(), rect.width(), rect.height());;
+    painter->fillPath(path, brush);
 }
 
 QColor CChord::color()
 {
-  if (isImportant())
+    if (isImportant())
     {
-      if (instrument() == Guitar)
-	return _importantGuitarChordColor;
-      else if (instrument() == Ukulele)
-	return _importantUkuleleChordColor;
+        if (instrument() == Guitar)
+            return _importantGuitarChordColor;
+        else if (instrument() == Ukulele)
+            return _importantUkuleleChordColor;
     }
-  else
+    else
     {
-      if (instrument() == Guitar)
-	return _guitarChordColor;
-      else if (instrument() == Ukulele)
-	return _ukuleleChordColor;
+        if (instrument() == Guitar)
+            return _guitarChordColor;
+        else if (instrument() == Ukulele)
+            return _ukuleleChordColor;
     }
 
-  return QColor(Qt::white);
+    return QColor(Qt::white);
 }
 
 void CChord::setDrawBorder(bool value)
 {
-  m_drawBorder = value;
+    m_drawBorder = value;
 }
 
 QString CChord::name() const
 {
-  return m_name;
+    return m_name;
 }
 
 void CChord::setName(const QString & str)
 {
-  if (m_name != str)
+    if (m_name != str)
     {
-      m_name = str;
-      emit nameChanged();
+        m_name = str;
+        emit nameChanged();
     }
 }
 
 QString CChord::fret() const
 {
-  return m_fret;
+    return m_fret;
 }
 
 void CChord::setFret(const QString & str)
 {
-  if (m_fret != str)
+    if (m_fret != str)
     {
-      m_fret = str;
-      emit fretChanged();
+        m_fret = str;
+        emit fretChanged();
     }
 }
 
 QString CChord::strings() const
 {
-  return m_strings;
+    return m_strings;
 }
 
 void CChord::setStrings(const QString & str)
 {
-  if (m_strings != str)
+    if (m_strings != str)
     {
-      m_strings = str;
-      emit stringsChanged();
+        m_strings = str;
+        emit stringsChanged();
     }
 }
 
 CChord::Instrument CChord::instrument() const
 {
-  return m_instrument;
+    return m_instrument;
 }
 
 void CChord::setInstrument(const CChord::Instrument & instru)
 {
-  if (m_instrument != instru)
+    if (m_instrument != instru)
     {
-      m_instrument = instru;
-      emit instrumentChanged();
+        m_instrument = instru;
+        emit instrumentChanged();
     }
 }
 
 void CChord::switchInstrument(bool value)
 {
-  if (value)
+    if (value)
     {
-      if (instrument() == Guitar)
-	setInstrument(Ukulele);
-      else
-	setInstrument(Guitar);
+        if (instrument() == Guitar)
+            setInstrument(Ukulele);
+        else
+            setInstrument(Guitar);
     }
 }
 
 bool CChord::isImportant() const
 {
-  return m_important;
+    return m_important;
 }
 
 void CChord::setImportant(bool value)
 {
-  m_important = value;
+    m_important = value;
 }

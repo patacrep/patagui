@@ -52,109 +52,109 @@
 /// Main routine of the application
 int main(int argc, char *argv[])
 {
-  // MacOSX needs to instanciate the application first to get the path
-  QApplication application(argc, argv);
+    // MacOSX needs to instanciate the application first to get the path
+    QApplication application(argc, argv);
 
-  QApplication::setOrganizationName("Patacrep");
-  QApplication::setOrganizationDomain("patacrep.com");
-  QApplication::setApplicationName(SONGBOOK_CLIENT_APPLICATION_NAME);
-  QApplication::setApplicationVersion(SONGBOOK_CLIENT_VERSION);
+    QApplication::setOrganizationName("Patacrep");
+    QApplication::setOrganizationDomain("patacrep.com");
+    QApplication::setApplicationName(SONGBOOK_CLIENT_APPLICATION_NAME);
+    QApplication::setApplicationVersion(SONGBOOK_CLIENT_VERSION);
 
-  // Load the application ressources (icons, ...)
-  Q_INIT_RESOURCE(songbook);
+    // Load the application ressources (icons, ...)
+    Q_INIT_RESOURCE(songbook);
 
-  // Check for a standard theme icon. If it does not exist, for
-  // instance on MacOSX or Windows, fallback to one of the theme
-  // provided in the ressource file.
-  if (!QIcon::hasThemeIcon("document-open"))
+    // Check for a standard theme icon. If it does not exist, for
+    // instance on MacOSX or Windows, fallback to one of the theme
+    // provided in the ressource file.
+    if (!QIcon::hasThemeIcon("document-open"))
     {
 #ifdef __APPLE__
-      QIcon::setThemeName("macos");
+        QIcon::setThemeName("macos");
 #else // __APPLE__
-      QIcon::setThemeName("tango");
+        QIcon::setThemeName("tango");
 #endif // __APPLE__
     }
 
-  // Parse command line arguments
-  QStringList arguments = QApplication::arguments();
-  bool helpFlag = false;;
-  bool versionFlag = false;
-  if (arguments.contains("-h") || arguments.contains("--help"))
-    helpFlag = true;
-  else if (arguments.contains("--version"))
-    versionFlag = true;
+    // Parse command line arguments
+    QStringList arguments = QApplication::arguments();
+    bool helpFlag = false;;
+    bool versionFlag = false;
+    if (arguments.contains("-h") || arguments.contains("--help"))
+        helpFlag = true;
+    else if (arguments.contains("--version"))
+        versionFlag = true;
 
-  // Localization
-  QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8")) ;
-  QDir translationDirectory;
-  QString translationFilename = QString("songbook_%1.qm").arg(QLocale::system().name().split('_').first());
-  QString directory;
+    // Localization
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8")) ;
+    QDir translationDirectory;
+    QString translationFilename = QString("songbook_%1.qm").arg(QLocale::system().name().split('_').first());
+    QString directory;
 
 #ifdef __APPLE__
-  translationDirectory = application.applicationDirPath();
-  translationDirectory.cd("../Resources");
+    translationDirectory = application.applicationDirPath();
+    translationDirectory.cd("../Resources");
 #else
-  translationDirectory = QDir(SONGBOOK_CLIENT_DATA_PATH);
+    translationDirectory = QDir(SONGBOOK_CLIENT_DATA_PATH);
 #endif
 
-  if (translationDirectory.exists())
-    directory = translationDirectory.absoluteFilePath("lang");
-  else
-    directory = QDir::current().absoluteFilePath("lang");
+    if (translationDirectory.exists())
+        directory = translationDirectory.absoluteFilePath("lang");
+    else
+        directory = QDir::current().absoluteFilePath("lang");
 
-  QTranslator translator;
-  translator.load(translationFilename, directory);
-  application.installTranslator(&translator);
+    QTranslator translator;
+    translator.load(translationFilename, directory);
+    application.installTranslator(&translator);
 
 #ifdef USE_SPARKLE
-  // Check for updates on startup using MacOSX. The atom feed provides
-  // the list of releases to get the update from.
-  // TODO: add a check to ignore beta versions
-  CocoaInitializer initializer;
-  AutoUpdater *updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
-  if (updater)
-    updater->checkForUpdates();
-  delete updater;
+    // Check for updates on startup using MacOSX. The atom feed provides
+    // the list of releases to get the update from.
+    // TODO: add a check to ignore beta versions
+    CocoaInitializer initializer;
+    AutoUpdater *updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
+    if (updater)
+        updater->checkForUpdates();
+    delete updater;
 #endif // USE_SPARKLE
 
-  if (helpFlag)
+    if (helpFlag)
     {
-      QTextStream out(stdout);
-      out << "Usage: " << QApplication::applicationName() << "[OPTION]" << endl
-	  << "Options:" << endl
-	  << "    " << "-h, --help"
-	  << "    " << "--version"
-	  << " " << QApplication::applicationVersion()
-	  << endl;
-      return 0;
+        QTextStream out(stdout);
+        out << "Usage: " << QApplication::applicationName() << "[OPTION]" << endl
+            << "Options:" << endl
+            << "    " << "-h, --help"
+            << "    " << "--version"
+            << " " << QApplication::applicationVersion()
+            << endl;
+        return 0;
     }
-  else if (versionFlag)
+    else if (versionFlag)
     {
-      QTextStream out(stdout);
-      out << QApplication::applicationName()
-	  << " " << QApplication::applicationVersion()
-	  << endl;
-      return 0;
+        QTextStream out(stdout);
+        out << QApplication::applicationName()
+            << " " << QApplication::applicationVersion()
+            << endl;
+        return 0;
     }
 
-  CMainWindow mainWindow;
-  mainWindow.show();
+    CMainWindow mainWindow;
+    mainWindow.show();
 
-  QStringList songsToBeImported;
-  foreach (const QString & arg, arguments)
+    QStringList songsToBeImported;
+    foreach (const QString & arg, arguments)
     {
-      if (arg.endsWith(".sb") && QFile(arg).exists())
-	{
-	  mainWindow.open(arg);
-	}
-      if (arg.endsWith(".sg") && QFile(arg).exists())
-	{
-	  songsToBeImported << arg;
-	  mainWindow.songEditor(arg);
-	}
+        if (arg.endsWith(".sb") && QFile(arg).exists())
+        {
+            mainWindow.open(arg);
+        }
+        if (arg.endsWith(".sg") && QFile(arg).exists())
+        {
+            songsToBeImported << arg;
+            mainWindow.songEditor(arg);
+        }
     }
-  if (songsToBeImported.isEmpty())
-    CLibrary::instance()->importSongs(songsToBeImported);
+    if (songsToBeImported.isEmpty())
+        CLibrary::instance()->importSongs(songsToBeImported);
 
-  return application.exec();
+    return application.exec();
 }

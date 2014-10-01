@@ -59,103 +59,103 @@ class CMainWindow;
 */
 class CImportDialog : public QDialog
 {
-  Q_OBJECT
-  public:
-  /// Constructor.
-  CImportDialog(QWidget *parent = 0);
+    Q_OBJECT
+public:
+    /// Constructor.
+    CImportDialog(QWidget *parent = 0);
 
-  /// Destructor.
-  virtual ~CImportDialog();
+    /// Destructor.
+    virtual ~CImportDialog();
 
-  void readSettings();
-  void writeSettings();
+    void readSettings();
+    void writeSettings();
 
-  CProgressBar* progressBar() const;
-  void showMessage(const QString & message);
+    CProgressBar* progressBar() const;
+    void showMessage(const QString & message);
 
-  CMainWindow* parent() const;
-  void setParent(CMainWindow* parent);
+    CMainWindow* parent() const;
+    void setParent(CMainWindow* parent);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
-  void initDownload();
+    void initDownload();
 
-  /// Save some data as a new file.
-  /// @param filename : filename of the new file on disk
-  /// @param data : the data to be saved
-  /// @return true if the operation succeeded, false otherwise
-  bool saveToDisk(const QString &filename, QIODevice *data);
+    /// Save some data as a new file.
+    /// @param filename : filename of the new file on disk
+    /// @param data : the data to be saved
+    /// @return true if the operation succeeded, false otherwise
+    bool saveToDisk(const QString &filename, QIODevice *data);
 
-  /// Decompress an archive depending on libarchive library
-  /// (http://github.com/libarchive/libarchive).
-  /// @param filename : filename of the compressed archive
-  /// @param directory : the directory resulting from the decompression
-  /// @return true if the operation succeeded, false otherwise
-  bool decompress(const QString &filename);
+    /// Decompress an archive depending on libarchive library
+    /// (http://github.com/libarchive/libarchive).
+    /// @param filename : filename of the compressed archive
+    /// @param directory : the directory resulting from the decompression
+    /// @return true if the operation succeeded, false otherwise
+    bool decompress(const QString &filename);
 
-  /// (http://github.com/libarchive/libarchive).
-  int copy_data(struct archive *ar, struct archive *aw);
+    /// (http://github.com/libarchive/libarchive).
+    int copy_data(struct archive *ar, struct archive *aw);
 
 public slots:
-  /// Handles common errors and dialog at the end of the downloading operation
-  /// such as conflicts with filenames or failed download.
-  void downloadFinished();
+    /// Handles common errors and dialog at the end of the downloading operation
+    /// such as conflicts with filenames or failed download.
+    void downloadFinished();
 
-  void sslErrors(const QList<QSslError> &errors);
+    void sslErrors(const QList<QSslError> &errors);
 
-  /// Network initialisation before download.
-  void downloadStart();
+    /// Network initialisation before download.
+    void downloadStart();
 
-  void downloadProgress(qint64 bytesRead, qint64 totalBytes);
+    void downloadProgress(qint64 bytesRead, qint64 totalBytes);
 
-  void cancelDownload();
+    void cancelDownload();
 #endif //ENABLE_LIBRARY_DOWNLOAD
 
 private slots:
-  bool acceptDialog();
-  void checkLibraryPath(const QString & path);
-  void onRadioButtonClicked(QAbstractButton*);
-  void onUrlChanged(const QString &);
-  void openItem(QListWidgetItem*);
-  void addFiles();
-  void removeFiles();
+    bool acceptDialog();
+    void checkLibraryPath(const QString & path);
+    void onRadioButtonClicked(QAbstractButton*);
+    void onUrlChanged(const QString &);
+    void openItem(QListWidgetItem*);
+    void addFiles();
+    void removeFiles();
 
 signals:
-  void songsReadyToBeImported(const QStringList &);
+    void songsReadyToBeImported(const QStringList &);
 
 private:
-  void setLocalSubWidgetsVisible(const bool value);
-  void setNetworkSubWidgetsVisible(const bool value);
+    void setLocalSubWidgetsVisible(const bool value);
+    void setNetworkSubWidgetsVisible(const bool value);
 
-  CMainWindow *m_parent;
-  CFileChooser *m_libraryPath;
-  QLabel *m_libraryPathValid;
+    CMainWindow *m_parent;
+    CFileChooser *m_libraryPath;
+    QLabel *m_libraryPathValid;
 
-  QRadioButton *m_fromLocalButton;
-  QRadioButton *m_fromNetworkButton;
+    QRadioButton *m_fromLocalButton;
+    QRadioButton *m_fromNetworkButton;
 
-  QPushButton *m_addButton;
-  QPushButton *m_removeButton;
+    QPushButton *m_addButton;
+    QPushButton *m_removeButton;
 
-  QLabel *m_patacrepLabel;
-  QLabel *m_gitLabel;
-  QLabel *m_urlLabel;
+    QLabel *m_patacrepLabel;
+    QLabel *m_gitLabel;
+    QLabel *m_urlLabel;
 
-  QRadioButton *m_patacrepButton;
-  QRadioButton *m_gitButton;
-  QRadioButton *m_urlButton;
-  QLineEdit *m_urlLineEdit;
-  QUrl m_url;
+    QRadioButton *m_patacrepButton;
+    QRadioButton *m_gitButton;
+    QRadioButton *m_urlButton;
+    QLineEdit *m_urlLineEdit;
+    QUrl m_url;
 
-  QListWidget *m_fileList;
-  QStringList m_songsToBeImported;
+    QListWidget *m_fileList;
+    QStringList m_songsToBeImported;
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
-  QString bytesToString(double bytes);
-  QString findFileName();
+    QString bytesToString(double bytes);
+    QString findFileName();
 
-  QNetworkAccessManager *m_manager;
-  QNetworkReply *m_reply;
-  QTime m_downloadTime;
+    QNetworkAccessManager *m_manager;
+    QNetworkReply *m_reply;
+    QTime m_downloadTime;
 #endif //ENABLE_LIBRARY_DOWNLOAD
 };
 

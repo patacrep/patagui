@@ -27,211 +27,211 @@
 #include <QDebug>
 
 CClearButton::CClearButton(QWidget *parent)
-  : QToolButton(parent)
+    : QToolButton(parent)
 {
-  setCursor(Qt::ArrowCursor);
-  setFocusPolicy(Qt::NoFocus);
-  setToolTip(tr("Clear"));
-  setMinimumSize(22, 22);
-  setVisible(false);
+    setCursor(Qt::ArrowCursor);
+    setFocusPolicy(Qt::NoFocus);
+    setToolTip(tr("Clear"));
+    setMinimumSize(22, 22);
+    setVisible(false);
 
-  // First check for a style icon
-  if (m_icon.isNull())
+    // First check for a style icon
+    if (m_icon.isNull())
     {
-      QLatin1String iconName = (layoutDirection() == Qt::RightToLeft)
-	? QLatin1String("edit-clear-locationbar-ltr")
-	: QLatin1String("edit-clear-locationbar-rtl");
-      QIcon icon = QIcon::fromTheme(iconName);
-      if (!icon.isNull())
-	m_icon = icon.pixmap(16, 16).toImage();
+        QLatin1String iconName = (layoutDirection() == Qt::RightToLeft)
+                ? QLatin1String("edit-clear-locationbar-ltr")
+                : QLatin1String("edit-clear-locationbar-rtl");
+        QIcon icon = QIcon::fromTheme(iconName);
+        if (!icon.isNull())
+            m_icon = icon.pixmap(16, 16).toImage();
     }
 }
 
 void CClearButton::textChanged(const QString &text)
 {
-  setVisible(!text.isEmpty());
+    setVisible(!text.isEmpty());
 }
 
 void CClearButton::paintEvent(QPaintEvent *event)
 {
-  Q_UNUSED(event);
-  QPainter painter(this);
+    Q_UNUSED(event);
+    QPainter painter(this);
 
-  if (!m_icon.isNull())
+    if (!m_icon.isNull())
     {
-      int x = (width() - m_icon.width()) / 2 - 1;
-      int y = (height() - m_icon.height()) / 2 - 1;
-      painter.drawImage(x, y, m_icon);
-      return;
+        int x = (width() - m_icon.width()) / 2 - 1;
+        int y = (height() - m_icon.height()) / 2 - 1;
+        painter.drawImage(x, y, m_icon);
+        return;
     }
 
-  // Fall back to boring circle X
-  painter.setRenderHint(QPainter::Antialiasing, true);
+    // Fall back to boring circle X
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
-  QPalette p = palette();
-  QColor circleColor = isDown() ? p.color(QPalette::Dark) : p.color(QPalette::Mid);
-  QColor xColor = p.color(QPalette::Window);
+    QPalette p = palette();
+    QColor circleColor = isDown() ? p.color(QPalette::Dark) : p.color(QPalette::Mid);
+    QColor xColor = p.color(QPalette::Window);
 
-  // draw circle
-  painter.setBrush(circleColor);
-  painter.setPen(circleColor);
-  int padding = width() / 5;
-  int circleRadius = width() - (padding * 2);
-  painter.drawEllipse(padding, padding, circleRadius, circleRadius);
+    // draw circle
+    painter.setBrush(circleColor);
+    painter.setPen(circleColor);
+    int padding = width() / 5;
+    int circleRadius = width() - (padding * 2);
+    painter.drawEllipse(padding, padding, circleRadius, circleRadius);
 
-  // draw X
-  painter.setPen(xColor);
-  padding *= 2;
-  painter.drawLine(padding, padding, width() - padding, width() - padding);
-  painter.drawLine(padding, height() - padding, width() - padding, padding);
+    // draw X
+    painter.setPen(xColor);
+    padding *= 2;
+    painter.drawLine(padding, padding, width() - padding, width() - padding);
+    painter.drawLine(padding, height() - padding, width() - padding, padding);
 }
 
 CMagButton::CMagButton(QWidget *parent)
-  : QToolButton(parent)
+    : QToolButton(parent)
 {
-  setCursor(Qt::ArrowCursor);
-  setFocusPolicy(Qt::NoFocus);
-  setToolTip(tr("Enter search request"));
-  setMinimumSize(22, 22);
-  setVisible(true);
+    setCursor(Qt::ArrowCursor);
+    setFocusPolicy(Qt::NoFocus);
+    setToolTip(tr("Enter search request"));
+    setMinimumSize(22, 22);
+    setVisible(true);
 }
 
 void CMagButton::paintEvent(QPaintEvent *event)
 {
-  Q_UNUSED(event);
-  QPainter painter(this);
+    Q_UNUSED(event);
+    QPainter painter(this);
 
-  if (!m_icon.isNull())
+    if (!m_icon.isNull())
     {
-      int x = (width() - m_icon.width()) / 2 - 1;
-      int y = (height() - m_icon.height()) / 2 - 1;
-      painter.drawImage(x, y, m_icon);
-      return;
+        int x = (width() - m_icon.width()) / 2 - 1;
+        int y = (height() - m_icon.height()) / 2 - 1;
+        painter.drawImage(x, y, m_icon);
+        return;
     }
 
-  // Fall back to boring circle X
-  painter.setRenderHint(QPainter::Antialiasing, true);
+    // Fall back to boring circle X
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
-  QPalette p = palette();
+    QPalette p = palette();
 
-  QPen pen(QColor::fromRgb(85,85,85));
-  pen.setWidthF(2.9);
+    QPen pen(QColor::fromRgb(85,85,85));
+    pen.setWidthF(2.9);
 
-  // draw circle
-  painter.setPen(pen);
-  int padding = width() / 4;
-  int circleRadius = (width() - (padding * 2))*3/4;
-  painter.drawEllipse(padding, padding, circleRadius, circleRadius);
+    // draw circle
+    painter.setPen(pen);
+    int padding = width() / 4;
+    int circleRadius = (width() - (padding * 2))*3/4;
+    painter.drawEllipse(padding, padding, circleRadius, circleRadius);
 
-  // draw
-  painter.drawLine(padding+circleRadius, padding+circleRadius, width() - padding, width() - padding);
+    // draw
+    painter.drawLine(padding+circleRadius, padding+circleRadius, width() - padding, width() - padding);
 }
 
 CLocaleButton::CLocaleButton(QWidget *parent)
-  : QToolButton(parent)
+    : QToolButton(parent)
 {
-  setCursor(Qt::ArrowCursor);
-  setFocusPolicy(Qt::NoFocus);
-  setToolTip(tr("Filter by language"));
-  setMinimumSize(44, 22);
-  setVisible(true);
-  setIcon(QIcon::fromTheme("preferences-desktop-locale", QIcon(":/icons/tango/22x22/apps/preferences-desktop-locale.png")));
-  setAutoRaise(false);
-  setPopupMode(QToolButton::InstantPopup);
+    setCursor(Qt::ArrowCursor);
+    setFocusPolicy(Qt::NoFocus);
+    setToolTip(tr("Filter by language"));
+    setMinimumSize(44, 22);
+    setVisible(true);
+    setIcon(QIcon::fromTheme("preferences-desktop-locale", QIcon(":/icons/tango/22x22/apps/preferences-desktop-locale.png")));
+    setAutoRaise(false);
+    setPopupMode(QToolButton::InstantPopup);
 
-  QString style("QToolButton {"
-                "border: none;"
-		"pressed {border: 1px}"
-                "}");
+    QString style("QToolButton {"
+                  "border: none;"
+                  "pressed {border: 1px}"
+                  "}");
 
-  setStyleSheet(style);
+    setStyleSheet(style);
 }
 
 CFilterLineEdit::CFilterLineEdit(QWidget *parent)
-  : LineEdit(parent)
-  , m_menu(new QMenu)
-  , m_filterModel(0)
+    : LineEdit(parent)
+    , m_menu(new QMenu)
+    , m_filterModel(0)
 {
-  CClearButton *clearButton = new CClearButton(this);
-  CMagButton *magButton = new CMagButton(this);
-  CLocaleButton *localeButton = new CLocaleButton(this);
-  QString style("QListView, QLineEdit {"
-                "selection-color: white; "
-                "border: 2px groove gray;"
-                "border-radius: 13px;"
-                "padding: 2px 2px;"
-                "background-image: url(:/icons/xxx.png);"
-                "background-position: top right;"
-                "padding-right: 0px;"
-                "}"
-                "QLineEdit:focus {"
-                "selection-color: white;   "
-                "border: 2px groove gray;"
-                "border-radius: 13px;"
-                "padding: 2px 2px;"
-                "background-image: url(:/icons/xxx.png);"
-                "padding-right: 0px;"
-                "}"
-                "QLineEdit:edit-focus {"
-                "selection-color: white;   "
-                "border: 2px groove gray;"
-                "border-radius: 13px;"
-                "padding: 2px 2px;"
-                "background-image: url(:/icons/xxx.png);"
-                "padding-right: 0px;"
-                "}");
+    CClearButton *clearButton = new CClearButton(this);
+    CMagButton *magButton = new CMagButton(this);
+    CLocaleButton *localeButton = new CLocaleButton(this);
+    QString style("QListView, QLineEdit {"
+                  "selection-color: white; "
+                  "border: 2px groove gray;"
+                  "border-radius: 13px;"
+                  "padding: 2px 2px;"
+                  "background-image: url(:/icons/xxx.png);"
+                  "background-position: top right;"
+                  "padding-right: 0px;"
+                  "}"
+                  "QLineEdit:focus {"
+                  "selection-color: white;   "
+                  "border: 2px groove gray;"
+                  "border-radius: 13px;"
+                  "padding: 2px 2px;"
+                  "background-image: url(:/icons/xxx.png);"
+                  "padding-right: 0px;"
+                  "}"
+                  "QLineEdit:edit-focus {"
+                  "selection-color: white;   "
+                  "border: 2px groove gray;"
+                  "border-radius: 13px;"
+                  "padding: 2px 2px;"
+                  "background-image: url(:/icons/xxx.png);"
+                  "padding-right: 0px;"
+                  "}");
 
-  setStyleSheet(style);
-  setAttribute(Qt::WA_MacShowFocusRect, 0);
-  addWidget(magButton, LeftSide);
+    setStyleSheet(style);
+    setAttribute(Qt::WA_MacShowFocusRect, 0);
+    addWidget(magButton, LeftSide);
 
-  connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
-  connect(this, SIGNAL(textChanged(const QString&)),
-	  clearButton, SLOT(textChanged(const QString&)));
-  addWidget(clearButton, RightSide);
+    connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
+    connect(this, SIGNAL(textChanged(const QString&)),
+            clearButton, SLOT(textChanged(const QString&)));
+    addWidget(clearButton, RightSide);
 
-  addWidget(localeButton, LeftSide);
+    addWidget(localeButton, LeftSide);
 
-  localeButton->setMenu(m_menu);
-  connect(localeButton, SIGNAL(clicked()), localeButton, SLOT(showMenu()));
+    localeButton->setMenu(m_menu);
+    connect(localeButton, SIGNAL(clicked()), localeButton, SLOT(showMenu()));
 
-  QAction *action = new QAction(tr("english"), this);
-  action->setStatusTip(tr("Select/Unselect songs in english"));
-  action->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")));
-  action->setIconVisibleInMenu(true);
-  connect(action, SIGNAL(triggered()), SLOT(filterLanguageEnglish()));
-  addAction(action);
+    QAction *action = new QAction(tr("english"), this);
+    action->setStatusTip(tr("Select/Unselect songs in english"));
+    action->setIcon(QIcon::fromTheme("flag-en", QIcon(":/icons/songbook/22x22/flags/flag-en.png")));
+    action->setIconVisibleInMenu(true);
+    connect(action, SIGNAL(triggered()), SLOT(filterLanguageEnglish()));
+    addAction(action);
 
-  action = new QAction(tr("french"), this);
-  action->setStatusTip(tr("Select/Unselect songs in french"));
-  action->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")));
-  action->setIconVisibleInMenu(true);
-  connect(action, SIGNAL(triggered()), SLOT(filterLanguageFrench()));
-  addAction(action);
+    action = new QAction(tr("french"), this);
+    action->setStatusTip(tr("Select/Unselect songs in french"));
+    action->setIcon(QIcon::fromTheme("flag-fr", QIcon(":/icons/songbook/22x22/flags/flag-fr.png")));
+    action->setIconVisibleInMenu(true);
+    connect(action, SIGNAL(triggered()), SLOT(filterLanguageFrench()));
+    addAction(action);
 
-  action = new QAction(tr("spanish"), this);
-  action->setStatusTip(tr("Select/Unselect songs in spanish"));
-  action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")));
-  action->setIconVisibleInMenu(true);
-  connect(action, SIGNAL(triggered()), SLOT(filterLanguageSpanish()));
-  addAction(action);
+    action = new QAction(tr("spanish"), this);
+    action->setStatusTip(tr("Select/Unselect songs in spanish"));
+    action->setIcon(QIcon::fromTheme("flag-es", QIcon(":/icons/songbook/22x22/flags/flag-es.png")));
+    action->setIconVisibleInMenu(true);
+    connect(action, SIGNAL(triggered()), SLOT(filterLanguageSpanish()));
+    addAction(action);
 
-  action = new QAction(tr("portuguese"), this);
-  action->setStatusTip(tr("Select/Unselect songs in portuguese"));
-  action->setIcon(QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")));
-  action->setIconVisibleInMenu(true);
-  connect(action, SIGNAL(triggered()), SLOT(filterLanguagePortuguese()));
-  addAction(action);
+    action = new QAction(tr("portuguese"), this);
+    action->setStatusTip(tr("Select/Unselect songs in portuguese"));
+    action->setIcon(QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-pt.png")));
+    action->setIconVisibleInMenu(true);
+    connect(action, SIGNAL(triggered()), SLOT(filterLanguagePortuguese()));
+    addAction(action);
 
-  action = new QAction(tr("italian"), this);
-  action->setStatusTip(tr("Select/Unselect songs in italian"));
-  action->setIcon(QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-it.png")));
-  action->setIconVisibleInMenu(true);
-  connect(action, SIGNAL(triggered()), SLOT(filterLanguageItalian()));
-  addAction(action);
+    action = new QAction(tr("italian"), this);
+    action->setStatusTip(tr("Select/Unselect songs in italian"));
+    action->setIcon(QIcon::fromTheme("flag-pt", QIcon(":/icons/songbook/22x22/flags/flag-it.png")));
+    action->setIconVisibleInMenu(true);
+    connect(action, SIGNAL(triggered()), SLOT(filterLanguageItalian()));
+    addAction(action);
 
-  updateTextMargins();
-  setInactiveText(tr("Filter"));
+    updateTextMargins();
+    setInactiveText(tr("Filter"));
 }
 
 CFilterLineEdit::~CFilterLineEdit()
@@ -239,37 +239,37 @@ CFilterLineEdit::~CFilterLineEdit()
 
 void CFilterLineEdit::addAction(QAction* action)
 {
-  m_menu->addAction(action);
+    m_menu->addAction(action);
 }
 
 void CFilterLineEdit::setFilterModel(CSongSortFilterProxyModel *filterModel)
 {
-  m_filterModel = filterModel;
-  connect(this, SIGNAL(textChanged(const QString&)),
-	  filterModel, SLOT(setFilterString(const QString&)));
+    m_filterModel = filterModel;
+    connect(this, SIGNAL(textChanged(const QString&)),
+            filterModel, SLOT(setFilterString(const QString&)));
 }
 
 void CFilterLineEdit::filterLanguageEnglish()
 {
-  setText(text() + " :en");
+    setText(text() + " :en");
 }
 
 void CFilterLineEdit::filterLanguageFrench()
 {
-  setText(text() + " :fr");
+    setText(text() + " :fr");
 }
 
 void CFilterLineEdit::filterLanguageSpanish()
 {
-  setText(text() + " :es");
+    setText(text() + " :es");
 }
 
 void CFilterLineEdit::filterLanguagePortuguese()
 {
-  setText(text() + " :pt");
+    setText(text() + " :pt");
 }
 
 void CFilterLineEdit::filterLanguageItalian()
 {
-  setText(text() + " :it");
+    setText(text() + " :it");
 }

@@ -46,72 +46,72 @@ class Hunspell;
 */
 class CEditor : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor
-  CEditor(QWidget *parent = 0);
+    /// Constructor
+    CEditor(QWidget *parent = 0);
 
-  /// Destructor
-  virtual ~CEditor();
+    /// Destructor
+    virtual ~CEditor();
 
-  /*!
+    /*!
     Returns the toolbar of the editor.
   */
-  virtual QToolBar * toolBar() const;
+    virtual QToolBar * toolBar() const;
 
-  /*!
+    /*!
     Returns a group that contains every action
     in the toolbar.
   */
-  virtual QActionGroup * actionGroup() const;
+    virtual QActionGroup * actionGroup() const;
 
-  /*!
+    /*!
     Associates this editor with an \a highlighter
     that applies syntaxic coloration onto its contents
   */
-  virtual void setHighlighter(CSongHighlighter *highlighter);
+    virtual void setHighlighter(CSongHighlighter *highlighter);
 
 protected:
-  /// Save contents
-  QAction *m_saveAct;
+    /// Save contents
+    QAction *m_saveAct;
 
-  /// Cut current selection to clipboard
-  QAction *m_cutAct;
+    /// Cut current selection to clipboard
+    QAction *m_cutAct;
 
-  /// Copy current selection to clipboard
-  QAction *m_copyAct;
+    /// Copy current selection to clipboard
+    QAction *m_copyAct;
 
-  /// Paste selection from clipboard
-  QAction *m_pasteAct;
+    /// Paste selection from clipboard
+    QAction *m_pasteAct;
 
-  /// Undo previous action
-  QAction *m_undoAct;
+    /// Undo previous action
+    QAction *m_undoAct;
 
-  /// Redo previous undone action
-  QAction *m_redoAct;
+    /// Redo previous undone action
+    QAction *m_redoAct;
 
-  /// Replace a text string with another
-  QAction *m_replaceAct;
+    /// Replace a text string with another
+    QAction *m_replaceAct;
 
-  /// Search a text string
-  QAction *m_searchAct;
+    /// Search a text string
+    QAction *m_searchAct;
 
-  /// Insert new verse environment
-  QAction *m_verseAct;
+    /// Insert new verse environment
+    QAction *m_verseAct;
 
-  /// Insert new chorus environment
-  QAction *m_chorusAct;
+    /// Insert new chorus environment
+    QAction *m_chorusAct;
 
-  /// Insert new bridge environment
-  QAction *m_bridgeAct;
+    /// Insert new bridge environment
+    QAction *m_bridgeAct;
 
-  /// Underline mispelled words
-  QAction* m_spellCheckingAct;
+    /// Underline mispelled words
+    QAction* m_spellCheckingAct;
 
 protected:
-  QActionGroup *m_actions;
-  QToolBar *m_toolBar;
+    QActionGroup *m_actions;
+    QToolBar *m_toolBar;
 };
 
 /*!
@@ -128,76 +128,76 @@ protected:
 */
 class CSongEditor : public CEditor
 {
-  Q_OBJECT
-  Q_PROPERTY(bool newSong READ isNewSong WRITE setNewSong)
-  Q_PROPERTY(bool newCover READ isNewCover WRITE setNewCover)
+    Q_OBJECT
+    Q_PROPERTY(bool newSong READ isNewSong WRITE setNewSong)
+    Q_PROPERTY(bool newCover READ isNewCover WRITE setNewCover)
 
 public:
-  CSongEditor(QWidget *parent = 0);
-  ~CSongEditor();
+    CSongEditor(QWidget *parent = 0);
+    ~CSongEditor();
 
-  CLibrary * library() const;
+    CLibrary * library() const;
 
-  void readSettings();
-  void writeSettings();
+    void readSettings();
+    void writeSettings();
 
-  virtual void setHighlighter(CSongHighlighter *highlighter);
+    virtual void setHighlighter(CSongHighlighter *highlighter);
 
-  Song & song();
-  void setSong(const Song &song);
+    Song & song();
+    void setSong(const Song &song);
 
-  CSongCodeEditor * codeEditor() const;
+    CSongCodeEditor * codeEditor() const;
 
-  bool isModified() const;
-  bool isNewSong() const;
+    bool isModified() const;
+    bool isNewSong() const;
 
-  //! Getter on the new cover property
-  bool isNewCover() const;
+    //! Getter on the new cover property
+    bool isNewCover() const;
 
-  virtual QToolBar * toolBar() const;
-  virtual QActionGroup * actionGroup() const;
+    virtual QToolBar * toolBar() const;
+    virtual QActionGroup * actionGroup() const;
 
-  virtual bool isSpellCheckAvailable() const;
-  virtual void setSpellCheckAvailable(const bool);
+    virtual bool isSpellCheckAvailable() const;
+    virtual void setSpellCheckAvailable(const bool);
 
 public slots:
-  void setModified(bool modified);
-  void setNewSong(bool newSong);
+    void setModified(bool modified);
+    void setNewSong(bool newSong);
 
-  //! Setter on the new cover property
-  void setNewCover(bool newCover);
+    //! Setter on the new cover property
+    void setNewCover(bool newCover);
 
 #ifdef ENABLE_SPELLCHECK
-  void setDictionary(const QLocale & locale);
+    void setDictionary(const QLocale & locale);
 #endif //ENABLE_SPELLCHECK
 
-  void toggleSpellCheckActive(bool);
+    void toggleSpellCheckActive(bool);
 
 signals:
-  void labelChanged(const QString &label);
-  void saved(const QString &path);
+    void labelChanged(const QString &label);
+    void saved(const QString &path);
 
 protected:
-  void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
-  //write modifications of the textEdit into sg file.
-  void save();
-  void documentWasModified();
-  void findReplaceDialog();
+    //write modifications of the textEdit into sg file.
+    void save();
+    void documentWasModified();
+    void findReplaceDialog();
 
 private:
-  void parseText();
-  bool checkSongMandatoryFields();
-  void saveNewSong();
+    void parseText();
+    bool checkSongMandatoryFields();
+    void saveNewSong();
 
-  CSongHeaderEditor *m_songHeaderEditor;
-  CSongCodeEditor *m_codeEditor;
-  CFindReplaceDialog* m_findReplaceDialog;
+    CSongHeaderEditor *m_songHeaderEditor;
+    CSongCodeEditor *m_codeEditor;
+    CFindReplaceDialog* m_findReplaceDialog;
 
-  Song m_song;
-  bool m_newSong;
-  bool m_newCover;
+    Song m_song;
+    bool m_newSong;
+    bool m_newCover;
 };
 
 

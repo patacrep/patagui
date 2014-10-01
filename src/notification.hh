@@ -41,58 +41,58 @@ class QBoxLayout;
  */
 class CNotification : public QDockWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  enum Priority { LowPriority, MediumPriority, HighPriority };
+    enum Priority { LowPriority, MediumPriority, HighPriority };
 
-  /// Constructor
-  CNotification(QWidget* parent);
+    /// Constructor
+    CNotification(QWidget* parent);
 
-  /// Getter on the notification message.
-  /// The message is the main information provided by the widget.
-  /// Based on this message, the user can select appropriate actions.
-  /// @return the message
-  QString message() const;
+    /// Getter on the notification message.
+    /// The message is the main information provided by the widget.
+    /// Based on this message, the user can select appropriate actions.
+    /// @return the message
+    QString message() const;
 
-  /// Setter on the notification message.
-  /// The message is the main information provided by the widget.
-  /// Based on this message, the user can select appropriate actions.
-  /// @param message the message
-  void setMessage(const QString & message);
+    /// Setter on the notification message.
+    /// The message is the main information provided by the widget.
+    /// Based on this message, the user can select appropriate actions.
+    /// @param message the message
+    void setMessage(const QString & message);
 
-  /// Getter on the notification priority.
-  /// The priority indicates the level of importance of the notification.
-  /// As a result, the icon and color background of the notification area may change
-  /// to highlight this level of priority.
-  /// @return the priority
-  Priority priority() const;
+    /// Getter on the notification priority.
+    /// The priority indicates the level of importance of the notification.
+    /// As a result, the icon and color background of the notification area may change
+    /// to highlight this level of priority.
+    /// @return the priority
+    Priority priority() const;
 
-  /// Setter on the notification priority.
-  /// The priority indicates the level of importance of the notification.
-  /// As a result, the icon and color background of the notification area may change
-  /// to highlight this level of priority.
-  /// @param level the priority level
-  void setPriority(const Priority & level);
+    /// Setter on the notification priority.
+    /// The priority indicates the level of importance of the notification.
+    /// As a result, the icon and color background of the notification area may change
+    /// to highlight this level of priority.
+    /// @param level the priority level
+    void setPriority(const Priority & level);
 
-  /// Add an action to the notification.
-  /// Actions result in QPushButtons on the right side,
-  /// organised in a vertical layout.
-  /// @param action the action
-  void addAction(QAction* action);
+    /// Add an action to the notification.
+    /// Actions result in QPushButtons on the right side,
+    /// organised in a vertical layout.
+    /// @param action the action
+    void addAction(QAction* action);
 
-  /// Getter on the parent widget.
-  /// @return the parent widget
-  CMainWindow* parent() const;
+    /// Getter on the parent widget.
+    /// @return the parent widget
+    CMainWindow* parent() const;
 
 private:
-  /// Change the background color of the notification area
-  /// based on the priority level.
-  void changeBackground();
+    /// Change the background color of the notification area
+    /// based on the priority level.
+    void changeBackground();
 
-  QTextEdit* m_textEdit; ///< widget containing icon and message
-  QBoxLayout* m_layout;  ///< notification layout
-  Priority m_priority; ///< notification priority level
+    QTextEdit* m_textEdit; ///< widget containing icon and message
+    QBoxLayout* m_layout;  ///< notification layout
+    Priority m_priority; ///< notification priority level
 };
 
 #endif // __NOTIFICATION_HH__

@@ -23,36 +23,36 @@
 #include <QDebug>
 
 CLogsHighlighter::CLogsHighlighter(QTextDocument *parent)
-  : QSyntaxHighlighter(parent)
+    : QSyntaxHighlighter(parent)
 {
-  HighlightingRule rule;
+    HighlightingRule rule;
 
-  //LaTeX compilation logs
-  //files (light blue)
-  QStringList extensions;
-  extensions << "pdf" << "jpg" << "png" << "ly" << "sg";
-  m_latexFileFormat.setForeground(_TangoSkyBlue1);
+    //LaTeX compilation logs
+    //files (light blue)
+    QStringList extensions;
+    extensions << "pdf" << "jpg" << "png" << "ly" << "sg";
+    m_latexFileFormat.setForeground(_TangoSkyBlue1);
 
-  foreach (const QString &extension, extensions)
+    foreach (const QString &extension, extensions)
     {
-      rule.pattern = QRegExp(QString("[^(\\s|/)]*\\.%1").arg(extension));
-      rule.format = m_latexFileFormat;
-      highlightingRules.append(rule);
+        rule.pattern = QRegExp(QString("[^(\\s|/)]*\\.%1").arg(extension));
+        rule.format = m_latexFileFormat;
+        highlightingRules.append(rule);
     }
 
-  //errors (light red)
-  m_latexErrorFormat.setForeground(_TangoScarletRed1);
+    //errors (light red)
+    m_latexErrorFormat.setForeground(_TangoScarletRed1);
 
-  rule.pattern = QRegExp("^!.*");
-  rule.format = m_latexErrorFormat;
-  highlightingRules.append(rule);
+    rule.pattern = QRegExp("^!.*");
+    rule.format = m_latexErrorFormat;
+    highlightingRules.append(rule);
 
-  //warnings (light orange)
-  m_latexWarningFormat.setForeground(_TangoOrange1);
+    //warnings (light orange)
+    m_latexWarningFormat.setForeground(_TangoOrange1);
 
-  rule.pattern = QRegExp("^.*(W|w)arning.*$");
-  rule.format = m_latexWarningFormat;
-  highlightingRules.append(rule);
+    rule.pattern = QRegExp("^.*(W|w)arning.*$");
+    rule.format = m_latexWarningFormat;
+    highlightingRules.append(rule);
 
 }
 
@@ -61,16 +61,16 @@ CLogsHighlighter::~CLogsHighlighter()
 
 void CLogsHighlighter::highlightBlock(const QString &text)
 {
-  foreach (const HighlightingRule &rule, highlightingRules)
+    foreach (const HighlightingRule &rule, highlightingRules)
     {
-      QRegExp expression(rule.pattern);
-      int index = expression.indexIn(text);
-      while (index >= 0)
-	{
-	  int length = expression.matchedLength();
-	  setFormat(index, length, rule.format);
-	  index = expression.indexIn(text, index + length);
-	}
+        QRegExp expression(rule.pattern);
+        int index = expression.indexIn(text);
+        while (index >= 0)
+        {
+            int length = expression.matchedLength();
+            setFormat(index, length, rule.format);
+            index = expression.indexIn(text, index + length);
+        }
     }
-  setCurrentBlockState(0);
+    setCurrentBlockState(0);
 }

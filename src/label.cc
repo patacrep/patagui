@@ -21,11 +21,11 @@
 #include <QFontMetrics>
 
 CLabel::CLabel(QWidget *parent)
-  : QLabel(parent)
-  , m_elideMode(Qt::ElideRight)
-  , m_textCache()
+    : QLabel(parent)
+    , m_elideMode(Qt::ElideRight)
+    , m_textCache()
 {
-  setFixedWidth(175);
+    setFixedWidth(175);
 }
 
 CLabel::~CLabel()
@@ -33,20 +33,20 @@ CLabel::~CLabel()
 
 Qt::TextElideMode CLabel::elideMode() const
 {
-  return m_elideMode;
+    return m_elideMode;
 }
 
 void CLabel::setElideMode(Qt::TextElideMode mode)
 {
-  m_elideMode = mode;
+    m_elideMode = mode;
 }
 
 void CLabel::paintEvent(QPaintEvent *event)
 {
-  if (m_textCache != text())
+    if (m_textCache != text())
     {
-      m_textCache = text();
-      setText(fontMetrics().elidedText(text(), m_elideMode, width()));
+        m_textCache = text();
+        setText(fontMetrics().elidedText(text(), m_elideMode, width()));
     }
-  QLabel::paintEvent(event);
+    QLabel::paintEvent(event);
 }

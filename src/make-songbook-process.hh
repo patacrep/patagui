@@ -43,183 +43,183 @@
 
 class CMakeSongbookProcess : public QProcess
 {
-  Q_OBJECT
-  Q_PROPERTY(QString command READ command WRITE setCommand)
-  Q_PROPERTY(QString program READ program WRITE setProgram)
-  Q_PROPERTY(QStringList arguments READ arguments WRITE setArguments)
+    Q_OBJECT
+    Q_PROPERTY(QString command READ command WRITE setCommand)
+    Q_PROPERTY(QString program READ program WRITE setProgram)
+    Q_PROPERTY(QStringList arguments READ arguments WRITE setArguments)
 
-  Q_PROPERTY(QString startMessage READ startMessage WRITE setStartMessage)
-  Q_PROPERTY(QString successMessage READ successMessage WRITE setSuccessMessage)
-  Q_PROPERTY(QString errorMessage READ errorMessage WRITE setErrorMessage)
+    Q_PROPERTY(QString startMessage READ startMessage WRITE setStartMessage)
+    Q_PROPERTY(QString successMessage READ successMessage WRITE setSuccessMessage)
+    Q_PROPERTY(QString errorMessage READ errorMessage WRITE setErrorMessage)
 
-  Q_PROPERTY(QUrl urlToOpen READ urlToOpen WRITE setUrlToOpen)
+    Q_PROPERTY(QUrl urlToOpen READ urlToOpen WRITE setUrlToOpen)
 
 public slots:
 
-  /*!
+    /*!
     Execute the process once all parameters have been set.
     The signal aboutToStart is emitted before the execution.
     \sa aboutToStart
   */
     void execute();
 
-  /*!
+    /*!
     Sets the \a command that should be executed.
     For instance: "make songbook.pdf".
     \sa command, program, arguments
   */
-  void setCommand(const QString &command);
+    void setCommand(const QString &command);
 
-  /*!
+    /*!
     Sets the \a message that should displayed when the process starts.
     The message is displayed within the status bar.
     \sa startMessage, setSuccessMessage, setErrorMessage
   */
-  void setStartMessage(const QString &message);
+    void setStartMessage(const QString &message);
 
-  /*!
+    /*!
     Sets the \a message that should displayed when the process successfully exits.
     The message is displayed within the status bar.
     \sa successMessage, setStartMessage, setErrorMessage
   */
-  void setSuccessMessage(const QString &message);
+    void setSuccessMessage(const QString &message);
 
-  /*!
+    /*!
     Sets the \a message that should displayed when the process exits with failure.
     The message is displayed within the status bar.
     \sa errorMessage, setStartMessage, setSuccessMessage
   */
-  void setErrorMessage(const QString &message);
+    void setErrorMessage(const QString &message);
 
-  /*!
+    /*!
     Sets an \a url that should be opened after the process successfully exits.
     The message is displayed within the status bar.
     \sa urlToOpen
   */
-  void setUrlToOpen(const QUrl &url);
+    void setUrlToOpen(const QUrl &url);
 
 public:
-  /// Constructor.
-  CMakeSongbookProcess(QObject *parent = 0);
+    /// Constructor.
+    CMakeSongbookProcess(QObject *parent = 0);
 
-  /// Destructor.
-  virtual ~CMakeSongbookProcess();
+    /// Destructor.
+    virtual ~CMakeSongbookProcess();
 
-  /*!
+    /*!
     Returns the whole command to be executed.
     \sa setCommand
   */
-  QString command() const;
+    QString command() const;
 
-  /*!
+    /*!
     Returns the message that is displayed when the process starts.
     \sa setStartMessage
   */
-  const QString & startMessage() const;
+    const QString & startMessage() const;
 
-  /*! Returns the message that is displayed when the process successfully exits.
+    /*! Returns the message that is displayed when the process successfully exits.
     \sa setSuccessMessage
   */
-  const QString & successMessage() const;
+    const QString & successMessage() const;
 
-  /*!
+    /*!
     Returns the message that is displayed when the process exits with failure.
     \sa setErrorMessage
   */
-  const QString & errorMessage() const;
+    const QString & errorMessage() const;
 
-  /*! Returns the url that should be opened when the process successfully exits.
+    /*! Returns the url that should be opened when the process successfully exits.
     \sa setUrlToOpen
   */
-  const QUrl & urlToOpen() const;
+    const QUrl & urlToOpen() const;
 
 signals:
-  /*!
+    /*!
     This signal is emitted before the process is executed.
     \sa execute
   */
-  void aboutToStart();
+    void aboutToStart();
 
-  /*!
+    /*!
     Emits a \a message when the process starts and exits after a delay of \a timeout.
     \sa startMessage, successMessage, errorMessage
   */
-  void message(const QString &message, int timeout);
+    void message(const QString &message, int timeout);
 
-  /*!
+    /*!
     This signal is emitted when information is available on standard output.
     \sa readOnStandardError
   */
-  void readOnStandardOutput(const QString &output);
+    void readOnStandardOutput(const QString &output);
 
-  /*!
+    /*!
     This signal is emitted when information is available on error output.
     \sa readOnStandardOutput
   */
-  void readOnStandardError(const QString &error);
+    void readOnStandardError(const QString &error);
 
 private slots:
-  /*!
+    /*!
     Reads information from standard output.
     \sa readStandardError
   */
-  void readStandardOutput();
+    void readStandardOutput();
 
-  /*!
+    /*!
     Reads information from error output.
     \sa readStandardOutput
   */
-  void readStandardError();
+    void readStandardError();
 
-  /*!
+    /*!
     Emits start message.
     \sa startMessage \sa message
   */
-  void onStarted();
+    void onStarted();
 
-  /*!
+    /*!
     Emits exit message and try opening the url if successful.
     \sa message, url, errorMessage, successMessage
   */
-  void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
 
-  /*!
+    /*!
     Returns the name of the process.
     \sa setProgram, arguments, setArguments, command, setCommand
   */
-  const QString & program() const;
+    const QString & program() const;
 
-  /*!
+    /*!
     Sets the \a program name of the process.
     The name corresponds to the first world of the command.
     \sa program, command, setCommand
   */
-  void setProgram(const QString &program);
+    void setProgram(const QString &program);
 
-  /*!
+    /*!
     Returns the arguments of the process.
     Arguments are the words that comes after the program name in the command.
     \sa setArguments, command, setCommand
   */
-  const QStringList & arguments() const;
+    const QStringList & arguments() const;
 
-  /*!
+    /*!
     Sets the \a arguments of the process.
     Arguments are the words that comes after the program name in the command.
     \sa arguments, command, setCommand
   */
-  void setArguments(const QStringList &arguments);
+    void setArguments(const QStringList &arguments);
 
-  QString m_program;
-  QStringList m_arguments;
+    QString m_program;
+    QStringList m_arguments;
 
-  QString m_startMessage;
-  QString m_successMessage;
-  QString m_errorMessage;
+    QString m_startMessage;
+    QString m_successMessage;
+    QString m_errorMessage;
 
-  QUrl m_urlToOpen;
+    QUrl m_urlToOpen;
 };
 
 #endif // __MAKE_SONGBOOK_PROCESS_HH__

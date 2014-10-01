@@ -48,51 +48,51 @@ class CDiagramArea;
 */
 class CDiagramEditor : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  CDiagramEditor(QWidget *parent=0);
+    /// Constructor.
+    CDiagramEditor(QWidget *parent=0);
 
-  /// Destructor.
-  ~CDiagramEditor();
+    /// Destructor.
+    ~CDiagramEditor();
 
-  /*!
+    /*!
     Returns the preferred size for the dialog.
   */
-  virtual QSize sizeHint() const;
+    virtual QSize sizeHint() const;
 
-  /*!
+    /*!
     Returns the CChord object associated with the dialog.
   */
-  CChord * chord() const;
+    CChord * chord() const;
 
 public slots:
-  /*!
+    /*!
     Associates the CDiagram object \a diagram with dialog.
     The properties of \a diagram are used to fill the form of the dialog.
   */
-  void setChord(CChord *chord);
+    void setChord(CChord *chord);
 
 private slots:
-  bool checkChord();
-  void onInstrumentChanged(bool);
-  void reset();
+    bool checkChord();
+    void onInstrumentChanged(bool);
+    void reset();
 
 private:
-  //chord
-  QRadioButton *m_guitar;
-  QRadioButton *m_ukulele;
-  QLineEdit *m_nameLineEdit;
-  QLineEdit *m_stringsLineEdit;
-  QSpinBox *m_fretSpinBox;
-  QCheckBox *m_importantCheckBox;
-  //info
-  QLabel *m_infoIconLabel;
-  QLabel *m_messageLabel;
+    //chord
+    QRadioButton *m_guitar;
+    QRadioButton *m_ukulele;
+    QLineEdit *m_nameLineEdit;
+    QLineEdit *m_stringsLineEdit;
+    QSpinBox *m_fretSpinBox;
+    QCheckBox *m_importantCheckBox;
+    //info
+    QLabel *m_infoIconLabel;
+    QLabel *m_messageLabel;
 
-  CDiagramArea *m_diagramArea;
-  CChord *m_chord;
+    CDiagramArea *m_diagramArea;
+    CChord *m_chord;
 };
 
 #endif // __DIAGRAM_EDITOR_HH__

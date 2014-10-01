@@ -40,238 +40,238 @@ const QRegExp Song::reCover("\\\\cover");
 
 Song Song::fromFile(const QString &path)
 {
-  QFile file(path);
+    QFile file(path);
 
-  if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-      qWarning() << "Song::fromFile: unable to open " << path;
-      return Song();
+        qWarning() << "Song::fromFile: unable to open " << path;
+        return Song();
     }
 
-  QTextStream stream (&file);
-  stream.setCodec("UTF-8");
-  QString fileStr = stream.readAll();
-  file.close();
+    QTextStream stream (&file);
+    stream.setCodec("UTF-8");
+    QString fileStr = stream.readAll();
+    file.close();
 
-  return Song::fromString(fileStr, path);
+    return Song::fromString(fileStr, path);
 }
 
 Song Song::fromString(const QString &text, const QString &path)
 {
-  Song song;
-  reSgFile.indexIn(text);
+    Song song;
+    reSgFile.indexIn(text);
 
-  QString prefix = reSgFile.cap(1);
-  QString options = reSgFile.cap(3);
-  QString content = reSgFile.cap(4);
-  QString post = reSgFile.cap(5);
+    QString prefix = reSgFile.cap(1);
+    QString options = reSgFile.cap(3);
+    QString content = reSgFile.cap(4);
+    QString post = reSgFile.cap(5);
 
-  // path
-  song.path = path;
+    // path
+    song.path = path;
 
-  // path (for cover)
-  song.coverPath = QFileInfo(path).absolutePath();
+    // path (for cover)
+    song.coverPath = QFileInfo(path).absolutePath();
 
-  reColumnCount.indexIn(prefix);
-  song.columnCount = reColumnCount.cap(1).toInt();
+    reColumnCount.indexIn(prefix);
+    song.columnCount = reColumnCount.cap(1).toInt();
 
-  // title
-  song.title = latexToUtf8(reSgFile.cap(2));
+    // title
+    song.title = latexToUtf8(reSgFile.cap(2));
 
-  // options
-  reArtist.indexIn(options);
-  song.artist = latexToUtf8(reArtist.cap(1));
+    // options
+    reArtist.indexIn(options);
+    song.artist = latexToUtf8(reArtist.cap(1));
 
-  reAlbum.indexIn(options);
-  song.album = latexToUtf8(reAlbum.cap(1));
+    reAlbum.indexIn(options);
+    song.album = latexToUtf8(reAlbum.cap(1));
 
-  reOriginalSong.indexIn(options);
-  song.originalSong = latexToUtf8(reOriginalSong.cap(1));
+    reOriginalSong.indexIn(options);
+    song.originalSong = latexToUtf8(reOriginalSong.cap(1));
 
-  reUrl.indexIn(options);
-  song.url = reUrl.cap(1).replace("http://","");
-  if (song.url.endsWith("/"))
-    song.url.chop(1);
-  song.isWebsite = !song.url.isEmpty();
+    reUrl.indexIn(options);
+    song.url = reUrl.cap(1).replace("http://","");
+    if (song.url.endsWith("/"))
+        song.url.chop(1);
+    song.isWebsite = !song.url.isEmpty();
 
-  reCoverName.indexIn(options);
-  song.coverName = reCoverName.cap(1);
+    reCoverName.indexIn(options);
+    song.coverName = reCoverName.cap(1);
 
-  // content
-  song.isLilypond = bool(reLilypond.indexIn(content) > -1);
+    // content
+    song.isLilypond = bool(reLilypond.indexIn(content) > -1);
 
-  //locale
-  reLanguage.indexIn(prefix);
-  song.locale = QLocale(languageFromString(reLanguage.cap(1)), QLocale::AnyCountry);
+    //locale
+    reLanguage.indexIn(prefix);
+    song.locale = QLocale(languageFromString(reLanguage.cap(1)), QLocale::AnyCountry);
 
-  song.capo = 0;
-  song.transpose = 0;
+    song.capo = 0;
+    song.transpose = 0;
 
-  QStringList lines = content.split("\n");
-  QString line;
-  bool preliminaryFinished = false;
-  foreach (line, lines)
+    QStringList lines = content.split("\n");
+    QString line;
+    bool preliminaryFinished = false;
+    foreach (line, lines)
     {
-      if (!preliminaryFinished)
+        if (!preliminaryFinished)
         {
-          if (reCapo.indexIn(line) != -1)
+            if (reCapo.indexIn(line) != -1)
             {
-              song.capo = reCapo.cap(1).toInt();
-              continue;
+                song.capo = reCapo.cap(1).toInt();
+                continue;
             }
-          else if (reTranspose.indexIn(line) != -1)
+            else if (reTranspose.indexIn(line) != -1)
             {
-              song.transpose = reTranspose.cap(1).toInt();
-              continue;
+                song.transpose = reTranspose.cap(1).toInt();
+                continue;
             }
-          else if (line.contains("\\gtab"))
+            else if (line.contains("\\gtab"))
             {
-	      song.gtabs << line.trimmed();
-              continue;
+                song.gtabs << line.trimmed();
+                continue;
             }
-          else if (line.contains("\\utab"))
+            else if (line.contains("\\utab"))
             {
-	      song.utabs << line.trimmed();
-              continue;
+                song.utabs << line.trimmed();
+                continue;
             }
-          else if (reCover.indexIn(line) != -1 || line.trimmed().isEmpty())
+            else if (reCover.indexIn(line) != -1 || line.trimmed().isEmpty())
             {
-              continue;
+                continue;
             }
-          else if (!line.trimmed().startsWith("%"))
+            else if (!line.trimmed().startsWith("%"))
             {
-              preliminaryFinished = true;
+                preliminaryFinished = true;
             }
         }
-      if (preliminaryFinished)
+        if (preliminaryFinished)
         {
-          song.lyrics << line;
+            song.lyrics << line;
         }
     }
-  // remove blank line at the end of input
-  if (!song.lyrics.isEmpty())
-    while (song.lyrics.last().trimmed().isEmpty())
-      {
-	if (song.lyrics.isEmpty())
-	  break;
-	song.lyrics.removeLast();
-      }
+    // remove blank line at the end of input
+    if (!song.lyrics.isEmpty())
+        while (song.lyrics.last().trimmed().isEmpty())
+        {
+            if (song.lyrics.isEmpty())
+                break;
+            song.lyrics.removeLast();
+        }
 
-  song.scripture << post.split("\n");
+    song.scripture << post.split("\n");
 
-  return song;
+    return song;
 }
 
 QString Song::toString(const Song &song)
 {
-  QString text;
-  text.append(QString("\\selectlanguage{%1}\n").arg(Song::languageToString(song.locale.language())));
-  if (song.columnCount > 0)
-    text.append(QString("\\songcolumns{%1}\n").arg(song.columnCount));
+    QString text;
+    text.append(QString("\\selectlanguage{%1}\n").arg(Song::languageToString(song.locale.language())));
+    if (song.columnCount > 0)
+        text.append(QString("\\songcolumns{%1}\n").arg(song.columnCount));
 
-  text.append(QString("\\beginsong{%1}\n  [by={%2}").arg(utf8ToLatex(song.title)).arg(utf8ToLatex(song.artist)));
+    text.append(QString("\\beginsong{%1}\n  [by={%2}").arg(utf8ToLatex(song.title)).arg(utf8ToLatex(song.artist)));
 
-  if (!song.coverName.isEmpty())
-    text.append(QString(",cov={%1}").arg(song.coverName));
+    if (!song.coverName.isEmpty())
+        text.append(QString(",cov={%1}").arg(song.coverName));
 
-  if (!song.album.isEmpty())
-    text.append(QString(",album={%1}").arg(utf8ToLatex(song.album)));
+    if (!song.album.isEmpty())
+        text.append(QString(",album={%1}").arg(utf8ToLatex(song.album)));
 
-  if (!song.originalSong.isEmpty())
-    text.append(QString(",%\n  original={%1}").arg(utf8ToLatex(song.originalSong)));
+    if (!song.originalSong.isEmpty())
+        text.append(QString(",%\n  original={%1}").arg(utf8ToLatex(song.originalSong)));
 
-  if (!song.url.isEmpty())
-    text.append(QString(",%\n  url={%1}").arg(song.url));
+    if (!song.url.isEmpty())
+        text.append(QString(",%\n  url={%1}").arg(song.url));
 
-  text.append(QString("]\n\n"));
+    text.append(QString("]\n\n"));
 
-  if (!song.coverName.isEmpty())
-    text.append(QString("  \\cover\n"));
+    if (!song.coverName.isEmpty())
+        text.append(QString("  \\cover\n"));
 
-  if (song.transpose != 0)
-    text.append(QString("  \\transpose{%1}\n").arg(song.transpose));
+    if (song.transpose != 0)
+        text.append(QString("  \\transpose{%1}\n").arg(song.transpose));
 
-  if (song.capo > 0)
-    text.append(QString("  \\capo{%1}\n").arg(song.capo));
+    if (song.capo > 0)
+        text.append(QString("  \\capo{%1}\n").arg(song.capo));
 
-  foreach (QString gtab, song.gtabs)
+    foreach (QString gtab, song.gtabs)
     {
-      text.append(QString("  %1\n").arg(gtab));
+        text.append(QString("  %1\n").arg(gtab));
     }
 
-  foreach (QString utab, song.utabs)
+    foreach (QString utab, song.utabs)
     {
-      text.append(QString("  %1\n").arg(utab));
+        text.append(QString("  %1\n").arg(utab));
     }
 
-  text.append(QString("\n"));
+    text.append(QString("\n"));
 
-  foreach (QString lyric, song.lyrics)
+    foreach (QString lyric, song.lyrics)
     {
-      text.append(QString("%1\n").arg(lyric));
+        text.append(QString("%1\n").arg(lyric));
     }
 
-  text.append(QString("\\endsong\n"));
+    text.append(QString("\\endsong\n"));
 
-  foreach (QString line, song.scripture)
+    foreach (QString line, song.scripture)
     {
-      text.append(QString("%1\n").arg(line));
+        text.append(QString("%1\n").arg(line));
     }
 
-  return text;
+    return text;
 }
 
 QLocale::Language Song::languageFromString(const QString &languageName)
 {
-  if (languageName == "french")
-    return QLocale::French;
-  else if (languageName == "english")
-    return QLocale::English;
-  else if (languageName == "spanish")
-    return QLocale::Spanish;
-  else if (languageName == "portuguese")
-    return QLocale::Portuguese;
-  else if (languageName == "italian")
-    return QLocale::Italian;
+    if (languageName == "french")
+        return QLocale::French;
+    else if (languageName == "english")
+        return QLocale::English;
+    else if (languageName == "spanish")
+        return QLocale::Spanish;
+    else if (languageName == "portuguese")
+        return QLocale::Portuguese;
+    else if (languageName == "italian")
+        return QLocale::Italian;
 
-  return QLocale::system().language();
+    return QLocale::system().language();
 }
 
 QString Song::languageToString(const QLocale::Language language)
 {
-  switch (language)
+    switch (language)
     {
     case QLocale::French:
-      return "french";
+        return "french";
     case QLocale::English:
-      return "english";
+        return "english";
     case QLocale::Spanish:
-      return "spanish";
+        return "spanish";
     case QLocale::Portuguese:
-      return "portuguese";
+        return "portuguese";
     case QLocale::Italian:
-      return "italian";
+        return "italian";
     default:
-      return "english";
+        return "english";
     }
 }
 
 QString Song::latexToUtf8(const QString & str)
 {
-  QString result(str);
-  result.replace(QRegExp("([^\\\\])~"), QString("\\1%1").arg(QChar(QChar::Nbsp)));
-  result.replace(QRegExp("\\\\([&~])"), "\\1");
-  result.replace(QRegExp("\\{?\\\\l?dots\\}?"),  "...");
-  result.replace("\\%",  "%");
-  return result;
+    QString result(str);
+    result.replace(QRegExp("([^\\\\])~"), QString("\\1%1").arg(QChar(QChar::Nbsp)));
+    result.replace(QRegExp("\\\\([&~])"), "\\1");
+    result.replace(QRegExp("\\{?\\\\l?dots\\}?"),  "...");
+    result.replace("\\%",  "%");
+    return result;
 }
 
 QString Song::utf8ToLatex(const QString & str)
 {
-  QString result(str);
-  result.replace(QRegExp("([&~])"), "\\\\1");
-  result.replace(QChar(QChar::Nbsp), "~");
-  result.replace("...", "\\dots");
-  result.replace("%", "\\%");
-  return result;
+    QString result(str);
+    result.replace(QRegExp("([&~])"), "\\\\1");
+    result.replace(QChar(QChar::Nbsp), "~");
+    result.replace("...", "\\dots");
+    result.replace("%", "\\%");
+    return result;
 }

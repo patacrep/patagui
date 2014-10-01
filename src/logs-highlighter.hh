@@ -37,29 +37,29 @@ class QTextDocument;
  */
 class CLogsHighlighter : public QSyntaxHighlighter
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor
-  CLogsHighlighter(QTextDocument *parent = 0);
-  /// Destructor
-  ~CLogsHighlighter();
+    /// Constructor
+    CLogsHighlighter(QTextDocument *parent = 0);
+    /// Destructor
+    ~CLogsHighlighter();
 
 protected:
-  /// Apply highlighting rules for LaTeX logs compilation output
-  void highlightBlock(const QString &text);
+    /// Apply highlighting rules for LaTeX logs compilation output
+    void highlightBlock(const QString &text);
 
 private:
-  struct HighlightingRule
-  {
-    QRegExp pattern;
-    QTextCharFormat format;
-  };
-  QVector<HighlightingRule> highlightingRules;
+    struct HighlightingRule
+    {
+        QRegExp pattern;
+        QTextCharFormat format;
+    };
+    QVector<HighlightingRule> highlightingRules;
 
-  QTextCharFormat m_latexFileFormat;
-  QTextCharFormat m_latexErrorFormat;
-  QTextCharFormat m_latexWarningFormat;
+    QTextCharFormat m_latexFileFormat;
+    QTextCharFormat m_latexErrorFormat;
+    QTextCharFormat m_latexWarningFormat;
 };
 
 #endif // __LOGS_HIGHLIGHTER_HH__

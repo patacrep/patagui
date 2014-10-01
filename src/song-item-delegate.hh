@@ -32,24 +32,24 @@
 */
 class CSongItemDelegate : public QStyledItemDelegate
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  CSongItemDelegate(QObject *parent = 0);
+    /// Constructor.
+    CSongItemDelegate(QObject *parent = 0);
 
-  /// Destructor.
-  ~CSongItemDelegate();
+    /// Destructor.
+    ~CSongItemDelegate();
 
-  /*!
+    /*!
     Draws the song item at position \a index.
   */
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-  /*!
+    /*!
     Returns a fixed size hint for columns 2 and 5 (lilypond and language columns).
   */
-  virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif // __SONG_ITEM_DELEGATE_HH__

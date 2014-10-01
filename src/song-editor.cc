@@ -37,193 +37,193 @@
 #include <QDebug>
 
 CEditor::CEditor(QWidget *parent)
-  : QWidget(parent)
-  , m_actions(new QActionGroup(this))
+    : QWidget(parent)
+    , m_actions(new QActionGroup(this))
 {
-  setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_DeleteOnClose);
 
-  // toolBar
-  m_toolBar = new QToolBar(tr("Edition tools"), this);
-  m_toolBar->setMovable(false);
-  m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
+    // toolBar
+    m_toolBar = new QToolBar(tr("Edition tools"), this);
+    m_toolBar->setMovable(false);
+    m_toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
-  // actions
-  m_saveAct = new QAction(tr("Save"), this);
-  m_saveAct->setShortcut(QKeySequence::Save);
-  m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
-  m_saveAct->setStatusTip(tr("Save modifications"));
-  m_actions->addAction(m_saveAct);
-  toolBar()->addAction(m_saveAct);
+    // actions
+    m_saveAct = new QAction(tr("Save"), this);
+    m_saveAct->setShortcut(QKeySequence::Save);
+    m_saveAct->setIcon(QIcon::fromTheme("document-save", QIcon(":/icons/tango/32x32/actions/document-save.png")));
+    m_saveAct->setStatusTip(tr("Save modifications"));
+    m_actions->addAction(m_saveAct);
+    toolBar()->addAction(m_saveAct);
 
-  //copy paste
-  m_cutAct = new QAction(tr("Cut"), this);
-  m_cutAct->setShortcut(QKeySequence::Cut);
-  m_cutAct->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
-  m_cutAct->setStatusTip(tr("Cut the selection"));
-  m_actions->addAction(m_cutAct);
-  toolBar()->addAction(m_cutAct);
+    //copy paste
+    m_cutAct = new QAction(tr("Cut"), this);
+    m_cutAct->setShortcut(QKeySequence::Cut);
+    m_cutAct->setIcon(QIcon::fromTheme("edit-cut", QIcon(":/icons/tango/32x32/actions/edit-cut.png")));
+    m_cutAct->setStatusTip(tr("Cut the selection"));
+    m_actions->addAction(m_cutAct);
+    toolBar()->addAction(m_cutAct);
 
-  m_copyAct = new QAction(tr("Copy"), this);
-  m_copyAct->setShortcut(QKeySequence::Copy);
-  m_copyAct->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
-  m_copyAct->setStatusTip(tr("Copy the selection"));
-  m_actions->addAction(m_copyAct);
-  toolBar()->addAction(m_copyAct);
+    m_copyAct = new QAction(tr("Copy"), this);
+    m_copyAct->setShortcut(QKeySequence::Copy);
+    m_copyAct->setIcon(QIcon::fromTheme("edit-copy", QIcon(":/icons/tango/32x32/actions/edit-copy.png")));
+    m_copyAct->setStatusTip(tr("Copy the selection"));
+    m_actions->addAction(m_copyAct);
+    toolBar()->addAction(m_copyAct);
 
-  m_pasteAct = new QAction(tr("Paste"), this);
-  m_pasteAct->setShortcut(QKeySequence::Paste);
-  m_pasteAct->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
-  m_pasteAct->setStatusTip(tr("Paste clipboard content"));
-  m_actions->addAction(m_pasteAct);
-  toolBar()->addAction(m_pasteAct);
+    m_pasteAct = new QAction(tr("Paste"), this);
+    m_pasteAct->setShortcut(QKeySequence::Paste);
+    m_pasteAct->setIcon(QIcon::fromTheme("edit-paste", QIcon(":/icons/tango/32x32/actions/edit-paste.png")));
+    m_pasteAct->setStatusTip(tr("Paste clipboard content"));
+    m_actions->addAction(m_pasteAct);
+    toolBar()->addAction(m_pasteAct);
 
-  toolBar()->addSeparator();
+    toolBar()->addSeparator();
 
-  //undo redo
-  m_undoAct = new QAction(tr("Undo"), this);
-  m_undoAct->setShortcut(QKeySequence::Undo);
-  m_undoAct->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
-  m_undoAct->setStatusTip(tr("Undo modifications"));
-  m_actions->addAction(m_undoAct);
-  toolBar()->addAction(m_undoAct);
+    //undo redo
+    m_undoAct = new QAction(tr("Undo"), this);
+    m_undoAct->setShortcut(QKeySequence::Undo);
+    m_undoAct->setIcon(QIcon::fromTheme("edit-undo", QIcon(":/icons/tango/32x32/actions/edit-undo.png")));
+    m_undoAct->setStatusTip(tr("Undo modifications"));
+    m_actions->addAction(m_undoAct);
+    toolBar()->addAction(m_undoAct);
 
-  m_redoAct = new QAction(tr("Redo"), this);
-  m_redoAct->setShortcut(QKeySequence::Redo);
-  m_redoAct->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
-  m_redoAct->setStatusTip(tr("Redo modifications"));
-  m_actions->addAction(m_redoAct);
-  toolBar()->addAction(m_redoAct);
+    m_redoAct = new QAction(tr("Redo"), this);
+    m_redoAct->setShortcut(QKeySequence::Redo);
+    m_redoAct->setIcon(QIcon::fromTheme("edit-redo", QIcon(":/icons/tango/32x32/actions/edit-redo.png")));
+    m_redoAct->setStatusTip(tr("Redo modifications"));
+    m_actions->addAction(m_redoAct);
+    toolBar()->addAction(m_redoAct);
 
-  m_replaceAct = new QAction(tr("Search and Replace"), this);
-  m_replaceAct->setShortcut(QKeySequence::Replace);
-  m_replaceAct->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
-  m_replaceAct->setStatusTip(tr("Find some text and replace it"));
-  m_actions->addAction(m_replaceAct);
-  toolBar()->addAction(m_replaceAct);
+    m_replaceAct = new QAction(tr("Search and Replace"), this);
+    m_replaceAct->setShortcut(QKeySequence::Replace);
+    m_replaceAct->setIcon(QIcon::fromTheme("edit-find-replace", QIcon(":/icons/tango/32x32/actions/edit-find-replace.png")));
+    m_replaceAct->setStatusTip(tr("Find some text and replace it"));
+    m_actions->addAction(m_replaceAct);
+    toolBar()->addAction(m_replaceAct);
 
-  m_searchAct = new QAction(tr("Search"), this);
-  m_searchAct->setShortcut(QKeySequence::Find);
-  m_actions->addAction(m_searchAct);
+    m_searchAct = new QAction(tr("Search"), this);
+    m_searchAct->setShortcut(QKeySequence::Find);
+    m_actions->addAction(m_searchAct);
 
-  //spellchecking
-  m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
-  m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
-  m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
-  m_spellCheckingAct->setCheckable(true);
+    //spellchecking
+    m_spellCheckingAct = new QAction(tr("Chec&k spelling"), this);
+    m_spellCheckingAct->setIcon(QIcon::fromTheme("tools-check-spelling", QIcon(":/icons/tango/32x32/actions/tools-check-spelling.png")));
+    m_spellCheckingAct->setStatusTip(tr("Check current song for incorrect spelling"));
+    m_spellCheckingAct->setCheckable(true);
 #ifndef ENABLE_SPELLCHECK
-  m_spellCheckingAct->setVisible(false);
+    m_spellCheckingAct->setVisible(false);
 #endif //ENABLE_SPELLCHECK
-  // Qt bug? -> can't uncheck action if it belongs to m_actionsGroup
-  //m_actions->addAction(m_spellCheckingAct);
-  toolBar()->addAction(m_spellCheckingAct);
+    // Qt bug? -> can't uncheck action if it belongs to m_actionsGroup
+    //m_actions->addAction(m_spellCheckingAct);
+    toolBar()->addAction(m_spellCheckingAct);
 
-  toolBar()->addSeparator();
+    toolBar()->addSeparator();
 
-  //songbook
-  m_verseAct = new QAction(tr("Verse"), this);
-  m_verseAct->setToolTip(tr("Insert a new verse"));
-  m_verseAct->setStatusTip(tr("Insert a new verse"));
-  m_actions->addAction(m_verseAct);
-  toolBar()->addAction(m_verseAct);
+    //songbook
+    m_verseAct = new QAction(tr("Verse"), this);
+    m_verseAct->setToolTip(tr("Insert a new verse"));
+    m_verseAct->setStatusTip(tr("Insert a new verse"));
+    m_actions->addAction(m_verseAct);
+    toolBar()->addAction(m_verseAct);
 
-  m_chorusAct = new QAction(tr("Chorus"), this);
-  m_chorusAct->setToolTip(tr("Insert a new chorus"));
-  m_chorusAct->setStatusTip(tr("Insert a new chorus"));
-  m_actions->addAction(m_chorusAct);
-  toolBar()->addAction(m_chorusAct);
+    m_chorusAct = new QAction(tr("Chorus"), this);
+    m_chorusAct->setToolTip(tr("Insert a new chorus"));
+    m_chorusAct->setStatusTip(tr("Insert a new chorus"));
+    m_actions->addAction(m_chorusAct);
+    toolBar()->addAction(m_chorusAct);
 
-  m_bridgeAct = new QAction(tr("Bridge"), this);
-  m_bridgeAct->setToolTip(tr("Insert a new bridge"));
-  m_bridgeAct->setStatusTip(tr("Insert a new bridge"));
-  m_actions->addAction(m_bridgeAct);
-  toolBar()->addAction(m_bridgeAct);
+    m_bridgeAct = new QAction(tr("Bridge"), this);
+    m_bridgeAct->setToolTip(tr("Insert a new bridge"));
+    m_bridgeAct->setStatusTip(tr("Insert a new bridge"));
+    m_actions->addAction(m_bridgeAct);
+    toolBar()->addAction(m_bridgeAct);
 }
 
 CEditor::~CEditor()
 {
-  delete m_toolBar;
-  delete m_actions;
+    delete m_toolBar;
+    delete m_actions;
 }
 
 QToolBar * CEditor::toolBar() const
 {
-  m_toolBar->setVisible(false);
-  return m_toolBar;
+    m_toolBar->setVisible(false);
+    return m_toolBar;
 }
 
 QActionGroup* CEditor::actionGroup() const
 {
-  m_actions->setEnabled(false);
-  return m_actions;
+    m_actions->setEnabled(false);
+    return m_actions;
 }
 
 void CEditor::setHighlighter(CSongHighlighter *highlighter)
 {
-  Q_UNUSED(highlighter);
+    Q_UNUSED(highlighter);
 }
 
 
 CSongEditor::CSongEditor(QWidget *parent)
-  : CEditor(parent)
-  , m_songHeaderEditor(0)
-  , m_codeEditor(0)
-  , m_findReplaceDialog(0)
-  , m_song()
-  , m_newSong(true)
-  , m_newCover(false)
+    : CEditor(parent)
+    , m_songHeaderEditor(0)
+    , m_codeEditor(0)
+    , m_findReplaceDialog(0)
+    , m_song()
+    , m_newSong(true)
+    , m_newCover(false)
 {
-  m_songHeaderEditor = new CSongHeaderEditor(this);
-  m_songHeaderEditor->setSong(m_song);
+    m_songHeaderEditor = new CSongHeaderEditor(this);
+    m_songHeaderEditor->setSong(m_song);
 
-  connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
-  connect(m_songHeaderEditor, SIGNAL(newCover(bool)), SLOT(setNewCover(bool)));
+    connect(m_songHeaderEditor, SIGNAL(contentsChanged()), SLOT(documentWasModified()));
+    connect(m_songHeaderEditor, SIGNAL(newCover(bool)), SLOT(setNewCover(bool)));
 #ifdef ENABLE_SPELLCHECK
-  connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)),
-	  SLOT(setDictionary(const QLocale &)));
+    connect(m_songHeaderEditor, SIGNAL(languageChanged(const QLocale &)),
+            SLOT(setDictionary(const QLocale &)));
 #endif //ENABLE_SPELLCHECK
 
-  m_codeEditor = new CSongCodeEditor(this);
-  connect(m_codeEditor->document(), SIGNAL(modificationChanged(bool)), SLOT(setModified(bool)));
+    m_codeEditor = new CSongCodeEditor(this);
+    connect(m_codeEditor->document(), SIGNAL(modificationChanged(bool)), SLOT(setModified(bool)));
 
 
-  m_findReplaceDialog = new CFindReplaceDialog(this);
-  m_findReplaceDialog->setTextEditor(codeEditor());
-  m_findReplaceDialog->readSettings();
+    m_findReplaceDialog = new CFindReplaceDialog(this);
+    m_findReplaceDialog->setTextEditor(codeEditor());
+    m_findReplaceDialog->readSettings();
 
-  //connects
-  connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
-  connect(m_cutAct, SIGNAL(triggered()), codeEditor(), SLOT(cut()));
-  connect(m_copyAct, SIGNAL(triggered()), codeEditor(), SLOT(copy()));
-  connect(m_pasteAct, SIGNAL(triggered()), codeEditor(), SLOT(paste()));
-  connect(m_undoAct, SIGNAL(triggered()), codeEditor(), SLOT(undo()));
-  connect(m_redoAct, SIGNAL(triggered()), codeEditor(), SLOT(redo()));
-  connect(m_searchAct, SIGNAL(triggered()), codeEditor(), SLOT(toggleQuickSearch()));
-  connect(m_verseAct, SIGNAL(triggered()), codeEditor(), SLOT(insertVerse()));
-  connect(m_chorusAct, SIGNAL(triggered()), codeEditor(), SLOT(insertChorus()));
-  connect(m_bridgeAct, SIGNAL(triggered()), codeEditor(), SLOT(insertBridge()));
-  connect(m_spellCheckingAct, SIGNAL(toggled(bool)), SLOT(toggleSpellCheckActive(bool)));
-  connect(m_replaceAct, SIGNAL(triggered()), SLOT(findReplaceDialog()));
+    //connects
+    connect(m_saveAct, SIGNAL(triggered()), SLOT(save()));
+    connect(m_cutAct, SIGNAL(triggered()), codeEditor(), SLOT(cut()));
+    connect(m_copyAct, SIGNAL(triggered()), codeEditor(), SLOT(copy()));
+    connect(m_pasteAct, SIGNAL(triggered()), codeEditor(), SLOT(paste()));
+    connect(m_undoAct, SIGNAL(triggered()), codeEditor(), SLOT(undo()));
+    connect(m_redoAct, SIGNAL(triggered()), codeEditor(), SLOT(redo()));
+    connect(m_searchAct, SIGNAL(triggered()), codeEditor(), SLOT(toggleQuickSearch()));
+    connect(m_verseAct, SIGNAL(triggered()), codeEditor(), SLOT(insertVerse()));
+    connect(m_chorusAct, SIGNAL(triggered()), codeEditor(), SLOT(insertChorus()));
+    connect(m_bridgeAct, SIGNAL(triggered()), codeEditor(), SLOT(insertBridge()));
+    connect(m_spellCheckingAct, SIGNAL(toggled(bool)), SLOT(toggleSpellCheckActive(bool)));
+    connect(m_replaceAct, SIGNAL(triggered()), SLOT(findReplaceDialog()));
 
-  QBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setContentsMargins(0, 0, 0, 0);
-  mainLayout->setSpacing(0);
-  mainLayout->addWidget(m_songHeaderEditor);
-  mainLayout->addWidget(codeEditor());
-  setLayout(mainLayout);
+    QBoxLayout *mainLayout = new QVBoxLayout();
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+    mainLayout->addWidget(m_songHeaderEditor);
+    mainLayout->addWidget(codeEditor());
+    setLayout(mainLayout);
 
-  hide(); // required to hide some widgets from the code editor
+    hide(); // required to hide some widgets from the code editor
 
-  // the editor is set for new song by default
-  setWindowTitle(tr("New song"));
-  setNewSong(true);
+    // the editor is set for new song by default
+    setWindowTitle(tr("New song"));
+    setNewSong(true);
 
-  readSettings();
+    readSettings();
 }
 
 CSongEditor::~CSongEditor()
 {
-  delete m_codeEditor;
-  delete m_songHeaderEditor;
+    delete m_codeEditor;
+    delete m_songHeaderEditor;
 }
 
 void CSongEditor::readSettings()
@@ -235,321 +235,321 @@ void CSongEditor::writeSettings()
 
 void CSongEditor::closeEvent(QCloseEvent *event)
 {
-  if (isModified())
+    if (isModified())
     {
-      QMessageBox::StandardButton answer =
-	QMessageBox::question(this, tr("Songbook-Client"),
-			      tr("The document has been modified.\n"
-				 "Do you want to save your changes?"),
-			      QMessageBox::Save | QMessageBox::Discard
-			      | QMessageBox::Cancel,
-			      QMessageBox::Save);
+        QMessageBox::StandardButton answer =
+                QMessageBox::question(this, tr("Songbook-Client"),
+                                      tr("The document has been modified.\n"
+                                         "Do you want to save your changes?"),
+                                      QMessageBox::Save | QMessageBox::Discard
+                                      | QMessageBox::Cancel,
+                                      QMessageBox::Save);
 
-      if (answer == QMessageBox::Save)
-	{
-	  save();
-	  writeSettings();
-	  event->accept();
-	}
-      if (answer == QMessageBox::Cancel)
-	{
-	  event->ignore();
-	}
-      if (answer == QMessageBox::Discard)
-	{
-	  event->accept();
-	}
+        if (answer == QMessageBox::Save)
+        {
+            save();
+            writeSettings();
+            event->accept();
+        }
+        if (answer == QMessageBox::Cancel)
+        {
+            event->ignore();
+        }
+        if (answer == QMessageBox::Discard)
+        {
+            event->accept();
+        }
     }
 }
 
 void CSongEditor::save()
 {
-  if (isNewSong())
-    return saveNewSong();
+    if (isNewSong())
+        return saveNewSong();
 
-  if (!checkSongMandatoryFields())
-    return;
+    if (!checkSongMandatoryFields())
+        return;
 
-  // get the song contents
-  parseText();
+    // get the song contents
+    parseText();
 
-  // save the song and add it to the library list
-  library()->createArtistDirectory(m_song);
+    // save the song and add it to the library list
+    library()->createArtistDirectory(m_song);
 
-  if (isNewCover() && !m_songHeaderEditor->cover().isNull())
-    library()->saveCover(m_song, m_songHeaderEditor->cover());
-  library()->saveSong(m_song);
+    if (isNewCover() && !m_songHeaderEditor->cover().isNull())
+        library()->saveCover(m_song, m_songHeaderEditor->cover());
+    library()->saveSong(m_song);
 
-  setNewCover(false);
-  setNewSong(false);
-  setModified(false);
-  setWindowTitle(m_song.title);
-  emit(labelChanged(windowTitle()));
-  setStatusTip(tr("Song saved in: %1").arg(song().path));
+    setNewCover(false);
+    setNewSong(false);
+    setModified(false);
+    setWindowTitle(m_song.title);
+    emit(labelChanged(windowTitle()));
+    setStatusTip(tr("Song saved in: %1").arg(song().path));
 }
 
 bool CSongEditor::checkSongMandatoryFields()
 {
-  QString css("QLineEdit{ border: 1px solid red; border-radius: 2px; }");
+    QString css("QLineEdit{ border: 1px solid red; border-radius: 2px; }");
 
-  if (song().title.isEmpty())
+    if (song().title.isEmpty())
     {
-      setStatusTip(tr("Invalid song title"));
-      m_songHeaderEditor->titleLineEdit()->setStyleSheet(css);
-      return false;
+        setStatusTip(tr("Invalid song title"));
+        m_songHeaderEditor->titleLineEdit()->setStyleSheet(css);
+        return false;
     }
-  m_songHeaderEditor->titleLineEdit()->setStyleSheet(QString());
+    m_songHeaderEditor->titleLineEdit()->setStyleSheet(QString());
 
-  if (song().artist.isEmpty())
+    if (song().artist.isEmpty())
     {
-      setStatusTip(tr("Invalid artist name"));
-      m_songHeaderEditor->artistLineEdit()->setStyleSheet(css);
-      return false;
+        setStatusTip(tr("Invalid artist name"));
+        m_songHeaderEditor->artistLineEdit()->setStyleSheet(css);
+        return false;
     }
-  m_songHeaderEditor->artistLineEdit()->setStyleSheet(QString());
+    m_songHeaderEditor->artistLineEdit()->setStyleSheet(QString());
 
-  return true;
+    return true;
 }
 
 void CSongEditor::parseText()
 {
-  m_song.lyrics.clear();
-  m_song.scripture.clear();
+    m_song.lyrics.clear();
+    m_song.scripture.clear();
 
-  bool in_scripture = false;
+    bool in_scripture = false;
 
-  QStringList lines = codeEditor()->toPlainText().split("\n");
-  foreach (QString line, lines)
+    QStringList lines = codeEditor()->toPlainText().split("\n");
+    foreach (QString line, lines)
     {
-      if (line.contains("\\beginscripture"))
-        in_scripture = true;
+        if (line.contains("\\beginscripture"))
+            in_scripture = true;
 
-      if (in_scripture)
+        if (in_scripture)
         {
-          // ensures all lines in a scripture environment end with a % symbol
-          if (!line.endsWith("%"))
-            line = line.append("%");
-          m_song.scripture << line;
+            // ensures all lines in a scripture environment end with a % symbol
+            if (!line.endsWith("%"))
+                line = line.append("%");
+            m_song.scripture << line;
         }
-      else
+        else
         {
-          // add a level of indentation
-          if (!line.isEmpty())
-            line = line.prepend("  ");
-          m_song.lyrics << line;
+            // add a level of indentation
+            if (!line.isEmpty())
+                line = line.prepend("  ");
+            m_song.lyrics << line;
         }
 
-      if (line.contains("\\endscripture"))
-        in_scripture = false;
+        if (line.contains("\\endscripture"))
+            in_scripture = false;
     }
 
-  // remove blank line at the end of input
-  while (!m_song.lyrics.empty() && m_song.lyrics.last().trimmed().isEmpty())
+    // remove blank line at the end of input
+    while (!m_song.lyrics.empty() && m_song.lyrics.last().trimmed().isEmpty())
     {
-      m_song.lyrics.removeLast();
+        m_song.lyrics.removeLast();
     }
 
-  while (!m_song.scripture.isEmpty() && m_song.scripture.last().trimmed().isEmpty())
+    while (!m_song.scripture.isEmpty() && m_song.scripture.last().trimmed().isEmpty())
     {
-      m_song.scripture.removeLast();
+        m_song.scripture.removeLast();
     }
 
-  // finally insert newline after endsong macro
-  m_song.lyrics << QString();
+    // finally insert newline after endsong macro
+    m_song.lyrics << QString();
 }
 
 void CSongEditor::saveNewSong()
 {
-  if (!isNewSong())
-    return;
+    if (!isNewSong())
+        return;
 
-  m_song = m_songHeaderEditor->song();
+    m_song = m_songHeaderEditor->song();
 
-  if (m_song.title.isEmpty() || m_song.artist.isEmpty())
+    if (m_song.title.isEmpty() || m_song.artist.isEmpty())
     {
-      qDebug() << "Error: " << m_song.title << " " << m_song.artist;
-      return;
+        qDebug() << "Error: " << m_song.title << " " << m_song.artist;
+        return;
     }
-  else if (m_song.title == tr("*New song*") || m_song.artist == tr("Unknown"))
+    else if (m_song.title == tr("*New song*") || m_song.artist == tr("Unknown"))
     {
-      qDebug() << "Warning: " << m_song.title << " " << m_song.artist;
-      return;
+        qDebug() << "Warning: " << m_song.title << " " << m_song.artist;
+        return;
     }
 
-  setNewSong(false);
-  save();
+    setNewSong(false);
+    save();
 }
 
 void CSongEditor::documentWasModified()
 {
-  setModified(true);
+    setModified(true);
 }
 
 CLibrary * CSongEditor::library() const
 {
-  return CLibrary::instance();
+    return CLibrary::instance();
 }
 
 bool CSongEditor::isModified() const
 {
-  return codeEditor()->document()->isModified();
+    return codeEditor()->document()->isModified();
 }
 
 void CSongEditor::setModified(bool modified)
 {
-  if (codeEditor()->document()->isModified() != modified)
-    codeEditor()->document()->setModified(modified);
+    if (codeEditor()->document()->isModified() != modified)
+        codeEditor()->document()->setModified(modified);
 
-  // update the window title
-  if (modified && !windowTitle().contains(" *"))
+    // update the window title
+    if (modified && !windowTitle().contains(" *"))
     {
-      setWindowTitle(windowTitle() + " *");
-      emit(labelChanged(windowTitle()));
+        setWindowTitle(windowTitle() + " *");
+        emit(labelChanged(windowTitle()));
     }
-  else if (!modified && windowTitle().contains(" *"))
+    else if (!modified && windowTitle().contains(" *"))
     {
-      setWindowTitle(windowTitle().remove(" *"));
-      emit(labelChanged(windowTitle()));
+        setWindowTitle(windowTitle().remove(" *"));
+        emit(labelChanged(windowTitle()));
     }
 
 }
 
 Song & CSongEditor::song()
 {
-  return m_song;
+    return m_song;
 }
 
 void CSongEditor::setSong(const Song &song)
 {
-  m_song = song;
+    m_song = song;
 
-  // update the header editor
-  m_songHeaderEditor->setSong(song);
+    // update the header editor
+    m_songHeaderEditor->setSong(song);
 
-  // update the text editor
-  QString songContent;
-  foreach (QString lyric, m_song.lyrics)
+    // update the text editor
+    QString songContent;
+    foreach (QString lyric, m_song.lyrics)
     {
-      songContent.append(QString("%1\n").arg(lyric));
+        songContent.append(QString("%1\n").arg(lyric));
     }
-  foreach (QString line, m_song.scripture)
+    foreach (QString line, m_song.scripture)
     {
-      songContent.append(QString("%1\n").arg(line));
+        songContent.append(QString("%1\n").arg(line));
     }
 
-  codeEditor()->setUndoRedoEnabled(false);
-  codeEditor()->setPlainText(songContent);
-  codeEditor()->indent();
-  codeEditor()->setUndoRedoEnabled(true);
+    codeEditor()->setUndoRedoEnabled(false);
+    codeEditor()->setPlainText(songContent);
+    codeEditor()->indent();
+    codeEditor()->setUndoRedoEnabled(true);
 
-  setNewSong(false);
-  setNewCover(false);
-  setWindowTitle(m_song.title);
-  setModified(false);
+    setNewSong(false);
+    setNewCover(false);
+    setWindowTitle(m_song.title);
+    setModified(false);
 }
 
 bool CSongEditor::isNewSong() const
 {
-  return m_newSong;
+    return m_newSong;
 }
 
 void CSongEditor::setNewSong(bool newSong)
 {
-  m_newSong = newSong;
+    m_newSong = newSong;
 }
 
 bool CSongEditor::isNewCover() const
 {
-  return m_newCover;
+    return m_newCover;
 }
 
 void CSongEditor::setNewCover(bool newCover)
 {
-  m_newCover = newCover;
+    m_newCover = newCover;
 }
 
 
 CSongCodeEditor* CSongEditor::codeEditor() const
 {
-  return m_codeEditor;
+    return m_codeEditor;
 }
 
 bool CSongEditor::isSpellCheckAvailable() const
 {
-  return codeEditor()->isSpellCheckAvailable();
+    return codeEditor()->isSpellCheckAvailable();
 }
 
 void CSongEditor::setSpellCheckAvailable(const bool value)
 {
-  // Uncheck action before disabling it
-  if (!value)
-    m_spellCheckingAct->setChecked(false);
+    // Uncheck action before disabling it
+    if (!value)
+        m_spellCheckingAct->setChecked(false);
 
-  m_spellCheckingAct->setEnabled(value);
+    m_spellCheckingAct->setEnabled(value);
 
-  codeEditor()->setSpellCheckAvailable(value);
+    codeEditor()->setSpellCheckAvailable(value);
 }
 
 void CSongEditor::toggleSpellCheckActive(bool value)
 {
-  codeEditor()->setSpellCheckActive(value);
+    codeEditor()->setSpellCheckActive(value);
 }
 
 #ifdef ENABLE_SPELLCHECK
 void CSongEditor::setDictionary(const QLocale &locale)
 {
-  // find the suitable dictionary based on the current song's locale
-  QString prefix;
+    // find the suitable dictionary based on the current song's locale
+    QString prefix;
 #if defined(Q_OS_WIN32)
-  prefix = "";
+    prefix = "";
 #else
-  prefix = "/usr/share/";
+    prefix = "/usr/share/";
 #endif //Q_OS_WIN32
-  QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
+    QString dictionary = QString("%1hunspell/%2.dic").arg(prefix).arg(locale.name());;
 
-  setSpellCheckAvailable(QFile(dictionary).exists());
+    setSpellCheckAvailable(QFile(dictionary).exists());
 
-  if (isSpellCheckAvailable())
+    if (isSpellCheckAvailable())
     {
-      setStatusTip("");
-      codeEditor()->setDictionary(dictionary);
+        setStatusTip("");
+        codeEditor()->setDictionary(dictionary);
 
-      // update action 'checked' state according to highlighter's
-      if (codeEditor()->highlighter())
-	m_spellCheckingAct->setChecked(codeEditor()->highlighter()->isSpellCheckActive());
+        // update action 'checked' state according to highlighter's
+        if (codeEditor()->highlighter())
+            m_spellCheckingAct->setChecked(codeEditor()->highlighter()->isSpellCheckActive());
     }
-  else
+    else
     {
-      setStatusTip(tr("Unable to find the following dictionary: %1").arg(dictionary));
+        setStatusTip(tr("Unable to find the following dictionary: %1").arg(dictionary));
     }
 }
 #endif //ENABLE_SPELLCHECK
 
 void CSongEditor::setHighlighter(CSongHighlighter *highlighter)
 {
-  if (!highlighter)
-    return;
+    if (!highlighter)
+        return;
 
-  codeEditor()->setHighlighter(highlighter);
-  #ifdef ENABLE_SPELLCHECK
-  setDictionary(song().locale);
-  #endif //ENABLE_SPELLCHECK
+    codeEditor()->setHighlighter(highlighter);
+#ifdef ENABLE_SPELLCHECK
+    setDictionary(song().locale);
+#endif //ENABLE_SPELLCHECK
 }
 
 QActionGroup* CSongEditor::actionGroup() const
 {
-  m_actions->setEnabled(true);
-  return m_actions;
+    m_actions->setEnabled(true);
+    return m_actions;
 }
 
 QToolBar * CSongEditor::toolBar() const
 {
-  m_toolBar->setVisible(true);
-  return m_toolBar;
+    m_toolBar->setVisible(true);
+    return m_toolBar;
 }
 
 void CSongEditor::findReplaceDialog()
 {
-  if (m_findReplaceDialog)
-    m_findReplaceDialog->show();
+    if (m_findReplaceDialog)
+        m_findReplaceDialog->show();
 }

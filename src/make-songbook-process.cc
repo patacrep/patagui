@@ -25,18 +25,18 @@
 #include <QDebug>
 
 CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
-  : QProcess(parent)
-  , m_program()
-  , m_arguments()
-  , m_startMessage(tr("Processing"))
-  , m_successMessage(tr("Success"))
-  , m_errorMessage(tr("Error"))
-  , m_urlToOpen()
+    : QProcess(parent)
+    , m_program()
+    , m_arguments()
+    , m_startMessage(tr("Processing"))
+    , m_successMessage(tr("Success"))
+    , m_errorMessage(tr("Error"))
+    , m_urlToOpen()
 {
-  connect(this, SIGNAL(started()), SLOT(onStarted()));
-  connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onFinished(int, QProcess::ExitStatus)));
-  connect(this, SIGNAL(readyReadStandardOutput()), SLOT(readStandardOutput()));
-  connect(this, SIGNAL(readyReadStandardError()), SLOT(readStandardError()));
+    connect(this, SIGNAL(started()), SLOT(onStarted()));
+    connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onFinished(int, QProcess::ExitStatus)));
+    connect(this, SIGNAL(readyReadStandardOutput()), SLOT(readStandardOutput()));
+    connect(this, SIGNAL(readyReadStandardError()), SLOT(readStandardError()));
 }
 
 CMakeSongbookProcess::~CMakeSongbookProcess()
@@ -44,124 +44,124 @@ CMakeSongbookProcess::~CMakeSongbookProcess()
 
 void CMakeSongbookProcess::execute()
 {
-  emit(aboutToStart());
-  start(program(), arguments());
+    emit(aboutToStart());
+    start(program(), arguments());
 }
 
 void CMakeSongbookProcess::setCommand(const QString &command)
 {
-  QStringList args = command.split(" ");
-  setProgram(args[0]);
-  args.pop_front();
-  setArguments(args);
+    QStringList args = command.split(" ");
+    setProgram(args[0]);
+    args.pop_front();
+    setArguments(args);
 }
 
 void CMakeSongbookProcess::setProgram(const QString &program)
 {
-  m_program = program;
+    m_program = program;
 }
 
 void CMakeSongbookProcess::setArguments(const QStringList &arguments)
 {
-  m_arguments = arguments;
+    m_arguments = arguments;
 }
 
 void CMakeSongbookProcess::setStartMessage(const QString &message)
 {
-  m_startMessage = message;
+    m_startMessage = message;
 }
 
 void CMakeSongbookProcess::setSuccessMessage(const QString &message)
 {
-  m_successMessage = message;
+    m_successMessage = message;
 }
 
 void CMakeSongbookProcess::setErrorMessage(const QString &message)
 {
-  m_errorMessage = message;
+    m_errorMessage = message;
 }
 
 void CMakeSongbookProcess::setUrlToOpen(const QUrl &urlToOpen)
 {
-  m_urlToOpen = urlToOpen;
+    m_urlToOpen = urlToOpen;
 }
 
 QString CMakeSongbookProcess::command() const
 {
-  QString commandString = QString("%1 %2").arg(program()).arg(arguments().join(" "));
-  return commandString;
+    QString commandString = QString("%1 %2").arg(program()).arg(arguments().join(" "));
+    return commandString;
 }
 
 const QString & CMakeSongbookProcess::program() const
 {
-  return m_program;
+    return m_program;
 }
 
 const QStringList & CMakeSongbookProcess::arguments() const
 {
-  return m_arguments;
+    return m_arguments;
 }
 
 const QString & CMakeSongbookProcess::startMessage() const
 {
-  return m_startMessage;
+    return m_startMessage;
 }
 
 const QString & CMakeSongbookProcess::successMessage() const
 {
-  return m_successMessage;
+    return m_successMessage;
 }
 
 const QString & CMakeSongbookProcess::errorMessage() const
 {
-  return m_errorMessage;
+    return m_errorMessage;
 }
 
 const QUrl & CMakeSongbookProcess::urlToOpen() const
 {
-  return m_urlToOpen;
+    return m_urlToOpen;
 }
 
 void CMakeSongbookProcess::readStandardOutput()
 {
-  QString standardOutput = QString(readAllStandardOutput().data());
-  emit(readOnStandardOutput(standardOutput));
+    QString standardOutput = QString(readAllStandardOutput().data());
+    emit(readOnStandardOutput(standardOutput));
 }
 
 void CMakeSongbookProcess::readStandardError()
 {
-  QString standardError = QString(readAllStandardError().data());
-  emit(readOnStandardError(standardError));
+    QString standardError = QString(readAllStandardError().data());
+    emit(readOnStandardError(standardError));
 }
 
 void CMakeSongbookProcess::onStarted()
 {
-  emit(message(startMessage(), 0));
+    emit(message(startMessage(), 0));
 }
 
 void CMakeSongbookProcess::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-  Q_UNUSED(exitCode);
-  if (exitStatus != QProcess::NormalExit)
+    Q_UNUSED(exitCode);
+    if (exitStatus != QProcess::NormalExit)
     {
-      emit(message(errorMessage(), 0));
-      return;
+        emit(message(errorMessage(), 0));
+        return;
     }
 
-  emit(message(successMessage(), 0));
-  if (urlToOpen().isEmpty() || !urlToOpen().isValid())
-    return;
+    emit(message(successMessage(), 0));
+    if (urlToOpen().isEmpty() || !urlToOpen().isValid())
+        return;
 
-  emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
-  if (!QFile(urlToOpen().toLocalFile()).exists())
+    emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
+    if (!QFile(urlToOpen().toLocalFile()).exists())
     {
-      qWarning() << tr("File [%1] does not exist.").arg(urlToOpen().toLocalFile());
-      emit(error(QProcess::UnknownError));
+        qWarning() << tr("File [%1] does not exist.").arg(urlToOpen().toLocalFile());
+        emit(error(QProcess::UnknownError));
     }
 
-  if (!QDesktopServices::openUrl(urlToOpen()))
+    if (!QDesktopServices::openUrl(urlToOpen()))
     {
-      qWarning() << tr("Can't open [%1].").arg(urlToOpen().toLocalFile());
-      emit(error(QProcess::UnknownError));
+        qWarning() << tr("Can't open [%1].").arg(urlToOpen().toLocalFile());
+        emit(error(QProcess::UnknownError));
     }
 }

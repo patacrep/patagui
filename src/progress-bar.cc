@@ -23,70 +23,70 @@
 #include <QBoxLayout>
 
 CProgressBar::CProgressBar(QWidget* parent)
-  : QWidget(parent)
-  , m_progressBar(new QProgressBar(this))
-  , m_cancelButton(new QToolButton(this))
-  , m_cancelable(true)
+    : QWidget(parent)
+    , m_progressBar(new QProgressBar(this))
+    , m_cancelButton(new QToolButton(this))
+    , m_cancelable(true)
 {
-  m_cancelButton->setIcon(QIcon::fromTheme("process-stop", QIcon(":/icons/tango/32x32/actions/process-stop.png")));
+    m_cancelButton->setIcon(QIcon::fromTheme("process-stop", QIcon(":/icons/tango/32x32/actions/process-stop.png")));
 
-  connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
+    connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
 
-  QLayout* layout = new QHBoxLayout;
-  layout->addWidget(m_progressBar);
-  layout->addWidget(m_cancelButton);
-  setLayout(layout);
-  setContentsMargins(0, 0, 0, 0);
+    QLayout* layout = new QHBoxLayout;
+    layout->addWidget(m_progressBar);
+    layout->addWidget(m_cancelButton);
+    setLayout(layout);
+    setContentsMargins(0, 0, 0, 0);
 
-  hide();
+    hide();
 }
 
 CProgressBar::~CProgressBar()
 {
-  delete m_progressBar;
-  delete m_cancelButton;
+    delete m_progressBar;
+    delete m_cancelButton;
 }
 
 void CProgressBar::cancel()
 {
-  hide();
-  emit(canceled());
+    hide();
+    emit(canceled());
 }
 
 void CProgressBar::hide()
 {
-  m_progressBar->hide();
-  m_cancelButton->hide();
+    m_progressBar->hide();
+    m_cancelButton->hide();
 }
 
 void CProgressBar::show()
 {
-  m_progressBar->show();
-  if (isCancelable())
-    m_cancelButton->show();
+    m_progressBar->show();
+    if (isCancelable())
+        m_cancelButton->show();
 }
 
 void CProgressBar::setTextVisible(bool value)
 {
-  m_progressBar->setTextVisible(value);
+    m_progressBar->setTextVisible(value);
 }
 
 void CProgressBar::setRange(int start, int stop)
 {
-  m_progressBar->setRange(start, stop);
+    m_progressBar->setRange(start, stop);
 }
 
 void CProgressBar::setValue(int value)
 {
-  m_progressBar->setValue(value);
+    m_progressBar->setValue(value);
 }
 
 bool CProgressBar::isCancelable() const
 {
- return m_cancelable;
+    return m_cancelable;
 }
 
 void CProgressBar::setCancelable(bool value)
 {
-  m_cancelable = value;
+    m_cancelable = value;
 }

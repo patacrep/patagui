@@ -37,140 +37,140 @@ Q_DECLARE_METATYPE(UnitPropertyType)
 
 int VariantManager::filePathTypeId()
 {
-  return qMetaTypeId<FilePathPropertyType>();
+    return qMetaTypeId<FilePathPropertyType>();
 }
 
 int VariantManager::unitTypeId()
 {
-  return qMetaTypeId<UnitPropertyType>();
+    return qMetaTypeId<UnitPropertyType>();
 }
 
 bool VariantManager::isPropertyTypeSupported(int propertyType) const
 {
-  if (propertyType == filePathTypeId() || propertyType == unitTypeId())
-    return true;
-  return QtVariantPropertyManager::isPropertyTypeSupported(propertyType);
+    if (propertyType == filePathTypeId() || propertyType == unitTypeId())
+        return true;
+    return QtVariantPropertyManager::isPropertyTypeSupported(propertyType);
 }
 
 int VariantManager::valueType(int propertyType) const
 {
-  if (propertyType == filePathTypeId() || propertyType == unitTypeId())
-    return QVariant::String;
-  return QtVariantPropertyManager::valueType(propertyType);
+    if (propertyType == filePathTypeId() || propertyType == unitTypeId())
+        return QVariant::String;
+    return QtVariantPropertyManager::valueType(propertyType);
 }
 
 QVariant VariantManager::value(const QtProperty *property) const
 {
-  if (theValues.contains(property))
-    return theValues[property].value;
-  return QtVariantPropertyManager::value(property);
+    if (theValues.contains(property))
+        return theValues[property].value;
+    return QtVariantPropertyManager::value(property);
 }
 
 QStringList VariantManager::attributes(int propertyType) const
 {
-  if (propertyType == filePathTypeId())
+    if (propertyType == filePathTypeId())
     {
-      QStringList attr;
-      attr << QLatin1String("filter");
-      return attr;
+        QStringList attr;
+        attr << QLatin1String("filter");
+        return attr;
     }
-  else if (propertyType == unitTypeId())
+    else if (propertyType == unitTypeId())
     {
-      QStringList attr;
-      attr << QLatin1String("unit");
-      return attr;
+        QStringList attr;
+        attr << QLatin1String("unit");
+        return attr;
     }
-  return QtVariantPropertyManager::attributes(propertyType);
+    return QtVariantPropertyManager::attributes(propertyType);
 }
 
 int VariantManager::attributeType(int propertyType, const QString &attribute) const
 {
-  if (propertyType == filePathTypeId()) {
-    if (attribute == QLatin1String("filter"))
-      return QVariant::String;
-    return 0;
-  }
-  else if (propertyType == unitTypeId())
-    {
-      if (attribute == QLatin1String("unit"))
-	return QVariant::String;
-      return 0;
+    if (propertyType == filePathTypeId()) {
+        if (attribute == QLatin1String("filter"))
+            return QVariant::String;
+        return 0;
     }
-  return QtVariantPropertyManager::attributeType(propertyType, attribute);
+    else if (propertyType == unitTypeId())
+    {
+        if (attribute == QLatin1String("unit"))
+            return QVariant::String;
+        return 0;
+    }
+    return QtVariantPropertyManager::attributeType(propertyType, attribute);
 }
 
 QVariant VariantManager::attributeValue(const QtProperty *property, const QString &attribute) const
 {
-  if (theValues.contains(property))
+    if (theValues.contains(property))
     {
-      if (attribute == QLatin1String("filter"))
-	return theValues[property].filter;
-      else if (attribute == QLatin1String("unit"))
-	return theValues[property].filter;
-      return QVariant();
+        if (attribute == QLatin1String("filter"))
+            return theValues[property].filter;
+        else if (attribute == QLatin1String("unit"))
+            return theValues[property].filter;
+        return QVariant();
     }
-  return QtVariantPropertyManager::attributeValue(property, attribute);
+    return QtVariantPropertyManager::attributeValue(property, attribute);
 }
 
 QString VariantManager::valueText(const QtProperty *property) const
 {
-  if (theValues.contains(property))
-    return theValues[property].value;
-  return QtVariantPropertyManager::valueText(property);
+    if (theValues.contains(property))
+        return theValues[property].value;
+    return QtVariantPropertyManager::valueText(property);
 }
 
 void VariantManager::setValue(QtProperty *property, const QVariant &val)
 {
-  if (theValues.contains(property))
+    if (theValues.contains(property))
     {
-      if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
-	return;
-      QString str = val.value<QString>();
-      Data d = theValues[property];
-      if (d.value == str)
-	return;
-      d.value = str;
-      theValues[property] = d;
-      emit propertyChanged(property);
-      emit valueChanged(property, str);
-      return;
+        if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
+            return;
+        QString str = val.value<QString>();
+        Data d = theValues[property];
+        if (d.value == str)
+            return;
+        d.value = str;
+        theValues[property] = d;
+        emit propertyChanged(property);
+        emit valueChanged(property, str);
+        return;
     }
-  QtVariantPropertyManager::setValue(property, val);
+    QtVariantPropertyManager::setValue(property, val);
 }
 
 void VariantManager::setAttribute(QtProperty *property,
-				  const QString &attribute, const QVariant &val)
+                                  const QString &attribute, const QVariant &val)
 {
-  if (theValues.contains(property))
+    if (theValues.contains(property))
     {
-      if (attribute == QLatin1String("filter") || attribute == QLatin1String("unit"))
-	{
-	  if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
-	    return;
-	  QString str = val.value<QString>();
-	  Data d = theValues[property];
-	  if (d.filter == str)
-	    return;
+        if (attribute == QLatin1String("filter") || attribute == QLatin1String("unit"))
+        {
+            if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
+                return;
+            QString str = val.value<QString>();
+            Data d = theValues[property];
+            if (d.filter == str)
+                return;
 
-	  d.filter = str;
-	  theValues[property] = d;
-	  emit attributeChanged(property, attribute, str);
-	}
-      return;
+            d.filter = str;
+            theValues[property] = d;
+            emit attributeChanged(property, attribute, str);
+        }
+        return;
     }
-  QtVariantPropertyManager::setAttribute(property, attribute, val);
+    QtVariantPropertyManager::setAttribute(property, attribute, val);
 }
 
 void VariantManager::initializeProperty(QtProperty *property)
 {
-  if (propertyType(property) == filePathTypeId() || propertyType(property) == unitTypeId())
-    theValues[property] = Data();
-  QtVariantPropertyManager::initializeProperty(property);
+    if (propertyType(property) == filePathTypeId() || propertyType(property) == unitTypeId())
+        theValues[property] = Data();
+    QtVariantPropertyManager::initializeProperty(property);
 }
 
 void VariantManager::uninitializeProperty(QtProperty *property)
 {
-  theValues.remove(property);
-  QtVariantPropertyManager::uninitializeProperty(property);
+    theValues.remove(property);
+    QtVariantPropertyManager::uninitializeProperty(property);
 }
 

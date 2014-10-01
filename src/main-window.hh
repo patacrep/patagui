@@ -56,240 +56,240 @@ class QLabel;
 */
 class CMainWindow : public QMainWindow
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public slots:
-  /*!
+    /*!
     Sets \a command as the command line to build a PDF.
     \sa setCleanCommand, setCleanallCommand
   */
-  void setBuildCommand(const QString &command);
+    void setBuildCommand(const QString &command);
 
-  /*!
+    /*!
     Sets \a command as the command line to remove temporary files
     that are generated during the compilation of a songbook.
     \sa setBuildCommand, setCleanallCommand
   */
-  void setCleanCommand(const QString &command);
+    void setCleanCommand(const QString &command);
 
-  /*!
+    /*!
     Sets \a command as the command line to remove temporary files
     and PDF files that are generated during the compilation of a songbook.
     \sa setBuildCommand, setCleanCommand
    */
-  void setCleanallCommand(const QString &command);
+    void setCleanallCommand(const QString &command);
 
-  void songEditor(const QString &filename);
+    void songEditor(const QString &filename);
 
-  void open(const QString &filename);
+    void open(const QString &filename);
 
 public:
-  /// Constructor.
-  CMainWindow(QWidget *parent=0);
+    /// Constructor.
+    CMainWindow(QWidget *parent=0);
 
-  /// Destructor.
-  ~CMainWindow();
+    /// Destructor.
+    ~CMainWindow();
 
-  /*!
+    /*!
     Returns the progress bar that is embedded in the status bar.
   */
-  CProgressBar * progressBar() const;
+    CProgressBar * progressBar() const;
 
-  /*!
+    /*!
     Returns the dock widget that displays LaTeX compilation logs.
     \image html logs.png
   */
-  QDockWidget * log() const;
+    QDockWidget * log() const;
 
-  /*!
+    /*!
     Returns the library view.
   */
-  CLibraryView * view() const;
+    CLibraryView * view() const;
 
-  /*!
+    /*!
     Returns the library.
   */
-  CLibrary * library() const;
+    CLibrary * library() const;
 
-  /*!
+    /*!
     Returns the current songbook.
   */
-  CSongbook * songbook() const;
+    CSongbook * songbook() const;
 
-  /*!
+    /*!
     Returns the directory of the songbook.
   */
-  const QString workingPath();
+    const QString workingPath();
 
 
-  /*!
+    /*!
     Getter on the songs library directory.
     @return the path to the songs/ directory
   */
-  const QString libraryPath();
+    const QString libraryPath();
 
-  /*!
+    /*!
     Returns the songbook build command.
     \sa setBuildCommand
   */
-  const QString & buildCommand() const;
+    const QString & buildCommand() const;
 
-  /*!
+    /*!
     Returns the songbook clean command.
     \sa setCleanCommand
   */
-  const QString & cleanCommand() const;
+    const QString & cleanCommand() const;
 
-  /*!
+    /*!
     Returns the songbook cleanall command.
     \sa setCleanallCommand
   */
-  const QString & cleanallCommand() const;
+    const QString & cleanallCommand() const;
 
-  /*!
+    /*!
     Calls pdflatex to build the songbook.
     \sa makeClean, makeCleanall
   */
-  void make();
+    void make();
 
-  /*!
+    /*!
     Removes LaTeX temporary files (*.aux *.log etc.)
     that are generated in the songbook directory during the make().
     \sa make, makeCleanall
   */
-  void makeClean();
+    void makeClean();
 
-  /*!
+    /*!
     Removes LaTeX temporary files (*.aux *.log etc.) and PDF files
     that are generated in the songbook directory during the make().
     \sa make, makeClean
   */
-  void makeCleanall();
+    void makeCleanall();
 
 protected:
-  /*!
+    /*!
     Saves settings before closing the application.
   */
-  void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
-  //songbook
-  void newSongbook();
-  void open();
-  void save(bool forced = false);
-  void saveAs();
-  void build();
-  void closeTab(int index);
-  void changeTab(int index);
+    //songbook
+    void newSongbook();
+    void open();
+    void save(bool forced = false);
+    void saveAs();
+    void build();
+    void closeTab(int index);
+    void changeTab(int index);
 
-  /// Displays a dialog to remove temporary LaTeX files.
-  /// \image html clean.png
-  void cleanDialog();
-  void updateTempFilesView(int state);
+    /// Displays a dialog to remove temporary LaTeX files.
+    /// \image html clean.png
+    void cleanDialog();
+    void updateTempFilesView(int state);
 
-  //library
-  void newSong();
-  void importSongs(const QStringList & songs);
-  void importSongsDialog();
-  void middleClicked(const QModelIndex &index = QModelIndex());
-  void songEditor(const QModelIndex &index = QModelIndex());
-  void deleteSong();
+    //library
+    void newSong();
+    void importSongs(const QStringList & songs);
+    void importSongsDialog();
+    void middleClicked(const QModelIndex &index = QModelIndex());
+    void songEditor(const QModelIndex &index = QModelIndex());
+    void deleteSong();
 
-  void deleteSong(const QString &filename);
-  void updateNotification(const QString &path);
-  void noDataNotification(const QDir &directory);
+    void deleteSong(const QString &filename);
+    void updateNotification(const QString &path);
+    void noDataNotification(const QDir &directory);
 
-  //model
-  void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    //model
+    void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
-  //application
-  void preferences();
-  void setToolBarDisplayed(bool);
-  void setStatusBarDisplayed(bool);
-  void documentation();
-  void reportBug();
-  void about();
+    //application
+    void preferences();
+    void setToolBarDisplayed(bool);
+    void setStatusBarDisplayed(bool);
+    void documentation();
+    void reportBug();
+    void about();
 
-  void updateTitle(const QString &filename);
-  void switchToolBar(QToolBar *toolBar);
+    void updateTitle(const QString &filename);
+    void switchToolBar(QToolBar *toolBar);
 
-  void buildError(QProcess::ProcessError error);
+    void buildError(QProcess::ProcessError error);
 
-  void cancelProcess();
+    void cancelProcess();
 
 private:
-  void readSettings(bool firstLaunch=false);
-  void writeSettings();
+    void readSettings(bool firstLaunch=false);
+    void writeSettings();
 
-  void createActions();
-  void createMenus();
-  void createToolBar();
+    void createActions();
+    void createMenus();
+    void createToolBar();
 
-  bool isToolBarDisplayed();
-  bool isStatusBarDisplayed();
+    bool isToolBarDisplayed();
+    bool isStatusBarDisplayed();
 
-  QItemSelectionModel * selectionModel();
+    QItemSelectionModel * selectionModel();
 
-  // Models and views
-  CLibraryView *m_view;
-  CSongbook *m_songbook;
-  QSortFilterProxyModel *m_proxyModel;
-  QFileSystemModel* m_tempFilesmodel;
+    // Models and views
+    CLibraryView *m_view;
+    CSongbook *m_songbook;
+    QSortFilterProxyModel *m_proxyModel;
+    QFileSystemModel* m_tempFilesmodel;
 
-  // Widgets
-  CTabWidget *m_mainWidget;
-  CProgressBar *m_progressBar;
-  CNotification *m_noDataInfo;
-  CNotification *m_updateAvailable;
-  QLabel *m_infoSelection;
-  CFilterLineEdit *m_filterLineEdit;
-  QDockWidget *m_log;
+    // Widgets
+    CTabWidget *m_mainWidget;
+    CProgressBar *m_progressBar;
+    CNotification *m_noDataInfo;
+    CNotification *m_updateAvailable;
+    QLabel *m_infoSelection;
+    CFilterLineEdit *m_filterLineEdit;
+    QDockWidget *m_log;
 
-  // Settings
-  QString m_workingPath;
-  bool m_isToolBarDisplayed;
-  bool m_isStatusBarDisplayed;
-  QString m_buildCommand;
-  QString m_cleanCommand;
-  QString m_cleanallCommand;
+    // Settings
+    QString m_workingPath;
+    bool m_isToolBarDisplayed;
+    bool m_isStatusBarDisplayed;
+    QString m_buildCommand;
+    QString m_cleanCommand;
+    QString m_cleanallCommand;
 
-  // Menus
-  QMenu *m_editorMenu;
-  QToolBar *m_libraryToolBar;
-  QToolBar *m_currentToolBar;
-  QToolBar *m_mainToolBar;
+    // Menus
+    QMenu *m_editorMenu;
+    QToolBar *m_libraryToolBar;
+    QToolBar *m_currentToolBar;
+    QToolBar *m_mainToolBar;
 
-  // Application actions
-  QAction *m_preferencesAct;
-  QAction *m_documentationAct;
-  QAction *m_bugsAct;
-  QAction *m_aboutAct;
-  QAction *m_exitAct;
+    // Application actions
+    QAction *m_preferencesAct;
+    QAction *m_documentationAct;
+    QAction *m_bugsAct;
+    QAction *m_aboutAct;
+    QAction *m_exitAct;
 
-  // Songbook actions
-  QAction *m_newAct;
-  QAction *m_openAct;
-  QAction *m_saveAct;
-  QAction *m_saveAsAct;
-  QAction *m_buildAct;
-  QAction *m_cleanAct;
-  QAction *m_sbInfoAct;
-  CMakeSongbookProcess *m_builder;
+    // Songbook actions
+    QAction *m_newAct;
+    QAction *m_openAct;
+    QAction *m_saveAct;
+    QAction *m_saveAsAct;
+    QAction *m_buildAct;
+    QAction *m_cleanAct;
+    QAction *m_sbInfoAct;
+    CMakeSongbookProcess *m_builder;
 
-  // Library action
-  QAction *m_newSongAct;
-  QAction *m_importSongsAct;
-  QAction *m_selectAllAct;
-  QAction *m_unselectAllAct;
-  QAction *m_invertSelectionAct;
-  QAction *m_libraryUpdateAct;
+    // Library action
+    QAction *m_newSongAct;
+    QAction *m_importSongsAct;
+    QAction *m_selectAllAct;
+    QAction *m_unselectAllAct;
+    QAction *m_invertSelectionAct;
+    QAction *m_libraryUpdateAct;
 
-  //Editor
-  CEditor *m_voidEditor;
-  CSongHighlighter *m_songHighlighter;
+    //Editor
+    CEditor *m_voidEditor;
+    CSongHighlighter *m_songHighlighter;
 
 public:
-  const static QString _cachePath;
+    const static QString _cachePath;
 };
 
 #endif  // __MAIN_WINDOW_HH__

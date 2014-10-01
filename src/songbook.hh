@@ -50,188 +50,188 @@ class QtGroupPropertyManager;
 */
 class CSongbook : public CIdentityProxyModel
 {
-  Q_OBJECT
-  Q_PROPERTY(bool modified READ isModified WRITE setModified NOTIFY wasModified)
-  Q_PROPERTY(QString filename READ filename WRITE setFilename)
-  Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
-  Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
+    Q_OBJECT
+    Q_PROPERTY(bool modified READ isModified WRITE setModified NOTIFY wasModified)
+    Q_PROPERTY(QString filename READ filename WRITE setFilename)
+    Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
+    Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
 
 public slots:
-  /*!
+    /*!
     Sets \a filename the filename of the songbook.
     \sa filename
   */
-  void setFilename(const QString &filename);
+    void setFilename(const QString &filename);
 
-  /*!
+    /*!
     Sets \a tmpl as the template filename of the songbook.
     \sa tmpl
   */
-  void setTmpl(const QString &tmpl);
+    void setTmpl(const QString &tmpl);
 
-  /*!
+    /*!
     Sets \a songs as the list of songs of the songbook.
     \sa songs
   */
-  void setSongs(QStringList songs);
+    void setSongs(QStringList songs);
 
-  /*!
+    /*!
     Resets the model.
   */
-  void reset();
+    void reset();
 
-  /*!
+    /*!
     Saves this songbook (.sb file) in the file \a filename.
     \sa load
   */
-  void save(const QString &filename);
+    void save(const QString &filename);
 
-  /*!
+    /*!
     Loads a songbook from the file \a filename (.sb file).
     \sa save
   */
-  void load(const QString &filename);
+    void load(const QString &filename);
 
-  /*!
+    /*!
     Sets the songbook as modified according to \a value.
     \sa isModified
   */
-  void setModified(bool value);
+    void setModified(bool value);
 
-  /*!
+    /*!
     Changes the current template (.tmpl file) of the songbook.
     \sa tmpl, setTmpl
   */
-  void changeTemplate(const QString &filename = QString());
+    void changeTemplate(const QString &filename = QString());
 
-  /*!
+    /*!
     Check all songs.
     \sa uncheckAll, toggleAll
   */
-  void checkAll();
+    void checkAll();
 
-  /*!
+    /*!
     Uncheck all songs.
     \sa checkAll, toggleAll
   */
-  void uncheckAll();
+    void uncheckAll();
 
-  /*!
+    /*!
     Toggle selection for all songs.
     \sa checkAll, uncheckAll
   */
-  void toggleAll();
+    void toggleAll();
 
-  /*!
+    /*!
     Sets the song at position \a index as checked according to \a value.
     \sa isChecked, checkAll, uncheckAll, toggleAll
   */
-  void setChecked(const QModelIndex &index, bool value);
+    void setChecked(const QModelIndex &index, bool value);
 
-  /*!
+    /*!
     Toggles the selection of the song at position \a index.
     \sa isChecked, setChecked, checkAll, uncheckAll, toggleAll
   */
-  void toggle(const QModelIndex &index);
+    void toggle(const QModelIndex &index);
 
 public:
-  /// Constructor.
-  CSongbook(QObject *parent);
+    /// Constructor.
+    CSongbook(QObject *parent);
 
-  /// Destructor.
-  ~CSongbook();
+    /// Destructor.
+    ~CSongbook();
 
-  /*!
+    /*!
     Returns the absolute path to the songbook directory.
   */
-  QString workingPath() const;
+    QString workingPath() const;
 
-  /*!
+    /*!
     Returns the library.
     \sa setLibrary
   */
-  CLibrary * library() const;
+    CLibrary * library() const;
 
-  /*!
+    /*!
     Returns the filename of the songbook file (.sb).
     \sa setFilename
   */
-  QString filename() const;
+    QString filename() const;
 
-  /*!
+    /*!
     Returns the current template for this songbook (.tmpl).
     \sa setTmpl
   */
-  QString tmpl() const;
+    QString tmpl() const;
 
-  /*!
+    /*!
     Returns the number of selected songs for this songbook.
   */
-  int selectedCount() const;
-  void selectLanguages(const QStringList &languages);
+    int selectedCount() const;
+    void selectLanguages(const QStringList &languages);
 
-  /*!
+    /*!
     Updates the list of songs of the songbook from current selection.
     \sa songsToSelection
   */
-  void songsFromSelection();
+    void songsFromSelection();
 
-  /*!
+    /*!
     Updates the selection from the list of songs of the songbook.
     \sa songsToSelection
   */
-  void songsToSelection();
+    void songsToSelection();
 
-  /*!
+    /*!
     Returns the list of songs of this songbook.
     \sa songsToSelection
   */
-  QStringList songs();
+    QStringList songs();
 
-  /*!
+    /*!
     Returns \a true if this songbook has unsaved modifications; \a false otherwise.
     \sa setModified
   */
-  bool isModified();
+    bool isModified();
 
-  /*!
+    /*!
     Initialize the template editor.
   */
-  void initializeEditor(QtGroupBoxPropertyBrowser *editor);
+    void initializeEditor(QtGroupBoxPropertyBrowser *editor);
 
-  /*!
+    /*!
     Returns true if the song at position \a index is checked; \a false otherwise.
   */
-  bool isChecked(const QModelIndex &index);
+    bool isChecked(const QModelIndex &index);
 
-  virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-  virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-  virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 
 signals:
-  void wasModified(bool modified);
-  void songsChanged();
+    void wasModified(bool modified);
+    void songsChanged();
 
 private slots:
-  void sourceModelAboutToBeReset();
-  void sourceModelReset();
+    void sourceModelAboutToBeReset();
+    void sourceModelReset();
 
 private:
-  QString m_filename;
-  QString m_tmpl;
+    QString m_filename;
+    QString m_tmpl;
 
-  QList< bool > m_selectedSongs;
-  QStringList m_songs;
+    QList< bool > m_selectedSongs;
+    QStringList m_songs;
 
-  bool m_modified;
+    bool m_modified;
 
-  QtVariantPropertyManager *m_propertyManager;
-  QtGroupPropertyManager *m_groupManager;
+    QtVariantPropertyManager *m_propertyManager;
+    QtGroupPropertyManager *m_groupManager;
 
-  QMap< QString, QtVariantProperty* > m_parameters;
+    QMap< QString, QtVariantProperty* > m_parameters;
 
-  QList< QtProperty*> m_mandatoryParameters;
-  QtProperty *m_advancedParameters;
+    QList< QtProperty*> m_mandatoryParameters;
+    QtProperty *m_advancedParameters;
 };
 
 #endif // __SONGBOOK_HH__

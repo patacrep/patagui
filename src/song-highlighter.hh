@@ -41,93 +41,93 @@ class Hunspell;
  */
 class CSongHighlighter : public QSyntaxHighlighter
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor
-  CSongHighlighter(QTextDocument *parent = 0);
-  /// Destructor
-  ~CSongHighlighter();
+    /// Constructor
+    CSongHighlighter(QTextDocument *parent = 0);
+    /// Destructor
+    ~CSongHighlighter();
 
-  /// Set the dictionary used by the spellchecker.
-  /// @param filename the .dic file that corresponds to a hunspell dictionary.
-  /// Those files are usually located in /usr/share/hunspell/.
-  void setDictionary(const QString &filename);
+    /// Set the dictionary used by the spellchecker.
+    /// @param filename the .dic file that corresponds to a hunspell dictionary.
+    /// Those files are usually located in /usr/share/hunspell/.
+    void setDictionary(const QString &filename);
 
-  /// Getter on the Hunspell spellchecker.
-  /// @return the hunspell spellchecker
-  Hunspell* checker() const;
+    /// Getter on the Hunspell spellchecker.
+    /// @return the hunspell spellchecker
+    Hunspell* checker() const;
 
 public slots:
 #ifdef ENABLE_SPELLCHECK
 
-  bool isSpellCheckActive() const;
+    bool isSpellCheckActive() const;
 
-  /// Add an unrecognized word to the hunspell dictionary
-  /// so that it is not marked as incorrect anymore.
-  /// @param word the word that is to be marked as correct.
-  void addWord(const QString &word);
+    /// Add an unrecognized word to the hunspell dictionary
+    /// so that it is not marked as incorrect anymore.
+    /// @param word the word that is to be marked as correct.
+    void addWord(const QString &word);
 
-  /// Define whether the spellchecker is active or not.
-  /// @param state true if the spellchecker is active, false otherwise.
-  void setSpellCheckActive(const bool state);
+    /// Define whether the spellchecker is active or not.
+    /// @param state true if the spellchecker is active, false otherwise.
+    void setSpellCheckActive(const bool state);
 #endif //ENABLE_SPELLCHECK
 
 protected:
-  /// Apply highlighting rules for a block of text.
-  /// @param text the text on which the rules should be applied.
-  void highlightBlock(const QString &text);
+    /// Apply highlighting rules for a block of text.
+    /// @param text the text on which the rules should be applied.
+    void highlightBlock(const QString &text);
 
-  /// Apply spellchecking on a text.
-  /// @param text the text on which the spellchecking should be applied.
-  void spellCheck(const QString &text);
+    /// Apply spellchecking on a text.
+    /// @param text the text on which the spellchecking should be applied.
+    void spellCheck(const QString &text);
 
-  /// Apply spellchecking on a particular word.
-  /// @param word the word that is to be spellchecked.
-  /// @return true if the word is correctly spelled, false otherwise.
-  bool checkWord(const QString &word);
+    /// Apply spellchecking on a particular word.
+    /// @param word the word that is to be spellchecked.
+    /// @return true if the word is correctly spelled, false otherwise.
+    bool checkWord(const QString &word);
 
 
 private:
-  struct HighlightingRule
-  {
-    QRegExp pattern;
-    QTextCharFormat format;
-  };
-  QVector<HighlightingRule> highlightingRules;
+    struct HighlightingRule
+    {
+        QRegExp pattern;
+        QTextCharFormat format;
+    };
+    QVector<HighlightingRule> highlightingRules;
 
-  QTextCharFormat keywordFormat;
-  QTextCharFormat keyword2Format;
-  QTextCharFormat environmentFormat;
-  QTextCharFormat singleLineCommentFormat;
-  QTextCharFormat chordFormat;
-  QTextCharFormat quotationFormat;
-  QTextCharFormat argumentFormat;
-  QTextCharFormat optionFormat;
+    QTextCharFormat keywordFormat;
+    QTextCharFormat keyword2Format;
+    QTextCharFormat environmentFormat;
+    QTextCharFormat singleLineCommentFormat;
+    QTextCharFormat chordFormat;
+    QTextCharFormat quotationFormat;
+    QTextCharFormat argumentFormat;
+    QTextCharFormat optionFormat;
 
-  QTextCharFormat multiLineCommentFormat;
+    QTextCharFormat multiLineCommentFormat;
 
-  Hunspell * m_checker;
-  bool m_isSpellCheckActive;
-  QTextCharFormat m_spellCheckFormat;
-  QTextCodec *m_codec;
+    Hunspell * m_checker;
+    bool m_isSpellCheckActive;
+    QTextCharFormat m_spellCheckFormat;
+    QTextCodec *m_codec;
 
-  const static QRegExp reLaTeXOption;
-  const static QRegExp reLaTeXArgument;
+    const static QRegExp reLaTeXOption;
+    const static QRegExp reLaTeXArgument;
 
-  const static QRegExp reChordsPattern;
-  const static QRegExp reCommentsPattern;
+    const static QRegExp reChordsPattern;
+    const static QRegExp reCommentsPattern;
 
-  const static QStringList _keywordPatterns;
-  const static QStringList _keyword2Patterns;
-  const static QStringList _delimiters;
+    const static QStringList _keywordPatterns;
+    const static QStringList _keyword2Patterns;
+    const static QStringList _delimiters;
 
-  const static QColor _keywords1Color;
-  const static QColor _keywords2Color;
-  const static QColor _environmentsColor;
-  const static QColor _commentsColor;
-  const static QColor _quotesColor;
-  const static QColor _chordsColor;
+    const static QColor _keywords1Color;
+    const static QColor _keywords2Color;
+    const static QColor _environmentsColor;
+    const static QColor _commentsColor;
+    const static QColor _quotesColor;
+    const static QColor _chordsColor;
 };
 
 #endif // __HIGHLIGHTER_HH__

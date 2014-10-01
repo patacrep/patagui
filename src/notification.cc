@@ -30,91 +30,91 @@
 #include <QDebug>
 
 CNotification::CNotification(QWidget* p)
-  : QDockWidget(p)
-  , m_textEdit(new QTextEdit)
-  , m_layout(new QVBoxLayout)
-  , m_priority(LowPriority)
+    : QDockWidget(p)
+    , m_textEdit(new QTextEdit)
+    , m_layout(new QVBoxLayout)
+    , m_priority(LowPriority)
 {
-  setFeatures(QDockWidget::NoDockWidgetFeatures);
-  setTitleBarWidget(NULL);
-  setMaximumHeight(120);
+    setFeatures(QDockWidget::NoDockWidgetFeatures);
+    setTitleBarWidget(NULL);
+    setMaximumHeight(120);
 
-  QIcon icon = QIcon::fromTheme("dialog-information");
-  QLabel* label = new QLabel;
-  label->setPixmap(icon.pixmap(48,48));
+    QIcon icon = QIcon::fromTheme("dialog-information");
+    QLabel* label = new QLabel;
+    label->setPixmap(icon.pixmap(48,48));
 
-  m_textEdit = new QTextEdit;
-  m_textEdit->setReadOnly(true);
-  setWindowFlags( Qt::FramelessWindowHint);
+    m_textEdit = new QTextEdit;
+    m_textEdit->setReadOnly(true);
+    setWindowFlags( Qt::FramelessWindowHint);
 
-  QWidget* buttons = new QWidget;
-  QPushButton* button = new QPushButton(tr("Close"));
-  connect(button, SIGNAL(clicked()), this, SLOT(close()));
-  m_layout->addWidget(button);
-  buttons->setLayout(m_layout);
+    QWidget* buttons = new QWidget;
+    QPushButton* button = new QPushButton(tr("Close"));
+    connect(button, SIGNAL(clicked()), this, SLOT(close()));
+    m_layout->addWidget(button);
+    buttons->setLayout(m_layout);
 
-  QWidget* mainWidget = new QWidget;
-  QLayout* mainLayout = new QHBoxLayout;
-  mainLayout->addWidget(label);
-  mainLayout->addWidget(m_textEdit);
-  mainLayout->addWidget(buttons);
-  mainWidget->setLayout(mainLayout);
+    QWidget* mainWidget = new QWidget;
+    QLayout* mainLayout = new QHBoxLayout;
+    mainLayout->addWidget(label);
+    mainLayout->addWidget(m_textEdit);
+    mainLayout->addWidget(buttons);
+    mainWidget->setLayout(mainLayout);
 
-  setWidget(mainWidget);
-  changeBackground();
-  parent()->addDockWidget(Qt::TopDockWidgetArea, this, Qt::Horizontal);
-  hide();
+    setWidget(mainWidget);
+    changeBackground();
+    parent()->addDockWidget(Qt::TopDockWidgetArea, this, Qt::Horizontal);
+    hide();
 }
 
 CMainWindow* CNotification::parent() const
 {
-  return  static_cast<CMainWindow*>(QDockWidget::parent());
+    return  static_cast<CMainWindow*>(QDockWidget::parent());
 }
 
 QString CNotification::message() const
 {
-  return  m_textEdit->toPlainText();
+    return  m_textEdit->toPlainText();
 }
 
 void CNotification::setMessage(const QString & str)
 {
-  m_textEdit->setHtml(str);
+    m_textEdit->setHtml(str);
 }
 
 
 void CNotification::addAction(QAction* action)
 {
-  QPushButton* button = new QPushButton(action->text());
-  connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
-  connect(button, SIGNAL(clicked()), this, SLOT(hide()));
-  m_layout->insertWidget(0, button);
+    QPushButton* button = new QPushButton(action->text());
+    connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
+    connect(button, SIGNAL(clicked()), this, SLOT(hide()));
+    m_layout->insertWidget(0, button);
 }
 
 CNotification::Priority CNotification::priority() const
 {
-  return  m_priority;
+    return  m_priority;
 }
 
 void CNotification::setPriority(const CNotification::Priority & value)
 {
-  m_priority = value;
-  changeBackground();
+    m_priority = value;
+    changeBackground();
 }
 
 void CNotification::changeBackground()
 {
-  QColor color;
-  switch(priority())
+    QColor color;
+    switch(priority())
     {
     case LowPriority:
-      color.setRgb(255,238,170); //light yellow
-      break;
+        color.setRgb(255,238,170); //light yellow
+        break;
     case MediumPriority:
-      color.setRgb(255,179,128); //light orange
-      break;
+        color.setRgb(255,179,128); //light orange
+        break;
     case HighPriority:
-      color.setRgb(233,175,175); //light red
-      break;
+        color.setRgb(233,175,175); //light red
+        break;
     }
-  setStyleSheet(QString(" QTextEdit, .QWidget { border: 0px; background-color: %1; }").arg(color.name()));
+    setStyleSheet(QString(" QTextEdit, .QWidget { border: 0px; background-color: %1; }").arg(color.name()));
 }

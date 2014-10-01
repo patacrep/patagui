@@ -32,191 +32,191 @@
 
 VariantFactory::~VariantFactory()
 {
-  {
-    QList<CFileChooser *> editors = theEditorToProperty.keys();
-    QListIterator<CFileChooser *> it(editors);
-    while (it.hasNext())
-      delete it.next();
-  }
+    {
+        QList<CFileChooser *> editors = theEditorToProperty.keys();
+        QListIterator<CFileChooser *> it(editors);
+        while (it.hasNext())
+            delete it.next();
+    }
 
-  {
-    QList<QSpinBox *> spinboxes = theSpinBoxToProperty.keys();
-    QListIterator<QSpinBox *> it(spinboxes);
-    while (it.hasNext())
-      delete it.next();
-  }
+    {
+        QList<QSpinBox *> spinboxes = theSpinBoxToProperty.keys();
+        QListIterator<QSpinBox *> it(spinboxes);
+        while (it.hasNext())
+            delete it.next();
+    }
 }
 
 void VariantFactory::connectPropertyManager(QtVariantPropertyManager *manager)
 {
-  connect(manager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-	  this, SLOT(slotPropertyChanged(QtProperty *, const QVariant &)));
-  connect(manager, SIGNAL(attributeChanged(QtProperty *, const QString &, const QVariant &)),
-	  this, SLOT(slotPropertyAttributeChanged(QtProperty *, const QString &, const QVariant &)));
-  QtVariantEditorFactory::connectPropertyManager(manager);
+    connect(manager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+            this, SLOT(slotPropertyChanged(QtProperty *, const QVariant &)));
+    connect(manager, SIGNAL(attributeChanged(QtProperty *, const QString &, const QVariant &)),
+            this, SLOT(slotPropertyAttributeChanged(QtProperty *, const QString &, const QVariant &)));
+    QtVariantEditorFactory::connectPropertyManager(manager);
 }
 
 QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
-				      QtProperty *property, QWidget *parent)
+                                      QtProperty *property, QWidget *parent)
 {
-  if (manager->propertyType(property) == VariantManager::filePathTypeId())
+    if (manager->propertyType(property) == VariantManager::filePathTypeId())
     {
-      CFileChooser *editor = new CFileChooser(parent);
-      editor->setPath(manager->value(property).toString());
-      editor->setFilter(manager->attributeValue(property, QLatin1String("filter")).toString());
-      theCreatedEditors[property].append(editor);
-      theEditorToProperty[editor] = property;
+        CFileChooser *editor = new CFileChooser(parent);
+        editor->setPath(manager->value(property).toString());
+        editor->setFilter(manager->attributeValue(property, QLatin1String("filter")).toString());
+        theCreatedEditors[property].append(editor);
+        theEditorToProperty[editor] = property;
 
-      connect(editor, SIGNAL(pathChanged(const QString &)),
-	      this, SLOT(slotSetValue(const QString &)));
-      connect(editor, SIGNAL(destroyed(QObject *)),
-	      this, SLOT(slotEditorDestroyed(QObject *)));
-      return editor;
+        connect(editor, SIGNAL(pathChanged(const QString &)),
+                this, SLOT(slotSetValue(const QString &)));
+        connect(editor, SIGNAL(destroyed(QObject *)),
+                this, SLOT(slotEditorDestroyed(QObject *)));
+        return editor;
     }
-  else if (manager->propertyType(property) == VariantManager::unitTypeId())
+    else if (manager->propertyType(property) == VariantManager::unitTypeId())
     {
-      QSpinBox *spinbox = new QSpinBox(parent);
-      spinbox->setValue(manager->value(property).toInt());
-      //spinbox->setSuffix(manager->attributeValue(property, QLatin1String("unit")).toString());
-      //hardcoded as the solution above does not work and we only have one type of spinbox (for font size)
-      spinbox->setSuffix("pt");
-      spinbox->setRange(10, 12);
-      theCreatedSpinBoxes[property].append(spinbox);
-      theSpinBoxToProperty[spinbox] = property;
+        QSpinBox *spinbox = new QSpinBox(parent);
+        spinbox->setValue(manager->value(property).toInt());
+        //spinbox->setSuffix(manager->attributeValue(property, QLatin1String("unit")).toString());
+        //hardcoded as the solution above does not work and we only have one type of spinbox (for font size)
+        spinbox->setSuffix("pt");
+        spinbox->setRange(10, 12);
+        theCreatedSpinBoxes[property].append(spinbox);
+        theSpinBoxToProperty[spinbox] = property;
 
-      connect(spinbox, SIGNAL(valueChanged(int)),
-	      this, SLOT(slotSetIntValue(int)));
-      connect(spinbox, SIGNAL(destroyed(QObject *)),
-	      this, SLOT(slotEditorDestroyed(QObject *)));
-      return spinbox;
+        connect(spinbox, SIGNAL(valueChanged(int)),
+                this, SLOT(slotSetIntValue(int)));
+        connect(spinbox, SIGNAL(destroyed(QObject *)),
+                this, SLOT(slotEditorDestroyed(QObject *)));
+        return spinbox;
     }
-  return QtVariantEditorFactory::createEditor(manager, property, parent);
+    return QtVariantEditorFactory::createEditor(manager, property, parent);
 }
 
 void VariantFactory::disconnectPropertyManager(QtVariantPropertyManager *manager)
 {
-  disconnect(manager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-	     this, SLOT(slotPropertyChanged(QtProperty *, const QVariant &)));
-  disconnect(manager, SIGNAL(attributeChanged(QtProperty *, const QString &, const QVariant &)),
-	     this, SLOT(slotPropertyAttributeChanged(QtProperty *, const QString &, const QVariant &)));
-  QtVariantEditorFactory::disconnectPropertyManager(manager);
+    disconnect(manager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+               this, SLOT(slotPropertyChanged(QtProperty *, const QVariant &)));
+    disconnect(manager, SIGNAL(attributeChanged(QtProperty *, const QString &, const QVariant &)),
+               this, SLOT(slotPropertyAttributeChanged(QtProperty *, const QString &, const QVariant &)));
+    QtVariantEditorFactory::disconnectPropertyManager(manager);
 }
 
 void VariantFactory::slotPropertyChanged(QtProperty *property,
-					 const QVariant &value)
+                                         const QVariant &value)
 {
-  if (theCreatedEditors.contains(property))
+    if (theCreatedEditors.contains(property))
     {
-      QList<CFileChooser *> editors = theCreatedEditors[property];
-      QListIterator<CFileChooser *> itEditor(editors);
-      while (itEditor.hasNext())
-	itEditor.next()->setPath(value.toString());
+        QList<CFileChooser *> editors = theCreatedEditors[property];
+        QListIterator<CFileChooser *> itEditor(editors);
+        while (itEditor.hasNext())
+            itEditor.next()->setPath(value.toString());
     }
-  else if (theCreatedSpinBoxes.contains(property))
+    else if (theCreatedSpinBoxes.contains(property))
     {
-      QList<QSpinBox *> spinboxes = theCreatedSpinBoxes[property];
-      QListIterator<QSpinBox *> it(spinboxes);
-      while (it.hasNext())
-	it.next()->setValue(value.toInt());
+        QList<QSpinBox *> spinboxes = theCreatedSpinBoxes[property];
+        QListIterator<QSpinBox *> it(spinboxes);
+        while (it.hasNext())
+            it.next()->setValue(value.toInt());
     }
 }
 
 void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
-						  const QString &attribute, const QVariant &value)
+                                                  const QString &attribute, const QVariant &value)
 {
-  if (!theCreatedEditors.contains(property) && !theCreatedSpinBoxes.contains(property))
-    return;
+    if (!theCreatedEditors.contains(property) && !theCreatedSpinBoxes.contains(property))
+        return;
 
-  if (attribute == QLatin1String("filter"))
+    if (attribute == QLatin1String("filter"))
     {
-      QList<CFileChooser *> editors = theCreatedEditors[property];
-      QListIterator<CFileChooser *> itEditor(editors);
-      while (itEditor.hasNext())
-	itEditor.next()->setFilter(value.toString());
+        QList<CFileChooser *> editors = theCreatedEditors[property];
+        QListIterator<CFileChooser *> itEditor(editors);
+        while (itEditor.hasNext())
+            itEditor.next()->setFilter(value.toString());
     }
-  else if (attribute == QLatin1String("unit"))
+    else if (attribute == QLatin1String("unit"))
     {
-      QList<QSpinBox *> spinboxes = theCreatedSpinBoxes[property];
-      QListIterator<QSpinBox *> it(spinboxes);
-      while (it.hasNext())
-	it.next()->setSuffix(value.toString());
+        QList<QSpinBox *> spinboxes = theCreatedSpinBoxes[property];
+        QListIterator<QSpinBox *> it(spinboxes);
+        while (it.hasNext())
+            it.next()->setSuffix(value.toString());
     }
 }
 
 void VariantFactory::slotSetValue(const QString &value)
 {
-  QObject *object = sender();
-  QMap<CFileChooser *, QtProperty *>::ConstIterator itEditor =
-    theEditorToProperty.constBegin();
-  while (itEditor != theEditorToProperty.constEnd())
+    QObject *object = sender();
+    QMap<CFileChooser *, QtProperty *>::ConstIterator itEditor =
+            theEditorToProperty.constBegin();
+    while (itEditor != theEditorToProperty.constEnd())
     {
-      if (itEditor.key() == object)
-	{
-	  QtProperty *property = itEditor.value();
-	  QtVariantPropertyManager *manager = propertyManager(property);
-	  if (!manager)
-	    return;
-	  manager->setValue(property, value);
-	  return;
-	}
-      itEditor++;
+        if (itEditor.key() == object)
+        {
+            QtProperty *property = itEditor.value();
+            QtVariantPropertyManager *manager = propertyManager(property);
+            if (!manager)
+                return;
+            manager->setValue(property, value);
+            return;
+        }
+        itEditor++;
     }
 }
 
 void VariantFactory::slotSetIntValue(int value)
 {
-  QObject *object = sender();
-  QMap<QSpinBox *, QtProperty *>::ConstIterator it =
-    theSpinBoxToProperty.constBegin();
-  while (it != theSpinBoxToProperty.constEnd())
+    QObject *object = sender();
+    QMap<QSpinBox *, QtProperty *>::ConstIterator it =
+            theSpinBoxToProperty.constBegin();
+    while (it != theSpinBoxToProperty.constEnd())
     {
-      if (it.key() == object)
-	{
-	  QtProperty *property = it.value();
-	  QtVariantPropertyManager *manager = propertyManager(property);
-	  if (!manager)
-	    return;
-	  manager->setValue(property, value);
-	  return;
-	}
-      it++;
+        if (it.key() == object)
+        {
+            QtProperty *property = it.value();
+            QtVariantPropertyManager *manager = propertyManager(property);
+            if (!manager)
+                return;
+            manager->setValue(property, value);
+            return;
+        }
+        it++;
     }
 }
 
 void VariantFactory::slotEditorDestroyed(QObject *object)
 {
-  QMap<CFileChooser *, QtProperty *>::ConstIterator itEditor =
-    theEditorToProperty.constBegin();
-  while (itEditor != theEditorToProperty.constEnd())
+    QMap<CFileChooser *, QtProperty *>::ConstIterator itEditor =
+            theEditorToProperty.constBegin();
+    while (itEditor != theEditorToProperty.constEnd())
     {
-      if (itEditor.key() == object)
-	{
-	  CFileChooser *editor = itEditor.key();
-	  QtProperty *property = itEditor.value();
-	  theEditorToProperty.remove(editor);
-	  theCreatedEditors[property].removeAll(editor);
-	  if (theCreatedEditors[property].isEmpty())
-	    theCreatedEditors.remove(property);
-	  break;
-	}
-      itEditor++;
+        if (itEditor.key() == object)
+        {
+            CFileChooser *editor = itEditor.key();
+            QtProperty *property = itEditor.value();
+            theEditorToProperty.remove(editor);
+            theCreatedEditors[property].removeAll(editor);
+            if (theCreatedEditors[property].isEmpty())
+                theCreatedEditors.remove(property);
+            break;
+        }
+        itEditor++;
     }
 
-  QMap<QSpinBox *, QtProperty *>::ConstIterator it =
-    theSpinBoxToProperty.constBegin();
-  while (it != theSpinBoxToProperty.constEnd())
+    QMap<QSpinBox *, QtProperty *>::ConstIterator it =
+            theSpinBoxToProperty.constBegin();
+    while (it != theSpinBoxToProperty.constEnd())
     {
-      if (it.key() == object)
-	{
-	  QSpinBox *editor = it.key();
-	  QtProperty *property = it.value();
-	  theSpinBoxToProperty.remove(editor);
-	  theCreatedSpinBoxes[property].removeAll(editor);
-	  if (theCreatedSpinBoxes[property].isEmpty())
-	    theCreatedSpinBoxes.remove(property);
-	  break;
-	}
-      it++;
+        if (it.key() == object)
+        {
+            QSpinBox *editor = it.key();
+            QtProperty *property = it.value();
+            theSpinBoxToProperty.remove(editor);
+            theCreatedSpinBoxes[property].removeAll(editor);
+            if (theCreatedSpinBoxes[property].isEmpty())
+                theCreatedSpinBoxes.remove(property);
+            break;
+        }
+        it++;
     }
 }
 

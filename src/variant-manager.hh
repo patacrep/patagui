@@ -37,7 +37,7 @@ class VariantManager : public QtVariantPropertyManager
 public:
     VariantManager(QObject *parent = 0)
         : QtVariantPropertyManager(parent)
-            { }
+    { }
 
     virtual QVariant value(const QtProperty *property) const;
     virtual int valueType(int propertyType) const;
@@ -53,7 +53,7 @@ public:
 public slots:
     virtual void setValue(QtProperty *property, const QVariant &val);
     virtual void setAttribute(QtProperty *property,
-                const QString &attribute, const QVariant &value);
+                              const QString &attribute, const QVariant &value);
 protected:
     virtual QString valueText(const QtProperty *property) const;
     virtual void initializeProperty(QtProperty *property);

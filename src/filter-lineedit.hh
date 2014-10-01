@@ -37,20 +37,20 @@
 */
 class CClearButton : public QToolButton
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  CClearButton(QWidget *parent = 0);
+    /// Constructor.
+    CClearButton(QWidget *parent = 0);
 
 protected slots:
-  void textChanged(const QString &text);
+    void textChanged(const QString &text);
 
 protected:
-  void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 private:
-  QImage m_icon;
+    QImage m_icon;
 };
 
 /*!
@@ -61,17 +61,17 @@ private:
 */
 class CMagButton : public QToolButton
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  CMagButton(QWidget *parent = 0);
+    /// Constructor.
+    CMagButton(QWidget *parent = 0);
 
 protected:
-  void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 private:
-  QImage m_icon;
+    QImage m_icon;
 };
 
 /*!
@@ -82,11 +82,11 @@ private:
 */
 class CLocaleButton : public QToolButton
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  CLocaleButton(QWidget *parent = 0);
+    /// Constructor.
+    CLocaleButton(QWidget *parent = 0);
 };
 
 
@@ -113,38 +113,38 @@ class CSongSortFilterProxyModel;
 */
 class CFilterLineEdit : public LineEdit
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public slots:
-  /// Only display songs written in English.
-  void filterLanguageEnglish();
-  /// Only display songs written in French.
-  void filterLanguageFrench();
-  /// Only display songs written in Spanish.
-  void filterLanguageSpanish();
-  /// Only display songs written in Portuguese.
-  void filterLanguagePortuguese();
-  /// Only display songs written in Italian.
-  void filterLanguageItalian();
+    /// Only display songs written in English.
+    void filterLanguageEnglish();
+    /// Only display songs written in French.
+    void filterLanguageFrench();
+    /// Only display songs written in Spanish.
+    void filterLanguageSpanish();
+    /// Only display songs written in Portuguese.
+    void filterLanguagePortuguese();
+    /// Only display songs written in Italian.
+    void filterLanguageItalian();
 
 public:
-  /// Constructor.
-  CFilterLineEdit(QWidget *parent = 0);
-  /// Destructor.
-  ~CFilterLineEdit();
+    /// Constructor.
+    CFilterLineEdit(QWidget *parent = 0);
+    /// Destructor.
+    ~CFilterLineEdit();
 
-  /// Add an action to the menu that is displayed
-  /// when clicking on the CMagButton on the left.
-  void addAction(QAction *action);
+    /// Add an action to the menu that is displayed
+    /// when clicking on the CMagButton on the left.
+    void addAction(QAction *action);
 
-  /// Defines the model that should be filtered.
-  /// @param filterModel the proxy model of the songs library
-  void setFilterModel(CSongSortFilterProxyModel *filterModel);
+    /// Defines the model that should be filtered.
+    /// @param filterModel the proxy model of the songs library
+    void setFilterModel(CSongSortFilterProxyModel *filterModel);
 
 private:
-  QMenu* m_menu;
+    QMenu* m_menu;
 
-  CSongSortFilterProxyModel *m_filterModel;
+    CSongSortFilterProxyModel *m_filterModel;
 };
 
 #endif // __FILTER_LINEEDIT_HH__

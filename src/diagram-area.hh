@@ -96,133 +96,133 @@ class CChordListModel;
 */
 class CDiagramArea : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
-  /// Constructor.
-  CDiagramArea(QWidget *parent=0);
+public:
+    /// Constructor.
+    CDiagramArea(QWidget *parent=0);
 
-  /*!
+    /*!
     Returns \a true if the diagram-area is in read-only mode; \a false otherwise.
     \sa setReadOnly
   */
-  bool isReadOnly() const;
+    bool isReadOnly() const;
 
-  /*!
+    /*!
     Set the diagram-area as editable (\a false) or read-only (\a true) according to \a value.
     \sa isReadOnly
   */
-  void setReadOnly(bool value);
+    void setReadOnly(bool value);
 
-  /*!
+    /*!
     Forces the list of chords to be displayed on \a value columns.
     \sa setRowCount
   */
-  void setColumnCount(int value);
+    void setColumnCount(int value);
 
-  /*!
+    /*!
     Forces the list of chords to be displayed on \a value rows.
     \sa setColumnCount
   */
-  void setRowCount(int value);
+    void setRowCount(int value);
 
-  /*!
+    /*!
     Returns all the chords. Note that it returns chords from the model, not the view;
     thus, filtered chords are also included.
   */
-  QList< CChord* > chords();
+    QList< CChord* > chords();
 
 public slots:
-  /*!
+    /*!
     Adds a new chord to the list. This slot is connected to the "add" button
     and pops-up a CDiagramEditor.
   */
-  void newDiagram();
+    void newDiagram();
 
-  /*!
+    /*!
     Appends the chord \a chord to the list.
     The user is responsible for the correctness of the chord.
   */
-  void addDiagram(const QString & chord);
+    void addDiagram(const QString & chord);
 
-  /*!
+    /*!
     Triggers a CDiagramEditor associated to the chord at position \a index.
     This slot is only available in editable mode.
     \sa setReadOnly
   */
-  void editDiagram(QModelIndex index = QModelIndex());
+    void editDiagram(QModelIndex index = QModelIndex());
 
-  /*!
+    /*!
     Removes the chord at position \a index from the list.
     This slot is only available in editable mode.
     \sa setReadOnly
   */
-  void removeDiagram(QModelIndex index = QModelIndex());
+    void removeDiagram(QModelIndex index = QModelIndex());
 
-  /*!
+    /*!
     Filters rows that contain chords whose instrument matches \a type.
     \sa setNameFilter, setStringsFilter
   */
-  void setTypeFilter(const CChord::Instrument & type);
+    void setTypeFilter(const CChord::Instrument & type);
 
-  /*!
+    /*!
     Filters rows that contain chords whose name matches \a name.
     \sa setTypeFilter, setStringsFilter
   */
-  void setNameFilter(const QString & name);
+    void setNameFilter(const QString & name);
 
-  /*!
+    /*!
     Filters rows that contain chords whose strings matches \a strings.
     \sa setTypeFilter, setNameFilter
   */
-  void setStringsFilter(const QString & strings);
+    void setStringsFilter(const QString & strings);
 
-  /*!
+    /*!
     Removes all filters.
     \sa setTypeFilter, setNameFilter, setStringsFilter
   */
-  void clearFilters();
+    void clearFilters();
 
 private slots:
-  void update();
-  void resizeRows();
-  void onDiagramChanged();
-  void contextMenu(const QPoint & pos);
-  void onViewClicked(const QModelIndex &);
+    void update();
+    void resizeRows();
+    void onDiagramChanged();
+    void contextMenu(const QPoint & pos);
+    void onViewClicked(const QModelIndex &);
 
 signals:
-  /*!
+    /*!
     This signal is emitted when the content of the list of chords changes
     such as when editing, removing or adding a new chord.
     This signal is never emitted in read-only mode.
     \sa editDiagram, removeDiagram, newDiagram
   */
-  void contentsChanged();
+    void contentsChanged();
 
-  /*!
+    /*!
     This signal is emitted when the contents of the model changes
     such as when removing, adding or filtering diagrams.
     \sa removeDiagram, newDiagram
   */
-  void layoutChanged();
+    void layoutChanged();
 
-  /*!
+    /*!
     This signal is emitted when the read-only property changes.
     \sa isReadOnly, setReadOnly
   */
-  void readOnlyModeChanged();
+    void readOnlyModeChanged();
 
-  /*!
+    /*!
     This signal is emitted when a chord from the list is clicked.
   */
-  void diagramClicked(CChord * diagram);
+    void diagramClicked(CChord * diagram);
 
 private:
-  bool m_isReadOnly;
-  CChordListModel *m_diagramModel;
-  QSortFilterProxyModel *m_proxyModel;
-  QTableView *m_diagramView;
-  QPushButton *m_addDiagramButton;
+    bool m_isReadOnly;
+    CChordListModel *m_diagramModel;
+    QSortFilterProxyModel *m_proxyModel;
+    QTableView *m_diagramView;
+    QPushButton *m_addDiagramButton;
 };
 
 

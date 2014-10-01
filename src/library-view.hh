@@ -36,29 +36,29 @@ class CMainWindow;
  */
 class CLibraryView : public QTableView
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor
-  CLibraryView(CMainWindow *parent);
-  /// Destructor
-  ~CLibraryView();
+    /// Constructor
+    CLibraryView(CMainWindow *parent);
+    /// Destructor
+    ~CLibraryView();
 
-  /// Load user settings
-  void readSettings();
-  /// Save user settings
-  void writeSettings();
+    /// Load user settings
+    void readSettings();
+    /// Save user settings
+    void writeSettings();
 
-  /// Resize the library columns
-  void resizeColumns();
+    /// Resize the library columns
+    void resizeColumns();
 
 public slots:
-  /// Update the view, sorting songs by artist name, then titles
-  void update();
+    /// Update the view, sorting songs by artist name, then titles
+    void update();
 
 private:
-  void createActions();
-  CMainWindow * parent() const;
+    void createActions();
+    CMainWindow * parent() const;
 };
 
 #endif // __LIBRARY_VIEW_HH__
