@@ -485,6 +485,9 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
 
 void CLibrary::importSongs(const QStringList & filenames)
 {
+  showMessage(tr("Importing %1 songs within the library %2")
+	      .arg(filenames.count())
+	      .arg(directory().absolutePath()));
   Song song;
   QMap<QString, QString> sourceTargetMap;
   foreach(const QString & filename, filenames)
@@ -537,7 +540,7 @@ QString CLibrary::pathToSong(const QString &artist, const QString &title) const
   QString artistInPath = stringToFilename(artist, "_");
   QString titleInPath = stringToFilename(title, "_");
 
-  return QString("%1/%2/%3.sg")
+  return QString("%1/songs/%2/%3.sg")
     .arg(directory().canonicalPath())
     .arg(artistInPath)
     .arg(titleInPath);
