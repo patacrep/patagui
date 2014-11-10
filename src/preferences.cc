@@ -340,7 +340,7 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   m_songbookPath->setPath(settings.value("songbookPath", QDir::homePath()).toString());
   m_libraryPath->setPath(settings.value("libraryPath", m_songbookPath->path()).toString());
   settings.endGroup();
@@ -355,7 +355,7 @@ void OptionsPage::readSettings()
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   settings.setValue("songbookPath", m_songbookPath->path());
   settings.setValue("libraryPath", m_libraryPath->path());
   settings.endGroup();

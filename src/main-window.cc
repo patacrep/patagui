@@ -290,7 +290,7 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
 void CMainWindow::readSettings(bool firstLaunch)
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   if (firstLaunch)
     {
       resize(settings.value("size", QSize(800,600)).toSize());
@@ -319,7 +319,7 @@ void CMainWindow::readSettings(bool firstLaunch)
 void CMainWindow::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   settings.setValue( "maximized", isMaximized() );
   if (!isMaximized())
     {
@@ -683,7 +683,7 @@ void CMainWindow::updateTitle(const QString &filename)
 const QString CMainWindow::workingPath()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   QString path = settings.value("songbookPath", QDir::homePath()).toString();
   settings.endGroup();
   return path;
