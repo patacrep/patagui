@@ -103,8 +103,8 @@ set(SONGBOOK_CLIENT_RCS
 
 # }}}
 
-find_package(Qt5 CONFIG REQUIRED Network Widgets Script Svg)
-LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES};${Qt5Svg_LIBRARIES})
+find_package(Qt5 CONFIG REQUIRED Network Widgets Script)
+LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
 
 #set(QT_USE_QTSCRIPT true)
 #set(QT_USE_QTSVG true)
