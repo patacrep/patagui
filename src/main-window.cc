@@ -607,7 +607,7 @@ void CMainWindow::build()
 	songbook()->checkAll();
     }
 
-  save(true);
+  save();
 
   if (QFile(songbook()->filename()).exists())
     {
@@ -642,18 +642,13 @@ void CMainWindow::open()
   open(filename);
 }
 
-void CMainWindow::save(bool forced)
+void CMainWindow::save()
 {
-  if (songbook()->filename().isEmpty() ||
-      songbook()->filename().endsWith("default.sb") ||
-      !songbook()->filename().compare(".sb"))
+  if (songbook()->filename().isEmpty())
     {
-      if (forced)
-	songbook()->setFilename(QString("%1/books/default.sb").arg(workingPath()));
-      else if (!songbook()->filename().isEmpty())
-	saveAs();
+      return saveAs();
     }
-
+  
   songbook()->save(songbook()->filename());
   updateTitle(songbook()->filename());
 }
@@ -662,7 +657,7 @@ void CMainWindow::saveAs()
 {
   QString filename = QFileDialog::getSaveFileName(this,
 						  tr("Save as"),
-						  QString("%1/books").arg(workingPath()),
+						  QDir::homePath(),
 						  tr("Songbook (*.sb)"));
 
   if (!filename.isEmpty())
