@@ -62,6 +62,10 @@ CImportDialog::CImportDialog(QWidget *parent)
   , m_libraryPath(new CFileChooser(this))
   , m_libraryPathValid(new QLabel(this))
   , m_songsToBeImported(QStringList())
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+  , m_manager(0)
+  , m_reply(0)
+#endif //ENABLE_LIBRARY_DOWNLOAD
 {
   setWindowTitle(tr("Import songs"));
   setParent(static_cast<CMainWindow*>(parent));
