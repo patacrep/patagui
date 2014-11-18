@@ -103,27 +103,12 @@ set(SONGBOOK_CLIENT_RCS
 
 # }}}
 
-# Finding Qt5
 find_package(Qt5 CONFIG REQUIRED Network Widgets Script Svg)
-list(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES};${Qt5Svg_LIBRARIES})
+LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES};${Qt5Svg_LIBRARIES})
 
-################ DIRTY HACK FOR IT TO WORK FOR NOW ###################
-#### Problem lies with cmake, can't properly find python3 on Mac #####
-SET(PYTHON_INCLUDE_DIR  /Library/Frameworks/Python.framework/Versions/3.4/include/python3.4m)
-SET(PYTHON_LIBRARY /Library/Frameworks/Python.framework/Versions/3.4/lib)
-############################# End of Hack ############################
+#set(QT_USE_QTSCRIPT true)
+#set(QT_USE_QTSVG true)
 
-# Finding Python 3
-find_package(PythonLibs 3.3 REQUIRED)
-include_directories(${PYTHON_INCLUDE_DIRS})
-list(APPEND LIBRARIES ${PYTHON_LIBRARIES})
-
-# Setup PythonQt
-include(${CMAKE_MODULE_PATH}/FindPythonQt.cmake)
-list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
-include_directories(${PYTHONQT_INCLUDE_DIR})
-
-# Use LibArchive
 if(ENABLE_LIBRARY_DOWNLOAD)
   set(QT_USE_QTNETWORK true)
   LIST(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES})
@@ -131,16 +116,15 @@ if(ENABLE_LIBRARY_DOWNLOAD)
   LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
 endif()
 
-# Use Hunspell
 if(ENABLE_SPELLCHECK)
   include_directories(${HUNSPELL_INCLUDE_DIR})
   LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
 endif()
 
-# Qt Property Editor configuration
+# include(${QT_USE_FILE})
+
 include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
-# Local Includes
 include_directories(
   ${SOURCE_DIR}
   ${SOURCE_DIR}/src/
@@ -174,8 +158,9 @@ if(WIN32)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
 
-# Setup Libraries for linking
 list(APPEND LIBRARIES ${QT_LIBRARIES})
+#message("Qt Libraries = ${QT_LIBRARIES}")
+#message("Test = ${SONGBOOK_CLIENT_SOURCES}")
 target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 
 # {{{ Internationalization

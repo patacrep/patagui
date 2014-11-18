@@ -18,7 +18,6 @@
 //******************************************************************************
 
 #include "make-songbook-process.hh"
-#include "PythonQt.h"
 
 #include <QDesktopServices>
 #include <QFile>
