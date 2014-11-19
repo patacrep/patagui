@@ -183,6 +183,8 @@ private slots:
   */
     void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
+    void stdOut(QString string);
+
 private:
 
     /*!

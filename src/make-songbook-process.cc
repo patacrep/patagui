@@ -38,10 +38,27 @@ CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
     connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onFinished(int, QProcess::ExitStatus)));
     connect(this, SIGNAL(readyReadStandardOutput()), SLOT(readStandardOutput()));
     connect(this, SIGNAL(readyReadStandardError()), SLOT(readStandardError()));
+
+    // Setup Python interpreter
+    PythonQt::init(PythonQt::RedirectStdOut);
+    // Test it
+    PythonQtObjectPtr mainModule = PythonQt::self()->getMainModule();
+    connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)), SLOT(stdOut(QString)));
+    connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)), SLOT(stdOut(QString)));
+    QVariant result = mainModule.evalScript("19*2+4", Py_eval_input);
+    qDebug() << result.toString();
+    mainModule.evalScript("import sys");
+    result = mainModule.evalScript("print(sys.path)\n", Py_eval_input);
+    qDebug() << result.toString();
 }
 
 CMakeSongbookProcess::~CMakeSongbookProcess()
 {}
+
+void CMakeSongbookProcess::stdOut(QString string)
+{
+    qDebug() << string;
+}
 
 void CMakeSongbookProcess::execute()
 {
