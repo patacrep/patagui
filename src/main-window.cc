@@ -26,6 +26,7 @@
 #include <QCompleter>
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QStandardPaths>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -170,7 +171,7 @@ namespace // anonymous namespace
   }
 }
 
-const QString CMainWindow::_cachePath(QString("%1/songbook-client").arg(QDesktopServices::storageLocation(QDesktopServices::CacheLocation)));
+const QString CMainWindow::_cachePath(QString("%1/songbook-client").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
 
 CMainWindow::CMainWindow(QWidget *parent)
   : QMainWindow(parent)
@@ -247,7 +248,7 @@ CMainWindow::CMainWindow(QWidget *parent)
   connect(m_builder, SIGNAL(aboutToStart()),
           progressBar(), SLOT(show()));
   connect(m_builder, SIGNAL(aboutToStart()),
-          statusBar(), SLOT(clear()));
+          statusBar(), SLOT(clearMessage()));
   connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
           SLOT(showMessage(const QString &, int)));
   connect(m_builder, SIGNAL(finished(int, QProcess::ExitStatus)),
@@ -289,7 +290,7 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
 void CMainWindow::readSettings(bool firstLaunch)
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   if (firstLaunch)
     {
       resize(settings.value("size", QSize(800,600)).toSize());
@@ -318,7 +319,7 @@ void CMainWindow::readSettings(bool firstLaunch)
 void CMainWindow::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   settings.setValue( "maximized", isMaximized() );
   if (!isMaximized())
     {
@@ -606,7 +607,7 @@ void CMainWindow::build()
 	songbook()->checkAll();
     }
 
-  save(true);
+  save();
 
   if (QFile(songbook()->filename()).exists())
     {
@@ -641,18 +642,13 @@ void CMainWindow::open()
   open(filename);
 }
 
-void CMainWindow::save(bool forced)
+void CMainWindow::save()
 {
-  if (songbook()->filename().isEmpty() ||
-      songbook()->filename().endsWith("default.sb") ||
-      !songbook()->filename().compare(".sb"))
+  if (songbook()->filename().isEmpty())
     {
-      if (forced)
-	songbook()->setFilename(QString("%1/books/default.sb").arg(workingPath()));
-      else if (!songbook()->filename().isEmpty())
-	saveAs();
+      return saveAs();
     }
-
+  
   songbook()->save(songbook()->filename());
   updateTitle(songbook()->filename());
 }
@@ -661,7 +657,7 @@ void CMainWindow::saveAs()
 {
   QString filename = QFileDialog::getSaveFileName(this,
 						  tr("Save as"),
-						  QString("%1/books").arg(workingPath()),
+						  QDir::homePath(),
 						  tr("Songbook (*.sb)"));
 
   if (!filename.isEmpty())
@@ -682,7 +678,7 @@ void CMainWindow::updateTitle(const QString &filename)
 const QString CMainWindow::workingPath()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   QString path = settings.value("songbookPath", QDir::homePath()).toString();
   settings.endGroup();
   return path;

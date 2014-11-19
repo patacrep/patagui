@@ -62,6 +62,10 @@ CImportDialog::CImportDialog(QWidget *parent)
   , m_libraryPath(new CFileChooser(this))
   , m_libraryPathValid(new QLabel(this))
   , m_songsToBeImported(QStringList())
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+  , m_manager(0)
+  , m_reply(0)
+#endif //ENABLE_LIBRARY_DOWNLOAD
 {
   setWindowTitle(tr("Import songs"));
   setParent(static_cast<CMainWindow*>(parent));
@@ -195,14 +199,16 @@ CImportDialog::~CImportDialog()
   delete m_urlLineEdit;
   
   delete m_fileList;
-
+  
+  #ifdef ENABLE_LIBRARY_DOWNLOAD
   delete m_manager;
+  #endif // ENABLE_LIBRARY_DOWNLOAD
 }
 
 void CImportDialog::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   m_libraryPath->setPath(settings.value("libraryPath", QDir::homePath()).toString());
   settings.endGroup();
 
@@ -215,7 +221,7 @@ void CImportDialog::readSettings()
 void CImportDialog::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   settings.setValue("libraryPath", m_libraryPath->path());
   settings.endGroup();
 

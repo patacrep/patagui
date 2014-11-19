@@ -192,13 +192,13 @@ QString CSongCodeEditor::textUnderCursor() const
   static QSet<QChar> delimiters;
   if ( delimiters.isEmpty() )
     {
-      delimiters.insert( QChar::fromAscii(',') );
-      delimiters.insert( QChar::fromAscii('!') );
-      delimiters.insert( QChar::fromAscii('?') );
-      delimiters.insert( QChar::fromAscii('.') );
-      delimiters.insert( QChar::fromAscii(';') );
-      delimiters.insert( QChar::fromAscii('{') );
-      delimiters.insert( QChar::fromAscii('}') );
+      delimiters.insert( QChar::fromLatin1(',') );
+      delimiters.insert( QChar::fromLatin1('!') );
+      delimiters.insert( QChar::fromLatin1('?') );
+      delimiters.insert( QChar::fromLatin1('.') );
+      delimiters.insert( QChar::fromLatin1(';') );
+      delimiters.insert( QChar::fromLatin1('{') );
+      delimiters.insert( QChar::fromLatin1('}') );
     }
 
   tc.anchor();
@@ -639,6 +639,7 @@ void CSongCodeEditor::setSpellCheckAvailable(const bool value)
   m_isSpellCheckAvailable = value;
 }
 
+#ifdef ENABLE_SPELLCHECK
 bool CSongCodeEditor::isSpellCheckActive() const
 {
   if (!highlighter())
@@ -646,6 +647,7 @@ bool CSongCodeEditor::isSpellCheckActive() const
 
   return highlighter()->isSpellCheckActive();
 }
+#endif // ENABLE_SPELLCHECK
 
 void CSongCodeEditor::setSpellCheckActive(const bool value)
 {

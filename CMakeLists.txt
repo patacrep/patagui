@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_COLOR_MAKEFILE ON)
 #set(CMAKE_VERBOSE_MAKEFILE OFF)
 
@@ -103,12 +103,15 @@ set(SONGBOOK_CLIENT_RCS
 
 # }}}
 
-find_package(Qt4 REQUIRED)
-set(QT_USE_QTSCRIPT true)
-set(QT_USE_QTSVG true)
+find_package(Qt5 CONFIG REQUIRED Network Widgets Script)
+LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
+
+#set(QT_USE_QTSCRIPT true)
+#set(QT_USE_QTSVG true)
 
 if(ENABLE_LIBRARY_DOWNLOAD)
   set(QT_USE_QTNETWORK true)
+  LIST(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES})
   include_directories(${LibArchive_INCLUDE_DIRS})
   LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
 endif()
@@ -118,7 +121,7 @@ if(ENABLE_SPELLCHECK)
   LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
 endif()
 
-include(${QT_USE_FILE})
+# include(${QT_USE_FILE})
 
 include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
@@ -129,9 +132,9 @@ include_directories(
   )
 
 # process Qt special files
-qt4_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
-qt4_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
-qt4_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
+qt5_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
+qt5_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
+qt5_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
 
 # {{{ Apple specific stuff
 if(APPLE)
@@ -156,7 +159,8 @@ if(WIN32)
 endif(WIN32)
 
 list(APPEND LIBRARIES ${QT_LIBRARIES})
-
+#message("Qt Libraries = ${QT_LIBRARIES}")
+#message("Test = ${SONGBOOK_CLIENT_SOURCES}")
 target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 
 # {{{ Internationalization

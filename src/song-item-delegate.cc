@@ -104,9 +104,9 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	    pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/22x22/status/image-missing.png")).pixmap(22, 22);
 	    QPixmapCache::insert("cover-missing-small", pixmap);
 	  }
-	if (qVariantCanConvert< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole)))
+	if (index.model()->data(index, CLibrary::CoverSmallRole).canConvert(QMetaType::QPixmap))
 	  {
-	    pixmap = qVariantValue< QPixmap >(index.model()->data(index, CLibrary::CoverSmallRole));
+	    pixmap = index.model()->data(index, CLibrary::CoverSmallRole).value< QPixmap >();
           }
         QRect coverRectangle(opt.rect.left(), opt.rect.top() + 2,
                              32, opt.rect.height() - 4);
@@ -129,7 +129,7 @@ void CSongItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
       break;
     case 6:
       {
-        QLocale::Language lang = qVariantValue< QLocale::Language >(index.model()->data(index, CLibrary::LanguageRole));
+        QLocale::Language lang = index.model()->data(index, CLibrary::LanguageRole).value< QLocale::Language >();
 	QString locale = QLocale(lang).name();
         QPixmap pixmap;
         if (!QPixmapCache::find(locale, &pixmap))

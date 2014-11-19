@@ -61,7 +61,7 @@ ConfigDialog::ConfigDialog(QWidget* parent)
 
   m_pagesWidget = new QStackedWidget(this);
   m_pagesWidget->addWidget(new OptionsPage(this));
-  m_pagesWidget->addWidget(new SongbookPage(this));
+  //m_pagesWidget->addWidget(new SongbookPage(this));
   m_pagesWidget->addWidget(new DisplayPage(this));
   m_pagesWidget->addWidget(new EditorPage(this));
 #ifdef ENABLE_LIBRARY_DOWNLOAD
@@ -103,11 +103,11 @@ void ConfigDialog::createIcons()
   optionsButton->setTextAlignment(Qt::AlignHCenter);
   optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-  QListWidgetItem *songbookButton = new QListWidgetItem(m_contentsWidget);
-  songbookButton->setIcon(QIcon(":/icons/songbook/256x256/book.png"));
-  songbookButton->setText(tr("Songbook"));
-  songbookButton->setTextAlignment(Qt::AlignHCenter);
-  songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+  //QListWidgetItem *songbookButton = new QListWidgetItem(m_contentsWidget);
+  //songbookButton->setIcon(QIcon(":/icons/songbook/256x256/book.png"));
+  //songbookButton->setText(tr("Songbook"));
+  //songbookButton->setTextAlignment(Qt::AlignHCenter);
+  //songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
   QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
   displayButton->setIcon(QIcon::fromTheme("preferences-desktop", QIcon(":/icons/tango/48x48/categories/preferences-desktop.png")));
@@ -340,7 +340,7 @@ OptionsPage::OptionsPage(QWidget *parent)
 void OptionsPage::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   m_songbookPath->setPath(settings.value("songbookPath", QDir::homePath()).toString());
   m_libraryPath->setPath(settings.value("libraryPath", m_songbookPath->path()).toString());
   settings.endGroup();
@@ -355,7 +355,7 @@ void OptionsPage::readSettings()
 void OptionsPage::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   settings.setValue("songbookPath", m_songbookPath->path());
   settings.setValue("libraryPath", m_libraryPath->path());
   settings.endGroup();

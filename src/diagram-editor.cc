@@ -106,7 +106,7 @@ CDiagramEditor::CDiagramEditor(QWidget *parent)
   chordLayout->addRow(tr("Strings:"), m_stringsLineEdit);
 
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   QString songbookDir(settings.value("songbookPath", QDir::homePath()).toString());
   settings.endGroup();
 

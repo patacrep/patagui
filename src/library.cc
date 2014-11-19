@@ -78,7 +78,7 @@ CLibrary::~CLibrary()
 void CLibrary::readSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   setDirectory(settings.value("libraryPath", findSongbookPath()).toString());
   settings.endGroup();
 }
@@ -86,7 +86,7 @@ void CLibrary::readSettings()
 void CLibrary::writeSettings()
 {
   QSettings settings;
-  settings.beginGroup("general");
+  settings.beginGroup("global");
   settings.setValue("libraryPath", directory().absolutePath());
   settings.endGroup();
 }
@@ -101,7 +101,7 @@ QString CLibrary::findSongbookPath()
 {
   QStringList paths;
   paths << QString("%1/songbook").arg(QDir::homePath())
-	<< QString("%1/songbook").arg(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+	<< QString("%1/songbook").arg(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
 
   QString path;
   foreach(path, paths)
@@ -209,7 +209,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
 	case 5:
 	  return data(index, AlbumRole);
         case 6:
-          return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
+          return QLocale::languageToString(data(index, LanguageRole).value< QLocale::Language >());
 	}
       break;
     case Qt::ToolTipRole:
@@ -220,7 +220,7 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
         case 3:
           return QString("http://%1").arg(m_songs[index.row()].url);
         case 5:
-          return QLocale::languageToString(qVariantValue< QLocale::Language >(data(index, LanguageRole)));
+          return QLocale::languageToString(data(index, LanguageRole).value< QLocale::Language >());
         default:
           return QVariant();
         }
@@ -345,8 +345,14 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 
   if (resetModel)
     {
-      reset();
+      // Modified due to change in QAbstractItemModel
+      beginResetModel();
       emit(wasModified());
+      endResetModel();
+      
+      // Original Code
+      //reset();
+      //emit(wasModified());
     }
 }
 
@@ -363,8 +369,14 @@ void CLibrary::addSongs(const QStringList &paths)
       addSong(song);
     }
 
-  reset();
+  // Modified due to change in QAbstractItemModel
+  beginResetModel();
   emit(wasModified());
+  endResetModel();
+  
+  // Original Code
+  //reset();
+  //emit(wasModified());
 }
 
 void CLibrary::addSong(const QString &path)
@@ -383,8 +395,14 @@ void CLibrary::removeSong(const QString &path)
           break;
         }
     }
-  reset();
+  // Modified due to change in QAbstractItemModel
+  beginResetModel();
   emit(wasModified());
+  endResetModel();
+  
+  // Original Code
+  //reset();
+  //emit(wasModified());
 }
 
 Song CLibrary::getSong(const QString &path) const
@@ -467,6 +485,9 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
 
 void CLibrary::importSongs(const QStringList & filenames)
 {
+  showMessage(tr("Importing %1 songs within the library %2")
+	      .arg(filenames.count())
+	      .arg(directory().absolutePath()));
   Song song;
   QMap<QString, QString> sourceTargetMap;
   foreach(const QString & filename, filenames)
@@ -519,7 +540,7 @@ QString CLibrary::pathToSong(const QString &artist, const QString &title) const
   QString artistInPath = stringToFilename(artist, "_");
   QString titleInPath = stringToFilename(title, "_");
 
-  return QString("%1/%2/%3.sg")
+  return QString("%1/songs/%2/%3.sg")
     .arg(directory().canonicalPath())
     .arg(artistInPath)
     .arg(titleInPath);
