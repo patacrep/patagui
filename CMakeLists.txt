@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_COLOR_MAKEFILE ON)
 #set(CMAKE_VERBOSE_MAKEFILE OFF)
 
@@ -104,8 +104,8 @@ set(SONGBOOK_CLIENT_RCS
 # }}}
 
 # Finding Qt5
-find_package(Qt5 CONFIG REQUIRED Network Widgets Script Svg)
-list(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES};${Qt5Svg_LIBRARIES})
+find_package(Qt5 CONFIG REQUIRED Network Widgets Script)
+list(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
 
 ################ DIRTY HACK FOR IT TO WORK FOR NOW ###################
 #### Problem lies with cmake, can't properly find python3 on Mac #####

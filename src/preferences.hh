@@ -33,7 +33,7 @@
 #define PLATFORM_CLEAN_COMMAND "macos/clean.sh"
 #define PLATFORM_CLEANALL_COMMAND "macos/cleanall.sh"
 #else //Unix/Linux
-#define PLATFORM_BUILD_COMMAND "./songbook %target --data-dir %library "
+#define PLATFORM_BUILD_COMMAND "./songbook %target --datadir %library "
 #define PLATFORM_CLEAN_COMMAND "./songbook --steps clean"
 #define PLATFORM_CLEANALL_COMMAND "./songbook --steps clean"
 #endif

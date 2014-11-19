@@ -176,7 +176,7 @@ private slots:
     //songbook
     void newSongbook();
     void open();
-    void save(bool forced = false);
+    void save();
     void saveAs();
     void build();
     void closeTab(int index);

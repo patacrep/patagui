@@ -290,7 +290,7 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
 void CMainWindow::readSettings(bool firstLaunch)
 {
     QSettings settings;
-    settings.beginGroup("general");
+    settings.beginGroup("global");
     if (firstLaunch)
     {
         resize(settings.value("size", QSize(800,600)).toSize());
@@ -319,7 +319,7 @@ void CMainWindow::readSettings(bool firstLaunch)
 void CMainWindow::writeSettings()
 {
     QSettings settings;
-    settings.beginGroup("general");
+    settings.beginGroup("global");
     settings.setValue( "maximized", isMaximized() );
     if (!isMaximized())
     {
@@ -608,6 +608,8 @@ void CMainWindow::build()
             songbook()->checkAll();
     }
 
+    save();
+
     if (QFile(songbook()->filename()).exists())
     {
         qobject_cast<QPlainTextEdit *>(log()->widget())->clear();
@@ -641,16 +643,11 @@ void CMainWindow::open()
     open(filename);
 }
 
-void CMainWindow::save(bool forced)
+void CMainWindow::save()
 {
-    if (songbook()->filename().isEmpty() ||
-            songbook()->filename().endsWith("default.sb") ||
-            !songbook()->filename().compare(".sb"))
+    if (songbook()->filename().isEmpty())
     {
-        if (forced)
-            songbook()->setFilename(QString("%1/books/default.sb").arg(workingPath()));
-        else if (!songbook()->filename().isEmpty())
-            saveAs();
+        return saveAs();
     }
 
     songbook()->save(songbook()->filename());
@@ -661,7 +658,7 @@ void CMainWindow::saveAs()
 {
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save as"),
-                                                    QString("%1/books").arg(workingPath()),
+                                                    QDir::homePath(),
                                                     tr("Songbook (*.sb)"));
 
     if (!filename.isEmpty())
@@ -682,7 +679,7 @@ void CMainWindow::updateTitle(const QString &filename)
 const QString CMainWindow::workingPath()
 {
     QSettings settings;
-    settings.beginGroup("general");
+    settings.beginGroup("global");
     QString path = settings.value("songbookPath", QDir::homePath()).toString();
     settings.endGroup();
     return path;
