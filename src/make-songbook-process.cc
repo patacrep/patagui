@@ -41,12 +41,20 @@ CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
 
     // Setup Python interpreter
     PythonQt::init(PythonQt::RedirectStdOut);
-    // Test it
+    // Redirect Std Out and Std Err to qDebug output through slot for easier debug.
     PythonQtObjectPtr mainModule = PythonQt::self()->getMainModule();
     connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)), SLOT(stdOut(QString)));
     connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)), SLOT(stdOut(QString)));
-    mainModule.evalScript("import patacrep");
-    mainModule.evalScript("print(patacrep.__version__)");
+    // Load SongbookBuilder and Error classes
+    mainModule.evalScript("from patacrep.build import SongbookBuilder");
+    mainModule.evalScript("from patacrep.errors import SongbookError");
+    // Testing only so far
+    // http://qt-quarterly.developpez.com/qq-23/pythonqt/
+    // http://pythonqt.sourceforge.net/Examples.html
+    QString program = QString("program");
+    mainModule.addVariable("object", program);
+    mainModule.evalScript("print(object)");
+//    mainModule.evalScript("SongbookBuilder(True,True)");
 }
 
 CMakeSongbookProcess::~CMakeSongbookProcess()
