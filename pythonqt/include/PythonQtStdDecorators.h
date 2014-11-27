@@ -89,13 +89,9 @@ public Q_SLOTS:
   double static_Qt_qAbs(double a) { return qAbs(a); }
   double static_Qt_qBound(double a,double b,double c) { return qBound(a,b,c); }
   void static_Qt_qDebug(const QByteArray& msg) { qDebug("%s", msg.constData()); }
-  // TODO: multi arg qDebug...
   void static_Qt_qWarning(const QByteArray& msg) { qWarning("%s", msg.constData()); }
-  // TODO: multi arg qWarning...
   void static_Qt_qCritical(const QByteArray& msg) { qCritical("%s", msg.constData()); }
-  // TODO: multi arg qCritical...
   void static_Qt_qFatal(const QByteArray& msg) { qFatal("%s", msg.constData()); }
-  // TODO: multi arg qFatal...
   bool static_Qt_qFuzzyCompare(double a, double b) { return qFuzzyCompare(a, b); }
   double static_Qt_qMax(double a, double b) { return qMax(a, b); }
   double static_Qt_qMin(double a, double b) { return qMin(a, b); }

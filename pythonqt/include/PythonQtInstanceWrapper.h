@@ -80,8 +80,6 @@ typedef struct PythonQtInstanceWrapperStruct {
   //! optional C++ object Ptr that is wrapped by the above _obj
   void*    _wrappedPtr;
 
-  // TODO xxx: put booleans into int that holds flags
-
   //! flag that stores if the object is owned by pythonQt
   bool _ownedByPythonQt;
 

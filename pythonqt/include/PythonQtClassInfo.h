@@ -57,7 +57,6 @@ struct PythonQtMemberInfo {
 
   Type              _type;
 
-  // TODO: this could be a union...
   PythonQtSlotInfo* _slot;
   PyObject*         _pythonType;
   PythonQtObjectPtr _enumValue;
