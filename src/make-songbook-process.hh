@@ -23,6 +23,7 @@
 #include <QString>
 #include <QStringList>
 #include <QUrl>
+#include "PythonQt.h"
 
 /*!
   \file make-songbook-process.hh
@@ -222,6 +223,7 @@ private:
     QString m_errorMessage;
 
     QUrl m_urlToOpen;
+    PythonQtObjectPtr pythonModule;
 };
 
 #endif // __MAKE_SONGBOOK_PROCESS_HH__

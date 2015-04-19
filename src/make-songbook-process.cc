@@ -18,7 +18,6 @@
 //******************************************************************************
 
 #include "make-songbook-process.hh"
-#include "PythonQt.h"
 
 #include <QDesktopServices>
 #include <QFile>
@@ -41,18 +40,20 @@ CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
 
     // Setup Python interpreter
     PythonQt::init(PythonQt::RedirectStdOut);
+    pythonModule = PythonQt::self()->getMainModule();
     // Redirect Std Out and Std Err to qDebug output through slot for easier debug.
-    PythonQtObjectPtr mainModule = PythonQt::self()->getMainModule();
     connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)), SLOT(stdOut(QString)));
     connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)), SLOT(stdOut(QString)));
-    mainModule.evalScript("import json");
-    mainModule.evalScript("import locale");
-    mainModule.evalScript("import os.path");
-    // Load SongbookBuilder and Error classes
-    mainModule.evalScript("from patacrep.build import SongbookBuilder, DEFAULT_STEPS");
-    mainModule.evalScript("from patacrep import __version__");
-    mainModule.evalScript("from patacrep import errors");
-    mainModule.evalScript("import patacrep.encoding");
+    pythonModule.evalFile(":/python_scripts/songbook.py");
+//    // Import all required modules for songbook building
+//    pythonModule.evalScript("import json");
+//    pythonModule.evalScript("import locale");
+//    pythonModule.evalScript("import os.path");
+//    // Load SongbookBuilder and Error classes
+//    pythonModule.evalScript("from patacrep.build import SongbookBuilder, DEFAULT_STEPS");
+//    pythonModule.evalScript("from patacrep import __version__");
+//    pythonModule.evalScript("from patacrep import errors");
+//    pythonModule.evalScript("import patacrep.encoding");
 }
 
 CMakeSongbookProcess::~CMakeSongbookProcess()
@@ -66,7 +67,9 @@ void CMakeSongbookProcess::stdOut(QString string)
 void CMakeSongbookProcess::execute()
 {
     emit(aboutToStart());
-    start(program(), arguments());
+    pythonModule.evalScript("print(patacrep.__version__)");
+    pythonModule.evalScript("Test()");
+//    start(program(), arguments());
 }
 
 void CMakeSongbookProcess::setCommand(const QString &command)

@@ -99,6 +99,7 @@ set(SONGBOOK_CLIENT_RCS
   icons/macos/macos.qrc
   icons/tango/tango.qrc
   songbook.rc
+  src/songbook_scripts.qrc
   )
 
 # }}}
