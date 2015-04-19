@@ -44,16 +44,8 @@ CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
     // Redirect Std Out and Std Err to qDebug output through slot for easier debug.
     connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)), SLOT(stdOut(QString)));
     connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)), SLOT(stdOut(QString)));
+    // Import Python file containing all necessary functions and imports
     pythonModule.evalFile(":/python_scripts/songbook.py");
-//    // Import all required modules for songbook building
-//    pythonModule.evalScript("import json");
-//    pythonModule.evalScript("import locale");
-//    pythonModule.evalScript("import os.path");
-//    // Load SongbookBuilder and Error classes
-//    pythonModule.evalScript("from patacrep.build import SongbookBuilder, DEFAULT_STEPS");
-//    pythonModule.evalScript("from patacrep import __version__");
-//    pythonModule.evalScript("from patacrep import errors");
-//    pythonModule.evalScript("import patacrep.encoding");
 }
 
 CMakeSongbookProcess::~CMakeSongbookProcess()
