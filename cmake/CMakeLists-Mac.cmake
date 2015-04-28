@@ -92,9 +92,9 @@
 		COMMAND ${CCS2}
 		COMMAND ${CCS3}
 		COMMAND ${CCS4}
-                COMMAND cp ARGS ${SOURCE_DIR}/pythonqt/lib/*.dylib ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks
-		COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
-		)
+                COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
+                COMMAND cp ARGS ${PYTHONQT_LIBRARY} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks
+                )
 
 	if(USE_SPARKLE)
 		# we need to add SPARKLE and APPKIT as '-framework' at link time

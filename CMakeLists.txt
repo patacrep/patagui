@@ -110,7 +110,7 @@ list(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
 
 ################ DIRTY HACK FOR IT TO WORK FOR NOW ###################
 #### Problem lies with cmake, can't properly find python3 on Mac #####
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+IF(APPLE)
 SET(PYTHON_INCLUDE_DIR  /usr/local/opt/python3/Frameworks/Python.framework/Versions/3.4/include/python3.4m)
 SET(PYTHON_LIBRARY /usr/local/opt/python3/Frameworks/Python.framework/Versions/3.4/Python)
 ENDIF()
