@@ -14,9 +14,8 @@ from patacrep import __version__
 from patacrep import errors
 import patacrep.encoding
 
-# Define variables
-songbook = None
-basename = None
+# Define global variables
+sb_builder = None
 
 # Define locale according to user's parameters
 def setLocale():
@@ -28,8 +27,7 @@ def setLocale():
 
 # Load songbook and setup datadirs
 def setupSongbook(songbook_path,datadir):
-    global songbook
-    global basename
+    global sb_builder
     basename = os.path.basename(songbook_path)[:-3]
     # Load songbook from sb file.
     try:
@@ -42,8 +40,9 @@ def setupSongbook(songbook_path,datadir):
                 ) as songbook_file:
                 songbook = json.load(songbook_file)
     except Exception as error: # pylint: disable=broad-except
-        print("Loading Error")
+        print("Error while loading file '{}'").format(songbook_path)
         # Throw Exception
+        return
 
     # Gathering datadirs
     datadirs = []
@@ -61,6 +60,17 @@ def setupSongbook(songbook_path,datadir):
     # Default value
     datadirs.append(os.path.dirname(os.path.abspath(songbook_path)))
     songbook['datadir'] = datadirs
+    try:
+        sb_builder = SongbookBuilder(songbook, basename)
+        sb_builder.unsafe = True
+    except errors.SongbookError as error:
+        print("Error in formation of Songbook Builder")
+        # Deal with error
 
-def Test():
-    print("Hello World!")
+def build(steps):
+    global sb_builder
+    try:
+        sb_builder.build_steps(steps)
+    except errors.SongbookError as error:
+        print("Building error")
+        # Deal with error

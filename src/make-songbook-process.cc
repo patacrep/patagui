@@ -60,7 +60,6 @@ void CMakeSongbookProcess::execute()
 {
     emit(aboutToStart());
     pythonModule.evalScript("print(patacrep.__version__)");
-    pythonModule.evalScript("Test()");
 //    start(program(), arguments());
 }
 
