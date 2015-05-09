@@ -19,10 +19,10 @@
 #ifndef __MAKE_SONGBOOK_PROCESS_HH__
 #define __MAKE_SONGBOOK_PROCESS_HH__
 
-#include <QProcess>
 #include <QString>
 #include <QStringList>
 #include <QUrl>
+#include <QObject>
 #include "PythonQt.h"
 
 /*!
@@ -42,7 +42,7 @@
   into windows/ and macos/ subdirectories of the songbook directory.
 */
 
-class CMakeSongbookProcess : public QProcess
+class CMakeSongbookProcess : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString command READ command WRITE setCommand)
@@ -134,6 +134,10 @@ public:
   */
     const QUrl & urlToOpen() const;
 
+    /*! Sets Working directory for process
+  */
+    void setWorkingDirectory(const QString &dir);
+
 signals:
     /*!
     This signal is emitted before the process is executed.
@@ -147,30 +151,7 @@ signals:
   */
     void message(const QString &message, int timeout);
 
-    /*!
-    This signal is emitted when information is available on standard output.
-    \sa readOnStandardError
-  */
-    void readOnStandardOutput(const QString &output);
-
-    /*!
-    This signal is emitted when information is available on error output.
-    \sa readOnStandardOutput
-  */
-    void readOnStandardError(const QString &error);
-
 private slots:
-    /*!
-    Reads information from standard output.
-    \sa readStandardError
-  */
-    void readStandardOutput();
-
-    /*!
-    Reads information from error output.
-    \sa readStandardOutput
-  */
-    void readStandardError();
 
     /*!
     Emits start message.
@@ -182,7 +163,8 @@ private slots:
     Emits exit message and try opening the url if successful.
     \sa message, url, errorMessage, successMessage
   */
-    void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
+// FIXME void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onFinished(int exitCode);
 
     void stdOut(QString string);
 

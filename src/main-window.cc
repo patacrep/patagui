@@ -251,6 +251,7 @@ CMainWindow::CMainWindow(QWidget *parent)
             statusBar(), SLOT(clearMessage()));
     connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
             SLOT(showMessage(const QString &, int)));
+    /* FIXME: Make signal and slots in builder to connect to log output
     connect(m_builder, SIGNAL(finished(int, QProcess::ExitStatus)),
             progressBar(), SLOT(hide()));
     connect(m_builder, SIGNAL(readOnStandardOutput(const QString &)),
@@ -259,7 +260,7 @@ CMainWindow::CMainWindow(QWidget *parent)
             log()->widget(), SLOT(appendPlainText(const QString &)));
     connect(m_builder, SIGNAL(error(QProcess::ProcessError)),
             this, SLOT(buildError(QProcess::ProcessError)));
-
+    */
     updateTitle(songbook()->filename());
 
     // make a clean cache directory for the application
@@ -594,7 +595,6 @@ void CMainWindow::build()
     if (!checkPdfLaTeX() || !checkPython())
         return;
 
-    qDebug() << "WP=" << songbook()->workingPath() << " / FILE=" << songbook()->filename() ;
     songbook()->songsFromSelection();
     if (songbook()->songs().isEmpty())
     {
@@ -692,15 +692,11 @@ const QString CMainWindow::libraryPath()
 
 void CMainWindow::make()
 {
-    makeClean(); //fix problems, don't remove
+    // makeClean(); //fix problems, don't remove
     m_builder->setWorkingDirectory(workingPath());
 
     QString basename = QFileInfo(songbook()->filename()).baseName();
     QString target = QString("%1.sb").arg(basename);
-
-    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-    environment.insert("LATEX_OPTIONS", "-halt-on-error");
-    m_builder->setProcessEnvironment(environment);
 
     QString command = buildCommand();
     m_builder->setCommand(command.replace("%target", songbook()->filename())
@@ -718,7 +714,6 @@ void CMainWindow::makeClean()
 {
     m_builder->setWorkingDirectory(workingPath());
     m_builder->setCommand(cleanCommand());
-    m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
 
     m_builder->setUrlToOpen(QUrl());
     m_builder->setStartMessage(tr("Cleaning the build directory."));
@@ -726,14 +721,14 @@ void CMainWindow::makeClean()
     m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
     m_builder->execute();
-    m_builder->waitForFinished();
+    // TODO: Replace appropriately
+    // m_builder->waitForFinished();
 }
 
 void CMainWindow::makeCleanall()
 {
     m_builder->setWorkingDirectory(workingPath());
     m_builder->setCommand(cleanallCommand());
-    m_builder->setProcessEnvironment(QProcessEnvironment::systemEnvironment());
 
     m_builder->setUrlToOpen(QUrl());
     m_builder->setStartMessage(tr("Cleaning the build directory."));
@@ -741,17 +736,20 @@ void CMainWindow::makeCleanall()
     m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
     m_builder->execute();
-    m_builder->waitForFinished();
+    // TODO: Replace appropriately
+    // m_builder->waitForFinished();
 }
 
 void CMainWindow::cancelProcess()
 {
+    // TODO Replace accordingly
+    /*
     if (m_builder->state() == QProcess::Running)
     {
         m_builder->close();
         if (m_builder->command() == buildCommand())
             makeClean();
-    }
+    }*/
 }
 
 CProgressBar * CMainWindow::progressBar() const
