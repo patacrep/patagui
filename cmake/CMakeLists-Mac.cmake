@@ -92,9 +92,9 @@
 		COMMAND ${CCS2}
 		COMMAND ${CCS3}
 		COMMAND ${CCS4}
-                COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
                 COMMAND cp ${PYTHONQT_LIBRARY} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/
                 COMMAND ln -s ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.dylib ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.1.dylib
+                COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
                 )
 
 	if(USE_SPARKLE)
