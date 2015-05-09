@@ -1,6 +1,6 @@
 	set( SONGBOOK_CLIENT_APPLICATION_NAME Songbook-Client )
 	set( MACOSX_BUNDLE_ICON_FILE songbook-client.icns )
-	set( CPACK_BUNDLE_NAME Sonbook Client With Space)
+        set( CPACK_BUNDLE_NAME Songbook Client With Space)
 	#versions
 	set( MACOSX_BUNDLE_VERSION 0.5.1 )
 	set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.5.1 )
@@ -83,9 +83,9 @@
 		${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/song.icns
 		)
 	add_custom_command( TARGET ${SONGBOOK_CLIENT_APPLICATION_NAME} POST_BUILD
-		COMMAND mkdir ARGS -p ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
-		COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources
-		COMMAND cp ARGS ${SOURCE_DIR}/lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
+                COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
+                COMMAND cp ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources
+                COMMAND cp ${SOURCE_DIR}/lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
 		# this for command are set if sparkle is activated and are ment to copy the framwork inside the bundle
 		# and warn the user about some error message that might be printed afterward
 		COMMAND ${CCS1}
@@ -93,7 +93,8 @@
 		COMMAND ${CCS3}
 		COMMAND ${CCS4}
                 COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
-                COMMAND cp ARGS ${PYTHONQT_LIBRARY} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks
+                COMMAND cp ${PYTHONQT_LIBRARY} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/
+                COMMAND ln -s ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.dylib ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.1.dylib
                 )
 
 	if(USE_SPARKLE)

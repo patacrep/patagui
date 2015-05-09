@@ -106,7 +106,9 @@ set(SONGBOOK_CLIENT_RCS
 
 # Finding Qt5
 find_package(Qt5 CONFIG REQUIRED Network Widgets Script)
-list(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
+list(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES};${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
+## Qt Libraries have to appear first, otherwise OS X deployment is confused.
+list(APPEND LIBRARIES ${QT_LIBRARIES})
 
 ################ DIRTY HACK FOR IT TO WORK FOR NOW ###################
 #### Problem lies with cmake, can't properly find python3 on Mac #####
@@ -178,7 +180,6 @@ if(WIN32)
 endif(WIN32)
 
 # Setup Libraries for linking
-list(APPEND LIBRARIES ${QT_LIBRARIES})
 target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
 
 # {{{ Internationalization
