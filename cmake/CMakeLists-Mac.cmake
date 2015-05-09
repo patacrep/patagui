@@ -64,13 +64,13 @@
 			macos_specific/sparkle/src/SparkleAutoUpdater.mm
 			)
 		# Hack Custom command to copy sparkle framwork
-		set(CCS1 mkdir   ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks)
+                set(CCS1 mkdir ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks)
 		set(CCS2 cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/Sparkle.framework)
 		set(CCS3 echo "Note : Having the message : ERROR: no file at '/usr/lib/@loader_path@loader_path' is normal")
 		set(CCS4 echo "It is due to Qt encountering references to Sparkle Framwork.")
 		
 	ELSE(EXISTS "/Library/Frameworks/Sparkle.framework")
-		message(STATUS "Looking for Sparkle Framwork - not found")
+                message(STATUS "Looking for Sparkle Framework - not found")
 		set(CCS1 echo "The application has been compiled without support for auto-updating, you will have to check for it manually")
 	ENDIF(EXISTS "/Library/Frameworks/Sparkle.framework")
 	
@@ -92,8 +92,9 @@
 		COMMAND ${CCS2}
 		COMMAND ${CCS3}
 		COMMAND ${CCS4}
+                COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks
                 COMMAND cp ${PYTHONQT_LIBRARY} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/
-                COMMAND ln -s ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.dylib ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.1.dylib
+                COMMAND ln -sf libPythonQt.dylib ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.1.dylib
                 COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
                 )
 
