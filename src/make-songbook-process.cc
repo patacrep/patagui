@@ -54,8 +54,9 @@ void CMakeSongbookProcess::stdOut(QString string)
 void CMakeSongbookProcess::execute()
 {
     emit(aboutToStart());
-    pythonModule.evalScript("print(patacrep.__version__)");
-//    start(program(), arguments());
+    pythonModule.evalScript("setupSongbook('/Users/emmanuel/aa.sb','/Users/emmanuel/Documents/Logiciels/patacrep/patacrep/data/examples/songs/')");
+    pythonModule.evalScript("build(['tex'])");
+    emit(message("Finished Execution",0));
 }
 
 void CMakeSongbookProcess::setCommand(const QString &command)

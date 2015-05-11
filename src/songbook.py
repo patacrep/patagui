@@ -27,6 +27,8 @@ def setLocale():
 
 # Load songbook and setup datadirs
 def setupSongbook(songbook_path,datadir):
+    print(songbook_path)
+    print(datadir)
     global sb_builder
     basename = os.path.basename(songbook_path)[:-3]
     # Load songbook from sb file.
@@ -40,7 +42,8 @@ def setupSongbook(songbook_path,datadir):
                 ) as songbook_file:
                 songbook = json.load(songbook_file)
     except Exception as error: # pylint: disable=broad-except
-        print("Error while loading file '{}'").format(songbook_path)
+        print("Error while loading file '{}'".format(songbook_path))
+        print(error)
         # Throw Exception
         return
 
@@ -73,4 +76,5 @@ def build(steps):
         sb_builder.build_steps(steps)
     except errors.SongbookError as error:
         print("Building error")
+        print(error)
         # Deal with error

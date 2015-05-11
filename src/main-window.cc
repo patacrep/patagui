@@ -38,6 +38,7 @@
 #include <QSettings>
 #include <QStatusBar>
 #include <QToolBar>
+#include <QtConcurrent>
 
 #include "label.hh"
 #include "library.hh"
@@ -251,8 +252,8 @@ CMainWindow::CMainWindow(QWidget *parent)
             statusBar(), SLOT(clearMessage()));
     connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
             SLOT(showMessage(const QString &, int)));
-    /* FIXME: Make signal and slots in builder to connect to log output
-    connect(m_builder, SIGNAL(finished(int, QProcess::ExitStatus)),
+    /*
+    connect(m_builder, SIGNAL(finished(int)),
             progressBar(), SLOT(hide()));
     connect(m_builder, SIGNAL(readOnStandardOutput(const QString &)),
             log()->widget(), SLOT(appendPlainText(const QString &)));
@@ -706,8 +707,13 @@ void CMainWindow::make()
     m_builder->setStartMessage(tr("Generating %1.").arg(target));
     m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
     m_builder->setErrorMessage(tr("Error while generating [%1]. Please check logs for more information.").arg(target));
-
-    m_builder->execute();
+    // Temp for understanding what is going on
+    qDebug() << workingPath();
+    qDebug() << basename;
+    qDebug() << target;
+    qDebug() << command;
+    qDebug() << "===========";
+    QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
 }
 
 void CMainWindow::makeClean()
@@ -720,7 +726,7 @@ void CMainWindow::makeClean()
     m_builder->setSuccessMessage(tr("Build directory cleaned."));
     m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
-    m_builder->execute();
+    QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
     // TODO: Replace appropriately
     // m_builder->waitForFinished();
 }
@@ -735,7 +741,7 @@ void CMainWindow::makeCleanall()
     m_builder->setSuccessMessage(tr("Build directory cleaned."));
     m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
-    m_builder->execute();
+    QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
     // TODO: Replace appropriately
     // m_builder->waitForFinished();
 }

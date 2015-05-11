@@ -354,7 +354,8 @@ void CSongbook::save(const QString & filename)
         QTextStream out(&file);
         out.setCodec("UTF-8");
         out << "{\n";
-        out << "\"template\" : \"data.tex\",\n";
+        // TODO Change template !
+        out << "\"template\" : \"default.tex\",\n";
         out << "\"lang\" : \"french\",\n";
         out << "\"bookoptions\" : [\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
         out << "\"authwords\" : {\"sep\" : []},\n";

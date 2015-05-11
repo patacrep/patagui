@@ -105,8 +105,8 @@ set(SONGBOOK_CLIENT_RCS
 # }}}
 
 # Finding Qt5
-find_package(Qt5 CONFIG REQUIRED Network Widgets Script)
-list(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES};${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
+find_package(Qt5 CONFIG REQUIRED Concurrent Network Script Widgets)
+list(APPEND QT_LIBRARIES ${Qt5Concurrent_LIBRARIES};${Qt5Network_LIBRARIES};${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
 ## Qt Libraries have to appear first, otherwise OS X deployment is confused.
 list(APPEND LIBRARIES ${QT_LIBRARIES})
 
