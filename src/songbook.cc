@@ -26,6 +26,33 @@
 #include <QScriptValue>
 #include <QScriptValueIterator>
 
+/*
+ * TODO FIXME TODO FIXME
+ * Switch to JSON
+ *
+#include <QByteArray>
+#include <QFile>
+#include <QJsonObject>
+#include <QJsonDocument>
+
+// ...
+
+// Read JSON file
+QFile file("/path/to/file.json");
+file.open(QIODevice::ReadOnly);
+QByteArray rawData = file.readAll();
+
+// Parse document
+QJsonDocument doc(QJsonDocument::fromJson(rawData));
+
+// Get JSON object
+QJsonObject json = doc.object();
+
+// Access properties
+qDebug() << json["something"].toString();
+ *
+ * */
+
 #include <QtGroupBoxPropertyBrowser>
 #include <QtAbstractPropertyManager>
 
