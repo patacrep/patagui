@@ -22,36 +22,18 @@
 #include <QFile>
 #include <QMessageBox>
 
+/*
 #include <QScriptEngine>
 #include <QScriptValue>
 #include <QScriptValueIterator>
-
-/*
- * TODO FIXME TODO FIXME
- * Switch to JSON
- *
+*/
 #include <QByteArray>
 #include <QFile>
 #include <QJsonObject>
 #include <QJsonDocument>
-
-// ...
-
-// Read JSON file
-QFile file("/path/to/file.json");
-file.open(QIODevice::ReadOnly);
-QByteArray rawData = file.readAll();
-
-// Parse document
-QJsonDocument doc(QJsonDocument::fromJson(rawData));
-
-// Get JSON object
-QJsonObject json = doc.object();
-
-// Access properties
-qDebug() << json["something"].toString();
- *
- * */
+#include <QJsonValue>
+#include <QJsonArray>
+#include <QVariantList>
 
 #include <QtGroupBoxPropertyBrowser>
 #include <QtAbstractPropertyManager>
@@ -186,7 +168,7 @@ void CSongbook::changeTemplate(const QString & filename)
         json += ")";
         file.close();
     }
-
+/*
     // Load json encoded songbook data
     QScriptEngine engine;
 
@@ -357,6 +339,7 @@ void CSongbook::changeTemplate(const QString & filename)
             m_mandatoryParameters << m_advancedParameters;
         }
     }
+*/
 }
 
 void CSongbook::initializeEditor(QtGroupBoxPropertyBrowser *editor)
@@ -378,10 +361,46 @@ void CSongbook::save(const QString & filename)
     QFile file(filename);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
+        // Start Json Objecy and fill it
+        QJsonObject json;
+        // TODO Check Template insertion
+        if (!tmpl().isEmpty())
+        {
+            json.insert("template",tmpl());
+        }
+        else
+        {
+            json.insert("template","default.tex");
+        }
+        json.insert("lang", "french");
+        // Book Options
+        QJsonArray bookoptions;
+        bookoptions.append("diagram");
+        bookoptions.append("lilypond");
+        bookoptions.append("pictures");
+        json.insert("bookoptions",bookoptions);
+        // Authwords
+        QJsonObject authwords;
+        authwords.insert("sep","");
+        json.insert("authwords",authwords);
+        // Datadirs. For now, only library path, later maybe other paths.
+        json.insert("datadir",library()->directory().absolutePath());
+        // Songs
+        QJsonArray songlist;
+        foreach (QString song, songs()) {
+            songlist.append(song);
+        }
+        json.insert("content",songlist);
+        file.write(QJsonDocument(json).toJson());
+
+        file.close();
+        setModified(false);
+        setFilename(filename);
+
+        /* FIXME OLD SYSTEM  to remove after advice from previous developers
         QTextStream out(&file);
         out.setCodec("UTF-8");
         out << "{\n";
-        // TODO Change template !
         out << "\"template\" : \"default.tex\",\n";
         out << "\"lang\" : \"french\",\n";
         out << "\"bookoptions\" : [\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
@@ -486,9 +505,10 @@ void CSongbook::save(const QString & filename)
         }
 
         out << "\"content\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
-        file.close();
-        setModified(false);
-        setFilename(filename);
+        */
+    }
+    else{
+        qWarning() << "Could not open File: " + filename;
     }
 }
 
@@ -497,37 +517,28 @@ void CSongbook::load(const QString & filename)
     QFile file(filename);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        QTextStream in(&file);
-        in.setCodec("UTF-8");
-        QString json = QString("(%1)").arg(in.readAll());
-        file.close();
+        // Read File
+        QByteArray rawData = file.readAll();
 
-        // Load json encoded songbook data
-        QScriptValue object;
-        QScriptEngine engine;
+        // Parse document
+        QJsonParseError error;
+        QJsonDocument doc(QJsonDocument::fromJson(rawData, &error));
 
-        // check syntax
-        QScriptSyntaxCheckResult res = QScriptEngine::checkSyntax(json);
-        if (res.state() != QScriptSyntaxCheckResult::Valid)
-        {
-            qDebug() << "CSongbook::load : Error line "<< res.errorLineNumber()
-                     << " column " << res.errorColumnNumber()
-                     << ":" << res.errorMessage();
-        }
-        // evaluate the json data
-        object = engine.evaluate(json);
+        // Get JSON object
+        QJsonObject json = doc.object();
 
         // load data into this object
-        if (object.isObject())
+        if (!json.isEmpty())// i.e. JsonObject is valid, parsing went fine
         {
-            QScriptValue sv;
+            QJsonValue jsonvalue;
             // template property
-            sv = object.property("template");
-            if (sv.isValid())
+            jsonvalue = json.value("template");
+            if (!(jsonvalue.isNull()))
             {
-                setTmpl(sv.toString());
+                setTmpl(jsonvalue.toString());
             }
 
+            /* FIXME From old system, ro remove after advice
             // template specific properties
             QtVariantProperty *property;
             int type;
@@ -535,12 +546,12 @@ void CSongbook::load(const QString & filename)
             QMap< QString, QtVariantProperty* >::const_iterator it;
             for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
             {
-                sv = object.property(it.key());
-                if (sv.isValid())
+                jsonvalue = json.value(it.key());
+                if (!(jsonvalue.isNull()))
                 {
                     property = it.value();
                     type = m_propertyManager->propertyType(property);
-                    value = sv.toVariant();
+                    value = jsonvalue.toVariant();
                     QVariant stringValues;
 
                     if (type == QtVariantPropertyManager::enumTypeId())
@@ -570,28 +581,39 @@ void CSongbook::load(const QString & filename)
                 }
             }
 
+            */
+
             // songs property (if not an array, the value can be "all")
-            sv = object.property("content");
-            if (sv.isValid())
+            jsonvalue = json.value("content");
+            if (!jsonvalue.isNull())
             {
                 QStringList items;
-                if (!sv.isArray())
+                if (!jsonvalue.isArray())
                 {
                     qDebug() << "CSongbook::load : not implemented yet";
                 }
                 else
                 {
-                    qScriptValueToSequence(sv, items);
+                    // Convert QVariantList to QStringList by casting one by one
+                    foreach (QVariant var, jsonvalue.toArray().toVariantList()) {
+                        items << var.toString();
+                    }
                 }
                 setSongs(items);
             }
         }
+        else{
+            // TODO Treat error properly
+            qDebug() << error.errorString();
+        }
+
         songsToSelection();
         setModified(false);
         setFilename(filename);
     }
     else
     {
+        // TODO Transfer error message to mainwindow
         qWarning() << "CSongbook::load : unable to open file in read mode";
     }
 }
