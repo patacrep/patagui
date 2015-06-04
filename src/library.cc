@@ -246,7 +246,12 @@ QVariant CLibrary::data(const QModelIndex &index, int role) const
     case PathRole:
         return m_songs[index.row()].path;
     case RelativePathRole:
+    {
+        // FIXME modifier le répertoire, i.e. XXX/songs afin que ce soit correct avec la nouvelle architecture type datadir.
+        qDebug() << directory().canonicalPath();
+        qDebug() << m_songs[index.row()].path;
         return QDir(QString("%1/songs").arg(directory().canonicalPath())).relativeFilePath(m_songs[index.row()].path);
+    }
     case CoverSmallRole:
     {
         QPixmap pixmap;

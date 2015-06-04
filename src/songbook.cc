@@ -22,11 +22,11 @@
 #include <QFile>
 #include <QMessageBox>
 
-/*
+
 #include <QScriptEngine>
 #include <QScriptValue>
 #include <QScriptValueIterator>
-*/
+
 #include <QByteArray>
 #include <QFile>
 #include <QJsonObject>
@@ -168,7 +168,7 @@ void CSongbook::changeTemplate(const QString & filename)
         json += ")";
         file.close();
     }
-/*
+
     // Load json encoded songbook data
     QScriptEngine engine;
 
@@ -339,7 +339,7 @@ void CSongbook::changeTemplate(const QString & filename)
             m_mandatoryParameters << m_advancedParameters;
         }
     }
-*/
+
 }
 
 void CSongbook::initializeEditor(QtGroupBoxPropertyBrowser *editor)
@@ -397,7 +397,7 @@ void CSongbook::save(const QString & filename)
         setModified(false);
         setFilename(filename);
 
-        /* FIXME OLD SYSTEM  to remove after advice from previous developers
+        /* FIXME OLD SYSTEM  to remove after advice from previous developers */
         QTextStream out(&file);
         out.setCodec("UTF-8");
         out << "{\n";
@@ -505,7 +505,7 @@ void CSongbook::save(const QString & filename)
         }
 
         out << "\"content\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
-        */
+
     }
     else{
         qWarning() << "Could not open File: " + filename;
@@ -538,7 +538,7 @@ void CSongbook::load(const QString & filename)
                 setTmpl(jsonvalue.toString());
             }
 
-            /* FIXME From old system, ro remove after advice
+            /* FIXME From old system, ro remove after advice */
             // template specific properties
             QtVariantProperty *property;
             int type;
@@ -580,8 +580,6 @@ void CSongbook::load(const QString & filename)
                     m_propertyManager->setValue(property, value);
                 }
             }
-
-            */
 
             // songs property (if not an array, the value can be "all")
             jsonvalue = json.value("content");
