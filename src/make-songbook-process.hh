@@ -45,9 +45,8 @@
 class CMakeSongbookProcess : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString command READ command WRITE setCommand)
-    Q_PROPERTY(QString program READ program WRITE setProgram)
-    Q_PROPERTY(QStringList arguments READ arguments WRITE setArguments)
+    Q_PROPERTY(QString songbook READ songbook WRITE setSongbook)
+//    Q_PROPERTY(QStringList datadirs READ datadirs WRITE setDatadirs)
 
     Q_PROPERTY(QString startMessage READ startMessage WRITE setStartMessage)
     Q_PROPERTY(QString successMessage READ successMessage WRITE setSuccessMessage)
@@ -65,11 +64,22 @@ public slots:
     void execute();
 
     /*!
-    Sets the \a command that should be executed.
-    For instance: "make songbook.pdf".
-    \sa command, program, arguments
+    Set the songbook to compile.
+    \sa execute
   */
-    void setCommand(const QString &command);
+    void setSongbook(const QString &songbook);
+
+    /*!
+    Set the datadirs
+    \sa setSongbook
+  */
+    void setDatadirs(const QStringList &datadirs);
+
+    /*!
+    Add a datadir
+    \sa setDatadirs
+  */
+    void addDatadir(const QString &datadir);
 
     /*!
     Sets the \a message that should displayed when the process starts.
@@ -107,10 +117,16 @@ public:
     virtual ~CMakeSongbookProcess();
 
     /*!
-    Returns the whole command to be executed.
-    \sa setCommand
+    Return the songbook to compile.
+    \sa setSongbook
   */
-    QString command() const;
+    const QString & songbook() const;
+
+    /*!
+    Return the datadirs
+    \sa setDatadirs,addDatadir
+  */
+    const QStringList & datadirs() const;
 
     /*!
     Returns the message that is displayed when the process starts.
@@ -169,37 +185,8 @@ private slots:
     void stdOut(QString string);
 
 private:
-
-    /*!
-    Returns the name of the process.
-    \sa setProgram, arguments, setArguments, command, setCommand
-  */
-    const QString & program() const;
-
-    /*!
-    Sets the \a program name of the process.
-    The name corresponds to the first world of the command.
-    \sa program, command, setCommand
-  */
-    void setProgram(const QString &program);
-
-    /*!
-    Returns the arguments of the process.
-    Arguments are the words that comes after the program name in the command.
-    \sa setArguments, command, setCommand
-  */
-    const QStringList & arguments() const;
-
-    /*!
-    Sets the \a arguments of the process.
-    Arguments are the words that comes after the program name in the command.
-    \sa arguments, command, setCommand
-  */
-    void setArguments(const QStringList &arguments);
-
-    QString m_program;
-    QStringList m_arguments;
-
+    QString m_songbook;
+    QStringList m_datadirs;
     QString m_startMessage;
     QString m_successMessage;
     QString m_errorMessage;

@@ -693,16 +693,15 @@ const QString CMainWindow::libraryPath()
 
 void CMainWindow::make()
 {
-    // makeClean(); //fix problems, don't remove
     m_builder->setWorkingDirectory(workingPath());
 
     QString basename = QFileInfo(songbook()->filename()).baseName();
     QString target = QString("%1.sb").arg(basename);
 
     QString command = buildCommand();
-    m_builder->setCommand(command.replace("%target", songbook()->filename())
-                          .replace("%library", libraryPath() + "/"));
 
+    m_builder->setSongbook(workingPath() + "/" + target);
+    m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
     m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2.pdf").arg(workingPath()).arg(basename))));
     m_builder->setStartMessage(tr("Generating %1.").arg(target));
     m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
@@ -713,13 +712,13 @@ void CMainWindow::make()
     qDebug() << target;
     qDebug() << command;
     qDebug() << "===========";
+
     QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
 }
 
 void CMainWindow::makeClean()
 {
     m_builder->setWorkingDirectory(workingPath());
-    m_builder->setCommand(cleanCommand());
 
     m_builder->setUrlToOpen(QUrl());
     m_builder->setStartMessage(tr("Cleaning the build directory."));
@@ -734,7 +733,6 @@ void CMainWindow::makeClean()
 void CMainWindow::makeCleanall()
 {
     m_builder->setWorkingDirectory(workingPath());
-    m_builder->setCommand(cleanallCommand());
 
     m_builder->setUrlToOpen(QUrl());
     m_builder->setStartMessage(tr("Cleaning the build directory."));

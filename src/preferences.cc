@@ -581,7 +581,7 @@ SongbookPage::SongbookPage(QWidget *p)
 
     int index = songbook->library()->templates().indexOf(songbook->tmpl());
     if (index == -1)
-        index = songbook->library()->templates().indexOf("patacrep.tmpl");
+        index = songbook->library()->templates().indexOf("patacrep.tex");
     templateComboBox->setCurrentIndex(index);
 
     connect(templateComboBox, SIGNAL(currentIndexChanged(const QString &)),

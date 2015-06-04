@@ -26,8 +26,6 @@
 
 CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
     : QObject(parent)
-    , m_program()
-    , m_arguments()
     , m_startMessage(tr("Processing"))
     , m_successMessage(tr("Success"))
     , m_errorMessage(tr("Error"))
@@ -54,27 +52,34 @@ void CMakeSongbookProcess::stdOut(QString string)
 void CMakeSongbookProcess::execute()
 {
     emit(aboutToStart());
-    pythonModule.evalScript("setupSongbook('/Users/emmanuel/aa.sb','/Users/emmanuel/Documents/Logiciels/patacrep/patacrep/data/examples/songs/')");
-    pythonModule.evalScript("build(['tex'])");
-    emit(message("Finished Execution",0));
+    if (!m_songbook.isEmpty()) {
+        qDebug() << m_songbook;
+        qDebug() << m_datadirs.join(" /// ");
+        pythonModule.evalScript(tr("setupSongbook('%1', '%2')").arg(m_songbook,m_datadirs.first()));
+        pythonModule.evalScript("build(['tex'])");
+        emit(message("Finished Execution",0));
+    }
+    else{
+        emit(message("Error: no songbook loaded",0));
+    }
 }
 
-void CMakeSongbookProcess::setCommand(const QString &command)
+void CMakeSongbookProcess::setSongbook(const QString &songbook)
 {
-    QStringList args = command.split(" ");
-    setProgram(args[0]);
-    args.pop_front();
-    setArguments(args);
+    m_songbook = songbook;
+    qDebug() << songbook;
+    pythonModule.evalScript(QString("print('Téléchargements')"));
+    qDebug() << "++++++";
 }
 
-void CMakeSongbookProcess::setProgram(const QString &program)
+void CMakeSongbookProcess::setDatadirs(const QStringList &datadirs)
 {
-    m_program = program;
+    m_datadirs.append(datadirs);
 }
 
-void CMakeSongbookProcess::setArguments(const QStringList &arguments)
+void CMakeSongbookProcess::addDatadir(const QString &datadir)
 {
-    m_arguments = arguments;
+    m_datadirs.append(datadir);
 }
 
 void CMakeSongbookProcess::setStartMessage(const QString &message)
@@ -102,20 +107,9 @@ void CMakeSongbookProcess::setWorkingDirectory(const QString &dir)
     // TODO Do Something ?
 }
 
-QString CMakeSongbookProcess::command() const
+const QString & CMakeSongbookProcess::songbook() const
 {
-    QString commandString = QString("%1 %2").arg(program()).arg(arguments().join(" "));
-    return commandString;
-}
-
-const QString & CMakeSongbookProcess::program() const
-{
-    return m_program;
-}
-
-const QStringList & CMakeSongbookProcess::arguments() const
-{
-    return m_arguments;
+    return m_songbook;
 }
 
 const QString & CMakeSongbookProcess::startMessage() const
