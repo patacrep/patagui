@@ -252,6 +252,7 @@ CMainWindow::CMainWindow(QWidget *parent)
             statusBar(), SLOT(clearMessage()));
     connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
             SLOT(showMessage(const QString &, int)));
+    connect(m_builder, SIGNAL(message(const QString &, int)), log()->widget(), SLOT(appendPlainText(const QString &)));
     /*
     connect(m_builder, SIGNAL(finished(int)),
             progressBar(), SLOT(hide()));

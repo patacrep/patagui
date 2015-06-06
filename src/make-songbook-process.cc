@@ -46,7 +46,7 @@ CMakeSongbookProcess::~CMakeSongbookProcess()
 
 void CMakeSongbookProcess::stdOut(QString string)
 {
-    qDebug() << string;
+    emit message(string,0);
 }
 
 void CMakeSongbookProcess::execute()
