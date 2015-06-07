@@ -370,7 +370,7 @@ void CSongbook::save(const QString & filename)
         }
         else
         {
-            json.insert("template","default.tex");
+            json.insert("template","patacrep.tex");
         }
         json.insert("lang", "french");
         // Book Options
@@ -397,11 +397,11 @@ void CSongbook::save(const QString & filename)
         setModified(false);
         setFilename(filename);
 
-        /* FIXME OLD SYSTEM  to remove after advice from previous developers */
+        /* FIXME OLD SYSTEM  to remove after advice from previous developers
         QTextStream out(&file);
         out.setCodec("UTF-8");
         out << "{\n";
-        out << "\"template\" : \"default.tex\",\n";
+        out << "\"template\" : \"patacrep.tex\",\n";
         out << "\"lang\" : \"french\",\n";
         out << "\"bookoptions\" : [\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
         out << "\"authwords\" : {\"sep\" : []},\n";
@@ -505,6 +505,7 @@ void CSongbook::save(const QString & filename)
         }
 
         out << "\"content\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
+        */
 
     }
     else{
@@ -606,6 +607,7 @@ void CSongbook::load(const QString & filename)
         }
 
         songsToSelection();
+        file.close();
         setModified(false);
         setFilename(filename);
     }

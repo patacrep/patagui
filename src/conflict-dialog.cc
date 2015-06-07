@@ -187,7 +187,7 @@ void CConflictDialog::openItem(QTableWidgetItem* item)
 }
 
 void CConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files)
-{ 
+{
     m_conflictsFound = false;
     m_conflictView->setRowCount(files.size());
     int row = 0;

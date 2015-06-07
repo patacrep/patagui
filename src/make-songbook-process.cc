@@ -68,7 +68,7 @@ void CMakeSongbookProcess::setSongbook(const QString &songbook)
 {
     m_songbook = songbook;
     qDebug() << songbook;
-    pythonModule.evalScript(QString("print('Téléchargements')"));
+    pythonModule.evalScript(QString("print(u'Téléchargements')"));
     qDebug() << "++++++";
 }
 
