@@ -695,11 +695,11 @@ void CMainWindow::make()
 
     m_builder->setSongbook(workingPath() + "/" + target);
     m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
-    m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2.pdf").arg(workingPath()).arg(basename))));
+    /*
     m_builder->setStartMessage(tr("Generating %1.").arg(target));
     m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
     m_builder->setErrorMessage(tr("Error while generating [%1]. Please check logs for more information.").arg(target));
-
+    */
     QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
 }
 

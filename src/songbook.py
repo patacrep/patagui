@@ -31,6 +31,7 @@ def setLocale():
 # Load songbook and setup datadirs
 def setupSongbook(songbook_path,datadir):
     setLocale()
+    print(os.curdir)
     print(songbook_path)
     print(datadir)
     global sb_builder

@@ -47,12 +47,18 @@ CMakeSongbookProcess::~CMakeSongbookProcess()
 
 void CMakeSongbookProcess::stdOut(QString string)
 {
-    emit message(string,0);
+    // Hack to simplify output
+    if (!string.simplified().isEmpty()) {
+        emit message(string.simplified(),0);
+    }
 }
 
 void CMakeSongbookProcess::stdErr(QString string)
 {
-    qWarning() << string.toUtf8().constData();
+    // Hack to simplify output
+    if (!string.simplified().isEmpty()) {
+        qWarning() << string.simplified().toUtf8().constData();
+    }
 }
 
 void CMakeSongbookProcess::execute()
@@ -67,9 +73,7 @@ void CMakeSongbookProcess::execute()
     emit(aboutToStart());
     if (!m_songbook.isEmpty()) {
         QString script = QString::fromLatin1("setupSongbook('" + m_songbook.toLatin1() + "', '"+ m_datadirs.first().toLatin1() +"')");
-        qDebug() << "++++++";
         qDebug() << script;
-        qDebug() << "++++++";
         pythonModule.evalScript(QString("setupSongbook('%1','%2')").arg(m_songbook,m_datadirs.first()));
         pythonModule.evalScript("build(['tex'])");
         emit(message("Finished Execution",0));
@@ -117,6 +121,7 @@ void CMakeSongbookProcess::setUrlToOpen(const QUrl &urlToOpen)
 void CMakeSongbookProcess::setWorkingDirectory(const QString &dir)
 {
     // TODO Do Something ?
+    pythonModule.evalScript("os.chdir('" + dir + "')");
 }
 
 const QString & CMakeSongbookProcess::songbook() const
