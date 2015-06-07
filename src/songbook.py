@@ -14,6 +14,9 @@ from patacrep import __version__
 from patacrep import errors
 import patacrep.encoding
 
+# Expose C++ to local python
+from PythonQt import *
+
 # Define global variables
 sb_builder = None
 
@@ -27,6 +30,7 @@ def setLocale():
 
 # Load songbook and setup datadirs
 def setupSongbook(songbook_path,datadir):
+    setLocale()
     print(songbook_path)
     print(datadir)
     global sb_builder

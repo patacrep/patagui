@@ -58,16 +58,19 @@ void CMakeSongbookProcess::stdErr(QString string)
 void CMakeSongbookProcess::execute()
 {
     /*
-    qDebug() << "++++++";
     // TESTING TESTING TESTING
+    qDebug() << "++++++";
     QString script = QString::fromLatin1("print('é')");
     pythonModule.evalScript(script);
     */
 
     emit(aboutToStart());
     if (!m_songbook.isEmpty()) {
-
-        pythonModule.evalScript(tr("setupSongbook('%1', '%2')").arg(m_songbook,m_datadirs.first()));
+        QString script = QString::fromLatin1("setupSongbook('" + m_songbook.toLatin1() + "', '"+ m_datadirs.first().toLatin1() +"')");
+        qDebug() << "++++++";
+        qDebug() << script;
+        qDebug() << "++++++";
+        pythonModule.evalScript(QString("setupSongbook('%1','%2')").arg(m_songbook,m_datadirs.first()));
         pythonModule.evalScript("build(['tex'])");
         emit(message("Finished Execution",0));
     }
