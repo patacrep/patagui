@@ -21,6 +21,7 @@
 
 #include <QDesktopServices>
 #include <QFile>
+#include <QString>
 
 #include <QDebug>
 
@@ -36,7 +37,7 @@ CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
     pythonModule = PythonQt::self()->getMainModule();
     // Redirect Std Out and Std Err to qDebug output through slot for easier debug.
     connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)), SLOT(stdOut(QString)));
-    connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)), SLOT(stdOut(QString)));
+    connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)), SLOT(stdErr(QString)));
     // Import Python file containing all necessary functions and imports
     pythonModule.evalFile(":/python_scripts/songbook.py");
 }
@@ -49,8 +50,19 @@ void CMakeSongbookProcess::stdOut(QString string)
     emit message(string,0);
 }
 
+void CMakeSongbookProcess::stdErr(QString string)
+{
+    qWarning() << string.toUtf8().constData();
+}
+
 void CMakeSongbookProcess::execute()
 {
+    qDebug() << "++++++";
+    // TESTING TESTING TESTING
+    QString script = QString::fromLatin1("print('é')");
+    pythonModule.evalScript(script);
+
+    /*
     emit(aboutToStart());
     if (!m_songbook.isEmpty()) {
         qDebug() << m_songbook;
@@ -62,14 +74,13 @@ void CMakeSongbookProcess::execute()
     else{
         emit(message("Error: no songbook loaded",0));
     }
+    */
 }
 
 void CMakeSongbookProcess::setSongbook(const QString &songbook)
 {
     m_songbook = songbook;
-    qDebug() << songbook;
-    pythonModule.evalScript(QString("print(u'Téléchargements')"));
-    qDebug() << "++++++";
+    // TODO Set Songbook
 }
 
 void CMakeSongbookProcess::setDatadirs(const QStringList &datadirs)

@@ -184,6 +184,8 @@ private slots:
 
     void stdOut(QString string);
 
+    void stdErr(QString string);
+
 private:
     QString m_songbook;
     QStringList m_datadirs;
