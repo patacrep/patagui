@@ -309,12 +309,6 @@ void CMainWindow::readSettings(bool firstLaunch)
     log()->setVisible(settings.value("logs", false).toBool());
     settings.endGroup();
 
-    settings.beginGroup("tools");
-    setBuildCommand(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
-    setCleanCommand(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
-    setCleanallCommand(settings.value("cleanallCommand", PLATFORM_CLEAN_COMMAND).toString());
-    settings.endGroup();
-
     view()->readSettings();
     library()->readSettings();
 }
@@ -699,20 +693,12 @@ void CMainWindow::make()
     QString basename = QFileInfo(songbook()->filename()).baseName();
     QString target = QString("%1.sb").arg(basename);
 
-    QString command = buildCommand();
-
     m_builder->setSongbook(workingPath() + "/" + target);
     m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
     m_builder->setUrlToOpen(QUrl::fromLocalFile((QString("%1/%2.pdf").arg(workingPath()).arg(basename))));
     m_builder->setStartMessage(tr("Generating %1.").arg(target));
     m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
     m_builder->setErrorMessage(tr("Error while generating [%1]. Please check logs for more information.").arg(target));
-    // Temp for understanding what is going on
-    qDebug() << workingPath();
-    qDebug() << basename;
-    qDebug() << target;
-    qDebug() << command;
-    qDebug() << "===========";
 
     QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
 }
@@ -1017,34 +1003,4 @@ void CMainWindow::updateTempFilesView(int state)
         list.removeLast();
         m_tempFilesmodel->setNameFilters(list);
     }
-}
-
-const QString & CMainWindow::buildCommand() const
-{
-    return m_buildCommand;
-}
-
-void CMainWindow::setBuildCommand(const QString &command)
-{
-    m_buildCommand = command;
-}
-
-const QString & CMainWindow::cleanCommand() const
-{
-    return m_cleanCommand;
-}
-
-void CMainWindow::setCleanCommand(const QString &command)
-{
-    m_cleanCommand = command;
-}
-
-const QString & CMainWindow::cleanallCommand() const
-{
-    return m_cleanallCommand;
-}
-
-void CMainWindow::setCleanallCommand(const QString &command)
-{
-    m_cleanallCommand = command;
 }

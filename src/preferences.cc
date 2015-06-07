@@ -313,25 +313,9 @@ OptionsPage::OptionsPage(QWidget *parent)
     pathLayout->addRow(m_libraryPathValid);
     pathGroupBox->setLayout(pathLayout);
 
-    // external tools
-    QGroupBox *toolsGroupBox
-            = new QGroupBox(tr("Songbook commands"));
-
-    QFormLayout *toolsLayout = new QFormLayout;
-    toolsLayout->addRow(tr("Build:"), m_buildCommand);
-    toolsLayout->addRow(tr("Clean:"), m_cleanCommand);
-    toolsLayout->addRow(tr("Cleanall:"), m_cleanallCommand);
-
-    QPushButton *resetButton = new QPushButton(tr("Reset to defaults"), this);
-    connect(resetButton, SIGNAL(clicked()), SLOT(resetCommands()));
-    toolsLayout->addRow(resetButton);
-
-    toolsGroupBox->setLayout(toolsLayout);
-
     // main layout
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(pathGroupBox);
-    mainLayout->addWidget(toolsGroupBox);
     mainLayout->addStretch(1);
     setLayout(mainLayout);
 }
@@ -342,12 +326,6 @@ void OptionsPage::readSettings()
     settings.beginGroup("global");
     m_songbookPath->setPath(settings.value("songbookPath", QDir::homePath()).toString());
     m_libraryPath->setPath(settings.value("libraryPath", m_songbookPath->path()).toString());
-    settings.endGroup();
-
-    settings.beginGroup("tools");
-    m_buildCommand->setText(settings.value("buildCommand", PLATFORM_BUILD_COMMAND).toString());
-    m_cleanCommand->setText(settings.value("cleanCommand", PLATFORM_CLEAN_COMMAND).toString());
-    m_cleanallCommand->setText(settings.value("cleanallCommand", PLATFORM_CLEANALL_COMMAND).toString());
     settings.endGroup();
 }
 
@@ -409,13 +387,6 @@ void OptionsPage::checkSongbookPath(const QString &path)
 void OptionsPage::checkLibraryPath(const QString &path)
 {
     m_libraryPathValid->setText(CLibrary::checkPath(path));
-}
-
-void OptionsPage::resetCommands()
-{
-    m_buildCommand->setText(PLATFORM_BUILD_COMMAND);
-    m_cleanCommand->setText(PLATFORM_CLEAN_COMMAND);
-    m_cleanallCommand->setText(PLATFORM_CLEANALL_COMMAND);
 }
 
 // Editor Page

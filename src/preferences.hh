@@ -24,20 +24,6 @@
 #include <QScrollArea>
 #include <QPushButton>
 
-#if defined(Q_OS_WIN32)
-#define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\\make.bat %basename"
-#define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\\clean.bat"
-#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\\cleanall.bat"
-#elif defined(Q_OS_MAC)
-#define PLATFORM_BUILD_COMMAND "macos/make.sh %basename"
-#define PLATFORM_CLEAN_COMMAND "macos/clean.sh"
-#define PLATFORM_CLEANALL_COMMAND "macos/cleanall.sh"
-#else //Unix/Linux
-#define PLATFORM_BUILD_COMMAND "./songbook %target --datadir %library "
-#define PLATFORM_CLEAN_COMMAND "./songbook --steps clean"
-#define PLATFORM_CLEANALL_COMMAND "./songbook --steps clean"
-#endif
-
 #include "config.hh"
 
 class QListWidget;
@@ -166,7 +152,6 @@ public:
 private slots:
     void checkSongbookPath(const QString &path);
     void checkLibraryPath(const QString &path);
-    void resetCommands();
 
 private:
     void readSettings();

@@ -59,26 +59,6 @@ class CMainWindow : public QMainWindow
     Q_OBJECT
 
 public slots:
-    /*!
-    Sets \a command as the command line to build a PDF.
-    \sa setCleanCommand, setCleanallCommand
-  */
-    void setBuildCommand(const QString &command);
-
-    /*!
-    Sets \a command as the command line to remove temporary files
-    that are generated during the compilation of a songbook.
-    \sa setBuildCommand, setCleanallCommand
-  */
-    void setCleanCommand(const QString &command);
-
-    /*!
-    Sets \a command as the command line to remove temporary files
-    and PDF files that are generated during the compilation of a songbook.
-    \sa setBuildCommand, setCleanCommand
-   */
-    void setCleanallCommand(const QString &command);
-
     void songEditor(const QString &filename);
 
     void open(const QString &filename);
@@ -127,24 +107,6 @@ public:
     @return the path to the songs/ directory
   */
     const QString libraryPath();
-
-    /*!
-    Returns the songbook build command.
-    \sa setBuildCommand
-  */
-    const QString & buildCommand() const;
-
-    /*!
-    Returns the songbook clean command.
-    \sa setCleanCommand
-  */
-    const QString & cleanCommand() const;
-
-    /*!
-    Returns the songbook cleanall command.
-    \sa setCleanallCommand
-  */
-    const QString & cleanallCommand() const;
 
     /*!
     Calls pdflatex to build the songbook.
@@ -249,9 +211,6 @@ private:
     QString m_workingPath;
     bool m_isToolBarDisplayed;
     bool m_isStatusBarDisplayed;
-    QString m_buildCommand;
-    QString m_cleanCommand;
-    QString m_cleanallCommand;
 
     // Menus
     QMenu *m_editorMenu;

@@ -57,16 +57,16 @@ void CMakeSongbookProcess::stdErr(QString string)
 
 void CMakeSongbookProcess::execute()
 {
+    /*
     qDebug() << "++++++";
     // TESTING TESTING TESTING
     QString script = QString::fromLatin1("print('é')");
     pythonModule.evalScript(script);
+    */
 
-    /*
     emit(aboutToStart());
     if (!m_songbook.isEmpty()) {
-        qDebug() << m_songbook;
-        qDebug() << m_datadirs.join(" /// ");
+
         pythonModule.evalScript(tr("setupSongbook('%1', '%2')").arg(m_songbook,m_datadirs.first()));
         pythonModule.evalScript("build(['tex'])");
         emit(message("Finished Execution",0));
@@ -74,13 +74,11 @@ void CMakeSongbookProcess::execute()
     else{
         emit(message("Error: no songbook loaded",0));
     }
-    */
 }
 
 void CMakeSongbookProcess::setSongbook(const QString &songbook)
 {
     m_songbook = songbook;
-    // TODO Set Songbook
 }
 
 void CMakeSongbookProcess::setDatadirs(const QStringList &datadirs)
