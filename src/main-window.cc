@@ -693,7 +693,8 @@ void CMainWindow::make()
     QString basename = QFileInfo(songbook()->filename()).baseName();
     QString target = QString("%1.sb").arg(basename);
 
-    m_builder->setSongbook(workingPath() + "/" + target);
+//    m_builder->setSongbook(workingPath() + "/" + target);
+    m_builder->setSongbook(songbook());
     m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
     /*
     m_builder->setStartMessage(tr("Generating %1.").arg(target));

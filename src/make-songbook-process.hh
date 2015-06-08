@@ -24,6 +24,7 @@
 #include <QUrl>
 #include <QObject>
 #include "PythonQt.h"
+#include "songbook.hh"
 
 /*!
   \file make-songbook-process.hh
@@ -45,7 +46,7 @@
 class CMakeSongbookProcess : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString songbook READ songbook WRITE setSongbook)
+//    Q_PROPERTY(QString songbook READ songbook WRITE setSongbook)
 //    Q_PROPERTY(QStringList datadirs READ datadirs WRITE setDatadirs)
 
     Q_PROPERTY(QString startMessage READ startMessage WRITE setStartMessage)
@@ -67,7 +68,7 @@ public slots:
     Set the songbook to compile.
     \sa execute
   */
-    void setSongbook(const QString &songbook);
+    void setSongbook(CSongbook* songbook);
 
     /*!
     Set the datadirs
@@ -120,7 +121,7 @@ public:
     Return the songbook to compile.
     \sa setSongbook
   */
-    const QString & songbook() const;
+    const CSongbook* songbook() const;
 
     /*!
     Return the datadirs
@@ -187,7 +188,7 @@ private slots:
     void stdErr(QString string);
 
 private:
-    QString m_songbook;
+    CSongbook* m_songbook;
     QStringList m_datadirs;
     QString m_startMessage;
     QString m_successMessage;
