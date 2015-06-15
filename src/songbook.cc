@@ -127,6 +127,19 @@ void CSongbook::setSongs(QStringList songs)
     }
 }
 
+QStringList CSongbook::datadirs()
+{
+    return library()->directory().canonicalPath();
+}
+
+void CSongbook::setDatadirs(QStringList datadirs)
+{
+    if (m_datadirs != datadirs)
+    {
+        m_datadirs = datadirs;
+    }
+}
+
 void CSongbook::reset()
 {
     setFilename(QString());

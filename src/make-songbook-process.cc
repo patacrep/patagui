@@ -126,6 +126,7 @@ void CMakeSongbookProcess::setWorkingDirectory(const QString &dir)
 {
     // TODO Do Something ?
     pythonModule.evalScript("os.chdir('" + dir + "')");
+    pythonModule.evalScript("print('CWD: ' + os.getcwd())");
 }
 
 const CSongbook* CMakeSongbookProcess::songbook() const

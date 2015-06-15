@@ -46,7 +46,7 @@ class QtGroupPropertyManager;
   and can be saved/loaded as a .sb file.
 
   LaTeX options than can be used within a songbook are defined in a template
-  file (.tmpl) that is located in the songbook application's template/ directory.
+  file (.tex) that is located in the songbook application's template/ directory.
 */
 class CSongbook : public CIdentityProxyModel
 {
@@ -55,6 +55,7 @@ class CSongbook : public CIdentityProxyModel
     Q_PROPERTY(QString filename READ filename WRITE setFilename)
     Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
     Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
+    Q_PROPERTY(QStringList datadirs READ datadirs WRITE setDatadirs)
 
 public slots:
     /*!
@@ -74,6 +75,11 @@ public slots:
     \sa songs
   */
     void setSongs(QStringList songs);
+
+    /*!
+    Sets \a datadirs ad the list of datadirs in the songbook
+  */
+    void setDatadirs(QStringList datadirs);
 
     /*!
     Resets the model.
@@ -165,6 +171,12 @@ public:
     QString tmpl() const;
 
     /*!
+    Returns the current datadirs for this songbook.
+    \sa setDatadirs
+  */
+    QStringList datadirs();
+
+    /*!
     Returns the number of selected songs for this songbook.
   */
     int selectedCount() const;
@@ -219,6 +231,7 @@ private slots:
 private:
     QString m_filename;
     QString m_tmpl;
+    QStringList m_datadirs;
 
     QList< bool > m_selectedSongs;
     QStringList m_songs;
