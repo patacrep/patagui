@@ -129,7 +129,7 @@ void CSongbook::setSongs(QStringList songs)
 
 QStringList CSongbook::datadirs()
 {
-    return library()->directory().canonicalPath();
+    return QStringList(library()->directory().canonicalPath());
 }
 
 void CSongbook::setDatadirs(QStringList datadirs)
@@ -153,7 +153,7 @@ void CSongbook::reset()
 
 void CSongbook::changeTemplate(const QString & filename)
 {
-    QString templateFilename("patacrep.tmpl");
+    QString templateFilename("patacrep.tex");
     if (!filename.isEmpty())
         templateFilename = filename;
 
@@ -389,7 +389,7 @@ void CSongbook::save(const QString & filename)
         // Book Options
         QJsonArray bookoptions;
         bookoptions.append("diagram");
-        bookoptions.append("lilypond");
+        // bookoptions.append("lilypond");
         bookoptions.append("pictures");
         json.insert("bookoptions",bookoptions);
         // Authwords

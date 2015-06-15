@@ -688,7 +688,7 @@ const QString CMainWindow::libraryPath()
 
 void CMainWindow::make()
 {
-    m_builder->setWorkingDirectory(workingPath());
+    m_builder->setWorkingDirectory(libraryPath());
 
     QString basename = QFileInfo(songbook()->filename()).baseName();
     QString target = QString("%1.sb").arg(basename);
@@ -706,7 +706,7 @@ void CMainWindow::make()
 
 void CMainWindow::makeClean()
 {
-    m_builder->setWorkingDirectory(workingPath());
+    m_builder->setWorkingDirectory(libraryPath());
 
     m_builder->setUrlToOpen(QUrl());
     m_builder->setStartMessage(tr("Cleaning the build directory."));
@@ -720,7 +720,7 @@ void CMainWindow::makeClean()
 
 void CMainWindow::makeCleanall()
 {
-    m_builder->setWorkingDirectory(workingPath());
+    m_builder->setWorkingDirectory(libraryPath());
 
     m_builder->setUrlToOpen(QUrl());
     m_builder->setStartMessage(tr("Cleaning the build directory."));
