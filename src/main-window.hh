@@ -24,7 +24,7 @@
 
 #include <QModelIndex>
 #include <QDir>
-#include <QProcess>
+#include <QFuture>
 
 class CSongbook;
 class CLibrary;
@@ -175,8 +175,6 @@ private slots:
     void updateTitle(const QString &filename);
     void switchToolBar(QToolBar *toolBar);
 
-    void buildError(QProcess::ProcessError error);
-
     void cancelProcess();
 
 private:
@@ -246,6 +244,9 @@ private:
     //Editor
     CEditor *m_voidEditor;
     CSongHighlighter *m_songHighlighter;
+
+    // Building Process
+    QFuture<void> future;
 
 public:
     const static QString _cachePath;

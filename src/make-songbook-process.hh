@@ -185,7 +185,6 @@ private slots:
     Emits exit message and try opening the url if successful.
     \sa message, url, errorMessage, successMessage
   */
-// FIXME void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void onFinished(int exitCode);
 
     void stdOut(QString string);

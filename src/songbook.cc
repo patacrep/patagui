@@ -410,7 +410,7 @@ void CSongbook::save(const QString & filename)
         setModified(false);
         setFilename(filename);
 
-        /* FIXME OLD SYSTEM  to remove after advice from previous developers
+        /* FIXME Adapt Template interpreter
         QTextStream out(&file);
         out.setCodec("UTF-8");
         out << "{\n";
@@ -552,7 +552,7 @@ void CSongbook::load(const QString & filename)
                 setTmpl(jsonvalue.toString());
             }
 
-            /* FIXME From old system, ro remove after advice */
+            /* FIXME Template interpreter */
             // template specific properties
             QtVariantProperty *property;
             int type;

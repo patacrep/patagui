@@ -39,6 +39,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <QtConcurrent>
+#include <QFuture>
 
 #include "label.hh"
 #include "library.hh"
@@ -695,7 +696,9 @@ void CMainWindow::make()
     m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
     m_builder->setErrorMessage(tr("Error while generating [%1]. Please check logs for more information.").arg(target));
     */
-    QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
+
+    // Todo: test future, wait for finished
+    future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
 }
 
 void CMainWindow::makeClean()
@@ -707,9 +710,8 @@ void CMainWindow::makeClean()
     m_builder->setSuccessMessage(tr("Build directory cleaned."));
     m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
-    QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
-    // TODO: Replace appropriately
-    // m_builder->waitForFinished();
+    // Todo: test future, wait for finished
+    future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
 }
 
 void CMainWindow::makeCleanall()
@@ -721,21 +723,17 @@ void CMainWindow::makeCleanall()
     m_builder->setSuccessMessage(tr("Build directory cleaned."));
     m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
 
-    QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
-    // TODO: Replace appropriately
-    // m_builder->waitForFinished();
+    // Todo: test future, wait for finished
+    future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
 }
 
 void CMainWindow::cancelProcess()
 {
-    // TODO Replace accordingly
-    /*
-    if (m_builder->state() == QProcess::Running)
+    if (future.isRunning())
     {
-        m_builder->close();
-        if (m_builder->command() == buildCommand())
-            makeClean();
-    }*/
+        qDebug() << "Stopping process";
+        // TODO: Implement cancelation through python
+    }
 }
 
 CProgressBar * CMainWindow::progressBar() const
@@ -897,14 +895,6 @@ void CMainWindow::changeTab(int index)
 QDockWidget* CMainWindow::log() const
 {
     return m_log;
-}
-
-void CMainWindow::buildError(QProcess::ProcessError error)
-{
-    Q_UNUSED(error);
-    log()->setVisible(true);
-    statusBar()->showMessage
-            (qobject_cast< CMakeSongbookProcess* >(QObject::sender())->errorMessage());
 }
 
 void CMainWindow::updateNotification(const QString &path)
