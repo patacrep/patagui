@@ -168,6 +168,11 @@ signals:
   */
     void message(const QString &message, int timeout);
 
+    /*!
+      Signel emitted when the process is finished
+  */
+    void finished();
+
 private slots:
 
     /*!

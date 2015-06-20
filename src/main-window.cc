@@ -253,16 +253,10 @@ CMainWindow::CMainWindow(QWidget *parent)
     connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
             SLOT(showMessage(const QString &, int)));
     connect(m_builder, SIGNAL(message(const QString &, int)), log()->widget(), SLOT(appendPlainText(const QString &)));
-    /*
-    connect(m_builder, SIGNAL(finished(int)),
+    connect(m_builder, SIGNAL(finished()),
             progressBar(), SLOT(hide()));
-    connect(m_builder, SIGNAL(readOnStandardOutput(const QString &)),
-            log()->widget(), SLOT(appendPlainText(const QString &)));
-    connect(m_builder, SIGNAL(readOnStandardError(const QString &)),
-            log()->widget(), SLOT(appendPlainText(const QString &)));
-    connect(m_builder, SIGNAL(error(QProcess::ProcessError)),
-            this, SLOT(buildError(QProcess::ProcessError)));
-    */
+//    connect(m_builder, SIGNAL(error(QProcess::ProcessError)),
+//            this, SLOT(buildError(QProcess::ProcessError)));
     updateTitle(songbook()->filename());
 
     // make a clean cache directory for the application

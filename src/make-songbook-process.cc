@@ -81,6 +81,7 @@ void CMakeSongbookProcess::execute()
         pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
         pythonModule.removeVariable("songbook");
         emit(message("Finished Execution",0));
+        emit(finished());
     }
     else{
         emit(message("Error: no songbook loaded",0));
