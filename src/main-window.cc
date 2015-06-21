@@ -683,48 +683,50 @@ const QString CMainWindow::libraryPath()
 
 void CMainWindow::make()
 {
-    m_builder->setWorkingDirectory(libraryPath());
+    if (!future.isRunning()) {
+        m_builder->setWorkingDirectory(libraryPath());
 
-    QString basename = QFileInfo(songbook()->filename()).baseName();
-    QString target = QString("%1.sb").arg(basename);
+        m_builder->setSongbook(songbook());
+        m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
 
-//    m_builder->setSongbook(workingPath() + "/" + target);
-    m_builder->setSongbook(songbook());
-    m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
-    /*
-    m_builder->setStartMessage(tr("Generating %1.").arg(target));
-    m_builder->setSuccessMessage(tr("%1 successfully built.").arg(target));
-    m_builder->setErrorMessage(tr("Error while generating [%1]. Please check logs for more information.").arg(target));
-    */
-
-    // Todo: test future, wait for finished
-    future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
+        future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
+    }
+    else {
+        // TODO: Choose behaviour: Wait for finished or error message?
+        qDebug() << "Process already running";
+    }
 }
 
 void CMainWindow::makeClean()
 {
-    m_builder->setWorkingDirectory(libraryPath());
+    if (!future.isRunning()) {
+        m_builder->setWorkingDirectory(libraryPath());
 
-    m_builder->setUrlToOpen(QUrl());
-    m_builder->setStartMessage(tr("Cleaning the build directory."));
-    m_builder->setSuccessMessage(tr("Build directory cleaned."));
-    m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
+        m_builder->setSongbook(songbook());
+        m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
 
-    // Todo: test future, wait for finished
-    future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
+        future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
+    }
+    else {
+        // TODO: Choose behaviour: Wait for finished or error message?
+        qDebug() << "Process already running";
+    }
 }
 
 void CMainWindow::makeCleanall()
 {
-    m_builder->setWorkingDirectory(libraryPath());
+    if (!future.isRunning()) {
+        m_builder->setWorkingDirectory(libraryPath());
 
-    m_builder->setUrlToOpen(QUrl());
-    m_builder->setStartMessage(tr("Cleaning the build directory."));
-    m_builder->setSuccessMessage(tr("Build directory cleaned."));
-    m_builder->setErrorMessage(tr("Error during cleaning, please check the log."));
+        m_builder->setSongbook(songbook());
+        m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
 
-    // Todo: test future, wait for finished
-    future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
+        future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
+    }
+    else {
+        // TODO: Choose behaviour: Wait for finished or error message?
+        qDebug() << "Process already running";
+    }
 }
 
 void CMainWindow::cancelProcess()
