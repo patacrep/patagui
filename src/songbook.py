@@ -7,6 +7,8 @@ import locale
 import os.path
 import textwrap
 import sys
+import logging
+import multiprocessing
 
 # Import patacrep modules
 from patacrep.build import SongbookBuilder, DEFAULT_STEPS
@@ -19,6 +21,7 @@ from PythonQt import *
 
 # Define global variables
 sb_builder = None
+process = None
 
 # Define locale according to user's parameters
 def setLocale():
@@ -76,10 +79,32 @@ def setupSongbook(songbook_path,datadir):
         # Deal with error
 
 def build(steps):
+    global process
+    process = multiprocessing.Process(target=buildSongbook, args=(steps,))
+    try:
+        #logger.info('Starting process')
+        process.start()
+    except multiprocessing.ProcessError as error:
+        #logger.warning('process Error occured')
+        message(error)
+    process.join()
+
+def message(text):
+    CPPprocess.message(text,0)
+
+def buildSongbook(steps):
+    message("Inner Function Reached")
+    sys.stdout.flush()
     global sb_builder
     try:
+        message("Building songbook")
         sb_builder.build_steps(steps)
     except errors.SongbookError as error:
-        print("Building error")
-        print(error)
-        # Deal with error
+        message("Building error")
+        # Call proper function in CPPprocess
+        message(error)
+
+def stopBuild():
+    message("Terminating process")
+    global process
+    process.terminate()    

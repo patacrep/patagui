@@ -733,8 +733,7 @@ void CMainWindow::cancelProcess()
 {
     if (future.isRunning())
     {
-        qDebug() << "Stopping process";
-        // TODO: Implement cancelation through python
+        m_builder->stopBuilding();
     }
 }
 

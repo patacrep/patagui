@@ -110,6 +110,11 @@ public slots:
   */
     void setUrlToOpen(const QUrl &url);
 
+   /*!
+    Stop the build
+  */
+    void stopBuilding();
+
 public:
     /// Constructor.
     CMakeSongbookProcess(QObject *parent = 0);

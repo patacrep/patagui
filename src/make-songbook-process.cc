@@ -57,34 +57,30 @@ void CMakeSongbookProcess::stdErr(QString string)
 {
     // Hack to simplify output
     if (!string.simplified().isEmpty()) {
-        qWarning() << string.simplified().toUtf8().constData();
+        emit message("PY: " + string.simplified(),0);
+        // qWarning() << string.simplified().toUtf8().constData();
     }
 }
 
 void CMakeSongbookProcess::execute()
 {
-    /*
-    // TESTING TESTING TESTING
-    qDebug() << "++++++";
-    QString script = QString::fromLatin1("print('é')");
-    pythonModule.evalScript(script);
-    */
-
     emit(aboutToStart());
     if (!m_songbook->filename().isEmpty()) {
         // pythonModule.evalScript(QString("setupSongbook('%1','%2')").arg(m_songbook,m_datadirs.first()));
         // pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
         // Expose Songbook to python
         pythonModule.addObject("songbook", m_songbook);
+        pythonModule.addObject("CPPprocess", this);
         pythonModule.evalScript("print(songbook.filename)");
         pythonModule.evalScript("setupSongbook(songbook.filename,'" + m_datadirs.first() + "')");
         pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
-        pythonModule.removeVariable("songbook");
+        // pythonModule.removeVariable("songbook");
         emit(message("Finished Execution",0));
         emit(finished());
     }
     else{
         emit(message("Error: no songbook loaded",0));
+        emit(finished());
     }
 }
 
@@ -127,7 +123,11 @@ void CMakeSongbookProcess::setWorkingDirectory(const QString &dir)
 {
     // TODO Do Something ?
     pythonModule.evalScript("os.chdir('" + dir + "')");
-    pythonModule.evalScript("print('CWD: ' + os.getcwd())");
+}
+
+void CMakeSongbookProcess::stopBuilding()
+{
+    pythonModule.evalScript("stopBuild()");
 }
 
 const CSongbook* CMakeSongbookProcess::songbook() const
