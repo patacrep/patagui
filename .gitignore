@@ -7,7 +7,5 @@ songbook-client
 *.dmg
 *.swp
 *~
-doc/html
-doc/man
-doc/latex
+doc
 Patagui.*
