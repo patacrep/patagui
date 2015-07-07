@@ -110,7 +110,7 @@ QString CLibrary::findSongbookPath()
             return path;
     }
 
-    return QDir::homePath();
+    return QString();
 }
 
 QDir CLibrary::directory() const
@@ -122,6 +122,8 @@ void CLibrary::setDirectory(const QString &directory)
 {
     if (!directory.isEmpty())
         setDirectory(QDir(directory));
+    else
+        emit(noDirectory());
 }
 
 void CLibrary::setDirectory(const QDir &directory)
@@ -345,19 +347,15 @@ void CLibrary::addSong(const Song &song, bool resetModel)
 
     if (resetModel)
     {
-        // Modified due to change in QAbstractItemModel
         beginResetModel();
         emit(wasModified());
         endResetModel();
-
-        // Original Code
-        //reset();
-        //emit(wasModified());
     }
 }
 
 void CLibrary::addSongs(const QStringList &paths)
 {
+    beginResetModel();
     Song song;
     int songCount = 0;
     // run through the library songs files
@@ -368,15 +366,8 @@ void CLibrary::addSongs(const QStringList &paths)
         loadSong(filepath.next(), &song);
         addSong(song);
     }
-
-    // Modified due to change in QAbstractItemModel
-    beginResetModel();
     emit(wasModified());
     endResetModel();
-
-    // Original Code
-    //reset();
-    //emit(wasModified());
 }
 
 void CLibrary::addSong(const QString &path)
@@ -387,6 +378,7 @@ void CLibrary::addSong(const QString &path)
 
 void CLibrary::removeSong(const QString &path)
 {
+    beginResetModel();
     for (int i = 0; i < m_songs.size(); ++i)
     {
         if (m_songs[i].path == path)
@@ -395,14 +387,8 @@ void CLibrary::removeSong(const QString &path)
             break;
         }
     }
-    // Modified due to change in QAbstractItemModel
-    beginResetModel();
     emit(wasModified());
     endResetModel();
-
-    // Original Code
-    //reset();
-    //emit(wasModified());
 }
 
 Song CLibrary::getSong(const QString &path) const

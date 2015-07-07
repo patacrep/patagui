@@ -199,6 +199,8 @@ CMainWindow::CMainWindow(QWidget *parent)
 
     connect(library(), SIGNAL(directoryChanged(const QDir &)),
             SLOT(noDataNotification(const QDir &)));
+    connect(library(), SIGNAL(noDirectory()),
+            SLOT(noSongbbookDirectoryNotification()));
 
     connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
     connect(m_songbook, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
@@ -265,6 +267,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     QDir().mkpath(_cachePath);
 
     readSettings(true);
+
 }
 
 CMainWindow::~CMainWindow()
@@ -928,6 +931,28 @@ void CMainWindow::noDataNotification(const QDir &directory)
     {
         m_noDataInfo->setMessage(tr("<strong>The directory <b>%1</b> does not contain any song.</strong><br/>"
                                     "Do you want to download the latest songs library?").arg(directory.canonicalPath()));
+        m_noDataInfo->show();
+        m_buildAct->setEnabled(false);
+    }
+}
+
+void CMainWindow::noSongbbookDirectoryNotification()
+{
+    // TODO: Have appropriate notifications.
+    if (!m_noDataInfo)
+    {
+        m_noDataInfo = new CNotification(this);
+        m_noDataInfo->addAction(m_importSongsAct);
+    }
+
+    if (library()->rowCount() > 0)
+    {
+        m_noDataInfo->hide();
+        m_buildAct->setEnabled(true);
+    }
+    else
+    {
+        m_noDataInfo->setMessage(tr("There is no datadir at the moment. Do you want to set one up?"));
         m_noDataInfo->show();
         m_buildAct->setEnabled(false);
     }

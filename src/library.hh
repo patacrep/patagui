@@ -270,6 +270,7 @@ public slots:
 signals:
     void wasModified();
     void directoryChanged(const QDir &directory);
+    void noDirectory();
 
 protected:
 
