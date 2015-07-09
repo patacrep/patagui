@@ -325,7 +325,7 @@ void OptionsPage::readSettings()
     QSettings settings;
     settings.beginGroup("global");
     m_songbookPath->setPath(settings.value("songbookPath", QDir::homePath()).toString());
-    m_libraryPath->setPath(settings.value("libraryPath", m_songbookPath->path()).toString());
+    m_libraryPath->setPath(settings.value("libraryPath", m_songbookPath->path()).toString()); // TODO Change default value
     settings.endGroup();
 }
 
@@ -334,7 +334,7 @@ void OptionsPage::writeSettings()
     QSettings settings;
     settings.beginGroup("global");
     settings.setValue("songbookPath", m_songbookPath->path());
-    settings.setValue("libraryPath", m_libraryPath->path());
+    settings.setValue("libraryPath", m_libraryPath->path()); // TODO Check Default Value on write
     settings.endGroup();
 
     settings.beginGroup("tools");

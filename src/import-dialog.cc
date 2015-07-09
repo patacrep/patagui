@@ -209,7 +209,7 @@ void CImportDialog::readSettings()
 {
     QSettings settings;
     settings.beginGroup("global");
-    m_libraryPath->setPath(settings.value("libraryPath", QDir::homePath()).toString());
+    m_libraryPath->setPath(settings.value("libraryPath", QDir::homePath()).toString()); // TODO Check default value
     settings.endGroup();
 
     settings.beginGroup("import");
@@ -222,7 +222,7 @@ void CImportDialog::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("global");
-    settings.setValue("libraryPath", m_libraryPath->path());
+    settings.setValue("libraryPath", m_libraryPath->path()); // TODO Check value on write
     settings.endGroup();
 
     settings.beginGroup("import");
