@@ -291,6 +291,7 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
 void CMainWindow::readSettings(bool firstLaunch)
 {
     QSettings settings;
+    qDebug() << "Reading settings";
     settings.beginGroup("global");
     if (firstLaunch)
     {
