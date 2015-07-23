@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 set(CMAKE_COLOR_MAKEFILE ON)
 #set(CMAKE_VERBOSE_MAKEFILE OFF)
 SET(CMAKE_BUILD_TYPE Debug)
@@ -111,13 +111,13 @@ list(APPEND QT_LIBRARIES ${Qt5Concurrent_LIBRARIES};${Qt5Network_LIBRARIES};${Qt
 ## Qt Libraries have to appear first, otherwise OS X deployment is confused.
 list(APPEND LIBRARIES ${QT_LIBRARIES})
 
-################ DIRTY HACK FOR IT TO WORK FOR NOW ###################
-#### Problem lies with cmake, can't properly find python3 on Mac #####
+# Small Hack for python3 on Mac OSX, otherwise, python3 is not found, only the system library which is 2.7 so far.
 IF(APPLE)
-SET(PYTHON_INCLUDE_DIR  /usr/local/opt/python3/Frameworks/Python.framework/Versions/3.4/include/python3.4m)
-SET(PYTHON_LIBRARY /usr/local/opt/python3/Frameworks/Python.framework/Versions/3.4/Python)
+execute_process(COMMAND python3-config --prefix
+OUTPUT_VARIABLE PYTHON3_PREFIX)
+SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python3.4m)
+SET(PYTHON_LIBRARY ${PYTHON3_PREFIX}/Python)
 ENDIF()
-############################# End of Hack ############################
 
 # Finding Python 3
 find_package(PythonLibs 3.3 REQUIRED)
