@@ -1,0 +1,12 @@
+4,5c4,5
+< win32:PYTHON_VERSION=26
+< unix:PYTHON_VERSION=2.6
+---
+> win32:PYTHON_VERSION=34
+> unix:PYTHON_VERSION=3.4
+9,10c9,10
+<   INCLUDEPATH += /System/Library/Frameworks/Python.framework/Headers
+<   LIBS += -F/System/Library/Frameworks -framework Python
+---
+>   INCLUDEPATH += $$system(python$${PYTHON_VERSION}-config --prefix)/Headers
+>   LIBS += -L$$system(python$${PYTHON_VERSION}-config --prefix)/lib $$system(python$${PYTHON_VERSION}-config --libs)
