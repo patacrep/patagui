@@ -113,8 +113,7 @@ list(APPEND LIBRARIES ${QT_LIBRARIES})
 
 # Small Hack for python3 on Mac OSX, otherwise, python3 is not found, only the system library which is 2.7 so far.
 IF(APPLE)
-execute_process(COMMAND python3-config --prefix
-OUTPUT_VARIABLE PYTHON3_PREFIX)
+execute_process(COMMAND python3-config --prefix OUTPUT_VARIABLE PYTHON3_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
 SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python3.4m)
 SET(PYTHON_LIBRARY ${PYTHON3_PREFIX}/Python)
 ENDIF()
