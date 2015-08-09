@@ -184,6 +184,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     , m_mainWidget(new CTabWidget(this))
     , m_progressBar(new CProgressBar(this))
     , m_noDataInfo(0)
+    , m_noDatadirSet(0)
     , m_updateAvailable(0)
     , m_infoSelection(new QLabel(this))
     , m_log(new QDockWidget(tr("LaTeX compilation logs")))
@@ -351,6 +352,13 @@ void CMainWindow::createActions()
     m_importSongsAct->setIconText(tr("Import songs"));
     connect(m_importSongsAct, SIGNAL(triggered()), this, SLOT(importSongsDialog()));
 
+    m_setupDatadirAct = new QAction(tr("&Setup Datadir"), this);
+    m_setupDatadirAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
+    m_setupDatadirAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_M));
+    m_setupDatadirAct->setStatusTip(tr("Create a new datadir"));
+    m_setupDatadirAct->setIconText(tr("Create datadir"));
+    connect(m_setupDatadirAct, SIGNAL(triggered()), this, SLOT(setupDatadirDialog()));
+
     m_newAct = new QAction(tr("&New"), this);
     m_newAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
     m_newAct->setShortcut(QKeySequence::New);
@@ -490,6 +498,7 @@ void CMainWindow::createMenus()
     QMenu *libraryMenu = menuBar()->addMenu(tr("&Library"));
     libraryMenu->addAction(m_newSongAct);
     libraryMenu->addAction(m_importSongsAct);
+    libraryMenu->addAction(m_setupDatadirAct); // FIXME
     libraryMenu->addSeparator();
     libraryMenu->addAction(m_selectAllAct);
     libraryMenu->addAction(m_unselectAllAct);
@@ -832,6 +841,13 @@ void CMainWindow::importSongsDialog()
     dialog->exec();
 }
 
+void CMainWindow::setupDatadirDialog()
+{
+    QString datadir = QFileDialog::getExistingDirectory(this, "Datadir");
+    library()->setDirectory(datadir);
+    qDebug() << datadir;
+}
+
 void CMainWindow::importSongs(const QStringList & songs)
 {
     library()->importSongs(songs);
@@ -940,21 +956,21 @@ void CMainWindow::noDataNotification(const QDir &directory)
 void CMainWindow::noSongbbookDirectoryNotification()
 {
     // TODO: Have appropriate notifications.
-    if (!m_noDataInfo)
+    if (!m_noDatadirSet)
     {
-        m_noDataInfo = new CNotification(this);
-        m_noDataInfo->addAction(m_importSongsAct);
+        m_noDatadirSet = new CNotification(this);
+        m_noDatadirSet->addAction(m_setupDatadirAct);
     }
 
     if (library()->rowCount() > 0)
     {
-        m_noDataInfo->hide();
+        m_noDatadirSet->hide();
         m_buildAct->setEnabled(true);
     }
     else
     {
-        m_noDataInfo->setMessage(tr("There is no datadir at the moment. Do you want to set one up?"));
-        m_noDataInfo->show();
+        m_noDatadirSet->setMessage(tr("There is no datadir at the moment. Do you want to set one up?"));
+        m_noDatadirSet->show();
         m_buildAct->setEnabled(false);
     }
 }

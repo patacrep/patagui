@@ -157,6 +157,7 @@ private slots:
     void songEditor(const QModelIndex &index = QModelIndex());
     void deleteSong();
 
+    void setupDatadirDialog();
     void deleteSong(const QString &filename);
     void updateNotification(const QString &path);
     void noDataNotification(const QDir &directory);
@@ -201,6 +202,7 @@ private:
     CTabWidget *m_mainWidget;
     CProgressBar *m_progressBar;
     CNotification *m_noDataInfo;
+    CNotification *m_noDatadirSet;
     CNotification *m_updateAvailable;
     QLabel *m_infoSelection;
     CFilterLineEdit *m_filterLineEdit;
@@ -237,6 +239,7 @@ private:
     // Library action
     QAction *m_newSongAct;
     QAction *m_importSongsAct;
+    QAction *m_setupDatadirAct;
     QAction *m_selectAllAct;
     QAction *m_unselectAllAct;
     QAction *m_invertSelectionAct;

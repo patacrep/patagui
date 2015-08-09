@@ -1,4 +1,4 @@
-builddir=.build-$(shell hostname)-$(shell gcc -dumpmachine)-$(shell gcc -dumpversion)
+builddir=.build-$(shell gcc -dumpmachine)-$(shell gcc -dumpversion)
 
 ifeq (,$(VERBOSE))
     MAKEFLAGS:=$(MAKEFLAGS)s
