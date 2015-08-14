@@ -6,20 +6,18 @@
 include(ExternalProject)
 
 ExternalProject_Add(PythonQt
-PREFIX pythonqt-build
-URL http://sourceforge.net/projects/pythonqt/files/pythonqt/PythonQt-3.0/PythonQt3.0.zip
-PATCH_COMMAND patch build/python.prf < ${CMAKE_CURRENT_SOURCE_DIR}/cmake/python34.patch
-CONFIGURE_COMMAND qmake ${CMAKE_CURRENT_BINARY_DIR}/pythonqt-build/src/PythonQt/PythonQt.pro
+PREFIX pythonqt
+SVN_REPOSITORY svn://svn.code.sf.net/p/pythonqt/code/trunk
+SVN_REVISION 403
+# URL "http://downloads.sourceforge.net/project/pythonqt/pythonqt/PythonQt-3.0/PythonQt3.0.zip"
+PATCH_COMMAND patch -p0 --ignore-whitespace -i ${CMAKE_CURRENT_SOURCE_DIR}/cmake/python3.patch
+CONFIGURE_COMMAND qmake ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt/PythonQt.pro
 BUILD_COMMAND make
 )
 
-set(PYTHONQT_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pythonqt-build/src/PythonQt/)
-find_path(PYTHONQT_INCLUDE_DIR PythonQt.h "${PYTHONQT_INSTALL_DIR}/src" DOC "Path to the PythonQt include directory")
-find_library(PYTHONQT_LIBRARY PythonQt PATHS "${CMAKE_CURRENT_BINARY_DIR}/pythonqt-build/src/PythonQt-build/lib" DOC "The PythonQt library.")
-
-message(STATUS ${PYTHONQT_INSTALL_DIR})
-message(STATUS ${PYTHONQT_INCLUDE_DIR})
-message(STATUS ${PYTHONQT_LIBRARY})
+set(PYTHONQT_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt)
+set(PYTHONQT_INCLUDE_DIR ${PYTHONQT_INSTALL_DIR}/src)
+set(PYTHONQT_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt-build/lib)
 
 mark_as_advanced(PYTHONQT_INSTALL_DIR)
 mark_as_advanced(PYTHONQT_INCLUDE_DIR)
