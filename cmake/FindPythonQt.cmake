@@ -19,6 +19,9 @@ set(PYTHONQT_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt)
 set(PYTHONQT_INCLUDE_DIR ${PYTHONQT_INSTALL_DIR}/src)
 set(PYTHONQT_LIBRARY ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt-build/lib)
 
+find_path(PYTHONQT_INCLUDE_DIR PythonQt.h "${PYTHONQT_INSTALL_DIR}/src" DOC "Path to the PythonQt include directory")
+find_library(PYTHONQT_LIBRARY PythonQt PATHS "${PYTHONQT_INSTALL_DIR}/lib" DOC "The PythonQt library.")
+
 mark_as_advanced(PYTHONQT_INSTALL_DIR)
 mark_as_advanced(PYTHONQT_INCLUDE_DIR)
 mark_as_advanced(PYTHONQT_LIBRARY)
