@@ -18,20 +18,20 @@
 		PROPERTIES
 		MACOSX_PACKAGE_LOCATION Resources
 	)
-	#set( CMAKE_OSX_ARCHITECTURES "ppc;i386;ppc64;x86_64" 
-	#set( CMAKE_OSX_ARCHITECTURES "ppc;i386" 
+	#set( CMAKE_OSX_ARCHITECTURES "ppc;i386;ppc64;x86_64"
+	#set( CMAKE_OSX_ARCHITECTURES "ppc;i386"
 	#				CACHE STRING "Build architectures for OSX" FORCE)
-	
+
 	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/songbook-client.icns
 		${CMAKE_CURRENT_BINARY_DIR}/songbook-client.icns COPYONLY)
 
 	IF(EXISTS "/Library/Frameworks/Sparkle.framework")
-		message(STATUS "Looking for Sparkle Framwork - found")
+		message(STATUS "Looking for Sparkle Framework - found")
 		#need to check a few things for autoupdate
-		# this will set the UPPERCASE Variable to the right path 
-		# for soft/Hard linknig of the framwork.
+		# this will set the UPPERCASE Variable to the right path
+		# for soft/Hard linknig of the framework.
 		# OPTION( VARIABLE "Description" Initial state)
-		OPTION( USE_SPARKLE "Enable Sparkle Framwork on mac" ON )
+		OPTION( USE_SPARKLE "Enable Sparkle Framework on mac" ON )
 
 		find_library(SPARKLE_FRAMEWORK Sparkle)
 		find_library(APPKIT_FRAMEWORK AppKit)
@@ -50,7 +50,7 @@
 			message(WARNING "Looking for Public Key - not found")
 			message(WARNING "${PUBLIC_KEY_PATH} not found Sparkle Framwork will NOT work and may event prevent application from launching. Please consider Disabling Sparkle Framwork, creating a pair of key for testing purposes")
 		ENDIF(EXISTS ${PUBLIC_KEY_PATH})
-		
+
 		LIST(
 			APPEND SONGBOOK_CLIENT_QT_HEADER
 			macos_specific/sparkle/src/AutoUpdater.h
@@ -68,13 +68,13 @@
 		set(CCS2 cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/Sparkle.framework)
 		set(CCS3 echo "Note : Having the message : ERROR: no file at '/usr/lib/@loader_path@loader_path' is normal")
 		set(CCS4 echo "It is due to Qt encountering references to Sparkle Framwork.")
-		
+
 	ELSE(EXISTS "/Library/Frameworks/Sparkle.framework")
                 message(STATUS "Looking for Sparkle Framework - not found")
 		set(CCS1 echo "The application has been compiled without support for auto-updating, you will have to check for it manually")
 	ENDIF(EXISTS "/Library/Frameworks/Sparkle.framework")
-	
-	add_executable( ${SONGBOOK_CLIENT_APPLICATION_NAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES} 
+
+	add_executable( ${SONGBOOK_CLIENT_APPLICATION_NAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES}
 		${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
 		${SONGBOOK_CLIENT_UI_HDRS}
 		${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
@@ -86,12 +86,12 @@
                 COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
                 COMMAND cp ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources
                 COMMAND cp ${SOURCE_DIR}/lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
-		# this for command are set if sparkle is activated and are ment to copy the framwork inside the bundle
-		# and warn the user about some error message that might be printed afterward
-		COMMAND ${CCS1}
-		COMMAND ${CCS2}
-		COMMAND ${CCS3}
-		COMMAND ${CCS4}
+								# this for command are set if sparkle is activated and are ment to copy the framwork inside the bundle
+								# and warn the user about some error message that might be printed afterward
+								COMMAND ${CCS1}
+								COMMAND ${CCS2}
+								COMMAND ${CCS3}
+								COMMAND ${CCS4}
                 COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks
                 COMMAND cp ${PYTHONQT_LIBRARY} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/
                 COMMAND ln -sf libPythonQt.dylib ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.1.dylib
