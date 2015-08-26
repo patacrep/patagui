@@ -64,7 +64,7 @@ IF(EXISTS "/Library/Frameworks/Sparkle.framework")
 		macos_specific/sparkle/src/SparkleAutoUpdater.mm
 		)
 	# Hack Custom command to copy sparkle framwork
-              set(CCS1 mkdir ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks)
+  set(CCS1 mkdir ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks)
 	set(CCS2 cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/Sparkle.framework)
 	set(CCS3 echo "Note : Having the message : ERROR: no file at '/usr/lib/@loader_path@loader_path' is normal")
 	set(CCS4 echo "It is due to Qt encountering references to Sparkle Framwork.")
