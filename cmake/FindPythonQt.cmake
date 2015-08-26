@@ -5,6 +5,13 @@
 
 include(ExternalProject)
 
+# Look for qmake
+IF(NOT QT_QMAKE_EXECUTABLE)
+    FIND_PROGRAM(QT_QMAKE_EXECUTABLE_FINDQT NAMES qmake qmake5 qmake-qt5
+        PATHS "${QT_SEARCH_PATH}/bin" "$ENV{QTDIR}/bin")
+    SET(QT_QMAKE_EXECUTABLE ${QT_QMAKE_EXECUTABLE_FINDQT} CACHE PATH "Qt qmake program.")
+ENDIF(NOT QT_QMAKE_EXECUTABLE)
+
 # Download PythonQt from SVN, patch then build
 ExternalProject_Add(PythonQt
 PREFIX pythonqt
@@ -13,7 +20,7 @@ SVN_REVISION -r403
 # Backup URL in case SVN messes up.
 # URL "http://downloads.sourceforge.net/project/pythonqt/pythonqt/PythonQt-3.0/PythonQt3.0.zip"
 PATCH_COMMAND patch -p0 --ignore-whitespace --batch --input=${CMAKE_CURRENT_SOURCE_DIR}/cmake/python3.patch
-CONFIGURE_COMMAND qmake ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt/PythonQt.pro
+CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt/PythonQt.pro
 BUILD_COMMAND make
 BUILD_IN_SOURCE 1
 INSTALL_COMMAND ""
