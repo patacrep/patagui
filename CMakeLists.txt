@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 set(CMAKE_COLOR_MAKEFILE ON)
-#set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 SET(CMAKE_BUILD_TYPE Debug)
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -113,7 +113,10 @@ list(APPEND LIBRARIES ${QT_LIBRARIES})
 
 # Small Hack for python3 on Mac OSX, otherwise, python3 is not found, only the system library which is 2.7 so far.
 IF(APPLE)
-execute_process(COMMAND python3-config --prefix OUTPUT_VARIABLE PYTHON3_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND python3-config --prefix
+                OUTPUT_VARIABLE PYTHON3_PREFIX
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                ERROR_STRIP_TRAILING_WHITESPACE)
 SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python3.4m)
 SET(PYTHON_LIBRARY ${PYTHON3_PREFIX}/Python)
 ENDIF()
@@ -125,8 +128,10 @@ list(APPEND LIBRARIES ${PYTHON_LIBRARIES})
 
 # Setup PythonQt
 include(${CMAKE_MODULE_PATH}/FindPythonQt.cmake)
-list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
 include_directories(${PYTHONQT_INCLUDE_DIR})
+message(STATUS ${PYTHONQT_LIBRARIES})
+list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
+message(STATUS ${LIBRARIES})
 
 # Use LibArchive
 if(ENABLE_LIBRARY_DOWNLOAD)
@@ -181,6 +186,8 @@ endif(WIN32)
 
 # Setup Libraries for linking
 target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
+set_property(TARGET ${SONGBOOK_CLIENT_APPLICATION_NAME} PROPERTY IMPORTED_LOCATION ${PYTHONQT_LIBRARY_PATH})
+add_dependencies(${SONGBOOK_CLIENT_APPLICATION_NAME} PythonQt)
 
 # {{{ Internationalization
 set (TRANSLATIONS

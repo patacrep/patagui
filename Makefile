@@ -1,4 +1,5 @@
 builddir=.build-$(shell gcc -dumpmachine)-$(shell gcc -dumpversion)
+CMAKE_ARGS=
 
 ifeq (,$(VERBOSE))
     MAKEFLAGS:=$(MAKEFLAGS)s
