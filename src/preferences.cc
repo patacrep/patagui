@@ -151,7 +151,6 @@ void ConfigDialog::closeEvent(QCloseEvent *event)
     }
 }
 
-
 // Page
 
 Page::Page(QWidget *parent)
@@ -293,10 +292,6 @@ OptionsPage::OptionsPage(QWidget *parent)
     connect(m_libraryPath, SIGNAL(pathChanged(const QString&)),
             this, SLOT(checkLibraryPath(const QString&)));
 
-    m_buildCommand = new QLineEdit(this);
-    m_cleanCommand = new QLineEdit(this);
-    m_cleanallCommand = new QLineEdit(this);
-
     readSettings();
 
     // Global paths
@@ -335,12 +330,6 @@ void OptionsPage::writeSettings()
     settings.beginGroup("global");
     settings.setValue("songbookPath", m_songbookPath->path());
     settings.setValue("libraryPath", m_libraryPath->path()); // TODO Check Default Value on write
-    settings.endGroup();
-
-    settings.beginGroup("tools");
-    settings.setValue("buildCommand", m_buildCommand->text());
-    settings.setValue("cleanCommand", m_cleanCommand->text());
-    settings.setValue("cleanallCommand", m_cleanallCommand->text());
     settings.endGroup();
 }
 
@@ -456,10 +445,64 @@ void EditorPage::updateFontButton()
                           .arg(QString::number(QFontInfo(m_font).pointSize())));
 }
 
+// Songbook Page
+
+SongbookPage::SongbookPage(QWidget *p)
+    : Page(p)
+    , m_propertyEditor(new QtGroupBoxPropertyBrowser)
+    , m_mainwindow(parent()->parent())
+{
+    if (!m_mainwindow)
+    {
+        qWarning() << tr("SongbookPage::SongbookPage invalid parent: can't find the mainwindow");
+        return;
+    }
+
+    CSongbook *songbook = m_mainwindow->songbook();
+
+    QComboBox* templateComboBox = new QComboBox;
+    templateComboBox->addItems(songbook->library()->templates());
+
+    int index = songbook->library()->templates().indexOf(songbook->tmpl());
+    if (index == -1)
+        index = songbook->library()->templates().indexOf("patacrep.tex");
+    templateComboBox->setCurrentIndex(index);
+
+    connect(templateComboBox, SIGNAL(currentIndexChanged(const QString &)),
+            songbook, SLOT(setTmpl(const QString &)));
+    connect(songbook, SIGNAL(wasModified(bool)), SLOT(updatePropertyEditor()));
+
+    songbook->changeTemplate(songbook->tmpl());
+    songbook->initializeEditor(m_propertyEditor);
+
+    QGroupBox *songbookGroupBox = new QGroupBox(tr("Songbook"));
+
+    QBoxLayout *templateLayout = new QHBoxLayout;
+    templateLayout->addWidget(new QLabel(tr("Template:")));
+    templateLayout->addWidget(templateComboBox);
+
+    QBoxLayout *songbookLayout = new QVBoxLayout;
+    songbookLayout->addLayout(templateLayout);
+    songbookLayout->addWidget(m_propertyEditor);
+    songbookGroupBox->setLayout(songbookLayout);
+
+    // main layout
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(songbookGroupBox);
+    mainLayout->addStretch(1);
+    setLayout(mainLayout);
+}
+
+void SongbookPage::updatePropertyEditor()
+{
+    if (m_mainwindow)
+        m_mainwindow->songbook()->initializeEditor(m_propertyEditor);
+    else
+        qWarning() << tr("SongbookPage::updatePropertyEditor can't find the mainwindow");
+}
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 // Network Page
-
 NetworkPage::NetworkPage(QWidget *parent)
     : Page(parent)
     , m_hostname()
@@ -531,59 +574,3 @@ void NetworkPage::writeSettings()
     QNetworkProxy::setApplicationProxy(proxy);
 }
 #endif // ENABLE_LIBRARY_DOWNLOAD
-
-// Songbook Page
-
-SongbookPage::SongbookPage(QWidget *p)
-    : Page(p)
-    , m_propertyEditor(new QtGroupBoxPropertyBrowser)
-    , m_mainwindow(parent()->parent())
-{
-    if (!m_mainwindow)
-    {
-        qWarning() << tr("SongbookPage::SongbookPage invalid parent: can't find the mainwindow");
-        return;
-    }
-
-    CSongbook *songbook = m_mainwindow->songbook();
-
-    QComboBox* templateComboBox = new QComboBox;
-    templateComboBox->addItems(songbook->library()->templates());
-
-    int index = songbook->library()->templates().indexOf(songbook->tmpl());
-    if (index == -1)
-        index = songbook->library()->templates().indexOf("patacrep.tex");
-    templateComboBox->setCurrentIndex(index);
-
-    connect(templateComboBox, SIGNAL(currentIndexChanged(const QString &)),
-            songbook, SLOT(setTmpl(const QString &)));
-    connect(songbook, SIGNAL(wasModified(bool)), SLOT(updatePropertyEditor()));
-
-    songbook->changeTemplate(songbook->tmpl());
-    songbook->initializeEditor(m_propertyEditor);
-
-    QGroupBox *songbookGroupBox = new QGroupBox(tr("Songbook"));
-
-    QBoxLayout *templateLayout = new QHBoxLayout;
-    templateLayout->addWidget(new QLabel(tr("Template:")));
-    templateLayout->addWidget(templateComboBox);
-
-    QBoxLayout *songbookLayout = new QVBoxLayout;
-    songbookLayout->addLayout(templateLayout);
-    songbookLayout->addWidget(m_propertyEditor);
-    songbookGroupBox->setLayout(songbookLayout);
-
-    // main layout
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(songbookGroupBox);
-    mainLayout->addStretch(1);
-    setLayout(mainLayout);
-}
-
-void SongbookPage::updatePropertyEditor()
-{
-    if (m_mainwindow)
-        m_mainwindow->songbook()->initializeEditor(m_propertyEditor);
-    else
-        qWarning() << tr("SongbookPage::updatePropertyEditor can't find the mainwindow");
-}

@@ -201,7 +201,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     connect(library(), SIGNAL(directoryChanged(const QDir &)),
             SLOT(noDataNotification(const QDir &)));
     connect(library(), SIGNAL(noDirectory()),
-            SLOT(noSongbbookDirectoryNotification()));
+            SLOT(noSongbookDirectoryNotification()));
 
     connect(m_songbook, SIGNAL(wasModified(bool)), SLOT(setWindowModified(bool)));
     connect(m_songbook, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
@@ -843,9 +843,10 @@ void CMainWindow::importSongsDialog()
 
 void CMainWindow::setupDatadirDialog()
 {
-    QString datadir = QFileDialog::getExistingDirectory(this, "Datadir");
+    QString datadir = QFileDialog::getExistingDirectory(this, "Datadir", QDir::homePath());
+    // TODO: Check failure ("datadir" empty)
     library()->setDirectory(datadir);
-    qDebug() << datadir;
+    library()->directory().mkdir("songs");
 }
 
 void CMainWindow::importSongs(const QStringList & songs)
@@ -953,7 +954,7 @@ void CMainWindow::noDataNotification(const QDir &directory)
     }
 }
 
-void CMainWindow::noSongbbookDirectoryNotification()
+void CMainWindow::noSongbookDirectoryNotification()
 {
     // TODO: Have appropriate notifications.
     if (!m_noDatadirSet)

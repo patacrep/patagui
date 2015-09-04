@@ -568,7 +568,10 @@ QString CLibrary::checkPath(const QString &path)
 
     if (!directory.exists())
     {
-        message = tr("the directory does not exist");
+        message = tr("The directory does not exist");
+    }
+    else if (!directory.exists("songs")) {
+        message = tr("No songs folder in this directory");
     }
     else
     {

@@ -161,7 +161,7 @@ private slots:
     void deleteSong(const QString &filename);
     void updateNotification(const QString &path);
     void noDataNotification(const QDir &directory);
-    void noSongbbookDirectoryNotification();
+    void noSongbookDirectoryNotification();
 
     //model
     void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
