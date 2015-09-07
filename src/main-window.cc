@@ -843,10 +843,23 @@ void CMainWindow::importSongsDialog()
 
 void CMainWindow::setupDatadirDialog()
 {
-    QString datadir = QFileDialog::getExistingDirectory(this, "Datadir", QDir::homePath());
-    // TODO: Check failure ("datadir" empty)
-    library()->setDirectory(datadir);
-    library()->directory().mkdir("songs");
+    QString datadir = QFileDialog::getExistingDirectory(this, tr("Select Datadir"), QDir::homePath(), QFileDialog::ShowDirsOnly);
+    if (datadir != "")
+    {
+        library()->setDirectory(datadir);
+        library()->directory().mkdir("songs");
+    }
+    else
+    {
+        if (QMessageBox::question(this, windowTitle(), tr("You did not select a datadir.\n Do you want to select one ?")) == QMessageBox::Yes)
+        {
+            setupDatadirDialog();
+        }
+        else
+        {
+            QMessageBox::critical(this,tr("No datadir"), tr("You did not set a datadir.\n The behaviour is unknown."));
+        }
+    }
 }
 
 void CMainWindow::importSongs(const QStringList & songs)
@@ -956,7 +969,6 @@ void CMainWindow::noDataNotification(const QDir &directory)
 
 void CMainWindow::noSongbookDirectoryNotification()
 {
-    // TODO: Have appropriate notifications.
     if (!m_noDatadirSet)
     {
         m_noDatadirSet = new CNotification(this);
