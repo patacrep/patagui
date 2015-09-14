@@ -847,17 +847,19 @@ void CMainWindow::setupDatadirDialog()
     if (datadir != "")
     {
         library()->setDirectory(datadir);
-        library()->directory().mkdir("songs");
+        if (library()->directory().mkdir("songs")) {
+            qDebug() << "Songs Directory created";
+        }
     }
     else
     {
-        if (QMessageBox::question(this, windowTitle(), tr("You did not select a datadir.\n Do you want to select one ?")) == QMessageBox::Yes)
+        if (QMessageBox::question(this, windowTitle(), tr("You did not select a datadir.\nDo you want to select one ?")) == QMessageBox::Yes)
         {
             setupDatadirDialog();
         }
         else
         {
-            QMessageBox::critical(this,tr("No datadir"), tr("You did not set a datadir.\n The behaviour is unknown."));
+            QMessageBox::critical(this,tr("No datadir"), tr("You did not set a datadir.\nThis behaviour is unknown."));
         }
     }
 }
