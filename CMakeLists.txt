@@ -117,7 +117,11 @@ execute_process(COMMAND python3-config --prefix
                 OUTPUT_VARIABLE PYTHON3_PREFIX
                 OUTPUT_STRIP_TRAILING_WHITESPACE
                 ERROR_STRIP_TRAILING_WHITESPACE)
-SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python3.4m)
+execute_process(COMMAND python3 -c "import sys; print(\".\".join(map(str, sys.version_info[:2])))"
+                OUTPUT_VARIABLE PYTHON3_VERSION
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                ERROR_STRIP_TRAILING_WHITESPACE)
+SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python${PYTHON3_VERSION}m)
 SET(PYTHON_LIBRARY ${PYTHON3_PREFIX}/Python)
 ENDIF()
 
