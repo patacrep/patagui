@@ -79,7 +79,7 @@ void CLibrary::readSettings()
 {
     QSettings settings;
     settings.beginGroup("global");
-    setDirectory(settings.value("libraryPath", findSongbookPath()).toString()); // TODO Change default
+    setDirectory(settings.value("libraryPath").toString());
     settings.endGroup();
 }
 
@@ -87,7 +87,10 @@ void CLibrary::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("global");
-    settings.setValue("libraryPath", directory().absolutePath()); // TODO Check value on write
+    if (directory().path()!=".")
+    {
+        settings.setValue("libraryPath", directory().absolutePath());
+    }
     settings.endGroup();
 }
 
@@ -95,22 +98,6 @@ bool CLibrary::checkSongbookPath(const QString &path)
 {
     QDir directory(path);
     return directory.exists() && directory.exists("songs");
-}
-
-QString CLibrary::findSongbookPath()
-{
-    QStringList paths;
-    paths << QString("%1/songbook").arg(QDir::homePath())
-          << QString("%1/songbook").arg(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-
-    QString path;
-    foreach(path, paths)
-    {
-        if (checkSongbookPath(path))
-            return path;
-    }
-
-    return QString();
 }
 
 QDir CLibrary::directory() const
