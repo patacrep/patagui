@@ -59,6 +59,7 @@
 #include "make-songbook-process.hh"
 
 #include <QDebug>
+#include <QMetaMethod>
 
 namespace // anonymous namespace
 {
@@ -354,7 +355,7 @@ void CMainWindow::createActions()
 
     m_setupDatadirAct = new QAction(tr("&Setup Datadir"), this);
     m_setupDatadirAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
-    m_setupDatadirAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_M));
+    m_setupDatadirAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_D));
     m_setupDatadirAct->setStatusTip(tr("Create a new datadir"));
     m_setupDatadirAct->setIconText(tr("Create datadir"));
     connect(m_setupDatadirAct, SIGNAL(triggered()), this, SLOT(setupDatadirDialog()));
@@ -557,6 +558,10 @@ void CMainWindow::createToolBar()
 
 void CMainWindow::preferences()
 {
+    QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
+    qDebug() << metaMethod.name();
+    qDebug() << metaMethod.methodSignature();
+
     ConfigDialog dialog(this);
     dialog.exec();
     readSettings();
