@@ -121,7 +121,6 @@ void CMakeSongbookProcess::setUrlToOpen(const QUrl &urlToOpen)
 
 void CMakeSongbookProcess::setWorkingDirectory(const QString &dir)
 {
-    // TODO Do Something ?
     pythonModule.evalScript("os.chdir('" + dir + "')");
 }
 
