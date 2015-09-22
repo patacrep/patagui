@@ -499,7 +499,7 @@ void CMainWindow::createMenus()
     QMenu *libraryMenu = menuBar()->addMenu(tr("&Library"));
     libraryMenu->addAction(m_newSongAct);
     libraryMenu->addAction(m_importSongsAct);
-    libraryMenu->addAction(m_setupDatadirAct); // FIXME
+    libraryMenu->addAction(m_setupDatadirAct);
     libraryMenu->addSeparator();
     libraryMenu->addAction(m_selectAllAct);
     libraryMenu->addAction(m_unselectAllAct);
