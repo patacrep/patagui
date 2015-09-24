@@ -17,7 +17,7 @@ ExternalProject_Add(PythonQt
 PREFIX pythonqt
 # Backup URL in case SVN messes up.
 URL "${CMAKE_CURRENT_SOURCE_DIR}/pythonqt/pythonqt.zip"
-PATCH_COMMAND patch -p0 --ignore-whitespace --batch --input=${CMAKE_CURRENT_SOURCE_DIR}/cmake/python3.patch
+PATCH_COMMAND ""
 CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt/PythonQt.pro
 BUILD_COMMAND make
 BUILD_IN_SOURCE 1
