@@ -22,11 +22,6 @@
 #include <QFile>
 #include <QMessageBox>
 
-
-#include <QScriptEngine>
-#include <QScriptValue>
-#include <QScriptValueIterator>
-
 #include <QByteArray>
 #include <QFile>
 #include <QJsonObject>
@@ -182,6 +177,7 @@ void CSongbook::changeTemplate(const QString & filename)
         file.close();
     }
 
+    /*
     // Load json encoded songbook data
     QScriptEngine engine;
 
@@ -352,7 +348,7 @@ void CSongbook::changeTemplate(const QString & filename)
             m_mandatoryParameters << m_advancedParameters;
         }
     }
-
+    */
 }
 
 void CSongbook::initializeEditor(QtGroupBoxPropertyBrowser *editor)

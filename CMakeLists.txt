@@ -8,11 +8,11 @@ set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
-if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
-  message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/songbook-client-config.cmake")
+if(NOT EXISTS ${CMAKE_MODULE_PATH}/patagui-config.cmake)
+  message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/patagui-config.cmake")
 endif()
 
-include(${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
+include(${CMAKE_MODULE_PATH}/patagui-config.cmake)
 
 # {{{ Sources
 set(SONGBOOK_CLIENT_SOURCES
@@ -106,8 +106,8 @@ set(SONGBOOK_CLIENT_RCS
 # }}}
 
 # Finding Qt5
-find_package(Qt5 CONFIG REQUIRED Concurrent Network Script Widgets)
-list(APPEND QT_LIBRARIES ${Qt5Concurrent_LIBRARIES};${Qt5Network_LIBRARIES};${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
+find_package(Qt5 CONFIG REQUIRED Concurrent Network Widgets)
+list(APPEND QT_LIBRARIES ${Qt5Concurrent_LIBRARIES};${Qt5Network_LIBRARIES};${Qt5Widgets_LIBRARIES})
 ## Qt Libraries have to appear first, otherwise OS X deployment is confused.
 list(APPEND LIBRARIES ${QT_LIBRARIES})
 
@@ -131,7 +131,7 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 list(APPEND LIBRARIES ${PYTHON_LIBRARIES})
 
 # Setup PythonQt
-include(${CMAKE_MODULE_PATH}/FindPythonQt.cmake)
+include(${CMAKE_MODULE_PATH}/pythonqt-config.cmake)
 include_directories(${PYTHONQT_INCLUDE_DIR})
 list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
 

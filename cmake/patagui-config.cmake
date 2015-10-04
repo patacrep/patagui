@@ -1,4 +1,4 @@
-set(PROJECT_NAME songbook-client)
+set(PROJECT_NAME Patagui)
 
 # If ${SOURCE_DIR} is a git repository VERSION is set to
 # `git describe --tags` later.
@@ -6,7 +6,7 @@ set(VERSION devel)
 
 set(CODENAME "")
 
-#project(${PROJECT_NAME} C)
+project(${PROJECT_NAME} LANGUAGES CXX)
 
 option(GENERATE_MANPAGES "generate manpages" ON)
 option(COMPRESS_MANPAGES "compress manpages" ON)
