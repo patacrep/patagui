@@ -8,7 +8,7 @@ else
     ECHO=@:
 endif
 
-TARGETS=songbook-client
+TARGETS=Patagui
 BUILDLN=build
 
 all: $(TARGETS) $(BUILDLN) ;
