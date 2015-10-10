@@ -3,11 +3,9 @@ src/config.h
 build
 buildpackage.sh
 macos_specific/*priv*
-songbook-client
+Patagui
 *.dmg
 *.swp
 *~
 doc
-Patagui.*
-
 CMakeLists.txt.user

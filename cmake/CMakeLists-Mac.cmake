@@ -1,6 +1,6 @@
-set( SONGBOOK_CLIENT_APPLICATION_NAME Songbook-Client )
-set( MACOSX_BUNDLE_ICON_FILE songbook-client.icns )
-      set( CPACK_BUNDLE_NAME Songbook Client With Space)
+set( PATAGUI_APPLICATION_NAME Patagui )
+set( MACOSX_BUNDLE_ICON_FILE patagui.icns )
+set( CPACK_BUNDLE_NAME Patagui With Space)
 #versions
 set( MACOSX_BUNDLE_VERSION 0.5.1 )
 set( MACOSX_BUNDLE_SHORT_VERSION_STRING 0.5.1 )
@@ -8,7 +8,7 @@ set( MACOSX_BUNDLE_LONG_VERSION_STRING "Version 0.5.1" )
 
 #name of the preference file, usefull if we need to keep the same preference file
 #upgrade after upgrade without loosing preferences
-set(MACOSX_BUNDLE_GUI_IDENTIFIER com.patacrep.songbook-client)
+set(MACOSX_BUNDLE_GUI_IDENTIFIER com.patacrep.patagui)
 
 # need to copy the icns (icon) file in the buils dir
 # also copy the icons for the .sg and .sb files
@@ -22,8 +22,8 @@ SET_SOURCE_FILES_PROPERTIES(
 #set( CMAKE_OSX_ARCHITECTURES "ppc;i386"
 #				CACHE STRING "Build architectures for OSX" FORCE)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/songbook-client.icns
-	${CMAKE_CURRENT_BINARY_DIR}/songbook-client.icns COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/patagui.icns
+${CMAKE_CURRENT_BINARY_DIR}/patagui.icns COPYONLY)
 
 IF(EXISTS "/Library/Frameworks/Sparkle.framework")
 	message(STATUS "Looking for Sparkle Framwork - found")
@@ -37,7 +37,7 @@ IF(EXISTS "/Library/Frameworks/Sparkle.framework")
 	find_library(APPKIT_FRAMEWORK AppKit)
 
 	# we need to copy the public key to check the updates
-	set(PUBLIC_KEY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/dsa_pub_songbookclient.pem")
+	set(PUBLIC_KEY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/dsa_pub_patagui.pem")
 	IF(EXISTS ${PUBLIC_KEY_PATH})
 		message(STATUS "Looking for Public Key - found")
 		SET_SOURCE_FILES_PROPERTIES(
@@ -52,20 +52,20 @@ IF(EXISTS "/Library/Frameworks/Sparkle.framework")
 	ENDIF(EXISTS ${PUBLIC_KEY_PATH})
 
 	LIST(
-		APPEND SONGBOOK_CLIENT_QT_HEADER
+		APPEND PATAGUI_QT_HEADER
 		macos_specific/sparkle/src/AutoUpdater.h
 		macos_specific/sparkle/src/CocoaInitializer.h
 		macos_specific/sparkle/src/SparkleAutoUpdater.h
 		)
 	LIST(
-		APPEND SONGBOOK_CLIENT_SOURCES
+		APPEND PATAGUI_SOURCES
 		macos_specific/sparkle/src/AutoUpdater.cpp
 		macos_specific/sparkle/src/CocoaInitializer.mm
 		macos_specific/sparkle/src/SparkleAutoUpdater.mm
 		)
 	# Hack Custom command to copy sparkle framwork
-  set(CCS1 mkdir ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks)
-	set(CCS2 cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/Sparkle.framework)
+  set(CCS1 mkdir ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Frameworks)
+	set(CCS2 cp -R ${SPARKLE_FRAMEWORK} ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Frameworks/Sparkle.framework)
 	set(CCS3 echo "Note : Having the message : ERROR: no file at '/usr/lib/@loader_path@loader_path' is normal")
 	set(CCS4 echo "It is due to Qt encountering references to Sparkle Framwork.")
 
@@ -74,38 +74,38 @@ ELSE(EXISTS "/Library/Frameworks/Sparkle.framework")
 	set(CCS1 echo "The application has been compiled without support for auto-updating, you will have to check for it manually")
 ENDIF(EXISTS "/Library/Frameworks/Sparkle.framework")
 
-add_executable( ${SONGBOOK_CLIENT_APPLICATION_NAME} MACOSX_BUNDLE ${SONGBOOK_CLIENT_SOURCES}
-	${SONGBOOK_CLIENT_MOCS} ${SONGBOOK_CLIENT_RESSOURCES} ${COMPILED_TRANSLATIONS}
-	${SONGBOOK_CLIENT_UI_HDRS}
+add_executable( ${PATAGUI_APPLICATION_NAME} MACOSX_BUNDLE ${PATAGUI_SOURCES}
+	${PATAGUI_MOCS} ${PATAGUI_RESSOURCES} ${COMPILED_TRANSLATIONS}
+	${PATAGUI_UI_HDRS}
 	${qtpropertyeditor_SRCS} ${qtpropertyeditor_MOC} ${qtpropertyeditor_RESOURCES}
 	${PUBLIC_KEY}
 	${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/book.icns
 	${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/song.icns
 	)
-add_custom_command(TARGET ${SONGBOOK_CLIENT_APPLICATION_NAME} POST_BUILD
-  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
-  COMMAND cp ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources
-  COMMAND cp ${SOURCE_DIR}/lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Resources/lang
+add_custom_command(TARGET ${PATAGUI_APPLICATION_NAME} POST_BUILD
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Resources/lang
+  COMMAND cp ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Resources
+  COMMAND cp ${SOURCE_DIR}/lang/*.qm ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Resources/lang
 	# this for command are set if sparkle is activated and are ment to copy the framwork inside the bundle
 	# and warn the user about some error message that might be printed afterward
 	COMMAND ${CCS1}
 	COMMAND ${CCS2}
 	COMMAND ${CCS3}
 	COMMAND ${CCS4}
-  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks
-  COMMAND cp ${PYTHONQT_LOCATION} ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/
-  COMMAND ln -sf libPythonQt.dylib ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.1.dylib
-  COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${SONGBOOK_CLIENT_APPLICATION_NAME}.app
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Frameworks
+  COMMAND cp ${PYTHONQT_LOCATION} ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Frameworks/
+  COMMAND ln -sf libPythonQt.dylib ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app/Contents/Frameworks/libPythonQt.1.dylib
+  COMMAND macdeployqt ${CMAKE_CURRENT_BINARY_DIR}/${PATAGUI_APPLICATION_NAME}.app
 )
 
 if(USE_SPARKLE)
 	# we need to add SPARKLE and APPKIT as '-framework' at link time
-	target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${APPKIT_FRAMEWORK})
-	target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${SPARKLE_FRAMEWORK})
+	target_link_libraries(${PATAGUI_APPLICATION_NAME} ${APPKIT_FRAMEWORK})
+	target_link_libraries(${PATAGUI_APPLICATION_NAME} ${SPARKLE_FRAMEWORK})
 endif(USE_SPARKLE)
 
 
 # genération d'une plist custom pour sparkle from a plist.in where @VARAIBLE@ are replaces by the content of VARAIBLE
 # we need this for having the default url to check updates
-set_target_properties( ${SONGBOOK_CLIENT_APPLICATION_NAME}	PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/Info.plist.in )
+set_target_properties( ${PATAGUI_APPLICATION_NAME}	PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/macos_specific/Info.plist.in )
 

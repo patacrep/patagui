@@ -15,7 +15,7 @@ endif()
 include(${CMAKE_MODULE_PATH}/patagui-config.cmake)
 
 # {{{ Sources
-set(SONGBOOK_CLIENT_SOURCES
+set(PATAGUI_SOURCES
   src/main.cc
   src/main-window.cc
   src/preferences.cc
@@ -54,7 +54,7 @@ set(SONGBOOK_CLIENT_SOURCES
   )
 
 # header (moc)
-set(SONGBOOK_CLIENT_QT_HEADER
+set(PATAGUI_QT_HEADER
   src/main-window.hh
   src/preferences.hh
   src/library.hh
@@ -91,15 +91,15 @@ set(SONGBOOK_CLIENT_QT_HEADER
   )
 
 # uis
-set(SONGBOOK_CLIENT_UIS
+set(PATAGUI_UIS
   )
 
 # resources (rcs)
-set(SONGBOOK_CLIENT_RCS
+set(PATAGUI_RCS
   icons/songbook/songbook.qrc
   icons/macos/macos.qrc
   icons/tango/tango.qrc
-  songbook.rc
+#  patagui.rc FIXME
   src/songbook_scripts.qrc
   )
 
@@ -160,9 +160,9 @@ include_directories(
   )
 
 # process Qt special files
-qt5_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
-qt5_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
-qt5_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
+qt5_wrap_cpp(PATAGUI_MOCS ${PATAGUI_QT_HEADER})
+qt5_add_resources(PATAGUI_RESSOURCES ${PATAGUI_RCS})
+qt5_wrap_ui(PATAGUI_UI_HDRS ${PATAGUI_UIS})
 
 # {{{ Apple specific stuff
 if(APPLE)
@@ -172,13 +172,13 @@ endif(APPLE)
 
 # generating executable
 if(NOT APPLE)
-  add_executable(${SONGBOOK_CLIENT_APPLICATION_NAME} WIN32
-    ${SONGBOOK_CLIENT_SOURCES}
-    ${SONGBOOK_CLIENT_MOCS}
-    ${SONGBOOK_CLIENT_RESSOURCES}
+  add_executable(${PATAGUI_APPLICATION_NAME} WIN32
+    ${PATAGUI_SOURCES}
+    ${PATAGUI_MOCS}
+    ${PATAGUI_RESSOURCES}
     ${COMPILED_TRANSLATIONS}
     ${QT_PROPERTY_EDITOR_SOURCES}
-    ${SONGBOOK_CLIENT_UI_HDRS}
+    ${PATAGUI_UI_HDRS}
     )
 endif(NOT APPLE)
 
@@ -187,9 +187,9 @@ if(WIN32)
 endif(WIN32)
 
 # Setup Libraries for linking
-target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
-set_property(TARGET ${SONGBOOK_CLIENT_APPLICATION_NAME} PROPERTY IMPORTED_LOCATION ${PYTHONQT_LIBRARY_PATH})
-add_dependencies(${SONGBOOK_CLIENT_APPLICATION_NAME} PythonQt)
+target_link_libraries(${PATAGUI_APPLICATION_NAME} ${LIBRARIES})
+set_property(TARGET ${PATAGUI_APPLICATION_NAME} PROPERTY IMPORTED_LOCATION ${PYTHONQT_LIBRARY_PATH})
+add_dependencies(${PATAGUI_APPLICATION_NAME} PythonQt)
 
 # {{{ Internationalization
 set (TRANSLATIONS
@@ -212,22 +212,22 @@ add_custom_target(
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 #uncomment and run `make translations_target` to update translations ts files from sources
 #warning, if uncommented, running make clean will remove ts files
-#qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
+#qt4_create_translation(COMPILED_TRANSLATIONS ${PATAGUI_SOURCES} ${TRANSLATIONS} )
 # }}}
 
 # {{{ Manpages
 if(GENERATE_MANPAGES)
 
-  set(SONGBOOK_CLIENT_MAN_SRCS
-    ${SOURCE_DIR}/manpages/songbook-client.1.txt
+  set(PATAGUI_MAN_SRCS
+    ${SOURCE_DIR}/manpages/patagui.1.txt
     )
 
-  set(SONGBOOK_CLIENT_MAN_LANGS default fr)
+  set(PATAGUI_MAN_LANGS default fr)
 
-  foreach(lang ${SONGBOOK_CLIENT_MAN_LANGS})
+  foreach(lang ${PATAGUI_MAN_LANGS})
 
-    foreach(txtfile ${SONGBOOK_CLIENT_MAN_SRCS})
-      # figure the base name of the file (ie "songbook-client.1")
+    foreach(txtfile ${PATAGUI_MAN_SRCS})
+      # figure the base name of the file (ie "patagui.1")
       GET_FILENAME_COMPONENT(tmpname ${txtfile} NAME)
       string(REGEX REPLACE ".txt\$" "" basename ${tmpname})
 
@@ -290,18 +290,18 @@ endif()
 
 # {{{ Installation
 if(NOT APPLE)
-  install(TARGETS ${SONGBOOK_CLIENT_APPLICATION_NAME} RUNTIME DESTINATION bin)
+  install(TARGETS ${PATAGUI_APPLICATION_NAME} RUNTIME DESTINATION bin)
   if(GENERATE_MANPAGES)
     if(COMPRESS_MANPAGES)
       set(regex "\\.(xml|txt|[0-9])$")
     else()
       set(regex "\\.(xml|txt|gz)$")
     endif()
-    install(DIRECTORY ${BUILD_DIR}/${relpath}/ DESTINATION ${SONGBOOK_CLIENT_MAN_PATH}
+    install(DIRECTORY ${BUILD_DIR}/${relpath}/ DESTINATION ${PATAGUI_MAN_PATH}
       REGEX ${regex} EXCLUDE)
   endif()
-  install(FILES ${SONGBOOK_CLIENT_APPLICATION_NAME}.desktop DESTINATION share/applications)
-  install(FILES icons/songbook/256x256/songbook-client.png DESTINATION share/icons)
-  install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${SONGBOOK_CLIENT_DATA_PATH}/lang)
+  install(FILES ${PATAGUI_APPLICATION_NAME}.desktop DESTINATION share/applications)
+  install(FILES icons/songbook/256x256/Patagui.png DESTINATION share/icons)
+  install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${PATAGUI_DATA_PATH}/lang)
 endif(NOT APPLE)
 # }}}

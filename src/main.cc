@@ -19,7 +19,7 @@
 
 /*!
  * \file main.cc
- * \mainpage Songbook-Client Documentation
+ * \mainpage Patagui Documentation
  *
  * A songbook is a collection of lyrics/guitar chords for songs.
  * This application allows one to manage your own set of songs and produce
@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
 
     QApplication::setOrganizationName("Patacrep");
     QApplication::setOrganizationDomain("patacrep.com");
-    QApplication::setApplicationName(SONGBOOK_CLIENT_APPLICATION_NAME);
-    QApplication::setApplicationVersion(SONGBOOK_CLIENT_VERSION);
+    QApplication::setApplicationName(PATAGUI_APPLICATION_NAME);
+    QApplication::setApplicationVersion(PATAGUI_VERSION);
 
     // Load the application ressources (icons, ...)
     Q_INIT_RESOURCE(songbook);
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     translationDirectory = application.applicationDirPath();
     translationDirectory.cd("../Resources");
 #else
-    translationDirectory = QDir(SONGBOOK_CLIENT_DATA_PATH);
+    translationDirectory = QDir(PATAGUI_DATA_PATH);
 #endif
 
     if (translationDirectory.exists())

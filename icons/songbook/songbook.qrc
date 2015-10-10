@@ -2,7 +2,7 @@
   <qresource prefix="icons/songbook">
     <file>22x22/song.png</file>
     <file>22x22/book.png</file>
-    <file>22x22/songbook-client.png</file>
+    <file>22x22/Patagui.png</file>
     <file>22x22/select-all.png</file>
     <file>22x22/select-none.png</file>
     <file>22x22/select-invert.png</file>
@@ -23,7 +23,7 @@
 
     <file>32x32/song.png</file>
     <file>32x32/book.png</file>
-    <file>32x32/songbook-client.png</file>
+    <file>32x32/Patagui.png</file>
     <file>32x32/select-all.png</file>
     <file>32x32/select-none.png</file>
     <file>32x32/select-invert.png</file>
@@ -44,7 +44,7 @@
 
     <file>48x48/song.png</file>
     <file>48x48/book.png</file>
-    <file>48x48/songbook-client.png</file>
+    <file>48x48/Patagui.png</file>
     <file>48x48/select-all.png</file>
     <file>48x48/select-none.png</file>
     <file>48x48/select-invert.png</file>
@@ -63,12 +63,12 @@
     <file>48x48/applications-internet.png</file>
     <file>48x48/git.png</file>
 
-    <file>256x256/songbook-client.png</file>
+    <file>256x256/Patagui.png</file>
     <file>256x256/book.png</file>
 
     <file>src/x-patacrep-song.svg</file>
     <file>src/x-patacrep-book.svg</file>
-    <file>src/songbook-client.svg</file>
+    <file>src/Patagui.svg</file>
     <file>src/applications-internet.svg</file>
     <file>src/git.svg</file>
  </qresource>

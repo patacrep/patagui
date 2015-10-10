@@ -174,7 +174,7 @@ bool removeDirectoryRecursively(const QDir & directory)
 }
 }
 
-const QString CMainWindow::_cachePath(QString("%1/songbook-client").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
+const QString CMainWindow::_cachePath(QString("%1/patagui").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
 
 CMainWindow::CMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -195,8 +195,8 @@ CMainWindow::CMainWindow(QWidget *parent)
     , m_builder(new CMakeSongbookProcess(this))
     , m_songHighlighter(0)
 {
-    setWindowTitle("Patacrep Songbook Client");
-    setWindowIcon(QIcon(":/icons/songbook/256x256/songbook-client.png"));
+    setWindowTitle("Patagui");
+    setWindowIcon(QIcon(":/icons/songbook/256x256/patagui.png"));
     CLibrary::instance()->setParent(this);
 
     connect(library(), SIGNAL(directoryChanged(const QDir &)),
@@ -576,12 +576,12 @@ void CMainWindow::documentation()
 
 void CMainWindow::reportBug()
 {
-    QDesktopServices::openUrl(QUrl("https://github.com/crep4ever/songbook-client/issues"));
+    QDesktopServices::openUrl(QUrl("https://github.com/patacrep/patagui/issues"));
 }
 
 void CMainWindow::about()
 {
-    QString title(tr("About Patacrep! Songbook Client"));
+    QString title(tr("About Patagui"));
     QString version = QCoreApplication::applicationVersion();
 
     QString description(tr("This program allows one to build customized songbooks from "
@@ -888,7 +888,7 @@ void CMainWindow::deleteSong()
 
 void CMainWindow::deleteSong(const QString &path)
 {
-    int ret = QMessageBox::warning(this, tr("Songbook-Client"),
+    int ret = QMessageBox::warning(this, tr("Patagui"),
                                    tr("This file will be deleted:\n%1\n"
                                       "Are you sure?").arg(path),
                                    QMessageBox::Cancel | QMessageBox::Ok,

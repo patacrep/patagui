@@ -238,7 +238,7 @@ void CSongEditor::closeEvent(QCloseEvent *event)
     if (isModified())
     {
         QMessageBox::StandardButton answer =
-                QMessageBox::question(this, tr("Songbook-Client"),
+                QMessageBox::question(this, tr("Patagui"),
                                       tr("The document has been modified.\n"
                                          "Do you want to save your changes?"),
                                       QMessageBox::Save | QMessageBox::Discard

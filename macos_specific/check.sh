@@ -14,11 +14,11 @@ fi;
 if [ -d $build_dir ]; then
     echo "Did you check the version number of the application?"
     pause 5
-    macdeployqt $build_dir/build/Songbook-Client.app/
-    cp -r /Library/Frameworks/Sparkle.framework/ $build_dir/build/Songbook-Client.app/Contents/Frameworks/
+    macdeployqt $build_dir/build/Patagui.app/
+    cp -r /Library/Frameworks/Sparkle.framework/ $build_dir/build/Patagui.app/Contents/Frameworks/
     echo "Please check that the public key exists"
-    ls ../build/Songbook-Client.app/Contents/Resources
-else 
+    ls ../build/Patagui.app/Contents/Resources
+else
     echo "Cannot find build directory : $build_dir"
-fi 
+fi
 

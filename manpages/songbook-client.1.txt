@@ -1,25 +1,24 @@
-songbook-client(1)
+Patagui(1)
 ==================
 
 NAME
 ----
 
-songbook-client - graphical library manager for Patacrep's songbook
+Patagui - graphical library manager for Patacrep's songbook
 
 SYNOPSIS
 --------
 
-*songbook-client* [*--version*] [*-h* | *--help*]
+*Patagui* [*--version*] [*-h* | *--help*]
 
 DESCRIPTION
 -----------
 
-*songbook-client* is a graphical frontend to the Patacrep! songbook
-application that allows to handle the song selection and appearance
-customization of a songbook. The embedded editor allows to add, remove
-and modify the songs in the available library. Finally a build option
-allows to create nice high quality pdf documents, directly from the
-GUI interface.
+*Patagui* is a graphical frontend to the Patacrep songbook application
+that allows to handle the song selection and appearance customization
+of a songbook. The embedded editor allows to add, remove and modify the
+songs in the available library. Finally a build option allows to create
+nice high quality pdf documents, directly from theGUI interface.
 
 OPTIONS
 -------

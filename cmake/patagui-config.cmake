@@ -131,26 +131,26 @@ else()
 endif()
 
 # set man path
-if(DEFINED SONGBOOK_CLIENT_MAN_PATH)
-  set(SONGBOOK_CLIENT_MAN_PATH ${SONGBOOK_CLIENT_MAN_PATH} CACHE PATH "songbook-client manpage directory")
+if(DEFINED PATAGUI_MAN_PATH)
+  set(PATAGUI_MAN_PATH ${PATAGUI_MAN_PATH} CACHE PATH "Patagui manpage directory")
 else()
-  set(SONGBOOK_CLIENT_MAN_PATH ${PREFIX}/share/man CACHE PATH "songbook-client manpage directory")
+  set(PATAGUI_MAN_PATH ${PREFIX}/share/man CACHE PATH "Patagui manpage directory")
 endif()
 
 # Hide to avoid confusion
 mark_as_advanced(CMAKE_INSTALL_PREFIX)
 
-set(SONGBOOK_CLIENT_APPLICATION_NAME ${PROJECT_NAME})
-set(SONGBOOK_CLIENT_VERSION          ${VERSION})
-set(SONGBOOK_CLIENT_COMPILE_MACHINE  ${CMAKE_SYSTEM_PROCESSOR})
-set(SONGBOOK_CLIENT_COMPILE_HOSTNAME ${BUILDHOSTNAME})
-set(SONGBOOK_CLIENT_COMPILE_BY       $ENV{USER})
-set(SONGBOOK_CLIENT_RELEASE          ${CODENAME})
-set(SONGBOOK_CLIENT_DATA_PATH        ${PREFIX}/share/${SONGBOOK_CLIENT_APPLICATION_NAME})
+set(PATAGUI_APPLICATION_NAME ${PROJECT_NAME})
+set(PATAGUI_VERSION          ${VERSION})
+set(PATAGUI_COMPILE_MACHINE  ${CMAKE_SYSTEM_PROCESSOR})
+set(PATAGUI_COMPILE_HOSTNAME ${BUILDHOSTNAME})
+set(PATAGUI_COMPILE_BY       $ENV{USER})
+set(PATAGUI_RELEASE          ${CODENAME})
+set(PATAGUI_DATA_PATH        ${PREFIX}/share/${PATAGUI_APPLICATION_NAME})
 # }}}
 
 # {{{ Configure files
-set(SONGBOOK_CLIENT_CONFIGURE_FILES
+set(PATAGUI_CONFIGURE_FILES
   config.hh.in
   )
 
@@ -163,7 +163,7 @@ macro(a_configure_file file)
     @ONLY)
 endmacro()
 
-foreach(file ${SONGBOOK_CLIENT_CONFIGURE_FILES})
+foreach(file ${PATAGUI_CONFIGURE_FILES})
   a_configure_file(${file})
 endforeach()
 #}}}

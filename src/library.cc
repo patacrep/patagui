@@ -441,7 +441,7 @@ void CLibrary::saveCover(Song &song, const QImage &cover)
     // ask before overwriting
     if (QFile(coverFilename).exists())
     {
-        int ret = QMessageBox::warning(0, tr("Songbook-Client"),
+        int ret = QMessageBox::warning(0, tr("Patagui"),
                                        tr("This file will be overwritten:\n%1\n"
                                           "Are you sure?").arg(coverFilename),
                                        QMessageBox::Cancel | QMessageBox::Ok,

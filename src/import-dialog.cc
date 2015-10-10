@@ -129,7 +129,7 @@ CImportDialog::CImportDialog(QWidget *parent)
     connect(networkGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(onRadioButtonClicked(QAbstractButton*)));
 
     m_patacrepLabel = new QLabel;
-    m_patacrepLabel->setPixmap(QIcon(":/icons/songbook/32x32/songbook-client.png").pixmap(32, 32));
+    m_patacrepLabel->setPixmap(QIcon(":/icons/songbook/32x32/patagui.png").pixmap(32, 32));
     m_gitLabel = new QLabel;
     m_gitLabel->setPixmap(QIcon(":/icons/songbook/32x32/git.png").pixmap(32, 32));
     m_urlLabel = new QLabel;
@@ -435,7 +435,7 @@ void CImportDialog::downloadStart()
         QDir dir(CMainWindow::_cachePath);
         QNetworkRequest request;
         request.setUrl(m_url);
-        request.setRawHeader("User-Agent", "songbook-client a1");
+        request.setRawHeader("User-Agent", "patagui a1");
         m_reply = m_manager->get(request);
         connect(m_reply, SIGNAL(finished()),
                 this, SLOT(downloadFinished()));
