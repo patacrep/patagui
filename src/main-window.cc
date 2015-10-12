@@ -352,6 +352,12 @@ void CMainWindow::createActions()
     m_importSongsAct->setIconText(tr("Import songs"));
     connect(m_importSongsAct, SIGNAL(triggered()), this, SLOT(importSongsDialog()));
 
+    m_preferencesAct = new QAction(tr("&Preferences"), this);
+    m_preferencesAct->setIcon(QIcon::fromTheme("document-properties",QIcon(":/icons/tango/32x32/document-properties.png")));
+    m_preferencesAct->setStatusTip(tr("Configure the application"));
+    m_preferencesAct->setMenuRole(QAction::PreferencesRole);
+    connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
+
     m_setupDatadirAct = new QAction(tr("&Setup Datadir"), this);
     m_setupDatadirAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
     m_setupDatadirAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_D));
@@ -405,12 +411,6 @@ void CMainWindow::createActions()
     m_exitAct->setStatusTip(tr("Quit the program"));
     m_exitAct->setMenuRole(QAction::QuitRole);
     connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
-
-    m_preferencesAct = new QAction(tr("&Preferences"), this);
-    m_preferencesAct->setIcon(QIcon::fromTheme("document-properties",QIcon(":/icons/tango/32x32/document-properties.png")));
-    m_preferencesAct->setStatusTip(tr("Configure the application"));
-    m_preferencesAct->setMenuRole(QAction::PreferencesRole);
-    connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
     m_selectAllAct = new QAction(tr("&Check all"), this);
     m_selectAllAct->setIcon(QIcon::fromTheme("select-all",QIcon(":/icons/songbook/32x32/select-all.png")));
@@ -557,10 +557,6 @@ void CMainWindow::createToolBar()
 
 void CMainWindow::preferences()
 {
-    QMetaMethod metaMethod = sender()->metaObject()->method(senderSignalIndex());
-    qDebug() << metaMethod.name();
-    qDebug() << metaMethod.methodSignature();
-
     ConfigDialog dialog(this);
     dialog.exec();
     readSettings();
@@ -704,7 +700,8 @@ void CMainWindow::make()
         m_builder->setWorkingDirectory(libraryPath());
 
         m_builder->setSongbook(songbook());
-        m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
+        m_builder->addDatadir(songbook()->library()->directory().absolutePath());
+        // To change properly, make access to datadir in songbook class
 
         future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
     }
@@ -720,7 +717,8 @@ void CMainWindow::makeClean()
         m_builder->setWorkingDirectory(libraryPath());
 
         m_builder->setSongbook(songbook());
-        m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
+        m_builder->addDatadir(songbook()->library()->directory().absolutePath());
+        // To change properly, make access to datadir in songbook class
 
         future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
     }
@@ -736,7 +734,8 @@ void CMainWindow::makeCleanall()
         m_builder->setWorkingDirectory(libraryPath());
 
         m_builder->setSongbook(songbook());
-        m_builder->addDatadir(songbook()->library()->directory().absolutePath()); // To change properly, make access to datadir in songbook class
+        m_builder->addDatadir(songbook()->library()->directory().absolutePath());
+        // To change properly, make access to datadir in songbook class
 
         future = QtConcurrent::run(m_builder,&CMakeSongbookProcess::execute);
     }
@@ -838,7 +837,6 @@ void CMainWindow::newSong()
 
 void CMainWindow::importSongsDialog()
 {
-    QStringList newSongs;
     CImportDialog *dialog = new CImportDialog(this);
     connect(dialog, SIGNAL(songsReadyToBeImported(const QStringList&)),
             this, SLOT(importSongs(const QStringList&)));
@@ -852,6 +850,7 @@ void CMainWindow::setupDatadirDialog()
     {
         library()->setDirectory(datadir);
         if (library()->directory().mkdir("songs")) {
+            // TODO Handle this. Message in Status Bar ?
             qDebug() << "Songs Directory created";
         }
     }
