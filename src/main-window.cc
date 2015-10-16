@@ -358,7 +358,7 @@ void CMainWindow::createActions()
     m_preferencesAct->setMenuRole(QAction::PreferencesRole);
     connect(m_preferencesAct, SIGNAL(triggered()), SLOT(preferences()));
 
-    m_setupDatadirAct = new QAction(tr("&Setup Datadir"), this);
+    m_setupDatadirAct = new QAction(tr("&Choose Datadir"), this);
     m_setupDatadirAct->setIcon(QIcon::fromTheme("folder-new", QIcon(":/icons/tango/32x32/actions/folder-new.png")));
     m_setupDatadirAct->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_D));
     m_setupDatadirAct->setStatusTip(tr("Create a new datadir"));
