@@ -599,6 +599,8 @@ void CMainWindow::build()
     if (!checkPdfLaTeX() || !checkPython())
         return;
 
+    m_builder->testPython();
+
     songbook()->songsFromSelection();
     if (songbook()->songs().isEmpty())
     {
@@ -616,7 +618,7 @@ void CMainWindow::build()
 
     if (QFile(songbook()->filename()).exists())
     {
-        qobject_cast<QPlainTextEdit *>(log()->widget())->clear();
+//        qobject_cast<QPlainTextEdit *>(log()->widget())->clear();
         make();
     }
     else

@@ -160,6 +160,10 @@ public:
   */
     void setWorkingDirectory(const QString &dir);
 
+    /*! Test for Python
+  */
+    const bool testPython();
+
 signals:
     /*!
     This signal is emitted before the process is executed.

@@ -31,6 +31,10 @@ def setLocale():
         print("Locale Error")
         # Throw error
 
+# Test patacrep version
+def testPatacrep():
+    return patacrep.__version__
+
 # Load songbook and setup datadirs
 def setupSongbook(songbook_path,datadir):
     setLocale()

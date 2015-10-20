@@ -66,12 +66,9 @@ void CMakeSongbookProcess::execute()
 {
     emit(aboutToStart());
     if (!m_songbook->filename().isEmpty()) {
-        // pythonModule.evalScript(QString("setupSongbook('%1','%2')").arg(m_songbook,m_datadirs.first()));
-        // pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
         // Expose Songbook to python
         pythonModule.addObject("songbook", m_songbook);
         pythonModule.addObject("CPPprocess", this);
-        pythonModule.evalScript("print(songbook.filename)");
         pythonModule.evalScript("setupSongbook(songbook.filename,'" + m_datadirs.first() + "')");
         pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
         // pythonModule.removeVariable("songbook");
@@ -81,6 +78,21 @@ void CMakeSongbookProcess::execute()
     else{
         emit(message("Error: no songbook loaded",0));
         emit(finished());
+    }
+}
+
+const bool CMakeSongbookProcess::testPython()
+{
+    QVariant patacrepVersion = pythonModule.call("testPatacrep");
+    if (patacrepVersion.toString()=="4.0.0")
+    {
+        emit message("Patacrep Found",0);
+        return true;
+    }
+    else
+    {
+        emit message("Patacrep Not Found",0);
+        return false;
     }
 }
 
