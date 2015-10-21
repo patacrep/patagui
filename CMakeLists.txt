@@ -51,6 +51,7 @@ set(PATAGUI_SOURCES
   src/import-dialog.cc
   src/conflict-dialog.cc
   src/diff_match_patch/diff_match_patch.cpp
+  src/patacrep.cc
   )
 
 # header (moc)
@@ -88,6 +89,7 @@ set(PATAGUI_QT_HEADER
   src/variant-manager.hh
   src/import-dialog.hh
   src/conflict-dialog.hh
+  src/patacrep.hh
   )
 
 # uis
