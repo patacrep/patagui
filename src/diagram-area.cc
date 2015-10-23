@@ -47,7 +47,7 @@ CDiagramArea::CDiagramArea(QWidget *parent)
     addButtonLayout->addWidget(m_addDiagramButton);
 
     // diagram model
-    m_diagramModel = new CChordListModel();
+    m_diagramModel = new ChordListModel();
 
     // proxy model (filtering)
     m_proxyModel = new QSortFilterProxyModel;
@@ -137,10 +137,10 @@ void CDiagramArea::editDiagram(QModelIndex index)
 
     bool newChord = !index.isValid();
 
-    CChord *chord = newChord ?
-                new CChord : m_diagramModel->getChord(m_proxyModel->mapToSource(index));
+    Chord *chord = newChord ?
+                new Chord : m_diagramModel->getChord(m_proxyModel->mapToSource(index));
 
-    CDiagramEditor dialog(this);
+    DiagramEditor dialog(this);
     dialog.setChord(chord);
 
     if (dialog.exec() == QDialog::Accepted)
@@ -207,10 +207,10 @@ void CDiagramArea::contextMenu(const QPoint & pos)
     menu.exec(QCursor::pos());
 }
 
-void CDiagramArea::setTypeFilter(const CChord::Instrument & type)
+void CDiagramArea::setTypeFilter(const Chord::Instrument & type)
 {
     m_proxyModel->setFilterRole(Qt::DisplayRole);
-    if (type == CChord::Guitar)
+    if (type == Chord::Guitar)
         m_proxyModel->setFilterRegExp("gtab");
     else
         m_proxyModel->setFilterRegExp("utab");
@@ -220,14 +220,14 @@ void CDiagramArea::setTypeFilter(const CChord::Instrument & type)
 void CDiagramArea::setNameFilter(const QString & name)
 {
     clearFilters();
-    m_proxyModel->setFilterRole(CChordListModel::NameRole);
+    m_proxyModel->setFilterRole(ChordListModel::NameRole);
     m_proxyModel->setFilterRegExp(name);
     emit(layoutChanged());
 }
 
 void CDiagramArea::setStringsFilter(const QString & strings)
 {
-    m_proxyModel->setFilterRole(CChordListModel::StringsRole);
+    m_proxyModel->setFilterRole(ChordListModel::StringsRole);
     m_proxyModel->setFilterRegExp(strings);
     emit(layoutChanged());
 }
@@ -249,9 +249,9 @@ void CDiagramArea::setRowCount(int value)
     m_diagramModel->setRowCount(value);
 }
 
-QList< CChord* > CDiagramArea::chords()
+QList< Chord* > CDiagramArea::chords()
 {
-    QList< CChord* > list;
+    QList< Chord* > list;
     for (int i = 0; i < m_diagramModel->rowCount(); ++i)
         for (int j = 0; j < m_diagramModel->columnCount(); ++j)
         {

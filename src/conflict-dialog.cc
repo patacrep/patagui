@@ -42,7 +42,7 @@
 
 #include <QDebug>
 
-CConflictDialog::CConflictDialog(QWidget *parent)
+ConflictDialog::ConflictDialog(QWidget *parent)
     : QDialog(parent)
     , m_conflictsFound(false)
     , m_conflictView(new QTableWidget(10, 2, this))
@@ -119,7 +119,7 @@ CConflictDialog::CConflictDialog(QWidget *parent)
     setLayout(mainLayout);
 }
 
-CConflictDialog::~CConflictDialog()
+ConflictDialog::~ConflictDialog()
 {
     delete m_conflictView;
     delete m_titleLabel;
@@ -130,27 +130,27 @@ CConflictDialog::~CConflictDialog()
     delete m_fileCopier;
 }
 
-void CConflictDialog::setParent(CMainWindow* parent)
+void ConflictDialog::setParent(CMainWindow* parent)
 {
     m_parent = parent;
 }
 
-CMainWindow* CConflictDialog::parent() const
+CMainWindow* ConflictDialog::parent() const
 {
     return m_parent;
 }
 
-CProgressBar* CConflictDialog::progressBar() const
+CProgressBar* ConflictDialog::progressBar() const
 {
     return parent()->progressBar();
 }
 
-void CConflictDialog::showMessage(const QString & message)
+void ConflictDialog::showMessage(const QString & message)
 {
     parent()->statusBar()->showMessage(message);
 }
 
-void CConflictDialog::updateItemDetails(QTableWidgetItem* item)
+void ConflictDialog::updateItemDetails(QTableWidgetItem* item)
 {
     QString path = item->data(Qt::ToolTipRole).toString();
     QFileInfo fi(path);
@@ -175,7 +175,7 @@ void CConflictDialog::updateItemDetails(QTableWidgetItem* item)
     m_coverLabel->setPixmap(*m_pixmap);
 }
 
-void CConflictDialog::openItem(QTableWidgetItem* item)
+void ConflictDialog::openItem(QTableWidgetItem* item)
 {
     if (!QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::ToolTipRole).toString())) &&
             !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::DisplayRole).toString())) &&
@@ -186,7 +186,7 @@ void CConflictDialog::openItem(QTableWidgetItem* item)
     }
 }
 
-void CConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files)
+void ConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files)
 {
     m_conflictsFound = false;
     m_conflictView->setRowCount(files.size());
@@ -243,17 +243,17 @@ void CConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files
         updateItemDetails(m_conflictView->itemAt(0, 0));
 }
 
-bool CConflictDialog::conflictsFound() const
+bool ConflictDialog::conflictsFound() const
 {
     return m_conflictsFound;
 }
 
-void CConflictDialog::cancelCopy()
+void ConflictDialog::cancelCopy()
 {
     m_fileCopier->setCancelCopy(true);
 }
 
-void CConflictDialog::showDiff()
+void ConflictDialog::showDiff()
 {
     QWizard *wizard = new QWizard(this);
     wizard->setWindowTitle("Show differences");
@@ -307,7 +307,7 @@ void CConflictDialog::showDiff()
     wizard->show();
 }
 
-bool CConflictDialog::resolve()
+bool ConflictDialog::resolve()
 {
     QPushButton *button = qobject_cast<QPushButton*>(QObject::sender());
     if (button == m_overwriteButton)

@@ -26,15 +26,15 @@
 #include <QPainter>
 #include <QDebug>
 
-const QRegExp CChord::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
-const QRegExp CChord::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
+const QRegExp Chord::reChordWithFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{(\\d):([^\\}]+)");
+const QRegExp Chord::reChordWithoutFret("\\\\[ug]tab[\\*]?\\{([^\\}]+)\\}\\{([^\\}]+)");
 
-const QColor CChord::_guitarChordColor(_TangoSkyBlue1);
-const QColor CChord::_importantGuitarChordColor(_TangoSkyBlue3);
-const QColor CChord::_ukuleleChordColor(_TangoPlum1);
-const QColor CChord::_importantUkuleleChordColor(_TangoPlum3);
+const QColor Chord::_guitarChordColor(_TangoSkyBlue1);
+const QColor Chord::_importantGuitarChordColor(_TangoSkyBlue3);
+const QColor Chord::_ukuleleChordColor(_TangoPlum1);
+const QColor Chord::_importantUkuleleChordColor(_TangoPlum3);
 
-CChord::CChord(const QString & chord, QObject *parent)
+Chord::Chord(const QString & chord, QObject *parent)
     : QObject(parent)
     , m_isValid(true)
     , m_drawBorder(false)
@@ -43,13 +43,13 @@ CChord::CChord(const QString & chord, QObject *parent)
     fromString(chord);
 }
 
-CChord::~CChord()
+Chord::~Chord()
 {
     delete m_pixmap;
     m_pixmap = 0;
 }
 
-QString CChord::toString()
+QString Chord::toString()
 {
     QString str;
     switch(m_instrument)
@@ -61,7 +61,7 @@ QString CChord::toString()
         str.append("\\utab");
         break;
     default:
-        qWarning() << tr("CChord::toString unsupported chord type");
+        qWarning() << tr("Chord::toString unsupported chord type");
     }
 
     if (isImportant())
@@ -79,7 +79,7 @@ QString CChord::toString()
     return str;
 }
 
-void CChord::fromString(const QString & str)
+void Chord::fromString(const QString & str)
 {
     QString copy(str);
 
@@ -109,12 +109,12 @@ void CChord::fromString(const QString & str)
 }
 
 
-bool CChord::isValid() const
+bool Chord::isValid() const
 {
     return m_isValid;
 }
 
-QPixmap* CChord::toPixmap()
+QPixmap* Chord::toPixmap()
 {
     if (m_pixmap)
         return m_pixmap;
@@ -215,14 +215,14 @@ QPixmap* CChord::toPixmap()
     return m_pixmap;
 }
 
-void CChord::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush)
+void Chord::fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush)
 {
     QPainterPath path;
     path.addEllipse(rect.topLeft().x(), rect.topLeft().y(), rect.width(), rect.height());;
     painter->fillPath(path, brush);
 }
 
-QColor CChord::color()
+QColor Chord::color()
 {
     if (isImportant())
     {
@@ -242,17 +242,17 @@ QColor CChord::color()
     return QColor(Qt::white);
 }
 
-void CChord::setDrawBorder(bool value)
+void Chord::setDrawBorder(bool value)
 {
     m_drawBorder = value;
 }
 
-QString CChord::name() const
+QString Chord::name() const
 {
     return m_name;
 }
 
-void CChord::setName(const QString & str)
+void Chord::setName(const QString & str)
 {
     if (m_name != str)
     {
@@ -261,12 +261,12 @@ void CChord::setName(const QString & str)
     }
 }
 
-QString CChord::fret() const
+QString Chord::fret() const
 {
     return m_fret;
 }
 
-void CChord::setFret(const QString & str)
+void Chord::setFret(const QString & str)
 {
     if (m_fret != str)
     {
@@ -275,12 +275,12 @@ void CChord::setFret(const QString & str)
     }
 }
 
-QString CChord::strings() const
+QString Chord::strings() const
 {
     return m_strings;
 }
 
-void CChord::setStrings(const QString & str)
+void Chord::setStrings(const QString & str)
 {
     if (m_strings != str)
     {
@@ -289,12 +289,12 @@ void CChord::setStrings(const QString & str)
     }
 }
 
-CChord::Instrument CChord::instrument() const
+Chord::Instrument Chord::instrument() const
 {
     return m_instrument;
 }
 
-void CChord::setInstrument(const CChord::Instrument & instru)
+void Chord::setInstrument(const Chord::Instrument & instru)
 {
     if (m_instrument != instru)
     {
@@ -303,7 +303,7 @@ void CChord::setInstrument(const CChord::Instrument & instru)
     }
 }
 
-void CChord::switchInstrument(bool value)
+void Chord::switchInstrument(bool value)
 {
     if (value)
     {
@@ -314,12 +314,12 @@ void CChord::switchInstrument(bool value)
     }
 }
 
-bool CChord::isImportant() const
+bool Chord::isImportant() const
 {
     return m_important;
 }
 
-void CChord::setImportant(bool value)
+void Chord::setImportant(bool value)
 {
     m_important = value;
 }

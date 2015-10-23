@@ -32,14 +32,14 @@
 class QPushButton;
 class QTableView;
 class QSortFilterProxyModel;
-class CChordListModel;
+class ChordListModel;
 
 /*!
   \file diagram-area.hh
   \class CDiagramArea
   \brief CDiagramArea is a widget displaying a list of chords
 
-  A CDiagramArea embeds a QTableView based upon a CChordTableModel model.
+  A CDiagramArea embeds a QTableView based upon a ChordTableModel model.
   A CDiagramArea can be defined as read-only or editable through
   setReadOnly() and is usually placed as a widget inside a scrolling
   area:
@@ -80,8 +80,8 @@ class CChordListModel;
 
   The list of chords in a CDiagramArea can be filtered by methods such
   as setTypeFilter(), setNameFilter() and setStringsFilter() that will
-  only display rows that contain chords whose CChord::instrument(),
-  CChord::name() and CChord::strings() match the filter. In the
+  only display rows that contain chords whose Chord::instrument(),
+  Chord::name() and Chord::strings() match the filter. In the
   dialog from diagram-editor.cc, those slots are thus connected to the
   QLineEdit widgets:
 
@@ -130,12 +130,12 @@ public:
     Returns all the chords. Note that it returns chords from the model, not the view;
     thus, filtered chords are also included.
   */
-    QList< CChord* > chords();
+    QList< Chord* > chords();
 
 public slots:
     /*!
     Adds a new chord to the list. This slot is connected to the "add" button
-    and pops-up a CDiagramEditor.
+    and pops-up a DiagramEditor.
   */
     void newDiagram();
 
@@ -146,7 +146,7 @@ public slots:
     void addDiagram(const QString & chord);
 
     /*!
-    Triggers a CDiagramEditor associated to the chord at position \a index.
+    Triggers a DiagramEditor associated to the chord at position \a index.
     This slot is only available in editable mode.
     \sa setReadOnly
   */
@@ -163,7 +163,7 @@ public slots:
     Filters rows that contain chords whose instrument matches \a type.
     \sa setNameFilter, setStringsFilter
   */
-    void setTypeFilter(const CChord::Instrument & type);
+    void setTypeFilter(const Chord::Instrument & type);
 
     /*!
     Filters rows that contain chords whose name matches \a name.
@@ -215,11 +215,11 @@ signals:
     /*!
     This signal is emitted when a chord from the list is clicked.
   */
-    void diagramClicked(CChord * diagram);
+    void diagramClicked(Chord * diagram);
 
 private:
     bool m_isReadOnly;
-    CChordListModel *m_diagramModel;
+    ChordListModel *m_diagramModel;
     QSortFilterProxyModel *m_proxyModel;
     QTableView *m_diagramView;
     QPushButton *m_addDiagramButton;

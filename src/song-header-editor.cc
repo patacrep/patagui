@@ -414,11 +414,11 @@ void CSongHeaderEditor::onDiagramsChanged()
 {
     song().gtabs = QStringList();
     song().utabs = QStringList();
-    foreach (CChord *chord, m_diagramArea->chords())
+    foreach (Chord *chord, m_diagramArea->chords())
     {
-        if (chord->instrument() == CChord::Guitar)
+        if (chord->instrument() == Chord::Guitar)
             song().gtabs << chord->toString();
-        else if (chord->instrument() == CChord::Ukulele)
+        else if (chord->instrument() == Chord::Ukulele)
             song().utabs << chord->toString();
     }
     emit(contentsChanged());

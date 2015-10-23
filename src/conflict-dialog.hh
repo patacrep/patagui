@@ -40,8 +40,8 @@ class CFileCopier;
 
 /*!
   \file conflict-dialog.hh
-  \class CConflictDialog
-  \brief CConflictDialog is a dialog to solve conflicts when importing already existing songs.
+  \class ConflictDialog
+  \brief ConflictDialog is a dialog to solve conflicts when importing already existing songs.
 
   A conflict dialog displays side-by-side two list of songs
   \li source: the list of conflictig songs that are being imported
@@ -55,17 +55,17 @@ class CFileCopier;
   \image html conflict-dialog.png
 
 */
-class CConflictDialog : public QDialog
+class ConflictDialog : public QDialog
 {
     Q_OBJECT
     Q_ENUMS(ConflictSolveMode)
 
 public:
     /// Constructor.
-    CConflictDialog(QWidget *parent = 0);
+    ConflictDialog(QWidget *parent = 0);
 
     /// Destructor.
-    virtual ~CConflictDialog();
+    virtual ~ConflictDialog();
 
     /*!
     Define \a map as the double list of existing / to be imported files

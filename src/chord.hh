@@ -31,8 +31,8 @@ class QPainter;
 
 /*!
   \file chord.hh
-  \class CChord
-  \brief CChord is an object representing a guitar/ukulele chord
+  \class Chord
+  \brief Chord is an object representing a guitar/ukulele chord
 
   A chord has a text and a graphical representation.
 
@@ -53,7 +53,7 @@ class QPainter;
   \image html chord.png
 
 */
-class CChord : public QObject
+class Chord : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
@@ -80,10 +80,10 @@ public:
     };
 
     /// Constructor.
-    CChord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
+    Chord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
 
     /// Destructor.
-    ~CChord();
+    ~Chord();
 
     /*!
     Returns true if the chord is valid; false otherwise. A valid

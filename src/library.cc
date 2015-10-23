@@ -469,7 +469,7 @@ void CLibrary::importSongs(const QStringList & filenames)
         sourceTargetMap.insert(filename, pathToSong(song));
     }
 
-    CConflictDialog dialog(parent());
+    ConflictDialog dialog(parent());
     dialog.setSourceTargetFiles(sourceTargetMap);
     if (dialog.conflictsFound() && dialog.exec() == QDialog::Accepted)
     {
