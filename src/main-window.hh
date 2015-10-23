@@ -33,7 +33,7 @@ class CTabWidget;
 class CEditor;
 class CLabel;
 class CTabWidget;
-class CFilterLineEdit;
+class FilterLineEdit;
 class CNotification;
 class ProgressBar;
 class CMakeSongbookProcess;
@@ -205,7 +205,7 @@ private:
     CNotification *m_noDatadirSet;
     CNotification *m_updateAvailable;
     QLabel *m_infoSelection;
-    CFilterLineEdit *m_filterLineEdit;
+    FilterLineEdit *m_filterLineEdit;
     QDockWidget *m_log;
 
     // Settings

@@ -30,7 +30,7 @@
 
 #include "qtvariantproperty.h"
 
-class CFileChooser;
+class FileChooser;
 class QSpinBox;
 
 class VariantFactory : public QtVariantEditorFactory
@@ -54,8 +54,8 @@ private slots:
     void slotSetIntValue(int);
     void slotEditorDestroyed(QObject *object);
 private:
-    QMap<QtProperty *, QList<CFileChooser *> > theCreatedEditors;
-    QMap<CFileChooser *, QtProperty *> theEditorToProperty;
+    QMap<QtProperty *, QList<FileChooser *> > theCreatedEditors;
+    QMap<FileChooser *, QtProperty *> theEditorToProperty;
     QMap<QtProperty *, QList<QSpinBox *> > theCreatedSpinBoxes;
     QMap<QSpinBox *, QtProperty *> theSpinBoxToProperty;
 };

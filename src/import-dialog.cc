@@ -59,7 +59,7 @@
 
 CImportDialog::CImportDialog(QWidget *parent)
     : QDialog(parent)
-    , m_libraryPath(new CFileChooser(this))
+    , m_libraryPath(new FileChooser(this))
     , m_libraryPathValid(new QLabel(this))
     , m_songsToBeImported(QStringList())
     #ifdef ENABLE_LIBRARY_DOWNLOAD

@@ -45,7 +45,7 @@ class CMainWindow;
   files) that are fetched from a local directory.
 
   This model is used to build an intermediate model
-  (CSongSortFilterProxyModel) that allows filtering options, and is
+  (SongSortFilterProxyModel) that allows filtering options, and is
   then presented in the library tab (CTabWidget) of the main window
   (CMainWindow) through its associated view (CLibraryView).
 

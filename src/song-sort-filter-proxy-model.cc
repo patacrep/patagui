@@ -23,7 +23,7 @@
 
 #include <QDebug>
 
-CSongSortFilterProxyModel::CSongSortFilterProxyModel(QObject *parent)
+SongSortFilterProxyModel::SongSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
     , m_onlySelected(false)
     , m_onlyNotSelected(false)
@@ -33,10 +33,10 @@ CSongSortFilterProxyModel::CSongSortFilterProxyModel(QObject *parent)
     , m_keywordFilter()
 {}
 
-CSongSortFilterProxyModel::~CSongSortFilterProxyModel()
+SongSortFilterProxyModel::~SongSortFilterProxyModel()
 {}
 
-void CSongSortFilterProxyModel::setFilterString(const QString &filterString)
+void SongSortFilterProxyModel::setFilterString(const QString &filterString)
 {
     m_filterString = filterString;
 
@@ -84,12 +84,12 @@ void CSongSortFilterProxyModel::setFilterString(const QString &filterString)
     invalidateFilter();
 }
 
-QString CSongSortFilterProxyModel::filterString() const
+QString SongSortFilterProxyModel::filterString() const
 {
     return m_filterString;
 }
 
-bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool SongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
 
@@ -132,7 +132,7 @@ bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelInde
     return accept;
 }
 
-void CSongSortFilterProxyModel::checkAll()
+void SongSortFilterProxyModel::checkAll()
 {
     int rows = rowCount();
     CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
@@ -142,7 +142,7 @@ void CSongSortFilterProxyModel::checkAll()
     }
 }
 
-void CSongSortFilterProxyModel::uncheckAll()
+void SongSortFilterProxyModel::uncheckAll()
 {
     int rows = rowCount();
     CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
@@ -152,7 +152,7 @@ void CSongSortFilterProxyModel::uncheckAll()
     }
 }
 
-void CSongSortFilterProxyModel::toggleAll()
+void SongSortFilterProxyModel::toggleAll()
 {
     int rows = rowCount();
     CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
@@ -162,52 +162,52 @@ void CSongSortFilterProxyModel::toggleAll()
     }
 }
 
-void CSongSortFilterProxyModel::insertLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::insertLanguageFilter(const QLocale::Language &language)
 {
     m_languageFilter.insert(language);
 }
 
-void CSongSortFilterProxyModel::removeLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::removeLanguageFilter(const QLocale::Language &language)
 {
     m_languageFilter.remove(language);
 }
 
-void CSongSortFilterProxyModel::clearLanguageFilter()
+void SongSortFilterProxyModel::clearLanguageFilter()
 {
     m_languageFilter.clear();
 }
 
-const QSet< QLocale::Language > & CSongSortFilterProxyModel::languageFilter() const
+const QSet< QLocale::Language > & SongSortFilterProxyModel::languageFilter() const
 {
     return m_languageFilter;
 }
 
-void CSongSortFilterProxyModel::insertNegativeLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::insertNegativeLanguageFilter(const QLocale::Language &language)
 {
     m_negativeLanguageFilter.insert(language);
 }
 
-void CSongSortFilterProxyModel::removeNegativeLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::removeNegativeLanguageFilter(const QLocale::Language &language)
 {
     m_negativeLanguageFilter.remove(language);
 }
 
-void CSongSortFilterProxyModel::clearNegativeLanguageFilter()
+void SongSortFilterProxyModel::clearNegativeLanguageFilter()
 {
     m_negativeLanguageFilter.clear();
 }
 
-const QSet< QLocale::Language > & CSongSortFilterProxyModel::negativeLanguageFilter() const
+const QSet< QLocale::Language > & SongSortFilterProxyModel::negativeLanguageFilter() const
 {
     return m_negativeLanguageFilter;
 }
 
-void CSongSortFilterProxyModel::clearKeywordFilter()
+void SongSortFilterProxyModel::clearKeywordFilter()
 {
     m_keywordFilter.clear();
 }
 
-const QStringList & CSongSortFilterProxyModel::keywordFilter() const
+const QStringList & SongSortFilterProxyModel::keywordFilter() const
 {
     return m_keywordFilter;
 }

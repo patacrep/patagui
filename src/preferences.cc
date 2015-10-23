@@ -276,12 +276,12 @@ OptionsPage::OptionsPage(QWidget *parent)
     , m_cleanCommand(0)
     , m_cleanallCommand(0)
 {
-    m_songbookPath = new CFileChooser();
+    m_songbookPath = new FileChooser();
     m_songbookPath->setMinimumWidth(300);
     m_songbookPath->setOptions(QFileDialog::ShowDirsOnly);
     m_songbookPath->setCaption(tr("Songbook path"));
 
-    m_libraryPath = new CFileChooser();
+    m_libraryPath = new FileChooser();
     m_libraryPath->setMinimumWidth(300);
     m_libraryPath->setOptions(QFileDialog::ShowDirsOnly);
     m_libraryPath->setCaption(tr("Library path"));

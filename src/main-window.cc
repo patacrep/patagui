@@ -180,7 +180,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_view(new CLibraryView(this))
     , m_songbook(new CSongbook(this))
-    , m_proxyModel(new CSongSortFilterProxyModel(this))
+    , m_proxyModel(new SongSortFilterProxyModel(this))
     , m_tempFilesmodel(0)
     , m_mainWidget(new CTabWidget(this))
     , m_progressBar(new ProgressBar(this))
@@ -531,9 +531,9 @@ void CMainWindow::createToolBar()
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setCompletionMode(QCompleter::PopupCompletion);
 
-    m_filterLineEdit = new CFilterLineEdit;
+    m_filterLineEdit = new FilterLineEdit;
     m_filterLineEdit->setCompleter(completer);
-    m_filterLineEdit->setFilterModel(qobject_cast< CSongSortFilterProxyModel* >(m_proxyModel));
+    m_filterLineEdit->setFilterModel(qobject_cast< SongSortFilterProxyModel* >(m_proxyModel));
 
     QWidget *stretch = new QWidget;
     stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

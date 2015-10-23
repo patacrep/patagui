@@ -26,14 +26,14 @@
 
 /*!
   \file song-sort-filter-proxy-model.hh
-  \class CSongSortFilterProxyModel
-  \brief CSongSortFilterProxyModel implements custom sort and filter
+  \class SongSortFilterProxyModel
+  \brief SongSortFilterProxyModel implements custom sort and filter
   operations for CLibraryView.
 
   Allows one to filter the library. Song items are only displayed if
   the match the filter from their artist, title, or album fields.
 */
-class CSongSortFilterProxyModel : public QSortFilterProxyModel
+class SongSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 
@@ -108,10 +108,10 @@ public slots:
 
 public:
     /// Constructor.
-    CSongSortFilterProxyModel(QObject *parent = 0);
+    SongSortFilterProxyModel(QObject *parent = 0);
 
     /// Destructor.
-    ~CSongSortFilterProxyModel();
+    ~SongSortFilterProxyModel();
 
     /*!
     Returns the filter.

@@ -31,17 +31,17 @@
 
 /*!
   \file filter-lineedit.hh
-  \class CClearButton
-  \brief CClearButton is the clear button that resets the content of a CFilterLineEdit
+  \class ClearButton
+  \brief ClearButton is the clear button that resets the content of a FilterLineEdit
   \image html mag-button.png
 */
-class CClearButton : public QToolButton
+class ClearButton : public QToolButton
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CClearButton(QWidget *parent = 0);
+    ClearButton(QWidget *parent = 0);
 
 protected slots:
     void textChanged(const QString &text);
@@ -55,17 +55,17 @@ private:
 
 /*!
   \file filter-lineedit.hh
-  \class CMagButton
-  \brief CMagButton is the magnify button in a CFilterLineEdit widget
+  \class MagButton
+  \brief MagButton is the magnify button in a FilterLineEdit widget
   \image html mag-button.png
 */
-class CMagButton : public QToolButton
+class MagButton : public QToolButton
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CMagButton(QWidget *parent = 0);
+    MagButton(QWidget *parent = 0);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -76,27 +76,27 @@ private:
 
 /*!
   \file filter-lineedit.hh
-  \class CLocaleButton
-  \brief CLocaleButton is the "flag" button in a CFilterLineEdit widget
+  \class LocaleButton
+  \brief LocaleButton is the "flag" button in a FilterLineEdit widget
   that triggers a popup to filter songs by language
 */
-class CLocaleButton : public QToolButton
+class LocaleButton : public QToolButton
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CLocaleButton(QWidget *parent = 0);
+    LocaleButton(QWidget *parent = 0);
 };
 
 
 class QAction;
-class CSongSortFilterProxyModel;
+class SongSortFilterProxyModel;
 
 /*!
   \file filter-lineedit.hh
-  \class CFilterLineEdit
-  \brief CFilterLineEdit is a QLineEdit widget that allows one to filter results in the songs library
+  \class FilterLineEdit
+  \brief FilterLineEdit is a QLineEdit widget that allows one to filter results in the songs library
 
   The filter updates the songs library view so that it only displays songs that match
   the user input.
@@ -104,14 +104,14 @@ class CSongSortFilterProxyModel;
   The filter only applies on artist/title/album columns as provided
   by the CLibrary::completionModel().
 
-  A CFilterLineEdit widget contains a CMagButton on the left that allows one to
-  access quick filters functions (such as search by songs' language) and a CClearButton
+  A FilterLineEdit widget contains a MagButton on the left that allows one to
+  access quick filters functions (such as search by songs' language) and a ClearButton
   on the right that resets its content (only dispayed when there is some user input).
 
   \image html filter.png
 
 */
-class CFilterLineEdit : public LineEdit
+class FilterLineEdit : public LineEdit
 {
     Q_OBJECT
 
@@ -129,22 +129,22 @@ public slots:
 
 public:
     /// Constructor.
-    CFilterLineEdit(QWidget *parent = 0);
+    FilterLineEdit(QWidget *parent = 0);
     /// Destructor.
-    ~CFilterLineEdit();
+    ~FilterLineEdit();
 
     /// Add an action to the menu that is displayed
-    /// when clicking on the CMagButton on the left.
+    /// when clicking on the MagButton on the left.
     void addAction(QAction *action);
 
     /// Defines the model that should be filtered.
     /// @param filterModel the proxy model of the songs library
-    void setFilterModel(CSongSortFilterProxyModel *filterModel);
+    void setFilterModel(SongSortFilterProxyModel *filterModel);
 
 private:
     QMenu* m_menu;
 
-    CSongSortFilterProxyModel *m_filterModel;
+    SongSortFilterProxyModel *m_filterModel;
 };
 
 #endif // __FILTER_LINEEDIT_HH__

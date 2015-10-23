@@ -26,7 +26,7 @@
 
 #include <QDebug>
 
-CClearButton::CClearButton(QWidget *parent)
+ClearButton::ClearButton(QWidget *parent)
     : QToolButton(parent)
 {
     setCursor(Qt::ArrowCursor);
@@ -47,12 +47,12 @@ CClearButton::CClearButton(QWidget *parent)
     }
 }
 
-void CClearButton::textChanged(const QString &text)
+void ClearButton::textChanged(const QString &text)
 {
     setVisible(!text.isEmpty());
 }
 
-void CClearButton::paintEvent(QPaintEvent *event)
+void ClearButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
     QPainter painter(this);
@@ -86,7 +86,7 @@ void CClearButton::paintEvent(QPaintEvent *event)
     painter.drawLine(padding, height() - padding, width() - padding, padding);
 }
 
-CMagButton::CMagButton(QWidget *parent)
+MagButton::MagButton(QWidget *parent)
     : QToolButton(parent)
 {
     setCursor(Qt::ArrowCursor);
@@ -96,7 +96,7 @@ CMagButton::CMagButton(QWidget *parent)
     setVisible(true);
 }
 
-void CMagButton::paintEvent(QPaintEvent *event)
+void MagButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
     QPainter painter(this);
@@ -127,7 +127,7 @@ void CMagButton::paintEvent(QPaintEvent *event)
     painter.drawLine(padding+circleRadius, padding+circleRadius, width() - padding, width() - padding);
 }
 
-CLocaleButton::CLocaleButton(QWidget *parent)
+LocaleButton::LocaleButton(QWidget *parent)
     : QToolButton(parent)
 {
     setCursor(Qt::ArrowCursor);
@@ -147,14 +147,14 @@ CLocaleButton::CLocaleButton(QWidget *parent)
     setStyleSheet(style);
 }
 
-CFilterLineEdit::CFilterLineEdit(QWidget *parent)
+FilterLineEdit::FilterLineEdit(QWidget *parent)
     : LineEdit(parent)
     , m_menu(new QMenu)
     , m_filterModel(0)
 {
-    CClearButton *clearButton = new CClearButton(this);
-    CMagButton *magButton = new CMagButton(this);
-    CLocaleButton *localeButton = new CLocaleButton(this);
+    ClearButton *clearButton = new ClearButton(this);
+    MagButton *magButton = new MagButton(this);
+    LocaleButton *localeButton = new LocaleButton(this);
     QString style("QListView, QLineEdit {"
                   "selection-color: white; "
                   "border: 2px groove gray;"
@@ -234,42 +234,42 @@ CFilterLineEdit::CFilterLineEdit(QWidget *parent)
     setInactiveText(tr("Filter"));
 }
 
-CFilterLineEdit::~CFilterLineEdit()
+FilterLineEdit::~FilterLineEdit()
 {}
 
-void CFilterLineEdit::addAction(QAction* action)
+void FilterLineEdit::addAction(QAction* action)
 {
     m_menu->addAction(action);
 }
 
-void CFilterLineEdit::setFilterModel(CSongSortFilterProxyModel *filterModel)
+void FilterLineEdit::setFilterModel(SongSortFilterProxyModel *filterModel)
 {
     m_filterModel = filterModel;
     connect(this, SIGNAL(textChanged(const QString&)),
             filterModel, SLOT(setFilterString(const QString&)));
 }
 
-void CFilterLineEdit::filterLanguageEnglish()
+void FilterLineEdit::filterLanguageEnglish()
 {
     setText(text() + " :en");
 }
 
-void CFilterLineEdit::filterLanguageFrench()
+void FilterLineEdit::filterLanguageFrench()
 {
     setText(text() + " :fr");
 }
 
-void CFilterLineEdit::filterLanguageSpanish()
+void FilterLineEdit::filterLanguageSpanish()
 {
     setText(text() + " :es");
 }
 
-void CFilterLineEdit::filterLanguagePortuguese()
+void FilterLineEdit::filterLanguagePortuguese()
 {
     setText(text() + " :pt");
 }
 
-void CFilterLineEdit::filterLanguageItalian()
+void FilterLineEdit::filterLanguageItalian()
 {
     setText(text() + " :it");
 }

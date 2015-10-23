@@ -44,7 +44,7 @@ class QNetworkAccessManager;
 class QNetworkReply;
 
 class ProgressBar;
-class CFileChooser;
+class FileChooser;
 class CMainWindow;
 
 /*!
@@ -127,7 +127,7 @@ private:
     void setNetworkSubWidgetsVisible(const bool value);
 
     CMainWindow *m_parent;
-    CFileChooser *m_libraryPath;
+    FileChooser *m_libraryPath;
     QLabel *m_libraryPathValid;
 
     QRadioButton *m_fromLocalButton;

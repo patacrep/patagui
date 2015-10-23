@@ -33,8 +33,8 @@
 VariantFactory::~VariantFactory()
 {
     {
-        QList<CFileChooser *> editors = theEditorToProperty.keys();
-        QListIterator<CFileChooser *> it(editors);
+        QList<FileChooser *> editors = theEditorToProperty.keys();
+        QListIterator<FileChooser *> it(editors);
         while (it.hasNext())
             delete it.next();
     }
@@ -61,7 +61,7 @@ QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
 {
     if (manager->propertyType(property) == VariantManager::filePathTypeId())
     {
-        CFileChooser *editor = new CFileChooser(parent);
+        FileChooser *editor = new FileChooser(parent);
         editor->setPath(manager->value(property).toString());
         editor->setFilter(manager->attributeValue(property, QLatin1String("filter")).toString());
         theCreatedEditors[property].append(editor);
@@ -107,8 +107,8 @@ void VariantFactory::slotPropertyChanged(QtProperty *property,
 {
     if (theCreatedEditors.contains(property))
     {
-        QList<CFileChooser *> editors = theCreatedEditors[property];
-        QListIterator<CFileChooser *> itEditor(editors);
+        QList<FileChooser *> editors = theCreatedEditors[property];
+        QListIterator<FileChooser *> itEditor(editors);
         while (itEditor.hasNext())
             itEditor.next()->setPath(value.toString());
     }
@@ -129,8 +129,8 @@ void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
 
     if (attribute == QLatin1String("filter"))
     {
-        QList<CFileChooser *> editors = theCreatedEditors[property];
-        QListIterator<CFileChooser *> itEditor(editors);
+        QList<FileChooser *> editors = theCreatedEditors[property];
+        QListIterator<FileChooser *> itEditor(editors);
         while (itEditor.hasNext())
             itEditor.next()->setFilter(value.toString());
     }
@@ -146,7 +146,7 @@ void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
 void VariantFactory::slotSetValue(const QString &value)
 {
     QObject *object = sender();
-    QMap<CFileChooser *, QtProperty *>::ConstIterator itEditor =
+    QMap<FileChooser *, QtProperty *>::ConstIterator itEditor =
             theEditorToProperty.constBegin();
     while (itEditor != theEditorToProperty.constEnd())
     {
@@ -185,13 +185,13 @@ void VariantFactory::slotSetIntValue(int value)
 
 void VariantFactory::slotEditorDestroyed(QObject *object)
 {
-    QMap<CFileChooser *, QtProperty *>::ConstIterator itEditor =
+    QMap<FileChooser *, QtProperty *>::ConstIterator itEditor =
             theEditorToProperty.constBegin();
     while (itEditor != theEditorToProperty.constEnd())
     {
         if (itEditor.key() == object)
         {
-            CFileChooser *editor = itEditor.key();
+            FileChooser *editor = itEditor.key();
             QtProperty *property = itEditor.value();
             theEditorToProperty.remove(editor);
             theCreatedEditors[property].removeAll(editor);

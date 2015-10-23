@@ -34,7 +34,7 @@ class QLabel;
 class QLineEdit;
 class QCheckBox;
 class QSpinBox;
-class CFileChooser;
+class FileChooser;
 class CMainWindow;
 
 class QtGroupBoxPropertyBrowser;
@@ -157,10 +157,10 @@ private:
     void readSettings();
     void writeSettings();
 
-    CFileChooser *m_songbookPath;
+    FileChooser *m_songbookPath;
     QLabel *m_songbookPathValid;
 
-    CFileChooser *m_libraryPath;
+    FileChooser *m_libraryPath;
     QLabel *m_libraryPathValid;
 
     QLineEdit *m_buildCommand;
