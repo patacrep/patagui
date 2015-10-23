@@ -33,7 +33,7 @@
 
 #include <QDebug>
 
-CDiagramArea::CDiagramArea(QWidget *parent)
+DiagramArea::DiagramArea(QWidget *parent)
     : QWidget(parent)
     , m_isReadOnly(false)
     , m_addDiagramButton(new QPushButton)
@@ -81,7 +81,7 @@ CDiagramArea::CDiagramArea(QWidget *parent)
     update();
 }
 
-void CDiagramArea::update()
+void DiagramArea::update()
 {
     if (isReadOnly())
     {
@@ -111,24 +111,24 @@ void CDiagramArea::update()
     }
 }
 
-void CDiagramArea::onViewClicked(const QModelIndex & index)
+void DiagramArea::onViewClicked(const QModelIndex & index)
 {
     if (index.isValid())
         emit(diagramClicked(m_diagramModel->getChord(m_proxyModel->mapToSource(index))));
 }
 
-void CDiagramArea::resizeRows()
+void DiagramArea::resizeRows()
 {
     for (int i=0; i < m_diagramModel->rowCount(); ++i)
         m_diagramView->setRowHeight(i, 120);
 }
 
-void CDiagramArea::newDiagram()
+void DiagramArea::newDiagram()
 {
     editDiagram(QModelIndex());
 }
 
-void CDiagramArea::editDiagram(QModelIndex index)
+void DiagramArea::editDiagram(QModelIndex index)
 {
     Q_ASSERT(!isReadOnly());
 
@@ -154,12 +154,12 @@ void CDiagramArea::editDiagram(QModelIndex index)
     }
 }
 
-void CDiagramArea::addDiagram(const QString & chord)
+void DiagramArea::addDiagram(const QString & chord)
 {
     m_diagramModel->addItem(chord);
 }
 
-void CDiagramArea::removeDiagram(QModelIndex index)
+void DiagramArea::removeDiagram(QModelIndex index)
 {
     if (!index.isValid())
         index = m_diagramView->indexAt(m_diagramView->mapFromGlobal(QCursor::pos()));
@@ -170,18 +170,18 @@ void CDiagramArea::removeDiagram(QModelIndex index)
     m_diagramModel->removeItem(m_proxyModel->mapToSource(index));
 }
 
-void CDiagramArea::onDiagramChanged()
+void DiagramArea::onDiagramChanged()
 {
     Q_ASSERT(isReadOnly());
     emit(contentsChanged());
 }
 
-bool CDiagramArea::isReadOnly() const
+bool DiagramArea::isReadOnly() const
 {
     return m_isReadOnly;
 }
 
-void CDiagramArea::setReadOnly(bool value)
+void DiagramArea::setReadOnly(bool value)
 {
     if (m_isReadOnly != value)
     {
@@ -190,7 +190,7 @@ void CDiagramArea::setReadOnly(bool value)
     }
 }
 
-void CDiagramArea::contextMenu(const QPoint & pos)
+void DiagramArea::contextMenu(const QPoint & pos)
 {
     Q_UNUSED(pos);
 
@@ -207,7 +207,7 @@ void CDiagramArea::contextMenu(const QPoint & pos)
     menu.exec(QCursor::pos());
 }
 
-void CDiagramArea::setTypeFilter(const Chord::Instrument & type)
+void DiagramArea::setTypeFilter(const Chord::Instrument & type)
 {
     m_proxyModel->setFilterRole(Qt::DisplayRole);
     if (type == Chord::Guitar)
@@ -217,7 +217,7 @@ void CDiagramArea::setTypeFilter(const Chord::Instrument & type)
     emit(layoutChanged());
 }
 
-void CDiagramArea::setNameFilter(const QString & name)
+void DiagramArea::setNameFilter(const QString & name)
 {
     clearFilters();
     m_proxyModel->setFilterRole(ChordListModel::NameRole);
@@ -225,31 +225,31 @@ void CDiagramArea::setNameFilter(const QString & name)
     emit(layoutChanged());
 }
 
-void CDiagramArea::setStringsFilter(const QString & strings)
+void DiagramArea::setStringsFilter(const QString & strings)
 {
     m_proxyModel->setFilterRole(ChordListModel::StringsRole);
     m_proxyModel->setFilterRegExp(strings);
     emit(layoutChanged());
 }
 
-void CDiagramArea::clearFilters()
+void DiagramArea::clearFilters()
 {
     m_proxyModel->setFilterRole(Qt::DisplayRole);
     m_proxyModel->setFilterRegExp("");
     emit(layoutChanged());
 }
 
-void CDiagramArea::setColumnCount(int value)
+void DiagramArea::setColumnCount(int value)
 {
     m_diagramModel->setColumnCount(value);
 }
 
-void CDiagramArea::setRowCount(int value)
+void DiagramArea::setRowCount(int value)
 {
     m_diagramModel->setRowCount(value);
 }
 
-QList< Chord* > CDiagramArea::chords()
+QList< Chord* > DiagramArea::chords()
 {
     QList< Chord* > list;
     for (int i = 0; i < m_diagramModel->rowCount(); ++i)

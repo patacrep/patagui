@@ -36,16 +36,16 @@ class ChordListModel;
 
 /*!
   \file diagram-area.hh
-  \class CDiagramArea
-  \brief CDiagramArea is a widget displaying a list of chords
+  \class DiagramArea
+  \brief DiagramArea is a widget displaying a list of chords
 
-  A CDiagramArea embeds a QTableView based upon a ChordTableModel model.
-  A CDiagramArea can be defined as read-only or editable through
+  A DiagramArea embeds a QTableView based upon a ChordTableModel model.
+  A DiagramArea can be defined as read-only or editable through
   setReadOnly() and is usually placed as a widget inside a scrolling
   area:
 
   \code
-  CDiagramArea *area = new CDiagramArea(this);
+  DiagramArea *area = new DiagramArea(this);
   area->setRowCount(1);
   area->setReadOnly(false);
 
@@ -60,7 +60,7 @@ class ChordListModel;
   features a "add" button that appends new chords to the model.
   An implementation may be found in song-header-editor.cc.
 
-  If the CDiagramArea is read-only, displayed chords can neither be
+  If the DiagramArea is read-only, displayed chords can neither be
   edited nor removed. Thus, the area does not propose the "add" button
   to add a new chord to the list. The following example can be found
   in the dialog from diagram-editor.cc where it is used to display all
@@ -68,7 +68,7 @@ class ChordListModel;
   pick from:
 
   \code
-  CDiagramArea *area = new CDiagramArea(this);
+  DiagramArea *area = new DiagramArea(this);
   area->setReadOnly(true);
   area->setColumnCount(8);
 
@@ -78,7 +78,7 @@ class ChordListModel;
   scroll->setWidgetResizable(true);
   \endcode
 
-  The list of chords in a CDiagramArea can be filtered by methods such
+  The list of chords in a DiagramArea can be filtered by methods such
   as setTypeFilter(), setNameFilter() and setStringsFilter() that will
   only display rows that contain chords whose Chord::instrument(),
   Chord::name() and Chord::strings() match the filter. In the
@@ -94,13 +94,13 @@ class ChordListModel;
           area, SLOT(setStringsFilter(const QString &)));
   \endcode
 */
-class CDiagramArea : public QWidget
+class DiagramArea : public QWidget
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CDiagramArea(QWidget *parent=0);
+    DiagramArea(QWidget *parent=0);
 
     /*!
     Returns \a true if the diagram-area is in read-only mode; \a false otherwise.

@@ -115,7 +115,7 @@ DiagramEditor::DiagramEditor(QWidget *parent)
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         // list of standard diagrams
-        m_diagramArea = new CDiagramArea(this);
+        m_diagramArea = new DiagramArea(this);
         m_diagramArea->setReadOnly(true);
         m_diagramArea->setColumnCount(8);
 

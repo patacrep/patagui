@@ -35,7 +35,7 @@ class CLabel;
 class CTabWidget;
 class CFilterLineEdit;
 class CNotification;
-class CProgressBar;
+class ProgressBar;
 class CMakeSongbookProcess;
 class CSongHighlighter;
 
@@ -73,7 +73,7 @@ public:
     /*!
     Returns the progress bar that is embedded in the status bar.
   */
-    CProgressBar * progressBar() const;
+    ProgressBar * progressBar() const;
 
     /*!
     Returns the dock widget that displays LaTeX compilation logs.
@@ -200,7 +200,7 @@ private:
 
     // Widgets
     CTabWidget *m_mainWidget;
-    CProgressBar *m_progressBar;
+    ProgressBar *m_progressBar;
     CNotification *m_noDataInfo;
     CNotification *m_noDatadirSet;
     CNotification *m_updateAvailable;

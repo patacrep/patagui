@@ -30,7 +30,7 @@ class QCheckBox;
 class QLabel;
 
 class Chord;
-class CDiagramArea;
+class DiagramArea;
 
 /*!
   \file diagram-editor.hh
@@ -40,11 +40,11 @@ class CDiagramArea;
   The DiagramEditor class provides a dialog widget for editing or
   creating chords. It is composed of a form where fields are the
   properties of a Chord object and of a list of common chords (a
-  CDiagramArea object) that may be selected.
+  DiagramArea object) that may be selected.
 
   \image html chord-editor.png
 
-  \sa Chord, CDiagramArea
+  \sa Chord, DiagramArea
 */
 class DiagramEditor : public QDialog
 {
@@ -91,7 +91,7 @@ private:
     QLabel *m_infoIconLabel;
     QLabel *m_messageLabel;
 
-    CDiagramArea *m_diagramArea;
+    DiagramArea *m_diagramArea;
     Chord *m_chord;
 };
 

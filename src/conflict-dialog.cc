@@ -51,7 +51,7 @@ ConflictDialog::ConflictDialog(QWidget *parent)
     , m_albumLabel(new QLabel)
     , m_coverLabel(new QLabel)
     , m_pixmap(new QPixmap(42, 42))
-    , m_fileCopier(new CFileCopier(parent))
+    , m_fileCopier(new FileCopier(parent))
 {
     setWindowTitle(tr("Resolve conflicts"));
     setParent(static_cast<CMainWindow*>(parent));
@@ -140,7 +140,7 @@ CMainWindow* ConflictDialog::parent() const
     return m_parent;
 }
 
-CProgressBar* ConflictDialog::progressBar() const
+ProgressBar* ConflictDialog::progressBar() const
 {
     return parent()->progressBar();
 }

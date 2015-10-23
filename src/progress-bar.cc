@@ -22,7 +22,7 @@
 #include <QToolButton>
 #include <QBoxLayout>
 
-CProgressBar::CProgressBar(QWidget* parent)
+ProgressBar::ProgressBar(QWidget* parent)
     : QWidget(parent)
     , m_progressBar(new QProgressBar(this))
     , m_cancelButton(new QToolButton(this))
@@ -41,52 +41,52 @@ CProgressBar::CProgressBar(QWidget* parent)
     hide();
 }
 
-CProgressBar::~CProgressBar()
+ProgressBar::~ProgressBar()
 {
     delete m_progressBar;
     delete m_cancelButton;
 }
 
-void CProgressBar::cancel()
+void ProgressBar::cancel()
 {
     hide();
     emit(canceled());
 }
 
-void CProgressBar::hide()
+void ProgressBar::hide()
 {
     m_progressBar->hide();
     m_cancelButton->hide();
 }
 
-void CProgressBar::show()
+void ProgressBar::show()
 {
     m_progressBar->show();
     if (isCancelable())
         m_cancelButton->show();
 }
 
-void CProgressBar::setTextVisible(bool value)
+void ProgressBar::setTextVisible(bool value)
 {
     m_progressBar->setTextVisible(value);
 }
 
-void CProgressBar::setRange(int start, int stop)
+void ProgressBar::setRange(int start, int stop)
 {
     m_progressBar->setRange(start, stop);
 }
 
-void CProgressBar::setValue(int value)
+void ProgressBar::setValue(int value)
 {
     m_progressBar->setValue(value);
 }
 
-bool CProgressBar::isCancelable() const
+bool ProgressBar::isCancelable() const
 {
     return m_cancelable;
 }
 
-void CProgressBar::setCancelable(bool value)
+void ProgressBar::setCancelable(bool value)
 {
     m_cancelable = value;
 }

@@ -524,7 +524,7 @@ QString CLibrary::pathToSong(Song &song) const
     return pathToSong(song.artist, song.title);
 }
 
-CProgressBar* CLibrary::progressBar() const
+ProgressBar* CLibrary::progressBar() const
 {
     return parent()->progressBar();
 }

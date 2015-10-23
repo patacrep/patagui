@@ -33,7 +33,7 @@ class QAbstractListModel;
 class QStringListModel;
 
 class QPixmap;
-class CProgressBar;
+class ProgressBar;
 class CMainWindow;
 
 /*!
@@ -257,7 +257,7 @@ public:
 
     static void recursiveFindFiles(const QString & path, const QStringList& filters, QStringList& files);
 
-    CProgressBar *progressBar() const;
+    ProgressBar *progressBar() const;
     void showMessage(const QString &);
 
     CMainWindow* parent() const;

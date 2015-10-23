@@ -369,7 +369,7 @@ bool CImportDialog::acceptDialog()
     return true;
 }
 
-CProgressBar* CImportDialog::progressBar() const
+ProgressBar* CImportDialog::progressBar() const
 {
     return parent()->progressBar();
 }

@@ -27,28 +27,28 @@ class QToolButton;
 
 /*!
   \file progress-bar.hh
-  \class CProgressBar
-  \brief CProgressBar is a custom cancelable progress bar.
+  \class ProgressBar
+  \brief ProgressBar is a custom cancelable progress bar.
 
-  A CProgressBar object displays a QProgressBar with a "cancel" button
+  A ProgressBar object displays a QProgressBar with a "cancel" button
   if it is cancelable.
 
   If the "cancel" button is clicked, the signal canceled() is emitted
-  and the CProgressBar object is hidden.
+  and the ProgressBar object is hidden.
 
   \image html progress-bar.png
 */
 
-class CProgressBar : public QWidget
+class ProgressBar : public QWidget
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CProgressBar(QWidget* parent=0);
+    ProgressBar(QWidget* parent=0);
 
     /// Destructor.
-    ~CProgressBar();
+    ~ProgressBar();
 
 public:
     /*!

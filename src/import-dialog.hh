@@ -43,7 +43,7 @@ class QLineEdit;
 class QNetworkAccessManager;
 class QNetworkReply;
 
-class CProgressBar;
+class ProgressBar;
 class CFileChooser;
 class CMainWindow;
 
@@ -70,7 +70,7 @@ public:
     void readSettings();
     void writeSettings();
 
-    CProgressBar* progressBar() const;
+    ProgressBar* progressBar() const;
     void showMessage(const QString & message);
 
     CMainWindow* parent() const;

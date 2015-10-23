@@ -28,7 +28,7 @@
 #include <QPixmap>
 
 class CCoverDropArea;
-class CDiagramArea;
+class DiagramArea;
 class LineEdit;
 
 class QSpinBox;
@@ -154,7 +154,7 @@ private:
     QSpinBox *m_transposeSpinBox;
     CCoverDropArea *m_coverLabel;
 
-    CDiagramArea *m_diagramArea;
+    DiagramArea *m_diagramArea;
 
     ViewMode m_viewMode;
     QStackedLayout *m_stackedLayout;

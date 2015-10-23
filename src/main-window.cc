@@ -183,7 +183,7 @@ CMainWindow::CMainWindow(QWidget *parent)
     , m_proxyModel(new CSongSortFilterProxyModel(this))
     , m_tempFilesmodel(0)
     , m_mainWidget(new CTabWidget(this))
-    , m_progressBar(new CProgressBar(this))
+    , m_progressBar(new ProgressBar(this))
     , m_noDataInfo(0)
     , m_noDatadirSet(0)
     , m_updateAvailable(0)
@@ -755,7 +755,7 @@ void CMainWindow::cancelProcess()
     }
 }
 
-CProgressBar * CMainWindow::progressBar() const
+ProgressBar * CMainWindow::progressBar() const
 {
     return m_progressBar;
 }

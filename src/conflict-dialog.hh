@@ -34,8 +34,8 @@ class QTableWidgetItem;
 class QPushButton;
 class QPixmap;
 
-class CProgressBar;
-class CFileCopier;
+class ProgressBar;
+class FileCopier;
 
 
 /*!
@@ -100,7 +100,7 @@ public:
     /*!
     Returns the progress bar of the parent window.
   */
-    CProgressBar* progressBar() const;
+    ProgressBar* progressBar() const;
 
 public slots:
     /*!
@@ -144,22 +144,22 @@ private:
     QPushButton *m_keepOriginalButton;
     QPushButton *m_diffButton;
 
-    CFileCopier *m_fileCopier;
+    FileCopier *m_fileCopier;
 };
 
 /*!
   \file conflict-dialog.hh
-  \class CFileCopier
-  \brief CFileCopier manages the copy of potentially conflicting files
+  \class FileCopier
+  \brief FileCopier manages the copy of potentially conflicting files
 */
-class CFileCopier : public QObject
+class FileCopier : public QObject
 {
     Q_OBJECT
 
 public:
 
     /// Constructor
-    CFileCopier(QWidget *parent) : m_cancelCopy(false)
+    FileCopier(QWidget *parent) : m_cancelCopy(false)
     {
         setParent(static_cast<CMainWindow*>(parent));
     }
@@ -203,7 +203,7 @@ public slots:
     void copy()
     {
         int count = 0;
-        CProgressBar * progressBar = parent()->progressBar();
+        ProgressBar * progressBar = parent()->progressBar();
         progressBar->setRange(0, m_sourceTargets.size());
         progressBar->show();
 
