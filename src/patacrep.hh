@@ -1,7 +1,11 @@
-#ifndef CPATACREP_H
-#define CPATACREP_H
+#ifndef PATACREP_H
+#define PATACREP_H
 
 #include <QObject>
+#include <QString>
+#include <QStringList>
+#include "PythonQt.h"
+#include "songbook.hh"
 
 class Patacrep : public QObject
 {
@@ -9,9 +13,27 @@ class Patacrep : public QObject
 public:
     explicit Patacrep(QObject *parent = 0);
 
+    /*!
+    Return the songbook to compile.
+    \sa setSongbook
+  */
+    const CSongbook* songbook() const;
+
+    /*! Sets Working directory for process
+  */
+    void setWorkingDirectory(const QString &dir);
+
+    /*! Test for Python
+  */
+    const bool testPython();
+
 signals:
 
-public slots:
+public slots:    
+
+private:
+    QStringList datadirs;
+    PythonQtObjectPtr pythonModule;
 };
 
-#endif // CPATACREP_H
+#endif // PATACREP_H
