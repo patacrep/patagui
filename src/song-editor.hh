@@ -32,7 +32,7 @@ class CLibrary;
 class CSongCodeEditor;
 class CSongHeaderEditor;
 class CSongHighlighter;
-class CFindReplaceDialog;
+class FindReplaceDialog;
 class Hunspell;
 
 /*!
@@ -193,7 +193,7 @@ private:
 
     CSongHeaderEditor *m_songHeaderEditor;
     CSongCodeEditor *m_codeEditor;
-    CFindReplaceDialog* m_findReplaceDialog;
+    FindReplaceDialog* m_findReplaceDialog;
 
     Song m_song;
     bool m_newSong;

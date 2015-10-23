@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-CLibraryView::CLibraryView(CMainWindow *parent)
+CLibraryView::CLibraryView(MainWindow *parent)
     : QTableView(parent)
 {
     setStyleSheet(" QTableView {margin: -1px -1px}");
@@ -45,9 +45,9 @@ CLibraryView::CLibraryView(CMainWindow *parent)
 CLibraryView::~CLibraryView()
 {}
 
-CMainWindow* CLibraryView::parent() const
+MainWindow* CLibraryView::parent() const
 {
-    return qobject_cast< CMainWindow* >(QTableView::parent());
+    return qobject_cast< MainWindow* >(QTableView::parent());
 }
 
 void CLibraryView::readSettings()

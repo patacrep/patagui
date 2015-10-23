@@ -66,9 +66,9 @@ CNotification::CNotification(QWidget* p)
     hide();
 }
 
-CMainWindow* CNotification::parent() const
+MainWindow* CNotification::parent() const
 {
-    return  static_cast<CMainWindow*>(QDockWidget::parent());
+    return  static_cast<MainWindow*>(QDockWidget::parent());
 }
 
 QString CNotification::message() const

@@ -174,9 +174,9 @@ bool removeDirectoryRecursively(const QDir & directory)
 }
 }
 
-const QString CMainWindow::_cachePath(QString("%1/patagui").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
+const QString MainWindow::_cachePath(QString("%1/patagui").arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
 
-CMainWindow::CMainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_view(new CLibraryView(this))
     , m_songbook(new CSongbook(this))
@@ -272,13 +272,13 @@ CMainWindow::CMainWindow(QWidget *parent)
 
 }
 
-CMainWindow::~CMainWindow()
+MainWindow::~MainWindow()
 {
     delete m_songbook;
     delete m_voidEditor;
 }
 
-void CMainWindow::switchToolBar(QToolBar *toolBar)
+void MainWindow::switchToolBar(QToolBar *toolBar)
 {
     if (toolBar != m_currentToolBar)
     {
@@ -290,7 +290,7 @@ void CMainWindow::switchToolBar(QToolBar *toolBar)
     }
 }
 
-void CMainWindow::readSettings(bool firstLaunch)
+void MainWindow::readSettings(bool firstLaunch)
 {
     QSettings settings;
     settings.beginGroup("global");
@@ -313,7 +313,7 @@ void CMainWindow::readSettings(bool firstLaunch)
     library()->readSettings();
 }
 
-void CMainWindow::writeSettings()
+void MainWindow::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("global");
@@ -329,14 +329,14 @@ void CMainWindow::writeSettings()
     view()->writeSettings();
 }
 
-void CMainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
+void MainWindow::selectedSongsChanged(const QModelIndex &, const QModelIndex &)
 {
     m_infoSelection->setText(tr("Selection: %1/%2")
                              .arg(songbook()->selectedCount())
                              .arg(songbook()->rowCount()));
 }
 
-void CMainWindow::createActions()
+void MainWindow::createActions()
 {
     m_newSongAct = new QAction(tr("&New Song"), this);
     m_newSongAct->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")));
@@ -446,7 +446,7 @@ void CMainWindow::createActions()
     connect(m_cleanAct, SIGNAL(triggered()), this, SLOT(cleanDialog()));
 }
 
-void CMainWindow::setToolBarDisplayed(bool value)
+void MainWindow::setToolBarDisplayed(bool value)
 {
     if (m_isToolBarDisplayed != value && m_currentToolBar)
     {
@@ -456,29 +456,29 @@ void CMainWindow::setToolBarDisplayed(bool value)
     }
 }
 
-bool CMainWindow::isToolBarDisplayed()
+bool MainWindow::isToolBarDisplayed()
 {
     return m_isToolBarDisplayed;
 }
 
-void CMainWindow::setStatusBarDisplayed(bool value)
+void MainWindow::setStatusBarDisplayed(bool value)
 {
     m_isStatusBarDisplayed = value;
     statusBar()->setVisible(value);
 }
 
-bool CMainWindow::isStatusBarDisplayed()
+bool MainWindow::isStatusBarDisplayed()
 {
     return m_isStatusBarDisplayed;
 }
 
-void CMainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::closeEvent(QCloseEvent *event)
 {
     writeSettings();
     event->accept();
 }
 
-void CMainWindow::createMenus()
+void MainWindow::createMenus()
 {
     menuBar()->setContextMenuPolicy(Qt::PreventContextMenu);
 
@@ -517,7 +517,7 @@ void CMainWindow::createMenus()
     helpMenu->addAction(m_aboutAct);
 }
 
-void CMainWindow::createToolBar()
+void MainWindow::createToolBar()
 {
     m_mainToolBar = new QToolBar(tr("Song tools"), this);
     m_mainToolBar->setMovable(false);
@@ -555,14 +555,14 @@ void CMainWindow::createToolBar()
     setUnifiedTitleAndToolBarOnMac(true);
 }
 
-void CMainWindow::preferences()
+void MainWindow::preferences()
 {
     ConfigDialog dialog(this);
     dialog.exec();
     readSettings();
 }
 
-void CMainWindow::documentation()
+void MainWindow::documentation()
 {
     if (QLocale::system().language() == QLocale::French)
         QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc_fr.pdf"));
@@ -570,12 +570,12 @@ void CMainWindow::documentation()
         QDesktopServices::openUrl(QUrl("http://www.patacrep.com/data/documents/doc_en.pdf"));
 }
 
-void CMainWindow::reportBug()
+void MainWindow::reportBug()
 {
     QDesktopServices::openUrl(QUrl("https://github.com/patacrep/patagui/issues"));
 }
 
-void CMainWindow::about()
+void MainWindow::about()
 {
     QString title(tr("About Patagui"));
     QString version = QCoreApplication::applicationVersion();
@@ -594,7 +594,7 @@ void CMainWindow::about()
                        .arg(description).arg(version).arg(authors));
 }
 
-void CMainWindow::build()
+void MainWindow::build()
 {
     if (!checkPdfLaTeX() || !checkPython())
         return;
@@ -628,19 +628,19 @@ void CMainWindow::build()
     }
 }
 
-void CMainWindow::newSongbook()
+void MainWindow::newSongbook()
 {
     songbook()->reset();
     updateTitle(songbook()->filename());
 }
 
-void CMainWindow::open(const QString & filename)
+void MainWindow::open(const QString & filename)
 {
     songbook()->load(filename);
     updateTitle(songbook()->filename());
 }
 
-void CMainWindow::open()
+void MainWindow::open()
 {
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Open"),
@@ -649,7 +649,7 @@ void CMainWindow::open()
     open(filename);
 }
 
-void CMainWindow::save()
+void MainWindow::save()
 {
     if (songbook()->filename().isEmpty())
     {
@@ -660,7 +660,7 @@ void CMainWindow::save()
     updateTitle(songbook()->filename());
 }
 
-void CMainWindow::saveAs()
+void MainWindow::saveAs()
 {
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save as"),
@@ -674,7 +674,7 @@ void CMainWindow::saveAs()
     }
 }
 
-void CMainWindow::updateTitle(const QString &filename)
+void MainWindow::updateTitle(const QString &filename)
 {
     QString text = filename.isEmpty() ? tr("New songbook") : filename;
     setWindowTitle(tr("%1 - %2[*]")
@@ -682,7 +682,7 @@ void CMainWindow::updateTitle(const QString &filename)
                    .arg(text));
 }
 
-const QString CMainWindow::workingPath()
+const QString MainWindow::workingPath()
 {
     QSettings settings;
     settings.beginGroup("global");
@@ -691,12 +691,12 @@ const QString CMainWindow::workingPath()
     return path;
 }
 
-const QString CMainWindow::libraryPath()
+const QString MainWindow::libraryPath()
 {
     return library()->directory().canonicalPath();
 }
 
-void CMainWindow::make()
+void MainWindow::make()
 {
     if (!future.isRunning()) {
         m_builder->setWorkingDirectory(libraryPath());
@@ -713,7 +713,7 @@ void CMainWindow::make()
     }
 }
 
-void CMainWindow::makeClean()
+void MainWindow::makeClean()
 {
     if (!future.isRunning()) {
         m_builder->setWorkingDirectory(libraryPath());
@@ -730,7 +730,7 @@ void CMainWindow::makeClean()
     }
 }
 
-void CMainWindow::makeCleanall()
+void MainWindow::makeCleanall()
 {
     if (!future.isRunning()) {
         m_builder->setWorkingDirectory(libraryPath());
@@ -747,7 +747,7 @@ void CMainWindow::makeCleanall()
     }
 }
 
-void CMainWindow::cancelProcess()
+void MainWindow::cancelProcess()
 {
     if (future.isRunning())
     {
@@ -755,32 +755,32 @@ void CMainWindow::cancelProcess()
     }
 }
 
-ProgressBar * CMainWindow::progressBar() const
+ProgressBar * MainWindow::progressBar() const
 {
     return m_progressBar;
 }
 
-CSongbook * CMainWindow::songbook() const
+CSongbook * MainWindow::songbook() const
 {
     return m_songbook;
 }
 
-CLibraryView * CMainWindow::view() const
+CLibraryView * MainWindow::view() const
 {
     return m_view;
 }
 
-CLibrary * CMainWindow::library() const
+CLibrary * MainWindow::library() const
 {
     return CLibrary::instance();
 }
 
-QItemSelectionModel * CMainWindow::selectionModel()
+QItemSelectionModel * MainWindow::selectionModel()
 {
     return view()->selectionModel();
 }
 
-void CMainWindow::middleClicked(const QModelIndex & index)
+void MainWindow::middleClicked(const QModelIndex & index)
 {
     if (QApplication::mouseButtons() == Qt::MidButton)
     {
@@ -789,7 +789,7 @@ void CMainWindow::middleClicked(const QModelIndex & index)
     }
 }
 
-void CMainWindow::songEditor(const QModelIndex &index)
+void MainWindow::songEditor(const QModelIndex &index)
 {
     Q_UNUSED(index);
     if (!selectionModel()->hasSelection())
@@ -803,7 +803,7 @@ void CMainWindow::songEditor(const QModelIndex &index)
     songEditor(path);
 }
 
-void CMainWindow::songEditor(const QString &path)
+void MainWindow::songEditor(const QString &path)
 {
     // if an editor already corresponds to path, focus on it
     for (int i = 0; i < m_mainWidget->count(); ++i)
@@ -832,20 +832,20 @@ void CMainWindow::songEditor(const QString &path)
     m_mainWidget->addTab(editor);
 }
 
-void CMainWindow::newSong()
+void MainWindow::newSong()
 {
     songEditor(QString());
 }
 
-void CMainWindow::importSongsDialog()
+void MainWindow::importSongsDialog()
 {
-    CImportDialog *dialog = new CImportDialog(this);
+    ImportDialog *dialog = new ImportDialog(this);
     connect(dialog, SIGNAL(songsReadyToBeImported(const QStringList&)),
             this, SLOT(importSongs(const QStringList&)));
     dialog->exec();
 }
 
-void CMainWindow::setupDatadirDialog()
+void MainWindow::setupDatadirDialog()
 {
     QString datadir = QFileDialog::getExistingDirectory(this, tr("Select Datadir"), QDir::homePath(), QFileDialog::ShowDirsOnly);
     if (datadir != "")
@@ -869,12 +869,12 @@ void CMainWindow::setupDatadirDialog()
     }
 }
 
-void CMainWindow::importSongs(const QStringList & songs)
+void MainWindow::importSongs(const QStringList & songs)
 {
     library()->importSongs(songs);
 }
 
-void CMainWindow::deleteSong()
+void MainWindow::deleteSong()
 {
     if (!selectionModel()->hasSelection())
     {
@@ -887,7 +887,7 @@ void CMainWindow::deleteSong()
     deleteSong(path);
 }
 
-void CMainWindow::deleteSong(const QString &path)
+void MainWindow::deleteSong(const QString &path)
 {
     int ret = QMessageBox::warning(this, tr("Patagui"),
                                    tr("This file will be deleted:\n%1\n"
@@ -899,7 +899,7 @@ void CMainWindow::deleteSong(const QString &path)
         library()->deleteSong(path);
 }
 
-void CMainWindow::closeTab(int index)
+void MainWindow::closeTab(int index)
 {
     if (CSongEditor *editor = qobject_cast< CSongEditor* >(m_mainWidget->widget(index)))
         if (editor->close())
@@ -909,7 +909,7 @@ void CMainWindow::closeTab(int index)
         }
 }
 
-void CMainWindow::changeTab(int index)
+void MainWindow::changeTab(int index)
 {
     m_editorMenu->clear();
     CEditor *editor = qobject_cast< CEditor* >(m_mainWidget->widget(index));
@@ -934,12 +934,12 @@ void CMainWindow::changeTab(int index)
     m_editorMenu->addActions(editor->actionGroup()->actions());
 }
 
-QDockWidget* CMainWindow::log() const
+QDockWidget* MainWindow::log() const
 {
     return m_log;
 }
 
-void CMainWindow::updateNotification(const QString &path)
+void MainWindow::updateNotification(const QString &path)
 {
     if (!m_updateAvailable)
     {
@@ -952,7 +952,7 @@ void CMainWindow::updateNotification(const QString &path)
                                      "Do you want to update the library to reflect these changes?").arg(path));
 }
 
-void CMainWindow::noDataNotification(const QDir &directory)
+void MainWindow::noDataNotification(const QDir &directory)
 {
     if (!m_noDataInfo)
     {
@@ -974,7 +974,7 @@ void CMainWindow::noDataNotification(const QDir &directory)
     }
 }
 
-void CMainWindow::noSongbookDirectoryNotification()
+void MainWindow::noSongbookDirectoryNotification()
 {
     if (!m_noDatadirSet)
     {
@@ -995,7 +995,7 @@ void CMainWindow::noSongbookDirectoryNotification()
     }
 }
 
-void CMainWindow::cleanDialog()
+void MainWindow::cleanDialog()
 {
     QDialog dialog(this);
     dialog.setWindowTitle(tr("Clean"));
@@ -1039,7 +1039,7 @@ void CMainWindow::cleanDialog()
     }
 }
 
-void CMainWindow::updateTempFilesView(int state)
+void MainWindow::updateTempFilesView(int state)
 {
     if (state == Qt::Checked)
     {

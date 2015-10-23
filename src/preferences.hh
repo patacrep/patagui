@@ -35,7 +35,7 @@ class QLineEdit;
 class QCheckBox;
 class QSpinBox;
 class FileChooser;
-class CMainWindow;
+class MainWindow;
 
 class QtGroupBoxPropertyBrowser;
 
@@ -52,7 +52,7 @@ public:
     /*!
     Returns the parent widget (which is the main window of the application).
   */
-    CMainWindow* parent() const;
+    MainWindow* parent() const;
 
 public slots:
     /*!
@@ -239,7 +239,7 @@ private slots:
 
 private:
     QtGroupBoxPropertyBrowser * m_propertyEditor;
-    CMainWindow *m_mainwindow;
+    MainWindow *m_mainwindow;
 };
 
 #endif // __PREFERENCES_HH__

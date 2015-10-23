@@ -47,14 +47,14 @@ class QLabel;
 
 /*!
   \file main-window.hh
-  \class CMainWindow
-  \brief CMainWindow is the base class of the application.
+  \class MainWindow
+  \brief MainWindow is the base class of the application.
 
   \image html main-window.png
 
   Class for the main window of the application.
 */
-class CMainWindow : public QMainWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -65,10 +65,10 @@ public slots:
 
 public:
     /// Constructor.
-    CMainWindow(QWidget *parent=0);
+    MainWindow(QWidget *parent=0);
 
     /// Destructor.
-    ~CMainWindow();
+    ~MainWindow();
 
     /*!
     Returns the progress bar that is embedded in the status bar.

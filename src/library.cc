@@ -534,12 +534,12 @@ void CLibrary::showMessage(const QString & message)
     parent()->statusBar()->showMessage(message);
 }
 
-CMainWindow* CLibrary::parent() const
+MainWindow* CLibrary::parent() const
 {
     return m_parent;
 }
 
-void CLibrary::setParent(CMainWindow *parent)
+void CLibrary::setParent(MainWindow *parent)
 {
     m_parent = parent;
 }

@@ -45,27 +45,27 @@ class QNetworkReply;
 
 class ProgressBar;
 class FileChooser;
-class CMainWindow;
+class MainWindow;
 
 /*!
   \file import-dialog.hh
-  \class CImportDialog
-  \brief CImportDialog is a dialog to import songs in the library.
+  \class ImportDialog
+  \brief ImportDialog is a dialog to import songs in the library.
 
   Songs may be imported from local (.sg) files or from a remote url.
 
   \image html import-dialog01.png
   \image html import-dialog02.png
 */
-class CImportDialog : public QDialog
+class ImportDialog : public QDialog
 {
     Q_OBJECT
 public:
     /// Constructor.
-    CImportDialog(QWidget *parent = 0);
+    ImportDialog(QWidget *parent = 0);
 
     /// Destructor.
-    virtual ~CImportDialog();
+    virtual ~ImportDialog();
 
     void readSettings();
     void writeSettings();
@@ -73,8 +73,8 @@ public:
     ProgressBar* progressBar() const;
     void showMessage(const QString & message);
 
-    CMainWindow* parent() const;
-    void setParent(CMainWindow* parent);
+    MainWindow* parent() const;
+    void setParent(MainWindow* parent);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
     void initDownload();
@@ -126,7 +126,7 @@ private:
     void setLocalSubWidgetsVisible(const bool value);
     void setNetworkSubWidgetsVisible(const bool value);
 
-    CMainWindow *m_parent;
+    MainWindow *m_parent;
     FileChooser *m_libraryPath;
     QLabel *m_libraryPathValid;
 

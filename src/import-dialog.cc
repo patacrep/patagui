@@ -57,7 +57,7 @@
 #include <QNetworkRequest>
 #endif //ENABLE_LIBRARY_DOWNLOAD
 
-CImportDialog::CImportDialog(QWidget *parent)
+ImportDialog::ImportDialog(QWidget *parent)
     : QDialog(parent)
     , m_libraryPath(new FileChooser(this))
     , m_libraryPathValid(new QLabel(this))
@@ -68,7 +68,7 @@ CImportDialog::CImportDialog(QWidget *parent)
     #endif //ENABLE_LIBRARY_DOWNLOAD
 {
     setWindowTitle(tr("Import songs"));
-    setParent(static_cast<CMainWindow*>(parent));
+    setParent(static_cast<MainWindow*>(parent));
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(buttonBox, SIGNAL(accepted()), SLOT(acceptDialog()));
@@ -178,7 +178,7 @@ CImportDialog::CImportDialog(QWidget *parent)
     readSettings();
 }
 
-CImportDialog::~CImportDialog()
+ImportDialog::~ImportDialog()
 {
     delete m_libraryPath;
     delete m_libraryPathValid;
@@ -205,7 +205,7 @@ CImportDialog::~CImportDialog()
 #endif // ENABLE_LIBRARY_DOWNLOAD
 }
 
-void CImportDialog::readSettings()
+void ImportDialog::readSettings()
 {
     QSettings settings;
     settings.beginGroup("global");
@@ -218,7 +218,7 @@ void CImportDialog::readSettings()
     m_patacrepButton->setChecked(true);
 }
 
-void CImportDialog::writeSettings()
+void ImportDialog::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("global");
@@ -231,29 +231,29 @@ void CImportDialog::writeSettings()
 }
 
 
-CMainWindow* CImportDialog::parent() const
+MainWindow* ImportDialog::parent() const
 {
     return m_parent;
 }
 
-void CImportDialog::setParent(CMainWindow* parent)
+void ImportDialog::setParent(MainWindow* parent)
 {
     m_parent = parent;
 }
 
-void CImportDialog::checkLibraryPath(const QString & path)
+void ImportDialog::checkLibraryPath(const QString & path)
 {
     m_libraryPathValid->setText(CLibrary::checkPath(path));
 }
 
-void CImportDialog::setLocalSubWidgetsVisible(const bool value)
+void ImportDialog::setLocalSubWidgetsVisible(const bool value)
 {
     m_addButton->setVisible(value);
     m_removeButton->setVisible(value);
     m_fileList->setVisible(value);
 }
 
-void CImportDialog::setNetworkSubWidgetsVisible(const bool value)
+void ImportDialog::setNetworkSubWidgetsVisible(const bool value)
 {
     m_patacrepLabel->setVisible(value);
     m_gitLabel->setVisible(value);
@@ -265,7 +265,7 @@ void CImportDialog::setNetworkSubWidgetsVisible(const bool value)
     m_urlLineEdit->setVisible(value);
 }
 
-void CImportDialog::onRadioButtonClicked(QAbstractButton* button)
+void ImportDialog::onRadioButtonClicked(QAbstractButton* button)
 {
     if (button == m_fromLocalButton)
     {
@@ -279,13 +279,13 @@ void CImportDialog::onRadioButtonClicked(QAbstractButton* button)
     }
 }
 
-void CImportDialog::onUrlChanged(const QString & text)
+void ImportDialog::onUrlChanged(const QString & text)
 {
     Q_UNUSED(text);
     m_urlButton->setChecked(true);
 }
 
-void CImportDialog::openItem(QListWidgetItem* item)
+void ImportDialog::openItem(QListWidgetItem* item)
 {
     if (!QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::ToolTipRole).toString())) &&
             !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::DisplayRole).toString())) &&
@@ -298,7 +298,7 @@ void CImportDialog::openItem(QListWidgetItem* item)
     }
 }
 
-void CImportDialog::addFiles()
+void ImportDialog::addFiles()
 {
     QStringList paths = QFileDialog::getOpenFileNames(this, tr("Import songs"),
                                                       QDir::homePath(),
@@ -320,7 +320,7 @@ void CImportDialog::addFiles()
     }
 }
 
-void CImportDialog::removeFiles()
+void ImportDialog::removeFiles()
 {
     QList<QListWidgetItem *> items = m_fileList->selectedItems();
     foreach (QListWidgetItem *item, items)
@@ -331,7 +331,7 @@ void CImportDialog::removeFiles()
     }
 }
 
-bool CImportDialog::acceptDialog()
+bool ImportDialog::acceptDialog()
 {
 #ifdef ENABLE_LIBRARY_DOWNLOAD
     if (m_fromNetworkButton->isChecked())
@@ -369,18 +369,18 @@ bool CImportDialog::acceptDialog()
     return true;
 }
 
-ProgressBar* CImportDialog::progressBar() const
+ProgressBar* ImportDialog::progressBar() const
 {
     return parent()->progressBar();
 }
 
-void CImportDialog::showMessage(const QString & message)
+void ImportDialog::showMessage(const QString & message)
 {
     parent()->statusBar()->showMessage(message);
 }
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
-void CImportDialog::initDownload()
+void ImportDialog::initDownload()
 {
     delete m_manager;
     m_manager = new QNetworkAccessManager(this);
@@ -412,7 +412,7 @@ void CImportDialog::initDownload()
             this, SLOT(cancelDownload()));
 }
 
-bool CImportDialog::saveToDisk(const QString &filename, QIODevice *data)
+bool ImportDialog::saveToDisk(const QString &filename, QIODevice *data)
 {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly))
@@ -427,12 +427,12 @@ bool CImportDialog::saveToDisk(const QString &filename, QIODevice *data)
     return true;
 }
 
-void CImportDialog::downloadStart()
+void ImportDialog::downloadStart()
 {
     if (m_url.isValid())
     {
         // check if there already is a songbook directory in the specified path
-        QDir dir(CMainWindow::_cachePath);
+        QDir dir(MainWindow::_cachePath);
         QNetworkRequest request;
         request.setUrl(m_url);
         request.setRawHeader("User-Agent", "patagui a1");
@@ -447,11 +447,11 @@ void CImportDialog::downloadStart()
     }
     else
     {
-        qWarning() << tr("CImportDialog::downloadStart the following url is invalid: ") << m_url;
+        qWarning() << tr("ImportDialog::downloadStart the following url is invalid: ") << m_url;
     }
 }
 
-void CImportDialog::downloadFinished()
+void ImportDialog::downloadFinished()
 {
     bool abort = false;
 
@@ -467,7 +467,7 @@ void CImportDialog::downloadFinished()
 
     if (!abort)
     {
-        QDir dir(CMainWindow::_cachePath);
+        QDir dir(MainWindow::_cachePath);
         QDir oldCurrent = QDir::currentPath();
         QString filepath = dir.filePath(filename);
         if (saveToDisk(filepath, m_reply))
@@ -490,15 +490,15 @@ void CImportDialog::downloadFinished()
     m_reply->deleteLater();
 }
 
-void CImportDialog::sslErrors(const QList<QSslError> &sslErrors)
+void ImportDialog::sslErrors(const QList<QSslError> &sslErrors)
 {
 #ifndef QT_NO_OPENSSL
     foreach (const QSslError &error, sslErrors)
-        qWarning() << "CImportDialog::sslErrors : " << error.errorString();
+        qWarning() << "ImportDialog::sslErrors : " << error.errorString();
 #endif
 }
 
-void CImportDialog::cancelDownload()
+void ImportDialog::cancelDownload()
 {
     if (m_reply)
         m_reply->abort();
@@ -507,7 +507,7 @@ void CImportDialog::cancelDownload()
 
 // Uses the code sample proposed in the libarchive documentation
 // http://code.google.com/p/libarchive/wiki/Examples#A_Complete_Extractor
-bool CImportDialog::decompress(const QString &filename)
+bool ImportDialog::decompress(const QString &filename)
 {
     struct archive *archive;
     struct archive *ext;
@@ -573,7 +573,7 @@ bool CImportDialog::decompress(const QString &filename)
     return true;
 }
 
-int CImportDialog::copy_data(struct archive *ar, struct archive *aw)
+int ImportDialog::copy_data(struct archive *ar, struct archive *aw)
 {
     const void *buff;
     size_t size;
@@ -597,11 +597,11 @@ int CImportDialog::copy_data(struct archive *ar, struct archive *aw)
     while (true);
 }
 
-QString CImportDialog::findFileName()
+QString ImportDialog::findFileName()
 {
     if (!m_reply)
     {
-        qWarning() << tr("CImportDialog::findFileName : invalid network reply");
+        qWarning() << tr("ImportDialog::findFileName : invalid network reply");
         return QString();
     }
 
@@ -623,7 +623,7 @@ QString CImportDialog::findFileName()
     return filename;
 }
 
-QString CImportDialog::bytesToString(double value)
+QString ImportDialog::bytesToString(double value)
 {
     QString unit;
     if (value < 1024)
@@ -643,7 +643,7 @@ QString CImportDialog::bytesToString(double value)
     return tr("%1 %2").arg(value, 2, 'f', 1).arg(unit);
 }
 
-void CImportDialog::downloadProgress(qint64 bytesRead, qint64 totalBytes)
+void ImportDialog::downloadProgress(qint64 bytesRead, qint64 totalBytes)
 {
     QString message = tr("Downloading %1").arg(findFileName());
     // download transfer

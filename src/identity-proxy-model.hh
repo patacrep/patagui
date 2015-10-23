@@ -21,20 +21,20 @@
 
 /**
  * \file identity-proxy-model.hh
- * \class CIdentityProxyModel
- * \brief CIdentityProxyModel is the base model to build a CSongbook
+ * \class IdentityProxyModel
+ * \brief IdentityProxyModel is the base model to build a CSongbook
  *
  * This class is based on the identity proxy model from Qt 4.8 :
  * http://doc.qt.nokia.com/4.8-snapshot/qidentityproxymodel.html
  *
  */
-class CIdentityProxyModel : public QAbstractProxyModel
+class IdentityProxyModel : public QAbstractProxyModel
 {
     Q_OBJECT
 
 public:
-    CIdentityProxyModel(QObject *parent = 0);
-    ~CIdentityProxyModel();
+    IdentityProxyModel(QObject *parent = 0);
+    ~IdentityProxyModel();
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;

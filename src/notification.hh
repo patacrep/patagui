@@ -23,7 +23,7 @@
 #include <QDockWidget>
 #include <QString>
 
-class CMainWindow;
+class MainWindow;
 class QTextEdit;
 class QBoxLayout;
 
@@ -83,7 +83,7 @@ public:
 
     /// Getter on the parent widget.
     /// @return the parent widget
-    CMainWindow* parent() const;
+    MainWindow* parent() const;
 
 private:
     /// Change the background color of the notification area

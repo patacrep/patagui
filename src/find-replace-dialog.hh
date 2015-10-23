@@ -30,21 +30,21 @@ class QCheckBox;
 
 /*!
   \file find-replace-dialog.hh
-  \class CFindReplaceDialog
-  \brief CFindReplaceDialog is a find and replace dialog.
+  \class FindReplaceDialog
+  \brief FindReplaceDialog is a find and replace dialog.
 
   \image html find-replace.png
 
 */
-class CFindReplaceDialog : public QDialog
+class FindReplaceDialog : public QDialog
 {
     Q_OBJECT
 public:
     /// Constructor.
-    CFindReplaceDialog(QWidget *parent = 0);
+    FindReplaceDialog(QWidget *parent = 0);
 
     /// Destructor.
-    virtual ~CFindReplaceDialog();
+    virtual ~FindReplaceDialog();
 
     /*!
     Sets \a editor as the text editor upon which

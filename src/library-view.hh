@@ -21,7 +21,7 @@
 
 #include <QTableView>
 
-class CMainWindow;
+class MainWindow;
 
 /**
  * \file library-view.hh
@@ -40,7 +40,7 @@ class CLibraryView : public QTableView
 
 public:
     /// Constructor
-    CLibraryView(CMainWindow *parent);
+    CLibraryView(MainWindow *parent);
     /// Destructor
     ~CLibraryView();
 
@@ -58,7 +58,7 @@ public slots:
 
 private:
     void createActions();
-    CMainWindow * parent() const;
+    MainWindow * parent() const;
 };
 
 #endif // __LIBRARY_VIEW_HH__

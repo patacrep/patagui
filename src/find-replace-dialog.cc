@@ -31,7 +31,7 @@
 
 #include <QDebug>
 
-CFindReplaceDialog::CFindReplaceDialog(QWidget *parent)
+FindReplaceDialog::FindReplaceDialog(QWidget *parent)
     : QDialog(parent)
     , m_editor(0)
     , m_findComboBox(new QComboBox(this))
@@ -83,10 +83,10 @@ CFindReplaceDialog::CFindReplaceDialog(QWidget *parent)
     readSettings();
 }
 
-CFindReplaceDialog::~CFindReplaceDialog()
+FindReplaceDialog::~FindReplaceDialog()
 {}
 
-void CFindReplaceDialog::readSettings()
+void FindReplaceDialog::readSettings()
 {
     QSettings settings;
     settings.beginGroup("find-replace");
@@ -106,7 +106,7 @@ void CFindReplaceDialog::readSettings()
     settings.endGroup();
 }
 
-void CFindReplaceDialog::writeSettings()
+void FindReplaceDialog::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("find-replace");
@@ -129,14 +129,14 @@ void CFindReplaceDialog::writeSettings()
     settings.endGroup();
 }
 
-void CFindReplaceDialog::setTextEditor(QPlainTextEdit *editor)
+void FindReplaceDialog::setTextEditor(QPlainTextEdit *editor)
 {
     m_editor = editor;
     connect(m_editor, SIGNAL(copyAvailable(bool)), m_replaceButton, SLOT(setEnabled(bool)));
     connect(m_editor, SIGNAL(copyAvailable(bool)), m_replaceAllButton, SLOT(setEnabled(bool)));
 }
 
-bool CFindReplaceDialog::find()
+bool FindReplaceDialog::find()
 {
     if (!m_editor)
         return false;
@@ -175,7 +175,7 @@ bool CFindReplaceDialog::find()
     return true;
 }
 
-void CFindReplaceDialog::appendToHistory(QComboBox *widget, QStringList & history)
+void FindReplaceDialog::appendToHistory(QComboBox *widget, QStringList & history)
 {
     if (!widget)
         return;
@@ -195,7 +195,7 @@ void CFindReplaceDialog::appendToHistory(QComboBox *widget, QStringList & histor
     }
 }
 
-void CFindReplaceDialog::replace()
+void FindReplaceDialog::replace()
 {
     if (!m_editor)
         return;
@@ -208,7 +208,7 @@ void CFindReplaceDialog::replace()
         cursor().insertText(m_replaceComboBox->currentText());
 }
 
-void CFindReplaceDialog::replaceAll()
+void FindReplaceDialog::replaceAll()
 {
     if (!m_editor)
         return;
@@ -243,22 +243,22 @@ void CFindReplaceDialog::replaceAll()
     m_wrapCheckBox->setChecked(wrapMode);
 }
 
-int CFindReplaceDialog::historySize() const
+int FindReplaceDialog::historySize() const
 {
     return m_historySize;
 }
 
-void CFindReplaceDialog::setHistorySize(int value)
+void FindReplaceDialog::setHistorySize(int value)
 {
     m_historySize = value;
 }
 
-QTextCursor CFindReplaceDialog::cursor() const
+QTextCursor FindReplaceDialog::cursor() const
 {
     return m_editor ? m_editor->textCursor() : QTextCursor();
 }
 
-void CFindReplaceDialog::setStatusTip(const QString & message)
+void FindReplaceDialog::setStatusTip(const QString & message)
 {
     if (!m_editor)
         return;
@@ -266,7 +266,7 @@ void CFindReplaceDialog::setStatusTip(const QString & message)
     m_editor->setStatusTip(message);
 }
 
-void CFindReplaceDialog::onValueChanged(const QString & text)
+void FindReplaceDialog::onValueChanged(const QString & text)
 {
     QComboBox *currentComboBox = qobject_cast< QComboBox* >(sender());
     if (currentComboBox == m_findComboBox)

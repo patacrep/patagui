@@ -84,12 +84,12 @@ public:
     /*!
     Returns the parent window of this dialog.
   */
-    CMainWindow* parent() const;
+    MainWindow* parent() const;
 
     /*!
     Sets \a parent as the parent window of this dialog.
   */
-    void setParent(CMainWindow* parent);
+    void setParent(MainWindow* parent);
 
     /*!
     Display an informative \a message in the status
@@ -124,7 +124,7 @@ private slots:
     void cancelCopy();
 
 private:
-    CMainWindow *m_parent;
+    MainWindow *m_parent;
     bool m_conflictsFound;
     QMap< QString, QString> m_conflicts;
     QMap< QString, QString> m_noConflicts;
@@ -161,7 +161,7 @@ public:
     /// Constructor
     FileCopier(QWidget *parent) : m_cancelCopy(false)
     {
-        setParent(static_cast<CMainWindow*>(parent));
+        setParent(static_cast<MainWindow*>(parent));
     }
 
     /// Define \a files as the list of source / target files to be copied
@@ -177,13 +177,13 @@ public:
     }
 
     /// Returns the parent widget
-    CMainWindow* parent() const
+    MainWindow* parent() const
     {
         return m_parent;
     }
 
     /// Defines the parent widget
-    void setParent(CMainWindow* parent)
+    void setParent(MainWindow* parent)
     {
         m_parent = parent;
     }
@@ -229,7 +229,7 @@ public slots:
     }
 
 private:
-    CMainWindow *m_parent;
+    MainWindow *m_parent;
     bool m_cancelCopy;
     QMap<QString, QString> m_sourceTargets;
 };

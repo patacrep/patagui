@@ -34,7 +34,7 @@ class QStringListModel;
 
 class QPixmap;
 class ProgressBar;
-class CMainWindow;
+class MainWindow;
 
 /*!
   \file library.hh
@@ -47,7 +47,7 @@ class CMainWindow;
   This model is used to build an intermediate model
   (SongSortFilterProxyModel) that allows filtering options, and is
   then presented in the library tab (CTabWidget) of the main window
-  (CMainWindow) through its associated view (CLibraryView).
+  (MainWindow) through its associated view (CLibraryView).
 
 */
 
@@ -260,8 +260,8 @@ public:
     ProgressBar *progressBar() const;
     void showMessage(const QString &);
 
-    CMainWindow* parent() const;
-    void setParent(CMainWindow* parent);
+    MainWindow* parent() const;
+    void setParent(MainWindow* parent);
 
 public slots:
     void readSettings();
@@ -275,7 +275,7 @@ signals:
 protected:
 
 private:
-    CMainWindow *m_parent;
+    MainWindow *m_parent;
     bool checkSongbookPath(const QString & path);
 
     QDir m_directory;

@@ -54,7 +54,7 @@ ConflictDialog::ConflictDialog(QWidget *parent)
     , m_fileCopier(new FileCopier(parent))
 {
     setWindowTitle(tr("Resolve conflicts"));
-    setParent(static_cast<CMainWindow*>(parent));
+    setParent(static_cast<MainWindow*>(parent));
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel);
     connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
@@ -130,12 +130,12 @@ ConflictDialog::~ConflictDialog()
     delete m_fileCopier;
 }
 
-void ConflictDialog::setParent(CMainWindow* parent)
+void ConflictDialog::setParent(MainWindow* parent)
 {
     m_parent = parent;
 }
 
-CMainWindow* ConflictDialog::parent() const
+MainWindow* ConflictDialog::parent() const
 {
     return m_parent;
 }

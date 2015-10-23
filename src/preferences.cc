@@ -88,9 +88,9 @@ ConfigDialog::ConfigDialog(QWidget* parent)
     resize(600,600);
 }
 
-CMainWindow* ConfigDialog::parent() const
+MainWindow* ConfigDialog::parent() const
 {
-    CMainWindow *p = qobject_cast<CMainWindow*>(QDialog::parent());
+    MainWindow *p = qobject_cast<MainWindow*>(QDialog::parent());
     if (!p) qWarning() << tr("ConfigDialog::parent() invalid parent");
     return p;
 }

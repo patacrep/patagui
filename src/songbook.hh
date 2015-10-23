@@ -48,7 +48,7 @@ class QtGroupPropertyManager;
   LaTeX options than can be used within a songbook are defined in a template
   file (.tex) that is located in the songbook application's template/ directory.
 */
-class CSongbook : public CIdentityProxyModel
+class CSongbook : public IdentityProxyModel
 {
     Q_OBJECT
     Q_PROPERTY(bool modified READ isModified WRITE setModified NOTIFY wasModified)

@@ -42,7 +42,7 @@
 #include <QDebug>
 
 CSongbook::CSongbook(QObject *parent)
-    : CIdentityProxyModel(parent)
+    : IdentityProxyModel(parent)
     , m_filename()
     , m_tmpl()
     , m_selectedSongs()
@@ -738,14 +738,14 @@ QVariant CSongbook::data(const QModelIndex &index, int role) const
     {
         return (m_selectedSongs[index.row()] ? Qt::Checked : Qt::Unchecked);
     }
-    return CIdentityProxyModel::data(index, role);
+    return IdentityProxyModel::data(index, role);
 }
 
 Qt::ItemFlags CSongbook::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::NoItemFlags;
-    return Qt::ItemIsUserCheckable | CIdentityProxyModel::flags(index);
+    return Qt::ItemIsUserCheckable | IdentityProxyModel::flags(index);
 }
 
 bool CSongbook::setData(const QModelIndex &index, const QVariant &value, int role)
@@ -756,7 +756,7 @@ bool CSongbook::setData(const QModelIndex &index, const QVariant &value, int rol
         emit(dataChanged(index, index));
         return true;
     }
-    return CIdentityProxyModel::setData(index, value, role);
+    return IdentityProxyModel::setData(index, value, role);
 }
 
 void CSongbook::sourceModelAboutToBeReset()

@@ -186,7 +186,7 @@ CSongEditor::CSongEditor(QWidget *parent)
     connect(m_codeEditor->document(), SIGNAL(modificationChanged(bool)), SLOT(setModified(bool)));
 
 
-    m_findReplaceDialog = new CFindReplaceDialog(this);
+    m_findReplaceDialog = new FindReplaceDialog(this);
     m_findReplaceDialog->setTextEditor(codeEditor());
     m_findReplaceDialog->readSettings();
 
