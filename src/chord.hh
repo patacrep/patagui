@@ -26,7 +26,6 @@
 #include <QBrush>
 #include <QRegExp>
 
-
 class QPainter;
 
 /*!
@@ -53,21 +52,21 @@ class QPainter;
   \image html chord.png
 
 */
-class Chord : public QObject
-{
+class Chord : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
-    Q_PROPERTY(QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
+    Q_PROPERTY(
+        QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
 
-public:
+  public:
     /*!
     \enum StringCount
     This enum type indicates the number of strings of an instrumuent.
   */
     enum StringCount {
-        GuitarStringCount=6, /*!< guitar: 6 */
-        UkuleleStringCount=4 /*!< ukulele: 4 */
+        GuitarStringCount = 6, /*!< guitar: 6 */
+        UkuleleStringCount = 4 /*!< ukulele: 4 */
     };
 
     /*!
@@ -80,7 +79,7 @@ public:
     };
 
     /// Constructor.
-    Chord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
+    Chord(const QString &chord = "\\gtab{}{0:}", QObject *parent = 0);
 
     /// Destructor.
     ~Chord();
@@ -102,13 +101,13 @@ public:
     Builds a chord from a string.
     \sa toString
   */
-    void fromString(const QString & gtab);
+    void fromString(const QString &gtab);
 
     /*!
     Returns the graphical representation (diagram) of the chord.
     \sa toString
   */
-    QPixmap* toPixmap();
+    QPixmap *toPixmap();
 
     /*!
     Returns the chord name.
@@ -164,30 +163,30 @@ public:
   */
     void setDrawBorder(bool value);
 
-public slots:
+  public slots:
     /*!
     Sets the chord name \a name.
     \sa chord
   */
-    void setName(const QString & name);
+    void setName(const QString &name);
 
     /*!
     Sets the strings \a strings.
     \sa strings
   */
-    void setStrings(const QString & strings);
+    void setStrings(const QString &strings);
 
     /*!
     Sets the fret number \a fret.
     \sa fret
   */
-    void setFret(const QString & fret);
+    void setFret(const QString &fret);
 
     /*!
     Sets the instrument \a instrument.
     \sa type
   */
-    void setInstrument(const Instrument & instrument);
+    void setInstrument(const Instrument &instrument);
 
     /*!
     Toggle instrument between Guitar and Ukulele if \a value is true.
@@ -201,7 +200,7 @@ public slots:
   */
     void setImportant(bool value);
 
-signals:
+  signals:
     /*!
     This signal is emitted when the chord name changes
   */
@@ -222,8 +221,8 @@ signals:
   */
     void instrumentChanged();
 
-private:
-    void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
+  private:
+    void fillEllipse(QPainter *painter, const QRect &rect, const QBrush &brush);
 
     Instrument m_instrument;
     QString m_name;

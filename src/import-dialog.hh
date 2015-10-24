@@ -30,7 +30,7 @@
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 #include <QSslError>
 #include <QTime>
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 class QLabel;
 class QRadioButton;
@@ -57,10 +57,9 @@ class MainWindow;
   \image html import-dialog01.png
   \image html import-dialog02.png
 */
-class ImportDialog : public QDialog
-{
+class ImportDialog : public QDialog {
     Q_OBJECT
-public:
+  public:
     /// Constructor.
     ImportDialog(QWidget *parent = 0);
 
@@ -70,11 +69,11 @@ public:
     void readSettings();
     void writeSettings();
 
-    ProgressBar* progressBar() const;
-    void showMessage(const QString & message);
+    ProgressBar *progressBar() const;
+    void showMessage(const QString &message);
 
-    MainWindow* parent() const;
-    void setParent(MainWindow* parent);
+    MainWindow *parent() const;
+    void setParent(MainWindow *parent);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
     void initDownload();
@@ -95,7 +94,7 @@ public:
     /// (http://github.com/libarchive/libarchive).
     int copy_data(struct archive *ar, struct archive *aw);
 
-public slots:
+  public slots:
     /// Handles common errors and dialog at the end of the downloading operation
     /// such as conflicts with filenames or failed download.
     void downloadFinished();
@@ -108,21 +107,21 @@ public slots:
     void downloadProgress(qint64 bytesRead, qint64 totalBytes);
 
     void cancelDownload();
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
-private slots:
+  private slots:
     bool acceptDialog();
-    void checkLibraryPath(const QString & path);
-    void onRadioButtonClicked(QAbstractButton*);
+    void checkLibraryPath(const QString &path);
+    void onRadioButtonClicked(QAbstractButton *);
     void onUrlChanged(const QString &);
-    void openItem(QListWidgetItem*);
+    void openItem(QListWidgetItem *);
     void addFiles();
     void removeFiles();
 
-signals:
+  signals:
     void songsReadyToBeImported(const QStringList &);
 
-private:
+  private:
     void setLocalSubWidgetsVisible(const bool value);
     void setNetworkSubWidgetsVisible(const bool value);
 
@@ -156,7 +155,7 @@ private:
     QNetworkAccessManager *m_manager;
     QNetworkReply *m_reply;
     QTime m_downloadTime;
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 };
 
 #endif // __IMPORT_DIALOG_HH
