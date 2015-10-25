@@ -31,7 +31,7 @@ class CLibrary;
 class CLibraryView;
 class CTabWidget;
 class CEditor;
-class CLabel;
+class Label;
 class CTabWidget;
 class FilterLineEdit;
 class CNotification;
