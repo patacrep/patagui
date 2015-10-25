@@ -45,7 +45,7 @@ class ProgressBar : public QWidget
 
 public:
     /// Constructor.
-    ProgressBar(QWidget* parent=0);
+    ProgressBar(QWidget *parent = 0);
 
     /// Destructor.
     ~ProgressBar();
@@ -64,7 +64,8 @@ public:
     void setTextVisible(bool value);
 
     /*!
-    Returns \a true if the action of the progress can be canceled; \a false otherwise.
+    Returns \a true if the action of the progress can be canceled; \a false
+    otherwise.
     \sa setCancelable
   */
     bool isCancelable() const;
@@ -111,4 +112,4 @@ private:
     bool m_cancelable;
 };
 
-#endif  // __FILE_CHOOSER_HH__
+#endif // __FILE_CHOOSER_HH__

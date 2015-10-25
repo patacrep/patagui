@@ -29,21 +29,21 @@ class QPushButton;
 
 /*!
   \file search-widget.hh
-  \class CSearchWidget
-  \brief CSearchWidget is a widget to perform search over a text editor.
+  \class SearchWidget
+  \brief SearchWidget is a widget to perform search over a text editor.
 
   \image html search-widget.png
 
 */
-class CSearchWidget : public QFrame
+class SearchWidget : public QFrame
 {
     Q_OBJECT
 public:
     /// Constructor.
-    CSearchWidget(QWidget *parent = 0);
+    SearchWidget(QWidget *parent = 0);
 
     /// Destructor.
-    virtual ~CSearchWidget();
+    virtual ~SearchWidget();
 
     /*!
     Sets \a editor as the text editor upon which

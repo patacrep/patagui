@@ -71,7 +71,7 @@ CSongCodeEditor::CSongCodeEditor(QWidget *parent)
     : CodeEditor(parent)
     , m_completer(0)
     , m_highlighter(0)
-    , m_quickSearch(new CSearchWidget(this))
+    , m_quickSearch(new SearchWidget(this))
     , m_environmentsHighlighted(true)
     , m_isSpellCheckAvailable(false)
     #ifdef ENABLE_SPELLCHECK

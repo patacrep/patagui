@@ -29,7 +29,7 @@
 
 #include <QDebug>
 
-CNotification::CNotification(QWidget* p)
+Notification::Notification(QWidget *p)
     : QDockWidget(p)
     , m_textEdit(new QTextEdit)
     , m_layout(new QVBoxLayout)
@@ -40,21 +40,21 @@ CNotification::CNotification(QWidget* p)
     setMaximumHeight(120);
 
     QIcon icon = QIcon::fromTheme("dialog-information");
-    QLabel* label = new QLabel;
-    label->setPixmap(icon.pixmap(48,48));
+    QLabel *label = new QLabel;
+    label->setPixmap(icon.pixmap(48, 48));
 
     m_textEdit = new QTextEdit;
     m_textEdit->setReadOnly(true);
-    setWindowFlags( Qt::FramelessWindowHint);
+    setWindowFlags(Qt::FramelessWindowHint);
 
-    QWidget* buttons = new QWidget;
-    QPushButton* button = new QPushButton(tr("Close"));
+    QWidget *buttons = new QWidget;
+    QPushButton *button = new QPushButton(tr("Close"));
     connect(button, SIGNAL(clicked()), this, SLOT(close()));
     m_layout->addWidget(button);
     buttons->setLayout(m_layout);
 
-    QWidget* mainWidget = new QWidget;
-    QLayout* mainLayout = new QHBoxLayout;
+    QWidget *mainWidget = new QWidget;
+    QLayout *mainLayout = new QHBoxLayout;
     mainLayout->addWidget(label);
     mainLayout->addWidget(m_textEdit);
     mainLayout->addWidget(buttons);
@@ -66,55 +66,46 @@ CNotification::CNotification(QWidget* p)
     hide();
 }
 
-MainWindow* CNotification::parent() const
+MainWindow *Notification::parent() const
 {
-    return  static_cast<MainWindow*>(QDockWidget::parent());
+    return static_cast<MainWindow *>(QDockWidget::parent());
 }
 
-QString CNotification::message() const
-{
-    return  m_textEdit->toPlainText();
-}
+QString Notification::message() const { return m_textEdit->toPlainText(); }
 
-void CNotification::setMessage(const QString & str)
-{
-    m_textEdit->setHtml(str);
-}
+void Notification::setMessage(const QString &str) { m_textEdit->setHtml(str); }
 
-
-void CNotification::addAction(QAction* action)
+void Notification::addAction(QAction *action)
 {
-    QPushButton* button = new QPushButton(action->text());
+    QPushButton *button = new QPushButton(action->text());
     connect(button, SIGNAL(clicked()), action, SLOT(trigger()));
     connect(button, SIGNAL(clicked()), this, SLOT(hide()));
     m_layout->insertWidget(0, button);
 }
 
-CNotification::Priority CNotification::priority() const
-{
-    return  m_priority;
-}
+Notification::Priority Notification::priority() const { return m_priority; }
 
-void CNotification::setPriority(const CNotification::Priority & value)
+void Notification::setPriority(const Notification::Priority &value)
 {
     m_priority = value;
     changeBackground();
 }
 
-void CNotification::changeBackground()
+void Notification::changeBackground()
 {
     QColor color;
-    switch(priority())
-    {
+    switch (priority()) {
     case LowPriority:
-        color.setRgb(255,238,170); //light yellow
+        color.setRgb(255, 238, 170); // light yellow
         break;
     case MediumPriority:
-        color.setRgb(255,179,128); //light orange
+        color.setRgb(255, 179, 128); // light orange
         break;
     case HighPriority:
-        color.setRgb(233,175,175); //light red
+        color.setRgb(233, 175, 175); // light red
         break;
     }
-    setStyleSheet(QString(" QTextEdit, .QWidget { border: 0px; background-color: %1; }").arg(color.name()));
+    setStyleSheet(
+        QString(" QTextEdit, .QWidget { border: 0px; background-color: %1; }")
+            .arg(color.name()));
 }

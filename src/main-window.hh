@@ -34,9 +34,9 @@ class CEditor;
 class Label;
 class CTabWidget;
 class FilterLineEdit;
-class CNotification;
+class Notification;
 class ProgressBar;
-class CMakeSongbookProcess;
+class MakeSongbookProcess;
 class CSongHighlighter;
 
 class QPlainTextEdit;
@@ -65,7 +65,7 @@ public slots:
 
 public:
     /// Constructor.
-    MainWindow(QWidget *parent=0);
+    MainWindow(QWidget *parent = 0);
 
     /// Destructor.
     ~MainWindow();
@@ -73,34 +73,33 @@ public:
     /*!
     Returns the progress bar that is embedded in the status bar.
   */
-    ProgressBar * progressBar() const;
+    ProgressBar *progressBar() const;
 
     /*!
     Returns the dock widget that displays LaTeX compilation logs.
     \image html logs.png
   */
-    QDockWidget * log() const;
+    QDockWidget *log() const;
 
     /*!
     Returns the library view.
   */
-    LibraryView * view() const;
+    LibraryView *view() const;
 
     /*!
     Returns the library.
   */
-    Library * library() const;
+    Library *library() const;
 
     /*!
     Returns the current songbook.
   */
-    CSongbook * songbook() const;
+    CSongbook *songbook() const;
 
     /*!
     Returns the directory of the songbook.
   */
     const QString workingPath();
-
 
     /*!
     Getter on the songs library directory.
@@ -135,7 +134,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-    //songbook
+    // songbook
     void newSongbook();
     void open();
     void save();
@@ -149,9 +148,9 @@ private slots:
     void cleanDialog();
     void updateTempFilesView(int state);
 
-    //library
+    // library
     void newSong();
-    void importSongs(const QStringList & songs);
+    void importSongs(const QStringList &songs);
     void importSongsDialog();
     void middleClicked(const QModelIndex &index = QModelIndex());
     void songEditor(const QModelIndex &index = QModelIndex());
@@ -163,10 +162,11 @@ private slots:
     void noDataNotification(const QDir &directory);
     void noSongbookDirectoryNotification();
 
-    //model
-    void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    // model
+    void selectedSongsChanged(const QModelIndex &topLeft,
+                              const QModelIndex &bottomRight);
 
-    //application
+    // application
     void preferences();
     void setToolBarDisplayed(bool);
     void setStatusBarDisplayed(bool);
@@ -180,7 +180,7 @@ private slots:
     void cancelProcess();
 
 private:
-    void readSettings(bool firstLaunch=false);
+    void readSettings(bool firstLaunch = false);
     void writeSettings();
 
     void createActions();
@@ -190,20 +190,20 @@ private:
     bool isToolBarDisplayed();
     bool isStatusBarDisplayed();
 
-    QItemSelectionModel * selectionModel();
+    QItemSelectionModel *selectionModel();
 
     // Models and views
     LibraryView *m_view;
     CSongbook *m_songbook;
     QSortFilterProxyModel *m_proxyModel;
-    QFileSystemModel* m_tempFilesmodel;
+    QFileSystemModel *m_tempFilesmodel;
 
     // Widgets
     CTabWidget *m_mainWidget;
     ProgressBar *m_progressBar;
-    CNotification *m_noDataInfo;
-    CNotification *m_noDatadirSet;
-    CNotification *m_updateAvailable;
+    Notification *m_noDataInfo;
+    Notification *m_noDatadirSet;
+    Notification *m_updateAvailable;
     QLabel *m_infoSelection;
     FilterLineEdit *m_filterLineEdit;
     QDockWidget *m_log;
@@ -234,7 +234,7 @@ private:
     QAction *m_buildAct;
     QAction *m_cleanAct;
     QAction *m_sbInfoAct;
-    CMakeSongbookProcess *m_builder;
+    MakeSongbookProcess *m_builder;
 
     // Library action
     QAction *m_newSongAct;
@@ -245,7 +245,7 @@ private:
     QAction *m_invertSelectionAct;
     QAction *m_libraryUpdateAct;
 
-    //Editor
+    // Editor
     CEditor *m_voidEditor;
     CSongHighlighter *m_songHighlighter;
 
@@ -256,4 +256,4 @@ public:
     const static QString _cachePath;
 };
 
-#endif  // __MAIN_WINDOW_HH__
+#endif // __MAIN_WINDOW_HH__

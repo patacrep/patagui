@@ -22,17 +22,18 @@
 #include <QToolButton>
 #include <QBoxLayout>
 
-ProgressBar::ProgressBar(QWidget* parent)
+ProgressBar::ProgressBar(QWidget *parent)
     : QWidget(parent)
     , m_progressBar(new QProgressBar(this))
     , m_cancelButton(new QToolButton(this))
     , m_cancelable(true)
 {
-    m_cancelButton->setIcon(QIcon::fromTheme("process-stop", QIcon(":/icons/tango/32x32/actions/process-stop.png")));
+    m_cancelButton->setIcon(QIcon::fromTheme(
+        "process-stop", QIcon(":/icons/tango/32x32/actions/process-stop.png")));
 
     connect(m_cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
 
-    QLayout* layout = new QHBoxLayout;
+    QLayout *layout = new QHBoxLayout;
     layout->addWidget(m_progressBar);
     layout->addWidget(m_cancelButton);
     setLayout(layout);
@@ -76,17 +77,8 @@ void ProgressBar::setRange(int start, int stop)
     m_progressBar->setRange(start, stop);
 }
 
-void ProgressBar::setValue(int value)
-{
-    m_progressBar->setValue(value);
-}
+void ProgressBar::setValue(int value) { m_progressBar->setValue(value); }
 
-bool ProgressBar::isCancelable() const
-{
-    return m_cancelable;
-}
+bool ProgressBar::isCancelable() const { return m_cancelable; }
 
-void ProgressBar::setCancelable(bool value)
-{
-    m_cancelable = value;
-}
+void ProgressBar::setCancelable(bool value) { m_cancelable = value; }

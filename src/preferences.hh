@@ -47,12 +47,12 @@ class ConfigDialog : public QDialog
 
 public:
     /// Constructor.
-    ConfigDialog(QWidget* parent=0);
+    ConfigDialog(QWidget *parent = 0);
 
     /*!
     Returns the parent widget (which is the main window of the application).
   */
-    MainWindow* parent() const;
+    MainWindow *parent() const;
 
 public slots:
     /*!
@@ -80,12 +80,12 @@ class Page : public QScrollArea
     Q_OBJECT
 public:
     /// Constructor.
-    Page(QWidget *parent=0);
+    Page(QWidget *parent = 0);
 
     /*!
     Returns the parent widget (which is the ConfigDialog object).
   */
-    ConfigDialog * parent() const;
+    ConfigDialog *parent() const;
 
     /*!
     Applies the layout \a layout to the current page.
@@ -117,7 +117,7 @@ class DisplayPage : public Page
 
 public:
     /// Constructor.
-    DisplayPage(QWidget *parent=0);
+    DisplayPage(QWidget *parent = 0);
 
 private:
     void readSettings();
@@ -147,7 +147,7 @@ class OptionsPage : public Page
 
 public:
     /// Constructor.
-    OptionsPage(QWidget *parent=0);
+    OptionsPage(QWidget *parent = 0);
 
 private slots:
     void checkSongbookPath(const QString &path);
@@ -180,7 +180,7 @@ class EditorPage : public Page
 
 public:
     /// Constructor.
-    EditorPage(QWidget *parent=0);
+    EditorPage(QWidget *parent = 0);
 
 private slots:
     void selectFont();
@@ -209,7 +209,7 @@ class NetworkPage : public Page
 
 public:
     /// Constructor.
-    NetworkPage(QWidget *parent=0);
+    NetworkPage(QWidget *parent = 0);
 
 private:
     void readSettings();
@@ -232,13 +232,13 @@ class SongbookPage : public Page
 
 public:
     /// Constructor.
-    SongbookPage(QWidget *parent=0);
+    SongbookPage(QWidget *parent = 0);
 
 private slots:
     void updatePropertyEditor();
 
 private:
-    QtGroupBoxPropertyBrowser * m_propertyEditor;
+    QtGroupBoxPropertyBrowser *m_propertyEditor;
     MainWindow *m_mainwindow;
 };
 

@@ -28,7 +28,7 @@ class QKeyEvent;
 class QCompleter;
 class CSongHighlighter;
 class Hunspell;
-class CSearchWidget;
+class SearchWidget;
 /*!
   \file song-code-editor.hh
   \class CSongCodeEditor
@@ -222,7 +222,7 @@ private:
 
     QCompleter* m_completer;
     CSongHighlighter* m_highlighter;
-    CSearchWidget *m_quickSearch;
+    SearchWidget *m_quickSearch;
 
     bool m_environmentsHighlighted;
     bool m_isSpellCheckAvailable;

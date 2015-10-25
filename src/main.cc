@@ -66,18 +66,18 @@ int main(int argc, char *argv[])
     // Check for a standard theme icon. If it does not exist, for
     // instance on MacOSX or Windows, fallback to one of the theme
     // provided in the ressource file.
-    if (!QIcon::hasThemeIcon("document-open"))
-    {
+    if (!QIcon::hasThemeIcon("document-open")) {
 #ifdef __APPLE__
         QIcon::setThemeName("macos");
-#else // __APPLE__
+#else  // __APPLE__
         QIcon::setThemeName("tango");
 #endif // __APPLE__
     }
 
     // Parse command line arguments
     QStringList arguments = QApplication::arguments();
-    bool helpFlag = false;;
+    bool helpFlag = false;
+
     bool versionFlag = false;
     if (arguments.contains("-h") || arguments.contains("--help"))
         helpFlag = true;
@@ -85,9 +85,11 @@ int main(int argc, char *argv[])
         versionFlag = true;
 
     // Localization
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8")) ;
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     QDir translationDirectory;
-    QString translationFilename = QString("songbook_%1.qm").arg(QLocale::system().name().split('_').first());
+    QString translationFilename =
+        QString("songbook_%1.qm")
+            .arg(QLocale::system().name().split('_').first());
     QString directory;
 
 #ifdef __APPLE__
@@ -111,29 +113,28 @@ int main(int argc, char *argv[])
     // the list of releases to get the update from.
     // TODO: add a check to ignore beta versions
     CocoaInitializer initializer;
-    AutoUpdater *updater = new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
+    AutoUpdater *updater =
+        new SparkleAutoUpdater("http://songbookclient.lmdb.eu/atom.xml");
     if (updater)
         updater->checkForUpdates();
     delete updater;
 #endif // USE_SPARKLE
 
-    if (helpFlag)
-    {
+    if (helpFlag) {
         QTextStream out(stdout);
-        out << "Usage: " << QApplication::applicationName() << "[OPTION]" << endl
+        out << "Usage: " << QApplication::applicationName() << "[OPTION]"
+            << endl
             << "Options:" << endl
-            << "    " << "-h, --help"
-            << "    " << "--version"
-            << " " << QApplication::applicationVersion()
-            << endl;
+            << "    "
+            << "-h, --help"
+            << "    "
+            << "--version"
+            << " " << QApplication::applicationVersion() << endl;
         return 0;
-    }
-    else if (versionFlag)
-    {
+    } else if (versionFlag) {
         QTextStream out(stdout);
-        out << QApplication::applicationName()
-            << " " << QApplication::applicationVersion()
-            << endl;
+        out << QApplication::applicationName() << " "
+            << QApplication::applicationVersion() << endl;
         return 0;
     }
 
@@ -141,14 +142,11 @@ int main(int argc, char *argv[])
     mainWindow.show();
 
     QStringList songsToBeImported;
-    foreach (const QString & arg, arguments)
-    {
-        if (arg.endsWith(".sb") && QFile(arg).exists())
-        {
+    foreach (const QString &arg, arguments) {
+        if (arg.endsWith(".sb") && QFile(arg).exists()) {
             mainWindow.open(arg);
         }
-        if (arg.endsWith(".sg") && QFile(arg).exists())
-        {
+        if (arg.endsWith(".sg") && QFile(arg).exists()) {
             songsToBeImported << arg;
             mainWindow.songEditor(arg);
         }

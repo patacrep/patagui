@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
+MakeSongbookProcess::MakeSongbookProcess(QObject *parent)
     : QObject(parent)
     , m_startMessage(tr("Processing"))
     , m_successMessage(tr("Success"))
@@ -35,146 +35,135 @@ CMakeSongbookProcess::CMakeSongbookProcess(QObject *parent)
     // Setup Python interpreter
     PythonQt::init(PythonQt::RedirectStdOut);
     pythonModule = PythonQt::self()->getMainModule();
-    // Redirect Std Out and Std Err to qDebug output through slot for easier debug.
-    connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)), SLOT(stdOut(QString)));
-    connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)), SLOT(stdErr(QString)));
+    // Redirect Std Out and Std Err to qDebug output through slot for easier
+    // debug.
+    connect(PythonQt::self(), SIGNAL(pythonStdOut(QString)),
+            SLOT(stdOut(QString)));
+    connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
+            SLOT(stdErr(QString)));
     // Import Python file containing all necessary functions and imports
     pythonModule.evalFile(":/python_scripts/songbook.py");
 }
 
-CMakeSongbookProcess::~CMakeSongbookProcess()
-{}
+MakeSongbookProcess::~MakeSongbookProcess() {}
 
-void CMakeSongbookProcess::stdOut(QString string)
+void MakeSongbookProcess::stdOut(QString string)
 {
     // Hack to simplify output
     if (!string.simplified().isEmpty()) {
-        emit message(string.simplified(),0);
+        emit message(string.simplified(), 0);
     }
 }
 
-void CMakeSongbookProcess::stdErr(QString string)
+void MakeSongbookProcess::stdErr(QString string)
 {
     // Hack to simplify output
     if (!string.simplified().isEmpty()) {
-        emit message("PY: " + string.simplified(),0);
+        emit message("PY: " + string.simplified(), 0);
         // qWarning() << string.simplified().toUtf8().constData();
     }
 }
 
-void CMakeSongbookProcess::execute()
+void MakeSongbookProcess::execute()
 {
     emit(aboutToStart());
     if (!m_songbook->filename().isEmpty()) {
         // Expose Songbook to python
         pythonModule.addObject("songbook", m_songbook);
         pythonModule.addObject("CPPprocess", this);
-        pythonModule.evalScript("setupSongbook(songbook.filename,'" + m_datadirs.first() + "')");
+        pythonModule.evalScript("setupSongbook(songbook.filename,'" +
+                                m_datadirs.first() + "')");
         pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
         // pythonModule.removeVariable("songbook");
-        emit(message("Finished Execution",0));
+        emit(message("Finished Execution", 0));
         emit(finished());
-    }
-    else{
-        emit(message("Error: no songbook loaded",0));
+    } else {
+        emit(message("Error: no songbook loaded", 0));
         emit(finished());
     }
 }
 
-const bool CMakeSongbookProcess::testPython()
+const bool MakeSongbookProcess::testPython()
 {
     QVariant patacrepVersion = pythonModule.call("testPatacrep");
-    if (patacrepVersion.toString()=="4.0.0")
-    {
-        emit message("Patacrep Found",0);
+    if (patacrepVersion.toString() == "4.0.0") {
+        emit message("Patacrep Found", 0);
         return true;
-    }
-    else
-    {
-        emit message("Patacrep Not Found",0);
+    } else {
+        emit message("Patacrep Not Found", 0);
         return false;
     }
 }
 
-void CMakeSongbookProcess::setSongbook(CSongbook *songbook)
+void MakeSongbookProcess::setSongbook(CSongbook *songbook)
 {
     m_songbook = songbook;
 }
 
-void CMakeSongbookProcess::setDatadirs(const QStringList &datadirs)
+void MakeSongbookProcess::setDatadirs(const QStringList &datadirs)
 {
     m_datadirs.append(datadirs);
 }
 
-void CMakeSongbookProcess::addDatadir(const QString &datadir)
+void MakeSongbookProcess::addDatadir(const QString &datadir)
 {
     m_datadirs.append(datadir);
 }
 
-void CMakeSongbookProcess::setStartMessage(const QString &message)
+void MakeSongbookProcess::setStartMessage(const QString &message)
 {
     m_startMessage = message;
 }
 
-void CMakeSongbookProcess::setSuccessMessage(const QString &message)
+void MakeSongbookProcess::setSuccessMessage(const QString &message)
 {
     m_successMessage = message;
 }
 
-void CMakeSongbookProcess::setErrorMessage(const QString &message)
+void MakeSongbookProcess::setErrorMessage(const QString &message)
 {
     m_errorMessage = message;
 }
 
-void CMakeSongbookProcess::setUrlToOpen(const QUrl &urlToOpen)
+void MakeSongbookProcess::setUrlToOpen(const QUrl &urlToOpen)
 {
     m_urlToOpen = urlToOpen;
 }
 
-void CMakeSongbookProcess::setWorkingDirectory(const QString &dir)
+void MakeSongbookProcess::setWorkingDirectory(const QString &dir)
 {
     pythonModule.evalScript("os.chdir('" + dir + "')");
 }
 
-void CMakeSongbookProcess::stopBuilding()
+void MakeSongbookProcess::stopBuilding()
 {
     pythonModule.evalScript("stopBuild()");
 }
 
-const CSongbook* CMakeSongbookProcess::songbook() const
-{
-    return m_songbook;
-}
+const CSongbook *MakeSongbookProcess::songbook() const { return m_songbook; }
 
-const QString & CMakeSongbookProcess::startMessage() const
+const QString &MakeSongbookProcess::startMessage() const
 {
     return m_startMessage;
 }
 
-const QString & CMakeSongbookProcess::successMessage() const
+const QString &MakeSongbookProcess::successMessage() const
 {
     return m_successMessage;
 }
 
-const QString & CMakeSongbookProcess::errorMessage() const
+const QString &MakeSongbookProcess::errorMessage() const
 {
     return m_errorMessage;
 }
 
-const QUrl & CMakeSongbookProcess::urlToOpen() const
-{
-    return m_urlToOpen;
-}
+const QUrl &MakeSongbookProcess::urlToOpen() const { return m_urlToOpen; }
 
-void CMakeSongbookProcess::onStarted()
-{
-    emit(message(startMessage(), 0));
-}
+void MakeSongbookProcess::onStarted() { emit(message(startMessage(), 0)); }
 
-void CMakeSongbookProcess::onFinished(int exitCode)
+void MakeSongbookProcess::onFinished(int exitCode)
 {
-    if (exitCode != 0)
-    {
+    if (exitCode != 0) {
         emit(message(errorMessage(), 0));
         return;
     }
@@ -184,12 +173,11 @@ void CMakeSongbookProcess::onFinished(int exitCode)
         return;
 
     emit(message(tr("Opening %1.").arg(urlToOpen().toString()), 1000));
-    if (!QFile(urlToOpen().toLocalFile()).exists())
-    {
-        qWarning() << tr("File [%1] does not exist.").arg(urlToOpen().toLocalFile());
+    if (!QFile(urlToOpen().toLocalFile()).exists()) {
+        qWarning() << tr("File [%1] does not exist.")
+                          .arg(urlToOpen().toLocalFile());
     }
-    if (!QDesktopServices::openUrl(urlToOpen()))
-    {
+    if (!QDesktopServices::openUrl(urlToOpen())) {
         qWarning() << tr("Can't open [%1].").arg(urlToOpen().toLocalFile());
     }
 }
