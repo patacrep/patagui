@@ -28,49 +28,49 @@
 class QAction;
 class QActionGroup;
 class QToolBar;
-class CLibrary;
-class CSongCodeEditor;
+class Library;
+class SongCodeEditor;
 class CSongHeaderEditor;
-class CSongHighlighter;
-class CFindReplaceDialog;
+class SongHighlighter;
+class FindReplaceDialog;
 class Hunspell;
 
 /*!
   \file song-editor.hh
-  \class CEditor
-  \brief CEditor is an abstract song editor.
+  \class Editor
+  \brief Editor is an abstract song editor.
 
-  A CEditor defines an editor that contains:
+  A Editor defines an editor that contains:
    \li a list of actions in a toolbar
    \li a highlighter to apply syntaxic coloration onto its contents
 */
-class CEditor : public QWidget
+class Editor : public QWidget
 {
     Q_OBJECT
 
 public:
     /// Constructor
-    CEditor(QWidget *parent = 0);
+    Editor(QWidget *parent = 0);
 
     /// Destructor
-    virtual ~CEditor();
+    virtual ~Editor();
 
     /*!
     Returns the toolbar of the editor.
   */
-    virtual QToolBar * toolBar() const;
+    virtual QToolBar *toolBar() const;
 
     /*!
     Returns a group that contains every action
     in the toolbar.
   */
-    virtual QActionGroup * actionGroup() const;
+    virtual QActionGroup *actionGroup() const;
 
     /*!
     Associates this editor with an \a highlighter
     that applies syntaxic coloration onto its contents
   */
-    virtual void setHighlighter(CSongHighlighter *highlighter);
+    virtual void setHighlighter(SongHighlighter *highlighter);
 
 protected:
     /// Save contents
@@ -107,7 +107,7 @@ protected:
     QAction *m_bridgeAct;
 
     /// Underline mispelled words
-    QAction* m_spellCheckingAct;
+    QAction *m_spellCheckingAct;
 
 protected:
     QActionGroup *m_actions;
@@ -116,37 +116,37 @@ protected:
 
 /*!
   \file song-editor.hh
-  \class CSongEditor
-  \brief CSongEditor is the widget that allows to write a song
+  \class SongEditor
+  \brief SongEditor is the widget that allows to write a song
 
-  A CSongEditor is embedded into a CTabWidget and is composed of:
+  A SongEditor is embedded into a TabWidget and is composed of:
    \li a CSongHeaderEditor that manages the song metadata
-   \li a CSongCodeEditor that manages the body of the song
+   \li a SongCodeEditor that manages the body of the song
 
   \image html song-editor.png
 
 */
-class CSongEditor : public CEditor
+class SongEditor : public Editor
 {
     Q_OBJECT
     Q_PROPERTY(bool newSong READ isNewSong WRITE setNewSong)
     Q_PROPERTY(bool newCover READ isNewCover WRITE setNewCover)
 
 public:
-    CSongEditor(QWidget *parent = 0);
-    ~CSongEditor();
+    SongEditor(QWidget *parent = 0);
+    ~SongEditor();
 
-    CLibrary * library() const;
+    Library *library() const;
 
     void readSettings();
     void writeSettings();
 
-    virtual void setHighlighter(CSongHighlighter *highlighter);
+    virtual void setHighlighter(SongHighlighter *highlighter);
 
-    Song & song();
+    Song &song();
     void setSong(const Song &song);
 
-    CSongCodeEditor * codeEditor() const;
+    SongCodeEditor *codeEditor() const;
 
     bool isModified() const;
     bool isNewSong() const;
@@ -154,8 +154,8 @@ public:
     //! Getter on the new cover property
     bool isNewCover() const;
 
-    virtual QToolBar * toolBar() const;
-    virtual QActionGroup * actionGroup() const;
+    virtual QToolBar *toolBar() const;
+    virtual QActionGroup *actionGroup() const;
 
     virtual bool isSpellCheckAvailable() const;
     virtual void setSpellCheckAvailable(const bool);
@@ -168,8 +168,8 @@ public slots:
     void setNewCover(bool newCover);
 
 #ifdef ENABLE_SPELLCHECK
-    void setDictionary(const QLocale & locale);
-#endif //ENABLE_SPELLCHECK
+    void setDictionary(const QLocale &locale);
+#endif // ENABLE_SPELLCHECK
 
     void toggleSpellCheckActive(bool);
 
@@ -181,7 +181,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-    //write modifications of the textEdit into sg file.
+    // write modifications of the textEdit into sg file.
     void save();
     void documentWasModified();
     void findReplaceDialog();
@@ -192,13 +192,12 @@ private:
     void saveNewSong();
 
     CSongHeaderEditor *m_songHeaderEditor;
-    CSongCodeEditor *m_codeEditor;
-    CFindReplaceDialog* m_findReplaceDialog;
+    SongCodeEditor *m_codeEditor;
+    FindReplaceDialog *m_findReplaceDialog;
 
     Song m_song;
     bool m_newSong;
     bool m_newCover;
 };
-
 
 #endif // __SONG_EDITOR_HH__

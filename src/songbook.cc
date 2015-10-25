@@ -41,8 +41,8 @@
 
 #include <QDebug>
 
-CSongbook::CSongbook(QObject *parent)
-    : CIdentityProxyModel(parent)
+Songbook::Songbook(QObject *parent)
+    : IdentityProxyModel(parent)
     , m_filename()
     , m_tmpl()
     , m_selectedSongs()
@@ -57,22 +57,13 @@ CSongbook::CSongbook(QObject *parent)
     setSourceModel(library());
 }
 
-CSongbook::~CSongbook()
-{
-    delete m_propertyManager;
-}
+Songbook::~Songbook() { delete m_propertyManager; }
 
-CLibrary * CSongbook::library() const
-{
-    return CLibrary::instance();
-}
+Library *Songbook::library() const { return Library::instance(); }
 
-QString CSongbook::filename() const
-{
-    return m_filename;
-}
+QString Songbook::filename() const { return m_filename; }
 
-void CSongbook::setFilename(const QString &filename)
+void Songbook::setFilename(const QString &filename)
 {
     m_filename = filename;
     // ensure the .sb extension is present
@@ -80,73 +71,61 @@ void CSongbook::setFilename(const QString &filename)
         m_filename += ".sb";
 }
 
-bool CSongbook::isModified()
-{
-    return m_modified;
-}
+bool Songbook::isModified() { return m_modified; }
 
-void CSongbook::setModified(bool modified)
+void Songbook::setModified(bool modified)
 {
     m_modified = modified;
     emit(wasModified(modified));
 }
 
-QString CSongbook::tmpl() const
-{
-    return m_tmpl;
-}
+QString Songbook::tmpl() const { return m_tmpl; }
 
-void CSongbook::setTmpl(const QString &tmpl)
+void Songbook::setTmpl(const QString &tmpl)
 {
-    int index =  library()->templates().indexOf(tmpl);
-    if (m_tmpl != tmpl && -1 != index)
-    {
+    int index = library()->templates().indexOf(tmpl);
+    if (m_tmpl != tmpl && -1 != index) {
         m_tmpl = tmpl;
         changeTemplate(tmpl);
         setModified(true);
     }
 }
 
-QStringList CSongbook::songs()
-{
-    return m_songs;
-}
+QStringList Songbook::songs() { return m_songs; }
 
-void CSongbook::setSongs(QStringList songs)
+void Songbook::setSongs(QStringList songs)
 {
-    if (m_songs != songs)
-    {
+    if (m_songs != songs) {
         setModified(true);
         m_songs = songs;
         emit(songsChanged());
     }
 }
 
-QStringList CSongbook::datadirs()
+QStringList Songbook::datadirs()
 {
     return QStringList(library()->directory().canonicalPath());
 }
 
-void CSongbook::setDatadirs(QStringList datadirs)
+void Songbook::setDatadirs(QStringList datadirs)
 {
-    if (m_datadirs != datadirs)
-    {
+    if (m_datadirs != datadirs) {
         m_datadirs = datadirs;
     }
 }
 
-void CSongbook::reset()
+void Songbook::reset()
 {
     setFilename(QString());
 
-    QMap< QString, QtVariantProperty* >::const_iterator it;
+    QMap<QString, QtVariantProperty *>::const_iterator it;
     for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
         it.value()->setValue(QVariant(""));
 
     setModified(false);
 }
 
-void CSongbook::changeTemplate(const QString & filename)
+void Songbook::changeTemplate(const QString &filename)
 {
     QString templateFilename("patacrep.tex");
     if (!filename.isEmpty())
@@ -156,12 +135,14 @@ void CSongbook::changeTemplate(const QString & filename)
 
     // reserved template parameters
     QStringList reservedParameters;
-    reservedParameters << "name" << "template" << "content";
+    reservedParameters << "name"
+                       << "template"
+                       << "content";
 
     // read template file
-    QFile file(QString("%1/templates/%2").arg(workingPath()).arg(templateFilename));
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    QFile file(
+        QString("%1/templates/%2").arg(workingPath()).arg(templateFilename));
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&file);
         in.setCodec("UTF-8");
         QRegExp jsonFilter("^%%:");
@@ -185,7 +166,8 @@ void CSongbook::changeTemplate(const QString & filename)
     QScriptSyntaxCheckResult res = QScriptEngine::checkSyntax(json);
     if (res.state() != QScriptSyntaxCheckResult::Valid)
     {
-        qDebug() << "CSongbook::changeTemplate : Error line "<< res.errorLineNumber()
+        qDebug() << "Songbook::changeTemplate : Error line "<<
+    res.errorLineNumber()
                  << " column " << res.errorColumnNumber()
                  << ":" << res.errorMessage();
         return;
@@ -208,7 +190,8 @@ void CSongbook::changeTemplate(const QString & filename)
 
         QMap< QString, QVariant > oldValues;
         {
-            QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
+            QMap< QString, QtVariantProperty* >::const_iterator it =
+    m_parameters.constBegin();
             while (it != m_parameters.constEnd())
             {
                 oldValues.insert(it.key(), it.value()->value());
@@ -226,7 +209,8 @@ void CSongbook::changeTemplate(const QString & filename)
 
         delete m_groupManager;
         m_groupManager = new QtGroupPropertyManager(this);
-        m_advancedParameters = m_groupManager->addProperty(tr("Advanced Parameters"));
+        m_advancedParameters = m_groupManager->addProperty(tr("Advanced
+    Parameters"));
 
         while (it.hasNext())
         {
@@ -283,9 +267,11 @@ void CSongbook::changeTemplate(const QString & filename)
                     m_propertyManager->setAttribute(item, "enumNames",
                                                     QVariant(stringValues));
                     // handle existing or default value in case of enum
-                    if (oldValue.isValid() && oldValue.type() == QVariant::String)
+                    if (oldValue.isValid() && oldValue.type() ==
+    QVariant::String)
                     {
-                        oldValue = QVariant(stringValues.indexOf(oldValue.toString()));
+                        oldValue =
+    QVariant(stringValues.indexOf(oldValue.toString()));
                     }
                 }
                 else if (propertyType == QtVariantPropertyManager::flagTypeId())
@@ -351,35 +337,30 @@ void CSongbook::changeTemplate(const QString & filename)
     */
 }
 
-void CSongbook::initializeEditor(QtGroupBoxPropertyBrowser *editor)
+void Songbook::initializeEditor(QtGroupBoxPropertyBrowser *editor)
 {
     editor->setFactoryForManager(m_propertyManager, new VariantFactory());
 
     QtProperty *item;
-    foreach(item, m_mandatoryParameters)
-    {
+    foreach (item, m_mandatoryParameters) {
         editor->addProperty(item);
     }
 }
 
-void CSongbook::save(const QString & filename)
+void Songbook::save(const QString &filename)
 {
     // get the song list in the correct format from the selected songs
     songsFromSelection();
     // write the songbook
     QFile file(filename);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         // Start Json Objecy and fill it
         QJsonObject json;
         // TODO Check Template insertion
-        if (!tmpl().isEmpty())
-        {
-            json.insert("template",tmpl());
-        }
-        else
-        {
-            json.insert("template","patacrep.tex");
+        if (!tmpl().isEmpty()) {
+            json.insert("template", tmpl());
+        } else {
+            json.insert("template", "patacrep.tex");
         }
         json.insert("lang", "french");
         // Book Options
@@ -387,19 +368,19 @@ void CSongbook::save(const QString & filename)
         bookoptions.append("diagram");
         // bookoptions.append("lilypond");
         bookoptions.append("pictures");
-        json.insert("bookoptions",bookoptions);
+        json.insert("bookoptions", bookoptions);
         // Authwords
         QJsonObject authwords;
-        authwords.insert("sep","");
-        json.insert("authwords",authwords);
+        authwords.insert("sep", "");
+        json.insert("authwords", authwords);
         // Datadirs. For now, only library path, later maybe other paths.
-        json.insert("datadir",library()->directory().absolutePath());
+        json.insert("datadir", library()->directory().absolutePath());
         // Songs
         QJsonArray songlist;
         foreach (QString song, songs()) {
             songlist.append(song);
         }
-        json.insert("content",songlist);
+        json.insert("content", songlist);
         file.write(QJsonDocument(json).toJson());
 
         file.close();
@@ -412,14 +393,17 @@ void CSongbook::save(const QString & filename)
         out << "{\n";
         out << "\"template\" : \"patacrep.tex\",\n";
         out << "\"lang\" : \"french\",\n";
-        out << "\"bookoptions\" : [\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
+        out << "\"bookoptions\" :
+        [\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
         out << "\"authwords\" : {\"sep\" : []},\n";
-        out << "\"datadir\" : \""<< library()->directory().absolutePath() << "\",\n";
+        out << "\"datadir\" : \""<< library()->directory().absolutePath() <<
+        "\",\n";
 
         if (!tmpl().isEmpty())
             out << "\"template\" : \"" << tmpl() << "\",\n";
 
-        QMap< QString, QtVariantProperty* >::const_iterator it = m_parameters.constBegin();
+        QMap< QString, QtVariantProperty* >::const_iterator it =
+        m_parameters.constBegin();
         QtProperty *property;
         int type;
         QVariant value;
@@ -513,20 +497,19 @@ void CSongbook::save(const QString & filename)
             ++it;
         }
 
-        out << "\"content\" : [\n    \"" << (songs().join("\",\n    \"")) << "\"\n  ]\n}\n";
+        out << "\"content\" : [\n    \"" << (songs().join("\",\n    \"")) <<
+        "\"\n  ]\n}\n";
         */
 
-    }
-    else{
+    } else {
         qWarning() << "Could not open File: " + filename;
     }
 }
 
-void CSongbook::load(const QString & filename)
+void Songbook::load(const QString &filename)
 {
     QFile file(filename);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         // Read File
         QByteArray rawData = file.readAll();
 
@@ -538,13 +521,12 @@ void CSongbook::load(const QString & filename)
         QJsonObject json = doc.object();
 
         // load data into this object
-        if (!json.isEmpty())// i.e. JsonObject is valid, parsing went fine
+        if (!json.isEmpty()) // i.e. JsonObject is valid, parsing went fine
         {
             QJsonValue jsonvalue;
             // template property
             jsonvalue = json.value("template");
-            if (!(jsonvalue.isNull()))
-            {
+            if (!(jsonvalue.isNull())) {
                 setTmpl(jsonvalue.toString());
             }
 
@@ -553,33 +535,30 @@ void CSongbook::load(const QString & filename)
             QtVariantProperty *property;
             int type;
             QVariant value;
-            QMap< QString, QtVariantProperty* >::const_iterator it;
-            for (it = m_parameters.constBegin(); it != m_parameters.constEnd(); ++it)
-            {
+            QMap<QString, QtVariantProperty *>::const_iterator it;
+            for (it = m_parameters.constBegin(); it != m_parameters.constEnd();
+                 ++it) {
                 jsonvalue = json.value(it.key());
-                if (!(jsonvalue.isNull()))
-                {
+                if (!(jsonvalue.isNull())) {
                     property = it.value();
                     type = m_propertyManager->propertyType(property);
                     value = jsonvalue.toVariant();
                     QVariant stringValues;
 
-                    if (type == QtVariantPropertyManager::enumTypeId())
-                    {
-                        stringValues = m_propertyManager->attributeValue(property, "enumNames");
-                        value = QVariant(stringValues.toStringList().indexOf(value.toString()));
-                    }
-                    else if (type == QtVariantPropertyManager::flagTypeId())
-                    {
-                        stringValues = m_propertyManager->attributeValue(property, "flagNames");
+                    if (type == QtVariantPropertyManager::enumTypeId()) {
+                        stringValues = m_propertyManager->attributeValue(
+                            property, "enumNames");
+                        value = QVariant(stringValues.toStringList().indexOf(
+                            value.toString()));
+                    } else if (type == QtVariantPropertyManager::flagTypeId()) {
+                        stringValues = m_propertyManager->attributeValue(
+                            property, "flagNames");
                         QStringList flagValues = stringValues.toStringList();
                         QStringList activatedFlags = value.toStringList();
                         int flags = 0;
                         int index = 1;
-                        for (int i = 0; i < flagValues.size(); ++i)
-                        {
-                            if (activatedFlags.contains(flagValues.at(i)))
-                            {
+                        for (int i = 0; i < flagValues.size(); ++i) {
+                            if (activatedFlags.contains(flagValues.at(i))) {
                                 flags |= index;
                             }
                             index *= 2;
@@ -593,24 +572,20 @@ void CSongbook::load(const QString & filename)
 
             // songs property (if not an array, the value can be "all")
             jsonvalue = json.value("content");
-            if (!jsonvalue.isNull())
-            {
+            if (!jsonvalue.isNull()) {
                 QStringList items;
-                if (!jsonvalue.isArray())
-                {
-                    qDebug() << "CSongbook::load : not implemented yet";
-                }
-                else
-                {
+                if (!jsonvalue.isArray()) {
+                    qDebug() << "Songbook::load : not implemented yet";
+                } else {
                     // Convert QVariantList to QStringList by casting one by one
-                    foreach (QVariant var, jsonvalue.toArray().toVariantList()) {
+                    foreach (QVariant var,
+                             jsonvalue.toArray().toVariantList()) {
                         items << var.toString();
                     }
                 }
                 setSongs(items);
             }
-        }
-        else{
+        } else {
             // TODO Treat error properly
             qDebug() << error.errorString();
         }
@@ -619,86 +594,77 @@ void CSongbook::load(const QString & filename)
         file.close();
         setModified(false);
         setFilename(filename);
-    }
-    else
-    {
+    } else {
         // TODO Transfer error message to mainwindow
-        qWarning() << "CSongbook::load : unable to open file in read mode";
+        qWarning() << "Songbook::load : unable to open file in read mode";
     }
 }
 
-QString CSongbook::workingPath() const
+QString Songbook::workingPath() const
 {
     return library()->directory().canonicalPath();
 }
 
-bool CSongbook::isChecked(const QModelIndex &index)
+bool Songbook::isChecked(const QModelIndex &index)
 {
     return m_selectedSongs[index.row()];
 }
 
-void CSongbook::setChecked(const QModelIndex &index, bool checked)
+void Songbook::setChecked(const QModelIndex &index, bool checked)
 {
-    if (isChecked(index) != checked)
-    {
+    if (isChecked(index) != checked) {
         m_selectedSongs[index.row()] = checked;
         emit(dataChanged(index, index));
     }
 }
 
-void CSongbook::toggle(const QModelIndex &index)
+void Songbook::toggle(const QModelIndex &index)
 {
     m_selectedSongs[index.row()] = !m_selectedSongs[index.row()];
     emit(dataChanged(index, index));
 }
 
-void CSongbook::checkAll()
+void Songbook::checkAll()
 {
-    for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
+    for (int i = 0; i < m_selectedSongs.size(); ++i) {
         m_selectedSongs[i] = true;
     }
-    emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+    emit(dataChanged(index(0, 0), index(m_selectedSongs.size() - 1, 0)));
 }
 
-void CSongbook::uncheckAll()
+void Songbook::uncheckAll()
 {
-    for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
+    for (int i = 0; i < m_selectedSongs.size(); ++i) {
         m_selectedSongs[i] = false;
     }
-    emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+    emit(dataChanged(index(0, 0), index(m_selectedSongs.size() - 1, 0)));
 }
 
-void CSongbook::toggleAll()
+void Songbook::toggleAll()
 {
-    for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
+    for (int i = 0; i < m_selectedSongs.size(); ++i) {
         m_selectedSongs[i] = !m_selectedSongs[i];
     }
-    emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+    emit(dataChanged(index(0, 0), index(m_selectedSongs.size() - 1, 0)));
 }
 
-int CSongbook::selectedCount() const
+int Songbook::selectedCount() const
 {
     int count = 0;
-    for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
+    for (int i = 0; i < m_selectedSongs.size(); ++i) {
         if (m_selectedSongs[i])
             count++;
     }
     return count;
 }
 
-void CSongbook::songsFromSelection()
+void Songbook::songsFromSelection()
 {
     m_songs.clear();
     QString song;
-    for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
-        if (m_selectedSongs[i])
-        {
-            song = data(index(i,0), CLibrary::RelativePathRole).toString();
+    for (int i = 0; i < m_selectedSongs.size(); ++i) {
+        if (m_selectedSongs[i]) {
+            song = data(index(i, 0), Library::RelativePathRole).toString();
 #ifdef Q_WS_WIN
             song.replace("\\", "/");
 #endif
@@ -707,69 +673,67 @@ void CSongbook::songsFromSelection()
     }
 }
 
-void CSongbook::songsToSelection()
+void Songbook::songsToSelection()
 {
     if (m_songs.isEmpty())
         uncheckAll();
 
-    for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
+    for (int i = 0; i < m_selectedSongs.size(); ++i) {
         m_selectedSongs[i] = false;
-        if (m_songs.contains(data(index(i,0), CLibrary::RelativePathRole).toString()))
+        if (m_songs.contains(
+                data(index(i, 0), Library::RelativePathRole).toString()))
             m_selectedSongs[i] = true;
     }
-    emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+    emit(dataChanged(index(0, 0), index(m_selectedSongs.size() - 1, 0)));
 }
 
-void CSongbook::selectLanguages(const QStringList &languages)
+void Songbook::selectLanguages(const QStringList &languages)
 {
-    for (int i = 0; i < m_selectedSongs.size(); ++i)
-    {
+    for (int i = 0; i < m_selectedSongs.size(); ++i) {
         m_selectedSongs[i] = false;
-        if (languages.contains(data(index(i,0), CLibrary::LanguageRole).toString()))
+        if (languages.contains(
+                data(index(i, 0), Library::LanguageRole).toString()))
             m_selectedSongs[i] = true;
     }
-    emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
+    emit(dataChanged(index(0, 0), index(m_selectedSongs.size() - 1, 0)));
 }
 
-QVariant CSongbook::data(const QModelIndex &index, int role) const
+QVariant Songbook::data(const QModelIndex &index, int role) const
 {
-    if (index.column() == 0 && role == Qt::CheckStateRole)
-    {
+    if (index.column() == 0 && role == Qt::CheckStateRole) {
         return (m_selectedSongs[index.row()] ? Qt::Checked : Qt::Unchecked);
     }
-    return CIdentityProxyModel::data(index, role);
+    return IdentityProxyModel::data(index, role);
 }
 
-Qt::ItemFlags CSongbook::flags(const QModelIndex &index) const
+Qt::ItemFlags Songbook::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::NoItemFlags;
-    return Qt::ItemIsUserCheckable | CIdentityProxyModel::flags(index);
+    return Qt::ItemIsUserCheckable | IdentityProxyModel::flags(index);
 }
 
-bool CSongbook::setData(const QModelIndex &index, const QVariant &value, int role)
+bool Songbook::setData(const QModelIndex &index, const QVariant &value,
+                       int role)
 {
-    if (index.column() == 0 && role == Qt::CheckStateRole)
-    {
+    if (index.column() == 0 && role == Qt::CheckStateRole) {
         m_selectedSongs[index.row()] = value.toBool();
         emit(dataChanged(index, index));
         return true;
     }
-    return CIdentityProxyModel::setData(index, value, role);
+    return IdentityProxyModel::setData(index, value, role);
 }
 
-void CSongbook::sourceModelAboutToBeReset()
+void Songbook::sourceModelAboutToBeReset()
 {
     songsFromSelection();
     beginResetModel();
 }
 
-void CSongbook::sourceModelReset()
+void Songbook::sourceModelReset()
 {
     m_selectedSongs.clear();
-    for (int i = 0; i < sourceModel()->rowCount(); ++i)
-    {
+    for (int i = 0; i < sourceModel()->rowCount(); ++i) {
         m_selectedSongs << false;
     }
     songsToSelection();

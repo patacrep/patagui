@@ -30,7 +30,7 @@
 #ifdef ENABLE_LIBRARY_DOWNLOAD
 #include <QSslError>
 #include <QTime>
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 class QLabel;
 class QRadioButton;
@@ -43,38 +43,38 @@ class QLineEdit;
 class QNetworkAccessManager;
 class QNetworkReply;
 
-class CProgressBar;
-class CFileChooser;
-class CMainWindow;
+class ProgressBar;
+class FileChooser;
+class MainWindow;
 
 /*!
   \file import-dialog.hh
-  \class CImportDialog
-  \brief CImportDialog is a dialog to import songs in the library.
+  \class ImportDialog
+  \brief ImportDialog is a dialog to import songs in the library.
 
   Songs may be imported from local (.sg) files or from a remote url.
 
   \image html import-dialog01.png
   \image html import-dialog02.png
 */
-class CImportDialog : public QDialog
+class ImportDialog : public QDialog
 {
     Q_OBJECT
 public:
     /// Constructor.
-    CImportDialog(QWidget *parent = 0);
+    ImportDialog(QWidget *parent = 0);
 
     /// Destructor.
-    virtual ~CImportDialog();
+    virtual ~ImportDialog();
 
     void readSettings();
     void writeSettings();
 
-    CProgressBar* progressBar() const;
-    void showMessage(const QString & message);
+    ProgressBar *progressBar() const;
+    void showMessage(const QString &message);
 
-    CMainWindow* parent() const;
-    void setParent(CMainWindow* parent);
+    MainWindow *parent() const;
+    void setParent(MainWindow *parent);
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
     void initDownload();
@@ -108,14 +108,14 @@ public slots:
     void downloadProgress(qint64 bytesRead, qint64 totalBytes);
 
     void cancelDownload();
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
 private slots:
     bool acceptDialog();
-    void checkLibraryPath(const QString & path);
-    void onRadioButtonClicked(QAbstractButton*);
+    void checkLibraryPath(const QString &path);
+    void onRadioButtonClicked(QAbstractButton *);
     void onUrlChanged(const QString &);
-    void openItem(QListWidgetItem*);
+    void openItem(QListWidgetItem *);
     void addFiles();
     void removeFiles();
 
@@ -126,8 +126,8 @@ private:
     void setLocalSubWidgetsVisible(const bool value);
     void setNetworkSubWidgetsVisible(const bool value);
 
-    CMainWindow *m_parent;
-    CFileChooser *m_libraryPath;
+    MainWindow *m_parent;
+    FileChooser *m_libraryPath;
     QLabel *m_libraryPathValid;
 
     QRadioButton *m_fromLocalButton;
@@ -156,7 +156,7 @@ private:
     QNetworkAccessManager *m_manager;
     QNetworkReply *m_reply;
     QTime m_downloadTime;
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 };
 
 #endif // __IMPORT_DIALOG_HH

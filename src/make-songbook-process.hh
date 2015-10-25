@@ -28,8 +28,8 @@
 
 /*!
   \file make-songbook-process.hh
-  \class CMakeSongbookProcess
-  \brief CMakeSongbookProcess calls songbook's external processes.
+  \class MakeSongbookProcess
+  \brief MakeSongbookProcess calls songbook's external processes.
 
   Three processes can be called:
 
@@ -39,18 +39,20 @@
 
   These commands are defined in preferences.hh.
   For Linux platforms, it directly uses makefile (with or without arguments).
-  For MacOS and Windows platforms, it uses specific scripts that are respectively located
-  into windows/ and macos/ subdirectories of the songbook directory.
+  For MacOS and Windows platforms, it uses specific scripts that are
+  respectively located into windows/ and macos/ subdirectories of the songbook
+  directory.
 */
 
-class CMakeSongbookProcess : public QObject
+class MakeSongbookProcess : public QObject
 {
     Q_OBJECT
-//    Q_PROPERTY(QString songbook READ songbook WRITE setSongbook)
-//    Q_PROPERTY(QStringList datadirs READ datadirs WRITE setDatadirs)
+    //    Q_PROPERTY(QString songbook READ songbook WRITE setSongbook)
+    //    Q_PROPERTY(QStringList datadirs READ datadirs WRITE setDatadirs)
 
     Q_PROPERTY(QString startMessage READ startMessage WRITE setStartMessage)
-    Q_PROPERTY(QString successMessage READ successMessage WRITE setSuccessMessage)
+    Q_PROPERTY(
+        QString successMessage READ successMessage WRITE setSuccessMessage)
     Q_PROPERTY(QString errorMessage READ errorMessage WRITE setErrorMessage)
 
     Q_PROPERTY(QUrl urlToOpen READ urlToOpen WRITE setUrlToOpen)
@@ -68,7 +70,7 @@ public slots:
     Set the songbook to compile.
     \sa execute
   */
-    void setSongbook(CSongbook* songbook);
+    void setSongbook(Songbook *songbook);
 
     /*!
     Set the datadirs
@@ -90,14 +92,16 @@ public slots:
     void setStartMessage(const QString &message);
 
     /*!
-    Sets the \a message that should displayed when the process successfully exits.
+    Sets the \a message that should displayed when the process successfully
+    exits.
     The message is displayed within the status bar.
     \sa successMessage, setStartMessage, setErrorMessage
   */
     void setSuccessMessage(const QString &message);
 
     /*!
-    Sets the \a message that should displayed when the process exits with failure.
+    Sets the \a message that should displayed when the process exits with
+    failure.
     The message is displayed within the status bar.
     \sa errorMessage, setStartMessage, setSuccessMessage
   */
@@ -110,51 +114,53 @@ public slots:
   */
     void setUrlToOpen(const QUrl &url);
 
-   /*!
-    Stop the build
-  */
+    /*!
+     Stop the build
+   */
     void stopBuilding();
 
 public:
     /// Constructor.
-    CMakeSongbookProcess(QObject *parent = 0);
+    MakeSongbookProcess(QObject *parent = 0);
 
     /// Destructor.
-    virtual ~CMakeSongbookProcess();
+    virtual ~MakeSongbookProcess();
 
     /*!
     Return the songbook to compile.
     \sa setSongbook
   */
-    const CSongbook* songbook() const;
+    const Songbook *songbook() const;
 
     /*!
     Return the datadirs
     \sa setDatadirs,addDatadir
   */
-    const QStringList & datadirs() const;
+    const QStringList &datadirs() const;
 
     /*!
     Returns the message that is displayed when the process starts.
     \sa setStartMessage
   */
-    const QString & startMessage() const;
+    const QString &startMessage() const;
 
-    /*! Returns the message that is displayed when the process successfully exits.
+    /*! Returns the message that is displayed when the process successfully
+    exits.
     \sa setSuccessMessage
   */
-    const QString & successMessage() const;
+    const QString &successMessage() const;
 
     /*!
     Returns the message that is displayed when the process exits with failure.
     \sa setErrorMessage
   */
-    const QString & errorMessage() const;
+    const QString &errorMessage() const;
 
-    /*! Returns the url that should be opened when the process successfully exits.
+    /*! Returns the url that should be opened when the process successfully
+    exits.
     \sa setUrlToOpen
   */
-    const QUrl & urlToOpen() const;
+    const QUrl &urlToOpen() const;
 
     /*! Sets Working directory for process
   */
@@ -172,7 +178,8 @@ signals:
     void aboutToStart();
 
     /*!
-    Emits a \a message when the process starts and exits after a delay of \a timeout.
+    Emits a \a message when the process starts and exits after a delay of \a
+    timeout.
     \sa startMessage, successMessage, errorMessage
   */
     void message(const QString &message, int timeout);
@@ -201,7 +208,7 @@ private slots:
     void stdErr(QString string);
 
 private:
-    CSongbook* m_songbook;
+    Songbook *m_songbook;
     QStringList m_datadirs;
     QString m_startMessage;
     QString m_successMessage;

@@ -27,7 +27,7 @@
 
 #include <QtVariantProperty>
 
-class CLibrary;
+class Library;
 class QWidget;
 class QComboBox;
 class QtGroupBoxPropertyBrowser;
@@ -35,23 +35,25 @@ class QtGroupPropertyManager;
 
 /*!
   \file songbook.hh
-  \class CSongbook
-  \brief CSongbook is the model representing a songbook
+  \class Songbook
+  \brief Songbook is the model representing a songbook
 
   A songbook is a composed of a list of songs and a set of options
   that defines its PDF output.
 
-  A CSongbook class extracts the list of selected songs in CLibraryView,
-  manages all the songbook options through the QtGroupBoxPropertyBrowser framework,
+  A Songbook class extracts the list of selected songs in LibraryView,
+  manages all the songbook options through the QtGroupBoxPropertyBrowser
+  framework,
   and can be saved/loaded as a .sb file.
 
   LaTeX options than can be used within a songbook are defined in a template
   file (.tex) that is located in the songbook application's template/ directory.
 */
-class CSongbook : public CIdentityProxyModel
+class Songbook : public IdentityProxyModel
 {
     Q_OBJECT
-    Q_PROPERTY(bool modified READ isModified WRITE setModified NOTIFY wasModified)
+    Q_PROPERTY(
+        bool modified READ isModified WRITE setModified NOTIFY wasModified)
     Q_PROPERTY(QString filename READ filename WRITE setFilename)
     Q_PROPERTY(QString tmpl READ tmpl WRITE setTmpl)
     Q_PROPERTY(QStringList songs READ songs WRITE setSongs)
@@ -142,10 +144,10 @@ public slots:
 
 public:
     /// Constructor.
-    CSongbook(QObject *parent);
+    Songbook(QObject *parent);
 
     /// Destructor.
-    ~CSongbook();
+    ~Songbook();
 
     /*!
     Returns the absolute path to the songbook directory.
@@ -156,7 +158,7 @@ public:
     Returns the library.
     \sa setLibrary
   */
-    CLibrary * library() const;
+    Library *library() const;
 
     /*!
     Returns the filename of the songbook file (.sb).
@@ -201,7 +203,8 @@ public:
     QStringList songs();
 
     /*!
-    Returns \a true if this songbook has unsaved modifications; \a false otherwise.
+    Returns \a true if this songbook has unsaved modifications; \a false
+    otherwise.
     \sa setModified
   */
     bool isModified();
@@ -212,13 +215,16 @@ public:
     void initializeEditor(QtGroupBoxPropertyBrowser *editor);
 
     /*!
-    Returns true if the song at position \a index is checked; \a false otherwise.
+    Returns true if the song at position \a index is checked; \a false
+    otherwise.
   */
     bool isChecked(const QModelIndex &index);
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual QVariant data(const QModelIndex &index,
+                          int role = Qt::DisplayRole) const;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    virtual bool setData(const QModelIndex &index, const QVariant &value,
+                         int role = Qt::EditRole);
 
 signals:
     void wasModified(bool modified);
@@ -233,7 +239,7 @@ private:
     QString m_tmpl;
     QStringList m_datadirs;
 
-    QList< bool > m_selectedSongs;
+    QList<bool> m_selectedSongs;
     QStringList m_songs;
 
     bool m_modified;
@@ -241,9 +247,9 @@ private:
     QtVariantPropertyManager *m_propertyManager;
     QtGroupPropertyManager *m_groupManager;
 
-    QMap< QString, QtVariantProperty* > m_parameters;
+    QMap<QString, QtVariantProperty *> m_parameters;
 
-    QList< QtProperty*> m_mandatoryParameters;
+    QList<QtProperty *> m_mandatoryParameters;
     QtProperty *m_advancedParameters;
 };
 

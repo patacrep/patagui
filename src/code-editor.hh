@@ -97,31 +97,33 @@ private:
     bool m_lineNumberMode;
 };
 
-
 /**
  * \file code-editor.hh
  * \class LineNumberArea
- * \brief LineNumberArea is the part of a CodeEditor that displays the lines numbers
+ * \brief LineNumberArea is the part of a CodeEditor that displays the lines
+ * numbers
  */
 class LineNumberArea : public QWidget
 {
 public:
-    LineNumberArea(CodeEditor *editor) : QWidget(editor) {
+    LineNumberArea(CodeEditor *editor) : QWidget(editor)
+    {
         codeEditor = editor;
     }
 
-    QSize sizeHint() const {
+    QSize sizeHint() const
+    {
         return QSize(codeEditor->lineNumberAreaWidth(), 0);
     }
 
 protected:
-    void paintEvent(QPaintEvent *event) {
+    void paintEvent(QPaintEvent *event)
+    {
         codeEditor->lineNumberAreaPaintEvent(event);
     }
 
 private:
     CodeEditor *codeEditor;
 };
-
 
 #endif

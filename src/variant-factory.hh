@@ -30,32 +30,34 @@
 
 #include "qtvariantproperty.h"
 
-class CFileChooser;
+class FileChooser;
 class QSpinBox;
 
 class VariantFactory : public QtVariantEditorFactory
 {
     Q_OBJECT
 public:
-    VariantFactory(QObject *parent = 0)
-        : QtVariantEditorFactory(parent)
-    { }
+    VariantFactory(QObject *parent = 0) : QtVariantEditorFactory(parent) {}
 
     virtual ~VariantFactory();
+
 protected:
     virtual void connectPropertyManager(QtVariantPropertyManager *manager);
-    virtual QWidget *createEditor(QtVariantPropertyManager *manager, QtProperty *property,
-                                  QWidget *parent);
+    virtual QWidget *createEditor(QtVariantPropertyManager *manager,
+                                  QtProperty *property, QWidget *parent);
     virtual void disconnectPropertyManager(QtVariantPropertyManager *manager);
 private slots:
     void slotPropertyChanged(QtProperty *property, const QVariant &value);
-    void slotPropertyAttributeChanged(QtProperty *property, const QString &attribute, const QVariant &value);
+    void slotPropertyAttributeChanged(QtProperty *property,
+                                      const QString &attribute,
+                                      const QVariant &value);
     void slotSetValue(const QString &value);
     void slotSetIntValue(int);
     void slotEditorDestroyed(QObject *object);
+
 private:
-    QMap<QtProperty *, QList<CFileChooser *> > theCreatedEditors;
-    QMap<CFileChooser *, QtProperty *> theEditorToProperty;
+    QMap<QtProperty *, QList<FileChooser *> > theCreatedEditors;
+    QMap<FileChooser *, QtProperty *> theEditorToProperty;
     QMap<QtProperty *, QList<QSpinBox *> > theCreatedSpinBoxes;
     QMap<QSpinBox *, QtProperty *> theSpinBoxToProperty;
 };

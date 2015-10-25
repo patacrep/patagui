@@ -155,7 +155,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
     songInformationLayout->addLayout(additionalInformationLayout);
     songInformationLayout->addStretch();
 
-    m_diagramArea = new CDiagramArea(this);
+    m_diagramArea = new DiagramArea(this);
     m_diagramArea->setRowCount(1);
     m_diagramArea->setReadOnly(false);
     connect(m_diagramArea, SIGNAL(contentsChanged()),
@@ -277,7 +277,7 @@ LineEdit * CSongHeaderEditor::artistLineEdit() const
 
 void CSongHeaderEditor::setLibraryCompleters()
 {
-    CLibrary *library = CLibrary::instance();
+    Library *library = Library::instance();
     QCompleter *completer = new QCompleter;
     completer->setModel(library->artistCompletionModel());
     completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -414,11 +414,11 @@ void CSongHeaderEditor::onDiagramsChanged()
 {
     song().gtabs = QStringList();
     song().utabs = QStringList();
-    foreach (CChord *chord, m_diagramArea->chords())
+    foreach (Chord *chord, m_diagramArea->chords())
     {
-        if (chord->instrument() == CChord::Guitar)
+        if (chord->instrument() == Chord::Guitar)
             song().gtabs << chord->toString();
-        else if (chord->instrument() == CChord::Ukulele)
+        else if (chord->instrument() == Chord::Ukulele)
             song().utabs << chord->toString();
     }
     emit(contentsChanged());

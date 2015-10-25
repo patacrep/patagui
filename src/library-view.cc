@@ -25,8 +25,7 @@
 
 #include <QDebug>
 
-CLibraryView::CLibraryView(CMainWindow *parent)
-    : QTableView(parent)
+LibraryView::LibraryView(MainWindow *parent) : QTableView(parent)
 {
     setStyleSheet(" QTableView {margin: -1px -1px}");
     setShowGrid(false);
@@ -42,15 +41,14 @@ CLibraryView::CLibraryView(CMainWindow *parent)
     createActions();
 }
 
-CLibraryView::~CLibraryView()
-{}
+LibraryView::~LibraryView() {}
 
-CMainWindow* CLibraryView::parent() const
+MainWindow *LibraryView::parent() const
 {
-    return qobject_cast< CMainWindow* >(QTableView::parent());
+    return qobject_cast<MainWindow *>(QTableView::parent());
 }
 
-void CLibraryView::readSettings()
+void LibraryView::readSettings()
 {
     QSettings settings;
     settings.beginGroup("display");
@@ -64,36 +62,32 @@ void CLibraryView::readSettings()
     settings.endGroup();
 }
 
-void CLibraryView::writeSettings()
-{
-}
+void LibraryView::writeSettings() {}
 
-void CLibraryView::update()
+void LibraryView::update()
 {
     sortByColumn(0, Qt::AscendingOrder);
     sortByColumn(1, Qt::AscendingOrder);
 }
 
-void CLibraryView::createActions()
+void LibraryView::createActions()
 {
-    connect(this, SIGNAL(doubleClicked(const QModelIndex &)),
-            parent(), SLOT(songEditor(const QModelIndex &)));
+    connect(this, SIGNAL(doubleClicked(const QModelIndex &)), parent(),
+            SLOT(songEditor(const QModelIndex &)));
 
-    connect(this, SIGNAL(pressed(const QModelIndex &)),
-            parent(), SLOT(middleClicked(const QModelIndex &)));
+    connect(this, SIGNAL(pressed(const QModelIndex &)), parent(),
+            SLOT(middleClicked(const QModelIndex &)));
 
-    QAction* action = new QAction(tr("Edit"), this);
-    connect(action, SIGNAL(triggered()),
-            parent(), SLOT(songEditor()));
+    QAction *action = new QAction(tr("Edit"), this);
+    connect(action, SIGNAL(triggered()), parent(), SLOT(songEditor()));
     addAction(action);
 
     action = new QAction(tr("Delete"), this);
-    connect(action, SIGNAL(triggered()),
-            parent(), SLOT(deleteSong()));
+    connect(action, SIGNAL(triggered()), parent(), SLOT(deleteSong()));
     addAction(action);
 }
 
-void CLibraryView::resizeColumns()
+void LibraryView::resizeColumns()
 {
     horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);

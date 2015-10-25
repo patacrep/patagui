@@ -26,13 +26,12 @@
 #include <QBrush>
 #include <QRegExp>
 
-
 class QPainter;
 
 /*!
   \file chord.hh
-  \class CChord
-  \brief CChord is an object representing a guitar/ukulele chord
+  \class Chord
+  \brief Chord is an object representing a guitar/ukulele chord
 
   A chord has a text and a graphical representation.
 
@@ -53,12 +52,13 @@ class QPainter;
   \image html chord.png
 
 */
-class CChord : public QObject
+class Chord : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
-    Q_PROPERTY(QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
+    Q_PROPERTY(
+        QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
 
 public:
     /*!
@@ -66,8 +66,8 @@ public:
     This enum type indicates the number of strings of an instrumuent.
   */
     enum StringCount {
-        GuitarStringCount=6, /*!< guitar: 6 */
-        UkuleleStringCount=4 /*!< ukulele: 4 */
+        GuitarStringCount = 6, /*!< guitar: 6 */
+        UkuleleStringCount = 4 /*!< ukulele: 4 */
     };
 
     /*!
@@ -80,10 +80,10 @@ public:
     };
 
     /// Constructor.
-    CChord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
+    Chord(const QString &chord = "\\gtab{}{0:}", QObject *parent = 0);
 
     /// Destructor.
-    ~CChord();
+    ~Chord();
 
     /*!
     Returns true if the chord is valid; false otherwise. A valid
@@ -102,13 +102,13 @@ public:
     Builds a chord from a string.
     \sa toString
   */
-    void fromString(const QString & gtab);
+    void fromString(const QString &gtab);
 
     /*!
     Returns the graphical representation (diagram) of the chord.
     \sa toString
   */
-    QPixmap* toPixmap();
+    QPixmap *toPixmap();
 
     /*!
     Returns the chord name.
@@ -169,25 +169,25 @@ public slots:
     Sets the chord name \a name.
     \sa chord
   */
-    void setName(const QString & name);
+    void setName(const QString &name);
 
     /*!
     Sets the strings \a strings.
     \sa strings
   */
-    void setStrings(const QString & strings);
+    void setStrings(const QString &strings);
 
     /*!
     Sets the fret number \a fret.
     \sa fret
   */
-    void setFret(const QString & fret);
+    void setFret(const QString &fret);
 
     /*!
     Sets the instrument \a instrument.
     \sa type
   */
-    void setInstrument(const Instrument & instrument);
+    void setInstrument(const Instrument &instrument);
 
     /*!
     Toggle instrument between Guitar and Ukulele if \a value is true.
@@ -223,7 +223,7 @@ signals:
     void instrumentChanged();
 
 private:
-    void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
+    void fillEllipse(QPainter *painter, const QRect &rect, const QBrush &brush);
 
     Instrument m_instrument;
     QString m_name;

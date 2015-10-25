@@ -24,7 +24,7 @@
 
 #ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 
 #include <QtGlobal>
 #include <QSettings>
@@ -43,96 +43,111 @@
 #include <QAction>
 #include <QMenu>
 
-const QColor CSongCodeEditor::_verseColor(_TangoChameleon1.lighter(180));
-const QColor CSongCodeEditor::_chorusColor(_TangoOrange1.lighter(160));
-const QColor CSongCodeEditor::_bridgeColor(_TangoSkyBlue1.lighter(170));
-const QColor CSongCodeEditor::_scriptureColor(_TangoPlum1.lighter(170));
+const QColor SongCodeEditor::_verseColor(_TangoChameleon1.lighter(180));
+const QColor SongCodeEditor::_chorusColor(_TangoOrange1.lighter(160));
+const QColor SongCodeEditor::_bridgeColor(_TangoSkyBlue1.lighter(170));
+const QColor SongCodeEditor::_scriptureColor(_TangoPlum1.lighter(170));
 
-const QStringList CSongCodeEditor::_completerWordList = QStringList()
-        << "\\begin{verse}" << "\\end{verse}"
-        << "\\begin{verse*}" << "\\end{verse*}"
-        << "\\begin{chorus}" << "\\end{chorus}"
-        << "\\begin{bridge}" << "\\end{bridge}"
-        << "\\begin{repeatedchords}" << "\\end{repeatedchords}"
-        << "\\beginscripture" << "\\endscripture"
-        << "\\rep"      << "\\echo"
-        << "\\image"    <<  "\\nolyrics"
-        << "\\musicnote" << "\\textnote"
-        << "\\dots"  << "\\lilypond"
-        << "\\Intro" << "\\Rythm"
-        << "\\Outro" << "\\Bridge"
-        << "\\Verse" << "\\Chorus"
-        << "\\Pattern" << "\\Solo"
-        << "\\Adlib" << "\\emph"
-        << "\\ifchorded" << "\\ifnorepeatchords"
-        << "\\else" << "\\fi";
+const QStringList SongCodeEditor::_completerWordList =
+    QStringList() << "\\begin{verse}"
+                  << "\\end{verse}"
+                  << "\\begin{verse*}"
+                  << "\\end{verse*}"
+                  << "\\begin{chorus}"
+                  << "\\end{chorus}"
+                  << "\\begin{bridge}"
+                  << "\\end{bridge}"
+                  << "\\begin{repeatedchords}"
+                  << "\\end{repeatedchords}"
+                  << "\\beginscripture"
+                  << "\\endscripture"
+                  << "\\rep"
+                  << "\\echo"
+                  << "\\image"
+                  << "\\nolyrics"
+                  << "\\musicnote"
+                  << "\\textnote"
+                  << "\\dots"
+                  << "\\lilypond"
+                  << "\\Intro"
+                  << "\\Rythm"
+                  << "\\Outro"
+                  << "\\Bridge"
+                  << "\\Verse"
+                  << "\\Chorus"
+                  << "\\Pattern"
+                  << "\\Solo"
+                  << "\\Adlib"
+                  << "\\emph"
+                  << "\\ifchorded"
+                  << "\\ifnorepeatchords"
+                  << "\\else"
+                  << "\\fi";
 
-CSongCodeEditor::CSongCodeEditor(QWidget *parent)
+SongCodeEditor::SongCodeEditor(QWidget *parent)
     : CodeEditor(parent)
     , m_completer(0)
     , m_highlighter(0)
-    , m_quickSearch(new CSearchWidget(this))
+    , m_quickSearch(new SearchWidget(this))
     , m_environmentsHighlighted(true)
     , m_isSpellCheckAvailable(false)
-    #ifdef ENABLE_SPELLCHECK
+#ifdef ENABLE_SPELLCHECK
     , m_maxSuggestedWords(0)
-    #endif
+#endif
 {
-    connect(this, SIGNAL(cursorPositionChanged()), SLOT(highlightEnvironments()));
+    connect(this, SIGNAL(cursorPositionChanged()),
+            SLOT(highlightEnvironments()));
     m_completer = new QCompleter(_completerWordList, this);
     m_completer->setWidget(this);
     m_completer->setCompletionMode(QCompleter::PopupCompletion);
-    QObject::connect(m_completer, SIGNAL(activated(QString)),
-                     this, SLOT(insertCompletion(QString)));
+    QObject::connect(m_completer, SIGNAL(activated(QString)), this,
+                     SLOT(insertCompletion(QString)));
 
     readSettings();
 }
 
-CSongCodeEditor::~CSongCodeEditor()
+SongCodeEditor::~SongCodeEditor()
 {
     delete m_completer;
     delete m_quickSearch;
 }
 
-void CSongCodeEditor::readSettings()
+void SongCodeEditor::readSettings()
 {
     QSettings settings;
     settings.beginGroup("editor");
 
     QFont font;
     QString fontstr = settings.value("font", QString()).toString();
-    if (fontstr.isEmpty())
-    {
-        font = QFont("Monospace",11);
+    if (fontstr.isEmpty()) {
+        font = QFont("Monospace", 11);
         font.setStyleHint(QFont::TypeWriter, QFont::PreferAntialias);
     }
 
     font.fromString(fontstr);
     setFont(font);
 
-    setEnvironmentsHighlighted(settings.value("color-environments", true).toBool());
+    setEnvironmentsHighlighted(
+        settings.value("color-environments", true).toBool());
     setHighlightMode(settings.value("highlight", true).toBool());
     setLineNumberMode(settings.value("lines", true).toBool());
 
 #ifdef ENABLE_SPELLCHECK
     m_maxSuggestedWords = settings.value("maxSuggestedWords", 5).toUInt();
-    for (uint i = 0; i < m_maxSuggestedWords; ++i)
-    {
+    for (uint i = 0; i < m_maxSuggestedWords; ++i) {
         QAction *action = new QAction(this);
         action->setVisible(false);
         connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
         m_misspelledWordsActs.append(action);
     }
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 
     settings.endGroup();
 }
 
-void CSongCodeEditor::writeSettings()
-{
-}
+void SongCodeEditor::writeSettings() {}
 
-void CSongCodeEditor::setHighlighter(CSongHighlighter *highlighter)
+void SongCodeEditor::setHighlighter(SongHighlighter *highlighter)
 {
     if (!highlighter)
         return;
@@ -152,29 +167,32 @@ void CSongCodeEditor::setHighlighter(CSongHighlighter *highlighter)
         previousDocument->setModified(state);
 
     if (first)
-        connect(this, SIGNAL(wordAdded(const QString&)),
-                m_highlighter, SLOT(addWord(const QString&)));
+        connect(this, SIGNAL(wordAdded(const QString &)), m_highlighter,
+                SLOT(addWord(const QString &)));
 }
 
-void CSongCodeEditor::insertVerse()
+void SongCodeEditor::insertVerse()
 {
     QString selection = textCursor().selectedText();
-    insertPlainText(QString("\n\\begin{verse}\n%1\n\\end{verse}\n").arg(selection)  );
+    insertPlainText(
+        QString("\n\\begin{verse}\n%1\n\\end{verse}\n").arg(selection));
 }
 
-void CSongCodeEditor::insertChorus()
+void SongCodeEditor::insertChorus()
 {
     QString selection = textCursor().selectedText();
-    insertPlainText(QString("\n\\begin{chorus}\n%1\n\\end{chorus}\n").arg(selection)  );
+    insertPlainText(
+        QString("\n\\begin{chorus}\n%1\n\\end{chorus}\n").arg(selection));
 }
 
-void CSongCodeEditor::insertBridge()
+void SongCodeEditor::insertBridge()
 {
     QString selection = textCursor().selectedText();
-    insertPlainText(QString("\n\\begin{bridge}\n%1\n\\end{bridge}\n").arg(selection)  );
+    insertPlainText(
+        QString("\n\\begin{bridge}\n%1\n\\end{bridge}\n").arg(selection));
 }
 
-void CSongCodeEditor::insertCompletion(const QString& completion)
+void SongCodeEditor::insertCompletion(const QString &completion)
 {
     Q_ASSERT(completer()->widget() == this);
     QTextCursor cursor = textCursor();
@@ -183,57 +201,52 @@ void CSongCodeEditor::insertCompletion(const QString& completion)
     setTextCursor(cursor);
 }
 
-QString CSongCodeEditor::textUnderCursor() const
+QString SongCodeEditor::textUnderCursor() const
 {
     QTextCursor tc = textCursor();
     if (tc.atBlockStart())
         return QString();
 
     static QSet<QChar> delimiters;
-    if ( delimiters.isEmpty() )
-    {
-        delimiters.insert( QChar::fromLatin1(',') );
-        delimiters.insert( QChar::fromLatin1('!') );
-        delimiters.insert( QChar::fromLatin1('?') );
-        delimiters.insert( QChar::fromLatin1('.') );
-        delimiters.insert( QChar::fromLatin1(';') );
-        delimiters.insert( QChar::fromLatin1('{') );
-        delimiters.insert( QChar::fromLatin1('}') );
+    if (delimiters.isEmpty()) {
+        delimiters.insert(QChar::fromLatin1(','));
+        delimiters.insert(QChar::fromLatin1('!'));
+        delimiters.insert(QChar::fromLatin1('?'));
+        delimiters.insert(QChar::fromLatin1('.'));
+        delimiters.insert(QChar::fromLatin1(';'));
+        delimiters.insert(QChar::fromLatin1('{'));
+        delimiters.insert(QChar::fromLatin1('}'));
     }
 
     tc.anchor();
-    while ( 1 )
-    {
-        // the '-1' comes from the TextCursor always being placed between characters
+    while (1) {
+        // the '-1' comes from the TextCursor always being placed between
+        // characters
         int pos = tc.position() - 1;
-        if ( pos < 0 )
+        if (pos < 0)
             break;
 
         QChar ch = document()->characterAt(pos);
-        if ( ch.isSpace() || delimiters.contains(ch) )
+        if (ch.isSpace() || delimiters.contains(ch))
             break;
 
         if (tc.atBlockStart())
             break;
 
-        tc.movePosition( QTextCursor::Left, QTextCursor::KeepAnchor );
+        tc.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor);
     }
     return tc.selectedText().trimmed();
 }
 
-void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
+void SongCodeEditor::keyPressEvent(QKeyEvent *event)
 {
-    if (m_quickSearch->isVisible() && event->key() == Qt::Key_Escape)
-    {
+    if (m_quickSearch->isVisible() && event->key() == Qt::Key_Escape) {
         m_quickSearch->hide();
         setFocus();
         return;
-    }
-    else if (completer() && completer()->popup()->isVisible())
-    {
+    } else if (completer() && completer()->popup()->isVisible()) {
         // The following keys are forwarded by the completer to the widget
-        switch (event->key())
-        {
+        switch (event->key()) {
         case Qt::Key_Enter:
         case Qt::Key_Return:
         case Qt::Key_Escape:
@@ -244,19 +257,19 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
         default:
             break;
         }
-    }
-    else if (event->key() == Qt::Key_Tab)
-    {
+    } else if (event->key() == Qt::Key_Tab) {
         indentSelection();
         return;
     }
 
-
-    bool isShortcut = ((event->modifiers() & Qt::ControlModifier) && event->key() == Qt::Key_Space); // CTRL+Space
-    if (!completer() || !isShortcut) // do not process the shortcut when we have a completer
+    bool isShortcut = ((event->modifiers() & Qt::ControlModifier) &&
+                       event->key() == Qt::Key_Space); // CTRL+Space
+    if (!completer() ||
+        !isShortcut) // do not process the shortcut when we have a completer
         QPlainTextEdit::keyPressEvent(event);
 
-    const bool ctrlOrShift = event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
+    const bool ctrlOrShift =
+        event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
     if (!completer() || (ctrlOrShift && event->text().isEmpty()))
         return;
 
@@ -265,31 +278,31 @@ void CSongCodeEditor::keyPressEvent(QKeyEvent *event)
     bool hasModifier = (event->modifiers() != Qt::NoModifier) && !ctrlOrShift;
     QString completionPrefix = textUnderCursor();
 
-    if (!isShortcut && (hasModifier || event->text().isEmpty() || completionPrefix.length() < 1
-                        || eow.contains(event->text().right(1))))
-    {
+    if (!isShortcut && (hasModifier || event->text().isEmpty() ||
+                        completionPrefix.length() < 1 ||
+                        eow.contains(event->text().right(1)))) {
         completer()->popup()->hide();
         return;
     }
 
-    if (completionPrefix != completer()->completionPrefix())
-    {
+    if (completionPrefix != completer()->completionPrefix()) {
         completer()->setCompletionPrefix(completionPrefix);
-        completer()->popup()->setCurrentIndex(completer()->completionModel()->index(0, 0));
+        completer()->popup()->setCurrentIndex(
+            completer()->completionModel()->index(0, 0));
     }
     QRect cr = cursorRect();
-    cr.setWidth(completer()->popup()->sizeHintForColumn(0)
-                + completer()->popup()->verticalScrollBar()->sizeHint().width());
+    cr.setWidth(completer()->popup()->sizeHintForColumn(0) +
+                completer()->popup()->verticalScrollBar()->sizeHint().width());
     completer()->complete(cr); // popup it up!
 }
 
-void CSongCodeEditor::resizeEvent(QResizeEvent *event)
+void SongCodeEditor::resizeEvent(QResizeEvent *event)
 {
     m_quickSearch->move(width() - 345, 4);
     CodeEditor::resizeEvent(event);
 }
 
-void CSongCodeEditor::toggleQuickSearch()
+void SongCodeEditor::toggleQuickSearch()
 {
     m_quickSearch->setVisible(!m_quickSearch->isVisible());
     if (m_quickSearch->isVisible())
@@ -298,7 +311,7 @@ void CSongCodeEditor::toggleQuickSearch()
         setFocus();
 }
 
-void CSongCodeEditor::highlightEnvironments()
+void SongCodeEditor::highlightEnvironments()
 {
     if (!environmentsHighlighted())
         return;
@@ -307,14 +320,13 @@ void CSongCodeEditor::highlightEnvironments()
     QTextCursor cursor(document());
     QStringList lines = toPlainText().split("\n");
     QList<QTextEdit::ExtraSelection> extraSelections;
-    foreach (QString line, lines)
-    {
+    foreach (QString line, lines) {
         if (line.contains("\\begin") && !line.contains("repeatedchords"))
             environment = true;
 
-        if (environment && line.contains("\\end"))
-        {
-            cursor.movePosition(QTextCursor::NextBlock, QTextCursor::KeepAnchor);
+        if (environment && line.contains("\\end")) {
+            cursor.movePosition(QTextCursor::NextBlock,
+                                QTextCursor::KeepAnchor);
 
             if (line.contains("verse"))
                 extraSelections.append(environmentSelection(Verse, cursor));
@@ -325,22 +337,24 @@ void CSongCodeEditor::highlightEnvironments()
             else if (line.contains("scripture"))
                 extraSelections.append(environmentSelection(Scripture, cursor));
 
-            cursor.movePosition(QTextCursor::PreviousBlock, QTextCursor::KeepAnchor);
+            cursor.movePosition(QTextCursor::PreviousBlock,
+                                QTextCursor::KeepAnchor);
             environment = false;
         }
-        cursor.movePosition(QTextCursor::NextBlock, environment?
-                                QTextCursor::KeepAnchor : QTextCursor::MoveAnchor);
+        cursor.movePosition(QTextCursor::NextBlock,
+                            environment ? QTextCursor::KeepAnchor
+                                        : QTextCursor::MoveAnchor);
     }
     extraSelections.append(currentLineSelection());
     setExtraSelections(extraSelections);
 }
 
-QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnvironment & env,
-                                                                const QTextCursor & cursor)
+QTextEdit::ExtraSelection
+SongCodeEditor::environmentSelection(const SongEnvironment &env,
+                                     const QTextCursor &cursor)
 {
     QColor backgroundColor;
-    switch(env)
-    {
+    switch (env) {
     case Verse:
         backgroundColor = _verseColor;
         break;
@@ -363,13 +377,12 @@ QTextEdit::ExtraSelection CSongCodeEditor::environmentSelection(const SongEnviro
     return selection;
 }
 
-void CSongCodeEditor::indent()
+void SongCodeEditor::indent()
 {
     QTextCursor cursor = textCursor();
     cursor.beginEditBlock();
     cursor.movePosition(QTextCursor::Start);
-    while (!cursor.atEnd())
-    {
+    while (!cursor.atEnd()) {
         indentLine(cursor);
         cursor.movePosition(QTextCursor::NextBlock);
         cursor.movePosition(QTextCursor::EndOfBlock);
@@ -377,24 +390,22 @@ void CSongCodeEditor::indent()
     cursor.endEditBlock();
 }
 
-void CSongCodeEditor::indentSelection()
+void SongCodeEditor::indentSelection()
 {
     QTextCursor cursor = textCursor();
     cursor.beginEditBlock();
     QTextCursor it = textCursor();
     it.setPosition(cursor.anchor());
 
-    //swap such as the cursor "it" always points
-    //to the beginning of the selection
-    if (it > cursor)
-    {
+    // swap such as the cursor "it" always points
+    // to the beginning of the selection
+    if (it > cursor) {
         it.setPosition(cursor.position());
         cursor.setPosition(cursor.anchor());
     }
 
     it.movePosition(QTextCursor::StartOfBlock);
-    while (it <= cursor)
-    {
+    while (it <= cursor) {
         indentLine(it);
         it.movePosition(QTextCursor::EndOfBlock);
         if (!it.atEnd())
@@ -405,66 +416,61 @@ void CSongCodeEditor::indentSelection()
     cursor.endEditBlock();
 }
 
-void CSongCodeEditor::indentLine(const QTextCursor & cur)
+void SongCodeEditor::indentLine(const QTextCursor &cur)
 {
-    if (cur.atStart())
-    {
+    if (cur.atStart()) {
         trimLine(cur);
         return;
     }
 
-    //get the previous non void line
+    // get the previous non void line
     QTextCursor cursor(cur);
     QString prevLine;
-    do
-    {
+    do {
         if (cursor.atStart())
             return;
         cursor.movePosition(QTextCursor::Up);
         prevLine = cursor.block().text();
-    }
-    while (cursor.block().text().trimmed().isEmpty());
+    } while (cursor.block().text().trimmed().isEmpty());
 
-    //deduce column from previous line
+    // deduce column from previous line
     int spaces = 0;
-    while (prevLine.startsWith(" "))
-    {
-        prevLine.remove(0,1);
+    while (prevLine.startsWith(" ")) {
+        prevLine.remove(0, 1);
         ++spaces;
     }
-    int index = spaces/2;
+    int index = spaces / 2;
 
-    //add indentation level if previous line begins with \begin
+    // add indentation level if previous line begins with \begin
     if (prevLine.startsWith("\\begin"))
         ++index;
 
     cursor = cur;
-    cursor.movePosition (QTextCursor::StartOfBlock);
-    //remove indentation level if current line begins with \end
-    if (cursor.block().text().contains("\\end") && index!=0)
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    // remove indentation level if current line begins with \end
+    if (cursor.block().text().contains("\\end") && index != 0)
         --index;
 
-    //performs the correct indentation
+    // performs the correct indentation
     trimLine(cursor);
     for (int i = 0; i < index; ++i)
         cursor.insertText("  ");
 }
 
-void CSongCodeEditor::trimLine(const QTextCursor & cur)
+void SongCodeEditor::trimLine(const QTextCursor &cur)
 {
     QTextCursor cursor(cur);
     QString str = cursor.block().text();
-    while (str.startsWith(" "))
-    {
+    while (str.startsWith(" ")) {
         cursor.deleteChar();
-        str  = cursor.block().text();
+        str = cursor.block().text();
         if (str.isEmpty())
             break;
     }
 }
 
 #ifdef ENABLE_SPELLCHECK
-void CSongCodeEditor::setDictionary(const QString & dictionary)
+void SongCodeEditor::setDictionary(const QString &dictionary)
 {
     if (!highlighter())
         return;
@@ -472,22 +478,21 @@ void CSongCodeEditor::setDictionary(const QString & dictionary)
     highlighter()->setDictionary(dictionary);
 }
 
-QString CSongCodeEditor::currentWord()
+QString SongCodeEditor::currentWord()
 {
     QTextCursor cursor = cursorForPosition(m_lastPos);
     QString word = cursor.block().text();
     int pos = cursor.columnNumber();
-    int end = word.indexOf(QRegExp("\\W+"),pos);
-    int begin = word.left(pos).lastIndexOf(QRegExp("\\W+"),pos);
-    word = word.mid(begin+1,end-begin-1);
+    int end = word.indexOf(QRegExp("\\W+"), pos);
+    int begin = word.left(pos).lastIndexOf(QRegExp("\\W+"), pos);
+    word = word.mid(begin + 1, end - begin - 1);
     return word;
 }
 
-void CSongCodeEditor::correctWord()
+void SongCodeEditor::correctWord()
 {
     QAction *action = qobject_cast<QAction *>(sender());
-    if (action)
-    {
+    if (action) {
         QString replacement = action->text();
         QTextCursor cursor = cursorForPosition(m_lastPos);
         cursor.select(QTextCursor::WordUnderCursor);
@@ -496,33 +501,32 @@ void CSongCodeEditor::correctWord()
     }
 }
 
-QStringList CSongCodeEditor::getWordPropositions(const QString &word)
+QStringList SongCodeEditor::getWordPropositions(const QString &word)
 {
     if (!checker())
         return QStringList();
 
     QStringList wordList;
     QByteArray encodedString;
-    QString spell_encoding=QString(checker()->get_dic_encoding());
+    QString spell_encoding = QString(checker()->get_dic_encoding());
     QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
     encodedString = codec->fromUnicode(word);
 
     if (checker()->spell(encodedString.data()))
         return wordList;
 
-    char ** wlst;
+    char **wlst;
     int ns = checker()->suggest(&wlst, encodedString.data());
-    if (ns > 0)
-    {
-        for (int i=0; i < ns; i++)
+    if (ns > 0) {
+        for (int i = 0; i < ns; i++)
             wordList.append(codec->toUnicode(wlst[i]));
         checker()->free_list(&wlst, ns);
     }
     return wordList;
 }
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 
-void CSongCodeEditor::contextMenuEvent(QContextMenuEvent *event)
+void SongCodeEditor::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu *menu = createStandardContextMenu();
 
@@ -538,18 +542,15 @@ void CSongCodeEditor::contextMenuEvent(QContextMenuEvent *event)
     menu->addAction(action);
 
 #ifdef ENABLE_SPELLCHECK
-    if (isSpellCheckActive())
-    {
+    if (isSpellCheckActive()) {
         menu->addSeparator();
         QMenu *spellMenu = new QMenu(tr("Suggestions"));
-        m_lastPos=event->pos();
+        m_lastPos = event->pos();
         QString str = currentWord();
         QStringList list = getWordPropositions(str);
         int size = qMin(m_maxSuggestedWords, (uint)list.size());
-        if (!list.isEmpty())
-        {
-            for (int i = 0; i < size; ++i)
-            {
+        if (!list.isEmpty()) {
+            for (int i = 0; i < size; ++i) {
                 m_misspelledWordsActs[i]->setText(list[i].trimmed());
                 m_misspelledWordsActs[i]->setVisible(true);
                 spellMenu->addAction(m_misspelledWordsActs[i]);
@@ -560,14 +561,14 @@ void CSongCodeEditor::contextMenuEvent(QContextMenuEvent *event)
             menu->addMenu(spellMenu);
         }
     }
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 
     menu->exec(event->globalPos());
     delete menu;
 }
 
 #ifdef ENABLE_SPELLCHECK
-void CSongCodeEditor::ignoreWord()
+void SongCodeEditor::ignoreWord()
 {
     QString str = currentWord();
     QByteArray encodedString;
@@ -578,11 +579,11 @@ void CSongCodeEditor::ignoreWord()
     emit wordAdded(str);
 }
 
-void CSongCodeEditor::addWord()
+void SongCodeEditor::addWord()
 {
     QString str = currentWord();
     QByteArray encodedString;
-    QString spell_encoding=QString(checker()->get_dic_encoding());
+    QString spell_encoding = QString(checker()->get_dic_encoding());
     QTextCodec *codec = QTextCodec::codecForName(spell_encoding.toLatin1());
     encodedString = codec->fromUnicode(str);
     checker()->add(encodedString.data());
@@ -590,7 +591,7 @@ void CSongCodeEditor::addWord()
     emit wordAdded(str);
 }
 
-Hunspell* CSongCodeEditor::checker() const
+Hunspell *SongCodeEditor::checker() const
 {
     if (!highlighter())
         return 0;
@@ -598,9 +599,9 @@ Hunspell* CSongCodeEditor::checker() const
     return highlighter()->checker();
 }
 
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 
-void CSongCodeEditor::commentSelection()
+void SongCodeEditor::commentSelection()
 {
     QTextCursor cursor = textCursor();
     cursor.beginEditBlock();
@@ -613,7 +614,7 @@ void CSongCodeEditor::commentSelection()
     cursor.endEditBlock();
 }
 
-void CSongCodeEditor::uncommentSelection()
+void SongCodeEditor::uncommentSelection()
 {
     QTextCursor cursor = textCursor();
     cursor.beginEditBlock();
@@ -621,7 +622,7 @@ void CSongCodeEditor::uncommentSelection()
     QStringList uncommentedSelection;
     foreach (QString line, selection)
         if (line.trimmed().startsWith("%"))
-            uncommentedSelection << line.trimmed().remove(0,1);
+            uncommentedSelection << line.trimmed().remove(0, 1);
         else
             uncommentedSelection << line;
     cursor.removeSelectedText();
@@ -629,18 +630,18 @@ void CSongCodeEditor::uncommentSelection()
     cursor.endEditBlock();
 }
 
-bool CSongCodeEditor::isSpellCheckAvailable() const
+bool SongCodeEditor::isSpellCheckAvailable() const
 {
     return m_isSpellCheckAvailable;
 }
 
-void CSongCodeEditor::setSpellCheckAvailable(const bool value)
+void SongCodeEditor::setSpellCheckAvailable(const bool value)
 {
     m_isSpellCheckAvailable = value;
 }
 
 #ifdef ENABLE_SPELLCHECK
-bool CSongCodeEditor::isSpellCheckActive() const
+bool SongCodeEditor::isSpellCheckActive() const
 {
     if (!highlighter())
         return false;
@@ -649,32 +650,25 @@ bool CSongCodeEditor::isSpellCheckActive() const
 }
 #endif // ENABLE_SPELLCHECK
 
-void CSongCodeEditor::setSpellCheckActive(const bool value)
+void SongCodeEditor::setSpellCheckActive(const bool value)
 {
 #ifdef ENABLE_SPELLCHECK
-    if (isSpellCheckAvailable() && highlighter())
-    {
+    if (isSpellCheckAvailable() && highlighter()) {
         highlighter()->setSpellCheckActive(value);
     }
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 }
 
-CSongHighlighter * CSongCodeEditor::highlighter() const
-{
-    return m_highlighter;
-}
+SongHighlighter *SongCodeEditor::highlighter() const { return m_highlighter; }
 
-QCompleter * CSongCodeEditor::completer() const
-{
-    return m_completer;
-}
+QCompleter *SongCodeEditor::completer() const { return m_completer; }
 
-bool CSongCodeEditor::environmentsHighlighted() const
+bool SongCodeEditor::environmentsHighlighted() const
 {
     return m_environmentsHighlighted;
 }
 
-void CSongCodeEditor::setEnvironmentsHighlighted(bool value)
+void SongCodeEditor::setEnvironmentsHighlighted(bool value)
 {
     m_environmentsHighlighted = value;
 }

@@ -26,14 +26,14 @@
 
 /*!
   \file song-sort-filter-proxy-model.hh
-  \class CSongSortFilterProxyModel
-  \brief CSongSortFilterProxyModel implements custom sort and filter
-  operations for CLibraryView.
+  \class SongSortFilterProxyModel
+  \brief SongSortFilterProxyModel implements custom sort and filter
+  operations for LibraryView.
 
   Allows one to filter the library. Song items are only displayed if
   the match the filter from their artist, title, or album fields.
 */
-class CSongSortFilterProxyModel : public QSortFilterProxyModel
+class SongSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 
@@ -85,19 +85,22 @@ public slots:
     /*!
     Add a negative \a language filter. For instance, "!:en" hides songs
     that are written in english.
-    \sa insertLanguageFilter, removeNegativeLanguageFilter, clearNegativeLanguageFilter
+    \sa insertLanguageFilter, removeNegativeLanguageFilter,
+    clearNegativeLanguageFilter
   */
     void insertNegativeLanguageFilter(const QLocale::Language &language);
 
     /*!
     Removes a negative \a language filter.
-    \sa removesLanguageFilter, insertNegativeLanguageFilter, clearNegativeLanguageFilter
+    \sa removesLanguageFilter, insertNegativeLanguageFilter,
+    clearNegativeLanguageFilter
   */
     void removeNegativeLanguageFilter(const QLocale::Language &language);
 
     /*!
     Removes all negative language filters.
-    \sa clearLanguageFilter, insertNegativeLanguageFilter, removeNegativeLanguageFilter
+    \sa clearLanguageFilter, insertNegativeLanguageFilter,
+    removeNegativeLanguageFilter
   */
     void clearNegativeLanguageFilter();
 
@@ -108,10 +111,10 @@ public slots:
 
 public:
     /// Constructor.
-    CSongSortFilterProxyModel(QObject *parent = 0);
+    SongSortFilterProxyModel(QObject *parent = 0);
 
     /// Destructor.
-    ~CSongSortFilterProxyModel();
+    ~SongSortFilterProxyModel();
 
     /*!
     Returns the filter.
@@ -123,24 +126,26 @@ public:
     Returns language filters.
     \sa insertLanguageFilter, removeLanguageFilter, clearLanguageFilter
   */
-    const QSet< QLocale::Language > & languageFilter() const;
+    const QSet<QLocale::Language> &languageFilter() const;
 
     /*!
     Returns negative language filters.
-    \sa insertNegativeLanguageFilter, removeNegativeLanguageFilter, clearNegativeLanguageFilter
+    \sa insertNegativeLanguageFilter, removeNegativeLanguageFilter,
+    clearNegativeLanguageFilter
   */
-    const QSet< QLocale::Language > & negativeLanguageFilter() const;
+    const QSet<QLocale::Language> &negativeLanguageFilter() const;
 
     /*!
     Returns the keywordFilter.
     \sa setKeywordFilter
   */
-    const QStringList & keywordFilter() const;
+    const QStringList &keywordFilter() const;
 
 protected:
     /*!
     Reimplements QSortFilterProxyModel::filterAcceptsRow
-    to display rows matching filterString only for title, artist and album columns.
+    to display rows matching filterString only for title, artist and album
+    columns.
   */
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 
@@ -148,8 +153,8 @@ private:
     bool m_onlySelected;
     bool m_onlyNotSelected;
     QString m_filterString;
-    QSet< QLocale::Language > m_languageFilter;
-    QSet< QLocale::Language > m_negativeLanguageFilter;
+    QSet<QLocale::Language> m_languageFilter;
+    QSet<QLocale::Language> m_negativeLanguageFilter;
     QStringList m_keywordFilter;
 };
 

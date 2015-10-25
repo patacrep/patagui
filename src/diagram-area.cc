@@ -33,21 +33,20 @@
 
 #include <QDebug>
 
-CDiagramArea::CDiagramArea(QWidget *parent)
-    : QWidget(parent)
-    , m_isReadOnly(false)
-    , m_addDiagramButton(new QPushButton)
+DiagramArea::DiagramArea(QWidget *parent)
+    : QWidget(parent), m_isReadOnly(false), m_addDiagramButton(new QPushButton)
 {
     QBoxLayout *addButtonLayout = new QVBoxLayout;
     m_addDiagramButton->setFlat(true);
     m_addDiagramButton->setToolTip(tr("Add a new diagram"));
-    m_addDiagramButton->setIcon(QIcon::fromTheme("list-add", QIcon(":/icons/tango/48x48/actions/list-add.png")));
+    m_addDiagramButton->setIcon(QIcon::fromTheme(
+        "list-add", QIcon(":/icons/tango/48x48/actions/list-add.png")));
     connect(m_addDiagramButton, SIGNAL(clicked()), this, SLOT(newDiagram()));
     addButtonLayout->addStretch();
     addButtonLayout->addWidget(m_addDiagramButton);
 
     // diagram model
-    m_diagramModel = new CChordListModel();
+    m_diagramModel = new ChordListModel();
 
     // proxy model (filtering)
     m_proxyModel = new QSortFilterProxyModel;
@@ -60,14 +59,14 @@ CDiagramArea::CDiagramArea(QWidget *parent)
     m_diagramView->setModel(m_proxyModel);
     m_diagramView->verticalHeader()->hide();
     m_diagramView->horizontalHeader()->hide();
-    m_diagramView->setStyleSheet("QTableView::item { border: 0px; padding: 10px;}");
+    m_diagramView->setStyleSheet(
+        "QTableView::item { border: 0px; padding: 10px;}");
     m_diagramView->setShowGrid(false);
     m_diagramView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(m_diagramView, SIGNAL(clicked(const QModelIndex &)),
-            this, SLOT(onViewClicked(const QModelIndex &)));
-    connect(m_diagramModel, SIGNAL(layoutChanged()),
-            this, SLOT(resizeRows()));
+    connect(m_diagramView, SIGNAL(clicked(const QModelIndex &)), this,
+            SLOT(onViewClicked(const QModelIndex &)));
+    connect(m_diagramModel, SIGNAL(layoutChanged()), this, SLOT(resizeRows()));
 
     connect(this, SIGNAL(layoutChanged()), this, SLOT(resizeRows()));
     connect(this, SIGNAL(readOnlyModeChanged()), this, SLOT(update()));
@@ -81,10 +80,9 @@ CDiagramArea::CDiagramArea(QWidget *parent)
     update();
 }
 
-void CDiagramArea::update()
+void DiagramArea::update()
 {
-    if (isReadOnly())
-    {
+    if (isReadOnly()) {
         m_addDiagramButton->setVisible(false);
         m_diagramView->setSelectionMode(QAbstractItemView::SingleSelection);
         m_diagramView->setDragEnabled(false);
@@ -92,11 +90,11 @@ void CDiagramArea::update()
         m_diagramView->setDropIndicatorShown(false);
         m_diagramView->setDragDropMode(QAbstractItemView::NoDragDrop);
 
-        disconnect(m_diagramView, SIGNAL(doubleClicked(const QModelIndex &)), 0, 0);
-        disconnect(m_diagramView, SIGNAL(customContextMenuRequested(const QPoint &)), 0, 0);
-    }
-    else
-    {
+        disconnect(m_diagramView, SIGNAL(doubleClicked(const QModelIndex &)), 0,
+                   0);
+        disconnect(m_diagramView,
+                   SIGNAL(customContextMenuRequested(const QPoint &)), 0, 0);
+    } else {
         m_addDiagramButton->setVisible(true);
         m_diagramView->setSelectionMode(QAbstractItemView::ExtendedSelection);
         m_diagramView->setDragEnabled(true);
@@ -104,65 +102,66 @@ void CDiagramArea::update()
         m_diagramView->setDropIndicatorShown(true);
         m_diagramView->setDragDropMode(QAbstractItemView::InternalMove);
 
-        connect(m_diagramView, SIGNAL(doubleClicked(const QModelIndex &)),
-                this, SLOT(editDiagram(const QModelIndex &)));
-        connect(m_diagramView, SIGNAL(customContextMenuRequested(const QPoint &)),
-                this, SLOT(contextMenu(const QPoint &)));
+        connect(m_diagramView, SIGNAL(doubleClicked(const QModelIndex &)), this,
+                SLOT(editDiagram(const QModelIndex &)));
+        connect(m_diagramView,
+                SIGNAL(customContextMenuRequested(const QPoint &)), this,
+                SLOT(contextMenu(const QPoint &)));
     }
 }
 
-void CDiagramArea::onViewClicked(const QModelIndex & index)
+void DiagramArea::onViewClicked(const QModelIndex &index)
 {
     if (index.isValid())
-        emit(diagramClicked(m_diagramModel->getChord(m_proxyModel->mapToSource(index))));
+        emit(diagramClicked(
+            m_diagramModel->getChord(m_proxyModel->mapToSource(index))));
 }
 
-void CDiagramArea::resizeRows()
+void DiagramArea::resizeRows()
 {
-    for (int i=0; i < m_diagramModel->rowCount(); ++i)
+    for (int i = 0; i < m_diagramModel->rowCount(); ++i)
         m_diagramView->setRowHeight(i, 120);
 }
 
-void CDiagramArea::newDiagram()
-{
-    editDiagram(QModelIndex());
-}
+void DiagramArea::newDiagram() { editDiagram(QModelIndex()); }
 
-void CDiagramArea::editDiagram(QModelIndex index)
+void DiagramArea::editDiagram(QModelIndex index)
 {
     Q_ASSERT(!isReadOnly());
 
     if (!index.isValid())
-        index = m_diagramView->indexAt(m_diagramView->mapFromGlobal(QCursor::pos()));
+        index = m_diagramView->indexAt(
+            m_diagramView->mapFromGlobal(QCursor::pos()));
 
     bool newChord = !index.isValid();
 
-    CChord *chord = newChord ?
-                new CChord : m_diagramModel->getChord(m_proxyModel->mapToSource(index));
+    Chord *chord = newChord ? new Chord : m_diagramModel->getChord(
+                                              m_proxyModel->mapToSource(index));
 
-    CDiagramEditor dialog(this);
+    DiagramEditor dialog(this);
     dialog.setChord(chord);
 
-    if (dialog.exec() == QDialog::Accepted)
-    {
+    if (dialog.exec() == QDialog::Accepted) {
         if (newChord)
             addDiagram(chord->toString());
         else
-            m_diagramModel->setData(m_proxyModel->mapToSource(index), chord->toString());
+            m_diagramModel->setData(m_proxyModel->mapToSource(index),
+                                    chord->toString());
 
         emit(contentsChanged());
     }
 }
 
-void CDiagramArea::addDiagram(const QString & chord)
+void DiagramArea::addDiagram(const QString &chord)
 {
     m_diagramModel->addItem(chord);
 }
 
-void CDiagramArea::removeDiagram(QModelIndex index)
+void DiagramArea::removeDiagram(QModelIndex index)
 {
     if (!index.isValid())
-        index = m_diagramView->indexAt(m_diagramView->mapFromGlobal(QCursor::pos()));
+        index = m_diagramView->indexAt(
+            m_diagramView->mapFromGlobal(QCursor::pos()));
 
     if (!index.isValid() || isReadOnly())
         return;
@@ -170,27 +169,23 @@ void CDiagramArea::removeDiagram(QModelIndex index)
     m_diagramModel->removeItem(m_proxyModel->mapToSource(index));
 }
 
-void CDiagramArea::onDiagramChanged()
+void DiagramArea::onDiagramChanged()
 {
     Q_ASSERT(isReadOnly());
     emit(contentsChanged());
 }
 
-bool CDiagramArea::isReadOnly() const
-{
-    return m_isReadOnly;
-}
+bool DiagramArea::isReadOnly() const { return m_isReadOnly; }
 
-void CDiagramArea::setReadOnly(bool value)
+void DiagramArea::setReadOnly(bool value)
 {
-    if (m_isReadOnly != value)
-    {
+    if (m_isReadOnly != value) {
         m_isReadOnly = value;
         emit(readOnlyModeChanged());
     }
 }
 
-void CDiagramArea::contextMenu(const QPoint & pos)
+void DiagramArea::contextMenu(const QPoint &pos)
 {
     Q_UNUSED(pos);
 
@@ -207,54 +202,50 @@ void CDiagramArea::contextMenu(const QPoint & pos)
     menu.exec(QCursor::pos());
 }
 
-void CDiagramArea::setTypeFilter(const CChord::Instrument & type)
+void DiagramArea::setTypeFilter(const Chord::Instrument &type)
 {
     m_proxyModel->setFilterRole(Qt::DisplayRole);
-    if (type == CChord::Guitar)
+    if (type == Chord::Guitar)
         m_proxyModel->setFilterRegExp("gtab");
     else
         m_proxyModel->setFilterRegExp("utab");
     emit(layoutChanged());
 }
 
-void CDiagramArea::setNameFilter(const QString & name)
+void DiagramArea::setNameFilter(const QString &name)
 {
     clearFilters();
-    m_proxyModel->setFilterRole(CChordListModel::NameRole);
+    m_proxyModel->setFilterRole(ChordListModel::NameRole);
     m_proxyModel->setFilterRegExp(name);
     emit(layoutChanged());
 }
 
-void CDiagramArea::setStringsFilter(const QString & strings)
+void DiagramArea::setStringsFilter(const QString &strings)
 {
-    m_proxyModel->setFilterRole(CChordListModel::StringsRole);
+    m_proxyModel->setFilterRole(ChordListModel::StringsRole);
     m_proxyModel->setFilterRegExp(strings);
     emit(layoutChanged());
 }
 
-void CDiagramArea::clearFilters()
+void DiagramArea::clearFilters()
 {
     m_proxyModel->setFilterRole(Qt::DisplayRole);
     m_proxyModel->setFilterRegExp("");
     emit(layoutChanged());
 }
 
-void CDiagramArea::setColumnCount(int value)
+void DiagramArea::setColumnCount(int value)
 {
     m_diagramModel->setColumnCount(value);
 }
 
-void CDiagramArea::setRowCount(int value)
-{
-    m_diagramModel->setRowCount(value);
-}
+void DiagramArea::setRowCount(int value) { m_diagramModel->setRowCount(value); }
 
-QList< CChord* > CDiagramArea::chords()
+QList<Chord *> DiagramArea::chords()
 {
-    QList< CChord* > list;
+    QList<Chord *> list;
     for (int i = 0; i < m_diagramModel->rowCount(); ++i)
-        for (int j = 0; j < m_diagramModel->columnCount(); ++j)
-        {
+        for (int j = 0; j < m_diagramModel->columnCount(); ++j) {
             list << m_diagramModel->getChord(m_diagramModel->index(i, j));
         }
 

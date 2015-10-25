@@ -31,26 +31,27 @@
   Provides the internal representation of a song from a songbook
   library.
 */
-struct Song
-{
-    QString title; /*!< the title of the song.*/
-    QString artist; /*!< the artist of the song.*/
-    QString album; /*!< the album of the song.*/
+struct Song {
+    QString title;        /*!< the title of the song.*/
+    QString artist;       /*!< the artist of the song.*/
+    QString album;        /*!< the album of the song.*/
     QString originalSong; /*!< the original song.*/
-    QString url; /*!< the website of the artist.*/
+    QString url;          /*!< the website of the artist.*/
     QString coverName; /*!< the cover file name (relative, without extension).*/
     QString coverPath; /*!< the cover file name (absolute).*/
-    QString path; /*!< the path of the .sg file (absolute).*/
-    QLocale locale; /*!< the locale of the song.*/
-    bool isLilypond; /*!< \a true if the song contains lilypond sheets.*/
-    bool isWebsite; /*!< \a true if the song contains a link to the website of the artist.*/
+    QString path;      /*!< the path of the .sg file (absolute).*/
+    QLocale locale;    /*!< the locale of the song.*/
+    bool isLilypond;   /*!< \a true if the song contains lilypond sheets.*/
+    bool isWebsite;  /*!< \a true if the song contains a link to the website of
+                        the artist.*/
     int columnCount; /*!< the number of columns of the song in the PDF.*/
-    int capo; /*!< the capo of the song.*/
-    int transpose; /*!< the transposition information.*/
-    QStringList gtabs; /*!< the list of guitar chords.*/
-    QStringList utabs; /*!< the list of ukulele chords.*/
-    QStringList lyrics; /*!< the song contents.*/
-    QStringList scripture; /*!< the song scriptures (comments/notes at the end in the PDF).*/
+    int capo;        /*!< the capo of the song.*/
+    int transpose;   /*!< the transposition information.*/
+    QStringList gtabs;     /*!< the list of guitar chords.*/
+    QStringList utabs;     /*!< the list of ukulele chords.*/
+    QStringList lyrics;    /*!< the song contents.*/
+    QStringList scripture; /*!< the song scriptures (comments/notes at the end
+                              in the PDF).*/
 
     /*!
     Constructs a Song object from a file whose absolute path is \a path.
@@ -62,7 +63,8 @@ struct Song
     Constructs a Song object whose content is \a text.
     \sa fromString, toString
   */
-    static Song fromString(const QString &text, const QString &path = QString());
+    static Song fromString(const QString &text,
+                           const QString &path = QString());
 
     /*!
     Returns the contents of the song \a song.
@@ -76,7 +78,8 @@ struct Song
     For example: english, french etc.
     \sa languageToString
   */
-    static QLocale::Language languageFromString(const QString &languageName = QString());
+    static QLocale::Language
+    languageFromString(const QString &languageName = QString());
 
     /*!
     Converts a QLocale object \a language as a plain string (ie english, french)
@@ -90,14 +93,14 @@ struct Song
     For example: \'e -> é.
     \sa utf8ToLatex
   */
-    static QString latexToUtf8(const QString & str);
+    static QString latexToUtf8(const QString &str);
 
     /*!
     Converts some utf8 characters to LaTeX sequences.
     For example: & -> \&.
     \sa latexToUtf8
   */
-    static QString utf8ToLatex(const QString & str);
+    static QString utf8ToLatex(const QString &str);
 
     /*!
     Extracts the contents of a .sg file.
