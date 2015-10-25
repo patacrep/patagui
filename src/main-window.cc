@@ -178,7 +178,7 @@ const QString MainWindow::_cachePath(QString("%1/patagui").arg(QStandardPaths::w
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_view(new CLibraryView(this))
+    , m_view(new LibraryView(this))
     , m_songbook(new CSongbook(this))
     , m_proxyModel(new SongSortFilterProxyModel(this))
     , m_tempFilesmodel(0)
@@ -197,7 +197,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setWindowTitle("Patagui");
     setWindowIcon(QIcon(":/icons/songbook/256x256/patagui.png"));
-    CLibrary::instance()->setParent(this);
+    Library::instance()->setParent(this);
 
     connect(library(), SIGNAL(directoryChanged(const QDir &)),
             SLOT(noDataNotification(const QDir &)));
@@ -765,14 +765,14 @@ CSongbook * MainWindow::songbook() const
     return m_songbook;
 }
 
-CLibraryView * MainWindow::view() const
+LibraryView * MainWindow::view() const
 {
     return m_view;
 }
 
-CLibrary * MainWindow::library() const
+Library * MainWindow::library() const
 {
-    return CLibrary::instance();
+    return Library::instance();
 }
 
 QItemSelectionModel * MainWindow::selectionModel()
@@ -798,7 +798,7 @@ void MainWindow::songEditor(const QModelIndex &index)
         return;
     }
 
-    QString path = view()->model()->data(selectionModel()->currentIndex(), CLibrary::PathRole).toString();
+    QString path = view()->model()->data(selectionModel()->currentIndex(), Library::PathRole).toString();
 
     songEditor(path);
 }
@@ -882,7 +882,7 @@ void MainWindow::deleteSong()
         return;
     }
 
-    QString path = view()->model()->data(selectionModel()->currentIndex(), CLibrary::PathRole).toString();
+    QString path = view()->model()->data(selectionModel()->currentIndex(), Library::PathRole).toString();
 
     deleteSong(path);
 }

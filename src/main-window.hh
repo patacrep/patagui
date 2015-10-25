@@ -27,8 +27,8 @@
 #include <QFuture>
 
 class CSongbook;
-class CLibrary;
-class CLibraryView;
+class Library;
+class LibraryView;
 class CTabWidget;
 class CEditor;
 class Label;
@@ -84,12 +84,12 @@ public:
     /*!
     Returns the library view.
   */
-    CLibraryView * view() const;
+    LibraryView * view() const;
 
     /*!
     Returns the library.
   */
-    CLibrary * library() const;
+    Library * library() const;
 
     /*!
     Returns the current songbook.
@@ -193,7 +193,7 @@ private:
     QItemSelectionModel * selectionModel();
 
     // Models and views
-    CLibraryView *m_view;
+    LibraryView *m_view;
     CSongbook *m_songbook;
     QSortFilterProxyModel *m_proxyModel;
     QFileSystemModel* m_tempFilesmodel;

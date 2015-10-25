@@ -104,7 +104,7 @@ class SongSortFilterProxyModel;
   the user input.
 
   The filter only applies on artist/title/album columns as provided
-  by the CLibrary::completionModel().
+  by the Library::completionModel().
 
   A FilterLineEdit widget contains a MagButton on the left that allows one to
   access quick filters functions (such as search by songs' language) and a

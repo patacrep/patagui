@@ -28,7 +28,7 @@
   \file song-sort-filter-proxy-model.hh
   \class SongSortFilterProxyModel
   \brief SongSortFilterProxyModel implements custom sort and filter
-  operations for CLibraryView.
+  operations for LibraryView.
 
   Allows one to filter the library. Song items are only displayed if
   the match the filter from their artist, title, or album fields.

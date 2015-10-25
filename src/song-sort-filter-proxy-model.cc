@@ -101,16 +101,16 @@ bool SongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
             if (keyword.startsWith("!"))
             {
                 keyword.remove("!");
-                if (sourceModel()->data(index, CLibrary::TitleRole).toString().contains(keyword, Qt::CaseInsensitive)
-                        || sourceModel()->data(index, CLibrary::ArtistRole).toString().contains(keyword, Qt::CaseInsensitive)
-                        || sourceModel()->data(index, CLibrary::AlbumRole).toString().contains(keyword, Qt::CaseInsensitive))
+                if (sourceModel()->data(index, Library::TitleRole).toString().contains(keyword, Qt::CaseInsensitive)
+                        || sourceModel()->data(index, Library::ArtistRole).toString().contains(keyword, Qt::CaseInsensitive)
+                        || sourceModel()->data(index, Library::AlbumRole).toString().contains(keyword, Qt::CaseInsensitive))
                 {
                     accept = false;
                 }
             }
-            else if (!sourceModel()->data(index, CLibrary::TitleRole).toString().contains(keyword, Qt::CaseInsensitive)
-                     && !sourceModel()->data(index, CLibrary::ArtistRole).toString().contains(keyword, Qt::CaseInsensitive)
-                     && !sourceModel()->data(index, CLibrary::AlbumRole).toString().contains(keyword, Qt::CaseInsensitive))
+            else if (!sourceModel()->data(index, Library::TitleRole).toString().contains(keyword, Qt::CaseInsensitive)
+                     && !sourceModel()->data(index, Library::ArtistRole).toString().contains(keyword, Qt::CaseInsensitive)
+                     && !sourceModel()->data(index, Library::AlbumRole).toString().contains(keyword, Qt::CaseInsensitive))
             {
                 accept = false;
             }
@@ -118,10 +118,10 @@ bool SongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     }
 
     if (!m_negativeLanguageFilter.isEmpty())
-        accept = accept && !m_negativeLanguageFilter.contains(sourceModel()->data(index, CLibrary::LanguageRole).value< QLocale::Language >());
+        accept = accept && !m_negativeLanguageFilter.contains(sourceModel()->data(index, Library::LanguageRole).value< QLocale::Language >());
 
     if (!m_languageFilter.isEmpty())
-        accept = accept && m_languageFilter.contains(sourceModel()->data(index, CLibrary::LanguageRole).value< QLocale::Language >());
+        accept = accept && m_languageFilter.contains(sourceModel()->data(index, Library::LanguageRole).value< QLocale::Language >());
 
     if (m_onlySelected)
         accept = accept && qobject_cast< CSongbook* >(sourceModel())->isChecked(index);

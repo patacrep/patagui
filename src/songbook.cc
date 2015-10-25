@@ -62,9 +62,9 @@ CSongbook::~CSongbook()
     delete m_propertyManager;
 }
 
-CLibrary * CSongbook::library() const
+Library * CSongbook::library() const
 {
-    return CLibrary::instance();
+    return Library::instance();
 }
 
 QString CSongbook::filename() const
@@ -698,7 +698,7 @@ void CSongbook::songsFromSelection()
     {
         if (m_selectedSongs[i])
         {
-            song = data(index(i,0), CLibrary::RelativePathRole).toString();
+            song = data(index(i,0), Library::RelativePathRole).toString();
 #ifdef Q_WS_WIN
             song.replace("\\", "/");
 #endif
@@ -715,7 +715,7 @@ void CSongbook::songsToSelection()
     for (int i = 0; i < m_selectedSongs.size(); ++i)
     {
         m_selectedSongs[i] = false;
-        if (m_songs.contains(data(index(i,0), CLibrary::RelativePathRole).toString()))
+        if (m_songs.contains(data(index(i,0), Library::RelativePathRole).toString()))
             m_selectedSongs[i] = true;
     }
     emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));
@@ -726,7 +726,7 @@ void CSongbook::selectLanguages(const QStringList &languages)
     for (int i = 0; i < m_selectedSongs.size(); ++i)
     {
         m_selectedSongs[i] = false;
-        if (languages.contains(data(index(i,0), CLibrary::LanguageRole).toString()))
+        if (languages.contains(data(index(i,0), Library::LanguageRole).toString()))
             m_selectedSongs[i] = true;
     }
     emit(dataChanged(index(0,0),index(m_selectedSongs.size()-1,0)));

@@ -381,7 +381,7 @@ void OptionsPage::checkSongbookPath(const QString &path)
 
 void OptionsPage::checkLibraryPath(const QString &path)
 {
-    m_libraryPathValid->setText(CLibrary::checkPath(path));
+    m_libraryPathValid->setText(Library::checkPath(path));
 }
 
 // Editor Page

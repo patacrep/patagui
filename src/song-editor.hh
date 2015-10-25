@@ -28,7 +28,7 @@
 class QAction;
 class QActionGroup;
 class QToolBar;
-class CLibrary;
+class Library;
 class CSongCodeEditor;
 class CSongHeaderEditor;
 class CSongHighlighter;
@@ -136,7 +136,7 @@ public:
     CSongEditor(QWidget *parent = 0);
     ~CSongEditor();
 
-    CLibrary * library() const;
+    Library * library() const;
 
     void readSettings();
     void writeSettings();

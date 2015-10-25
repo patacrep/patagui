@@ -25,7 +25,7 @@
 /*!
   \file song-item-delegate.hh
   \class CSongItemDelegate
-  \brief CSongItemDelegate draws items from CLibraryView.
+  \brief CSongItemDelegate draws items from LibraryView.
 
   Items are rows corresponding to a song and are composed of several
   columns for title, artist, album, language  etc.

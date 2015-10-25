@@ -257,7 +257,7 @@ void ImportDialog::setParent(MainWindow *parent) { m_parent = parent; }
 
 void ImportDialog::checkLibraryPath(const QString &path)
 {
-    m_libraryPathValid->setText(CLibrary::checkPath(path));
+    m_libraryPathValid->setText(Library::checkPath(path));
 }
 
 void ImportDialog::setLocalSubWidgetsVisible(const bool value)
@@ -366,7 +366,7 @@ bool ImportDialog::acceptDialog()
         emit(songsReadyToBeImported(m_songsToBeImported));
     }
 
-    CLibrary::instance()->setDirectory(m_libraryPath->path());
+    Library::instance()->setDirectory(m_libraryPath->path());
     writeSettings();
     accept();
     return true;
@@ -467,7 +467,7 @@ void ImportDialog::downloadFinished()
         if (saveToDisk(filepath, m_reply)) {
             QDir::setCurrent(dir.absolutePath());
             if (decompress(filepath)) {
-                CLibrary::recursiveFindFiles(dir.absolutePath(),
+                Library::recursiveFindFiles(dir.absolutePath(),
                                              QStringList() << "*.sg",
                                              m_songsToBeImported);
                 showMessage(tr("Download completed"));

@@ -27,7 +27,7 @@
 
 #include <QtVariantProperty>
 
-class CLibrary;
+class Library;
 class QWidget;
 class QComboBox;
 class QtGroupBoxPropertyBrowser;
@@ -41,7 +41,7 @@ class QtGroupPropertyManager;
   A songbook is a composed of a list of songs and a set of options
   that defines its PDF output.
 
-  A CSongbook class extracts the list of selected songs in CLibraryView,
+  A CSongbook class extracts the list of selected songs in LibraryView,
   manages all the songbook options through the QtGroupBoxPropertyBrowser framework,
   and can be saved/loaded as a .sb file.
 
@@ -156,7 +156,7 @@ public:
     Returns the library.
     \sa setLibrary
   */
-    CLibrary * library() const;
+    Library * library() const;
 
     /*!
     Returns the filename of the songbook file (.sb).

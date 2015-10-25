@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
         }
     }
     if (songsToBeImported.isEmpty())
-        CLibrary::instance()->importSongs(songsToBeImported);
+        Library::instance()->importSongs(songsToBeImported);
 
     return application.exec();
 }

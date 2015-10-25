@@ -25,24 +25,25 @@ class MainWindow;
 
 /**
  * \file library-view.hh
- * \class CLibraryView
- * \brief CLibraryView is the class that displays the songs library.
+ * \class LibraryView
+ * \brief LibraryView is the class that displays the songs library.
  *
  * The songs library is displayed as a table where each row represents a song.
- * Columns can be displayed/hidden through the display section in the preferences.
+ * Columns can be displayed/hidden through the display section in the
+ * preferences.
  *
  * \image html library-view.png
  *
  */
-class CLibraryView : public QTableView
+class LibraryView : public QTableView
 {
     Q_OBJECT
 
 public:
     /// Constructor
-    CLibraryView(MainWindow *parent);
+    LibraryView(MainWindow *parent);
     /// Destructor
-    ~CLibraryView();
+    ~LibraryView();
 
     /// Load user settings
     void readSettings();
@@ -58,7 +59,7 @@ public slots:
 
 private:
     void createActions();
-    MainWindow * parent() const;
+    MainWindow *parent() const;
 };
 
 #endif // __LIBRARY_VIEW_HH__

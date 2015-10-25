@@ -385,9 +385,9 @@ void CSongEditor::documentWasModified()
     setModified(true);
 }
 
-CLibrary * CSongEditor::library() const
+Library * CSongEditor::library() const
 {
-    return CLibrary::instance();
+    return Library::instance();
 }
 
 bool CSongEditor::isModified() const
