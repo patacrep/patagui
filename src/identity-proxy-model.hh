@@ -36,15 +36,18 @@ public:
     IdentityProxyModel(QObject *parent = 0);
     ~IdentityProxyModel();
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual QVariant data(const QModelIndex &index,
+                          int role = Qt::DisplayRole) const;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-    virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    virtual bool setData(const QModelIndex &index, const QVariant &value,
+                         int role = Qt::EditRole);
 
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-    virtual QModelIndex parent(const QModelIndex &index ) const;
+    virtual QModelIndex index(int row, int column,
+                              const QModelIndex &parent = QModelIndex()) const;
+    virtual QModelIndex parent(const QModelIndex &index) const;
 
     virtual QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
     virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
@@ -52,22 +55,36 @@ public:
     virtual void setSourceModel(QAbstractItemModel *sourceModel);
 
 private slots:
-    void sourceColumnsAboutToBeInserted(const QModelIndex &parent, int start, int end);
+    void sourceColumnsAboutToBeInserted(const QModelIndex &parent, int start,
+                                        int end);
     void sourceColumnsInserted(const QModelIndex &parent, int start, int end);
-    void sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-    void sourceColumnsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-    void sourceColumnsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
+    void sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent,
+                                     int sourceStart, int sourceEnd,
+                                     const QModelIndex &destParent, int dest);
+    void sourceColumnsMoved(const QModelIndex &sourceParent, int sourceStart,
+                            int sourceEnd, const QModelIndex &destParent,
+                            int dest);
+    void sourceColumnsAboutToBeRemoved(const QModelIndex &parent, int start,
+                                       int end);
     void sourceColumnsRemoved(const QModelIndex &parent, int start, int end);
 
-    void sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
+    void sourceRowsAboutToBeInserted(const QModelIndex &parent, int start,
+                                     int end);
     void sourceRowsInserted(const QModelIndex &parent, int start, int end);
-    void sourceRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-    void sourceRowsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-    void sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
+    void sourceRowsAboutToBeMoved(const QModelIndex &sourceParent,
+                                  int sourceStart, int sourceEnd,
+                                  const QModelIndex &destParent, int dest);
+    void sourceRowsMoved(const QModelIndex &sourceParent, int sourceStart,
+                         int sourceEnd, const QModelIndex &destParent,
+                         int dest);
+    void sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start,
+                                    int end);
     void sourceRowsRemoved(const QModelIndex &parent, int start, int end);
 
-    void sourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void sourceHeaderDataChanged(Qt::Orientation orientation, int first, int last);
+    void sourceDataChanged(const QModelIndex &topLeft,
+                           const QModelIndex &bottomRight);
+    void sourceHeaderDataChanged(Qt::Orientation orientation, int first,
+                                 int last);
 
     void sourceLayoutAboutToBeChanged();
     void sourceLayoutChanged();

@@ -20,10 +20,10 @@
 
 IdentityProxyModel::IdentityProxyModel(QObject *parent)
     : QAbstractProxyModel(parent)
-{}
+{
+}
 
-IdentityProxyModel::~IdentityProxyModel()
-{}
+IdentityProxyModel::~IdentityProxyModel() {}
 
 QModelIndex IdentityProxyModel::mapFromSource(const QModelIndex &index) const
 {
@@ -49,7 +49,8 @@ Qt::ItemFlags IdentityProxyModel::flags(const QModelIndex &index) const
     return QAbstractProxyModel::flags(index);
 }
 
-bool IdentityProxyModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool IdentityProxyModel::setData(const QModelIndex &index,
+                                 const QVariant &value, int role)
 {
     return QAbstractProxyModel::setData(index, value, role);
 }
@@ -64,12 +65,14 @@ int IdentityProxyModel::rowCount(const QModelIndex &parent) const
     return sourceModel()->rowCount(mapToSource(parent));
 }
 
-QModelIndex IdentityProxyModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex IdentityProxyModel::index(int row, int column,
+                                      const QModelIndex &parent) const
 {
     if (!hasIndex(row, column, parent))
         return QModelIndex();
     const QModelIndex sourceParent = mapToSource(parent);
-    const QModelIndex sourceIndex = sourceModel()->index(row, column, sourceParent);
+    const QModelIndex sourceIndex =
+        sourceModel()->index(row, column, sourceParent);
     return mapFromSource(sourceIndex);
 }
 
@@ -85,79 +88,132 @@ void IdentityProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     beginResetModel();
 
     if (sourceModel) {
-        disconnect(sourceModel, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
-                   this, SLOT(sourceRowsAboutToBeInserted(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
-                   this, SLOT(sourceRowsInserted(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
-                   this, SLOT(sourceRowsAboutToBeRemoved(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
-                   this, SLOT(sourceRowsRemoved(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(rowsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                   this, SLOT(sourceRowsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
-        disconnect(sourceModel, SIGNAL(rowsMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                   this, SLOT(sourceRowsMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
-        disconnect(sourceModel, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)),
-                   this, SLOT(sourceColumnsAboutToBeInserted(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(columnsInserted(const QModelIndex &, int, int)),
-                   this, SLOT(sourceColumnsInserted(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)),
-                   this, SLOT(sourceColumnsAboutToBeRemoved(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(columnsRemoved(const QModelIndex &, int, int)),
-                   this, SLOT(sourceColumnsRemoved(const QModelIndex &, int, int)));
-        disconnect(sourceModel, SIGNAL(columnsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                   this, SLOT(sourceColumnsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
-        disconnect(sourceModel, SIGNAL(columnsMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                   this, SLOT(sourceColumnsMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
-        disconnect(sourceModel, SIGNAL(modelAboutToBeReset()),
-                   this, SLOT(sourceModelAboutToBeReset()));
-        disconnect(sourceModel, SIGNAL(modelReset()),
-                   this, SLOT(sourceModelReset()));
-        disconnect(sourceModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-                   this, SLOT(sourceDataChanged(const QModelIndex &, const QModelIndex &)));
-        disconnect(sourceModel, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
-                   this, SLOT(sourceHeaderDataChanged(Qt::Orientation,int,int)));
-        disconnect(sourceModel, SIGNAL(layoutAboutToBeChanged()),
-                   this, SLOT(sourceLayoutAboutToBeChanged()));
-        disconnect(sourceModel, SIGNAL(layoutChanged()),
-                   this, SLOT(sourceLayoutChanged()));
+        disconnect(
+            sourceModel,
+            SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)), this,
+            SLOT(sourceRowsAboutToBeInserted(const QModelIndex &, int, int)));
+        disconnect(sourceModel,
+                   SIGNAL(rowsInserted(const QModelIndex &, int, int)), this,
+                   SLOT(sourceRowsInserted(const QModelIndex &, int, int)));
+        disconnect(
+            sourceModel,
+            SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)), this,
+            SLOT(sourceRowsAboutToBeRemoved(const QModelIndex &, int, int)));
+        disconnect(sourceModel,
+                   SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this,
+                   SLOT(sourceRowsRemoved(const QModelIndex &, int, int)));
+        disconnect(sourceModel,
+                   SIGNAL(rowsAboutToBeMoved(const QModelIndex &, int, int,
+                                             const QModelIndex &, int)),
+                   this,
+                   SLOT(sourceRowsAboutToBeMoved(const QModelIndex &, int, int,
+                                                 const QModelIndex &, int)));
+        disconnect(sourceModel, SIGNAL(rowsMoved(const QModelIndex &, int, int,
+                                                 const QModelIndex &, int)),
+                   this, SLOT(sourceRowsMoved(const QModelIndex &, int, int,
+                                              const QModelIndex &, int)));
+        disconnect(
+            sourceModel,
+            SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)),
+            this, SLOT(sourceColumnsAboutToBeInserted(const QModelIndex &, int,
+                                                      int)));
+        disconnect(sourceModel,
+                   SIGNAL(columnsInserted(const QModelIndex &, int, int)), this,
+                   SLOT(sourceColumnsInserted(const QModelIndex &, int, int)));
+        disconnect(
+            sourceModel,
+            SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)),
+            this,
+            SLOT(sourceColumnsAboutToBeRemoved(const QModelIndex &, int, int)));
+        disconnect(sourceModel,
+                   SIGNAL(columnsRemoved(const QModelIndex &, int, int)), this,
+                   SLOT(sourceColumnsRemoved(const QModelIndex &, int, int)));
+        disconnect(sourceModel,
+                   SIGNAL(columnsAboutToBeMoved(const QModelIndex &, int, int,
+                                                const QModelIndex &, int)),
+                   this, SLOT(sourceColumnsAboutToBeMoved(
+                             const QModelIndex &, int, int, const QModelIndex &,
+                             int)));
+        disconnect(sourceModel,
+                   SIGNAL(columnsMoved(const QModelIndex &, int, int,
+                                       const QModelIndex &, int)),
+                   this, SLOT(sourceColumnsMoved(const QModelIndex &, int, int,
+                                                 const QModelIndex &, int)));
+        disconnect(sourceModel, SIGNAL(modelAboutToBeReset()), this,
+                   SLOT(sourceModelAboutToBeReset()));
+        disconnect(sourceModel, SIGNAL(modelReset()), this,
+                   SLOT(sourceModelReset()));
+        disconnect(
+            sourceModel,
+            SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this,
+            SLOT(sourceDataChanged(const QModelIndex &, const QModelIndex &)));
+        disconnect(sourceModel,
+                   SIGNAL(headerDataChanged(Qt::Orientation, int, int)), this,
+                   SLOT(sourceHeaderDataChanged(Qt::Orientation, int, int)));
+        disconnect(sourceModel, SIGNAL(layoutAboutToBeChanged()), this,
+                   SLOT(sourceLayoutAboutToBeChanged()));
+        disconnect(sourceModel, SIGNAL(layoutChanged()), this,
+                   SLOT(sourceLayoutChanged()));
     }
 
     QAbstractProxyModel::setSourceModel(sourceModel);
 
     if (sourceModel) {
-        connect(sourceModel, SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
-                SLOT(sourceRowsAboutToBeInserted(const QModelIndex &, int, int)));
-        connect(sourceModel, SIGNAL(rowsInserted(const QModelIndex &, int, int)),
+        connect(
+            sourceModel,
+            SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
+            SLOT(sourceRowsAboutToBeInserted(const QModelIndex &, int, int)));
+        connect(sourceModel,
+                SIGNAL(rowsInserted(const QModelIndex &, int, int)),
                 SLOT(sourceRowsInserted(const QModelIndex &, int, int)));
-        connect(sourceModel, SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
-                SLOT(sourceRowsAboutToBeRemoved(const QModelIndex &, int, int)));
+        connect(
+            sourceModel,
+            SIGNAL(rowsAboutToBeRemoved(const QModelIndex &, int, int)),
+            SLOT(sourceRowsAboutToBeRemoved(const QModelIndex &, int, int)));
         connect(sourceModel, SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
                 SLOT(sourceRowsRemoved(const QModelIndex &, int, int)));
-        connect(sourceModel, SIGNAL(rowsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                SLOT(sourceRowsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
-        connect(sourceModel, SIGNAL(rowsMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                SLOT(sourceRowsMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
-        connect(sourceModel, SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)),
-                SLOT(sourceColumnsAboutToBeInserted(const QModelIndex &, int, int)));
-        connect(sourceModel, SIGNAL(columnsInserted(const QModelIndex &, int, int)),
+        connect(sourceModel,
+                SIGNAL(rowsAboutToBeMoved(const QModelIndex &, int, int,
+                                          const QModelIndex &, int)),
+                SLOT(sourceRowsAboutToBeMoved(const QModelIndex &, int, int,
+                                              const QModelIndex &, int)));
+        connect(sourceModel, SIGNAL(rowsMoved(const QModelIndex &, int, int,
+                                              const QModelIndex &, int)),
+                SLOT(sourceRowsMoved(const QModelIndex &, int, int,
+                                     const QModelIndex &, int)));
+        connect(sourceModel,
+                SIGNAL(columnsAboutToBeInserted(const QModelIndex &, int, int)),
+                SLOT(sourceColumnsAboutToBeInserted(const QModelIndex &, int,
+                                                    int)));
+        connect(sourceModel,
+                SIGNAL(columnsInserted(const QModelIndex &, int, int)),
                 SLOT(sourceColumnsInserted(const QModelIndex &, int, int)));
-        connect(sourceModel, SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)),
-                SLOT(sourceColumnsAboutToBeRemoved(const QModelIndex &, int, int)));
-        connect(sourceModel, SIGNAL(columnsRemoved(const QModelIndex &, int, int)),
+        connect(
+            sourceModel,
+            SIGNAL(columnsAboutToBeRemoved(const QModelIndex &, int, int)),
+            SLOT(sourceColumnsAboutToBeRemoved(const QModelIndex &, int, int)));
+        connect(sourceModel,
+                SIGNAL(columnsRemoved(const QModelIndex &, int, int)),
                 SLOT(sourceColumnsRemoved(const QModelIndex &, int, int)));
-        connect(sourceModel, SIGNAL(columnsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                SLOT(sourceColumnsAboutToBeMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
-        connect(sourceModel, SIGNAL(columnsMoved(const QModelIndex &, int, int, const QModelIndex &, int)),
-                SLOT(sourceColumnsMoved(const QModelIndex &, int, int, const QModelIndex &, int)));
+        connect(sourceModel,
+                SIGNAL(columnsAboutToBeMoved(const QModelIndex &, int, int,
+                                             const QModelIndex &, int)),
+                SLOT(sourceColumnsAboutToBeMoved(const QModelIndex &, int, int,
+                                                 const QModelIndex &, int)));
+        connect(sourceModel, SIGNAL(columnsMoved(const QModelIndex &, int, int,
+                                                 const QModelIndex &, int)),
+                SLOT(sourceColumnsMoved(const QModelIndex &, int, int,
+                                        const QModelIndex &, int)));
         connect(sourceModel, SIGNAL(modelAboutToBeReset()),
                 SLOT(sourceModelAboutToBeReset()));
-        connect(sourceModel, SIGNAL(modelReset()),
-                SLOT(sourceModelReset()));
-        connect(sourceModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
-                SLOT(sourceDataChanged(const QModelIndex &, const QModelIndex &)));
-        connect(sourceModel, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
-                SLOT(sourceHeaderDataChanged(Qt::Orientation,int,int)));
+        connect(sourceModel, SIGNAL(modelReset()), SLOT(sourceModelReset()));
+        connect(
+            sourceModel,
+            SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
+            SLOT(sourceDataChanged(const QModelIndex &, const QModelIndex &)));
+        connect(sourceModel,
+                SIGNAL(headerDataChanged(Qt::Orientation, int, int)),
+                SLOT(sourceHeaderDataChanged(Qt::Orientation, int, int)));
         connect(sourceModel, SIGNAL(layoutAboutToBeChanged()),
                 SLOT(sourceLayoutAboutToBeChanged()));
         connect(sourceModel, SIGNAL(layoutChanged()),
@@ -167,22 +223,28 @@ void IdentityProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     endResetModel();
 }
 
-void IdentityProxyModel::sourceColumnsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceColumnsAboutToBeInserted(
+    const QModelIndex &parent, int start, int end)
 {
     beginInsertColumns(mapFromSource(parent), start, end);
 }
 
-void IdentityProxyModel::sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest)
+void IdentityProxyModel::sourceColumnsAboutToBeMoved(
+    const QModelIndex &sourceParent, int sourceStart, int sourceEnd,
+    const QModelIndex &destParent, int dest)
 {
-    beginMoveColumns(mapFromSource(sourceParent), sourceStart, sourceEnd, mapFromSource(destParent), dest);
+    beginMoveColumns(mapFromSource(sourceParent), sourceStart, sourceEnd,
+                     mapFromSource(destParent), dest);
 }
 
-void IdentityProxyModel::sourceColumnsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceColumnsAboutToBeRemoved(
+    const QModelIndex &parent, int start, int end)
 {
     beginRemoveColumns(mapFromSource(parent), start, end);
 }
 
-void IdentityProxyModel::sourceColumnsInserted(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceColumnsInserted(const QModelIndex &parent,
+                                               int start, int end)
 {
     Q_UNUSED(parent);
     Q_UNUSED(start);
@@ -190,7 +252,10 @@ void IdentityProxyModel::sourceColumnsInserted(const QModelIndex &parent, int st
     endInsertColumns();
 }
 
-void IdentityProxyModel::sourceColumnsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest)
+void IdentityProxyModel::sourceColumnsMoved(const QModelIndex &sourceParent,
+                                            int sourceStart, int sourceEnd,
+                                            const QModelIndex &destParent,
+                                            int dest)
 {
     Q_UNUSED(sourceParent);
     Q_UNUSED(sourceStart);
@@ -200,7 +265,8 @@ void IdentityProxyModel::sourceColumnsMoved(const QModelIndex &sourceParent, int
     endMoveColumns();
 }
 
-void IdentityProxyModel::sourceColumnsRemoved(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceColumnsRemoved(const QModelIndex &parent,
+                                              int start, int end)
 {
     Q_UNUSED(parent);
     Q_UNUSED(start);
@@ -208,12 +274,14 @@ void IdentityProxyModel::sourceColumnsRemoved(const QModelIndex &parent, int sta
     endRemoveColumns();
 }
 
-void IdentityProxyModel::sourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+void IdentityProxyModel::sourceDataChanged(const QModelIndex &topLeft,
+                                           const QModelIndex &bottomRight)
 {
     dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight));
 }
 
-void IdentityProxyModel::sourceHeaderDataChanged(Qt::Orientation orientation, int first, int last)
+void IdentityProxyModel::sourceHeaderDataChanged(Qt::Orientation orientation,
+                                                 int first, int last)
 {
     headerDataChanged(orientation, first, last);
 }
@@ -223,37 +291,34 @@ void IdentityProxyModel::sourceLayoutAboutToBeChanged()
     layoutAboutToBeChanged();
 }
 
-void IdentityProxyModel::sourceLayoutChanged()
-{
-    layoutChanged();
-}
+void IdentityProxyModel::sourceLayoutChanged() { layoutChanged(); }
 
-void IdentityProxyModel::sourceModelAboutToBeReset()
-{
-    beginResetModel();
-}
+void IdentityProxyModel::sourceModelAboutToBeReset() { beginResetModel(); }
 
-void IdentityProxyModel::sourceModelReset()
-{
-    endResetModel();
-}
+void IdentityProxyModel::sourceModelReset() { endResetModel(); }
 
-void IdentityProxyModel::sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceRowsAboutToBeInserted(const QModelIndex &parent,
+                                                     int start, int end)
 {
     beginInsertRows(mapFromSource(parent), start, end);
 }
 
-void IdentityProxyModel::sourceRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest)
+void IdentityProxyModel::sourceRowsAboutToBeMoved(
+    const QModelIndex &sourceParent, int sourceStart, int sourceEnd,
+    const QModelIndex &destParent, int dest)
 {
-    beginMoveRows(mapFromSource(sourceParent), sourceStart, sourceEnd, mapFromSource(destParent), dest);
+    beginMoveRows(mapFromSource(sourceParent), sourceStart, sourceEnd,
+                  mapFromSource(destParent), dest);
 }
 
-void IdentityProxyModel::sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceRowsAboutToBeRemoved(const QModelIndex &parent,
+                                                    int start, int end)
 {
     beginRemoveRows(mapFromSource(parent), start, end);
 }
 
-void IdentityProxyModel::sourceRowsInserted(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceRowsInserted(const QModelIndex &parent,
+                                            int start, int end)
 {
     Q_UNUSED(parent);
     Q_UNUSED(start);
@@ -261,7 +326,10 @@ void IdentityProxyModel::sourceRowsInserted(const QModelIndex &parent, int start
     endInsertRows();
 }
 
-void IdentityProxyModel::sourceRowsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest)
+void IdentityProxyModel::sourceRowsMoved(const QModelIndex &sourceParent,
+                                         int sourceStart, int sourceEnd,
+                                         const QModelIndex &destParent,
+                                         int dest)
 {
     Q_UNUSED(sourceParent);
     Q_UNUSED(sourceStart);
@@ -271,7 +339,8 @@ void IdentityProxyModel::sourceRowsMoved(const QModelIndex &sourceParent, int so
     endMoveRows();
 }
 
-void IdentityProxyModel::sourceRowsRemoved(const QModelIndex &parent, int start, int end)
+void IdentityProxyModel::sourceRowsRemoved(const QModelIndex &parent, int start,
+                                           int end)
 {
     Q_UNUSED(parent);
     Q_UNUSED(start);

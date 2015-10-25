@@ -57,9 +57,10 @@ class MainWindow;
   \image html import-dialog01.png
   \image html import-dialog02.png
 */
-class ImportDialog : public QDialog {
+class ImportDialog : public QDialog
+{
     Q_OBJECT
-  public:
+public:
     /// Constructor.
     ImportDialog(QWidget *parent = 0);
 
@@ -94,7 +95,7 @@ class ImportDialog : public QDialog {
     /// (http://github.com/libarchive/libarchive).
     int copy_data(struct archive *ar, struct archive *aw);
 
-  public slots:
+public slots:
     /// Handles common errors and dialog at the end of the downloading operation
     /// such as conflicts with filenames or failed download.
     void downloadFinished();
@@ -109,7 +110,7 @@ class ImportDialog : public QDialog {
     void cancelDownload();
 #endif // ENABLE_LIBRARY_DOWNLOAD
 
-  private slots:
+private slots:
     bool acceptDialog();
     void checkLibraryPath(const QString &path);
     void onRadioButtonClicked(QAbstractButton *);
@@ -118,10 +119,10 @@ class ImportDialog : public QDialog {
     void addFiles();
     void removeFiles();
 
-  signals:
+signals:
     void songsReadyToBeImported(const QStringList &);
 
-  private:
+private:
     void setLocalSubWidgetsVisible(const bool value);
     void setNetworkSubWidgetsVisible(const bool value);
 

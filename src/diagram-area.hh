@@ -97,7 +97,7 @@ class DiagramArea : public QWidget
 {
     Q_OBJECT
 
-    public:
+public:
     /// Constructor.
     DiagramArea(QWidget *parent = 0);
 
@@ -134,7 +134,7 @@ class DiagramArea : public QWidget
   */
     QList<Chord *> chords();
 
-    public slots:
+public slots:
     /*!
     Adds a new chord to the list. This slot is connected to the "add" button
     and pops-up a DiagramEditor.
@@ -185,14 +185,14 @@ class DiagramArea : public QWidget
   */
     void clearFilters();
 
-    private slots:
+private slots:
     void update();
     void resizeRows();
     void onDiagramChanged();
     void contextMenu(const QPoint &pos);
     void onViewClicked(const QModelIndex &);
 
-    signals:
+signals:
     /*!
     This signal is emitted when the content of the list of chords changes
     such as when editing, removing or adding a new chord.
@@ -219,7 +219,7 @@ class DiagramArea : public QWidget
   */
     void diagramClicked(Chord *diagram);
 
-    private:
+private:
     bool m_isReadOnly;
     ChordListModel *m_diagramModel;
     QSortFilterProxyModel *m_proxyModel;

@@ -62,7 +62,7 @@ class ConflictDialog : public QDialog
     Q_OBJECT
     Q_ENUMS(ConflictSolveMode)
 
-    public:
+public:
     /// Constructor.
     ConflictDialog(QWidget *parent = 0);
 
@@ -104,7 +104,7 @@ class ConflictDialog : public QDialog
   */
     ProgressBar *progressBar() const;
 
-    public slots:
+public slots:
     /*!
     Resolves existing conflicts according to
     the desired action (overwriting / preserving)
@@ -120,12 +120,12 @@ class ConflictDialog : public QDialog
   */
     void showDiff();
 
-    private slots:
+private slots:
     void updateItemDetails(QTableWidgetItem *item);
     void openItem(QTableWidgetItem *item);
     void cancelCopy();
 
-    private:
+private:
     MainWindow *m_parent;
     bool m_conflictsFound;
     QMap<QString, QString> m_conflicts;
@@ -158,7 +158,7 @@ class FileCopier : public QObject
 {
     Q_OBJECT
 
-    public:
+public:
     /// Constructor
     FileCopier(QWidget *parent) : m_cancelCopy(false)
     {
@@ -183,7 +183,7 @@ class FileCopier : public QObject
     /// If value is \a true, the copy can be interrupted
     void setCancelCopy(bool value) { m_cancelCopy = value; }
 
-    public slots:
+public slots:
 
     /*!
     Performs the copy operation of sources to targets
@@ -216,7 +216,7 @@ class FileCopier : public QObject
         progressBar->hide();
     }
 
-    private:
+private:
     MainWindow *m_parent;
     bool m_cancelCopy;
     QMap<QString, QString> m_sourceTargets;

@@ -101,8 +101,8 @@ private slots:
 
 private:
     QTextCursor cursor() const;
-    void appendToHistory(QComboBox *widget, QStringList & history);
-    void setStatusTip(const QString & message);
+    void appendToHistory(QComboBox *widget, QStringList &history);
+    void setStatusTip(const QString &message);
 
     QPlainTextEdit *m_editor;
 

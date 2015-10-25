@@ -60,7 +60,7 @@ class Chord : public QObject
     Q_PROPERTY(
         QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
 
-    public:
+public:
     /*!
     \enum StringCount
     This enum type indicates the number of strings of an instrumuent.
@@ -164,7 +164,7 @@ class Chord : public QObject
   */
     void setDrawBorder(bool value);
 
-    public slots:
+public slots:
     /*!
     Sets the chord name \a name.
     \sa chord
@@ -201,7 +201,7 @@ class Chord : public QObject
   */
     void setImportant(bool value);
 
-    signals:
+signals:
     /*!
     This signal is emitted when the chord name changes
   */
@@ -222,7 +222,7 @@ class Chord : public QObject
   */
     void instrumentChanged();
 
-    private:
+private:
     void fillEllipse(QPainter *painter, const QRect &rect, const QBrush &brush);
 
     Instrument m_instrument;

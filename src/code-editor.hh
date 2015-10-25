@@ -69,7 +69,7 @@ class CodeEditor : public QPlainTextEdit
 {
     Q_OBJECT
 
-    public:
+public:
     CodeEditor(QWidget *parent = 0);
     virtual ~CodeEditor();
 
@@ -84,14 +84,14 @@ class CodeEditor : public QPlainTextEdit
 
     QTextEdit::ExtraSelection currentLineSelection();
 
-    protected:
+protected:
     void resizeEvent(QResizeEvent *event);
 
-    private slots:
+private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void updateLineNumberArea(const QRect &, int);
 
-    private:
+private:
     QWidget *lineNumberArea;
     bool m_highlightMode;
     bool m_lineNumberMode;
@@ -105,7 +105,7 @@ class CodeEditor : public QPlainTextEdit
  */
 class LineNumberArea : public QWidget
 {
-    public:
+public:
     LineNumberArea(CodeEditor *editor) : QWidget(editor)
     {
         codeEditor = editor;
@@ -116,13 +116,13 @@ class LineNumberArea : public QWidget
         return QSize(codeEditor->lineNumberAreaWidth(), 0);
     }
 
-    protected:
+protected:
     void paintEvent(QPaintEvent *event)
     {
         codeEditor->lineNumberAreaPaintEvent(event);
     }
 
-    private:
+private:
     CodeEditor *codeEditor;
 };
 
