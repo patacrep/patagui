@@ -46,7 +46,7 @@ class MainWindow;
 
   This model is used to build an intermediate model
   (SongSortFilterProxyModel) that allows filtering options, and is
-  then presented in the library tab (CTabWidget) of the main window
+  then presented in the library tab (TabWidget) of the main window
   (MainWindow) through its associated view (LibraryView).
 
 */

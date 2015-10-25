@@ -17,7 +17,7 @@ public:
     Return the songbook to compile.
     \sa setSongbook
   */
-    const CSongbook* songbook() const;
+    const Songbook* songbook() const;
 
     /*! Sets Working directory for process
   */

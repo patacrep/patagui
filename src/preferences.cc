@@ -458,7 +458,7 @@ SongbookPage::SongbookPage(QWidget *p)
         return;
     }
 
-    CSongbook *songbook = m_mainwindow->songbook();
+    Songbook *songbook = m_mainwindow->songbook();
 
     QComboBox *templateComboBox = new QComboBox;
     templateComboBox->addItems(songbook->library()->templates());

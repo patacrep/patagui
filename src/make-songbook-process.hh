@@ -70,7 +70,7 @@ public slots:
     Set the songbook to compile.
     \sa execute
   */
-    void setSongbook(CSongbook *songbook);
+    void setSongbook(Songbook *songbook);
 
     /*!
     Set the datadirs
@@ -130,7 +130,7 @@ public:
     Return the songbook to compile.
     \sa setSongbook
   */
-    const CSongbook *songbook() const;
+    const Songbook *songbook() const;
 
     /*!
     Return the datadirs
@@ -208,7 +208,7 @@ private slots:
     void stdErr(QString string);
 
 private:
-    CSongbook *m_songbook;
+    Songbook *m_songbook;
     QStringList m_datadirs;
     QString m_startMessage;
     QString m_successMessage;

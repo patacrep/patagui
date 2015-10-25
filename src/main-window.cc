@@ -201,10 +201,10 @@ const QString MainWindow::_cachePath(
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_view(new LibraryView(this))
-    , m_songbook(new CSongbook(this))
+    , m_songbook(new Songbook(this))
     , m_proxyModel(new SongSortFilterProxyModel(this))
     , m_tempFilesmodel(0)
-    , m_mainWidget(new CTabWidget(this))
+    , m_mainWidget(new TabWidget(this))
     , m_progressBar(new ProgressBar(this))
     , m_noDataInfo(0)
     , m_noDatadirSet(0)
@@ -241,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // view
     m_view->setModel(m_proxyModel);
-    m_view->setItemDelegate(new CSongItemDelegate);
+    m_view->setItemDelegate(new SongItemDelegate);
     m_view->resizeColumns();
     connect(library(), SIGNAL(wasModified()), m_view, SLOT(update()));
 
@@ -259,7 +259,7 @@ MainWindow::MainWindow(QWidget *parent)
     // place elements into the main window
     m_mainWidget->setTabsClosable(true);
     m_mainWidget->setMovable(true);
-    m_mainWidget->setSelectionBehaviorOnAdd(CTabWidget::SelectNew);
+    m_mainWidget->setSelectionBehaviorOnAdd(TabWidget::SelectNew);
     connect(m_mainWidget, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
     connect(m_mainWidget, SIGNAL(currentChanged(int)), SLOT(changeTab(int)));
     m_mainWidget->addTab(m_view, tr("Library"));
@@ -555,7 +555,7 @@ void MainWindow::createMenus()
 
     m_editorMenu = menuBar()->addMenu(tr("&Editor"));
 
-    m_voidEditor = new CEditor(this);
+    m_voidEditor = new Editor(this);
     m_editorMenu->addActions(m_voidEditor->actionGroup()->actions());
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -802,7 +802,7 @@ void MainWindow::cancelProcess()
 
 ProgressBar *MainWindow::progressBar() const { return m_progressBar; }
 
-CSongbook *MainWindow::songbook() const { return m_songbook; }
+Songbook *MainWindow::songbook() const { return m_songbook; }
 
 LibraryView *MainWindow::view() const { return m_view; }
 
@@ -842,15 +842,15 @@ void MainWindow::songEditor(const QString &path)
 {
     // if an editor already corresponds to path, focus on it
     for (int i = 0; i < m_mainWidget->count(); ++i)
-        if (CSongEditor *editor =
-                qobject_cast<CSongEditor *>(m_mainWidget->widget(i)))
+        if (SongEditor *editor =
+                qobject_cast<SongEditor *>(m_mainWidget->widget(i)))
             if (editor->song().path == path) {
                 m_mainWidget->setCurrentIndex(i);
                 return;
             }
 
     // create a new editor
-    CSongEditor *editor = new CSongEditor(this);
+    SongEditor *editor = new SongEditor(this);
 
     if (!path.isEmpty()) {
         // if the song does not exist within the library, add it
@@ -936,8 +936,8 @@ void MainWindow::deleteSong(const QString &path)
 
 void MainWindow::closeTab(int index)
 {
-    if (CSongEditor *editor =
-            qobject_cast<CSongEditor *>(m_mainWidget->widget(index)))
+    if (SongEditor *editor =
+            qobject_cast<SongEditor *>(m_mainWidget->widget(index)))
         if (editor->close()) {
             m_mainWidget->closeTab(index);
             delete editor;
@@ -947,14 +947,14 @@ void MainWindow::closeTab(int index)
 void MainWindow::changeTab(int index)
 {
     m_editorMenu->clear();
-    CEditor *editor = qobject_cast<CEditor *>(m_mainWidget->widget(index));
+    Editor *editor = qobject_cast<Editor *>(m_mainWidget->widget(index));
     if (editor != 0) {
         switchToolBar(editor->toolBar());
         m_saveAct->setShortcutContext(Qt::WidgetShortcut);
 
         // install highlighter
         if (!m_songHighlighter) {
-            m_songHighlighter = new CSongHighlighter;
+            m_songHighlighter = new SongHighlighter;
         }
         editor->setHighlighter(m_songHighlighter);
     } else {

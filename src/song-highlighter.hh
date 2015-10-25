@@ -29,8 +29,8 @@ class Hunspell;
 
 /**
  * \file song-highlighter.hh
- * \class CSongHighlighter
- * \brief CSongHighlighter provides colors and highlights for the song editor.
+ * \class SongHighlighter
+ * \brief SongHighlighter provides colors and highlights for the song editor.
  *
  * Highlights include LaTeX keywords and specific commands provided by the
  * Songs LaTeX package (http://songs.sourceforge.net).
@@ -39,15 +39,15 @@ class Hunspell;
  * unrecognized words.
  *
  */
-class CSongHighlighter : public QSyntaxHighlighter
+class SongHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
 
 public:
     /// Constructor
-    CSongHighlighter(QTextDocument *parent = 0);
+    SongHighlighter(QTextDocument *parent = 0);
     /// Destructor
-    ~CSongHighlighter();
+    ~SongHighlighter();
 
     /// Set the dictionary used by the spellchecker.
     /// @param filename the .dic file that corresponds to a hunspell dictionary.
@@ -56,7 +56,7 @@ public:
 
     /// Getter on the Hunspell spellchecker.
     /// @return the hunspell spellchecker
-    Hunspell* checker() const;
+    Hunspell *checker() const;
 
 public slots:
 #ifdef ENABLE_SPELLCHECK
@@ -71,7 +71,7 @@ public slots:
     /// Define whether the spellchecker is active or not.
     /// @param state true if the spellchecker is active, false otherwise.
     void setSpellCheckActive(const bool state);
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 
 protected:
     /// Apply highlighting rules for a block of text.
@@ -87,10 +87,8 @@ protected:
     /// @return true if the word is correctly spelled, false otherwise.
     bool checkWord(const QString &word);
 
-
 private:
-    struct HighlightingRule
-    {
+    struct HighlightingRule {
         QRegExp pattern;
         QTextCharFormat format;
     };
@@ -107,7 +105,7 @@ private:
 
     QTextCharFormat multiLineCommentFormat;
 
-    Hunspell * m_checker;
+    Hunspell *m_checker;
     bool m_isSpellCheckActive;
     QTextCharFormat m_spellCheckFormat;
     QTextCodec *m_codec;

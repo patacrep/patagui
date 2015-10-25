@@ -22,7 +22,7 @@
 /**
  * \file identity-proxy-model.hh
  * \class IdentityProxyModel
- * \brief IdentityProxyModel is the base model to build a CSongbook
+ * \brief IdentityProxyModel is the base model to build a Songbook
  *
  * This class is based on the identity proxy model from Qt 4.8 :
  * http://doc.qt.nokia.com/4.8-snapshot/qidentityproxymodel.html

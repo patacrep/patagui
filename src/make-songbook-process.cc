@@ -95,7 +95,7 @@ const bool MakeSongbookProcess::testPython()
     }
 }
 
-void MakeSongbookProcess::setSongbook(CSongbook *songbook)
+void MakeSongbookProcess::setSongbook(Songbook *songbook)
 {
     m_songbook = songbook;
 }
@@ -140,7 +140,7 @@ void MakeSongbookProcess::stopBuilding()
     pythonModule.evalScript("stopBuild()");
 }
 
-const CSongbook *MakeSongbookProcess::songbook() const { return m_songbook; }
+const Songbook *MakeSongbookProcess::songbook() const { return m_songbook; }
 
 const QString &MakeSongbookProcess::startMessage() const
 {

@@ -26,18 +26,18 @@
 #include <QDir>
 #include <QFuture>
 
-class CSongbook;
+class Songbook;
 class Library;
 class LibraryView;
-class CTabWidget;
-class CEditor;
+class TabWidget;
+class Editor;
 class Label;
-class CTabWidget;
+class TabWidget;
 class FilterLineEdit;
 class Notification;
 class ProgressBar;
 class MakeSongbookProcess;
-class CSongHighlighter;
+class SongHighlighter;
 
 class QPlainTextEdit;
 class QItemSelectionModel;
@@ -94,7 +94,7 @@ public:
     /*!
     Returns the current songbook.
   */
-    CSongbook *songbook() const;
+    Songbook *songbook() const;
 
     /*!
     Returns the directory of the songbook.
@@ -194,12 +194,12 @@ private:
 
     // Models and views
     LibraryView *m_view;
-    CSongbook *m_songbook;
+    Songbook *m_songbook;
     QSortFilterProxyModel *m_proxyModel;
     QFileSystemModel *m_tempFilesmodel;
 
     // Widgets
-    CTabWidget *m_mainWidget;
+    TabWidget *m_mainWidget;
     ProgressBar *m_progressBar;
     Notification *m_noDataInfo;
     Notification *m_noDatadirSet;
@@ -246,8 +246,8 @@ private:
     QAction *m_libraryUpdateAct;
 
     // Editor
-    CEditor *m_voidEditor;
-    CSongHighlighter *m_songHighlighter;
+    Editor *m_voidEditor;
+    SongHighlighter *m_songHighlighter;
 
     // Building Process
     QFuture<void> future;

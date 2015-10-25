@@ -39,7 +39,7 @@ class QStackedLayout;
 /*!
   \file song-header-editor.hh
   \class CSongHeaderEditor
-  \brief CSongHeaderEditor is a widget that manages a Song metadata in a CSongEditor
+  \brief CSongHeaderEditor is a widget that manages a Song metadata in a SongEditor
 
   A Song is composed of a header (metadata) and a body (lyrics).
   The CSongHeaderEditor hides the plain text of the song's header to present them

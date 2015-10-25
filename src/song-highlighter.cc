@@ -25,53 +25,68 @@
 #include "song.hh"
 #ifdef ENABLE_SPELLCHECK
 #include "hunspell/hunspell.hxx"
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 
 #include "utils/tango-colors.hh"
 
 #include <QDebug>
 
-const QRegExp CSongHighlighter::reLaTeXOption("\\[[^\\]]+\\]");
-const QRegExp CSongHighlighter::reLaTeXArgument("\\{[^}]+\\}");
+const QRegExp SongHighlighter::reLaTeXOption("\\[[^\\]]+\\]");
+const QRegExp SongHighlighter::reLaTeXArgument("\\{[^}]+\\}");
 
-const QRegExp CSongHighlighter::reChordsPattern("\\\\\\[[^\\]]+\\]");
-const QRegExp CSongHighlighter::reCommentsPattern("%[^\n]*");
+const QRegExp SongHighlighter::reChordsPattern("\\\\\\[[^\\]]+\\]");
+const QRegExp SongHighlighter::reCommentsPattern("%[^\n]*");
 
-const QStringList CSongHighlighter::_keywordPatterns
-(QStringList()
- << "\\\\gtab" << "\\\\utab"
- << "\\\\rep" << "\\\\lilypond"
- << "\\\\image" << "\\\\songcolumns"
- << "\\\\cover" << "\\\\capo"
- << "\\\\nolyrics" << "\\\\musicnote"
- << "\\\\textnote" << "\\\\dots"
- << "\\\\single" << "\\\\echo"
- << "\\\\transpose" << "\\\\transposition"
- << "\\\\emph" << "\\\\selectlanguage");
+const QStringList SongHighlighter::_keywordPatterns(QStringList()
+                                                    << "\\\\gtab"
+                                                    << "\\\\utab"
+                                                    << "\\\\rep"
+                                                    << "\\\\lilypond"
+                                                    << "\\\\image"
+                                                    << "\\\\songcolumns"
+                                                    << "\\\\cover"
+                                                    << "\\\\capo"
+                                                    << "\\\\nolyrics"
+                                                    << "\\\\musicnote"
+                                                    << "\\\\textnote"
+                                                    << "\\\\dots"
+                                                    << "\\\\single"
+                                                    << "\\\\echo"
+                                                    << "\\\\transpose"
+                                                    << "\\\\transposition"
+                                                    << "\\\\emph"
+                                                    << "\\\\selectlanguage");
 
-const QStringList CSongHighlighter::_keyword2Patterns
-(QStringList()
- << "\\\\Intro" << "\\\\Rhythm"
- << "\\\\Outro" << "\\\\Bridge"
- << "\\\\Verse" << "\\\\Chorus"
- << "\\\\Pattern" << "\\\\Solo"
- << "\\\\Adlib" << "\\\\else"
- << "\\\\ifchorded" << "\\\\iflyrics"
- << "\\\\ifnorepeatchords" << "\\\\fi");
+const QStringList SongHighlighter::_keyword2Patterns(QStringList()
+                                                     << "\\\\Intro"
+                                                     << "\\\\Rhythm"
+                                                     << "\\\\Outro"
+                                                     << "\\\\Bridge"
+                                                     << "\\\\Verse"
+                                                     << "\\\\Chorus"
+                                                     << "\\\\Pattern"
+                                                     << "\\\\Solo"
+                                                     << "\\\\Adlib"
+                                                     << "\\\\else"
+                                                     << "\\\\ifchorded"
+                                                     << "\\\\iflyrics"
+                                                     << "\\\\ifnorepeatchords"
+                                                     << "\\\\fi");
 
-const QStringList CSongHighlighter::_delimiters
-(QStringList()
- << "\\\\begin" << "\\\\end"
- << "\\\\beginscripture" << "\\\\endscripture");
+const QStringList SongHighlighter::_delimiters(QStringList()
+                                               << "\\\\begin"
+                                               << "\\\\end"
+                                               << "\\\\beginscripture"
+                                               << "\\\\endscripture");
 
-const QColor CSongHighlighter::_keywords1Color(_TangoOrange3); //orange
-const QColor CSongHighlighter::_keywords2Color(_TangoScarletRed3); //red
-const QColor CSongHighlighter::_environmentsColor(_TangoChameleon3); //green
-const QColor CSongHighlighter::_commentsColor(_TangoAluminium4); //grey
-const QColor CSongHighlighter::_quotesColor(_TangoPlum3); //violet
-const QColor CSongHighlighter::_chordsColor(_TangoSkyBlue3); //blue
+const QColor SongHighlighter::_keywords1Color(_TangoOrange3); // orange
+const QColor SongHighlighter::_keywords2Color(_TangoScarletRed3); // red
+const QColor SongHighlighter::_environmentsColor(_TangoChameleon3); // green
+const QColor SongHighlighter::_commentsColor(_TangoAluminium4); // grey
+const QColor SongHighlighter::_quotesColor(_TangoPlum3); // violet
+const QColor SongHighlighter::_chordsColor(_TangoSkyBlue3); // blue
 
-CSongHighlighter::CSongHighlighter(QTextDocument *parent)
+SongHighlighter::SongHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
     , m_checker(0)
     , m_isSpellCheckActive(false)
@@ -79,13 +94,13 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
 {
     HighlightingRule rule;
 
-    //LaTeX options (overrided by chords)
+    // LaTeX options (overrided by chords)
     optionFormat.setFontItalic(true);
     rule.pattern = reLaTeXOption;
     rule.format = optionFormat;
     highlightingRules.append(rule);
 
-    //LaTeX args (bold)
+    // LaTeX args (bold)
     argumentFormat.setFontWeight(QFont::Bold);
     rule.pattern = reLaTeXArgument;
     rule.format = argumentFormat;
@@ -94,8 +109,7 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
     // Keywords1 (orange)
     keywordFormat.setForeground(_keywords1Color);
     keywordFormat.setFontWeight(QFont::Bold);
-    foreach (const QString &pattern, _keywordPatterns)
-    {
+    foreach (const QString &pattern, _keywordPatterns) {
         rule.pattern = QRegExp(pattern);
         rule.format = keywordFormat;
         highlightingRules.append(rule);
@@ -104,30 +118,28 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
     // Keywords2 (red)
     keyword2Format.setForeground(_keywords2Color);
     keyword2Format.setFontWeight(QFont::Bold);
-    foreach (const QString &pattern, _keyword2Patterns)
-    {
+    foreach (const QString &pattern, _keyword2Patterns) {
         rule.pattern = QRegExp(pattern);
         rule.format = keyword2Format;
         highlightingRules.append(rule);
     }
 
-    //Environments (bold, green)
+    // Environments (bold, green)
     environmentFormat.setFontWeight(QFont::Bold);
     environmentFormat.setForeground(_environmentsColor);
-    foreach (QString str, _delimiters)
-    {
+    foreach (QString str, _delimiters) {
         rule.pattern = QRegExp(str);
         rule.format = environmentFormat;
         highlightingRules.append(rule);
     }
 
-    //Comments (grey)
+    // Comments (grey)
     singleLineCommentFormat.setForeground(_commentsColor);
     rule.pattern = reCommentsPattern;
     rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
 
-    //Quotations (violet)
+    // Quotations (violet)
     quotationFormat.setForeground(_quotesColor);
     rule.pattern = QRegExp("\".*\"");
     rule.format = quotationFormat;
@@ -137,7 +149,7 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
     rule.format = quotationFormat;
     highlightingRules.append(rule);
 
-    //Chords (blue)
+    // Chords (blue)
     chordFormat.setForeground(_chordsColor);
     chordFormat.setFontWeight(QFont::Bold);
     rule.pattern = reChordsPattern;
@@ -145,27 +157,25 @@ CSongHighlighter::CSongHighlighter(QTextDocument *parent)
     highlightingRules.append(rule);
 
 #ifdef ENABLE_SPELLCHECK
-    //Settings for online spellchecking
+    // Settings for online spellchecking
     m_spellCheckFormat.setUnderlineColor(QColor(Qt::red));
     m_spellCheckFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 }
 
-CSongHighlighter::~CSongHighlighter()
+SongHighlighter::~SongHighlighter()
 {
 #ifdef ENABLE_SPELLCHECK
     delete m_checker;
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 }
 
-void CSongHighlighter::highlightBlock(const QString &text)
+void SongHighlighter::highlightBlock(const QString &text)
 {
-    foreach (const HighlightingRule &rule, highlightingRules)
-    {
+    foreach (const HighlightingRule &rule, highlightingRules) {
         QRegExp expression(rule.pattern);
         int index = expression.indexIn(text);
-        while (index >= 0)
-        {
+        while (index >= 0) {
             int length = expression.matchedLength();
             setFormat(index, length, rule.format);
             index = expression.indexIn(text, index + length);
@@ -175,11 +185,11 @@ void CSongHighlighter::highlightBlock(const QString &text)
 
 #ifdef ENABLE_SPELLCHECK
     spellCheck(text);
-#endif //ENABLE_SPELLCHECK
+#endif // ENABLE_SPELLCHECK
 }
 
 #ifdef ENABLE_SPELLCHECK
-void CSongHighlighter::spellCheck(const QString &text)
+void SongHighlighter::spellCheck(const QString &text)
 {
     if (!m_isSpellCheckActive)
         return;
@@ -188,25 +198,23 @@ void CSongHighlighter::spellCheck(const QString &text)
     if (str.isEmpty())
         return;
 
-    QStringList list = str.split(QRegExp("([^\\w,^\\\\]|(?=\\\\))+"),
-                                 QString::SkipEmptyParts);
+    QStringList list =
+        str.split(QRegExp("([^\\w,^\\\\]|(?=\\\\))+"), QString::SkipEmptyParts);
 
     foreach (str, list)
-        if (str.length()>1 && !str.startsWith('\\') && !checkWord(str))
-        {
+        if (str.length() > 1 && !str.startsWith('\\') && !checkWord(str)) {
             int number = text.count(QRegExp("\\b" + str + "\\b"));
             int line = -1;
             // underline all incorrect occurrences of misspelled word
-            for (int j=0; j < number; ++j)
-            {
-                line = text.indexOf(QRegExp("\\b" + str + "\\b"), line+1);
+            for (int j = 0; j < number; ++j) {
+                line = text.indexOf(QRegExp("\\b" + str + "\\b"), line + 1);
                 if (line >= 0)
                     setFormat(line, str.length(), m_spellCheckFormat);
             }
         }
 }
 
-bool CSongHighlighter::checkWord(const QString &word)
+bool SongHighlighter::checkWord(const QString &word)
 {
     if (!m_codec)
         return false;
@@ -216,24 +224,23 @@ bool CSongHighlighter::checkWord(const QString &word)
     return m_checker->spell(encodedString.data());
 }
 
-void CSongHighlighter::setDictionary(const QString &filename)
+void SongHighlighter::setDictionary(const QString &filename)
 {
-    if (m_checker)
-    {
+    if (m_checker) {
         delete m_checker;
         m_checker = 0;
     }
 
     QFileInfo fi(filename);
-    if (filename.isEmpty() || !fi.exists() || !fi.isReadable())
-    {
-        qWarning() << tr("CSongHighlighter::setDictionary cannot open dictionary : ") << filename;
+    if (filename.isEmpty() || !fi.exists() || !fi.isReadable()) {
+        qWarning()
+            << tr("SongHighlighter::setDictionary cannot open dictionary : ")
+            << filename;
         delete m_checker;
         m_checker = 0;
-    }
-    else
-    {
-        QString basename = QString("%1/%2").arg(fi.absolutePath()).arg(fi.baseName());
+    } else {
+        QString basename =
+            QString("%1/%2").arg(fi.absolutePath()).arg(fi.baseName());
         m_checker = new Hunspell(QString("%1.aff").arg(basename).toLatin1(),
                                  QString("%1.dic").arg(basename).toLatin1());
         QString encoded = QString(m_checker->get_dic_encoding());
@@ -243,7 +250,7 @@ void CSongHighlighter::setDictionary(const QString &filename)
     rehighlight();
 }
 
-void CSongHighlighter::addWord(const QString & word)
+void SongHighlighter::addWord(const QString &word)
 {
     QByteArray encodedString;
     QString encoded = QString(m_checker->get_dic_encoding());
@@ -253,22 +260,18 @@ void CSongHighlighter::addWord(const QString & word)
     rehighlight();
 }
 
-void CSongHighlighter::setSpellCheckActive(const bool value)
+void SongHighlighter::setSpellCheckActive(const bool value)
 {
-    if (m_isSpellCheckActive != value)
-    {
+    if (m_isSpellCheckActive != value) {
         m_isSpellCheckActive = value;
         rehighlight();
     }
 }
 
-bool CSongHighlighter::isSpellCheckActive() const
+bool SongHighlighter::isSpellCheckActive() const
 {
     return m_isSpellCheckActive;
 }
 
-Hunspell* CSongHighlighter::checker() const
-{
-    return m_checker;
-}
-#endif //ENABLE_SPELLCHECK
+Hunspell *SongHighlighter::checker() const { return m_checker; }
+#endif // ENABLE_SPELLCHECK
