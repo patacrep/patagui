@@ -37,11 +37,11 @@ class QPixmap;
 class ProgressBar;
 class FileCopier;
 
-
 /*!
   \file conflict-dialog.hh
   \class ConflictDialog
-  \brief ConflictDialog is a dialog to solve conflicts when importing already existing songs.
+  \brief ConflictDialog is a dialog to solve conflicts when importing already
+  existing songs.
 
   A conflict dialog displays side-by-side two list of songs
   \li source: the list of conflictig songs that are being imported
@@ -50,7 +50,9 @@ class FileCopier;
   The dialog then presents actions to:
   \li overwrite (replace target with source)
   \li preserve  (keep target and ignore source)
-  \li show differences (a diff view that relies on the <a href="http://code.google.com/p/google-diff-match-patch/">diff_match_patch</a> library)
+  \li show differences (a diff view that relies on the <a
+  href="http://code.google.com/p/google-diff-match-patch/">diff_match_patch</a>
+  library)
 
   \image html conflict-dialog.png
 
@@ -60,7 +62,7 @@ class ConflictDialog : public QDialog
     Q_OBJECT
     Q_ENUMS(ConflictSolveMode)
 
-public:
+    public:
     /// Constructor.
     ConflictDialog(QWidget *parent = 0);
 
@@ -72,7 +74,7 @@ public:
     Key: path to source file (new song)
     Value: path to target file (existing song)
   */
-    void setSourceTargetFiles(const QMap< QString, QString > &map);
+    void setSourceTargetFiles(const QMap<QString, QString> &map);
 
     /*!
     Determines whether there are some conflicts between
@@ -84,25 +86,25 @@ public:
     /*!
     Returns the parent window of this dialog.
   */
-    MainWindow* parent() const;
+    MainWindow *parent() const;
 
     /*!
     Sets \a parent as the parent window of this dialog.
   */
-    void setParent(MainWindow* parent);
+    void setParent(MainWindow *parent);
 
     /*!
     Display an informative \a message in the status
     bar of the parent window.
   */
-    void showMessage(const QString & message);
+    void showMessage(const QString &message);
 
     /*!
     Returns the progress bar of the parent window.
   */
-    ProgressBar* progressBar() const;
+    ProgressBar *progressBar() const;
 
-public slots:
+    public slots:
     /*!
     Resolves existing conflicts according to
     the desired action (overwriting / preserving)
@@ -118,16 +120,16 @@ public slots:
   */
     void showDiff();
 
-private slots:
-    void updateItemDetails(QTableWidgetItem* item);
-    void openItem(QTableWidgetItem* item);
+    private slots:
+    void updateItemDetails(QTableWidgetItem *item);
+    void openItem(QTableWidgetItem *item);
     void cancelCopy();
 
-private:
+    private:
     MainWindow *m_parent;
     bool m_conflictsFound;
-    QMap< QString, QString> m_conflicts;
-    QMap< QString, QString> m_noConflicts;
+    QMap<QString, QString> m_conflicts;
+    QMap<QString, QString> m_noConflicts;
 
     QLabel *m_mainLabel;
 
@@ -156,12 +158,11 @@ class FileCopier : public QObject
 {
     Q_OBJECT
 
-public:
-
+    public:
     /// Constructor
     FileCopier(QWidget *parent) : m_cancelCopy(false)
     {
-        setParent(static_cast<MainWindow*>(parent));
+        setParent(static_cast<MainWindow *>(parent));
     }
 
     /// Define \a files as the list of source / target files to be copied
@@ -171,30 +172,18 @@ public:
     }
 
     /// Returns \a true if the copy can be interrupted
-    bool cancelCopy() const
-    {
-        return m_cancelCopy;
-    }
+    bool cancelCopy() const { return m_cancelCopy; }
 
     /// Returns the parent widget
-    MainWindow* parent() const
-    {
-        return m_parent;
-    }
+    MainWindow *parent() const { return m_parent; }
 
     /// Defines the parent widget
-    void setParent(MainWindow* parent)
-    {
-        m_parent = parent;
-    }
+    void setParent(MainWindow *parent) { m_parent = parent; }
 
     /// If value is \a true, the copy can be interrupted
-    void setCancelCopy(bool value)
-    {
-        m_cancelCopy = value;
-    }
+    void setCancelCopy(bool value) { m_cancelCopy = value; }
 
-public slots:
+    public slots:
 
     /*!
     Performs the copy operation of sources to targets
@@ -203,24 +192,23 @@ public slots:
     void copy()
     {
         int count = 0;
-        ProgressBar * progressBar = parent()->progressBar();
+        ProgressBar *progressBar = parent()->progressBar();
         progressBar->setRange(0, m_sourceTargets.size());
         progressBar->show();
 
-        QMap<QString, QString>::const_iterator it = m_sourceTargets.constBegin();
-        while (it != m_sourceTargets.constEnd())
-        {
+        QMap<QString, QString>::const_iterator it =
+            m_sourceTargets.constBegin();
+        while (it != m_sourceTargets.constEnd()) {
             if (cancelCopy())
                 break;
 
             QFile source(it.key());
             QFile target(it.value());
-            if (!target.exists() && !source.copy(target.fileName()))
-            {
-                parent()->statusBar()->showMessage
-                        (tr("An unexpected error occurred while copying: %1 to %2")
-                         .arg(source.fileName())
-                         .arg(target.fileName()));
+            if (!target.exists() && !source.copy(target.fileName())) {
+                parent()->statusBar()->showMessage(
+                    tr("An unexpected error occurred while copying: %1 to %2")
+                        .arg(source.fileName())
+                        .arg(target.fileName()));
             }
             progressBar->setValue(++count);
             ++it;
@@ -228,7 +216,7 @@ public slots:
         progressBar->hide();
     }
 
-private:
+    private:
     MainWindow *m_parent;
     bool m_cancelCopy;
     QMap<QString, QString> m_sourceTargets;

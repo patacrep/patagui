@@ -37,16 +37,19 @@ const QColor Chord::_ukuleleChordColor(_TangoPlum1);
 const QColor Chord::_importantUkuleleChordColor(_TangoPlum3);
 
 Chord::Chord(const QString &chord, QObject *parent)
-    : QObject(parent), m_isValid(true), m_drawBorder(false), m_pixmap(0) {
+    : QObject(parent), m_isValid(true), m_drawBorder(false), m_pixmap(0)
+{
     fromString(chord);
 }
 
-Chord::~Chord() {
+Chord::~Chord()
+{
     delete m_pixmap;
     m_pixmap = 0;
 }
 
-QString Chord::toString() {
+QString Chord::toString()
+{
     QString str;
     switch (m_instrument) {
     case Guitar:
@@ -74,7 +77,8 @@ QString Chord::toString() {
     return str;
 }
 
-void Chord::fromString(const QString &str) {
+void Chord::fromString(const QString &str)
+{
     QString copy(str);
 
     if (str.contains("gtab"))
@@ -101,7 +105,8 @@ void Chord::fromString(const QString &str) {
 
 bool Chord::isValid() const { return m_isValid; }
 
-QPixmap *Chord::toPixmap() {
+QPixmap *Chord::toPixmap()
+{
     if (m_pixmap)
         return m_pixmap;
 
@@ -149,7 +154,7 @@ QPixmap *Chord::toPixmap() {
         // grid background
         int hOffset =
             (instrument() == Guitar) ? 0 : cellWidth; // offset from the left
-        int vOffset = 45; // offset from the top
+        int vOffset = 45;                             // offset from the top
         QRect gridRect(4, vOffset, 80, cellHeight * max + padding + 5);
 
         painter.setPen(QPen(Qt::black));
@@ -207,7 +212,8 @@ QPixmap *Chord::toPixmap() {
 }
 
 void Chord::fillEllipse(QPainter *painter, const QRect &rect,
-                        const QBrush &brush) {
+                        const QBrush &brush)
+{
     QPainterPath path;
     path.addEllipse(rect.topLeft().x(), rect.topLeft().y(), rect.width(),
                     rect.height());
@@ -215,7 +221,8 @@ void Chord::fillEllipse(QPainter *painter, const QRect &rect,
     painter->fillPath(path, brush);
 }
 
-QColor Chord::color() {
+QColor Chord::color()
+{
     if (isImportant()) {
         if (instrument() == Guitar)
             return _importantGuitarChordColor;
@@ -235,7 +242,8 @@ void Chord::setDrawBorder(bool value) { m_drawBorder = value; }
 
 QString Chord::name() const { return m_name; }
 
-void Chord::setName(const QString &str) {
+void Chord::setName(const QString &str)
+{
     if (m_name != str) {
         m_name = str;
         emit nameChanged();
@@ -244,7 +252,8 @@ void Chord::setName(const QString &str) {
 
 QString Chord::fret() const { return m_fret; }
 
-void Chord::setFret(const QString &str) {
+void Chord::setFret(const QString &str)
+{
     if (m_fret != str) {
         m_fret = str;
         emit fretChanged();
@@ -253,7 +262,8 @@ void Chord::setFret(const QString &str) {
 
 QString Chord::strings() const { return m_strings; }
 
-void Chord::setStrings(const QString &str) {
+void Chord::setStrings(const QString &str)
+{
     if (m_strings != str) {
         m_strings = str;
         emit stringsChanged();
@@ -262,14 +272,16 @@ void Chord::setStrings(const QString &str) {
 
 Chord::Instrument Chord::instrument() const { return m_instrument; }
 
-void Chord::setInstrument(const Chord::Instrument &instru) {
+void Chord::setInstrument(const Chord::Instrument &instru)
+{
     if (m_instrument != instru) {
         m_instrument = instru;
         emit instrumentChanged();
     }
 }
 
-void Chord::switchInstrument(bool value) {
+void Chord::switchInstrument(bool value)
+{
     if (value) {
         if (instrument() == Guitar)
             setInstrument(Ukulele);

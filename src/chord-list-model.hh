@@ -62,10 +62,11 @@ class Chord;
   model->addItem("\gtab{D}{XX0232}");
   \endcode
 */
-class ChordListModel : public QAbstractListModel {
+class ChordListModel : public QAbstractListModel
+{
     Q_OBJECT
 
-  public:
+    public:
     /*!
     \enum ChordRoles
     Each Chord object the model has a set of data elements associated with it,
@@ -149,7 +150,7 @@ class ChordListModel : public QAbstractListModel {
   */
     Chord *getChord(const QModelIndex &index) const;
 
-  public slots:
+    public slots:
     /*!
     Insert the string \a value that represents a chord
     at position \a index
@@ -166,11 +167,11 @@ class ChordListModel : public QAbstractListModel {
   */
     void addItem(const QString &value);
 
-  private:
+    private:
     QModelIndex indexFromPosition(int position);
     int positionFromIndex(const QModelIndex &index) const;
 
-  private:
+    private:
     bool m_fixedColumnCount;
     bool m_fixedRowCount;
     int m_columnCount;

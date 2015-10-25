@@ -32,24 +32,25 @@
 /*!
   \file filter-lineedit.hh
   \class ClearButton
-  \brief ClearButton is the clear button that resets the content of a FilterLineEdit
+  \brief ClearButton is the clear button that resets the content of a
+  FilterLineEdit
   \image html mag-button.png
 */
 class ClearButton : public QToolButton
 {
     Q_OBJECT
 
-public:
+    public:
     /// Constructor.
     ClearButton(QWidget *parent = 0);
 
-protected slots:
+    protected slots:
     void textChanged(const QString &text);
 
-protected:
+    protected:
     void paintEvent(QPaintEvent *event);
 
-private:
+    private:
     QImage m_icon;
 };
 
@@ -63,14 +64,14 @@ class MagButton : public QToolButton
 {
     Q_OBJECT
 
-public:
+    public:
     /// Constructor.
     MagButton(QWidget *parent = 0);
 
-protected:
+    protected:
     void paintEvent(QPaintEvent *event);
 
-private:
+    private:
     QImage m_icon;
 };
 
@@ -84,11 +85,10 @@ class LocaleButton : public QToolButton
 {
     Q_OBJECT
 
-public:
+    public:
     /// Constructor.
     LocaleButton(QWidget *parent = 0);
 };
-
 
 class QAction;
 class SongSortFilterProxyModel;
@@ -96,17 +96,21 @@ class SongSortFilterProxyModel;
 /*!
   \file filter-lineedit.hh
   \class FilterLineEdit
-  \brief FilterLineEdit is a QLineEdit widget that allows one to filter results in the songs library
+  \brief FilterLineEdit is a QLineEdit widget that allows one to filter results
+  in the songs library
 
-  The filter updates the songs library view so that it only displays songs that match
+  The filter updates the songs library view so that it only displays songs that
+  match
   the user input.
 
   The filter only applies on artist/title/album columns as provided
   by the CLibrary::completionModel().
 
   A FilterLineEdit widget contains a MagButton on the left that allows one to
-  access quick filters functions (such as search by songs' language) and a ClearButton
-  on the right that resets its content (only dispayed when there is some user input).
+  access quick filters functions (such as search by songs' language) and a
+  ClearButton
+  on the right that resets its content (only dispayed when there is some user
+  input).
 
   \image html filter.png
 
@@ -115,7 +119,7 @@ class FilterLineEdit : public LineEdit
 {
     Q_OBJECT
 
-public slots:
+    public slots:
     /// Only display songs written in English.
     void filterLanguageEnglish();
     /// Only display songs written in French.
@@ -127,7 +131,7 @@ public slots:
     /// Only display songs written in Italian.
     void filterLanguageItalian();
 
-public:
+    public:
     /// Constructor.
     FilterLineEdit(QWidget *parent = 0);
     /// Destructor.
@@ -141,8 +145,8 @@ public:
     /// @param filterModel the proxy model of the songs library
     void setFilterModel(SongSortFilterProxyModel *filterModel);
 
-private:
-    QMenu* m_menu;
+    private:
+    QMenu *m_menu;
 
     SongSortFilterProxyModel *m_filterModel;
 };

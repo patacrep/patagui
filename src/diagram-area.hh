@@ -19,7 +19,6 @@
 #ifndef __DIAGRAM_AREA_HH__
 #define __DIAGRAM_AREA_HH__
 
-
 #include <QWidget>
 #include <QModelIndex>
 #include <QString>
@@ -98,18 +97,20 @@ class DiagramArea : public QWidget
 {
     Q_OBJECT
 
-public:
+    public:
     /// Constructor.
-    DiagramArea(QWidget *parent=0);
+    DiagramArea(QWidget *parent = 0);
 
     /*!
-    Returns \a true if the diagram-area is in read-only mode; \a false otherwise.
+    Returns \a true if the diagram-area is in read-only mode; \a false
+    otherwise.
     \sa setReadOnly
   */
     bool isReadOnly() const;
 
     /*!
-    Set the diagram-area as editable (\a false) or read-only (\a true) according to \a value.
+    Set the diagram-area as editable (\a false) or read-only (\a true) according
+    to \a value.
     \sa isReadOnly
   */
     void setReadOnly(bool value);
@@ -127,12 +128,13 @@ public:
     void setRowCount(int value);
 
     /*!
-    Returns all the chords. Note that it returns chords from the model, not the view;
+    Returns all the chords. Note that it returns chords from the model, not the
+    view;
     thus, filtered chords are also included.
   */
-    QList< Chord* > chords();
+    QList<Chord *> chords();
 
-public slots:
+    public slots:
     /*!
     Adds a new chord to the list. This slot is connected to the "add" button
     and pops-up a DiagramEditor.
@@ -143,7 +145,7 @@ public slots:
     Appends the chord \a chord to the list.
     The user is responsible for the correctness of the chord.
   */
-    void addDiagram(const QString & chord);
+    void addDiagram(const QString &chord);
 
     /*!
     Triggers a DiagramEditor associated to the chord at position \a index.
@@ -163,19 +165,19 @@ public slots:
     Filters rows that contain chords whose instrument matches \a type.
     \sa setNameFilter, setStringsFilter
   */
-    void setTypeFilter(const Chord::Instrument & type);
+    void setTypeFilter(const Chord::Instrument &type);
 
     /*!
     Filters rows that contain chords whose name matches \a name.
     \sa setTypeFilter, setStringsFilter
   */
-    void setNameFilter(const QString & name);
+    void setNameFilter(const QString &name);
 
     /*!
     Filters rows that contain chords whose strings matches \a strings.
     \sa setTypeFilter, setNameFilter
   */
-    void setStringsFilter(const QString & strings);
+    void setStringsFilter(const QString &strings);
 
     /*!
     Removes all filters.
@@ -183,14 +185,14 @@ public slots:
   */
     void clearFilters();
 
-private slots:
+    private slots:
     void update();
     void resizeRows();
     void onDiagramChanged();
-    void contextMenu(const QPoint & pos);
+    void contextMenu(const QPoint &pos);
     void onViewClicked(const QModelIndex &);
 
-signals:
+    signals:
     /*!
     This signal is emitted when the content of the list of chords changes
     such as when editing, removing or adding a new chord.
@@ -215,15 +217,14 @@ signals:
     /*!
     This signal is emitted when a chord from the list is clicked.
   */
-    void diagramClicked(Chord * diagram);
+    void diagramClicked(Chord *diagram);
 
-private:
+    private:
     bool m_isReadOnly;
     ChordListModel *m_diagramModel;
     QSortFilterProxyModel *m_proxyModel;
     QTableView *m_diagramView;
     QPushButton *m_addDiagramButton;
 };
-
 
 #endif //__DIAGRAM_AREA_HH__

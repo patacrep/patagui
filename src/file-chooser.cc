@@ -44,8 +44,8 @@ FileChooser::FileChooser(QWidget *parent)
     completer->setCompletionMode(QCompleter::InlineCompletion);
     m_lineEdit->setCompleter(completer);
 
-    connect(m_lineEdit, SIGNAL(textChanged(const QString &)),
-            this, SLOT(setPath(const QString &)));
+    connect(m_lineEdit, SIGNAL(textChanged(const QString &)), this,
+            SLOT(setPath(const QString &)));
 
     m_button = new QPushButton(tr("Browse"));
     connect(m_button, SIGNAL(clicked()), SLOT(browse()));
@@ -58,56 +58,38 @@ FileChooser::FileChooser(QWidget *parent)
     setLayout(layout);
 }
 
-FileChooser::~FileChooser()
-{
-}
+FileChooser::~FileChooser() {}
 
 void FileChooser::browse()
 {
     QString selection;
     if (options() & QFileDialog::ShowDirsOnly)
-        selection = QFileDialog::getExistingDirectory(this, caption(), directory());
+        selection =
+            QFileDialog::getExistingDirectory(this, caption(), directory());
     else
-        selection = QFileDialog::getOpenFileName(this, caption(), directory(), filter(), 0, options());
+        selection = QFileDialog::getOpenFileName(this, caption(), directory(),
+                                                 filter(), 0, options());
 
     if (!selection.isEmpty())
         setPath(selection);
 }
 
-QFileDialog::Options FileChooser::options() const
-{
-    return m_options;
-}
+QFileDialog::Options FileChooser::options() const { return m_options; }
 
 void FileChooser::setOptions(const QFileDialog::Options &opts)
 {
     m_options = opts;
 }
 
-QString FileChooser::filter() const
-{
-    return m_filter;
-}
+QString FileChooser::filter() const { return m_filter; }
 
-void FileChooser::setFilter(const QString &filter)
-{
-    m_filter = filter;
-}
+void FileChooser::setFilter(const QString &filter) { m_filter = filter; }
 
-QString FileChooser::caption() const
-{
-    return m_caption;
-}
+QString FileChooser::caption() const { return m_caption; }
 
-void FileChooser::setCaption(const QString &caption)
-{
-    m_caption = caption;
-}
+void FileChooser::setCaption(const QString &caption) { m_caption = caption; }
 
-QString FileChooser::directory() const
-{
-    return m_directory;
-}
+QString FileChooser::directory() const { return m_directory; }
 
 void FileChooser::setDirectory(const QString &directory)
 {
@@ -119,11 +101,7 @@ void FileChooser::setDirectory(const QDir &directory)
     m_directory = directory.absolutePath();
 }
 
-
-QString FileChooser::path() const
-{
-    return m_path;
-}
+QString FileChooser::path() const { return m_path; }
 
 void FileChooser::setPath(const QString &path)
 {

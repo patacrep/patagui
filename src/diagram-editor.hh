@@ -50,9 +50,9 @@ class DiagramEditor : public QDialog
 {
     Q_OBJECT
 
-public:
+    public:
     /// Constructor.
-    DiagramEditor(QWidget *parent=0);
+    DiagramEditor(QWidget *parent = 0);
 
     /// Destructor.
     ~DiagramEditor();
@@ -65,29 +65,29 @@ public:
     /*!
     Returns the Chord object associated with the dialog.
   */
-    Chord * chord() const;
+    Chord *chord() const;
 
-public slots:
+    public slots:
     /*!
     Associates the CDiagram object \a diagram with dialog.
     The properties of \a diagram are used to fill the form of the dialog.
   */
     void setChord(Chord *chord);
 
-private slots:
+    private slots:
     bool checkChord();
     void onInstrumentChanged(bool);
     void reset();
 
-private:
-    //chord
+    private:
+    // chord
     QRadioButton *m_guitar;
     QRadioButton *m_ukulele;
     QLineEdit *m_nameLineEdit;
     QLineEdit *m_stringsLineEdit;
     QSpinBox *m_fretSpinBox;
     QCheckBox *m_importantCheckBox;
-    //info
+    // info
     QLabel *m_infoIconLabel;
     QLabel *m_messageLabel;
 

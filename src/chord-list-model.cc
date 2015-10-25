@@ -25,22 +25,26 @@
 #include <QDebug>
 
 ChordListModel::ChordListModel(QObject *parent)
-    : QAbstractListModel(parent), m_columnCount(0), m_rowCount(0) {
+    : QAbstractListModel(parent), m_columnCount(0), m_rowCount(0)
+{
     m_fixedColumnCount = false;
     m_fixedRowCount = false;
 }
 
-ChordListModel::~ChordListModel() {
+ChordListModel::~ChordListModel()
+{
     foreach (Chord *chord, m_data)
         delete chord;
     m_data.clear();
 }
 
-int ChordListModel::columnCount(const QModelIndex &) const {
+int ChordListModel::columnCount(const QModelIndex &) const
+{
     return m_columnCount;
 }
 
-void ChordListModel::setColumnCount(int value) {
+void ChordListModel::setColumnCount(int value)
+{
     emit(layoutAboutToBeChanged());
     m_fixedColumnCount = true;
     m_columnCount = value;
@@ -49,14 +53,16 @@ void ChordListModel::setColumnCount(int value) {
 
 int ChordListModel::rowCount(const QModelIndex &) const { return m_rowCount; }
 
-void ChordListModel::setRowCount(int value) {
+void ChordListModel::setRowCount(int value)
+{
     emit(layoutAboutToBeChanged());
     m_fixedRowCount = true;
     m_rowCount = value;
     emit(layoutChanged());
 }
 
-QVariant ChordListModel::data(const QModelIndex &index, int role) const {
+QVariant ChordListModel::data(const QModelIndex &index, int role) const
+{
     if (!index.isValid() || m_data.size() == 0)
         return QVariant();
 
@@ -79,7 +85,8 @@ QVariant ChordListModel::data(const QModelIndex &index, int role) const {
 }
 
 bool ChordListModel::setData(const QModelIndex &index, const QVariant &value,
-                             int role) {
+                             int role)
+{
     Q_UNUSED(role);
 
     if (!index.isValid())
@@ -97,8 +104,8 @@ bool ChordListModel::setData(const QModelIndex &index, const QVariant &value,
     return false;
 }
 
-void ChordListModel::insertItem(const QModelIndex &index,
-                                const QString &value) {
+void ChordListModel::insertItem(const QModelIndex &index, const QString &value)
+{
     setColumnCount(columnCount() + 1);
     m_fixedColumnCount = false;
     int pos = index.column() < 0 ? columnCount() - 1 : index.column();
@@ -110,7 +117,8 @@ void ChordListModel::insertItem(const QModelIndex &index,
         delete chord;
 }
 
-void ChordListModel::removeItem(const QModelIndex &index) {
+void ChordListModel::removeItem(const QModelIndex &index)
+{
     int pos = positionFromIndex(index);
     delete m_data[pos];
     m_data.remove(pos);
@@ -129,7 +137,8 @@ void ChordListModel::removeItem(const QModelIndex &index) {
     }
 }
 
-void ChordListModel::addItem(const QString &value) {
+void ChordListModel::addItem(const QString &value)
+{
     Chord *chord = new Chord(value);
     if (!chord->isValid()) {
         delete chord;
@@ -152,7 +161,8 @@ void ChordListModel::addItem(const QString &value) {
     }
 }
 
-QModelIndex ChordListModel::indexFromPosition(int position) {
+QModelIndex ChordListModel::indexFromPosition(int position)
+{
     int row = 1, col = 1;
     if (m_fixedColumnCount) {
         row = (position - 1) / columnCount();
@@ -165,23 +175,28 @@ QModelIndex ChordListModel::indexFromPosition(int position) {
     return QAbstractListModel::createIndex(row, col);
 }
 
-int ChordListModel::positionFromIndex(const QModelIndex &index) const {
+int ChordListModel::positionFromIndex(const QModelIndex &index) const
+{
     return columnCount() * index.row() + index.column();
 }
 
-Chord *ChordListModel::getChord(const QModelIndex &index) const {
+Chord *ChordListModel::getChord(const QModelIndex &index) const
+{
     return m_data[positionFromIndex(index)];
 }
 
-Qt::DropActions ChordListModel::supportedDropActions() const {
+Qt::DropActions ChordListModel::supportedDropActions() const
+{
     return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::DropActions ChordListModel::supportedDragActions() const {
+Qt::DropActions ChordListModel::supportedDragActions() const
+{
     return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::ItemFlags ChordListModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags ChordListModel::flags(const QModelIndex &index) const
+{
     Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
 
     if (index.isValid())
@@ -190,13 +205,15 @@ Qt::ItemFlags ChordListModel::flags(const QModelIndex &index) const {
         return Qt::ItemIsDropEnabled | defaultFlags;
 }
 
-QStringList ChordListModel::mimeTypes() const {
+QStringList ChordListModel::mimeTypes() const
+{
     QStringList types;
     types << "text/plain";
     return types;
 }
 
-QMimeData *ChordListModel::mimeData(const QModelIndexList &indexes) const {
+QMimeData *ChordListModel::mimeData(const QModelIndexList &indexes) const
+{
     QMimeData *mimeData = new QMimeData();
     foreach (const QModelIndex &index, indexes)
         if (index.isValid())
@@ -207,7 +224,8 @@ QMimeData *ChordListModel::mimeData(const QModelIndexList &indexes) const {
 
 bool ChordListModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
                                   int row, int column,
-                                  const QModelIndex &parent) {
+                                  const QModelIndex &parent)
+{
     if (action == Qt::IgnoreAction)
         return true;
 

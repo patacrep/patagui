@@ -54,9 +54,10 @@ ConflictDialog::ConflictDialog(QWidget *parent)
     , m_fileCopier(new FileCopier(parent))
 {
     setWindowTitle(tr("Resolve conflicts"));
-    setParent(static_cast<MainWindow*>(parent));
+    setParent(static_cast<MainWindow *>(parent));
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel);
+    QDialogButtonBox *buttonBox =
+        new QDialogButtonBox(QDialogButtonBox::Cancel);
     connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
 
     m_overwriteButton = new QPushButton(tr("Overwrite"), this);
@@ -77,14 +78,18 @@ ConflictDialog::ConflictDialog(QWidget *parent)
     m_conflictView->setColumnWidth(1, 290);
     m_conflictView->horizontalHeader()->setStretchLastSection(true);
     m_conflictView->setAlternatingRowColors(true);
-    m_conflictView->setHorizontalHeaderLabels(QStringList() << tr("Source") << tr("Target"));
+    m_conflictView->setHorizontalHeaderLabels(QStringList() << tr("Source")
+                                                            << tr("Target"));
     m_conflictView->verticalHeader()->setVisible(false);
     m_conflictView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    connect(m_conflictView, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(updateItemDetails(QTableWidgetItem*)));
-    connect(m_conflictView, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(openItem(QTableWidgetItem*)));
+    connect(m_conflictView, SIGNAL(itemClicked(QTableWidgetItem *)), this,
+            SLOT(updateItemDetails(QTableWidgetItem *)));
+    connect(m_conflictView, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this,
+            SLOT(openItem(QTableWidgetItem *)));
 
     QLabel *messageLabel = new QLabel;
-    messageLabel->setText(tr("Importing the following source items would overwrite those target items: "));
+    messageLabel->setText(tr("Importing the following source items would "
+                             "overwrite those target items: "));
     messageLabel->setWordWrap(true);
     QIcon warningIcon = QIcon::fromTheme("dialog-warning");
     QLabel *iconLabel = new QLabel;
@@ -130,27 +135,21 @@ ConflictDialog::~ConflictDialog()
     delete m_fileCopier;
 }
 
-void ConflictDialog::setParent(MainWindow* parent)
-{
-    m_parent = parent;
-}
+void ConflictDialog::setParent(MainWindow *parent) { m_parent = parent; }
 
-MainWindow* ConflictDialog::parent() const
-{
-    return m_parent;
-}
+MainWindow *ConflictDialog::parent() const { return m_parent; }
 
-ProgressBar* ConflictDialog::progressBar() const
+ProgressBar *ConflictDialog::progressBar() const
 {
     return parent()->progressBar();
 }
 
-void ConflictDialog::showMessage(const QString & message)
+void ConflictDialog::showMessage(const QString &message)
 {
     parent()->statusBar()->showMessage(message);
 }
 
-void ConflictDialog::updateItemDetails(QTableWidgetItem* item)
+void ConflictDialog::updateItemDetails(QTableWidgetItem *item)
 {
     QString path = item->data(Qt::ToolTipRole).toString();
     QFileInfo fi(path);
@@ -160,47 +159,50 @@ void ConflictDialog::updateItemDetails(QTableWidgetItem* item)
     m_artistLabel->setText(song.artist);
     m_albumLabel->setText(song.album);
 
-    QString cover = QString("%1/%2.jpg").arg(fi.absolutePath()).arg(song.coverName);
-    if (QFile(cover).exists())
-    {
+    QString cover =
+        QString("%1/%2.jpg").arg(fi.absolutePath()).arg(song.coverName);
+    if (QFile(cover).exists()) {
         m_pixmap->load(cover);
         *m_pixmap = m_pixmap->scaled(42, 42);
-    }
-    else if (!QPixmapCache::find("cover-missing-full", m_pixmap))
-    {
-        *m_pixmap = QIcon::fromTheme("image-missing", QIcon(":/icons/tango/32x32/status/image-missing.png")).pixmap(42, 42);
+    } else if (!QPixmapCache::find("cover-missing-full", m_pixmap)) {
+        *m_pixmap = QIcon::fromTheme(
+                        "image-missing",
+                        QIcon(":/icons/tango/32x32/status/image-missing.png"))
+                        .pixmap(42, 42);
         QPixmapCache::insert("cover-missing-full", *m_pixmap);
     }
 
     m_coverLabel->setPixmap(*m_pixmap);
 }
 
-void ConflictDialog::openItem(QTableWidgetItem* item)
+void ConflictDialog::openItem(QTableWidgetItem *item)
 {
-    if (!QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::ToolTipRole).toString())) &&
-            !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::DisplayRole).toString())) &&
-            !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::EditRole).toString())) &&
-            !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::WhatsThisRole).toString())) )
-    {
-        showMessage(tr("Can't open: %1").arg(item->data(Qt::DisplayRole).toString()));
+    if (!QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::ToolTipRole).toString())) &&
+        !QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::DisplayRole).toString())) &&
+        !QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::EditRole).toString())) &&
+        !QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::WhatsThisRole).toString()))) {
+        showMessage(
+            tr("Can't open: %1").arg(item->data(Qt::DisplayRole).toString()));
     }
 }
 
-void ConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files)
+void ConflictDialog::setSourceTargetFiles(const QMap<QString, QString> &files)
 {
     m_conflictsFound = false;
     m_conflictView->setRowCount(files.size());
     int row = 0;
     QMap<QString, QString>::const_iterator it = files.constBegin();
-    while (it != files.constEnd())
-    {
-        if (QFile(it.value()).exists())
-        {
+    while (it != files.constEnd()) {
+        if (QFile(it.value()).exists()) {
             QFile source(it.key());
             QFile target(it.value());
 
-            if (source.open(QIODevice::ReadOnly) && target.open(QIODevice::ReadOnly))
-            {
+            if (source.open(QIODevice::ReadOnly) &&
+                target.open(QIODevice::ReadOnly)) {
                 QCryptographicHash sourceHash(QCryptographicHash::Sha1);
                 sourceHash.addData(source.readAll());
                 source.close();
@@ -209,8 +211,7 @@ void ConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files)
                 targetHash.addData(target.readAll());
                 target.close();
 
-                if (sourceHash.result() != targetHash.result())
-                {
+                if (sourceHash.result() != targetHash.result()) {
                     m_conflictsFound = true;
                     m_conflicts.insert(it.key(), it.value());
 
@@ -218,19 +219,20 @@ void ConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files)
                     QTableWidgetItem *srcItem = new QTableWidgetItem;
                     srcItem->setIcon(QIcon(":/icons/songbook/48x48/song.png"));
                     srcItem->setData(Qt::DisplayRole, fileInfo.fileName());
-                    srcItem->setData(Qt::ToolTipRole, fileInfo.absoluteFilePath());
+                    srcItem->setData(Qt::ToolTipRole,
+                                     fileInfo.absoluteFilePath());
                     m_conflictView->setItem(row, 0, srcItem);
 
                     fileInfo = QFileInfo(it.value());
                     QTableWidgetItem *targetItem = new QTableWidgetItem;
-                    targetItem->setIcon(QIcon(":/icons/songbook/48x48/song.png"));
+                    targetItem->setIcon(
+                        QIcon(":/icons/songbook/48x48/song.png"));
                     targetItem->setData(Qt::DisplayRole, fileInfo.fileName());
-                    targetItem->setData(Qt::ToolTipRole, fileInfo.absoluteFilePath());
+                    targetItem->setData(Qt::ToolTipRole,
+                                        fileInfo.absoluteFilePath());
                     m_conflictView->setItem(row, 1, targetItem);
                     ++row;
-                }
-                else
-                {
+                } else {
                     m_noConflicts.insert(it.key(), it.value());
                 }
             }
@@ -243,15 +245,9 @@ void ConflictDialog::setSourceTargetFiles(const QMap< QString, QString > &files)
         updateItemDetails(m_conflictView->itemAt(0, 0));
 }
 
-bool ConflictDialog::conflictsFound() const
-{
-    return m_conflictsFound;
-}
+bool ConflictDialog::conflictsFound() const { return m_conflictsFound; }
 
-void ConflictDialog::cancelCopy()
-{
-    m_fileCopier->setCancelCopy(true);
-}
+void ConflictDialog::cancelCopy() { m_fileCopier->setCancelCopy(true); }
 
 void ConflictDialog::showDiff()
 {
@@ -259,27 +255,27 @@ void ConflictDialog::showDiff()
     wizard->setWindowTitle("Show differences");
 
     QMap<QString, QString>::const_iterator it = m_conflicts.constBegin();
-    while (it != m_conflicts.constEnd())
-    {
+    while (it != m_conflicts.constEnd()) {
         QFile source(it.key());
         QFile target(it.value());
 
-        if (source.open(QIODevice::ReadOnly) && target.open(QIODevice::ReadOnly))
-        {
+        if (source.open(QIODevice::ReadOnly) &&
+            target.open(QIODevice::ReadOnly)) {
             // retrieve source song infos
             Song song = Song::fromFile(it.key());
             QFileInfo fi(it.key());
-            QString cover = QString("%1/%2.jpg").arg(fi.absolutePath()).arg(song.coverName);
+            QString cover =
+                QString("%1/%2.jpg").arg(fi.absolutePath()).arg(song.coverName);
             QPixmap *pixmap = 0;
-            if (QFile(cover).exists())
-            {
+            if (QFile(cover).exists()) {
                 pixmap = new QPixmap(cover);
                 *pixmap = pixmap->scaled(42, 42);
             }
 
             // retrieve diffs info
-            diff_match_patch* dmp = new diff_match_patch();
-            QList<Diff> diffList = dmp->diff_main(source.readAll(), target.readAll());
+            diff_match_patch *dmp = new diff_match_patch();
+            QList<Diff> diffList =
+                dmp->diff_main(source.readAll(), target.readAll());
             source.close();
             target.close();
             dmp->diff_cleanupSemantic(diffList);
@@ -291,7 +287,7 @@ void ConflictDialog::showDiff()
             if (pixmap && !pixmap->isNull())
                 page->setPixmap(QWizard::LogoPixmap, *pixmap);
 
-            QPlainTextEdit* area = new QPlainTextEdit;
+            QPlainTextEdit *area = new QPlainTextEdit;
             area->setReadOnly(true);
             area->appendHtml(dmp->diff_prettyHtml(diffList));
             area->moveCursor(QTextCursor::Start);
@@ -309,25 +305,20 @@ void ConflictDialog::showDiff()
 
 bool ConflictDialog::resolve()
 {
-    QPushButton *button = qobject_cast<QPushButton*>(QObject::sender());
-    if (button == m_overwriteButton)
-    {
+    QPushButton *button = qobject_cast<QPushButton *>(QObject::sender());
+    if (button == m_overwriteButton) {
         QMap<QString, QString>::const_iterator it = m_conflicts.constBegin();
-        while (it != m_conflicts.constEnd())
-        {
+        while (it != m_conflicts.constEnd()) {
             QFile target(it.value());
-            if (!target.remove())
-            {
-                parent()->statusBar()->showMessage
-                        (tr("An unexpected error occurred while removing: %1")
-                         .arg(target.fileName()));
+            if (!target.remove()) {
+                parent()->statusBar()->showMessage(
+                    tr("An unexpected error occurred while removing: %1")
+                        .arg(target.fileName()));
             }
             ++it;
         }
         m_fileCopier->setSourceTargets(m_conflicts.unite(m_noConflicts));
-    }
-    else if (button == m_keepOriginalButton)
-    {
+    } else if (button == m_keepOriginalButton) {
         m_fileCopier->setSourceTargets(m_noConflicts);
     }
 

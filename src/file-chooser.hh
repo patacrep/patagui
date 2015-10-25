@@ -45,9 +45,9 @@ class FileChooser : public QWidget
 {
     Q_OBJECT
 
-public:
+    public:
     /// Constructor.
-    FileChooser(QWidget *parent=0);
+    FileChooser(QWidget *parent = 0);
 
     /// Destructor.
     ~FileChooser();
@@ -112,27 +112,26 @@ public:
   */
     QString path() const;
 
-public slots:
+    public slots:
     /*!
     Sets the path for the QLineEdit.
     \sa path
   */
     void setPath(const QString &path);
 
-signals:
+    signals:
     /*!
     This signal is emitted when the path is changed in the QLineEdit.
     \sa path, setPath
   */
     void pathChanged(const QString &path);
 
-private slots:
+    private slots:
     void browse();
 
-
-private:
-    QLineEdit* m_lineEdit;
-    QPushButton* m_button;
+    private:
+    QLineEdit *m_lineEdit;
+    QPushButton *m_button;
     QString m_caption;
     QString m_directory;
     QString m_path;
@@ -140,4 +139,4 @@ private:
     QFileDialog::Options m_options;
 };
 
-#endif  // __FILE_CHOOSER_HH__
+#endif // __FILE_CHOOSER_HH__

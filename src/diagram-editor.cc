@@ -38,7 +38,6 @@
 #include <QFormLayout>
 #include <QDebug>
 
-
 DiagramEditor::DiagramEditor(QWidget *parent)
     : QDialog(parent)
     , m_infoIconLabel(new QLabel(this))
@@ -48,20 +47,22 @@ DiagramEditor::DiagramEditor(QWidget *parent)
 {
     setWindowTitle(tr("Chord editor"));
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
-                                                       QDialogButtonBox::Cancel |
-                                                       QDialogButtonBox::Reset);
+    QDialogButtonBox *buttonBox =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel |
+                             QDialogButtonBox::Reset);
 
     connect(buttonBox, SIGNAL(accepted()), SLOT(checkChord()));
     connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
-    connect(buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
-            this, SLOT(reset()));
+    connect(buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this,
+            SLOT(reset()));
 
     QGroupBox *instrumentGroupBox = new QGroupBox(tr("Instrument"));
-    m_guitar  = new QRadioButton(tr("Guitar"));
+    m_guitar = new QRadioButton(tr("Guitar"));
     m_ukulele = new QRadioButton(tr("Ukulele"));
-    connect(m_guitar, SIGNAL(toggled(bool)), this, SLOT(onInstrumentChanged(bool)));
-    connect(m_ukulele, SIGNAL(toggled(bool)), this, SLOT(onInstrumentChanged(bool)));
+    connect(m_guitar, SIGNAL(toggled(bool)), this,
+            SLOT(onInstrumentChanged(bool)));
+    connect(m_ukulele, SIGNAL(toggled(bool)), this,
+            SLOT(onInstrumentChanged(bool)));
 
     QVBoxLayout *instrumentLayout = new QVBoxLayout;
     instrumentLayout->addWidget(m_guitar);
@@ -70,24 +71,26 @@ DiagramEditor::DiagramEditor(QWidget *parent)
     instrumentGroupBox->setLayout(instrumentLayout);
 
     m_nameLineEdit = new QLineEdit;
-    m_nameLineEdit->setToolTip(tr("The chord name such as A&m for A-flat minor"));
+    m_nameLineEdit->setToolTip(
+        tr("The chord name such as A&m for A-flat minor"));
 
     m_fretSpinBox = new QSpinBox;
     m_fretSpinBox->setToolTip(tr("Fret"));
-    m_fretSpinBox->setRange(0,9);
+    m_fretSpinBox->setRange(0, 9);
 
     m_stringsLineEdit = new QLineEdit;
-    m_stringsLineEdit->setToolTip(tr("Symbols for each string of the guitar from lowest pitch to highest:\n"
-                                     "  X: string is not to be played\n"
-                                     "  0: string is to be played open\n"
-                                     "  [1-9]: string is to be played on the given numbered fret."));
+    m_stringsLineEdit->setToolTip(tr(
+        "Symbols for each string of the guitar from lowest pitch to highest:\n"
+        "  X: string is not to be played\n"
+        "  0: string is to be played open\n"
+        "  [1-9]: string is to be played on the given numbered fret."));
 
     QRegExp rx("[X\\d]+");
     QRegExpValidator *validator = new QRegExpValidator(rx, 0);
     m_stringsLineEdit->setValidator(validator);
 
     QIcon iconInfo = QIcon::fromTheme("dialog-information");
-    m_infoIconLabel->setPixmap(iconInfo.pixmap(24,24));
+    m_infoIconLabel->setPixmap(iconInfo.pixmap(24, 24));
     m_messageLabel->setWordWrap(true);
 
     QHBoxLayout *layoutInformation = new QHBoxLayout;
@@ -107,13 +110,13 @@ DiagramEditor::DiagramEditor(QWidget *parent)
 
     QSettings settings;
     settings.beginGroup("global");
-    QString songbookDir(settings.value("songbookPath", QDir::homePath()).toString());
+    QString songbookDir(
+        settings.value("songbookPath", QDir::homePath()).toString());
     settings.endGroup();
 
     QFile file(QString("%1/tex/chords.tex").arg(songbookDir));
 
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         // list of standard diagrams
         m_diagramArea = new DiagramArea(this);
         m_diagramArea->setReadOnly(true);
@@ -123,10 +126,10 @@ DiagramEditor::DiagramEditor(QWidget *parent)
                 m_diagramArea, SLOT(setNameFilter(const QString &)));
         connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
                 m_diagramArea, SLOT(setStringsFilter(const QString &)));
-        connect(m_diagramArea, SIGNAL(diagramClicked(Chord *)),
-                this, SLOT(setChord(Chord *)));
+        connect(m_diagramArea, SIGNAL(diagramClicked(Chord *)), this,
+                SLOT(setChord(Chord *)));
 
-        QTextStream stream (&file);
+        QTextStream stream(&file);
         stream.setCodec("UTF-8");
         QString content = stream.readAll();
         file.close();
@@ -147,8 +150,7 @@ DiagramEditor::DiagramEditor(QWidget *parent)
 
     QBoxLayout *contentLayout = new QHBoxLayout;
     contentLayout->addLayout(formLayout);
-    if (m_diagramArea)
-    {
+    if (m_diagramArea) {
         QScrollArea *scrollArea = new QScrollArea;
         scrollArea->setWidget(m_diagramArea);
         scrollArea->setBackgroundRole(QPalette::Base);
@@ -165,9 +167,7 @@ DiagramEditor::DiagramEditor(QWidget *parent)
     setLayout(mainLayout);
 }
 
-DiagramEditor::~DiagramEditor()
-{
-}
+DiagramEditor::~DiagramEditor() {}
 
 QSize DiagramEditor::sizeHint() const
 {
@@ -204,27 +204,24 @@ void DiagramEditor::setChord(Chord *chord)
     m_stringsLineEdit->setText(chord->strings());
     m_importantCheckBox->setChecked(chord->isImportant());
 
-    connect(m_nameLineEdit, SIGNAL(textChanged(const QString &)),
-            m_chord, SLOT(setName(const QString &)));
-    connect(m_fretSpinBox, SIGNAL(valueChanged(const QString &)),
-            m_chord, SLOT(setFret(const QString &)));
-    connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)),
-            m_chord, SLOT(setStrings(const QString &)));
-    connect(m_importantCheckBox, SIGNAL(toggled(bool)),
-            m_chord, SLOT(setImportant(bool)));
-    connect(m_guitar, SIGNAL(toggled(bool)),
-            m_chord, SLOT(switchInstrument(bool)));
-    connect(m_ukulele, SIGNAL(toggled(bool)),
-            m_chord, SLOT(switchInstrument(bool)));
+    connect(m_nameLineEdit, SIGNAL(textChanged(const QString &)), m_chord,
+            SLOT(setName(const QString &)));
+    connect(m_fretSpinBox, SIGNAL(valueChanged(const QString &)), m_chord,
+            SLOT(setFret(const QString &)));
+    connect(m_stringsLineEdit, SIGNAL(textChanged(const QString &)), m_chord,
+            SLOT(setStrings(const QString &)));
+    connect(m_importantCheckBox, SIGNAL(toggled(bool)), m_chord,
+            SLOT(setImportant(bool)));
+    connect(m_guitar, SIGNAL(toggled(bool)), m_chord,
+            SLOT(switchInstrument(bool)));
+    connect(m_ukulele, SIGNAL(toggled(bool)), m_chord,
+            SLOT(switchInstrument(bool)));
 
     if (m_diagramArea)
         m_diagramArea->clearFilters();
 }
 
-Chord * DiagramEditor::chord() const
-{
-    return m_chord;
-}
+Chord *DiagramEditor::chord() const { return m_chord; }
 
 bool DiagramEditor::checkChord()
 {
@@ -232,25 +229,28 @@ bool DiagramEditor::checkChord()
     m_messageLabel->show();
     QString css("QLineEdit{ border: 1px solid red; border-radius: 2px; }");
 
-    if (m_nameLineEdit->text().isEmpty())
-    {
+    if (m_nameLineEdit->text().isEmpty()) {
         m_messageLabel->setText(tr("Choose a valid chord name"));
         m_nameLineEdit->setStyleSheet(css);
         return false;
     }
     m_nameLineEdit->setStyleSheet(QString());
 
-    if ((m_guitar->isChecked()  && m_stringsLineEdit->text().length() != Chord::GuitarStringCount) ||
-            (m_ukulele->isChecked() && m_stringsLineEdit->text().length() != Chord::UkuleleStringCount))
-    {
+    if ((m_guitar->isChecked() &&
+         m_stringsLineEdit->text().length() != Chord::GuitarStringCount) ||
+        (m_ukulele->isChecked() &&
+         m_stringsLineEdit->text().length() != Chord::UkuleleStringCount)) {
         m_stringsLineEdit->setStyleSheet(css);
-        m_messageLabel->setText(tr("The number of strings doesn't match the chosen instrument"));
+        m_messageLabel->setText(
+            tr("The number of strings doesn't match the chosen instrument"));
         return false;
     }
     m_stringsLineEdit->setStyleSheet(QString());
 
     if (!chord()->isValid())
-        qWarning() << tr("DiagramEditor::checkChord() an invalid chord has been accepted: ") << chord()->toString();
+        qWarning() << tr("DiagramEditor::checkChord() an invalid chord has "
+                         "been accepted: ")
+                   << chord()->toString();
 
     accept();
     return true;
@@ -260,8 +260,7 @@ void DiagramEditor::onInstrumentChanged(bool checked)
 {
     Q_UNUSED(checked);
 
-    if (m_diagramArea)
-    {
+    if (m_diagramArea) {
         m_diagramArea->clearFilters();
 
         if (m_guitar->isChecked())

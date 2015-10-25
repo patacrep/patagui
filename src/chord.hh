@@ -52,14 +52,15 @@ class QPainter;
   \image html chord.png
 
 */
-class Chord : public QObject {
+class Chord : public QObject
+{
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
     Q_PROPERTY(
         QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
 
-  public:
+    public:
     /*!
     \enum StringCount
     This enum type indicates the number of strings of an instrumuent.
@@ -163,7 +164,7 @@ class Chord : public QObject {
   */
     void setDrawBorder(bool value);
 
-  public slots:
+    public slots:
     /*!
     Sets the chord name \a name.
     \sa chord
@@ -200,7 +201,7 @@ class Chord : public QObject {
   */
     void setImportant(bool value);
 
-  signals:
+    signals:
     /*!
     This signal is emitted when the chord name changes
   */
@@ -221,7 +222,7 @@ class Chord : public QObject {
   */
     void instrumentChanged();
 
-  private:
+    private:
     void fillEllipse(QPainter *painter, const QRect &rect, const QBrush &brush);
 
     Instrument m_instrument;
