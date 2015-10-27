@@ -13,12 +13,6 @@ class Patacrep : public QObject
 public:
     explicit Patacrep(QObject *parent = 0);
 
-    /*!
-    Return the songbook to compile.
-    \sa setSongbook
-  */
-    const Songbook* songbook() const;
-
     /*! Sets Working directory for process
   */
     void setWorkingDirectory(const QString &dir);
@@ -27,13 +21,22 @@ public:
   */
     const bool testPython();
 
+    /*! Test for Patacrep
+  */
+    const bool testPatacrep();
+
+    Songbook *getSongbook() const;
+
+    void setSongbook(Songbook *value);
+
 signals:
 
-public slots:    
+public slots:
 
 private:
-    QStringList datadirs;
     PythonQtObjectPtr pythonModule;
+    Songbook *songbook;
+    QStringList datadirs;
 };
 
 #endif // PATACREP_H
