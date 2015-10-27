@@ -19,11 +19,11 @@ public:
 
     /*! Test for Python
   */
-    const bool testPython();
+    bool testPython();
 
     /*! Test for Patacrep
   */
-    const bool testPatacrep();
+    bool testPatacrep();
 
     Songbook *getSongbook() const;
 

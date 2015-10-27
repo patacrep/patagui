@@ -20,9 +20,15 @@ void Patacrep::setWorkingDirectory(const QString &dir)
     // Set Current directory in python
 }
 
-const bool Patacrep::testPython()
+bool Patacrep::testPython()
 {
     //FIXME Test python
+    return true;
+}
+
+bool Patacrep::testPatacrep()
+{
+    //FIXME Test patacrep
     return true;
 }
 

@@ -168,7 +168,7 @@ public:
 
     /*! Test for Python
   */
-    const bool testPython();
+    bool testPython();
 
 signals:
     /*!

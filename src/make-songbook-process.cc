@@ -83,7 +83,7 @@ void MakeSongbookProcess::execute()
     }
 }
 
-const bool MakeSongbookProcess::testPython()
+bool MakeSongbookProcess::testPython()
 {
     QVariant patacrepVersion = pythonModule.call("testPatacrep");
     if (patacrepVersion.toString() == "4.0.0") {
