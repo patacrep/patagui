@@ -60,7 +60,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) : QDialog(parent)
 
     m_pagesWidget = new QStackedWidget(this);
     m_pagesWidget->addWidget(new OptionsPage(this));
-    // m_pagesWidget->addWidget(new SongbookPage(this));
+    m_pagesWidget->addWidget(new SongbookPage(this));
     m_pagesWidget->addWidget(new DisplayPage(this));
     m_pagesWidget->addWidget(new EditorPage(this));
 #ifdef ENABLE_LIBRARY_DOWNLOAD
@@ -105,11 +105,11 @@ void ConfigDialog::createIcons()
     optionsButton->setTextAlignment(Qt::AlignHCenter);
     optionsButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-    // QListWidgetItem *songbookButton = new QListWidgetItem(m_contentsWidget);
-    // songbookButton->setIcon(QIcon(":/icons/songbook/256x256/book.png"));
-    // songbookButton->setText(tr("Songbook"));
-    // songbookButton->setTextAlignment(Qt::AlignHCenter);
-    // songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    QListWidgetItem *songbookButton = new QListWidgetItem(m_contentsWidget);
+    songbookButton->setIcon(QIcon(":/icons/songbook/256x256/book.png"));
+    songbookButton->setText(tr("Songbook"));
+    songbookButton->setTextAlignment(Qt::AlignHCenter);
+    songbookButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem *displayButton = new QListWidgetItem(m_contentsWidget);
     displayButton->setIcon(QIcon::fromTheme(
@@ -439,10 +439,8 @@ void EditorPage::selectFont()
 
 void EditorPage::updateFontButton()
 {
-    m_fontButton->setText(
-        QString("%1 %2")
-            .arg(QFontInfo(m_font).family())
-            .arg(QString::number(QFontInfo(m_font).pointSize())));
+    m_fontButton->setText(QString("%1 %2").arg(QFontInfo(m_font).family()).arg(
+        QString::number(QFontInfo(m_font).pointSize())));
 }
 
 // Songbook Page

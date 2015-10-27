@@ -25,6 +25,10 @@ public:
   */
     bool testPatacrep();
 
+    /*!
+     * \brief getSongbook
+     * \return Returns songbook
+     */
     Songbook *getSongbook() const;
 
     void setSongbook(Songbook *value);
