@@ -17,18 +17,18 @@ Patacrep::Patacrep(QObject *parent) : QObject(parent)
 
 void Patacrep::setWorkingDirectory(const QString &dir)
 {
-    // Set Current directory in python
+    pythonModule.evalScript("os.chdir('" + dir + "')");
 }
 
 bool Patacrep::testPython()
 {
-    //FIXME Test python
+    // FIXME Test python
     return true;
 }
 
 bool Patacrep::testPatacrep()
 {
-    //FIXME Test patacrep
+    // FIXME Test patacrep
     return true;
 }
 
@@ -42,3 +42,41 @@ void Patacrep::setSongbook(Songbook *value)
     songbook = value;
 }
 
+QStringList Patacrep::getDatadirs() const
+{
+    return datadirs;
+}
+
+void Patacrep::buildSongbook()
+{
+    emit(aboutToStart());
+    if (!songbook->filename().isEmpty()) {
+        // Expose Songbook to python
+        pythonModule.addObject("songbook", songbook);
+        pythonModule.addObject("CPPprocess", this);
+        pythonModule.evalScript("setupSongbook(songbook.filename,'" +
+                                datadirs.first() + "')");
+        pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
+        // pythonModule.removeVariable("songbook");
+        emit(message("Finished Execution", 0));
+        emit(finished());
+    } else {
+        emit(message("Error: no songbook loaded", 0));
+        emit(finished());
+    }
+}
+
+void Patacrep::setDatadirs(const QStringList &datadirs)
+{
+    Patacrep::datadirs.append(datadirs);
+}
+
+void Patacrep::addDatadir(const QString &datadir)
+{
+    datadirs.append(datadir);
+}
+
+void Patacrep::stopBuilding()
+{
+    pythonModule.evalScript("stopBuild()");
+}

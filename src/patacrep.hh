@@ -31,11 +31,28 @@ public:
      */
     Songbook *getSongbook() const;
 
-    void setSongbook(Songbook *value);
+    QStringList getDatadirs() const;
 
 signals:
+    void aboutToStart();
+    void finished();
+    void message(const QString &message, int timeout);
 
 public slots:
+    /*!
+     * \brief setSongbook
+     * \param value
+     */
+
+    void setSongbook(Songbook *value);
+
+    void setDatadirs(const QStringList &datadirs);
+
+    void addDatadir(const QString &datadir);
+
+    void stopBuilding();
+
+    void buildSongbook();
 
 private:
     PythonQtObjectPtr pythonModule;
