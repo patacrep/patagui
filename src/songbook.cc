@@ -57,11 +57,20 @@ Songbook::Songbook(QObject *parent)
     setSourceModel(library());
 }
 
-Songbook::~Songbook() { delete m_propertyManager; }
+Songbook::~Songbook()
+{
+    delete m_propertyManager;
+}
 
-Library *Songbook::library() const { return Library::instance(); }
+Library *Songbook::library() const
+{
+    return Library::instance();
+}
 
-QString Songbook::filename() const { return m_filename; }
+QString Songbook::filename() const
+{
+    return m_filename;
+}
 
 void Songbook::setFilename(const QString &filename)
 {
@@ -71,7 +80,10 @@ void Songbook::setFilename(const QString &filename)
         m_filename += ".sb";
 }
 
-bool Songbook::isModified() { return m_modified; }
+bool Songbook::isModified()
+{
+    return m_modified;
+}
 
 void Songbook::setModified(bool modified)
 {
@@ -79,7 +91,10 @@ void Songbook::setModified(bool modified)
     emit(wasModified(modified));
 }
 
-QString Songbook::tmpl() const { return m_tmpl; }
+QString Songbook::tmpl() const
+{
+    return m_tmpl;
+}
 
 void Songbook::setTmpl(const QString &tmpl)
 {
@@ -91,7 +106,10 @@ void Songbook::setTmpl(const QString &tmpl)
     }
 }
 
-QStringList Songbook::songs() { return m_songs; }
+QStringList Songbook::songs()
+{
+    return m_songs;
+}
 
 void Songbook::setSongs(QStringList songs)
 {
@@ -158,7 +176,7 @@ void Songbook::changeTemplate(const QString &filename)
         file.close();
     }
 
-    /*
+    /* FIXME: Switch to non QScript stuff // Use variables read in patacrep!!!
     // Load json encoded songbook data
     QScriptEngine engine;
 
@@ -387,119 +405,94 @@ void Songbook::save(const QString &filename)
         setModified(false);
         setFilename(filename);
 
-        /* FIXME Adapt Template interpreter
         QTextStream out(&file);
         out.setCodec("UTF-8");
         out << "{\n";
         out << "\"template\" : \"patacrep.tex\",\n";
         out << "\"lang\" : \"french\",\n";
-        out << "\"bookoptions\" :
-        [\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
+        out << "\"bookoptions\" : "
+               "[\n\"diagram\",\n\"lilypond\",\n\"pictures\"\n],\n";
         out << "\"authwords\" : {\"sep\" : []},\n";
-        out << "\"datadir\" : \""<< library()->directory().absolutePath() <<
-        "\",\n";
+        out << "\"datadir\" : \"" << library()->directory().absolutePath()
+            << "\",\n";
 
         if (!tmpl().isEmpty())
             out << "\"template\" : \"" << tmpl() << "\",\n";
 
-        QMap< QString, QtVariantProperty* >::const_iterator it =
-        m_parameters.constBegin();
+        QMap<QString, QtVariantProperty *>::const_iterator it =
+            m_parameters.constBegin();
         QtProperty *property;
         int type;
         QVariant value;
         QString string_value;
         QColor color_value;
         QVariant stringValues;
-        while (it != m_parameters.constEnd())
-        {
+        while (it != m_parameters.constEnd()) {
             property = it.value();
             type = m_propertyManager->propertyType(property);
             value = m_propertyManager->value(property);
-            if (type == QVariant::String)
-            {
+            if (type == QVariant::String) {
                 string_value = value.toString();
-                if (!string_value.isEmpty())
-                {
+                if (!string_value.isEmpty()) {
                     out << "\"" << it.key() << "\" : \""
-                        << string_value.replace('\\',"\\\\") << "\",\n";
+                        << string_value.replace('\\', "\\\\") << "\",\n";
                 }
-            }
-            else if (type == QVariant::Color)
-            {
-                color_value = value.value< QColor >();
+            } else if (type == QVariant::Color) {
+                color_value = value.value<QColor>();
                 string_value = color_value.name();
-                string_value.remove(0,1);
-                if (!string_value.isEmpty())
-                {
+                string_value.remove(0, 1);
+                if (!string_value.isEmpty()) {
                     out << "\"" << it.key() << "\" : \"#"
                         << string_value.toUpper() << "\",\n";
                 }
-            }
-            else if (type == QVariant::Int)
-            {
+            } else if (type == QVariant::Int) {
                 string_value = value.toString();
-                if (!string_value.isEmpty())
-                {
-                    out << "\"" << it.key() << "\" : \""
-                        << string_value << "\",\n";
+                if (!string_value.isEmpty()) {
+                    out << "\"" << it.key() << "\" : \"" << string_value
+                        << "\",\n";
                 }
-            }
-            else if (type == QtVariantPropertyManager::enumTypeId())
-            {
-                stringValues = m_propertyManager->attributeValue(property,
-                                                                 "enumNames");
+            } else if (type == QtVariantPropertyManager::enumTypeId()) {
+                stringValues =
+                    m_propertyManager->attributeValue(property, "enumNames");
                 string_value = stringValues.toStringList()[value.toInt()];
-                if (!string_value.isEmpty())
-                {
+                if (!string_value.isEmpty()) {
                     out << "\"" << it.key() << "\" : \""
-                        << string_value.replace('\\',"\\\\") << "\",\n";
+                        << string_value.replace('\\', "\\\\") << "\",\n";
                 }
-            }
-            else if (type == QtVariantPropertyManager::flagTypeId())
-            {
-                stringValues = m_propertyManager->attributeValue(property,
-                                                                 "flagNames");
+            } else if (type == QtVariantPropertyManager::flagTypeId()) {
+                stringValues =
+                    m_propertyManager->attributeValue(property, "flagNames");
                 QStringList flagValues = stringValues.toStringList();
                 QStringList activatedFlags;
                 int index = 1;
                 int flags = value.toInt();
-                for (int i = 0; i < flagValues.size(); ++i)
-                {
-                    if (flags & index)
-                    {
+                for (int i = 0; i < flagValues.size(); ++i) {
+                    if (flags & index) {
                         activatedFlags << flagValues.at(i);
                     }
                     index *= 2;
                 }
                 out << "\"" << it.key() << "\" : [\n    \""
-                    << (activatedFlags.join("\",\n    \""))
-                    << "\"\n  ],\n";
-            }
-            else if (type == VariantManager::filePathTypeId())
-            {
+                    << (activatedFlags.join("\",\n    \"")) << "\"\n  ],\n";
+            } else if (type == VariantManager::filePathTypeId()) {
                 QFileInfo fi(value.toString());
                 string_value = fi.baseName();
-                if (!string_value.isEmpty())
-                {
+                if (!string_value.isEmpty()) {
                     out << "\"" << it.key() << "\" : \""
-                        << string_value.replace('\\',"\\\\") << "\",\n";
+                        << string_value.replace('\\', "\\\\") << "\",\n";
                 }
-            }
-            else if (type == VariantManager::unitTypeId())
-            {
+            } else if (type == VariantManager::unitTypeId()) {
                 string_value = value.toString();
-                if (!string_value.isEmpty())
-                {
+                if (!string_value.isEmpty()) {
                     out << "\"" << it.key() << "\" : \""
-                        << string_value.replace('\\',"\\\\") << "\",\n";
+                        << string_value.replace('\\', "\\\\") << "\",\n";
                 }
             }
             ++it;
         }
 
-        out << "\"content\" : [\n    \"" << (songs().join("\",\n    \"")) <<
-        "\"\n  ]\n}\n";
-        */
+        out << "\"content\" : [\n    \"" << (songs().join("\",\n    \""))
+            << "\"\n  ]\n}\n";
 
     } else {
         qWarning() << "Could not open File: " + filename;
