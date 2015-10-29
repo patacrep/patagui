@@ -36,7 +36,7 @@ class TabWidget;
 class FilterLineEdit;
 class Notification;
 class ProgressBar;
-class MakeSongbookProcess;
+class Patacrep;
 class SongHighlighter;
 
 class QPlainTextEdit;
@@ -118,14 +118,14 @@ public:
     that are generated in the songbook directory during the make().
     \sa make, makeCleanall
   */
-    void makeClean();
+//    void makeClean();
 
     /*!
     Removes LaTeX temporary files (*.aux *.log etc.) and PDF files
     that are generated in the songbook directory during the make().
     \sa make, makeClean
   */
-    void makeCleanall();
+//    void makeCleanall();
 
 protected:
     /*!
@@ -198,6 +198,9 @@ private:
     QSortFilterProxyModel *m_proxyModel;
     QFileSystemModel *m_tempFilesmodel;
 
+    // Interface to patacrep python library
+    Patacrep *patacrep;
+
     // Widgets
     TabWidget *m_mainWidget;
     ProgressBar *m_progressBar;
@@ -234,7 +237,6 @@ private:
     QAction *m_buildAct;
     QAction *m_cleanAct;
     QAction *m_sbInfoAct;
-    MakeSongbookProcess *m_builder;
 
     // Library action
     QAction *m_newSongAct;

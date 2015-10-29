@@ -56,7 +56,7 @@
 #include "preferences.hh"
 #include "progress-bar.hh"
 #include "import-dialog.hh"
-#include "make-songbook-process.hh"
+#include "patacrep.hh"
 
 #include <QDebug>
 #include <QMetaMethod>
@@ -214,7 +214,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_isToolBarDisplayed(true)
     , m_isStatusBarDisplayed(true)
     , m_currentToolBar(0)
-    , m_builder(new MakeSongbookProcess(this))
+    , patacrep(new Patacrep(this))
     , m_songHighlighter(0)
 {
     setWindowTitle("Patagui");
@@ -275,15 +275,15 @@ MainWindow::MainWindow(QWidget *parent)
     statusBar()->addPermanentWidget(m_progressBar);
 
     // make/make clean/make cleanall process
-    connect(m_builder, SIGNAL(aboutToStart()), progressBar(), SLOT(show()));
-    connect(m_builder, SIGNAL(aboutToStart()), statusBar(),
+    connect(patacrep, SIGNAL(aboutToStart()), progressBar(), SLOT(show()));
+    connect(patacrep, SIGNAL(aboutToStart()), statusBar(),
             SLOT(clearMessage()));
-    connect(m_builder, SIGNAL(message(const QString &, int)), statusBar(),
+    connect(patacrep, SIGNAL(message(const QString &, int)), statusBar(),
             SLOT(showMessage(const QString &, int)));
-    connect(m_builder, SIGNAL(message(const QString &, int)), log()->widget(),
+    connect(patacrep, SIGNAL(message(const QString &, int)), log()->widget(),
             SLOT(appendPlainText(const QString &)));
-    connect(m_builder, SIGNAL(finished()), progressBar(), SLOT(hide()));
-    //    connect(m_builder, SIGNAL(error(QProcess::ProcessError)),
+    connect(patacrep, SIGNAL(finished()), progressBar(), SLOT(hide()));
+    //    connect(patacrep, SIGNAL(error(QProcess::ProcessError)),
     //            this, SLOT(buildError(QProcess::ProcessError)));
     updateTitle(songbook()->filename());
 
@@ -509,7 +509,10 @@ void MainWindow::setToolBarDisplayed(bool value)
     }
 }
 
-bool MainWindow::isToolBarDisplayed() { return m_isToolBarDisplayed; }
+bool MainWindow::isToolBarDisplayed()
+{
+    return m_isToolBarDisplayed;
+}
 
 void MainWindow::setStatusBarDisplayed(bool value)
 {
@@ -517,7 +520,10 @@ void MainWindow::setStatusBarDisplayed(bool value)
     statusBar()->setVisible(value);
 }
 
-bool MainWindow::isStatusBarDisplayed() { return m_isStatusBarDisplayed; }
+bool MainWindow::isStatusBarDisplayed()
+{
+    return m_isStatusBarDisplayed;
+}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -653,7 +659,7 @@ void MainWindow::build()
     if (!checkPdfLaTeX() || !checkPython())
         return;
 
-    m_builder->testPython();
+    patacrep->testPython();
 
     songbook()->songsFromSelection();
     if (songbook()->songs().isEmpty()) {
@@ -745,31 +751,30 @@ const QString MainWindow::libraryPath()
 void MainWindow::make()
 {
     if (!future.isRunning()) {
-        m_builder->setWorkingDirectory(libraryPath());
+        patacrep->setWorkingDirectory(libraryPath());
+        patacrep->setSongbook(songbook());
+        patacrep->addDatadir(songbook()->library()->directory().absolutePath());
 
-        m_builder->setSongbook(songbook());
-        m_builder->addDatadir(
-            songbook()->library()->directory().absolutePath());
         // To change properly, make access to datadir in songbook class
-
-        future = QtConcurrent::run(m_builder, &MakeSongbookProcess::execute);
+        future = QtConcurrent::run(patacrep, &Patacrep::buildSongbook);
     } else {
         // TODO: Choose behaviour: Wait for finished or error message?
         qDebug() << "Process already running";
     }
 }
 
+/*
 void MainWindow::makeClean()
 {
     if (!future.isRunning()) {
-        m_builder->setWorkingDirectory(libraryPath());
+        patacrep->setWorkingDirectory(libraryPath());
 
-        m_builder->setSongbook(songbook());
-        m_builder->addDatadir(
+        patacrep->setSongbook(songbook());
+        patacrep->addDatadir(
             songbook()->library()->directory().absolutePath());
         // To change properly, make access to datadir in songbook class
 
-        future = QtConcurrent::run(m_builder, &MakeSongbookProcess::execute);
+        future = QtConcurrent::run(patacrep, &Patacrep::buildSongbook);
     } else {
         // TODO: Choose behaviour: Wait for finished or error message?
         qDebug() << "Process already running";
@@ -779,34 +784,47 @@ void MainWindow::makeClean()
 void MainWindow::makeCleanall()
 {
     if (!future.isRunning()) {
-        m_builder->setWorkingDirectory(libraryPath());
+        patacrep->setWorkingDirectory(libraryPath());
 
-        m_builder->setSongbook(songbook());
-        m_builder->addDatadir(
+        patacrep->setSongbook(songbook());
+        patacrep->addDatadir(
             songbook()->library()->directory().absolutePath());
         // To change properly, make access to datadir in songbook class
 
-        future = QtConcurrent::run(m_builder, &MakeSongbookProcess::execute);
+        future = QtConcurrent::run(patacrep,
+&MakeSongbookProcess::buildSongbook);
     } else {
         // TODO: Choose behaviour: Wait for finished or error message?
         qDebug() << "Process already running";
     }
 }
-
+*/
 void MainWindow::cancelProcess()
 {
     if (future.isRunning()) {
-        m_builder->stopBuilding();
+        patacrep->stopBuilding();
     }
 }
 
-ProgressBar *MainWindow::progressBar() const { return m_progressBar; }
+ProgressBar *MainWindow::progressBar() const
+{
+    return m_progressBar;
+}
 
-Songbook *MainWindow::songbook() const { return m_songbook; }
+Songbook *MainWindow::songbook() const
+{
+    return m_songbook;
+}
 
-LibraryView *MainWindow::view() const { return m_view; }
+LibraryView *MainWindow::view() const
+{
+    return m_view;
+}
 
-Library *MainWindow::library() const { return Library::instance(); }
+Library *MainWindow::library() const
+{
+    return Library::instance();
+}
 
 QItemSelectionModel *MainWindow::selectionModel()
 {
@@ -866,7 +884,10 @@ void MainWindow::songEditor(const QString &path)
     m_mainWidget->addTab(editor);
 }
 
-void MainWindow::newSong() { songEditor(QString()); }
+void MainWindow::newSong()
+{
+    songEditor(QString());
+}
 
 void MainWindow::importSongsDialog()
 {
@@ -965,7 +986,10 @@ void MainWindow::changeTab(int index)
     m_editorMenu->addActions(editor->actionGroup()->actions());
 }
 
-QDockWidget *MainWindow::log() const { return m_log; }
+QDockWidget *MainWindow::log() const
+{
+    return m_log;
+}
 
 void MainWindow::updateNotification(const QString &path)
 {
@@ -1063,12 +1087,13 @@ void MainWindow::cleanDialog()
     layout->addWidget(buttonBox);
     dialog.setLayout(layout);
 
-    if (dialog.exec() == QDialog::Accepted) {
-        if (cleanAllButton->isChecked())
-            makeCleanall();
-        else
-            makeClean();
-    }
+    //    FIXME
+    //    if (dialog.exec() == QDialog::Accepted) {
+    //        if (cleanAllButton->isChecked())
+    //            makeCleanall();
+    //        else
+    //            makeClean();
+    //    }
 }
 
 void MainWindow::updateTempFilesView(int state)

@@ -11,7 +11,11 @@ class Patacrep : public QObject
 {
     Q_OBJECT
 public:
-    explicit Patacrep(QObject *parent = 0);
+    /// Constructor
+    Patacrep(QObject *parent = 0);
+
+    /// Destructor
+    virtual ~Patacrep();
 
     /*! Sets Working directory for process
   */
@@ -33,18 +37,18 @@ public:
 
     QStringList getDatadirs() const;
 
+    /*!
+     * \brief setSongbook
+     * \param value
+     */
+    void setSongbook(Songbook *value);
+
 signals:
     void aboutToStart();
     void finished();
     void message(const QString &message, int timeout);
 
 public slots:
-    /*!
-     * \brief setSongbook
-     * \param value
-     */
-
-    void setSongbook(Songbook *value);
 
     void setDatadirs(const QStringList &datadirs);
 
@@ -53,6 +57,10 @@ public slots:
     void stopBuilding();
 
     void buildSongbook();
+
+    void stdOut(QString string);
+
+    void stdErr(QString string);
 
 private:
     PythonQtObjectPtr pythonModule;

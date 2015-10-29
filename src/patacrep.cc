@@ -15,6 +15,25 @@ Patacrep::Patacrep(QObject *parent) : QObject(parent)
     pythonModule.evalFile(":/python_scripts/songbook.py");
 }
 
+Patacrep::~Patacrep() {}
+
+void Patacrep::stdOut(QString string)
+{
+    // Hack to simplify output
+    if (!string.simplified().isEmpty()) {
+        emit message(string.simplified(), 0);
+    }
+}
+
+void Patacrep::stdErr(QString string)
+{
+    // Hack to simplify output
+    if (!string.simplified().isEmpty()) {
+        emit message("PY: " + string.simplified(), 0);
+        // qWarning() << string.simplified().toUtf8().constData();
+    }
+}
+
 void Patacrep::setWorkingDirectory(const QString &dir)
 {
     pythonModule.evalScript("os.chdir('" + dir + "')");
@@ -57,7 +76,7 @@ void Patacrep::buildSongbook()
         pythonModule.evalScript("setupSongbook(songbook.filename,'" +
                                 datadirs.first() + "')");
         pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
-        // pythonModule.removeVariable("songbook");
+//        pythonModule.removeVariable("songbook");
         emit(message("Finished Execution", 0));
         emit(finished());
     } else {
