@@ -756,7 +756,8 @@ void MainWindow::make()
         patacrep->addDatadir(songbook()->library()->directory().absolutePath());
 
         // To change properly, make access to datadir in songbook class
-        future = QtConcurrent::run(patacrep, &Patacrep::buildSongbook);
+//        future = QtConcurrent::run(patacrep, &Patacrep::buildSongbook);
+        patacrep->buildSongbook();
     } else {
         // TODO: Choose behaviour: Wait for finished or error message?
         qDebug() << "Process already running";
