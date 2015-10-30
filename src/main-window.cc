@@ -194,9 +194,8 @@ bool removeDirectoryRecursively(const QDir &directory)
 }
 }
 
-const QString MainWindow::_cachePath(
-    QString("%1/patagui")
-        .arg(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
+const QString MainWindow::_cachePath(QString("%1/patagui").arg(
+    QStandardPaths::writableLocation(QStandardPaths::CacheLocation)));
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -754,25 +753,6 @@ void MainWindow::make()
         patacrep->setWorkingDirectory(libraryPath());
         patacrep->setSongbook(songbook());
         patacrep->addDatadir(songbook()->library()->directory().absolutePath());
-
-        // To change properly, make access to datadir in songbook class
-//        future = QtConcurrent::run(patacrep, &Patacrep::buildSongbook);
-        patacrep->buildSongbook();
-    } else {
-        // TODO: Choose behaviour: Wait for finished or error message?
-        qDebug() << "Process already running";
-    }
-}
-
-/*
-void MainWindow::makeClean()
-{
-    if (!future.isRunning()) {
-        patacrep->setWorkingDirectory(libraryPath());
-
-        patacrep->setSongbook(songbook());
-        patacrep->addDatadir(
-            songbook()->library()->directory().absolutePath());
         // To change properly, make access to datadir in songbook class
 
         future = QtConcurrent::run(patacrep, &Patacrep::buildSongbook);
@@ -782,24 +762,6 @@ void MainWindow::makeClean()
     }
 }
 
-void MainWindow::makeCleanall()
-{
-    if (!future.isRunning()) {
-        patacrep->setWorkingDirectory(libraryPath());
-
-        patacrep->setSongbook(songbook());
-        patacrep->addDatadir(
-            songbook()->library()->directory().absolutePath());
-        // To change properly, make access to datadir in songbook class
-
-        future = QtConcurrent::run(patacrep,
-&MakeSongbookProcess::buildSongbook);
-    } else {
-        // TODO: Choose behaviour: Wait for finished or error message?
-        qDebug() << "Process already running";
-    }
-}
-*/
 void MainWindow::cancelProcess()
 {
     if (future.isRunning()) {
@@ -948,8 +910,7 @@ void MainWindow::deleteSong(const QString &path)
 {
     int ret = QMessageBox::warning(
         this, tr("Patagui"), tr("This file will be deleted:\n%1\n"
-                                "Are you sure?")
-                                 .arg(path),
+                                "Are you sure?").arg(path),
         QMessageBox::Cancel | QMessageBox::Ok, QMessageBox::Cancel);
 
     if (ret == QMessageBox::Ok)
