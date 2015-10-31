@@ -104,15 +104,17 @@ def buildSongbook(steps):
     global sb_builder
     message("Inner Function Reached")
     sys.stdout.flush()
-    if not(stopProcess):
-        try:
-            message("Building songbook")
-            sb_builder.build_steps(steps)
-        except errors.SongbookError as error:
-            message("Building error")
-            # Call proper function in CPPprocess
-            message(error)
-
+    try:
+        for step in steps:
+            message("Building songbook: " + step)
+            if stopProcess:
+                return
+            else:
+                sb_builder.build_steps([step])
+    except errors.SongbookError as error:
+        message("Building error")
+        # Call proper function in CPPprocess
+        message(error)
 
 def stopBuild():
     message("Terminating process")
