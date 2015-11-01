@@ -21,7 +21,7 @@ void Patacrep::stdOut(QString string)
 {
     // Hack to simplify output
     if (!string.simplified().isEmpty()) {
-        emit message(string.simplified(), 0);
+        emit message("PyOut: " + string.simplified(), 0);
     }
 }
 
@@ -29,7 +29,7 @@ void Patacrep::stdErr(QString string)
 {
     // Hack to simplify output
     if (!string.simplified().isEmpty()) {
-        emit message("PY: " + string.simplified(), 0);
+        emit message("PyErr: " + string.simplified(), 0);
         // qWarning() << string.simplified().toUtf8().constData();
     }
 }
