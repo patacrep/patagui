@@ -89,8 +89,6 @@ def build(steps):
     global loop
     message("==== Starting Loop call")
     loop.run_until_complete(buildSongbook(steps))
-    loop.stop()
-    # loop.close()
     message("==== Finished")
 
 # Inner function that actually builds the songbook
