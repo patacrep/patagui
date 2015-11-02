@@ -43,7 +43,6 @@ set(PATAGUI_SOURCES
   src/notification.cc
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
-  src/make-songbook-process.cc
   src/find-replace-dialog.cc
   src/search-widget.cc
   src/variant-factory.cc
@@ -82,7 +81,6 @@ set(PATAGUI_QT_HEADER
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
-  src/make-songbook-process.hh
   src/find-replace-dialog.hh
   src/search-widget.hh
   src/variant-factory.hh
