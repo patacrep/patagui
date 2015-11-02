@@ -24,20 +24,20 @@
 
 /**
  * \file label.hh
- * \class CLabel
- * \brief CLabel is a custom QLabel with a fixed width and elide mode.
+ * \class Label
+ * \brief Label is a custom QLabel with a fixed width and elide mode.
  */
-class CLabel : public QLabel
+class Label : public QLabel
 {
     Q_OBJECT
     Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
 
 public:
     /// Constructor.
-    CLabel(QWidget *parent = 0);
+    Label(QWidget *parent = 0);
 
     /// Destructor.
-    ~CLabel();
+    ~Label();
 
     /// Getter on the elide mode used by the label.
     /// Default is elide on the right.

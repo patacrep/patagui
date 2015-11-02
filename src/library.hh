@@ -33,61 +33,72 @@ class QAbstractListModel;
 class QStringListModel;
 
 class QPixmap;
-class CProgressBar;
-class CMainWindow;
+class ProgressBar;
+class MainWindow;
 
 /*!
   \file library.hh
-  \class CLibrary
-  \brief CLibrary is the base model that corresponds to the list of songs
+  \class Library
+  \brief Library is the base model that corresponds to the list of songs
 
-  A CLibrary is a list of Song objects (structure representing .sg
+  A Library is a list of Song objects (structure representing .sg
   files) that are fetched from a local directory.
 
   This model is used to build an intermediate model
-  (CSongSortFilterProxyModel) that allows filtering options, and is
-  then presented in the library tab (CTabWidget) of the main window
-  (CMainWindow) through its associated view (CLibraryView).
+  (SongSortFilterProxyModel) that allows filtering options, and is
+  then presented in the library tab (TabWidget) of the main window
+  (MainWindow) through its associated view (LibraryView).
 
 */
 
-class CLibrary : public QAbstractTableModel, public Singleton<CLibrary>
+class Library : public QAbstractTableModel, public Singleton<Library>
 {
     Q_OBJECT
     Q_PROPERTY(QDir directory READ directory WRITE setDirectory)
 
-    friend class Singleton<CLibrary>;
+    friend class Singleton<Library>;
 
 private:
     /// Constructor.
-    CLibrary();
+    Library();
     /// Destructor.
-    ~CLibrary();
+    ~Library();
 
 public:
     /*!
     \enum Roles
-    Each Song in the CLibrary has a set of data elements associated with it, each with its own role.
-    The roles are used by the view to indicate to the model which type of data it needs.
+    Each Song in the Library has a set of data elements associated with it, each
+    with its own role.
+    The roles are used by the view to indicate to the model which type of data
+    it needs.
   */
     enum Roles {
-        TitleRole = Qt::UserRole + 1, /*!< the title of the song item.*/
-        ArtistRole = Qt::UserRole + 2, /*!< the artist of the song item.*/
-        AlbumRole = Qt::UserRole + 3, /*!< the album of the song item.*/
-        CoverRole = Qt::UserRole + 4, /*!< the cover of the song item.*/
-        LilypondRole = Qt::UserRole + 5, /*!< whether or not the song item contains lilypond music sheets.*/
-        WebsiteRole = Qt::UserRole + 6, /*!< whether or not the song item contains a link to the website of the artist.*/
-        UrlRole = Qt::UserRole + 7, /*!< the url of the artist website.*/
+        TitleRole = Qt::UserRole + 1,    /*!< the title of the song item.*/
+        ArtistRole = Qt::UserRole + 2,   /*!< the artist of the song item.*/
+        AlbumRole = Qt::UserRole + 3,    /*!< the album of the song item.*/
+        CoverRole = Qt::UserRole + 4,    /*!< the cover of the song item.*/
+        LilypondRole = Qt::UserRole + 5, /*!< whether or not the song item
+                                            contains lilypond music sheets.*/
+        WebsiteRole = Qt::UserRole +
+                      6, /*!< whether or not the song item contains a link to
+                            the website of the artist.*/
+        UrlRole = Qt::UserRole + 7,      /*!< the url of the artist website.*/
         LanguageRole = Qt::UserRole + 8, /*!< the language of the song item.*/
-        PathRole = Qt::UserRole + 9, /*!< the absolute path to the .sg file corresponding to the song item.*/
-        CoverSmallRole = Qt::UserRole + 10, /*!< the thumbnail cover (22x22) of the song item.*/
-        CoverFullRole = Qt::UserRole + 11, /*!< the full cover (128x128) of the song item.*/
-        RelativePathRole = Qt::UserRole + 12, /*!< the relative path to the .sg file corresponding to the song item (from the base directory of the songbook).*/
+        PathRole = Qt::UserRole + 9,     /*!< the absolute path to the .sg file
+                                            corresponding to the song item.*/
+        CoverSmallRole =
+            Qt::UserRole +
+            10, /*!< the thumbnail cover (22x22) of the song item.*/
+        CoverFullRole =
+            Qt::UserRole + 11, /*!< the full cover (128x128) of the song item.*/
+        RelativePathRole =
+            Qt::UserRole + 12, /*!< the relative path to the .sg file
+                                  corresponding to the song item (from the base
+                                  directory of the songbook).*/
         MaxRole = RelativePathRole
     };
 
     void writeSettings();
-
 
     /*!
     Returns the directory of the library.
@@ -118,31 +129,32 @@ public:
     title, artist and album columns.
     \sa artistCompletionModel, albumCompletionModel, urlCompletionModel
   */
-    QAbstractListModel * completionModel() const;
+    QAbstractListModel *completionModel() const;
 
     /*!
     Returns a model based on the list (without duplicates) of artists.
     \sa completionModel, albumCompletionModel, urlCompletionModel
   */
-    QAbstractListModel * artistCompletionModel() const;
+    QAbstractListModel *artistCompletionModel() const;
 
     /*!
     Returns a model based on the list (without duplicates) of albums.
     \sa completionModel, artistCompletionModel, urlCompletionModel
   */
-    QAbstractListModel * albumCompletionModel() const;
+    QAbstractListModel *albumCompletionModel() const;
 
     /*!
     Returns a model based on the list (without duplicates) of urls.
     \sa completionModel, artistCompletionModel, albumCompletionModel
   */
-    QAbstractListModel * urlCompletionModel() const;
+    QAbstractListModel *urlCompletionModel() const;
 
     /*!
     Reimplements QAbstractTableModel::headerData.
     \sa data
   */
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role = Qt::DisplayRole) const;
 
     /*!
     Reimplements QAbstractTableModel::data.
@@ -168,7 +180,8 @@ public:
 
     /*!
     Returns the absolute path of an .sg file from \a artist and \a title names.
-    Following the songbook convention, the song "Hello world!" from artist "Unknown" would
+    Following the songbook convention, the song "Hello world!" from artist
+    "Unknown" would
     be located in \a /path/to/songbook/songs/unknown/hello_world.sg".
    */
     QString pathToSong(const QString &artist, const QString &title) const;
@@ -184,7 +197,7 @@ public:
     If \a reset is \a true, the whole library is parsed again.
     \sa addSongs
   */
-    void addSong(const Song &song, bool reset=false);
+    void addSong(const Song &song, bool reset = false);
 
     /*!
     A Song object is built from the file \a path
@@ -200,7 +213,7 @@ public:
   */
     void addSongs(const QStringList &paths);
 
-    void importSongs(const QStringList & filenames);
+    void importSongs(const QStringList &filenames);
 
     /*!
     Returns \a true if the song \a path is already in the library.
@@ -243,7 +256,8 @@ public:
     void saveSong(Song &song);
 
     /*!
-    Saves the cover \a cover in the library directory (update the cover path if required).
+    Saves the cover \a cover in the library directory (update the cover path if
+    required).
     \sa saveSong
   */
     void saveCover(Song &song, const QImage &cover);
@@ -253,15 +267,17 @@ public:
   */
     void deleteSong(const QString &path);
 
-    static QString checkPath(const QString & path);
+    static QString checkPath(const QString &path);
 
-    static void recursiveFindFiles(const QString & path, const QStringList& filters, QStringList& files);
+    static void recursiveFindFiles(const QString &path,
+                                   const QStringList &filters,
+                                   QStringList &files);
 
-    CProgressBar *progressBar() const;
+    ProgressBar *progressBar() const;
     void showMessage(const QString &);
 
-    CMainWindow* parent() const;
-    void setParent(CMainWindow* parent);
+    MainWindow *parent() const;
+    void setParent(MainWindow *parent);
 
 public slots:
     void readSettings();
@@ -273,10 +289,9 @@ signals:
     void noDirectory();
 
 protected:
-
 private:
-    CMainWindow *m_parent;
-    bool checkSongbookPath(const QString & path);
+    MainWindow *m_parent;
+    bool checkSongbookPath(const QString &path);
 
     QDir m_directory;
 
@@ -286,7 +301,7 @@ private:
     QStringListModel *m_urlCompletionModel;
 
     QStringList m_templates;
-    QList< Song > m_songs;
+    QList<Song> m_songs;
 };
 
 Q_DECLARE_METATYPE(QLocale::Language)

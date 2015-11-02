@@ -28,11 +28,13 @@
 #include "variant-manager.hh"
 
 class FilePathPropertyType
-{};
+{
+};
 Q_DECLARE_METATYPE(FilePathPropertyType)
 
 class UnitPropertyType
-{};
+{
+};
 Q_DECLARE_METATYPE(UnitPropertyType)
 
 int VariantManager::filePathTypeId()
@@ -40,10 +42,7 @@ int VariantManager::filePathTypeId()
     return qMetaTypeId<FilePathPropertyType>();
 }
 
-int VariantManager::unitTypeId()
-{
-    return qMetaTypeId<UnitPropertyType>();
-}
+int VariantManager::unitTypeId() { return qMetaTypeId<UnitPropertyType>(); }
 
 bool VariantManager::isPropertyTypeSupported(int propertyType) const
 {
@@ -68,14 +67,11 @@ QVariant VariantManager::value(const QtProperty *property) const
 
 QStringList VariantManager::attributes(int propertyType) const
 {
-    if (propertyType == filePathTypeId())
-    {
+    if (propertyType == filePathTypeId()) {
         QStringList attr;
         attr << QLatin1String("filter");
         return attr;
-    }
-    else if (propertyType == unitTypeId())
-    {
+    } else if (propertyType == unitTypeId()) {
         QStringList attr;
         attr << QLatin1String("unit");
         return attr;
@@ -83,15 +79,14 @@ QStringList VariantManager::attributes(int propertyType) const
     return QtVariantPropertyManager::attributes(propertyType);
 }
 
-int VariantManager::attributeType(int propertyType, const QString &attribute) const
+int VariantManager::attributeType(int propertyType,
+                                  const QString &attribute) const
 {
     if (propertyType == filePathTypeId()) {
         if (attribute == QLatin1String("filter"))
             return QVariant::String;
         return 0;
-    }
-    else if (propertyType == unitTypeId())
-    {
+    } else if (propertyType == unitTypeId()) {
         if (attribute == QLatin1String("unit"))
             return QVariant::String;
         return 0;
@@ -99,10 +94,10 @@ int VariantManager::attributeType(int propertyType, const QString &attribute) co
     return QtVariantPropertyManager::attributeType(propertyType, attribute);
 }
 
-QVariant VariantManager::attributeValue(const QtProperty *property, const QString &attribute) const
+QVariant VariantManager::attributeValue(const QtProperty *property,
+                                        const QString &attribute) const
 {
-    if (theValues.contains(property))
-    {
+    if (theValues.contains(property)) {
         if (attribute == QLatin1String("filter"))
             return theValues[property].filter;
         else if (attribute == QLatin1String("unit"))
@@ -121,8 +116,7 @@ QString VariantManager::valueText(const QtProperty *property) const
 
 void VariantManager::setValue(QtProperty *property, const QVariant &val)
 {
-    if (theValues.contains(property))
-    {
+    if (theValues.contains(property)) {
         if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
             return;
         QString str = val.value<QString>();
@@ -141,11 +135,11 @@ void VariantManager::setValue(QtProperty *property, const QVariant &val)
 void VariantManager::setAttribute(QtProperty *property,
                                   const QString &attribute, const QVariant &val)
 {
-    if (theValues.contains(property))
-    {
-        if (attribute == QLatin1String("filter") || attribute == QLatin1String("unit"))
-        {
-            if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
+    if (theValues.contains(property)) {
+        if (attribute == QLatin1String("filter") ||
+            attribute == QLatin1String("unit")) {
+            if (val.type() != QVariant::String &&
+                !val.canConvert(QVariant::String))
                 return;
             QString str = val.value<QString>();
             Data d = theValues[property];
@@ -163,7 +157,8 @@ void VariantManager::setAttribute(QtProperty *property,
 
 void VariantManager::initializeProperty(QtProperty *property)
 {
-    if (propertyType(property) == filePathTypeId() || propertyType(property) == unitTypeId())
+    if (propertyType(property) == filePathTypeId() ||
+        propertyType(property) == unitTypeId())
         theValues[property] = Data();
     QtVariantPropertyManager::initializeProperty(property);
 }
@@ -173,4 +168,3 @@ void VariantManager::uninitializeProperty(QtProperty *property)
     theValues.remove(property);
     QtVariantPropertyManager::uninitializeProperty(property);
 }
-

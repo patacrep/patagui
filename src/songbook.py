@@ -8,7 +8,7 @@ import os.path
 import textwrap
 import sys
 import logging
-import multiprocessing
+import threading
 
 # Import patacrep modules
 from patacrep.build import SongbookBuilder, DEFAULT_STEPS
@@ -22,6 +22,8 @@ from PythonQt import *
 # Define global variables
 sb_builder = None
 process = None
+stopProcess = False
+# logging.basicConfig(level=logging.DEBUG)
 
 # Define locale according to user's parameters
 def setLocale():
@@ -31,12 +33,16 @@ def setLocale():
         print("Locale Error")
         # Throw error
 
+# Test patacrep version
+def testPatacrep():
+    return patacrep.__version__
+
+def message(text):
+    CPPprocess.message(text,0)
+
 # Load songbook and setup datadirs
 def setupSongbook(songbook_path,datadir):
     setLocale()
-    print(os.curdir)
-    print(songbook_path)
-    print(datadir)
     global sb_builder
     basename = os.path.basename(songbook_path)[:-3]
     # Load songbook from sb file.
@@ -78,33 +84,50 @@ def setupSongbook(songbook_path,datadir):
         print("Error in formation of Songbook Builder")
         # Deal with error
 
+# Wrapper around buildSongbook that manages the threading part
 def build(steps):
+    global stopProcess
     global process
-    process = multiprocessing.Process(target=buildSongbook, args=(steps,))
+    stopProcess = False
+    process = threading.Thread(target=buildSongbook, args=(steps,))
     try:
         #logger.info('Starting process')
         process.start()
-    except multiprocessing.ProcessError as error:
+    except threading.ThreadError as error:
         #logger.warning('process Error occured')
         message(error)
-    process.join()
 
-def message(text):
-    CPPprocess.message(text,0)
+    period = 2
+    while process.is_alive():
+        # message("it's alive: " + CPPprocess.getBuildState())
+        if CPPprocess.getBuildState() == False:
+            try:
+                process.crash()
+            except AttributeError as error:
+                message("Building exited at user's request")
+                raise
+        # Check in 2 seconds
+        process.join(period)
+    message("end build")
 
+# Inner function that actually builds the songbook
 def buildSongbook(steps):
+    global sb_builder
     message("Inner Function Reached")
     sys.stdout.flush()
-    global sb_builder
     try:
-        message("Building songbook")
-        sb_builder.build_steps(steps)
+        for step in steps:
+            message("Building songbook: " + step)
+            sb_builder.build_steps([step])
+        message("Building finished")
     except errors.SongbookError as error:
         message("Building error")
         # Call proper function in CPPprocess
         message(error)
+        raise
+    message("Exiting buildSongbook function")
 
 def stopBuild():
     message("Terminating process")
-    global process
-    process.terminate()    
+    global stopProcess
+    stopProcess = True

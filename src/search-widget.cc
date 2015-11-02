@@ -28,32 +28,35 @@
 
 #include <QDebug>
 
-CSearchWidget::CSearchWidget(QWidget *parent)
+SearchWidget::SearchWidget(QWidget *parent)
     : QFrame(parent)
     , m_editor(0)
     , m_findLineEdit(new QLineEdit(this))
     , m_findPrevButton(new QPushButton(this))
     , m_findNextButton(new QPushButton(this))
 {
-    if (QPlainTextEdit *editor = qobject_cast< QPlainTextEdit* >(parent))
+    if (QPlainTextEdit *editor = qobject_cast<QPlainTextEdit *>(parent))
         setTextEditor(editor);
 
     m_findLineEdit->setMinimumWidth(200);
 
     m_findPrevButton->setFlat(true);
     m_findPrevButton->setMaximumWidth(20);
-    m_findPrevButton->setIcon(QIcon::fromTheme("go-up", QIcon(":/icons/songbook/22x22/fold.png")));
+    m_findPrevButton->setIcon(
+        QIcon::fromTheme("go-up", QIcon(":/icons/songbook/22x22/fold.png")));
     connect(m_findPrevButton, SIGNAL(clicked()), SLOT(find()));
 
     m_findNextButton->setFlat(true);
     m_findNextButton->setMaximumWidth(20);
-    m_findNextButton->setIcon(QIcon::fromTheme("go-down", QIcon(":/icons/songbook/22x22/unfold.png")));
+    m_findNextButton->setIcon(QIcon::fromTheme(
+        "go-down", QIcon(":/icons/songbook/22x22/unfold.png")));
     connect(m_findNextButton, SIGNAL(clicked()), SLOT(find()));
 
     QPushButton *closeButton = new QPushButton(this);
     closeButton->setFlat(true);
     closeButton->setMaximumWidth(20);
-    closeButton->setIcon(QIcon::fromTheme("window-close", QIcon(":/icons/tango/22x22/actions/window-close.png")));
+    closeButton->setIcon(QIcon::fromTheme(
+        "window-close", QIcon(":/icons/tango/22x22/actions/window-close.png")));
     connect(closeButton, SIGNAL(clicked()), SLOT(close()));
 
     QBoxLayout *layout = new QHBoxLayout;
@@ -73,22 +76,18 @@ CSearchWidget::CSearchWidget(QWidget *parent)
     readSettings();
 }
 
-CSearchWidget::~CSearchWidget()
+SearchWidget::~SearchWidget()
 {
     delete m_findLineEdit;
     delete m_findPrevButton;
     delete m_findNextButton;
 }
 
-void CSearchWidget::setFocus()
-{
-    m_findLineEdit->setFocus();
-}
+void SearchWidget::setFocus() { m_findLineEdit->setFocus(); }
 
-void CSearchWidget::keyPressEvent(QKeyEvent *event)
+void SearchWidget::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key())
-    {
+    switch (event->key()) {
     case Qt::Key_Enter:
     case Qt::Key_Return:
         find();
@@ -101,7 +100,7 @@ void CSearchWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void CSearchWidget::readSettings()
+void SearchWidget::readSettings()
 {
     QSettings settings;
     settings.beginGroup("find-replace");
@@ -109,7 +108,7 @@ void CSearchWidget::readSettings()
     settings.endGroup();
 }
 
-void CSearchWidget::writeSettings()
+void SearchWidget::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("find-replace");
@@ -117,7 +116,7 @@ void CSearchWidget::writeSettings()
     settings.endGroup();
 }
 
-void CSearchWidget::find()
+void SearchWidget::find()
 {
     if (!m_editor)
         return;
@@ -125,7 +124,7 @@ void CSearchWidget::find()
     QTextDocument::FindFlags options = 0;
     QString expr = m_findLineEdit->text();
 
-    QPushButton *button = qobject_cast< QPushButton* >(sender());
+    QPushButton *button = qobject_cast<QPushButton *>(sender());
     if (button == m_findPrevButton)
         options |= QTextDocument::FindBackward;
 
@@ -133,7 +132,4 @@ void CSearchWidget::find()
         m_editor->setStatusTip(tr("\"%1\" not found").arg(expr));
 }
 
-void CSearchWidget::setTextEditor(QPlainTextEdit *editor)
-{
-    m_editor = editor;
-}
+void SearchWidget::setTextEditor(QPlainTextEdit *editor) { m_editor = editor; }

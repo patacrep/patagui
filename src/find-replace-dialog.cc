@@ -31,7 +31,7 @@
 
 #include <QDebug>
 
-CFindReplaceDialog::CFindReplaceDialog(QWidget *parent)
+FindReplaceDialog::FindReplaceDialog(QWidget *parent)
     : QDialog(parent)
     , m_editor(0)
     , m_findComboBox(new QComboBox(this))
@@ -47,8 +47,8 @@ CFindReplaceDialog::CFindReplaceDialog(QWidget *parent)
     setModal(false);
     m_findComboBox->setEditable(true);
     m_replaceComboBox->setEditable(true);
-    connect(m_findComboBox, SIGNAL(editTextChanged(const QString &)),
-            this, SLOT(onValueChanged(const QString &)));
+    connect(m_findComboBox, SIGNAL(editTextChanged(const QString &)), this,
+            SLOT(onValueChanged(const QString &)));
 
     // button box
     m_findButton->setDefault(true);
@@ -83,10 +83,9 @@ CFindReplaceDialog::CFindReplaceDialog(QWidget *parent)
     readSettings();
 }
 
-CFindReplaceDialog::~CFindReplaceDialog()
-{}
+FindReplaceDialog::~FindReplaceDialog() {}
 
-void CFindReplaceDialog::readSettings()
+void FindReplaceDialog::readSettings()
 {
     QSettings settings;
     settings.beginGroup("find-replace");
@@ -96,17 +95,21 @@ void CFindReplaceDialog::readSettings()
     m_historySize = settings.value("history-size", 5).toInt();
 
     m_caseCheckBox->setChecked(settings.value("case", false).toBool());
-    m_wholeWordsCheckBox->setChecked(settings.value("entire-word", false).toBool());
-    m_searchBackwardsCheckBox->setChecked(settings.value("backwards", false).toBool());
+    m_wholeWordsCheckBox->setChecked(
+        settings.value("entire-word", false).toBool());
+    m_searchBackwardsCheckBox->setChecked(
+        settings.value("backwards", false).toBool());
     m_wrapCheckBox->setChecked(settings.value("wrap", true).toBool());
 
-    m_findWords = settings.value("find-words", QStringList()).toString().split(";");
-    m_replaceWords = settings.value("replace-words", QStringList()).toString().split(";");
+    m_findWords =
+        settings.value("find-words", QStringList()).toString().split(";");
+    m_replaceWords =
+        settings.value("replace-words", QStringList()).toString().split(";");
 
     settings.endGroup();
 }
 
-void CFindReplaceDialog::writeSettings()
+void FindReplaceDialog::writeSettings()
 {
     QSettings settings;
     settings.beginGroup("find-replace");
@@ -129,14 +132,16 @@ void CFindReplaceDialog::writeSettings()
     settings.endGroup();
 }
 
-void CFindReplaceDialog::setTextEditor(QPlainTextEdit *editor)
+void FindReplaceDialog::setTextEditor(QPlainTextEdit *editor)
 {
     m_editor = editor;
-    connect(m_editor, SIGNAL(copyAvailable(bool)), m_replaceButton, SLOT(setEnabled(bool)));
-    connect(m_editor, SIGNAL(copyAvailable(bool)), m_replaceAllButton, SLOT(setEnabled(bool)));
+    connect(m_editor, SIGNAL(copyAvailable(bool)), m_replaceButton,
+            SLOT(setEnabled(bool)));
+    connect(m_editor, SIGNAL(copyAvailable(bool)), m_replaceAllButton,
+            SLOT(setEnabled(bool)));
 }
 
-bool CFindReplaceDialog::find()
+bool FindReplaceDialog::find()
 {
     if (!m_editor)
         return false;
@@ -152,20 +157,16 @@ bool CFindReplaceDialog::find()
         options |= QTextDocument::FindWholeWords;
 
     QString expr = m_findComboBox->currentText();
-    if (!m_editor->find(expr, options))
-    {
-        if (m_wrapCheckBox->isChecked())
-        {
-            m_editor->moveCursor(m_searchBackwardsCheckBox->isChecked() ?
-                                     QTextCursor::End : QTextCursor::Start);
-            if (!m_editor->find(expr, options))
-            {
+    if (!m_editor->find(expr, options)) {
+        if (m_wrapCheckBox->isChecked()) {
+            m_editor->moveCursor(m_searchBackwardsCheckBox->isChecked()
+                                     ? QTextCursor::End
+                                     : QTextCursor::Start);
+            if (!m_editor->find(expr, options)) {
                 setStatusTip(tr("\"%1\" not found").arg(expr));
                 return false;
             }
-        }
-        else
-        {
+        } else {
             setStatusTip(tr("\"%1\" not found").arg(expr));
             return false;
         }
@@ -175,27 +176,25 @@ bool CFindReplaceDialog::find()
     return true;
 }
 
-void CFindReplaceDialog::appendToHistory(QComboBox *widget, QStringList & history)
+void FindReplaceDialog::appendToHistory(QComboBox *widget, QStringList &history)
 {
     if (!widget)
         return;
 
     QString expr = widget->currentText();
     // append the replaced expression to history
-    if (!expr.isEmpty() && !history.contains(expr))
-    {
+    if (!expr.isEmpty() && !history.contains(expr)) {
         history.append(expr);
         widget->addItem(expr);
-        while (history.size() >= historySize())
-        {
+        while (history.size() >= historySize()) {
             history.removeFirst();
             widget->removeItem(0);
         }
-        widget->setCurrentIndex(widget->count()-1);
+        widget->setCurrentIndex(widget->count() - 1);
     }
 }
 
-void CFindReplaceDialog::replace()
+void FindReplaceDialog::replace()
 {
     if (!m_editor)
         return;
@@ -208,7 +207,7 @@ void CFindReplaceDialog::replace()
         cursor().insertText(m_replaceComboBox->currentText());
 }
 
-void CFindReplaceDialog::replaceAll()
+void FindReplaceDialog::replaceAll()
 {
     if (!m_editor)
         return;
@@ -216,12 +215,12 @@ void CFindReplaceDialog::replaceAll()
     appendToHistory(m_replaceComboBox, m_replaceWords);
 
     bool wrapMode = m_wrapCheckBox->isChecked();
-    if (wrapMode)
-    {
+    if (wrapMode) {
         // move the cursor at document start and
         // temporary disable wrap mode to avoid infinite loops
-        m_editor->moveCursor(m_searchBackwardsCheckBox->isChecked() ?
-                                 QTextCursor::End : QTextCursor::Start);
+        m_editor->moveCursor(m_searchBackwardsCheckBox->isChecked()
+                                 ? QTextCursor::End
+                                 : QTextCursor::Start);
         m_wrapCheckBox->setChecked(false);
     }
 
@@ -230,8 +229,7 @@ void CFindReplaceDialog::replaceAll()
 
     cursor().beginEditBlock();
     int count = 0;
-    while (cursor().hasSelection())
-    {
+    while (cursor().hasSelection()) {
         cursor().insertText(m_replaceComboBox->currentText());
         find();
         ++count;
@@ -243,22 +241,16 @@ void CFindReplaceDialog::replaceAll()
     m_wrapCheckBox->setChecked(wrapMode);
 }
 
-int CFindReplaceDialog::historySize() const
-{
-    return m_historySize;
-}
+int FindReplaceDialog::historySize() const { return m_historySize; }
 
-void CFindReplaceDialog::setHistorySize(int value)
-{
-    m_historySize = value;
-}
+void FindReplaceDialog::setHistorySize(int value) { m_historySize = value; }
 
-QTextCursor CFindReplaceDialog::cursor() const
+QTextCursor FindReplaceDialog::cursor() const
 {
     return m_editor ? m_editor->textCursor() : QTextCursor();
 }
 
-void CFindReplaceDialog::setStatusTip(const QString & message)
+void FindReplaceDialog::setStatusTip(const QString &message)
 {
     if (!m_editor)
         return;
@@ -266,9 +258,9 @@ void CFindReplaceDialog::setStatusTip(const QString & message)
     m_editor->setStatusTip(message);
 }
 
-void CFindReplaceDialog::onValueChanged(const QString & text)
+void FindReplaceDialog::onValueChanged(const QString &text)
 {
-    QComboBox *currentComboBox = qobject_cast< QComboBox* >(sender());
+    QComboBox *currentComboBox = qobject_cast<QComboBox *>(sender());
     if (currentComboBox == m_findComboBox)
         m_findButton->setEnabled(!text.isEmpty());
 }

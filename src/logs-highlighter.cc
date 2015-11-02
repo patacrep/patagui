@@ -22,51 +22,50 @@
 
 #include <QDebug>
 
-CLogsHighlighter::CLogsHighlighter(QTextDocument *parent)
+LogsHighlighter::LogsHighlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
 {
     HighlightingRule rule;
 
-    //LaTeX compilation logs
-    //files (light blue)
+    // LaTeX compilation logs
+    // files (light blue)
     QStringList extensions;
-    extensions << "pdf" << "jpg" << "png" << "ly" << "sg";
+    extensions << "pdf"
+               << "jpg"
+               << "png"
+               << "ly"
+               << "sg";
     m_latexFileFormat.setForeground(_TangoSkyBlue1);
 
-    foreach (const QString &extension, extensions)
-    {
+    foreach (const QString &extension, extensions) {
         rule.pattern = QRegExp(QString("[^(\\s|/)]*\\.%1").arg(extension));
         rule.format = m_latexFileFormat;
         highlightingRules.append(rule);
     }
 
-    //errors (light red)
+    // errors (light red)
     m_latexErrorFormat.setForeground(_TangoScarletRed1);
 
     rule.pattern = QRegExp("^!.*");
     rule.format = m_latexErrorFormat;
     highlightingRules.append(rule);
 
-    //warnings (light orange)
+    // warnings (light orange)
     m_latexWarningFormat.setForeground(_TangoOrange1);
 
     rule.pattern = QRegExp("^.*(W|w)arning.*$");
     rule.format = m_latexWarningFormat;
     highlightingRules.append(rule);
-
 }
 
-CLogsHighlighter::~CLogsHighlighter()
-{}
+LogsHighlighter::~LogsHighlighter() {}
 
-void CLogsHighlighter::highlightBlock(const QString &text)
+void LogsHighlighter::highlightBlock(const QString &text)
 {
-    foreach (const HighlightingRule &rule, highlightingRules)
-    {
+    foreach (const HighlightingRule &rule, highlightingRules) {
         QRegExp expression(rule.pattern);
         int index = expression.indexIn(text);
-        while (index >= 0)
-        {
+        while (index >= 0) {
             int length = expression.matchedLength();
             setFormat(index, length, rule.format);
             index = expression.indexIn(text, index + length);

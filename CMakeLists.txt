@@ -43,7 +43,6 @@ set(PATAGUI_SOURCES
   src/notification.cc
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
-  src/make-songbook-process.cc
   src/find-replace-dialog.cc
   src/search-widget.cc
   src/variant-factory.cc
@@ -51,6 +50,7 @@ set(PATAGUI_SOURCES
   src/import-dialog.cc
   src/conflict-dialog.cc
   src/diff_match_patch/diff_match_patch.cpp
+  src/patacrep.cc
   )
 
 # header (moc)
@@ -81,13 +81,13 @@ set(PATAGUI_QT_HEADER
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
-  src/make-songbook-process.hh
   src/find-replace-dialog.hh
   src/search-widget.hh
   src/variant-factory.hh
   src/variant-manager.hh
   src/import-dialog.hh
   src/conflict-dialog.hh
+  src/patacrep.hh
   )
 
 # uis

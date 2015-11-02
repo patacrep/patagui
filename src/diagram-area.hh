@@ -19,7 +19,6 @@
 #ifndef __DIAGRAM_AREA_HH__
 #define __DIAGRAM_AREA_HH__
 
-
 #include <QWidget>
 #include <QModelIndex>
 #include <QString>
@@ -32,20 +31,20 @@
 class QPushButton;
 class QTableView;
 class QSortFilterProxyModel;
-class CChordListModel;
+class ChordListModel;
 
 /*!
   \file diagram-area.hh
-  \class CDiagramArea
-  \brief CDiagramArea is a widget displaying a list of chords
+  \class DiagramArea
+  \brief DiagramArea is a widget displaying a list of chords
 
-  A CDiagramArea embeds a QTableView based upon a CChordTableModel model.
-  A CDiagramArea can be defined as read-only or editable through
+  A DiagramArea embeds a QTableView based upon a ChordTableModel model.
+  A DiagramArea can be defined as read-only or editable through
   setReadOnly() and is usually placed as a widget inside a scrolling
   area:
 
   \code
-  CDiagramArea *area = new CDiagramArea(this);
+  DiagramArea *area = new DiagramArea(this);
   area->setRowCount(1);
   area->setReadOnly(false);
 
@@ -60,7 +59,7 @@ class CChordListModel;
   features a "add" button that appends new chords to the model.
   An implementation may be found in song-header-editor.cc.
 
-  If the CDiagramArea is read-only, displayed chords can neither be
+  If the DiagramArea is read-only, displayed chords can neither be
   edited nor removed. Thus, the area does not propose the "add" button
   to add a new chord to the list. The following example can be found
   in the dialog from diagram-editor.cc where it is used to display all
@@ -68,7 +67,7 @@ class CChordListModel;
   pick from:
 
   \code
-  CDiagramArea *area = new CDiagramArea(this);
+  DiagramArea *area = new DiagramArea(this);
   area->setReadOnly(true);
   area->setColumnCount(8);
 
@@ -78,10 +77,10 @@ class CChordListModel;
   scroll->setWidgetResizable(true);
   \endcode
 
-  The list of chords in a CDiagramArea can be filtered by methods such
+  The list of chords in a DiagramArea can be filtered by methods such
   as setTypeFilter(), setNameFilter() and setStringsFilter() that will
-  only display rows that contain chords whose CChord::instrument(),
-  CChord::name() and CChord::strings() match the filter. In the
+  only display rows that contain chords whose Chord::instrument(),
+  Chord::name() and Chord::strings() match the filter. In the
   dialog from diagram-editor.cc, those slots are thus connected to the
   QLineEdit widgets:
 
@@ -94,22 +93,24 @@ class CChordListModel;
           area, SLOT(setStringsFilter(const QString &)));
   \endcode
 */
-class CDiagramArea : public QWidget
+class DiagramArea : public QWidget
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CDiagramArea(QWidget *parent=0);
+    DiagramArea(QWidget *parent = 0);
 
     /*!
-    Returns \a true if the diagram-area is in read-only mode; \a false otherwise.
+    Returns \a true if the diagram-area is in read-only mode; \a false
+    otherwise.
     \sa setReadOnly
   */
     bool isReadOnly() const;
 
     /*!
-    Set the diagram-area as editable (\a false) or read-only (\a true) according to \a value.
+    Set the diagram-area as editable (\a false) or read-only (\a true) according
+    to \a value.
     \sa isReadOnly
   */
     void setReadOnly(bool value);
@@ -127,15 +128,16 @@ public:
     void setRowCount(int value);
 
     /*!
-    Returns all the chords. Note that it returns chords from the model, not the view;
+    Returns all the chords. Note that it returns chords from the model, not the
+    view;
     thus, filtered chords are also included.
   */
-    QList< CChord* > chords();
+    QList<Chord *> chords();
 
 public slots:
     /*!
     Adds a new chord to the list. This slot is connected to the "add" button
-    and pops-up a CDiagramEditor.
+    and pops-up a DiagramEditor.
   */
     void newDiagram();
 
@@ -143,10 +145,10 @@ public slots:
     Appends the chord \a chord to the list.
     The user is responsible for the correctness of the chord.
   */
-    void addDiagram(const QString & chord);
+    void addDiagram(const QString &chord);
 
     /*!
-    Triggers a CDiagramEditor associated to the chord at position \a index.
+    Triggers a DiagramEditor associated to the chord at position \a index.
     This slot is only available in editable mode.
     \sa setReadOnly
   */
@@ -163,19 +165,19 @@ public slots:
     Filters rows that contain chords whose instrument matches \a type.
     \sa setNameFilter, setStringsFilter
   */
-    void setTypeFilter(const CChord::Instrument & type);
+    void setTypeFilter(const Chord::Instrument &type);
 
     /*!
     Filters rows that contain chords whose name matches \a name.
     \sa setTypeFilter, setStringsFilter
   */
-    void setNameFilter(const QString & name);
+    void setNameFilter(const QString &name);
 
     /*!
     Filters rows that contain chords whose strings matches \a strings.
     \sa setTypeFilter, setNameFilter
   */
-    void setStringsFilter(const QString & strings);
+    void setStringsFilter(const QString &strings);
 
     /*!
     Removes all filters.
@@ -187,7 +189,7 @@ private slots:
     void update();
     void resizeRows();
     void onDiagramChanged();
-    void contextMenu(const QPoint & pos);
+    void contextMenu(const QPoint &pos);
     void onViewClicked(const QModelIndex &);
 
 signals:
@@ -215,15 +217,14 @@ signals:
     /*!
     This signal is emitted when a chord from the list is clicked.
   */
-    void diagramClicked(CChord * diagram);
+    void diagramClicked(Chord *diagram);
 
 private:
     bool m_isReadOnly;
-    CChordListModel *m_diagramModel;
+    ChordListModel *m_diagramModel;
     QSortFilterProxyModel *m_proxyModel;
     QTableView *m_diagramView;
     QPushButton *m_addDiagramButton;
 };
-
 
 #endif //__DIAGRAM_AREA_HH__

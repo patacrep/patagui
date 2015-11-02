@@ -26,8 +26,8 @@
 
 /*!
   \file tab-widget.hh
-  \class CTabWidget
-  \brief CTabWidget is a widget representing a tab in the mainwindow
+  \class TabWidget
+  \brief TabWidget is a widget representing a tab in the mainwindow
 
   Note that a tab-widget is a generic widget that is a plain
   container but from the application point of view, two kinds of tabs
@@ -41,13 +41,12 @@
   tab for each available song.
 */
 
-class CTabWidget : public QTabWidget
+class TabWidget : public QTabWidget
 {
     Q_OBJECT
     Q_ENUMS(SelectionBehavior)
-    Q_PROPERTY(SelectionBehavior selectionBehaviorOnAdd
-               READ selectionBehaviorOnAdd
-               WRITE setSelectionBehaviorOnAdd)
+    Q_PROPERTY(SelectionBehavior selectionBehaviorOnAdd READ
+                   selectionBehaviorOnAdd WRITE setSelectionBehaviorOnAdd)
 
 public:
     /*!
@@ -56,14 +55,14 @@ public:
   */
     enum SelectionBehavior {
         SelectCurrent, /*!< this will keep focus on the current tab. */
-        SelectNew /*!< this will shift focus on the new tab. */
+        SelectNew      /*!< this will shift focus on the new tab. */
     };
 
     /// Constructor.
-    CTabWidget(QWidget *parent=0);
+    TabWidget(QWidget *parent = 0);
 
     /// Destructor.
-    virtual ~CTabWidget();
+    virtual ~TabWidget();
 
     /*!
     Add a new tab with \a widget as his parent and returns
@@ -130,26 +129,25 @@ private:
     SelectionBehavior m_selectionBehaviorOnAdd; ///> focus policy on new tabs
 };
 
-
 /*!
   \file tab-widget.hh
-  \class CTabBar
-  \brief CTabBar is the widget representing the tabs in the mainwindow
+  \class TabBar
+  \brief TabBar is the widget representing the tabs in the mainwindow
 
-  A CTabBar allows tabs to be closed when middle-clicked with a mouse.
+  A TabBar allows tabs to be closed when middle-clicked with a mouse.
 
   \image html tab-widget.png
 
 */
-class CTabBar : public QTabBar
+class TabBar : public QTabBar
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CTabBar(QWidget *parent=0);
+    TabBar(QWidget *parent = 0);
     /// Destructor.
-    ~CTabBar();
+    ~TabBar();
 
 protected:
     /*!
@@ -159,4 +157,4 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *event);
 };
 
-#endif  // __TAB_WIDGET_HH__
+#endif // __TAB_WIDGET_HH__

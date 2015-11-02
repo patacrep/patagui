@@ -28,7 +28,7 @@
 #include <QPixmap>
 
 class CCoverDropArea;
-class CDiagramArea;
+class DiagramArea;
 class LineEdit;
 
 class QSpinBox;
@@ -39,7 +39,7 @@ class QStackedLayout;
 /*!
   \file song-header-editor.hh
   \class CSongHeaderEditor
-  \brief CSongHeaderEditor is a widget that manages a Song metadata in a CSongEditor
+  \brief CSongHeaderEditor is a widget that manages a Song metadata in a SongEditor
 
   A Song is composed of a header (metadata) and a body (lyrics).
   The CSongHeaderEditor hides the plain text of the song's header to present them
@@ -154,7 +154,7 @@ private:
     QSpinBox *m_transposeSpinBox;
     CCoverDropArea *m_coverLabel;
 
-    CDiagramArea *m_diagramArea;
+    DiagramArea *m_diagramArea;
 
     ViewMode m_viewMode;
     QStackedLayout *m_stackedLayout;

@@ -26,18 +26,18 @@
 #include <QDir>
 #include <QFuture>
 
-class CSongbook;
-class CLibrary;
-class CLibraryView;
-class CTabWidget;
-class CEditor;
-class CLabel;
-class CTabWidget;
-class CFilterLineEdit;
-class CNotification;
-class CProgressBar;
-class CMakeSongbookProcess;
-class CSongHighlighter;
+class Songbook;
+class Library;
+class LibraryView;
+class TabWidget;
+class Editor;
+class Label;
+class TabWidget;
+class FilterLineEdit;
+class Notification;
+class ProgressBar;
+class Patacrep;
+class SongHighlighter;
 
 class QPlainTextEdit;
 class QItemSelectionModel;
@@ -47,14 +47,14 @@ class QLabel;
 
 /*!
   \file main-window.hh
-  \class CMainWindow
-  \brief CMainWindow is the base class of the application.
+  \class MainWindow
+  \brief MainWindow is the base class of the application.
 
   \image html main-window.png
 
   Class for the main window of the application.
 */
-class CMainWindow : public QMainWindow
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -65,42 +65,41 @@ public slots:
 
 public:
     /// Constructor.
-    CMainWindow(QWidget *parent=0);
+    MainWindow(QWidget *parent = 0);
 
     /// Destructor.
-    ~CMainWindow();
+    ~MainWindow();
 
     /*!
     Returns the progress bar that is embedded in the status bar.
   */
-    CProgressBar * progressBar() const;
+    ProgressBar *progressBar() const;
 
     /*!
     Returns the dock widget that displays LaTeX compilation logs.
     \image html logs.png
   */
-    QDockWidget * log() const;
+    QDockWidget *log() const;
 
     /*!
     Returns the library view.
   */
-    CLibraryView * view() const;
+    LibraryView *view() const;
 
     /*!
     Returns the library.
   */
-    CLibrary * library() const;
+    Library *library() const;
 
     /*!
     Returns the current songbook.
   */
-    CSongbook * songbook() const;
+    Songbook *songbook() const;
 
     /*!
     Returns the directory of the songbook.
   */
     const QString workingPath();
-
 
     /*!
     Getter on the songs library directory.
@@ -119,14 +118,14 @@ public:
     that are generated in the songbook directory during the make().
     \sa make, makeCleanall
   */
-    void makeClean();
+//    void makeClean();
 
     /*!
     Removes LaTeX temporary files (*.aux *.log etc.) and PDF files
     that are generated in the songbook directory during the make().
     \sa make, makeClean
   */
-    void makeCleanall();
+//    void makeCleanall();
 
 protected:
     /*!
@@ -135,7 +134,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-    //songbook
+    // songbook
     void newSongbook();
     void open();
     void save();
@@ -149,9 +148,9 @@ private slots:
     void cleanDialog();
     void updateTempFilesView(int state);
 
-    //library
+    // library
     void newSong();
-    void importSongs(const QStringList & songs);
+    void importSongs(const QStringList &songs);
     void importSongsDialog();
     void middleClicked(const QModelIndex &index = QModelIndex());
     void songEditor(const QModelIndex &index = QModelIndex());
@@ -163,10 +162,11 @@ private slots:
     void noDataNotification(const QDir &directory);
     void noSongbookDirectoryNotification();
 
-    //model
-    void selectedSongsChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    // model
+    void selectedSongsChanged(const QModelIndex &topLeft,
+                              const QModelIndex &bottomRight);
 
-    //application
+    // application
     void preferences();
     void setToolBarDisplayed(bool);
     void setStatusBarDisplayed(bool);
@@ -180,7 +180,7 @@ private slots:
     void cancelProcess();
 
 private:
-    void readSettings(bool firstLaunch=false);
+    void readSettings(bool firstLaunch = false);
     void writeSettings();
 
     void createActions();
@@ -190,22 +190,25 @@ private:
     bool isToolBarDisplayed();
     bool isStatusBarDisplayed();
 
-    QItemSelectionModel * selectionModel();
+    QItemSelectionModel *selectionModel();
 
     // Models and views
-    CLibraryView *m_view;
-    CSongbook *m_songbook;
+    LibraryView *m_view;
+    Songbook *m_songbook;
     QSortFilterProxyModel *m_proxyModel;
-    QFileSystemModel* m_tempFilesmodel;
+    QFileSystemModel *m_tempFilesmodel;
+
+    // Interface to patacrep python library
+    Patacrep *patacrep;
 
     // Widgets
-    CTabWidget *m_mainWidget;
-    CProgressBar *m_progressBar;
-    CNotification *m_noDataInfo;
-    CNotification *m_noDatadirSet;
-    CNotification *m_updateAvailable;
+    TabWidget *m_mainWidget;
+    ProgressBar *m_progressBar;
+    Notification *m_noDataInfo;
+    Notification *m_noDatadirSet;
+    Notification *m_updateAvailable;
     QLabel *m_infoSelection;
-    CFilterLineEdit *m_filterLineEdit;
+    FilterLineEdit *m_filterLineEdit;
     QDockWidget *m_log;
 
     // Settings
@@ -234,7 +237,6 @@ private:
     QAction *m_buildAct;
     QAction *m_cleanAct;
     QAction *m_sbInfoAct;
-    CMakeSongbookProcess *m_builder;
 
     // Library action
     QAction *m_newSongAct;
@@ -245,9 +247,9 @@ private:
     QAction *m_invertSelectionAct;
     QAction *m_libraryUpdateAct;
 
-    //Editor
-    CEditor *m_voidEditor;
-    CSongHighlighter *m_songHighlighter;
+    // Editor
+    Editor *m_voidEditor;
+    SongHighlighter *m_songHighlighter;
 
     // Building Process
     QFuture<void> future;
@@ -256,4 +258,4 @@ public:
     const static QString _cachePath;
 };
 
-#endif  // __MAIN_WINDOW_HH__
+#endif // __MAIN_WINDOW_HH__
