@@ -1,5 +1,7 @@
 #include "patacrep.hh"
 
+#include <QDebug>
+
 Patacrep::Patacrep(QObject *parent) : QObject(parent)
 {
     // Setup Python interpreter
@@ -11,6 +13,7 @@ Patacrep::Patacrep(QObject *parent) : QObject(parent)
             SLOT(stdOut(QString)));
     connect(PythonQt::self(), SIGNAL(pythonStdErr(QString)),
             SLOT(stdErr(QString)));
+    connect(this, SIGNAL(message(QString, int)), SLOT(debugOutput(QString)));
     // Import Python file containing all necessary functions and imports
     pythonModule.evalFile(":/python_scripts/songbook.py");
 }
@@ -83,6 +86,11 @@ void Patacrep::buildSongbook()
         emit(message("Error: no songbook loaded", 0));
         emit(finished());
     }
+}
+
+void Patacrep::debugOutput(QString string)
+{
+    qDebug() << string;
 }
 
 void Patacrep::setDatadirs(const QStringList &datadirs)

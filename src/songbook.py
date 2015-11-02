@@ -8,7 +8,7 @@ import os.path
 import textwrap
 import sys
 import logging
-import asyncio
+import threading
 
 # Import patacrep modules
 from patacrep.build import SongbookBuilder, DEFAULT_STEPS
@@ -22,8 +22,8 @@ from PythonQt import *
 # Define global variables
 sb_builder = None
 process = None
-loop = asyncio.get_event_loop()
-# logging.basicConfig(level=logging.DEBUG)
+stopProcess = False
+logging.basicConfig(level=logging.DEBUG)
 
 # Define locale according to user's parameters
 def setLocale():
@@ -84,15 +84,30 @@ def setupSongbook(songbook_path,datadir):
         print("Error in formation of Songbook Builder")
         # Deal with error
 
-# Wrapper around buildSongbook that manages the event loop part
+# Wrapper around buildSongbook that manages the threading part
 def build(steps):
-    global loop
-    message("==== Starting Loop call")
-    loop.run_until_complete(buildSongbook(steps))
-    message("==== Finished")
+    global stopProcess
+    global process
+    stopProcess = False
+    process = threading.Thread(target=buildSongbook, args=(steps,))
+    try:
+        #logger.info('Starting process')
+        process.start()
+    except threading.ThreadError as error:
+        #logger.warning('process Error occured')
+        message(error)
+
+    period = 2
+    while process.is_alive():
+        if stopProcess:
+            process.terminate()
+            print("terminated")
+        # Check in 2 seconds
+        process.join(period)
+    message("end build")
 
 # Inner function that actually builds the songbook
-async def buildSongbook(steps):
+def buildSongbook(steps):
     global sb_builder
     message("Inner Function Reached")
     sys.stdout.flush()
@@ -109,6 +124,6 @@ async def buildSongbook(steps):
     message("Exiting buildSongbook function")
 
 def stopBuild():
-    global loop
     message("Terminating process")
-    loop.stop()
+    global stopProcess
+    stopProcess = True

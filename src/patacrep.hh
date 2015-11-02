@@ -62,6 +62,8 @@ public slots:
 
     void stdErr(QString string);
 
+    void debugOutput(QString string);
+
 private:
     PythonQtObjectPtr pythonModule;
     Songbook *songbook;
