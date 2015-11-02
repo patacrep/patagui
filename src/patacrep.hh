@@ -50,6 +50,8 @@ signals:
 
 public slots:
 
+    bool getBuildState() const;
+
     void setDatadirs(const QStringList &datadirs);
 
     void addDatadir(const QString &datadir);
@@ -68,6 +70,7 @@ private:
     PythonQtObjectPtr pythonModule;
     Songbook *songbook;
     QStringList datadirs;
+    bool buildingSongbook;
 };
 
 #endif // PATACREP_H

@@ -16,6 +16,7 @@ Patacrep::Patacrep(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(message(QString, int)), SLOT(debugOutput(QString)));
     // Import Python file containing all necessary functions and imports
     pythonModule.evalFile(":/python_scripts/songbook.py");
+    buildingSongbook = false;
 }
 
 Patacrep::~Patacrep() {}
@@ -71,6 +72,7 @@ QStringList Patacrep::getDatadirs() const
 
 void Patacrep::buildSongbook()
 {
+    buildingSongbook = true;
     emit(aboutToStart());
     if (!songbook->filename().isEmpty()) {
         // Expose Songbook to python
@@ -78,7 +80,7 @@ void Patacrep::buildSongbook()
         pythonModule.addObject("CPPprocess", this);
         pythonModule.evalScript("setupSongbook(songbook.filename,'" +
                                 datadirs.first() + "')");
-        pythonModule.evalScript("build(['tex', 'pdf', 'sbx', 'pdf', 'clean'])");
+        pythonModule.evalScript("build(['clean', 'tex', 'pdf', 'sbx', 'pdf', 'clean'])");
 //        pythonModule.removeVariable("songbook");
         emit(message("Finished Execution", 0));
         emit(finished());
@@ -93,6 +95,11 @@ void Patacrep::debugOutput(QString string)
     qDebug() << string;
 }
 
+bool Patacrep::getBuildState() const
+{
+    return buildingSongbook;
+}
+
 void Patacrep::setDatadirs(const QStringList &datadirs)
 {
     Patacrep::datadirs.append(datadirs);
@@ -105,5 +112,5 @@ void Patacrep::addDatadir(const QString &datadir)
 
 void Patacrep::stopBuilding()
 {
-    pythonModule.evalScript("stopBuild()");
+    buildingSongbook = false;
 }

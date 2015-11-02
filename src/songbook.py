@@ -23,7 +23,7 @@ from PythonQt import *
 sb_builder = None
 process = None
 stopProcess = False
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 # Define locale according to user's parameters
 def setLocale():
@@ -99,9 +99,13 @@ def build(steps):
 
     period = 2
     while process.is_alive():
-        if stopProcess:
-            process.terminate()
-            print("terminated")
+        # message("it's alive: " + CPPprocess.getBuildState())
+        if CPPprocess.getBuildState() == False:
+            try:
+                process.crash()
+            except AttributeError as error:
+                message("Building exited at user's request")
+                raise
         # Check in 2 seconds
         process.join(period)
     message("end build")
