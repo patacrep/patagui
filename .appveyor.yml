@@ -1,3 +1,10 @@
+clone_depth: 10
+shallow_clone: true
+branches:
+  only:
+    - master
+    - pythonqt
+
 environment:
   matrix:
   - PLATFORM: x86
