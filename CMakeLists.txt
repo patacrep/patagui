@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 set(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-SET(CMAKE_BUILD_TYPE Debug)
+SET(CMAKE_BUILD_TYPE Release)
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -112,18 +112,18 @@ list(APPEND QT_LIBRARIES ${Qt5Concurrent_LIBRARIES};${Qt5Network_LIBRARIES};${Qt
 list(APPEND LIBRARIES ${QT_LIBRARIES})
 
 # Small Hack for python3 on Mac OSX, otherwise, python3 is not found, only the system library which is 2.7 so far.
-IF(APPLE)
-execute_process(COMMAND python3-config --prefix
-                OUTPUT_VARIABLE PYTHON3_PREFIX
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND python3 -c "import sys; print(\".\".join(map(str, sys.version_info[:2])))"
-                OUTPUT_VARIABLE PYTHON3_VERSION
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_STRIP_TRAILING_WHITESPACE)
-SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python${PYTHON3_VERSION}m)
-SET(PYTHON_LIBRARY ${PYTHON3_PREFIX}/Python)
-ENDIF()
+if(APPLE)
+    execute_process(COMMAND python3-config --prefix
+                    OUTPUT_VARIABLE PYTHON3_PREFIX
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    ERROR_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND python3 -c "import sys; print(\".\".join(map(str, sys.version_info[:2])))"
+                    OUTPUT_VARIABLE PYTHON3_VERSION
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    ERROR_STRIP_TRAILING_WHITESPACE)
+    SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python${PYTHON3_VERSION}m)
+    SET(PYTHON_LIBRARY ${PYTHON3_PREFIX}/Python)
+endif(APPLE)
 
 # Finding Python 3
 find_package(PythonLibs 3.3 REQUIRED)
@@ -137,27 +137,27 @@ list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
 
 # Use LibArchive
 if(ENABLE_LIBRARY_DOWNLOAD)
-  set(QT_USE_QTNETWORK true)
-  LIST(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES})
-  include_directories(${LibArchive_INCLUDE_DIRS})
-  LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
-endif()
+    set(QT_USE_QTNETWORK true)
+    LIST(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES})
+    include_directories(${LibArchive_INCLUDE_DIRS})
+    LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
+endif(ENABLE_LIBRARY_DOWNLOAD)
 
 # Use Hunspell
 if(ENABLE_SPELLCHECK)
-  include_directories(${HUNSPELL_INCLUDE_DIR})
-  LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
-endif()
+    include_directories(${HUNSPELL_INCLUDE_DIR})
+    LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
+endif(ENABLE_SPELLCHECK)
 
 # Qt Property Editor configuration
 include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
 # Local Includes
 include_directories(
-  ${SOURCE_DIR}
-  ${SOURCE_DIR}/src/
-  ${BUILD_DIR}
-  )
+    ${SOURCE_DIR}
+    ${SOURCE_DIR}/src/
+    ${BUILD_DIR}
+)
 
 # process Qt special files
 qt5_wrap_cpp(PATAGUI_MOCS ${PATAGUI_QT_HEADER})
@@ -172,44 +172,44 @@ endif(APPLE)
 
 # generating executable
 if(NOT APPLE)
-  add_executable(${PATAGUI_APPLICATION_NAME} WIN32
-    ${PATAGUI_SOURCES}
-    ${PATAGUI_MOCS}
-    ${PATAGUI_RESSOURCES}
-    ${COMPILED_TRANSLATIONS}
-    ${QT_PROPERTY_EDITOR_SOURCES}
-    ${PATAGUI_UI_HDRS}
+    add_executable(${PATAGUI_APPLICATION_NAME} WIN32
+        ${PATAGUI_SOURCES}
+        ${PATAGUI_MOCS}
+        ${PATAGUI_RESSOURCES}
+        ${COMPILED_TRANSLATIONS}
+        ${QT_PROPERTY_EDITOR_SOURCES}
+        ${PATAGUI_UI_HDRS}
     )
 endif(NOT APPLE)
 
 if(WIN32)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
 
 # Setup Libraries for linking
 target_link_libraries(${PATAGUI_APPLICATION_NAME} ${LIBRARIES})
-set_property(TARGET ${PATAGUI_APPLICATION_NAME} PROPERTY IMPORTED_LOCATION ${PYTHONQT_LIBRARY_PATH})
-add_dependencies(${PATAGUI_APPLICATION_NAME} PythonQt)
+add_dependencies(${PATAGUI_APPLICATION_NAME} PythonQt-External)
 
 # {{{ Internationalization
 set (TRANSLATIONS
-  lang/songbook_en.ts
-  lang/songbook_it.ts
-  lang/songbook_fr.ts
-  lang/songbook_cs.ts)
+    lang/songbook_en.ts
+    lang/songbook_it.ts
+    lang/songbook_fr.ts
+    lang/songbook_cs.ts)
 
 set (COMPILED_TRANSLATIONS
-  lang/songbook_fr.qm
-  lang/songbook_it.qm
-  lang/songbook_en.qm
-  lang/songbook_cs.qm)
+    lang/songbook_fr.qm
+    lang/songbook_it.qm
+    lang/songbook_en.qm
+    lang/songbook_cs.qm)
 
 add_custom_target(
-  translations_target
-  COMMAND "${QT_LRELEASE_EXECUTABLE}" ${TRANSLATIONS}
-  DEPENDS ${TRANSLATIONS}
-  COMMENT "Updating translations"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    translations_target
+    COMMAND "${QT_LRELEASE_EXECUTABLE}" ${TRANSLATIONS}
+    DEPENDS ${TRANSLATIONS}
+    COMMENT "Updating translations"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
 #uncomment and run `make translations_target` to update translations ts files from sources
 #warning, if uncommented, running make clean will remove ts files
 #qt4_create_translation(COMPILED_TRANSLATIONS ${PATAGUI_SOURCES} ${TRANSLATIONS} )
