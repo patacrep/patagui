@@ -219,7 +219,7 @@ add_custom_target(
 if(GENERATE_MANPAGES)
 
   set(PATAGUI_MAN_SRCS
-    ${SOURCE_DIR}/manpages/patagui.1.txt
+    ${SOURCE_DIR}/manpages/Patagui.1.txt
     )
 
   set(PATAGUI_MAN_LANGS default fr)

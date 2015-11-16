@@ -567,7 +567,7 @@ int ImportDialog::copy_data(struct archive *ar, struct archive *aw)
 {
     const void *buff;
     size_t size;
-    off_t offset;
+    int64_t offset;
 
     do {
         int r = archive_read_data_block(ar, &buff, &size, &offset);

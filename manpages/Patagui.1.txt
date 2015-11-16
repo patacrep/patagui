@@ -1,5 +1,5 @@
 Patagui(1)
-==================
+==========
 
 NAME
 ----
@@ -18,7 +18,7 @@ DESCRIPTION
 that allows to handle the song selection and appearance customization
 of a songbook. The embedded editor allows to add, remove and modify the
 songs in the available library. Finally a build option allows to create
-nice high quality pdf documents, directly from theGUI interface.
+nice high quality pdf documents, directly from the GUI interface.
 
 OPTIONS
 -------
