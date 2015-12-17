@@ -30,3 +30,6 @@ before_build:
 build_script:
     - cmake -G "NMake Makefiles" -H. -Bbuild -DCMAKE_PREFIX_PATH=%QT5%
     - cmake --build build
+
+on_failure:
+    - cmd: echo C:/projects/patagui/build/pythonqt/src/PythonQt-External-stamp/PythonQt-External-configure-*.log
