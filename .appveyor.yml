@@ -32,4 +32,4 @@ build_script:
     - cmake --build build
 
 on_failure:
-    - cmd: echo C:/projects/patagui/build/pythonqt/src/PythonQt-External-stamp/PythonQt-External-configure-*.log
+    - cmd: type C:/projects/patagui/build/pythonqt/src/PythonQt-External-stamp/PythonQt-External-configure-*.log
