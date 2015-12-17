@@ -9,7 +9,7 @@
 >
 > However, latest versions ([core 3.7.2](https://github.com/patacrep/patacrep/releases/tag/patacrep_3.7.2) and [gui 0.7.9](https://github.com/patacrep/patagui/releases/tag/0.7.9)) should still fully work. Enjoy!
 
-[![Build status](https://ci.appveyor.com/api/projects/status/yydomf8riq5m3o7j?svg=true)](https://ci.appveyor.com/project/LaTruelle/patagui)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/yydomf8riq5m3o7j?svg=true)](https://ci.appveyor.com/project/LaTruelle/patagui) [![Travis Build Status](https://travis-ci.org/LaTruelle/patagui.svg?branch=continuous-integration-travis)](https://travis-ci.org/LaTruelle/patagui)
 
 # Description
 This is a Qt5/C++/Python client that allows to pick up songs from the patacrep songbook database to build personalized songbooks.
