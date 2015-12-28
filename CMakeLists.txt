@@ -137,7 +137,8 @@ list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
 
 # Setup Yaml-cpp
 include(${CMAKE_MODULE_PATH}/yaml-cpp-config.cmake)
-include_directories()
+include_directories(${YAML-CPP_INCLUDE_DIR})
+list(APPEND LIBRARIES ${YAML-CPP_LIBRARIES})
 
 # Use LibArchive
 if(ENABLE_LIBRARY_DOWNLOAD)
@@ -193,7 +194,7 @@ endif(WIN32)
 # Setup Libraries for linking
 target_link_libraries(${PATAGUI_APPLICATION_NAME} ${LIBRARIES})
 add_dependencies(${PATAGUI_APPLICATION_NAME} PythonQt-External)
-
+add_dependencies(${PATAGUI_APPLICATION_NAME} Yaml-cpp-External)
 # {{{ Internationalization
 set (TRANSLATIONS
     lang/songbook_en.ts
