@@ -135,6 +135,10 @@ include(${CMAKE_MODULE_PATH}/pythonqt-config.cmake)
 include_directories(${PYTHONQT_INCLUDE_DIR})
 list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
 
+# Setup Yaml-cpp
+include(${CMAKE_MODULE_PATH}/yaml-cpp-config.cmake)
+include_directories()
+
 # Use LibArchive
 if(ENABLE_LIBRARY_DOWNLOAD)
     set(QT_USE_QTNETWORK true)

@@ -16,7 +16,7 @@ ENDIF(NOT QT_QMAKE_EXECUTABLE)
 ExternalProject_Add(PythonQt-External
 PREFIX pythonqt
 # Backup URL in case SVN messes up.
-URL "${CMAKE_CURRENT_SOURCE_DIR}/pythonqt/pythonqt.zip"
+URL "${CMAKE_CURRENT_SOURCE_DIR}/external_libs/pythonqt.zip"
 PATCH_COMMAND ""
 CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/pythonqt/src/PythonQt-External/PythonQt.pro
 BUILD_COMMAND ${CMAKE_MAKE_PROGRAM}
