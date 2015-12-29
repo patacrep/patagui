@@ -1,22 +1,19 @@
 clone_depth: 10
 shallow_clone: true
-branches:
-  only:
-    - master
-    - pythonqt
 
 environment:
-  matrix:
-  - PLATFORM: x86
-    QT5: C:\Qt\5.5\msvc2013
-    PYTHON_PATH: C:\Python34
-    PYTHON_VERSION: 34
-    PYTHON_ARCH: 32
-  - PLATFORM: x86_amd64
-    QT5: C:\Qt\5.5\msvc2013_64
-    PYTHON_PATH: C:\Python34-x64
-    PYTHON_VERSION: 34
-    PYTHON_ARCH: 64
+    BOOST_ROOT: C:\Libraries\boost_1_59_0
+    matrix:
+    - PLATFORM: x86
+        QT5: C:\Qt\5.5\msvc2013
+        PYTHON_PATH: C:\Python34
+        PYTHON_VERSION: 34
+        PYTHON_ARCH: 32
+    - PLATFORM: x86_amd64
+        QT5: C:\Qt\5.5\msvc2013_64
+        PYTHON_PATH: C:\Python34-x64
+        PYTHON_VERSION: 34
+        PYTHON_ARCH: 64
 
 install:
     - call "%ProgramFiles(x86)%\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" %PLATFORM%

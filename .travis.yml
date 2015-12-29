@@ -24,6 +24,7 @@ install:
          brew update
       && brew unlink cmake
       && brew install cmake
+      && brew unlink boost
       && brew install boost
       && brew install qt5
       && brew linkapps qt5
