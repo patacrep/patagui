@@ -140,6 +140,11 @@ include(${CMAKE_MODULE_PATH}/yaml-cpp-config.cmake)
 include_directories(${YAML-CPP_INCLUDE_DIR})
 list(APPEND LIBRARIES ${YAML-CPP_LIBRARIES})
 
+# Setup Boost (used in Yaml-CPP)
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+list(APPEND LIBRARIES ${Boost_LIBRARIES})
+
 # Use LibArchive
 if(ENABLE_LIBRARY_DOWNLOAD)
     set(QT_USE_QTNETWORK true)

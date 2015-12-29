@@ -43,4 +43,5 @@ script:
     && make
 
 after_failure:
-  - cat /home/travis/build/LaTruelle/patagui/pythonqt/src/PythonQt-External-stamp/PythonQt-External-build-*.log
+  - cat /home/travis/build/LaTruelle/patagui/yaml-cpp/src/Yaml-cpp-External-stamp/Yaml-cpp-External-configure-*.log
+  - cat /home/travis/build/LaTruelle/patagui/yaml-cpp/src/Yaml-cpp-External-stamp/Yaml-cpp-External-build-*.log

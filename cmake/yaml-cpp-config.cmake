@@ -22,7 +22,7 @@ LOG_BUILD ON
 )
 
 set(YAML-CPP_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/yaml-cpp/src/Yaml-cpp-External)
-set(YAML-CPP_INCLUDE_DIR ${YAML-CPP_INSTALL_DIR}/src)
+set(YAML-CPP_INCLUDE_DIR ${YAML-CPP_INSTALL_DIR}/include)
 set(YAML-CPP_LIBRARY Yaml-cpp)
 
 # Create dummy Yaml-cpp library that depends on real Yaml-cpp in order to have cmake behaving properly without
