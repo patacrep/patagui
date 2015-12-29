@@ -15,7 +15,7 @@ install:
          sudo apt-add-repository -y ppa:beineri/opt-qt551-trusty
       && sudo apt-add-repository -y ppa:george-edison55/cmake-3.x
       && sudo apt-get -qq update
-      && sudo apt-get -qq install build-essential qt55tools qt55base cmake
+      && sudo apt-get -qq install build-essential qt55tools qt55base cmake libboost-dev
       && QTDIR="/opt/qt55"
       && PATH="$QTDIR/bin:$PATH"
       && qt55-env.sh
@@ -24,6 +24,7 @@ install:
          brew update
       && brew unlink cmake
       && brew install cmake
+      && brew install boost
       && brew install qt5
       && brew linkapps qt5
       && brew link --force qt5

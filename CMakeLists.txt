@@ -141,6 +141,7 @@ include_directories(${YAML-CPP_INCLUDE_DIR})
 list(APPEND LIBRARIES ${YAML-CPP_LIBRARIES})
 
 # Setup Boost (used in Yaml-CPP)
+set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 list(APPEND LIBRARIES ${Boost_LIBRARIES})
