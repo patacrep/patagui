@@ -38,7 +38,7 @@
 #include "variant-factory.hh"
 
 #include "library.hh"
-
+#include "yaml-cpp/yaml.h"
 #include <QDebug>
 
 Songbook::Songbook(QObject *parent)
