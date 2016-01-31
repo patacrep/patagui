@@ -63,7 +63,7 @@ CSongHeaderEditor::CSongHeaderEditor(QWidget *parent)
     , m_columnCountSpinBox(new QSpinBox(this))
     , m_capoSpinBox(new QSpinBox(this))
     , m_transposeSpinBox(new QSpinBox(this))
-    , m_coverLabel(new CCoverDropArea(this))
+    , m_coverLabel(new CoverDropArea(this))
     , m_viewMode(FullViewMode)
 {
 
@@ -437,7 +437,7 @@ const QImage & CSongHeaderEditor::cover()
 
 //------------------------------------------------------------------------------
 
-CCoverDropArea::CCoverDropArea(CSongHeaderEditor *parent)
+CoverDropArea::CoverDropArea(CSongHeaderEditor *parent)
     : QLabel(parent)
     , m_parent(parent)
 {
@@ -454,19 +454,19 @@ CCoverDropArea::CCoverDropArea(CSongHeaderEditor *parent)
     connect(this, SIGNAL(changed()), SLOT(update()));
 }
 
-void CCoverDropArea::dragEnterEvent(QDragEnterEvent *event)
+void CoverDropArea::dragEnterEvent(QDragEnterEvent *event)
 {
     setBackgroundRole(QPalette::Highlight);
     event->acceptProposedAction();
     emit changed(event->mimeData());
 }
 
-void CCoverDropArea::dragMoveEvent(QDragMoveEvent *event)
+void CoverDropArea::dragMoveEvent(QDragMoveEvent *event)
 {
     event->acceptProposedAction();
 }
 
-void CCoverDropArea::dropEvent(QDropEvent *event)
+void CoverDropArea::dropEvent(QDropEvent *event)
 {
     const QMimeData *mimeData = event->mimeData();
 
@@ -477,25 +477,25 @@ void CCoverDropArea::dropEvent(QDropEvent *event)
         update();
     }
     else
-        qWarning() << tr("CCoverDropArea::dropEvent cannot display dropped data");
+        qWarning() << tr("CoverDropArea::dropEvent cannot display dropped data");
 
     setBackgroundRole(QPalette::Dark);
     event->acceptProposedAction();
 }
 
-void CCoverDropArea::dragLeaveEvent(QDragLeaveEvent *event)
+void CoverDropArea::dragLeaveEvent(QDragLeaveEvent *event)
 {
     clear();
     event->accept();
 }
 
-void CCoverDropArea::clear()
+void CoverDropArea::clear()
 {
     setBackgroundRole(QPalette::Dark);
     emit changed();
 }
 
-void CCoverDropArea::update()
+void CoverDropArea::update()
 {
     if (m_filename.isEmpty() && !song().coverPath.isEmpty() && !song().coverName.isEmpty())
         m_filename = QString("%1/%2.jpg").arg(song().coverPath).arg(song().coverName);
@@ -529,7 +529,7 @@ void CCoverDropArea::update()
     emit(miniCoverChanged(pixmap.scaled(28,28)));
 }
 
-void CCoverDropArea::selectCover()
+void CoverDropArea::selectCover()
 {
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Select cover"),
@@ -543,13 +543,13 @@ void CCoverDropArea::selectCover()
     }
 }
 
-void CCoverDropArea::mousePressEvent(QMouseEvent *event)
+void CoverDropArea::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
     setFrameStyle(QFrame::Sunken | QFrame::Panel);
 }
 
-void CCoverDropArea::mouseReleaseEvent(QMouseEvent *event)
+void CoverDropArea::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
     setFrameStyle(QFrame::Raised | QFrame::Panel);
@@ -557,7 +557,7 @@ void CCoverDropArea::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
-void CCoverDropArea::contextMenuEvent(QContextMenuEvent *event)
+void CoverDropArea::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu *menu = new QMenu(this);
     QAction *action = new QAction(tr("Clear cover"), this);
@@ -568,29 +568,29 @@ void CCoverDropArea::contextMenuEvent(QContextMenuEvent *event)
     delete menu;
 }
 
-CSongHeaderEditor * CCoverDropArea::parent() const
+CSongHeaderEditor * CoverDropArea::parent() const
 {
     if (!m_parent)
-        qWarning() << tr("CCoverDropArea:: invalid parent");
+        qWarning() << tr("CoverDropArea:: invalid parent");
     return m_parent;
 }
 
-void CCoverDropArea::setParent(CSongHeaderEditor * parent)
+void CoverDropArea::setParent(CSongHeaderEditor * parent)
 {
     m_parent = parent;
 }
 
-Song & CCoverDropArea::song()
+Song & CoverDropArea::song()
 {
     return parent()->song();
 }
 
-const QImage & CCoverDropArea::cover()
+const QImage & CoverDropArea::cover()
 {
     return m_cover;
 }
 
-void CCoverDropArea::clearCover()
+void CoverDropArea::clearCover()
 {
     m_cover = QImage();
     m_filename = QString();
@@ -599,13 +599,13 @@ void CCoverDropArea::clearCover()
     update();
 }
 
-void CCoverDropArea::setCover(const QImage &cover)
+void CoverDropArea::setCover(const QImage &cover)
 {
     if (!cover.isNull())
         m_cover = cover.scaled(115, 115, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-void CCoverDropArea::setCover(const QString &path)
+void CoverDropArea::setCover(const QString &path)
 {
     setCover(QImage(path));
 }

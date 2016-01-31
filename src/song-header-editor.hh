@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QPixmap>
 
-class CCoverDropArea;
+class CoverDropArea;
 class DiagramArea;
 class LineEdit;
 
@@ -152,7 +152,7 @@ private:
     QSpinBox *m_columnCountSpinBox;
     QSpinBox *m_capoSpinBox;
     QSpinBox *m_transposeSpinBox;
-    CCoverDropArea *m_coverLabel;
+    CoverDropArea *m_coverLabel;
 
     DiagramArea *m_diagramArea;
 
@@ -169,8 +169,8 @@ class QDragDropEvent;
 
 /*!
   \file song-header-editor.hh
-  \class CCoverDropArea
-  \brief CCoverDropArea displays the cover of a song.
+  \class CoverDropArea
+  \brief CoverDropArea displays the cover of a song.
 
   The cover area displays the cover of a song within a raised box. If
   there is no cover to display, it displays a generic image-missing
@@ -182,13 +182,13 @@ class QDragDropEvent;
   \image html cover-drop-area2.png
 
 */
-class CCoverDropArea : public QLabel
+class CoverDropArea : public QLabel
 {
     Q_OBJECT
 
 public:
     /// Constructor.
-    CCoverDropArea(CSongHeaderEditor *parent);
+    CoverDropArea(CSongHeaderEditor *parent);
 
     /*!
     Returns the Song object associated with this cover.
