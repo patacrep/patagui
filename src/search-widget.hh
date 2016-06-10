@@ -29,64 +29,64 @@ class QPushButton;
 
 /*!
   \file search-widget.hh
-  \class CSearchWidget
-  \brief CSearchWidget is a widget to perform search over a text editor.
+  \class SearchWidget
+  \brief SearchWidget is a widget to perform search over a text editor.
 
   \image html search-widget.png
 
 */
-class CSearchWidget : public QFrame
+class SearchWidget : public QFrame
 {
-  Q_OBJECT
-  public:
-  /// Constructor.
-  CSearchWidget(QWidget *parent = 0);
+    Q_OBJECT
+public:
+    /// Constructor.
+    SearchWidget(QWidget *parent = 0);
 
-  /// Destructor.
-  virtual ~CSearchWidget();
+    /// Destructor.
+    virtual ~SearchWidget();
 
-  /*!
+    /*!
     Sets \a editor as the text editor upon which
     find  operations are applied.
   */
-  void setTextEditor(QPlainTextEdit *editor);
+    void setTextEditor(QPlainTextEdit *editor);
 
-  /*!
+    /*!
     Saves the settings of the widget.
     \sa readSettings
   */
-  void writeSettings();
+    void writeSettings();
 
-  /*!
+    /*!
     Reads the settings of the widget.
     \sa writeSettings
   */
-  void readSettings();
+    void readSettings();
 
-  /*!
+    /*!
     Sets the focus on the line edit.
   */
-  void setFocus();
+    void setFocus();
 
-  /*!
+    /*!
     Performs find() when hitting the return key.
     If the escape key is pressed, forward event to parent.
     \sa find
   */
-  void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 public slots:
-  /*!
+    /*!
     Finds the next occurrence in the editor's contents
   */
-  void find();
+    void find();
 
 private:
-  QPlainTextEdit *m_editor;
+    QPlainTextEdit *m_editor;
 
-  QLineEdit *m_findLineEdit;
-  QPushButton *m_findPrevButton;
-  QPushButton *m_findNextButton;
+    QLineEdit *m_findLineEdit;
+    QPushButton *m_findPrevButton;
+    QPushButton *m_findNextButton;
 };
 
 #endif // __SEARCH_WIDGET_HH

@@ -25,81 +25,75 @@
 
 #include <QDebug>
 
-CLibraryView::CLibraryView(CMainWindow *parent)
-  : QTableView(parent)
+LibraryView::LibraryView(MainWindow *parent) : QTableView(parent)
 {
-  setStyleSheet(" QTableView {margin: -1px -1px}");
-  setShowGrid(false);
-  setAlternatingRowColors(true);
-  setSelectionMode(QAbstractItemView::SingleSelection);
-  setSelectionBehavior(QAbstractItemView::SelectRows);
-  setEditTriggers(QAbstractItemView::NoEditTriggers);
-  setSortingEnabled(true);
-  verticalHeader()->setVisible(false);
+    setStyleSheet(" QTableView {margin: -1px -1px}");
+    setShowGrid(false);
+    setAlternatingRowColors(true);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setSortingEnabled(true);
+    verticalHeader()->setVisible(false);
 
-  setContextMenuPolicy(Qt::ActionsContextMenu);
+    setContextMenuPolicy(Qt::ActionsContextMenu);
 
-  createActions();
+    createActions();
 }
 
-CLibraryView::~CLibraryView()
-{}
+LibraryView::~LibraryView() {}
 
-CMainWindow* CLibraryView::parent() const
+MainWindow *LibraryView::parent() const
 {
-  return qobject_cast< CMainWindow* >(QTableView::parent());
+    return qobject_cast<MainWindow *>(QTableView::parent());
 }
 
-void CLibraryView::readSettings()
+void LibraryView::readSettings()
 {
-  QSettings settings;
-  settings.beginGroup("display");
-  setColumnHidden(0, !settings.value("title", true).toBool());
-  setColumnHidden(1, !settings.value("artist", true).toBool());
-  setColumnHidden(2, !settings.value("lilypond", false).toBool());
-  setColumnHidden(3, !settings.value("website", false).toBool());
-  setColumnHidden(4, !settings.value("path", false).toBool());
-  setColumnHidden(5, !settings.value("album", true).toBool());
-  setColumnHidden(6, !settings.value("lang", true).toBool());
-  settings.endGroup();
+    QSettings settings;
+    settings.beginGroup("display");
+    setColumnHidden(0, !settings.value("title", true).toBool());
+    setColumnHidden(1, !settings.value("artist", true).toBool());
+    setColumnHidden(2, !settings.value("lilypond", false).toBool());
+    setColumnHidden(3, !settings.value("website", false).toBool());
+    setColumnHidden(4, !settings.value("path", false).toBool());
+    setColumnHidden(5, !settings.value("album", true).toBool());
+    setColumnHidden(6, !settings.value("lang", true).toBool());
+    settings.endGroup();
 }
 
-void CLibraryView::writeSettings()
+void LibraryView::writeSettings() {}
+
+void LibraryView::update()
 {
+    sortByColumn(0, Qt::AscendingOrder);
+    sortByColumn(1, Qt::AscendingOrder);
 }
 
-void CLibraryView::update()
+void LibraryView::createActions()
 {
-  sortByColumn(0, Qt::AscendingOrder);
-  sortByColumn(1, Qt::AscendingOrder);
+    connect(this, SIGNAL(doubleClicked(const QModelIndex &)), parent(),
+            SLOT(songEditor(const QModelIndex &)));
+
+    connect(this, SIGNAL(pressed(const QModelIndex &)), parent(),
+            SLOT(middleClicked(const QModelIndex &)));
+
+    QAction *action = new QAction(tr("Edit"), this);
+    connect(action, SIGNAL(triggered()), parent(), SLOT(songEditor()));
+    addAction(action);
+
+    action = new QAction(tr("Delete"), this);
+    connect(action, SIGNAL(triggered()), parent(), SLOT(deleteSong()));
+    addAction(action);
 }
 
-void CLibraryView::createActions()
+void LibraryView::resizeColumns()
 {
-  connect(this, SIGNAL(doubleClicked(const QModelIndex &)),
-	  parent(), SLOT(songEditor(const QModelIndex &)));
-
-  connect(this, SIGNAL(pressed(const QModelIndex &)),
-	  parent(), SLOT(middleClicked(const QModelIndex &)));
-
-  QAction* action = new QAction(tr("Edit"), this);
-  connect(action, SIGNAL(triggered()),
-	  parent(), SLOT(songEditor()));
-  addAction(action);
-
-  action = new QAction(tr("Delete"), this);
-  connect(action, SIGNAL(triggered()),
-	  parent(), SLOT(deleteSong()));
-  addAction(action);
-}
-
-void CLibraryView::resizeColumns()
-{
-  horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-  horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-  horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-  horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-  horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
-  horizontalHeader()->setSectionResizeMode(5, QHeaderView::Stretch);
-  horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
+    horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+    horizontalHeader()->setSectionResizeMode(5, QHeaderView::Stretch);
+    horizontalHeader()->setSectionResizeMode(6, QHeaderView::ResizeToContents);
 }

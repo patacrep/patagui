@@ -24,245 +24,232 @@
 
 #include <QDebug>
 
-CChordListModel::CChordListModel(QObject *parent)
-  : QAbstractListModel(parent)
-  , m_columnCount(0)
-  , m_rowCount(0)
+ChordListModel::ChordListModel(QObject *parent)
+    : QAbstractListModel(parent), m_columnCount(0), m_rowCount(0)
 {
-  m_fixedColumnCount = false;
-  m_fixedRowCount = false;
+    m_fixedColumnCount = false;
+    m_fixedRowCount = false;
 }
 
-CChordListModel::~CChordListModel()
+ChordListModel::~ChordListModel()
 {
-  foreach (CChord* chord, m_data)
-    delete chord;
-  m_data.clear();
+    foreach (Chord *chord, m_data)
+        delete chord;
+    m_data.clear();
 }
 
-int CChordListModel::columnCount(const QModelIndex &) const
+int ChordListModel::columnCount(const QModelIndex &) const
 {
-  return m_columnCount;
+    return m_columnCount;
 }
 
-void CChordListModel::setColumnCount(int value)
+void ChordListModel::setColumnCount(int value)
 {
-  emit(layoutAboutToBeChanged());
-  m_fixedColumnCount = true;
-  m_columnCount = value;
-  emit(layoutChanged());
+    emit(layoutAboutToBeChanged());
+    m_fixedColumnCount = true;
+    m_columnCount = value;
+    emit(layoutChanged());
 }
 
-int CChordListModel::rowCount(const QModelIndex &) const
+int ChordListModel::rowCount(const QModelIndex &) const { return m_rowCount; }
+
+void ChordListModel::setRowCount(int value)
 {
-  return m_rowCount;
+    emit(layoutAboutToBeChanged());
+    m_fixedRowCount = true;
+    m_rowCount = value;
+    emit(layoutChanged());
 }
 
-void CChordListModel::setRowCount(int value)
+QVariant ChordListModel::data(const QModelIndex &index, int role) const
 {
-  emit(layoutAboutToBeChanged());
-  m_fixedRowCount = true;
-  m_rowCount = value;
-  emit(layoutChanged());
-}
+    if (!index.isValid() || m_data.size() == 0)
+        return QVariant();
 
-QVariant CChordListModel::data(const QModelIndex &index, int role) const
-{
-  if (!index.isValid() || m_data.size()==0)
-    return QVariant();
-
-  switch (role)
-    {
+    switch (role) {
     case Qt::DisplayRole:
-      return m_data[positionFromIndex(index)]->toString();
+        return m_data[positionFromIndex(index)]->toString();
     case Qt::DecorationRole:
-      return *(m_data[positionFromIndex(index)]->toPixmap());
+        return *(m_data[positionFromIndex(index)]->toPixmap());
     case Qt::ToolTipRole:
-      return data(index, Qt::DisplayRole);
+        return data(index, Qt::DisplayRole);
     case NameRole:
-      return m_data[positionFromIndex(index)]->name();
+        return m_data[positionFromIndex(index)]->name();
     case StringsRole:
-      return m_data[positionFromIndex(index)]->strings();
+        return m_data[positionFromIndex(index)]->strings();
     case ImportantRole:
-      return m_data[positionFromIndex(index)]->isImportant();
+        return m_data[positionFromIndex(index)]->isImportant();
     default:
-      return QVariant();
+        return QVariant();
     }
 }
 
-bool CChordListModel::setData(const QModelIndex & index, const QVariant & value, int role)
+bool ChordListModel::setData(const QModelIndex &index, const QVariant &value,
+                             int role)
 {
-  Q_UNUSED(role);
+    Q_UNUSED(role);
 
-  if (!index.isValid())
-    return false;
+    if (!index.isValid())
+        return false;
 
-  CChord *chord = new CChord(value.toString());
-  if (chord->isValid())
-    {
-      int pos = positionFromIndex(index);
-      delete m_data[pos];
-      m_data[pos] = chord;
-      return true;
+    Chord *chord = new Chord(value.toString());
+    if (chord->isValid()) {
+        int pos = positionFromIndex(index);
+        delete m_data[pos];
+        m_data[pos] = chord;
+        return true;
     }
 
-  delete chord;
-  return false;
-}
-
-void CChordListModel::insertItem(const QModelIndex & index, const QString & value)
-{
-  setColumnCount(columnCount() + 1);
-  m_fixedColumnCount = false;
-  int pos = index.column() < 0 ? columnCount()-1 : index.column();
-
-  CChord *chord = new CChord(value);
-  if (chord->isValid())
-    m_data.insert(pos, chord);
-  else
     delete chord;
+    return false;
 }
 
-void CChordListModel::removeItem(const QModelIndex & index)
+void ChordListModel::insertItem(const QModelIndex &index, const QString &value)
 {
-  int pos = positionFromIndex(index);
-  delete m_data[pos];
-  m_data.remove(pos);
+    setColumnCount(columnCount() + 1);
+    m_fixedColumnCount = false;
+    int pos = index.column() < 0 ? columnCount() - 1 : index.column();
 
-  int row = indexFromPosition(m_data.size()).row();
-  int col = indexFromPosition(m_data.size()).column();
-
-  // dynamically reduce the QListModel
-  if (rowCount() > row +1)
-    {
-      setRowCount(row + 1);
-      m_fixedRowCount = false;
-    }
-  if (columnCount() > col +1)
-    {
-      setColumnCount(col + 1);
-      m_fixedColumnCount = false;
-    }
+    Chord *chord = new Chord(value);
+    if (chord->isValid())
+        m_data.insert(pos, chord);
+    else
+        delete chord;
 }
 
-void CChordListModel::addItem(const QString & value)
+void ChordListModel::removeItem(const QModelIndex &index)
 {
-  CChord * chord = new CChord(value);
-  if (!chord->isValid())
-    {
-      delete chord;
-      return;
+    int pos = positionFromIndex(index);
+    delete m_data[pos];
+    m_data.remove(pos);
+
+    int row = indexFromPosition(m_data.size()).row();
+    int col = indexFromPosition(m_data.size()).column();
+
+    // dynamically reduce the QListModel
+    if (rowCount() > row + 1) {
+        setRowCount(row + 1);
+        m_fixedRowCount = false;
     }
-
-  m_data.append(chord);
-
-  int row = indexFromPosition(m_data.size()).row();
-  int col = indexFromPosition(m_data.size()).column();
-
-  // dynamically expand the QListModel
-  if (rowCount() < row +1)
-    {
-      setRowCount(row + 1);
-      m_fixedRowCount = false;
-    }
-  if (columnCount() < col +1)
-    {
-      setColumnCount(col + 1);
-      m_fixedColumnCount = false;
+    if (columnCount() > col + 1) {
+        setColumnCount(col + 1);
+        m_fixedColumnCount = false;
     }
 }
 
-QModelIndex CChordListModel::indexFromPosition(int position)
+void ChordListModel::addItem(const QString &value)
 {
-  int row = 1, col = 1;
-  if (m_fixedColumnCount)
-    {
-      row = (position-1)/columnCount();
-      col = (position-1)%columnCount();
+    Chord *chord = new Chord(value);
+    if (!chord->isValid()) {
+        delete chord;
+        return;
     }
-  if (m_fixedRowCount)
-    {
-      row = (position-1)%rowCount();
-      col = (position-1)/rowCount();
+
+    m_data.append(chord);
+
+    int row = indexFromPosition(m_data.size()).row();
+    int col = indexFromPosition(m_data.size()).column();
+
+    // dynamically expand the QListModel
+    if (rowCount() < row + 1) {
+        setRowCount(row + 1);
+        m_fixedRowCount = false;
     }
-  return QAbstractListModel::createIndex(row, col);
+    if (columnCount() < col + 1) {
+        setColumnCount(col + 1);
+        m_fixedColumnCount = false;
+    }
 }
 
-int CChordListModel::positionFromIndex(const QModelIndex & index) const
+QModelIndex ChordListModel::indexFromPosition(int position)
 {
-  return columnCount() * index.row() + index.column();
+    int row = 1, col = 1;
+    if (m_fixedColumnCount) {
+        row = (position - 1) / columnCount();
+        col = (position - 1) % columnCount();
+    }
+    if (m_fixedRowCount) {
+        row = (position - 1) % rowCount();
+        col = (position - 1) / rowCount();
+    }
+    return QAbstractListModel::createIndex(row, col);
 }
 
-CChord * CChordListModel::getChord(const QModelIndex & index) const
+int ChordListModel::positionFromIndex(const QModelIndex &index) const
 {
-  return m_data[positionFromIndex(index)];
+    return columnCount() * index.row() + index.column();
 }
 
-Qt::DropActions CChordListModel::supportedDropActions() const
+Chord *ChordListModel::getChord(const QModelIndex &index) const
 {
-  return Qt::CopyAction | Qt::MoveAction;
+    return m_data[positionFromIndex(index)];
 }
 
-Qt::DropActions CChordListModel::supportedDragActions() const
+Qt::DropActions ChordListModel::supportedDropActions() const
 {
-  return Qt::CopyAction | Qt::MoveAction;
+    return Qt::CopyAction | Qt::MoveAction;
 }
 
-Qt::ItemFlags CChordListModel::flags(const QModelIndex &index) const
+Qt::DropActions ChordListModel::supportedDragActions() const
 {
-  Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
-
-  if (index.isValid())
-    return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
-  else
-    return Qt::ItemIsDropEnabled | defaultFlags;
+    return Qt::CopyAction | Qt::MoveAction;
 }
 
-QStringList CChordListModel::mimeTypes() const
+Qt::ItemFlags ChordListModel::flags(const QModelIndex &index) const
 {
-  QStringList types;
-  types << "text/plain";
-  return types;
-}
+    Qt::ItemFlags defaultFlags = QAbstractListModel::flags(index);
 
-QMimeData * CChordListModel::mimeData(const QModelIndexList &indexes) const
-{
-  QMimeData *mimeData = new QMimeData();
-  foreach (const QModelIndex &index, indexes)
     if (index.isValid())
-      mimeData->setText(data(index, Qt::DisplayRole).toString());
-
-  return mimeData;
+        return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | defaultFlags;
+    else
+        return Qt::ItemIsDropEnabled | defaultFlags;
 }
 
-bool CChordListModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
-				 int row, int column, const QModelIndex &parent)
+QStringList ChordListModel::mimeTypes() const
 {
-  if (action == Qt::IgnoreAction)
+    QStringList types;
+    types << "text/plain";
+    return types;
+}
+
+QMimeData *ChordListModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    foreach (const QModelIndex &index, indexes)
+        if (index.isValid())
+            mimeData->setText(data(index, Qt::DisplayRole).toString());
+
+    return mimeData;
+}
+
+bool ChordListModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
+                                  int row, int column,
+                                  const QModelIndex &parent)
+{
+    if (action == Qt::IgnoreAction)
+        return true;
+
+    if (!data->hasFormat("text/plain"))
+        return false;
+
+    if (row > 1)
+        return false;
+
+    int beginColumn;
+    if (column != -1)
+        beginColumn = column;
+    else if (parent.isValid())
+        beginColumn = parent.column();
+    else
+        beginColumn = columnCount();
+
+    QString newItem = data->text();
+    insertItem(index(0, beginColumn), newItem);
+    for (int j = 0; j < columnCount(); ++j)
+        if (m_data[j]->toString() == newItem && j != beginColumn) {
+            removeItem(index(0, j));
+            return true;
+        }
+
     return true;
-
-  if (!data->hasFormat("text/plain"))
-    return false;
-
-  if (row > 1)
-    return false;
-
-  int beginColumn;
-  if (column != -1)
-    beginColumn = column;
-  else if (parent.isValid())
-    beginColumn = parent.column();
-  else
-    beginColumn = columnCount();
-
-  QString newItem = data->text();
-  insertItem(index(0, beginColumn), newItem);
-  for(int j=0; j<columnCount(); ++j)
-    if (m_data[j]->toString() == newItem && j != beginColumn)
-      {
-	removeItem(index(0, j));
-	return true;
-      }
-
-  return true;
 }

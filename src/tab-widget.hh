@@ -26,8 +26,8 @@
 
 /*!
   \file tab-widget.hh
-  \class CTabWidget
-  \brief CTabWidget is a widget representing a tab in the mainwindow
+  \class TabWidget
+  \brief TabWidget is a widget representing a tab in the mainwindow
 
   Note that a tab-widget is a generic widget that is a plain
   container but from the application point of view, two kinds of tabs
@@ -41,122 +41,120 @@
   tab for each available song.
 */
 
-class CTabWidget : public QTabWidget
+class TabWidget : public QTabWidget
 {
-  Q_OBJECT
-  Q_ENUMS(SelectionBehavior)
-  Q_PROPERTY(SelectionBehavior selectionBehaviorOnAdd
-	     READ selectionBehaviorOnAdd
-	     WRITE setSelectionBehaviorOnAdd)
+    Q_OBJECT
+    Q_ENUMS(SelectionBehavior)
+    Q_PROPERTY(SelectionBehavior selectionBehaviorOnAdd READ
+                   selectionBehaviorOnAdd WRITE setSelectionBehaviorOnAdd)
 
 public:
-  /*!
+    /*!
     \enum SelectionBehavior
     This enum type is used to determine focus for new tabs.
   */
     enum SelectionBehavior {
-    SelectCurrent, /*!< this will keep focus on the current tab. */
-    SelectNew /*!< this will shift focus on the new tab. */
-  };
+        SelectCurrent, /*!< this will keep focus on the current tab. */
+        SelectNew      /*!< this will shift focus on the new tab. */
+    };
 
-  /// Constructor.
-  CTabWidget(QWidget *parent=0);
+    /// Constructor.
+    TabWidget(QWidget *parent = 0);
 
-  /// Destructor.
-  virtual ~CTabWidget();
+    /// Destructor.
+    virtual ~TabWidget();
 
-  /*!
+    /*!
     Add a new tab with \a widget as his parent and returns
     the new tab position in the bar.
     The tab's label is the title of the parent widget's window.
   */
-  int addTab(QWidget *widget);
+    int addTab(QWidget *widget);
 
-  /*!
+    /*!
     Add a new tab with a title \a label and \a widget as its parent.
   */
-  int addTab(QWidget *widget, const QString &label);
+    int addTab(QWidget *widget, const QString &label);
 
-  /*!
+    /*!
     Returns the selection behavior to apply when a new tab is added.
     \sa setSelectionBehaviorOnAdd, SelectionBehavior
   */
-  SelectionBehavior selectionBehaviorOnAdd() const;
+    SelectionBehavior selectionBehaviorOnAdd() const;
 
-  /*!
+    /*!
     Sets the selection behavior to apply when a new tab is added.
     This defines if the focus should be set on the tab or kept on current tab.
     \sa selectionBehaviorOnAdd, SelectionBehavior
   */
-  void setSelectionBehaviorOnAdd(SelectionBehavior behavior);
+    void setSelectionBehaviorOnAdd(SelectionBehavior behavior);
 
 public slots:
-  /*!
+    /*!
     Close the current tab.
   */
-  void closeTab();
+    void closeTab();
 
-  /*!
+    /*!
     Close the tab at a given index.
     @param index a tab index
   */
-  void closeTab(int index);
+    void closeTab(int index);
 
-  /*!
+    /*!
     The current tab becomes the next tab on the right.
   */
-  void prev();
+    void prev();
 
-  /*!
+    /*!
     The current tab becomes the previous tab on the left.
   */
-  void next();
+    void next();
 
-  /*!
+    /*!
     Change the tab label.
     @param text the new label
   */
-  void changeTabText(const QString &text);
+    void changeTabText(const QString &text);
 
 protected:
-  /*!
+    /*!
     Hide or display the tab bar.
     The tab bar is hidden when there is only the library tab
     to be displayed (no song-editor tabs).
   */
-  void updateTabBarVisibility();
+    void updateTabBarVisibility();
 
 private:
-  SelectionBehavior m_selectionBehaviorOnAdd; ///> focus policy on new tabs
+    SelectionBehavior m_selectionBehaviorOnAdd; ///> focus policy on new tabs
 };
-
 
 /*!
   \file tab-widget.hh
-  \class CTabBar
-  \brief CTabBar is the widget representing the tabs in the mainwindow
+  \class TabBar
+  \brief TabBar is the widget representing the tabs in the mainwindow
 
-  A CTabBar allows tabs to be closed when middle-clicked with a mouse.
+  A TabBar allows tabs to be closed when middle-clicked with a mouse.
 
   \image html tab-widget.png
 
 */
-class CTabBar : public QTabBar
+class TabBar : public QTabBar
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  CTabBar(QWidget *parent=0);
-  /// Destructor.
-  ~CTabBar();
+    /// Constructor.
+    TabBar(QWidget *parent = 0);
+    /// Destructor.
+    ~TabBar();
 
 protected:
-  /*!
+    /*!
     Reimplements QTabBar::mouseReleaseEvent to close
     tabs when they are middle-clicked.
   */
-  virtual void mouseReleaseEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
 };
 
-#endif  // __TAB_WIDGET_HH__
+#endif // __TAB_WIDGET_HH__

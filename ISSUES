@@ -1,0 +1,23 @@
+# SongHighlighter errors on runtime
+Songbook can't connect to non-existing slot (makes sense)
+
+Full error:
+QObject::connect: No such slot CSongHighlighter::addWord(const QString&)
+
+Reason:
+Slot not created if HUNSPELL not detected on compile.
+
+Solution:
+Add IF_DEF tags to appropriate part of code
+
+#QCocoaMenu error
+
+Full error:
+void QCocoaMenu::insertNative(QCocoaMenuItem *, QCocoaMenuItem *) Menu item is already in a menu, remove it from the other menu first before inserting
+
+Reason:
+Unclear. linked to libqcocoa.dylib
+
+Solution:
+Check the web !
+

@@ -25,122 +25,113 @@
 
 #include <QDebug>
 
-CTabWidget::CTabWidget(QWidget *parent)
-  : QTabWidget(parent)
-  , m_selectionBehaviorOnAdd(SelectCurrent)
+TabWidget::TabWidget(QWidget *parent)
+    : QTabWidget(parent), m_selectionBehaviorOnAdd(SelectCurrent)
 {
-  setDocumentMode(true);
+    setDocumentMode(true);
 
-  setStyleSheet(" QTabWidget::tab-bar {}");
-  setTabBar(new CTabBar(this));
-  updateTabBarVisibility();
+    setStyleSheet(" QTabWidget::tab-bar {}");
+    setTabBar(new TabBar(this));
+    updateTabBarVisibility();
 
-  QAction *action;
-  action = new QAction(tr("Next tab"), this);
-  action->setShortcut(QKeySequence::NextChild);
-  connect(action, SIGNAL(triggered()), this, SLOT(next()));
-  addAction(action);
+    QAction *action;
+    action = new QAction(tr("Next tab"), this);
+    action->setShortcut(QKeySequence::NextChild);
+    connect(action, SIGNAL(triggered()), this, SLOT(next()));
+    addAction(action);
 
-  action = new QAction(tr("Previous tab"), this);
-  action->setShortcut(QKeySequence::PreviousChild);
-  connect(action, SIGNAL(triggered()), this, SLOT(prev()));
-  addAction(action);
+    action = new QAction(tr("Previous tab"), this);
+    action->setShortcut(QKeySequence::PreviousChild);
+    connect(action, SIGNAL(triggered()), this, SLOT(prev()));
+    addAction(action);
 
-  action = new QAction(tr("Close tab"), this);
-  action->setShortcut(QKeySequence::Close);
-  connect(action, SIGNAL(triggered()), this, SLOT(closeTab()));
-  addAction(action);
+    action = new QAction(tr("Close tab"), this);
+    action->setShortcut(QKeySequence::Close);
+    connect(action, SIGNAL(triggered()), this, SLOT(closeTab()));
+    addAction(action);
 }
 
-CTabWidget::~CTabWidget()
-{}
+TabWidget::~TabWidget() {}
 
-CTabWidget::SelectionBehavior CTabWidget::selectionBehaviorOnAdd() const
+TabWidget::SelectionBehavior TabWidget::selectionBehaviorOnAdd() const
 {
-  return m_selectionBehaviorOnAdd;
+    return m_selectionBehaviorOnAdd;
 }
 
-void CTabWidget::setSelectionBehaviorOnAdd(CTabWidget::SelectionBehavior behavior)
+void TabWidget::setSelectionBehaviorOnAdd(TabWidget::SelectionBehavior behavior)
 {
-  m_selectionBehaviorOnAdd = behavior;
+    m_selectionBehaviorOnAdd = behavior;
 }
 
-void CTabWidget::closeTab()
+void TabWidget::closeTab() { emit(tabCloseRequested(currentIndex())); }
+
+void TabWidget::closeTab(int index)
 {
-  emit(tabCloseRequested (currentIndex()));
+    removeTab(index);
+
+    updateTabBarVisibility();
 }
 
-void CTabWidget::closeTab(int index)
+int TabWidget::addTab(QWidget *widget)
 {
-  removeTab(index);
-
-  updateTabBarVisibility();
+    return addTab(widget, widget->windowTitle());
 }
 
-int CTabWidget::addTab(QWidget *widget)
+int TabWidget::addTab(QWidget *widget, const QString &label)
 {
-  return addTab(widget, widget->windowTitle());
+    int index = QTabWidget::addTab(widget, label);
+
+    updateTabBarVisibility();
+
+    if (selectionBehaviorOnAdd() == SelectNew)
+        setCurrentIndex(index);
+
+    return index;
 }
 
-int CTabWidget::addTab(QWidget *widget, const QString &label)
+void TabWidget::updateTabBarVisibility()
 {
-  int index = QTabWidget::addTab(widget, label);
-
-  updateTabBarVisibility();
-
-  if (selectionBehaviorOnAdd() == SelectNew)
-    setCurrentIndex(index);
-
-  return index;
+    if (count() > 1)
+        tabBar()->show();
+    else
+        tabBar()->hide();
 }
 
-void CTabWidget::updateTabBarVisibility()
+void TabWidget::next()
 {
-  if (count() > 1)
-    tabBar()->show();
-  else
-    tabBar()->hide();
+    if (currentIndex() == count() - 1) // last tab
+        setCurrentIndex(0); // first tab
+    else
+        setCurrentIndex(currentIndex() + 1);
 }
 
-void CTabWidget::next()
+void TabWidget::prev()
 {
-  if (currentIndex() == count()-1) //last tab
-    setCurrentIndex(0); //first tab
-  else
-    setCurrentIndex(currentIndex() + 1);
+    if (currentIndex() == 0) // first tab
+        setCurrentIndex(count() - 1); // last tab
+    else
+        setCurrentIndex(currentIndex() - 1);
 }
 
-void CTabWidget::prev()
+void TabWidget::changeTabText(const QString &text)
 {
-  if (currentIndex() == 0) //first tab
-    setCurrentIndex(count()-1); //last tab
-  else
-    setCurrentIndex(currentIndex() - 1);
-}
+    QWidget *widget = qobject_cast<QWidget *>(QObject::sender());
+    int index = indexOf(widget);
 
-void CTabWidget::changeTabText(const QString &text)
-{
-  QWidget *widget = qobject_cast< QWidget* >(QObject::sender());
-  int index = indexOf(widget);
-
-  if (index >= 0)
-    setTabText(index, text);
+    if (index >= 0)
+        setTabText(index, text);
 }
 
 //----------------------------------------------------------------------------
 
-CTabBar::CTabBar(QWidget *parent)
-  : QTabBar(parent)
-{}
+TabBar::TabBar(QWidget *parent) : QTabBar(parent) {}
 
-CTabBar::~CTabBar()
-{}
+TabBar::~TabBar() {}
 
-void CTabBar::mouseReleaseEvent(QMouseEvent *event)
+void TabBar::mouseReleaseEvent(QMouseEvent *event)
 {
-  if (event->button() == Qt::MidButton)
-    {
-      emit(tabCloseRequested(tabAt(event->pos())));
+    if (event->button() == Qt::MidButton) {
+        emit(tabCloseRequested(tabAt(event->pos())));
     }
-  QTabBar::mouseReleaseEvent(event);
+    QTabBar::mouseReleaseEvent(event);
 }

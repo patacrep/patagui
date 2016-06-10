@@ -1,20 +1,20 @@
-songbook-client(1)
-==================
+Patagui(1)
+==========
 
 NOM
 ---
 
-songbook-client - gestionnaire graphique pour carnets de chants
+Patagui - gestionnaire graphique pour carnets de chants
 
 SYNOPSIS
 --------
 
-*songbook-client* [*--version*] [*-h* | *--help*]
+*Patagui* [*--version*] [*-h* | *--help*]
 
 DESCRIPTION
 -----------
 
-*songbook-client* est une interface graphique pour l'application du
+*Patagui* est une interface graphique pour l'application du
 carnet de chant Patacrep! qui permet de manipuler la sélection de
 chansons et de personnaliser l'apparence d'un carnet de
 chant. L'éditeur intégré permet d'ajouter, de supprimer et de modifier
@@ -31,8 +31,8 @@ OPTIONS
 
 BUGS
 ----
-Reportez les bugs à l'adresse suivante : 
-http://github.com/crep4ever/songbook-client/issues
+Reportez les bugs à l'adresse suivante :
+http://github.com/patacrep/patagui/issues
 
 AUTHORS
 -------

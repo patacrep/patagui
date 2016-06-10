@@ -21,44 +21,45 @@
 
 #include <QTableView>
 
-class CMainWindow;
+class MainWindow;
 
 /**
  * \file library-view.hh
- * \class CLibraryView
- * \brief CLibraryView is the class that displays the songs library.
+ * \class LibraryView
+ * \brief LibraryView is the class that displays the songs library.
  *
  * The songs library is displayed as a table where each row represents a song.
- * Columns can be displayed/hidden through the display section in the preferences.
+ * Columns can be displayed/hidden through the display section in the
+ * preferences.
  *
  * \image html library-view.png
  *
  */
-class CLibraryView : public QTableView
+class LibraryView : public QTableView
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor
-  CLibraryView(CMainWindow *parent);
-  /// Destructor
-  ~CLibraryView();
+    /// Constructor
+    LibraryView(MainWindow *parent);
+    /// Destructor
+    ~LibraryView();
 
-  /// Load user settings
-  void readSettings();
-  /// Save user settings
-  void writeSettings();
+    /// Load user settings
+    void readSettings();
+    /// Save user settings
+    void writeSettings();
 
-  /// Resize the library columns
-  void resizeColumns();
+    /// Resize the library columns
+    void resizeColumns();
 
 public slots:
-  /// Update the view, sorting songs by artist name, then titles
-  void update();
+    /// Update the view, sorting songs by artist name, then titles
+    void update();
 
 private:
-  void createActions();
-  CMainWindow * parent() const;
+    void createActions();
+    MainWindow *parent() const;
 };
 
 #endif // __LIBRARY_VIEW_HH__

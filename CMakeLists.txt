@@ -1,20 +1,21 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0)
 set(CMAKE_COLOR_MAKEFILE ON)
-#set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+SET(CMAKE_BUILD_TYPE Release)
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_MODULE_PATH "${SOURCE_DIR}/cmake/")
 
-if(NOT EXISTS ${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
-  message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/songbook-client-config.cmake")
+if(NOT EXISTS ${CMAKE_MODULE_PATH}/patagui-config.cmake)
+  message(FATAL_ERROR "Cannot find: ${CMAKE_MODULE_PATH}/patagui-config.cmake")
 endif()
 
-include(${CMAKE_MODULE_PATH}/songbook-client-config.cmake)
+include(${CMAKE_MODULE_PATH}/patagui-config.cmake)
 
 # {{{ Sources
-set(SONGBOOK_CLIENT_SOURCES
+set(PATAGUI_SOURCES
   src/main.cc
   src/main-window.cc
   src/preferences.cc
@@ -42,7 +43,6 @@ set(SONGBOOK_CLIENT_SOURCES
   src/notification.cc
   src/identity-proxy-model.cc
   src/song-item-delegate.cc
-  src/make-songbook-process.cc
   src/find-replace-dialog.cc
   src/search-widget.cc
   src/variant-factory.cc
@@ -50,10 +50,11 @@ set(SONGBOOK_CLIENT_SOURCES
   src/import-dialog.cc
   src/conflict-dialog.cc
   src/diff_match_patch/diff_match_patch.cpp
+  src/patacrep.cc
   )
 
 # header (moc)
-set(SONGBOOK_CLIENT_QT_HEADER
+set(PATAGUI_QT_HEADER
   src/main-window.hh
   src/preferences.hh
   src/library.hh
@@ -80,61 +81,99 @@ set(SONGBOOK_CLIENT_QT_HEADER
   src/notification.hh
   src/identity-proxy-model.hh
   src/song-item-delegate.hh
-  src/make-songbook-process.hh
   src/find-replace-dialog.hh
   src/search-widget.hh
   src/variant-factory.hh
   src/variant-manager.hh
   src/import-dialog.hh
   src/conflict-dialog.hh
+  src/patacrep.hh
   )
 
 # uis
-set(SONGBOOK_CLIENT_UIS
+set(PATAGUI_UIS
   )
 
 # resources (rcs)
-set(SONGBOOK_CLIENT_RCS
+set(PATAGUI_RCS
   icons/songbook/songbook.qrc
   icons/macos/macos.qrc
   icons/tango/tango.qrc
-  songbook.rc
+#  patagui.rc FIXME
+  src/songbook_scripts.qrc
   )
 
 # }}}
 
-find_package(Qt5 CONFIG REQUIRED Network Widgets Script)
-LIST(APPEND QT_LIBRARIES ${Qt5Widgets_LIBRARIES};${Qt5Script_LIBRARIES})
+# Finding Qt5
+find_package(Qt5 CONFIG REQUIRED Concurrent Network Widgets)
+list(APPEND QT_LIBRARIES ${Qt5Concurrent_LIBRARIES};${Qt5Network_LIBRARIES};${Qt5Widgets_LIBRARIES})
+## Qt Libraries have to appear first, otherwise OS X deployment is confused.
+list(APPEND LIBRARIES ${QT_LIBRARIES})
 
-#set(QT_USE_QTSCRIPT true)
-#set(QT_USE_QTSVG true)
+# Small Hack for python3 on Mac OSX, otherwise, python3 is not found, only the system library which is 2.7 so far.
+if(APPLE)
+    execute_process(COMMAND python3-config --prefix
+                    OUTPUT_VARIABLE PYTHON3_PREFIX
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    ERROR_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND python3 -c "import sys; print(\".\".join(map(str, sys.version_info[:2])))"
+                    OUTPUT_VARIABLE PYTHON3_VERSION
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    ERROR_STRIP_TRAILING_WHITESPACE)
+    SET(PYTHON_INCLUDE_DIR  ${PYTHON3_PREFIX}/include/python${PYTHON3_VERSION}m)
+    SET(PYTHON_LIBRARY ${PYTHON3_PREFIX}/Python)
+endif(APPLE)
 
+# Finding Python 3
+find_package(PythonLibs 3.3 REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+list(APPEND LIBRARIES ${PYTHON_LIBRARIES})
+
+# Setup PythonQt
+include(${CMAKE_MODULE_PATH}/pythonqt-config.cmake)
+include_directories(${PYTHONQT_INCLUDE_DIR})
+list(APPEND LIBRARIES ${PYTHONQT_LIBRARIES})
+
+# Setup Yaml-cpp
+include(${CMAKE_MODULE_PATH}/yaml-cpp-config.cmake)
+include_directories(${YAML-CPP_INCLUDE_DIR})
+list(APPEND LIBRARIES ${YAML-CPP_LIBRARIES})
+
+# Setup Boost (used in Yaml-CPP)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+list(APPEND LIBRARIES ${Boost_LIBRARIES})
+
+# Use LibArchive
 if(ENABLE_LIBRARY_DOWNLOAD)
-  set(QT_USE_QTNETWORK true)
-  LIST(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES})
-  include_directories(${LibArchive_INCLUDE_DIRS})
-  LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
-endif()
+    set(QT_USE_QTNETWORK true)
+    LIST(APPEND QT_LIBRARIES ${Qt5Network_LIBRARIES})
+    include_directories(${LibArchive_INCLUDE_DIRS})
+    LIST(APPEND LIBRARIES ${LibArchive_LIBRARIES})
+endif(ENABLE_LIBRARY_DOWNLOAD)
 
+# Use Hunspell
 if(ENABLE_SPELLCHECK)
-  include_directories(${HUNSPELL_INCLUDE_DIR})
-  LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
-endif()
+    include_directories(${HUNSPELL_INCLUDE_DIR})
+    LIST(APPEND LIBRARIES ${HUNSPELL_LIBRARIES})
+endif(ENABLE_SPELLCHECK)
 
-# include(${QT_USE_FILE})
-
+# Qt Property Editor configuration
 include(${CMAKE_MODULE_PATH}/qt-property-editor-config.cmake)
 
+# Local Includes
 include_directories(
-  ${SOURCE_DIR}
-  ${SOURCE_DIR}/src/
-  ${BUILD_DIR}
-  )
+    ${SOURCE_DIR}
+    ${SOURCE_DIR}/src/
+    ${BUILD_DIR}
+)
 
 # process Qt special files
-qt5_wrap_cpp(SONGBOOK_CLIENT_MOCS ${SONGBOOK_CLIENT_QT_HEADER})
-qt5_add_resources(SONGBOOK_CLIENT_RESSOURCES ${SONGBOOK_CLIENT_RCS})
-qt5_wrap_ui(SONGBOOK_CLIENT_UI_HDRS ${SONGBOOK_CLIENT_UIS})
+qt5_wrap_cpp(PATAGUI_MOCS ${PATAGUI_QT_HEADER})
+qt5_add_resources(PATAGUI_RESSOURCES ${PATAGUI_RCS})
+qt5_wrap_ui(PATAGUI_UI_HDRS ${PATAGUI_UIS})
 
 # {{{ Apple specific stuff
 if(APPLE)
@@ -144,62 +183,62 @@ endif(APPLE)
 
 # generating executable
 if(NOT APPLE)
-  add_executable(${SONGBOOK_CLIENT_APPLICATION_NAME} WIN32
-    ${SONGBOOK_CLIENT_SOURCES}
-    ${SONGBOOK_CLIENT_MOCS}
-    ${SONGBOOK_CLIENT_RESSOURCES}
-    ${COMPILED_TRANSLATIONS}
-    ${QT_PROPERTY_EDITOR_SOURCES}
-    ${SONGBOOK_CLIENT_UI_HDRS}
+    add_executable(${PATAGUI_APPLICATION_NAME} WIN32
+        ${PATAGUI_SOURCES}
+        ${PATAGUI_MOCS}
+        ${PATAGUI_RESSOURCES}
+        ${COMPILED_TRANSLATIONS}
+        ${QT_PROPERTY_EDITOR_SOURCES}
+        ${PATAGUI_UI_HDRS}
     )
 endif(NOT APPLE)
 
 if(WIN32)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-enable-auto-import")
 endif(WIN32)
 
-list(APPEND LIBRARIES ${QT_LIBRARIES})
-#message("Qt Libraries = ${QT_LIBRARIES}")
-#message("Test = ${SONGBOOK_CLIENT_SOURCES}")
-target_link_libraries(${SONGBOOK_CLIENT_APPLICATION_NAME} ${LIBRARIES})
-
+# Setup Libraries for linking
+target_link_libraries(${PATAGUI_APPLICATION_NAME} ${LIBRARIES})
+add_dependencies(${PATAGUI_APPLICATION_NAME} PythonQt-External)
+add_dependencies(${PATAGUI_APPLICATION_NAME} Yaml-cpp-External)
 # {{{ Internationalization
 set (TRANSLATIONS
-  lang/songbook_en.ts
-  lang/songbook_it.ts
-  lang/songbook_fr.ts
-  lang/songbook_cs.ts)
+    lang/songbook_en.ts
+    lang/songbook_it.ts
+    lang/songbook_fr.ts
+    lang/songbook_cs.ts)
 
 set (COMPILED_TRANSLATIONS
-  lang/songbook_fr.qm
-  lang/songbook_it.qm
-  lang/songbook_en.qm
-  lang/songbook_cs.qm)
+    lang/songbook_fr.qm
+    lang/songbook_it.qm
+    lang/songbook_en.qm
+    lang/songbook_cs.qm)
 
 add_custom_target(
-  translations_target
-  COMMAND "${QT_LRELEASE_EXECUTABLE}" ${TRANSLATIONS}
-  DEPENDS ${TRANSLATIONS}
-  COMMENT "Updating translations"
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    translations_target
+    COMMAND "${QT_LRELEASE_EXECUTABLE}" ${TRANSLATIONS}
+    DEPENDS ${TRANSLATIONS}
+    COMMENT "Updating translations"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
 #uncomment and run `make translations_target` to update translations ts files from sources
 #warning, if uncommented, running make clean will remove ts files
-#qt4_create_translation(COMPILED_TRANSLATIONS ${SONGBOOK_CLIENT_SOURCES} ${TRANSLATIONS} )
+#qt4_create_translation(COMPILED_TRANSLATIONS ${PATAGUI_SOURCES} ${TRANSLATIONS} )
 # }}}
 
 # {{{ Manpages
 if(GENERATE_MANPAGES)
 
-  set(SONGBOOK_CLIENT_MAN_SRCS
-    ${SOURCE_DIR}/manpages/songbook-client.1.txt
+  set(PATAGUI_MAN_SRCS
+    ${SOURCE_DIR}/manpages/Patagui.1.txt
     )
 
-  set(SONGBOOK_CLIENT_MAN_LANGS default fr)
+  set(PATAGUI_MAN_LANGS default fr)
 
-  foreach(lang ${SONGBOOK_CLIENT_MAN_LANGS})
+  foreach(lang ${PATAGUI_MAN_LANGS})
 
-    foreach(txtfile ${SONGBOOK_CLIENT_MAN_SRCS})
-      # figure the base name of the file (ie "songbook-client.1")
+    foreach(txtfile ${PATAGUI_MAN_SRCS})
+      # figure the base name of the file (ie "patagui.1")
       GET_FILENAME_COMPONENT(tmpname ${txtfile} NAME)
       string(REGEX REPLACE ".txt\$" "" basename ${tmpname})
 
@@ -262,18 +301,18 @@ endif()
 
 # {{{ Installation
 if(NOT APPLE)
-  install(TARGETS ${SONGBOOK_CLIENT_APPLICATION_NAME} RUNTIME DESTINATION bin)
+  install(TARGETS ${PATAGUI_APPLICATION_NAME} RUNTIME DESTINATION bin)
   if(GENERATE_MANPAGES)
     if(COMPRESS_MANPAGES)
       set(regex "\\.(xml|txt|[0-9])$")
     else()
       set(regex "\\.(xml|txt|gz)$")
     endif()
-    install(DIRECTORY ${BUILD_DIR}/${relpath}/ DESTINATION ${SONGBOOK_CLIENT_MAN_PATH}
+    install(DIRECTORY ${BUILD_DIR}/${relpath}/ DESTINATION ${PATAGUI_MAN_PATH}
       REGEX ${regex} EXCLUDE)
   endif()
-  install(FILES ${SONGBOOK_CLIENT_APPLICATION_NAME}.desktop DESTINATION share/applications)
-  install(FILES icons/songbook/256x256/songbook-client.png DESTINATION share/icons)
-  install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${SONGBOOK_CLIENT_DATA_PATH}/lang)
+  install(FILES ${PATAGUI_APPLICATION_NAME}.desktop DESTINATION share/applications)
+  install(FILES icons/songbook/256x256/Patagui.png DESTINATION share/icons)
+  install(FILES ${COMPILED_TRANSLATIONS} DESTINATION ${PATAGUI_DATA_PATH}/lang)
 endif(NOT APPLE)
 # }}}

@@ -1,57 +1,47 @@
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2015 The Qt Company Ltd.
+** Contact: http://www.qt.io/licensing/
 **
-** This file is part of the Qt Solutions component.
+** This file is part of the tools applications of the Qt Toolkit.
 **
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
+** $QT_BEGIN_LICENSE:LGPL21$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see http://www.qt.io/terms-conditions. For further
+** information use the contact form at http://www.qt.io/contact-us.
 **
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 or version 3 as published by the Free
+** Software Foundation and appearing in the file LICENSE.LGPLv21 and
+** LICENSE.LGPLv3 included in the packaging of this file. Please review the
+** following information to ensure the GNU Lesser General Public License
+** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+** As a special exception, The Qt Company gives you certain additional
+** rights. These rights are described in The Qt Company LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
-
 #include "qtpropertybrowserutils_p.h"
-#include <QApplication>
-#include <QPainter>
-#include <QHBoxLayout>
-#include <QMouseEvent>
-#include <QCheckBox>
-#include <QLineEdit>
-#include <QMenu>
-#include <QStyleOption>
+#include <QtWidgets/QApplication>
+#include <QtGui/QPainter>
+#include <QtWidgets/QHBoxLayout>
+#include <QtGui/QMouseEvent>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QMenu>
+#include <QtCore/QLocale>
 
-#if QT_VERSION >= 0x040400
 QT_BEGIN_NAMESPACE
-#endif
 
 QtCursorDatabase::QtCursorDatabase()
 {
@@ -215,6 +205,26 @@ QString QtPropertyBrowserUtils::fontValueText(const QFont &f)
            .arg(f.family()).arg(f.pointSize());
 }
 
+QString QtPropertyBrowserUtils::dateFormat()
+{
+    QLocale loc;
+    return loc.dateFormat(QLocale::ShortFormat);
+}
+
+QString QtPropertyBrowserUtils::timeFormat()
+{
+    QLocale loc;
+    // ShortFormat is missing seconds on UNIX.
+    return loc.timeFormat(QLocale::LongFormat);
+}
+
+QString QtPropertyBrowserUtils::dateTimeFormat()
+{
+    QString format = dateFormat();
+    format += QLatin1Char(' ');
+    format += timeFormat();
+    return format;
+}
 
 QtBoolEdit::QtBoolEdit(QWidget *parent) :
     QWidget(parent),
@@ -283,174 +293,4 @@ void QtBoolEdit::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void QtBoolEdit::paintEvent(QPaintEvent *)
-{
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-}
-
-
-
-QtKeySequenceEdit::QtKeySequenceEdit(QWidget *parent)
-    : QWidget(parent), m_num(0), m_lineEdit(new QLineEdit(this))
-{
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->addWidget(m_lineEdit);
-    layout->setMargin(0);
-    m_lineEdit->installEventFilter(this);
-    m_lineEdit->setReadOnly(true);
-    m_lineEdit->setFocusProxy(this);
-    setFocusPolicy(m_lineEdit->focusPolicy());
-    setAttribute(Qt::WA_InputMethodEnabled);
-}
-
-bool QtKeySequenceEdit::eventFilter(QObject *o, QEvent *e)
-{
-    if (o == m_lineEdit && e->type() == QEvent::ContextMenu) {
-        QContextMenuEvent *c = static_cast<QContextMenuEvent *>(e);
-        QMenu *menu = m_lineEdit->createStandardContextMenu();
-        const QList<QAction *> actions = menu->actions();
-        QListIterator<QAction *> itAction(actions);
-        while (itAction.hasNext()) {
-            QAction *action = itAction.next();
-            action->setShortcut(QKeySequence());
-            QString actionString = action->text();
-            const int pos = actionString.lastIndexOf(QLatin1Char('\t'));
-            if (pos > 0)
-                actionString.remove(pos, actionString.length() - pos);
-            action->setText(actionString);
-        }
-        QAction *actionBefore = 0;
-        if (actions.count() > 0)
-            actionBefore = actions[0];
-        QAction *clearAction = new QAction(tr("Clear Shortcut"), menu);
-        menu->insertAction(actionBefore, clearAction);
-        menu->insertSeparator(actionBefore);
-        clearAction->setEnabled(!m_keySequence.isEmpty());
-        connect(clearAction, SIGNAL(triggered()), this, SLOT(slotClearShortcut()));
-        menu->exec(c->globalPos());
-        delete menu;
-        e->accept();
-        return true;
-    }
-
-    return QWidget::eventFilter(o, e);
-}
-
-void QtKeySequenceEdit::slotClearShortcut()
-{
-    if (m_keySequence.isEmpty())
-        return;
-    setKeySequence(QKeySequence());
-    emit keySequenceChanged(m_keySequence);
-}
-
-void QtKeySequenceEdit::handleKeyEvent(QKeyEvent *e)
-{
-    int nextKey = e->key();
-    if (nextKey == Qt::Key_Control || nextKey == Qt::Key_Shift ||
-            nextKey == Qt::Key_Meta || nextKey == Qt::Key_Alt ||
-            nextKey == Qt::Key_Super_L || nextKey == Qt::Key_AltGr)
-        return;
-
-    nextKey |= translateModifiers(e->modifiers(), e->text());
-    int k0 = m_keySequence[0];
-    int k1 = m_keySequence[1];
-    int k2 = m_keySequence[2];
-    int k3 = m_keySequence[3];
-    switch (m_num) {
-        case 0: k0 = nextKey; k1 = 0; k2 = 0; k3 = 0; break;
-        case 1: k1 = nextKey; k2 = 0; k3 = 0; break;
-        case 2: k2 = nextKey; k3 = 0; break;
-        case 3: k3 = nextKey; break;
-        default: break;
-    }
-    ++m_num;
-    if (m_num > 3)
-        m_num = 0;
-    m_keySequence = QKeySequence(k0, k1, k2, k3);
-    m_lineEdit->setText(m_keySequence.toString(QKeySequence::NativeText));
-    e->accept();
-    emit keySequenceChanged(m_keySequence);
-}
-
-void QtKeySequenceEdit::setKeySequence(const QKeySequence &sequence)
-{
-    if (sequence == m_keySequence)
-        return;
-    m_num = 0;
-    m_keySequence = sequence;
-    m_lineEdit->setText(m_keySequence.toString(QKeySequence::NativeText));
-}
-
-QKeySequence QtKeySequenceEdit::keySequence() const
-{
-    return m_keySequence;
-}
-
-int QtKeySequenceEdit::translateModifiers(Qt::KeyboardModifiers state, const QString &text) const
-{
-    int result = 0;
-    if ((state & Qt::ShiftModifier) && (text.size() == 0 || !text.at(0).isPrint() || text.at(0).isLetter() || text.at(0).isSpace()))
-        result |= Qt::SHIFT;
-    if (state & Qt::ControlModifier)
-        result |= Qt::CTRL;
-    if (state & Qt::MetaModifier)
-        result |= Qt::META;
-    if (state & Qt::AltModifier)
-        result |= Qt::ALT;
-    return result;
-}
-
-void QtKeySequenceEdit::focusInEvent(QFocusEvent *e)
-{
-    m_lineEdit->event(e);
-    m_lineEdit->selectAll();
-    QWidget::focusInEvent(e);
-}
-
-void QtKeySequenceEdit::focusOutEvent(QFocusEvent *e)
-{
-    m_num = 0;
-    m_lineEdit->event(e);
-    QWidget::focusOutEvent(e);
-}
-
-void QtKeySequenceEdit::keyPressEvent(QKeyEvent *e)
-{
-    handleKeyEvent(e);
-    e->accept();
-}
-
-void QtKeySequenceEdit::keyReleaseEvent(QKeyEvent *e)
-{
-    m_lineEdit->event(e);
-}
-
-void QtKeySequenceEdit::paintEvent(QPaintEvent *)
-{
-    QStyleOption opt;
-    opt.init(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
-}
-
-bool QtKeySequenceEdit::event(QEvent *e)
-{
-    if (e->type() == QEvent::Shortcut ||
-            e->type() == QEvent::ShortcutOverride  ||
-            e->type() == QEvent::KeyRelease) {
-        e->accept();
-        return true;
-    }
-    return QWidget::event(e);
-}
-
-
-
-
-#if QT_VERSION >= 0x040400
 QT_END_NAMESPACE
-#endif

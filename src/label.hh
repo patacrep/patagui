@@ -24,36 +24,36 @@
 
 /**
  * \file label.hh
- * \class CLabel
- * \brief CLabel is a custom QLabel with a fixed width and elide mode.
+ * \class Label
+ * \brief Label is a custom QLabel with a fixed width and elide mode.
  */
-class CLabel : public QLabel
+class Label : public QLabel
 {
-  Q_OBJECT
-  Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
+    Q_OBJECT
+    Q_PROPERTY(Qt::TextElideMode elideMode READ elideMode WRITE setElideMode)
 
 public:
-  /// Constructor.
-  CLabel(QWidget *parent = 0);
+    /// Constructor.
+    Label(QWidget *parent = 0);
 
-  /// Destructor.
-  ~CLabel();
+    /// Destructor.
+    ~Label();
 
-  /// Getter on the elide mode used by the label.
-  /// Default is elide on the right.
-  /// @return the elide mode.
-  Qt::TextElideMode elideMode() const;
+    /// Getter on the elide mode used by the label.
+    /// Default is elide on the right.
+    /// @return the elide mode.
+    Qt::TextElideMode elideMode() const;
 
-  /// Setter on the elide mode used by the label.
-  /// @param mode the elide mode.
-  void setElideMode(Qt::TextElideMode mode);
+    /// Setter on the elide mode used by the label.
+    /// @param mode the elide mode.
+    void setElideMode(Qt::TextElideMode mode);
 
 protected:
-  void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 private:
-  Qt::TextElideMode m_elideMode;
-  QString m_textCache;
+    Qt::TextElideMode m_elideMode;
+    QString m_textCache;
 };
 
 #endif // __LABEL_HH__

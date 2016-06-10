@@ -23,191 +23,205 @@
 
 #include <QDebug>
 
-CSongSortFilterProxyModel::CSongSortFilterProxyModel(QObject *parent)
-  : QSortFilterProxyModel(parent)
-  , m_onlySelected(false)
-  , m_onlyNotSelected(false)
-  , m_filterString()
-  , m_languageFilter()
-  , m_negativeLanguageFilter()
-  , m_keywordFilter()
-{}
-
-CSongSortFilterProxyModel::~CSongSortFilterProxyModel()
-{}
-
-void CSongSortFilterProxyModel::setFilterString(const QString &filterString)
+SongSortFilterProxyModel::SongSortFilterProxyModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
+    , m_onlySelected(false)
+    , m_onlyNotSelected(false)
+    , m_filterString()
+    , m_languageFilter()
+    , m_negativeLanguageFilter()
+    , m_keywordFilter()
 {
-  m_filterString = filterString;
-
-  clearLanguageFilter();
-  clearNegativeLanguageFilter();
-  clearKeywordFilter();
-
-  m_onlySelected = false;
-  m_onlyNotSelected = false;
-
-  QString filter = m_filterString;
-  if (filter.contains("!:selection"))
-    {
-      m_onlyNotSelected = true;
-      filter.remove("!:selection");
-    }
-  else if (filter.contains(":selection"))
-    {
-      m_onlySelected = true;
-      filter.remove(":selection");
-    }
-  else if (!filter.contains(":se")) //:se(lection) would be removed
-    {
-      // parse the :keyword parameters and create the appropriate filter
-      QRegExp langFilter("!?:(\\w{2})\\s?");
-      int pos = 0;
-      while ((pos = langFilter.indexIn(m_filterString, pos)) != -1)
-	{
-	  QString language = langFilter.cap(1);
-	  QLocale locale(language);
-	  if (langFilter.cap(0).startsWith("!"))
-	    {
-	      insertNegativeLanguageFilter(locale.language());
-	    }
-	  else
-	    {
-	      insertLanguageFilter(locale.language());
-	    }
-	  pos += langFilter.matchedLength();
-	}
-
-      filter.remove(langFilter);
-    }
-  m_keywordFilter << filter.split(" ");
-  invalidateFilter();
 }
 
-QString CSongSortFilterProxyModel::filterString() const
-{
-  return m_filterString;
-}
+SongSortFilterProxyModel::~SongSortFilterProxyModel() {}
 
-bool CSongSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+void SongSortFilterProxyModel::setFilterString(const QString &filterString)
 {
-  QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+    m_filterString = filterString;
 
-  bool accept = true;
-  if (!m_keywordFilter.isEmpty())
+    clearLanguageFilter();
+    clearNegativeLanguageFilter();
+    clearKeywordFilter();
+
+    m_onlySelected = false;
+    m_onlyNotSelected = false;
+
+    QString filter = m_filterString;
+    if (filter.contains("!:selection")) {
+        m_onlyNotSelected = true;
+        filter.remove("!:selection");
+    } else if (filter.contains(":selection")) {
+        m_onlySelected = true;
+        filter.remove(":selection");
+    } else if (!filter.contains(":se")) //:se(lection) would be removed
     {
-      foreach (QString keyword, m_keywordFilter)
-        {
-	  if (keyword.startsWith("!"))
-            {
-              keyword.remove("!");
-              if (sourceModel()->data(index, CLibrary::TitleRole).toString().contains(keyword, Qt::CaseInsensitive)
-                  || sourceModel()->data(index, CLibrary::ArtistRole).toString().contains(keyword, Qt::CaseInsensitive)
-                  || sourceModel()->data(index, CLibrary::AlbumRole).toString().contains(keyword, Qt::CaseInsensitive))
-                {
-                  accept = false;
-                }
+        // parse the :keyword parameters and create the appropriate filter
+        QRegExp langFilter("!?:(\\w{2})\\s?");
+        int pos = 0;
+        while ((pos = langFilter.indexIn(m_filterString, pos)) != -1) {
+            QString language = langFilter.cap(1);
+            QLocale locale(language);
+            if (langFilter.cap(0).startsWith("!")) {
+                insertNegativeLanguageFilter(locale.language());
+            } else {
+                insertLanguageFilter(locale.language());
             }
-          else if (!sourceModel()->data(index, CLibrary::TitleRole).toString().contains(keyword, Qt::CaseInsensitive)
-                   && !sourceModel()->data(index, CLibrary::ArtistRole).toString().contains(keyword, Qt::CaseInsensitive)
-                   && !sourceModel()->data(index, CLibrary::AlbumRole).toString().contains(keyword, Qt::CaseInsensitive))
-            {
-              accept = false;
+            pos += langFilter.matchedLength();
+        }
+
+        filter.remove(langFilter);
+    }
+    m_keywordFilter << filter.split(" ");
+    invalidateFilter();
+}
+
+QString SongSortFilterProxyModel::filterString() const
+{
+    return m_filterString;
+}
+
+bool SongSortFilterProxyModel::filterAcceptsRow(
+    int sourceRow, const QModelIndex &sourceParent) const
+{
+    QModelIndex index = sourceModel()->index(sourceRow, 0, sourceParent);
+
+    bool accept = true;
+    if (!m_keywordFilter.isEmpty()) {
+        foreach (QString keyword, m_keywordFilter) {
+            if (keyword.startsWith("!")) {
+                keyword.remove("!");
+                if (sourceModel()
+                        ->data(index, Library::TitleRole)
+                        .toString()
+                        .contains(keyword, Qt::CaseInsensitive) ||
+                    sourceModel()
+                        ->data(index, Library::ArtistRole)
+                        .toString()
+                        .contains(keyword, Qt::CaseInsensitive) ||
+                    sourceModel()
+                        ->data(index, Library::AlbumRole)
+                        .toString()
+                        .contains(keyword, Qt::CaseInsensitive)) {
+                    accept = false;
+                }
+            } else if (!sourceModel()
+                            ->data(index, Library::TitleRole)
+                            .toString()
+                            .contains(keyword, Qt::CaseInsensitive) &&
+                       !sourceModel()
+                            ->data(index, Library::ArtistRole)
+                            .toString()
+                            .contains(keyword, Qt::CaseInsensitive) &&
+                       !sourceModel()
+                            ->data(index, Library::AlbumRole)
+                            .toString()
+                            .contains(keyword, Qt::CaseInsensitive)) {
+                accept = false;
             }
         }
     }
 
-  if (!m_negativeLanguageFilter.isEmpty())
-    accept = accept && !m_negativeLanguageFilter.contains(sourceModel()->data(index, CLibrary::LanguageRole).value< QLocale::Language >());
+    if (!m_negativeLanguageFilter.isEmpty())
+        accept = accept &&
+                 !m_negativeLanguageFilter.contains(
+                     sourceModel()
+                         ->data(index, Library::LanguageRole)
+                         .value<QLocale::Language>());
 
-  if (!m_languageFilter.isEmpty())
-    accept = accept && m_languageFilter.contains(sourceModel()->data(index, CLibrary::LanguageRole).value< QLocale::Language >());
+    if (!m_languageFilter.isEmpty())
+        accept =
+            accept &&
+            m_languageFilter.contains(sourceModel()
+                                          ->data(index, Library::LanguageRole)
+                                          .value<QLocale::Language>());
 
-  if (m_onlySelected)
-    accept = accept && qobject_cast< CSongbook* >(sourceModel())->isChecked(index);
+    if (m_onlySelected)
+        accept = accept &&
+                 qobject_cast<Songbook *>(sourceModel())->isChecked(index);
 
-  if (m_onlyNotSelected)
-    accept = accept && !qobject_cast< CSongbook* >(sourceModel())->isChecked(index);
+    if (m_onlyNotSelected)
+        accept = accept &&
+                 !qobject_cast<Songbook *>(sourceModel())->isChecked(index);
 
-  return accept;
+    return accept;
 }
 
-void CSongSortFilterProxyModel::checkAll()
+void SongSortFilterProxyModel::checkAll()
 {
-  int rows = rowCount();
-  CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
-  for (int i = 0; i < rows; ++i)
-    {
-      songbook->setChecked(mapToSource(index(i,0)), true);
+    int rows = rowCount();
+    Songbook *songbook = qobject_cast<Songbook *>(sourceModel());
+    for (int i = 0; i < rows; ++i) {
+        songbook->setChecked(mapToSource(index(i, 0)), true);
     }
 }
 
-void CSongSortFilterProxyModel::uncheckAll()
+void SongSortFilterProxyModel::uncheckAll()
 {
-  int rows = rowCount();
-  CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
-  for (int i = 0; i < rows; ++i)
-    {
-      songbook->setChecked(mapToSource(index(i,0)), false);
+    int rows = rowCount();
+    Songbook *songbook = qobject_cast<Songbook *>(sourceModel());
+    for (int i = 0; i < rows; ++i) {
+        songbook->setChecked(mapToSource(index(i, 0)), false);
     }
 }
 
-void CSongSortFilterProxyModel::toggleAll()
+void SongSortFilterProxyModel::toggleAll()
 {
-  int rows = rowCount();
-  CSongbook *songbook = qobject_cast< CSongbook* >(sourceModel());
-  for (int i = 0; i < rows; ++i)
-    {
-      songbook->toggle(mapToSource(index(i,0)));
+    int rows = rowCount();
+    Songbook *songbook = qobject_cast<Songbook *>(sourceModel());
+    for (int i = 0; i < rows; ++i) {
+        songbook->toggle(mapToSource(index(i, 0)));
     }
 }
 
-void CSongSortFilterProxyModel::insertLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::insertLanguageFilter(
+    const QLocale::Language &language)
 {
-  m_languageFilter.insert(language);
+    m_languageFilter.insert(language);
 }
 
-void CSongSortFilterProxyModel::removeLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::removeLanguageFilter(
+    const QLocale::Language &language)
 {
-  m_languageFilter.remove(language);
+    m_languageFilter.remove(language);
 }
 
-void CSongSortFilterProxyModel::clearLanguageFilter()
+void SongSortFilterProxyModel::clearLanguageFilter()
 {
-  m_languageFilter.clear();
+    m_languageFilter.clear();
 }
 
-const QSet< QLocale::Language > & CSongSortFilterProxyModel::languageFilter() const
+const QSet<QLocale::Language> &SongSortFilterProxyModel::languageFilter() const
 {
-  return m_languageFilter;
+    return m_languageFilter;
 }
 
-void CSongSortFilterProxyModel::insertNegativeLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::insertNegativeLanguageFilter(
+    const QLocale::Language &language)
 {
-  m_negativeLanguageFilter.insert(language);
+    m_negativeLanguageFilter.insert(language);
 }
 
-void CSongSortFilterProxyModel::removeNegativeLanguageFilter(const QLocale::Language &language)
+void SongSortFilterProxyModel::removeNegativeLanguageFilter(
+    const QLocale::Language &language)
 {
-  m_negativeLanguageFilter.remove(language);
+    m_negativeLanguageFilter.remove(language);
 }
 
-void CSongSortFilterProxyModel::clearNegativeLanguageFilter()
+void SongSortFilterProxyModel::clearNegativeLanguageFilter()
 {
-  m_negativeLanguageFilter.clear();
+    m_negativeLanguageFilter.clear();
 }
 
-const QSet< QLocale::Language > & CSongSortFilterProxyModel::negativeLanguageFilter() const
+const QSet<QLocale::Language> &
+SongSortFilterProxyModel::negativeLanguageFilter() const
 {
-  return m_negativeLanguageFilter;
+    return m_negativeLanguageFilter;
 }
 
-void CSongSortFilterProxyModel::clearKeywordFilter()
-{
-  m_keywordFilter.clear();
-}
+void SongSortFilterProxyModel::clearKeywordFilter() { m_keywordFilter.clear(); }
 
-const QStringList & CSongSortFilterProxyModel::keywordFilter() const
+const QStringList &SongSortFilterProxyModel::keywordFilter() const
 {
-  return m_keywordFilter;
+    return m_keywordFilter;
 }

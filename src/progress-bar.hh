@@ -27,88 +27,89 @@ class QToolButton;
 
 /*!
   \file progress-bar.hh
-  \class CProgressBar
-  \brief CProgressBar is a custom cancelable progress bar.
+  \class ProgressBar
+  \brief ProgressBar is a custom cancelable progress bar.
 
-  A CProgressBar object displays a QProgressBar with a "cancel" button
+  A ProgressBar object displays a QProgressBar with a "cancel" button
   if it is cancelable.
 
   If the "cancel" button is clicked, the signal canceled() is emitted
-  and the CProgressBar object is hidden.
+  and the ProgressBar object is hidden.
 
   \image html progress-bar.png
 */
 
-class CProgressBar : public QWidget
+class ProgressBar : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  CProgressBar(QWidget* parent=0);
+    /// Constructor.
+    ProgressBar(QWidget *parent = 0);
 
-  /// Destructor.
-  ~CProgressBar();
+    /// Destructor.
+    ~ProgressBar();
 
 public:
-  /*!
+    /*!
     Sets the range for the progress bar.
     \sa QProgressBar::setRange
   */
-  void setRange(int start, int stop);
+    void setRange(int start, int stop);
 
-  /*!
+    /*!
     Sets the visibility of the text over the progress bar to \a value.
     \sa QProgressBar::setTextVisible
   */
-  void setTextVisible(bool value);
+    void setTextVisible(bool value);
 
-  /*!
-    Returns \a true if the action of the progress can be canceled; \a false otherwise.
+    /*!
+    Returns \a true if the action of the progress can be canceled; \a false
+    otherwise.
     \sa setCancelable
   */
-  bool isCancelable() const;
+    bool isCancelable() const;
 
-  /*!
+    /*!
     Sets the cancelable property of the progress bar to \a value.
     \sa isCancelable
   */
-  void setCancelable(bool value);
+    void setCancelable(bool value);
 
 public slots:
-  /*!
+    /*!
     Shows the progress bar.
     The cancel button is shown if the progress bar is cancelable.
     \sa hide
   */
-  void show();
+    void show();
 
-  /*!
+    /*!
     Hides the progress bar.
     \sa show
   */
-  void hide();
+    void hide();
 
-  /*!
+    /*!
     Sets the current progress of the progress bar.
     \sa QProgressBar::setValue
   */
-  void setValue(int value);
+    void setValue(int value);
 
 signals:
-  /*!
+    /*!
     This signal is emitted when the cancel button is clicked.
     \sa cancelable, setCancelable
   */
-  void canceled();
+    void canceled();
 
 private slots:
-  void cancel();
+    void cancel();
 
 private:
-  QProgressBar *m_progressBar;
-  QToolButton *m_cancelButton;
-  bool m_cancelable;
+    QProgressBar *m_progressBar;
+    QToolButton *m_cancelButton;
+    bool m_cancelable;
 };
 
-#endif  // __FILE_CHOOSER_HH__
+#endif // __FILE_CHOOSER_HH__
