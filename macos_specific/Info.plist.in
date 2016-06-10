@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDisplayName</key>
-	<string>Songbook-Client</string>
+	<string>Patagui</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.patacrep.songbook-client</string>
+	<string>com.patacrep.patagui</string>
 	<key>SUPublicDSAKeyFile</key>
-	<string>dsa_pub_songbookclient.pem</string>
+	<string>dsa_pub_patagui.pem</string>
 	<key>SUFeedURL</key>
 	<string>http://songbookclient.lmdb.eu/atom.xml</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>@SONGBOOK_CLIENT_APPLICATION_NAME@</string>
+	<string>@PATAGUI_APPLICATION_NAME@</string>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleIconFile</key>
@@ -25,7 +25,7 @@
 	<key>CFBundleLongVersionString</key>
 	<string>@MACOSX_BUNDLE_LONG_VERSION_STRING@</string>
 	<key>CFBundleName</key>
-	<string>Songbook-client</string>
+	<string>Patagui</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

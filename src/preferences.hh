@@ -24,20 +24,6 @@
 #include <QScrollArea>
 #include <QPushButton>
 
-#if defined(Q_OS_WIN32)
-#define PLATFORM_BUILD_COMMAND "cmd.exe /C windows\\make.bat %basename"
-#define PLATFORM_CLEAN_COMMAND "cmd.exe /C windows\\clean.bat"
-#define PLATFORM_CLEANALL_COMMAND "cmd.exe /C windows\\cleanall.bat"
-#elif defined(Q_OS_MAC)
-#define PLATFORM_BUILD_COMMAND "macos/make.sh %basename"
-#define PLATFORM_CLEAN_COMMAND "macos/clean.sh"
-#define PLATFORM_CLEANALL_COMMAND "macos/cleanall.sh"
-#else //Unix/Linux
-#define PLATFORM_BUILD_COMMAND "./songbook %target --datadir %library "
-#define PLATFORM_CLEAN_COMMAND "./songbook --steps clean"
-#define PLATFORM_CLEANALL_COMMAND "./songbook --steps clean"
-#endif
-
 #include "config.hh"
 
 class QListWidget;
@@ -48,8 +34,8 @@ class QLabel;
 class QLineEdit;
 class QCheckBox;
 class QSpinBox;
-class CFileChooser;
-class CMainWindow;
+class FileChooser;
+class MainWindow;
 
 class QtGroupBoxPropertyBrowser;
 
@@ -57,66 +43,66 @@ class QtGroupBoxPropertyBrowser;
  */
 class ConfigDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  ConfigDialog(QWidget* parent=0);
+    /// Constructor.
+    ConfigDialog(QWidget *parent = 0);
 
-  /*!
+    /*!
     Returns the parent widget (which is the main window of the application).
   */
-  CMainWindow* parent() const;
+    MainWindow *parent() const;
 
 public slots:
-  /*!
+    /*!
     Changes the configuration page from \a previous to \a current.
   */
-  void changePage(QListWidgetItem *current, QListWidgetItem *previous);
+    void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 
 protected:
-  /*!
+    /*!
     Saves all pages settings before closing.
   */
-  void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 private:
-  void createIcons();
+    void createIcons();
 
-  QListWidget *m_contentsWidget;
-  QStackedWidget *m_pagesWidget;
+    QListWidget *m_contentsWidget;
+    QStackedWidget *m_pagesWidget;
 };
 
 /** \brief Page is the base class for config page
  */
 class Page : public QScrollArea
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  /// Constructor.
-  Page(QWidget *parent=0);
+    /// Constructor.
+    Page(QWidget *parent = 0);
 
-  /*!
+    /*!
     Returns the parent widget (which is the ConfigDialog object).
   */
-  ConfigDialog * parent() const;
+    ConfigDialog *parent() const;
 
-  /*!
+    /*!
     Applies the layout \a layout to the current page.
   */
-  void setLayout(QLayout *layout);
+    void setLayout(QLayout *layout);
 
 protected:
-  /*!
+    /*!
     Saves settings before closing the page.
   */
-  void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 private:
-  virtual void readSettings();
-  virtual void writeSettings();
+    virtual void readSettings();
+    virtual void writeSettings();
 
-  QWidget *m_content;
+    QWidget *m_content;
 };
 
 /**
@@ -127,27 +113,27 @@ private:
  */
 class DisplayPage : public Page
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  DisplayPage(QWidget *parent=0);
+    /// Constructor.
+    DisplayPage(QWidget *parent = 0);
 
 private:
-  void readSettings();
-  void writeSettings();
+    void readSettings();
+    void writeSettings();
 
-  QCheckBox *m_statusBarCheckBox;
-  QCheckBox *m_toolBarCheckBox;
-  QCheckBox *m_compilationLogCheckBox;
+    QCheckBox *m_statusBarCheckBox;
+    QCheckBox *m_toolBarCheckBox;
+    QCheckBox *m_compilationLogCheckBox;
 
-  QCheckBox *m_titleCheckBox;
-  QCheckBox *m_artistCheckBox;
-  QCheckBox *m_pathCheckBox;
-  QCheckBox *m_albumCheckBox;
-  QCheckBox *m_lilypondCheckBox;
-  QCheckBox *m_websiteCheckBox;
-  QCheckBox *m_langCheckBox;
+    QCheckBox *m_titleCheckBox;
+    QCheckBox *m_artistCheckBox;
+    QCheckBox *m_pathCheckBox;
+    QCheckBox *m_albumCheckBox;
+    QCheckBox *m_lilypondCheckBox;
+    QCheckBox *m_websiteCheckBox;
+    QCheckBox *m_langCheckBox;
 };
 
 /**
@@ -157,30 +143,29 @@ private:
  */
 class OptionsPage : public Page
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  OptionsPage(QWidget *parent=0);
+    /// Constructor.
+    OptionsPage(QWidget *parent = 0);
 
 private slots:
-  void checkSongbookPath(const QString &path);
-  void checkLibraryPath(const QString &path);
-  void resetCommands();
+    void checkSongbookPath(const QString &path);
+    void checkLibraryPath(const QString &path);
 
 private:
-  void readSettings();
-  void writeSettings();
+    void readSettings();
+    void writeSettings();
 
-  CFileChooser *m_songbookPath;
-  QLabel *m_songbookPathValid;
+    FileChooser *m_songbookPath;
+    QLabel *m_songbookPathValid;
 
-  CFileChooser *m_libraryPath;
-  QLabel *m_libraryPathValid;
+    FileChooser *m_libraryPath;
+    QLabel *m_libraryPathValid;
 
-  QLineEdit *m_buildCommand;
-  QLineEdit *m_cleanCommand;
-  QLineEdit *m_cleanallCommand;
+    QLineEdit *m_buildCommand;
+    QLineEdit *m_cleanCommand;
+    QLineEdit *m_cleanallCommand;
 };
 
 /**
@@ -191,26 +176,26 @@ private:
  */
 class EditorPage : public Page
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  EditorPage(QWidget *parent=0);
+    /// Constructor.
+    EditorPage(QWidget *parent = 0);
 
 private slots:
-  void selectFont();
-  void updateFontButton();
+    void selectFont();
+    void updateFontButton();
 
 private:
-  void readSettings();
-  void writeSettings();
+    void readSettings();
+    void writeSettings();
 
-  QCheckBox *m_numberLinesCheckBox;
-  QCheckBox *m_highlightCurrentLineCheckBox;
-  QCheckBox *m_colorEnvironmentsCheckBox;
-  QPushButton *m_fontButton;
-  QFont m_font;
-  QString m_fontstr;
+    QCheckBox *m_numberLinesCheckBox;
+    QCheckBox *m_highlightCurrentLineCheckBox;
+    QCheckBox *m_colorEnvironmentsCheckBox;
+    QPushButton *m_fontButton;
+    QFont m_font;
+    QString m_fontstr;
 };
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
@@ -220,20 +205,20 @@ private:
  */
 class NetworkPage : public Page
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  NetworkPage(QWidget *parent=0);
+    /// Constructor.
+    NetworkPage(QWidget *parent = 0);
 
 private:
-  void readSettings();
-  void writeSettings();
+    void readSettings();
+    void writeSettings();
 
-  QLineEdit *m_hostname;
-  QSpinBox *m_port;
-  QLineEdit *m_user;
-  QLineEdit *m_password;
+    QLineEdit *m_hostname;
+    QSpinBox *m_port;
+    QLineEdit *m_user;
+    QLineEdit *m_password;
 };
 
 #endif // ENABLE_LIBRARY_DOWNLOAD
@@ -243,18 +228,18 @@ private:
  */
 class SongbookPage : public Page
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor.
-  SongbookPage(QWidget *parent=0);
+    /// Constructor.
+    SongbookPage(QWidget *parent = 0);
 
 private slots:
-  void updatePropertyEditor();
+    void updatePropertyEditor();
 
 private:
-  QtGroupBoxPropertyBrowser * m_propertyEditor;
-  CMainWindow *m_mainwindow;
+    QtGroupBoxPropertyBrowser *m_propertyEditor;
+    MainWindow *m_mainwindow;
 };
 
 #endif // __PREFERENCES_HH__

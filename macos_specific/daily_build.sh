@@ -35,7 +35,7 @@ rm -rf .build*
 make
 ./macos_specific/makedmg.sh
 echo " "
-./macos_specific/sign -d Songbook-Client-$(git describe).dmg -v $(git describe) -p macos_specific/dsa_priv_songbookclient.pem -x > macos_specific/daily/$(date "+%Y-%m-%d")-$(git describe).feed
+./macos_specific/sign -d Patagui-$(git describe).dmg -v $(git describe) -p macos_specific/dsa_priv_patagui.pem -x > macos_specific/daily/$(date "+%Y-%m-%d")-$(git describe).feed
 echo " "
 echo "make sure too put this in feed.xml and upload it"
 

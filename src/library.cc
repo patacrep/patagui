@@ -35,8 +35,8 @@
 
 namespace // anonymous namespace
 {
-  QString stringToFilename(const QString & string, const QString & separator)
-  {
+QString stringToFilename(const QString &string, const QString &separator)
+{
     QString result(string.toLower());
 
     // replace whitespaces with separator
@@ -53,584 +53,502 @@ namespace // anonymous namespace
     result.replace(QString("ç"), "c");
 
     return result;
-  }
+}
 }
 
-
-CLibrary::CLibrary()
-  : QAbstractTableModel()
-  , m_directory()
-  , m_completionModel(new QStringListModel(this))
-  , m_artistCompletionModel(new QStringListModel(this))
-  , m_albumCompletionModel(new QStringListModel(this))
-  , m_urlCompletionModel(new QStringListModel(this))
-  , m_templates()
-  , m_songs()
+Library::Library()
+    : QAbstractTableModel()
+    , m_directory()
+    , m_completionModel(new QStringListModel(this))
+    , m_artistCompletionModel(new QStringListModel(this))
+    , m_albumCompletionModel(new QStringListModel(this))
+    , m_urlCompletionModel(new QStringListModel(this))
+    , m_templates()
+    , m_songs()
 {
-  connect(this, SIGNAL(directoryChanged(const QDir&)), SLOT(update()));
+    connect(this, SIGNAL(directoryChanged(const QDir &)), SLOT(update()));
 }
 
-CLibrary::~CLibrary()
+Library::~Library() { m_songs.clear(); }
+
+void Library::readSettings()
 {
-  m_songs.clear();
+    QSettings settings;
+    settings.beginGroup("global");
+    setDirectory(settings.value("libraryPath").toString());
+    settings.endGroup();
 }
 
-void CLibrary::readSettings()
+void Library::writeSettings()
 {
-  QSettings settings;
-  settings.beginGroup("global");
-  setDirectory(settings.value("libraryPath", findSongbookPath()).toString());
-  settings.endGroup();
-}
-
-void CLibrary::writeSettings()
-{
-  QSettings settings;
-  settings.beginGroup("global");
-  settings.setValue("libraryPath", directory().absolutePath());
-  settings.endGroup();
-}
-
-bool CLibrary::checkSongbookPath(const QString &path)
-{
-  QDir directory(path);
-  return directory.exists() && directory.exists("songs");
-}
-
-QString CLibrary::findSongbookPath()
-{
-  QStringList paths;
-  paths << QString("%1/songbook").arg(QDir::homePath())
-	<< QString("%1/songbook").arg(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-
-  QString path;
-  foreach(path, paths)
-    {
-      if (checkSongbookPath(path))
-        return path;
+    QSettings settings;
+    settings.beginGroup("global");
+    if (directory().path() != ".") {
+        settings.setValue("libraryPath", directory().absolutePath());
     }
-
-  return QDir::homePath();
+    settings.endGroup();
 }
 
-QDir CLibrary::directory() const
+bool Library::checkSongbookPath(const QString &path)
 {
-  return m_directory;
+    QDir directory(path);
+    return directory.exists() && directory.exists("songs");
 }
 
-void CLibrary::setDirectory(const QString &directory)
+QDir Library::directory() const { return m_directory; }
+
+void Library::setDirectory(const QString &directory)
 {
-  if (!directory.isEmpty())
-    setDirectory(QDir(directory));
+    if (!directory.isEmpty())
+        setDirectory(QDir(directory));
+    else
+        emit(noDirectory());
 }
 
-void CLibrary::setDirectory(const QDir &directory)
+void Library::setDirectory(const QDir &directory)
 {
-  if (directory.absolutePath() != m_directory.absolutePath())
-    {
-      m_directory = directory;
-      QDir templatesDirectory(QString("%1/templates").arg(directory.canonicalPath()));
-      m_templates = templatesDirectory.entryList(QStringList() << "*.tmpl");
-      writeSettings();
-      emit(directoryChanged(m_directory));
+    if (directory.absolutePath() != m_directory.absolutePath()) {
+        m_directory = directory;
+        QDir templatesDirectory(
+            QString("%1/templates").arg(directory.canonicalPath()));
+        m_templates = templatesDirectory.entryList(QStringList() << "*.tex");
+        writeSettings();
+        emit(directoryChanged(m_directory));
     }
 }
 
-QStringList CLibrary::templates() const
+QStringList Library::templates() const { return m_templates; }
+
+QAbstractListModel *Library::completionModel() const
 {
-  return m_templates;
+    return m_completionModel;
 }
 
-QAbstractListModel * CLibrary::completionModel() const
+QAbstractListModel *Library::artistCompletionModel() const
 {
-  return m_completionModel;
+    return m_artistCompletionModel;
 }
 
-QAbstractListModel * CLibrary::artistCompletionModel() const
+QAbstractListModel *Library::albumCompletionModel() const
 {
-  return m_artistCompletionModel;
+    return m_albumCompletionModel;
 }
 
-QAbstractListModel * CLibrary::albumCompletionModel() const
+QAbstractListModel *Library::urlCompletionModel() const
 {
-  return m_albumCompletionModel;
+    return m_urlCompletionModel;
 }
 
-QAbstractListModel * CLibrary::urlCompletionModel() const
+QVariant Library::headerData(int section, Qt::Orientation orientation,
+                             int role) const
 {
-  return m_urlCompletionModel;
-}
-
-QVariant CLibrary::headerData (int section, Qt::Orientation orientation, int role) const
-{
-  if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-    {
-      switch (section)
-	{
-	case 0:
-	  return tr("Title");
-	case 1:
-	  return tr("Artist");
-	case 2:
-	  return tr("Lilypond");
-	case 3:
-	  return tr("Website");
-	case 4:
-	  return tr("Path");
-	case 5:
-	  return tr("Album");
-	case 6:
-	  return tr("Language");
-	}
-    }
-  return QVariant();
-}
-
-QVariant CLibrary::data(const QModelIndex &index, int role) const
-{
-  if (!index.isValid())
-    return QVariant();
-
-  switch (role)
-    {
-    case Qt::DisplayRole:
-      switch (index.column())
-	{
-	case 0:
-	  return data(index, TitleRole);
-	case 1:
-	  return data(index, ArtistRole);
-	case 2:
-	  return data(index, LilypondRole);
-	case 3:
-	  return data(index, UrlRole);
-	case 4:
-	  return data(index, PathRole);
-	case 5:
-	  return data(index, AlbumRole);
-        case 6:
-          return QLocale::languageToString(data(index, LanguageRole).value< QLocale::Language >());
-	}
-      break;
-    case Qt::ToolTipRole:
-      switch (index.column())
-        {
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+        switch (section) {
+        case 0:
+            return tr("Title");
+        case 1:
+            return tr("Artist");
         case 2:
-          return tr("Lilypond music sheet");
+            return tr("Lilypond");
         case 3:
-          return QString("http://%1").arg(m_songs[index.row()].url);
+            return tr("Website");
+        case 4:
+            return tr("Path");
         case 5:
-          return QLocale::languageToString(data(index, LanguageRole).value< QLocale::Language >());
+            return tr("Album");
+        case 6:
+            return tr("Language");
+        }
+    }
+    return QVariant();
+}
+
+QVariant Library::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    switch (role) {
+    case Qt::DisplayRole:
+        switch (index.column()) {
+        case 0:
+            return data(index, TitleRole);
+        case 1:
+            return data(index, ArtistRole);
+        case 2:
+            return data(index, LilypondRole);
+        case 3:
+            return data(index, UrlRole);
+        case 4:
+            return data(index, PathRole);
+        case 5:
+            return data(index, AlbumRole);
+        case 6:
+            return QLocale::languageToString(
+                data(index, LanguageRole).value<QLocale::Language>());
+        }
+        break;
+    case Qt::ToolTipRole:
+        switch (index.column()) {
+        case 2:
+            return tr("Lilypond music sheet");
+        case 3:
+            return QString("http://%1").arg(m_songs[index.row()].url);
+        case 5:
+            return QLocale::languageToString(
+                data(index, LanguageRole).value<QLocale::Language>());
         default:
-          return QVariant();
+            return QVariant();
         }
-      break;
+        break;
     case TitleRole:
-      return m_songs[index.row()].title;
+        return m_songs[index.row()].title;
     case ArtistRole:
-      return m_songs[index.row()].artist;
+        return m_songs[index.row()].artist;
     case AlbumRole:
-      return m_songs[index.row()].album;
+        return m_songs[index.row()].album;
     case CoverRole:
-      return QString("%1/%2.jpg")
-	.arg(m_songs[index.row()].coverPath)
-	.arg(m_songs[index.row()].coverName);
+        return QString("%1/%2.jpg")
+            .arg(m_songs[index.row()].coverPath)
+            .arg(m_songs[index.row()].coverName);
     case LilypondRole:
-      return m_songs[index.row()].isLilypond;
+        return m_songs[index.row()].isLilypond;
     case WebsiteRole:
-      return m_songs[index.row()].isWebsite;
+        return m_songs[index.row()].isWebsite;
     case UrlRole:
-      return m_songs[index.row()].url;
+        return m_songs[index.row()].url;
     case LanguageRole:
-      return qVariantFromValue(m_songs[index.row()].locale.language());
+        return qVariantFromValue(m_songs[index.row()].locale.language());
     case PathRole:
-      return m_songs[index.row()].path;
+        return m_songs[index.row()].path;
     case RelativePathRole:
-      return QDir(QString("%1/songs").arg(directory().canonicalPath())).relativeFilePath(m_songs[index.row()].path);
-    case CoverSmallRole:
-      {
+        return QDir(QString("%1/songs").arg(directory().canonicalPath()))
+            .relativeFilePath(m_songs[index.row()].path);
+    case CoverSmallRole: {
         QPixmap pixmap;
-	QFileInfo file = QFileInfo(data(index, CoverRole).toString());
-	if (file.exists())
-          {
-            if (!QPixmapCache::find(file.baseName()+"-small", &pixmap))
-              {
-                pixmap = QPixmap::fromImage(QImage(file.filePath()).scaledToWidth(24));
-                QPixmapCache::insert(file.baseName()+"-small", pixmap);
-              }
+        QFileInfo file = QFileInfo(data(index, CoverRole).toString());
+        if (file.exists()) {
+            if (!QPixmapCache::find(file.baseName() + "-small", &pixmap)) {
+                pixmap = QPixmap::fromImage(
+                    QImage(file.filePath()).scaledToWidth(24));
+                QPixmapCache::insert(file.baseName() + "-small", pixmap);
+            }
             return pixmap;
-          }
-      }
-      return QVariant();
-    case CoverFullRole:
-      {
-	QPixmap pixmap;
-	QFileInfo file = QFileInfo(data(index, CoverRole).toString());
-	if (file.exists())
-          {
-            if (!QPixmapCache::find(file.baseName()+"-full", &pixmap))
-              {
-                pixmap = QPixmap::fromImage(QImage(file.filePath()).scaled(128,128));
-                QPixmapCache::insert(file.baseName()+"-full", pixmap);
-              }
-            return pixmap;
-          }
-      }
-      return QVariant();
-    }
-  return QVariant();
-}
-
-void CLibrary::update()
-{
-  m_songs.clear();
-
-  // get the path of each song in the library
-  QStringList filter = QStringList() << "*.sg";
-  QString path = directory().absolutePath();
-  QStringList paths;
-
-  QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
-  while (it.hasNext())
-    paths.append(it.next());
-
-  showMessage(tr("Updating the library..."));
-  progressBar()->setCancelable(false);
-  progressBar()->setTextVisible(true);
-  progressBar()->setRange(0, paths.size());
-  progressBar()->show();
-
-  addSongs(paths);
-
-  QStringList wordList, artistList, albumList, urlList;
-  for (int i = 0; i < rowCount(); ++i)
-    {
-      wordList   << data(index(i,0), CLibrary::TitleRole).toString()
-	         << data(index(i,0), CLibrary::ArtistRole).toString()
-	         << data(index(i,0), CLibrary::PathRole).toString();
-      artistList << data(index(i,0), CLibrary::ArtistRole).toString();
-      albumList  << data(index(i,0), CLibrary::AlbumRole).toString();
-      urlList    << data(index(i,0), CLibrary::UrlRole).toString();
-    }
-  wordList.removeDuplicates();
-  artistList.removeDuplicates();
-  albumList.removeDuplicates();
-  urlList.removeDuplicates();
-  m_completionModel->setStringList(wordList);
-  m_artistCompletionModel->setStringList(artistList);
-  m_albumCompletionModel->setStringList(albumList);
-  m_urlCompletionModel->setStringList(urlList);
-
-  progressBar()->setCancelable(true);
-  progressBar()->setTextVisible(false);
-  progressBar()->setRange(0, 0);
-  progressBar()->hide();
-  showMessage(tr("Library updated."));
-  emit(wasModified());
-}
-
-int CLibrary::rowCount(const QModelIndex &) const
-{
-  return m_songs.size();
-}
-
-int CLibrary::columnCount(const QModelIndex &) const
-{
-  return 7;
-}
-
-void CLibrary::addSong(const Song &song, bool resetModel)
-{
-  m_songs << song;
-
-  if (resetModel)
-    {
-      // Modified due to change in QAbstractItemModel
-      beginResetModel();
-      emit(wasModified());
-      endResetModel();
-      
-      // Original Code
-      //reset();
-      //emit(wasModified());
-    }
-}
-
-void CLibrary::addSongs(const QStringList &paths)
-{
-  Song song;
-  int songCount = 0;
-  // run through the library songs files
-  QStringListIterator filepath(paths);
-  while (filepath.hasNext())
-    {
-      progressBar()->setValue(++songCount);
-      loadSong(filepath.next(), &song);
-      addSong(song);
-    }
-
-  // Modified due to change in QAbstractItemModel
-  beginResetModel();
-  emit(wasModified());
-  endResetModel();
-  
-  // Original Code
-  //reset();
-  //emit(wasModified());
-}
-
-void CLibrary::addSong(const QString &path)
-{
-  m_songs << Song::fromFile(path);
-}
-
-
-void CLibrary::removeSong(const QString &path)
-{
-  for (int i = 0; i < m_songs.size(); ++i)
-    {
-      if (m_songs[i].path == path)
-        {
-          m_songs.removeAt(i);
-          break;
         }
     }
-  // Modified due to change in QAbstractItemModel
-  beginResetModel();
-  emit(wasModified());
-  endResetModel();
-  
-  // Original Code
-  //reset();
-  //emit(wasModified());
-}
-
-Song CLibrary::getSong(const QString &path) const
-{
-  for (int i = 0; i < m_songs.size(); ++i)
-    {
-      if (m_songs[i].path == path)
-        return m_songs[i];
+        return QVariant();
+    case CoverFullRole: {
+        QPixmap pixmap;
+        QFileInfo file = QFileInfo(data(index, CoverRole).toString());
+        if (file.exists()) {
+            if (!QPixmapCache::find(file.baseName() + "-full", &pixmap)) {
+                pixmap = QPixmap::fromImage(
+                    QImage(file.filePath()).scaled(128, 128));
+                QPixmapCache::insert(file.baseName() + "-full", pixmap);
+            }
+            return pixmap;
+        }
     }
-  return Song();
-}
-
-int CLibrary::getSongIndex(const QString &path) const
-{
-  for (int i = 0; i < m_songs.size(); ++i)
-    {
-      if (m_songs[i].path == path)
-        return i;
+        return QVariant();
     }
-  return -1;
+    return QVariant();
 }
 
-void CLibrary::loadSong(const QString &path, Song *song)
+void Library::update()
 {
-  if (song == 0)
-    return;
-  (*song) = Song::fromFile(path);
-}
+    m_songs.clear();
 
-void CLibrary::saveSong(Song &song)
-{
-  // write the song file
-  QFile file(song.path);
-  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-      QTextStream stream (&file);
-      stream.setCodec("UTF-8");
-      stream << Song::toString(song);
-      file.close();
+    // get the path of each song in the library
+    QStringList filter = QStringList() << "*.sg";
+    QString path = directory().absolutePath();
+    QStringList paths;
+
+    QDirIterator it(path, filter, QDir::NoFilter, QDirIterator::Subdirectories);
+    while (it.hasNext())
+        paths.append(it.next());
+
+    showMessage(tr("Updating the library..."));
+    progressBar()->setCancelable(false);
+    progressBar()->setTextVisible(true);
+    progressBar()->setRange(0, paths.size());
+    progressBar()->show();
+
+    addSongs(paths);
+
+    QStringList wordList, artistList, albumList, urlList;
+    for (int i = 0; i < rowCount(); ++i) {
+        wordList << data(index(i, 0), Library::TitleRole).toString()
+                 << data(index(i, 0), Library::ArtistRole).toString()
+                 << data(index(i, 0), Library::PathRole).toString();
+        artistList << data(index(i, 0), Library::ArtistRole).toString();
+        albumList << data(index(i, 0), Library::AlbumRole).toString();
+        urlList << data(index(i, 0), Library::UrlRole).toString();
     }
-  //update the song in the library
-  int index = getSongIndex(song.path);
-  if (index != -1)
-    m_songs[index] = song;
-  else //new song
-    addSong(song, true);
+    wordList.removeDuplicates();
+    artistList.removeDuplicates();
+    albumList.removeDuplicates();
+    urlList.removeDuplicates();
+    m_completionModel->setStringList(wordList);
+    m_artistCompletionModel->setStringList(artistList);
+    m_albumCompletionModel->setStringList(albumList);
+    m_urlCompletionModel->setStringList(urlList);
+
+    progressBar()->setCancelable(true);
+    progressBar()->setTextVisible(false);
+    progressBar()->setRange(0, 0);
+    progressBar()->hide();
+    showMessage(tr("Library updated."));
+    emit(wasModified());
 }
 
-void CLibrary::saveCover(Song &song, const QImage &cover)
+int Library::rowCount(const QModelIndex &) const { return m_songs.size(); }
+
+int Library::columnCount(const QModelIndex &) const { return 7; }
+
+void Library::addSong(const Song &song, bool resetModel)
 {
-  QFileInfo fileInfo(song.path);
-  QDir artistDirectory = fileInfo.absoluteDir();
+    m_songs << song;
 
-  // update song cover information
-  song.coverPath = artistDirectory.absolutePath();
-  song.coverName = (!song.album.isEmpty()) ?
-    stringToFilename(song.album,  "-") :
-    stringToFilename(song.artist, "-"); //fallback on artist name
-
-  // guess the cover filename
-  QString coverFilename = QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
-
-  // ask before overwriting
-  if (QFile(coverFilename).exists())
-    {
-      int ret = QMessageBox::warning(0, tr("Songbook-Client"),
-				     tr("This file will be overwritten:\n%1\n"
-					"Are you sure?").arg(coverFilename),
-				     QMessageBox::Cancel | QMessageBox::Ok,
-				     QMessageBox::Cancel);
-      // actually write the image
-      if (ret == QMessageBox::Ok)
-	cover.save(coverFilename);
-    }
-  else
-    {
-      cover.save(coverFilename);
+    if (resetModel) {
+        beginResetModel();
+        emit(wasModified());
+        endResetModel();
     }
 }
 
-void CLibrary::importSongs(const QStringList & filenames)
+void Library::addSongs(const QStringList &paths)
 {
-  showMessage(tr("Importing %1 songs within the library %2")
-	      .arg(filenames.count())
-	      .arg(directory().absolutePath()));
-  Song song;
-  QMap<QString, QString> sourceTargetMap;
-  foreach(const QString & filename, filenames)
-    {
-      song = Song::fromFile(filename);
-      sourceTargetMap.insert(filename, pathToSong(song));
+    beginResetModel();
+    Song song;
+    int songCount = 0;
+    // run through the library songs files
+    QStringListIterator filepath(paths);
+    while (filepath.hasNext()) {
+        progressBar()->setValue(++songCount);
+        loadSong(filepath.next(), &song);
+        addSong(song);
+    }
+    emit(wasModified());
+    endResetModel();
+}
+
+void Library::addSong(const QString &path) { m_songs << Song::fromFile(path); }
+
+void Library::removeSong(const QString &path)
+{
+    beginResetModel();
+    for (int i = 0; i < m_songs.size(); ++i) {
+        if (m_songs[i].path == path) {
+            m_songs.removeAt(i);
+            break;
+        }
+    }
+    emit(wasModified());
+    endResetModel();
+}
+
+Song Library::getSong(const QString &path) const
+{
+    for (int i = 0; i < m_songs.size(); ++i) {
+        if (m_songs[i].path == path)
+            return m_songs[i];
+    }
+    return Song();
+}
+
+int Library::getSongIndex(const QString &path) const
+{
+    for (int i = 0; i < m_songs.size(); ++i) {
+        if (m_songs[i].path == path)
+            return i;
+    }
+    return -1;
+}
+
+void Library::loadSong(const QString &path, Song *song)
+{
+    if (song == 0)
+        return;
+    (*song) = Song::fromFile(path);
+}
+
+void Library::saveSong(Song &song)
+{
+    // write the song file
+    QFile file(song.path);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
+        stream.setCodec("UTF-8");
+        stream << Song::toString(song);
+        file.close();
+    }
+    // update the song in the library
+    int index = getSongIndex(song.path);
+    if (index != -1)
+        m_songs[index] = song;
+    else // new song
+        addSong(song, true);
+}
+
+void Library::saveCover(Song &song, const QImage &cover)
+{
+    QFileInfo fileInfo(song.path);
+    QDir artistDirectory = fileInfo.absoluteDir();
+
+    // update song cover information
+    song.coverPath = artistDirectory.absolutePath();
+    song.coverName =
+        (!song.album.isEmpty())
+            ? stringToFilename(song.album, "-")
+            : stringToFilename(song.artist, "-"); // fallback on artist name
+
+    // guess the cover filename
+    QString coverFilename =
+        QString("%1/%2.jpg").arg(song.coverPath).arg(song.coverName);
+
+    // ask before overwriting
+    if (QFile(coverFilename).exists()) {
+        int ret = QMessageBox::warning(
+            0, tr("Patagui"), tr("This file will be overwritten:\n%1\n"
+                                 "Are you sure?")
+                                  .arg(coverFilename),
+            QMessageBox::Cancel | QMessageBox::Ok, QMessageBox::Cancel);
+        // actually write the image
+        if (ret == QMessageBox::Ok)
+            cover.save(coverFilename);
+    } else {
+        cover.save(coverFilename);
+    }
+}
+
+void Library::importSongs(const QStringList &filenames)
+{
+    showMessage(tr("Importing %1 songs within the library %2")
+                    .arg(filenames.count())
+                    .arg(directory().absolutePath()));
+    Song song;
+    QMap<QString, QString> sourceTargetMap;
+    foreach (const QString &filename, filenames) {
+        song = Song::fromFile(filename);
+        sourceTargetMap.insert(filename, pathToSong(song));
     }
 
-  CConflictDialog dialog(parent());
-  dialog.setSourceTargetFiles(sourceTargetMap);
-  if (dialog.conflictsFound() && dialog.exec() == QDialog::Accepted)
-    {
-      update();
-      showMessage(tr("Import songs completed"));
+    ConflictDialog dialog(parent());
+    dialog.setSourceTargetFiles(sourceTargetMap);
+    if (dialog.conflictsFound() && dialog.exec() == QDialog::Accepted) {
+        update();
+        showMessage(tr("Import songs completed"));
     }
 }
 
-void CLibrary::createArtistDirectory(Song &song)
+void Library::createArtistDirectory(Song &song)
 {
-  // if the song is new or comes from an other library, update the
-  // song file path
-  if (song.path.isEmpty()
-      || !song.path.startsWith(directory().path()))
-    {
-      song.path = pathToSong(song);
+    // if the song is new or comes from an other library, update the
+    // song file path
+    if (song.path.isEmpty() || !song.path.startsWith(directory().path())) {
+        song.path = pathToSong(song);
     }
 
-  // create the artist directory (if it does not exists)
-  QFileInfo fileInfo(song.path);
-  QDir artistDirectory = fileInfo.absoluteDir();
-  if (!artistDirectory.exists())
-    directory().mkpath(artistDirectory.absolutePath());
+    // create the artist directory (if it does not exists)
+    QFileInfo fileInfo(song.path);
+    QDir artistDirectory = fileInfo.absoluteDir();
+    if (!artistDirectory.exists())
+        directory().mkpath(artistDirectory.absolutePath());
 }
 
-void CLibrary::deleteSong(const QString &path)
+void Library::deleteSong(const QString &path)
 {
-  // make sure the song is not in the library list anymore
-  removeSong(path);
+    // make sure the song is not in the library list anymore
+    removeSong(path);
 
-  // remove the file
-  QFile file(path);
-  if (!file.remove())
-    {
-      qWarning() << "Unable to remove the song file: " << path;
+    // remove the file
+    QFile file(path);
+    if (!file.remove()) {
+        qWarning() << "Unable to remove the song file: " << path;
     }
 }
 
-QString CLibrary::pathToSong(const QString &artist, const QString &title) const
+QString Library::pathToSong(const QString &artist, const QString &title) const
 {
-  QString artistInPath = stringToFilename(artist, "_");
-  QString titleInPath = stringToFilename(title, "_");
+    QString artistInPath = stringToFilename(artist, "_");
+    QString titleInPath = stringToFilename(title, "_");
 
-  return QString("%1/songs/%2/%3.sg")
-    .arg(directory().canonicalPath())
-    .arg(artistInPath)
-    .arg(titleInPath);
+    return QString("%1/songs/%2/%3.sg")
+        .arg(directory().canonicalPath())
+        .arg(artistInPath)
+        .arg(titleInPath);
 }
 
-QString CLibrary::pathToSong(Song &song) const
+QString Library::pathToSong(Song &song) const
 {
-  return pathToSong(song.artist, song.title);
+    return pathToSong(song.artist, song.title);
 }
 
-CProgressBar* CLibrary::progressBar() const
+ProgressBar *Library::progressBar() const { return parent()->progressBar(); }
+
+void Library::showMessage(const QString &message)
 {
-  return parent()->progressBar();
+    parent()->statusBar()->showMessage(message);
 }
 
-void CLibrary::showMessage(const QString & message)
+MainWindow *Library::parent() const { return m_parent; }
+
+void Library::setParent(MainWindow *parent) { m_parent = parent; }
+
+QString Library::checkPath(const QString &path)
 {
-  parent()->statusBar()->showMessage(message);
-}
+    QDir directory(path);
 
-CMainWindow* CLibrary::parent() const
-{
-  return m_parent;
-}
+    bool error = true;
+    bool warning = true;
 
-void CLibrary::setParent(CMainWindow *parent)
-{
-  m_parent = parent;
-}
+    QString message;
 
-QString CLibrary::checkPath(const QString &path)
-{
-  QDir directory(path);
-
-  bool error = true;
-  bool warning = true;
-
-  QString message;
-
-  if (!directory.exists())
-    {
-      message = tr("the directory does not exist");
-    }
-  else
-    {
-      error = false;
-      // look for sg files
-      QStringList songs;
-      recursiveFindFiles(path, QStringList() << "*.sg", songs);
-      uint nbSongs = songs.count();
-      if (nbSongs > 0)
-	{
-	  warning = false;
-	  message = QString(tr("%1 songs found in this library")).arg(nbSongs);
-	}
-      else
-	{
-	  message = tr("The library is valid but does not contain any song");
-	}
+    if (!directory.exists()) {
+        message = tr("The directory does not exist");
+    } else if (!directory.exists("songs")) {
+        message = tr("No songs folder in this directory");
+    } else {
+        error = false;
+        // look for sg files
+        QStringList songs;
+        recursiveFindFiles(path, QStringList() << "*.sg", songs);
+        uint nbSongs = songs.count();
+        if (nbSongs > 0) {
+            warning = false;
+            message =
+                QString(tr("%1 songs found in this library")).arg(nbSongs);
+        } else {
+            message = tr("The library is valid but does not contain any song");
+        }
     }
 
-  QString mask("<font color=%1>%2%3.</font>");
-  if (error)
-    {
-      mask = mask.arg("red").arg(tr("Error: "));
+    QString mask("<font color=%1>%2%3.</font>");
+    if (error) {
+        mask = mask.arg("red").arg(tr("Error: "));
+    } else if (warning) {
+        mask = mask.arg("orange").arg(tr("Warning: "));
+    } else {
+        mask = mask.arg("green").arg("");
     }
-  else if (warning)
-    {
-      mask = mask.arg("orange").arg(tr("Warning: "));
-    }
-  else
-    {
-      mask = mask.arg("green").arg("");
-    }
-  return mask.arg(message);
+    return mask.arg(message);
 }
 
-void CLibrary::recursiveFindFiles(const QString & path, const QStringList& filters,
-				       QStringList& files)
+void Library::recursiveFindFiles(const QString &path,
+                                 const QStringList &filters, QStringList &files)
 {
-  QDir directory(path);
-  QFileInfoList fiList = QFileInfoList() << directory.entryInfoList(filters, QDir::Files);
-  foreach (const QFileInfo& fi, fiList)
-    files << fi.absoluteFilePath();
+    QDir directory(path);
+    QFileInfoList fiList = QFileInfoList()
+                           << directory.entryInfoList(filters, QDir::Files);
+    foreach (const QFileInfo &fi, fiList)
+        files << fi.absoluteFilePath();
 
-  QStringList subdirectories = directory.entryList
-    (QStringList(), QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+    QStringList subdirectories = directory.entryList(
+        QStringList(), QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
 
-  foreach (const QString & subdirectory, subdirectories)
-    {
-      recursiveFindFiles(QString("%1/%2/").arg(directory.absolutePath()).arg(subdirectory), filters, files);
+    foreach (const QString &subdirectory, subdirectories) {
+        recursiveFindFiles(
+            QString("%1/%2/").arg(directory.absolutePath()).arg(subdirectory),
+            filters, files);
     }
 }

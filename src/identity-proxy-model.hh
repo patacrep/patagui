@@ -21,59 +21,76 @@
 
 /**
  * \file identity-proxy-model.hh
- * \class CIdentityProxyModel
- * \brief CIdentityProxyModel is the base model to build a CSongbook
+ * \class IdentityProxyModel
+ * \brief IdentityProxyModel is the base model to build a Songbook
  *
  * This class is based on the identity proxy model from Qt 4.8 :
  * http://doc.qt.nokia.com/4.8-snapshot/qidentityproxymodel.html
  *
  */
-class CIdentityProxyModel : public QAbstractProxyModel
+class IdentityProxyModel : public QAbstractProxyModel
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  CIdentityProxyModel(QObject *parent = 0);
-  ~CIdentityProxyModel();
+    IdentityProxyModel(QObject *parent = 0);
+    ~IdentityProxyModel();
 
-  virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-  virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-  virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    virtual QVariant data(const QModelIndex &index,
+                          int role = Qt::DisplayRole) const;
+    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+    virtual bool setData(const QModelIndex &index, const QVariant &value,
+                         int role = Qt::EditRole);
 
-  virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
-  virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-  virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-  virtual QModelIndex parent(const QModelIndex &index ) const;
+    virtual QModelIndex index(int row, int column,
+                              const QModelIndex &parent = QModelIndex()) const;
+    virtual QModelIndex parent(const QModelIndex &index) const;
 
-  virtual QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
-  virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
+    virtual QModelIndex mapFromSource(const QModelIndex &sourceIndex) const;
+    virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const;
 
-  virtual void setSourceModel(QAbstractItemModel *sourceModel);
+    virtual void setSourceModel(QAbstractItemModel *sourceModel);
 
 private slots:
-  void sourceColumnsAboutToBeInserted(const QModelIndex &parent, int start, int end);
-  void sourceColumnsInserted(const QModelIndex &parent, int start, int end);
-  void sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-  void sourceColumnsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-  void sourceColumnsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
-  void sourceColumnsRemoved(const QModelIndex &parent, int start, int end);
+    void sourceColumnsAboutToBeInserted(const QModelIndex &parent, int start,
+                                        int end);
+    void sourceColumnsInserted(const QModelIndex &parent, int start, int end);
+    void sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent,
+                                     int sourceStart, int sourceEnd,
+                                     const QModelIndex &destParent, int dest);
+    void sourceColumnsMoved(const QModelIndex &sourceParent, int sourceStart,
+                            int sourceEnd, const QModelIndex &destParent,
+                            int dest);
+    void sourceColumnsAboutToBeRemoved(const QModelIndex &parent, int start,
+                                       int end);
+    void sourceColumnsRemoved(const QModelIndex &parent, int start, int end);
 
-  void sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
-  void sourceRowsInserted(const QModelIndex &parent, int start, int end);
-  void sourceRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-  void sourceRowsMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destParent, int dest);
-  void sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
-  void sourceRowsRemoved(const QModelIndex &parent, int start, int end);
+    void sourceRowsAboutToBeInserted(const QModelIndex &parent, int start,
+                                     int end);
+    void sourceRowsInserted(const QModelIndex &parent, int start, int end);
+    void sourceRowsAboutToBeMoved(const QModelIndex &sourceParent,
+                                  int sourceStart, int sourceEnd,
+                                  const QModelIndex &destParent, int dest);
+    void sourceRowsMoved(const QModelIndex &sourceParent, int sourceStart,
+                         int sourceEnd, const QModelIndex &destParent,
+                         int dest);
+    void sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start,
+                                    int end);
+    void sourceRowsRemoved(const QModelIndex &parent, int start, int end);
 
-  void sourceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-  void sourceHeaderDataChanged(Qt::Orientation orientation, int first, int last);
+    void sourceDataChanged(const QModelIndex &topLeft,
+                           const QModelIndex &bottomRight);
+    void sourceHeaderDataChanged(Qt::Orientation orientation, int first,
+                                 int last);
 
-  void sourceLayoutAboutToBeChanged();
-  void sourceLayoutChanged();
+    void sourceLayoutAboutToBeChanged();
+    void sourceLayoutChanged();
 
-  void sourceModelAboutToBeReset();
-  void sourceModelReset();
+    void sourceModelAboutToBeReset();
+    void sourceModelReset();
 };
 
 #endif // __IDENTITY_PROXY_MODEL_HH__

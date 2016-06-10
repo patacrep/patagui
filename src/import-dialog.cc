@@ -55,614 +55,594 @@
 #include <QNetworkProxy>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
-CImportDialog::CImportDialog(QWidget *parent)
-  : QDialog(parent)
-  , m_libraryPath(new CFileChooser(this))
-  , m_libraryPathValid(new QLabel(this))
-  , m_songsToBeImported(QStringList())
+ImportDialog::ImportDialog(QWidget *parent)
+    : QDialog(parent)
+    , m_libraryPath(new FileChooser(this))
+    , m_libraryPathValid(new QLabel(this))
+    , m_songsToBeImported(QStringList())
 #ifdef ENABLE_LIBRARY_DOWNLOAD
-  , m_manager(0)
-  , m_reply(0)
-#endif //ENABLE_LIBRARY_DOWNLOAD
+    , m_manager(0)
+    , m_reply(0)
+#endif // ENABLE_LIBRARY_DOWNLOAD
 {
-  setWindowTitle(tr("Import songs"));
-  setParent(static_cast<CMainWindow*>(parent));
+    setWindowTitle(tr("Import songs"));
+    setParent(static_cast<MainWindow *>(parent));
 
-  QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-  connect(buttonBox, SIGNAL(accepted()), SLOT(acceptDialog()));
-  connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
+    QDialogButtonBox *buttonBox =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, SIGNAL(accepted()), SLOT(acceptDialog()));
+    connect(buttonBox, SIGNAL(rejected()), SLOT(close()));
 
-  m_libraryPath->setMinimumWidth(300);
-  m_libraryPath->setOptions(QFileDialog::ShowDirsOnly);
-  m_libraryPath->setCaption(tr("Library path"));
-  connect(m_libraryPath, SIGNAL(pathChanged(const QString&)),
-          this, SLOT(checkLibraryPath(const QString&)));
-  checkLibraryPath(m_libraryPath->path());
+    m_libraryPath->setMinimumWidth(300);
+    m_libraryPath->setOptions(QFileDialog::ShowDirsOnly);
+    m_libraryPath->setCaption(tr("Library path"));
+    connect(m_libraryPath, SIGNAL(pathChanged(const QString &)), this,
+            SLOT(checkLibraryPath(const QString &)));
+    checkLibraryPath(m_libraryPath->path());
 
-  QGroupBox *pathGroupBox = new QGroupBox(tr("Library"));
+    QGroupBox *pathGroupBox = new QGroupBox(tr("Library"));
 
-  QFormLayout *pathLayout = new QFormLayout;
-  pathLayout->addRow(tr("Path:"), m_libraryPath);
-  pathLayout->addRow(m_libraryPathValid);
-  pathGroupBox->setLayout(pathLayout);
+    QFormLayout *pathLayout = new QFormLayout;
+    pathLayout->addRow(tr("Path:"), m_libraryPath);
+    pathLayout->addRow(m_libraryPathValid);
+    pathGroupBox->setLayout(pathLayout);
 
-  //Import Section
-  QGroupBox *importGroupBox = new QGroupBox(tr("Import new Songs"));
+    // Import Section
+    QGroupBox *importGroupBox = new QGroupBox(tr("Import new Songs"));
 
-  QButtonGroup *buttonGroup = new QButtonGroup;
-  m_fromLocalButton = new QRadioButton(tr("From local files"));
-  buttonGroup->addButton(m_fromLocalButton);
-  m_fromNetworkButton = new QRadioButton(tr("From network"));
-  buttonGroup->addButton(m_fromNetworkButton);
-  connect(buttonGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(onRadioButtonClicked(QAbstractButton*)));
+    QButtonGroup *buttonGroup = new QButtonGroup;
+    m_fromLocalButton = new QRadioButton(tr("From local files"));
+    buttonGroup->addButton(m_fromLocalButton);
+    m_fromNetworkButton = new QRadioButton(tr("From network"));
+    buttonGroup->addButton(m_fromNetworkButton);
+    connect(buttonGroup, SIGNAL(buttonClicked(QAbstractButton *)), this,
+            SLOT(onRadioButtonClicked(QAbstractButton *)));
 
-  QLabel *fromLocalLabel = new QLabel;
-  fromLocalLabel->setPixmap(QIcon::fromTheme("document-open", QIcon(":/icons/tango/48x48/actions/document-open.png")).pixmap(48, 48));
-  QLabel *fromNetworkLabel = new QLabel;
-  fromNetworkLabel->setPixmap(QIcon(":/icons/songbook/48x48/applications-internet.png").pixmap(48, 48));
+    QLabel *fromLocalLabel = new QLabel;
+    fromLocalLabel->setPixmap(
+        QIcon::fromTheme("document-open",
+                         QIcon(":/icons/tango/48x48/actions/document-open.png"))
+            .pixmap(48, 48));
+    QLabel *fromNetworkLabel = new QLabel;
+    fromNetworkLabel->setPixmap(
+        QIcon(":/icons/songbook/48x48/applications-internet.png")
+            .pixmap(48, 48));
 
-  //from local files
-  m_fileList = new QListWidget;
-  m_fileList->setSelectionMode(QAbstractItemView::MultiSelection);
-  connect(m_fileList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(openItem(QListWidgetItem*)));
+    // from local files
+    m_fileList = new QListWidget;
+    m_fileList->setSelectionMode(QAbstractItemView::MultiSelection);
+    connect(m_fileList, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this,
+            SLOT(openItem(QListWidgetItem *)));
 
-  m_addButton = new QPushButton(QIcon::fromTheme("list-add", QIcon(":/icons/tango/32x32/actions/list-add.png")), tr("Add files"));
-  connect(m_addButton, SIGNAL(clicked()), this, SLOT(addFiles()));
-  m_removeButton = new QPushButton(QIcon::fromTheme("list-remove", QIcon(":/icons/tango/32x32/actions/list-remove.png")), tr("Remove files"));
-  connect(m_removeButton, SIGNAL(clicked()), this, SLOT(removeFiles()));
+    m_addButton = new QPushButton(
+        QIcon::fromTheme("list-add",
+                         QIcon(":/icons/tango/32x32/actions/list-add.png")),
+        tr("Add files"));
+    connect(m_addButton, SIGNAL(clicked()), this, SLOT(addFiles()));
+    m_removeButton = new QPushButton(
+        QIcon::fromTheme("list-remove",
+                         QIcon(":/icons/tango/32x32/actions/list-remove.png")),
+        tr("Remove files"));
+    connect(m_removeButton, SIGNAL(clicked()), this, SLOT(removeFiles()));
 
-  QBoxLayout *fileActionsLayout = new QVBoxLayout;
-  fileActionsLayout->addStretch();
-  fileActionsLayout->addWidget(m_addButton);
-  fileActionsLayout->addWidget(m_removeButton);
+    QBoxLayout *fileActionsLayout = new QVBoxLayout;
+    fileActionsLayout->addStretch();
+    fileActionsLayout->addWidget(m_addButton);
+    fileActionsLayout->addWidget(m_removeButton);
 
-  //from network
-  QButtonGroup *networkGroup = new QButtonGroup;
-  m_patacrepButton = new QRadioButton(tr("Latest stable version"));
-  networkGroup->addButton(m_patacrepButton);
-  m_gitButton = new QRadioButton(tr("Latest development version"));
-  networkGroup->addButton(m_gitButton);
-  m_urlButton = new QRadioButton(tr("Custom URL"));
-  networkGroup->addButton(m_urlButton);
-  connect(networkGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(onRadioButtonClicked(QAbstractButton*)));
-  
-  m_patacrepLabel = new QLabel;
-  m_patacrepLabel->setPixmap(QIcon(":/icons/songbook/32x32/songbook-client.png").pixmap(32, 32));
-  m_gitLabel = new QLabel;
-  m_gitLabel->setPixmap(QIcon(":/icons/songbook/32x32/git.png").pixmap(32, 32));
-  m_urlLabel = new QLabel;
-  m_urlLabel->setPixmap(QIcon(":/icons/songbook/32x32/applications-internet.png").pixmap(32, 32));
+    // from network
+    QButtonGroup *networkGroup = new QButtonGroup;
+    m_patacrepButton = new QRadioButton(tr("Latest stable version"));
+    networkGroup->addButton(m_patacrepButton);
+    m_gitButton = new QRadioButton(tr("Latest development version"));
+    networkGroup->addButton(m_gitButton);
+    m_urlButton = new QRadioButton(tr("Custom URL"));
+    networkGroup->addButton(m_urlButton);
+    connect(networkGroup, SIGNAL(buttonClicked(QAbstractButton *)), this,
+            SLOT(onRadioButtonClicked(QAbstractButton *)));
 
-  m_urlLineEdit = new QLineEdit;
-  connect(m_urlLineEdit, SIGNAL(textChanged(const QString &)), SLOT(onUrlChanged(const QString &)));
+    m_patacrepLabel = new QLabel;
+    m_patacrepLabel->setPixmap(
+        QIcon(":/icons/songbook/32x32/patagui.png").pixmap(32, 32));
+    m_gitLabel = new QLabel;
+    m_gitLabel->setPixmap(
+        QIcon(":/icons/songbook/32x32/git.png").pixmap(32, 32));
+    m_urlLabel = new QLabel;
+    m_urlLabel->setPixmap(
+        QIcon(":/icons/songbook/32x32/applications-internet.png")
+            .pixmap(32, 32));
+
+    m_urlLineEdit = new QLineEdit;
+    connect(m_urlLineEdit, SIGNAL(textChanged(const QString &)),
+            SLOT(onUrlChanged(const QString &)));
 
 #ifndef ENABLE_LIBRARY_DOWNLOAD
-  m_fromNetworkButton->setEnabled(false);
-  m_patacrepButton->setEnabled(false);
-  m_gitButton->setEnabled(false);
-  m_urlButton->setEnabled(false);
-#endif //ENABLE_LIBRARY_DOWNLOAD
+    m_fromNetworkButton->setEnabled(false);
+    m_patacrepButton->setEnabled(false);
+    m_gitButton->setEnabled(false);
+    m_urlButton->setEnabled(false);
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
-  QGridLayout *importLayout = new QGridLayout;
-  importLayout->addWidget(fromLocalLabel, 0, 0, 1, 1);
-  importLayout->addWidget(m_fromLocalButton, 0, 1, 1, 4);
-  importLayout->addWidget(m_fileList, 1, 2, 1, 1);
-  importLayout->addLayout(fileActionsLayout, 1, 4, 1, 1);
-  importLayout->addWidget(fromNetworkLabel, 2, 0, 1, 1);
-  importLayout->addWidget(m_fromNetworkButton, 2, 1, 1, 4);
-  importLayout->addWidget(m_patacrepLabel, 3, 1, 1, 1);
-  importLayout->addWidget(m_patacrepButton, 3, 2, 1, 3);
-  importLayout->addWidget(m_gitLabel, 4, 1, 1, 1);
-  importLayout->addWidget(m_gitButton, 4, 2, 1, 3);
-  importLayout->addWidget(m_urlLabel, 5, 1, 1, 1);
-  importLayout->addWidget(m_urlButton, 5, 2, 1, 2);
-  importLayout->addWidget(m_urlLineEdit, 5, 4, 1, 1);
+    QGridLayout *importLayout = new QGridLayout;
+    importLayout->addWidget(fromLocalLabel, 0, 0, 1, 1);
+    importLayout->addWidget(m_fromLocalButton, 0, 1, 1, 4);
+    importLayout->addWidget(m_fileList, 1, 2, 1, 1);
+    importLayout->addLayout(fileActionsLayout, 1, 4, 1, 1);
+    importLayout->addWidget(fromNetworkLabel, 2, 0, 1, 1);
+    importLayout->addWidget(m_fromNetworkButton, 2, 1, 1, 4);
+    importLayout->addWidget(m_patacrepLabel, 3, 1, 1, 1);
+    importLayout->addWidget(m_patacrepButton, 3, 2, 1, 3);
+    importLayout->addWidget(m_gitLabel, 4, 1, 1, 1);
+    importLayout->addWidget(m_gitButton, 4, 2, 1, 3);
+    importLayout->addWidget(m_urlLabel, 5, 1, 1, 1);
+    importLayout->addWidget(m_urlButton, 5, 2, 1, 2);
+    importLayout->addWidget(m_urlLineEdit, 5, 4, 1, 1);
 
-  importGroupBox->setLayout(importLayout);
+    importGroupBox->setLayout(importLayout);
 
-  setLocalSubWidgetsVisible(false);
-  setNetworkSubWidgetsVisible(false);
+    setLocalSubWidgetsVisible(false);
+    setNetworkSubWidgetsVisible(false);
 
-  // main layout
-  QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(pathGroupBox);
-  mainLayout->addWidget(importGroupBox);
-  mainLayout->addStretch(1);
-  mainLayout->addWidget(buttonBox);
-  setLayout(mainLayout);
+    // main layout
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(pathGroupBox);
+    mainLayout->addWidget(importGroupBox);
+    mainLayout->addStretch(1);
+    mainLayout->addWidget(buttonBox);
+    setLayout(mainLayout);
 
-  setMinimumWidth(600);
+    setMinimumWidth(600);
 
-  readSettings();
+    readSettings();
 }
 
-CImportDialog::~CImportDialog()
+ImportDialog::~ImportDialog()
 {
-  delete m_libraryPath;
-  delete m_libraryPathValid;
+    delete m_libraryPath;
+    delete m_libraryPathValid;
 
-  delete m_fromLocalButton;
-  delete m_fromNetworkButton;
+    delete m_fromLocalButton;
+    delete m_fromNetworkButton;
 
-  delete m_addButton;
-  delete m_removeButton;
+    delete m_addButton;
+    delete m_removeButton;
 
-  delete m_patacrepLabel;
-  delete m_gitLabel;
-  delete m_urlLabel;
+    delete m_patacrepLabel;
+    delete m_gitLabel;
+    delete m_urlLabel;
 
-  delete m_patacrepButton;
-  delete m_gitButton;
-  delete m_urlButton;
-  delete m_urlLineEdit;
-  
-  delete m_fileList;
-  
-  #ifdef ENABLE_LIBRARY_DOWNLOAD
-  delete m_manager;
-  #endif // ENABLE_LIBRARY_DOWNLOAD
+    delete m_patacrepButton;
+    delete m_gitButton;
+    delete m_urlButton;
+    delete m_urlLineEdit;
+
+    delete m_fileList;
+
+#ifdef ENABLE_LIBRARY_DOWNLOAD
+    delete m_manager;
+#endif // ENABLE_LIBRARY_DOWNLOAD
 }
 
-void CImportDialog::readSettings()
+void ImportDialog::readSettings()
 {
-  QSettings settings;
-  settings.beginGroup("global");
-  m_libraryPath->setPath(settings.value("libraryPath", QDir::homePath()).toString());
-  settings.endGroup();
+    QSettings settings;
+    settings.beginGroup("global");
+    m_libraryPath->setPath(settings.value("libraryPath", "").toString());
+    settings.endGroup();
 
-  settings.beginGroup("import");
-  m_urlLineEdit->setText(settings.value("customUrl", "http://").toString());
-  settings.endGroup();
-  m_patacrepButton->setChecked(true);
+    settings.beginGroup("import");
+    m_urlLineEdit->setText(settings.value("customUrl", "http://").toString());
+    settings.endGroup();
+    m_patacrepButton->setChecked(true);
 }
 
-void CImportDialog::writeSettings()
+void ImportDialog::writeSettings()
 {
-  QSettings settings;
-  settings.beginGroup("global");
-  settings.setValue("libraryPath", m_libraryPath->path());
-  settings.endGroup();
+    QSettings settings;
+    settings.beginGroup("global");
+    settings.setValue("libraryPath",
+                      m_libraryPath->path()); // TODO Check value on write
+    settings.endGroup();
 
-  settings.beginGroup("import");
-  settings.setValue("customUrl", m_urlLineEdit->text());
-  settings.endGroup();
+    settings.beginGroup("import");
+    settings.setValue("customUrl", m_urlLineEdit->text());
+    settings.endGroup();
 }
 
+MainWindow *ImportDialog::parent() const { return m_parent; }
 
-CMainWindow* CImportDialog::parent() const
+void ImportDialog::setParent(MainWindow *parent) { m_parent = parent; }
+
+void ImportDialog::checkLibraryPath(const QString &path)
 {
-  return m_parent;
+    m_libraryPathValid->setText(Library::checkPath(path));
 }
 
-void CImportDialog::setParent(CMainWindow* parent)
+void ImportDialog::setLocalSubWidgetsVisible(const bool value)
 {
-  m_parent = parent;
+    m_addButton->setVisible(value);
+    m_removeButton->setVisible(value);
+    m_fileList->setVisible(value);
 }
 
-void CImportDialog::checkLibraryPath(const QString & path)
+void ImportDialog::setNetworkSubWidgetsVisible(const bool value)
 {
-  m_libraryPathValid->setText(CLibrary::checkPath(path));
+    m_patacrepLabel->setVisible(value);
+    m_gitLabel->setVisible(value);
+    m_urlLabel->setVisible(value);
+
+    m_patacrepButton->setVisible(value);
+    m_gitButton->setVisible(value);
+    m_urlButton->setVisible(value);
+    m_urlLineEdit->setVisible(value);
 }
 
-void CImportDialog::setLocalSubWidgetsVisible(const bool value)
+void ImportDialog::onRadioButtonClicked(QAbstractButton *button)
 {
-  m_addButton->setVisible(value);
-  m_removeButton->setVisible(value);
-  m_fileList->setVisible(value);
-}
-
-void CImportDialog::setNetworkSubWidgetsVisible(const bool value)
-{
-  m_patacrepLabel->setVisible(value);
-  m_gitLabel->setVisible(value);
-  m_urlLabel->setVisible(value);
-
-  m_patacrepButton->setVisible(value);
-  m_gitButton->setVisible(value);
-  m_urlButton->setVisible(value);
-  m_urlLineEdit->setVisible(value);
-}
-
-void CImportDialog::onRadioButtonClicked(QAbstractButton* button)
-{
-  if (button == m_fromLocalButton)
-    {
-      setLocalSubWidgetsVisible(true);
-      setNetworkSubWidgetsVisible(false);      
-    }
-  else if (button == m_fromNetworkButton)
-    {
-      setLocalSubWidgetsVisible(false);
-      setNetworkSubWidgetsVisible(true);      
+    if (button == m_fromLocalButton) {
+        setLocalSubWidgetsVisible(true);
+        setNetworkSubWidgetsVisible(false);
+    } else if (button == m_fromNetworkButton) {
+        setLocalSubWidgetsVisible(false);
+        setNetworkSubWidgetsVisible(true);
     }
 }
 
-void CImportDialog::onUrlChanged(const QString & text)
+void ImportDialog::onUrlChanged(const QString &text)
 {
-  Q_UNUSED(text);
-  m_urlButton->setChecked(true);
+    Q_UNUSED(text);
+    m_urlButton->setChecked(true);
 }
 
-void CImportDialog::openItem(QListWidgetItem* item)
+void ImportDialog::openItem(QListWidgetItem *item)
 {
-  if (!QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::ToolTipRole).toString())) &&
-      !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::DisplayRole).toString())) &&
-      !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::EditRole).toString())) &&
-      !QDesktopServices::openUrl(QUrl::fromLocalFile(item->data(Qt::WhatsThisRole).toString())) )
-    {
-      parent()->statusBar()->showMessage
-	(tr("Can't open: %1")
-	 .arg(item->data(Qt::DisplayRole).toString()));
+    if (!QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::ToolTipRole).toString())) &&
+        !QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::DisplayRole).toString())) &&
+        !QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::EditRole).toString())) &&
+        !QDesktopServices::openUrl(
+            QUrl::fromLocalFile(item->data(Qt::WhatsThisRole).toString()))) {
+        parent()->statusBar()->showMessage(
+            tr("Can't open: %1").arg(item->data(Qt::DisplayRole).toString()));
     }
 }
 
-void CImportDialog::addFiles()
+void ImportDialog::addFiles()
 {
-  QStringList paths = QFileDialog::getOpenFileNames(this, tr("Import songs"),
-						    QDir::homePath(),
-						    tr("Songs (*.sg)"));
-  foreach (const QString & path, paths)
-    {
-      if (!m_songsToBeImported.contains(path))
-	{
-	  QFileInfo fileInfo(path);
-	  //todo: set associated cover as icon
-	  QListWidgetItem *item = new QListWidgetItem;
-	  item->setIcon(QIcon(":/icons/songbook/48x48/song.png"));
-	  item->setData(Qt::DisplayRole, fileInfo.fileName());
-	  item->setData(Qt::WhatsThisRole, fileInfo.absoluteFilePath());
-	  item->setData(Qt::ToolTipRole, fileInfo.absoluteFilePath());
-	  m_fileList->addItem(item);
-	  m_songsToBeImported << path;
-	}
+    QStringList paths = QFileDialog::getOpenFileNames(
+        this, tr("Import songs"), QDir::homePath(), tr("Songs (*.sg)"));
+    foreach (const QString &path, paths) {
+        if (!m_songsToBeImported.contains(path)) {
+            QFileInfo fileInfo(path);
+            // todo: set associated cover as icon
+            QListWidgetItem *item = new QListWidgetItem;
+            item->setIcon(QIcon(":/icons/songbook/48x48/song.png"));
+            item->setData(Qt::DisplayRole, fileInfo.fileName());
+            item->setData(Qt::WhatsThisRole, fileInfo.absoluteFilePath());
+            item->setData(Qt::ToolTipRole, fileInfo.absoluteFilePath());
+            m_fileList->addItem(item);
+            m_songsToBeImported << path;
+        }
     }
 }
 
-void CImportDialog::removeFiles()
+void ImportDialog::removeFiles()
 {
-  QList<QListWidgetItem *> items = m_fileList->selectedItems();
-  foreach (QListWidgetItem *item, items)
-    {
-      m_songsToBeImported.removeOne(item->data(Qt::WhatsThisRole).toString());
-      m_fileList->removeItemWidget(item);
-      delete item;
+    QList<QListWidgetItem *> items = m_fileList->selectedItems();
+    foreach (QListWidgetItem *item, items) {
+        m_songsToBeImported.removeOne(item->data(Qt::WhatsThisRole).toString());
+        m_fileList->removeItemWidget(item);
+        delete item;
     }
 }
 
-bool CImportDialog::acceptDialog()
+bool ImportDialog::acceptDialog()
 {
 #ifdef ENABLE_LIBRARY_DOWNLOAD
-  if (m_fromNetworkButton->isChecked())
-    {
-      if (m_patacrepButton->isChecked())
-	{
-	  m_url = QUrl("http://www.patacrep.com/data/documents/songbook.tar.gz");
-	}
-      else if (m_gitButton->isChecked())
-	{
-	  m_url = QUrl("http://git.lohrun.net/?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
-	}
-      else if (m_urlButton->isChecked() && QUrl(m_urlLineEdit->text()).isValid())
-	{
-	  m_url = QUrl(m_urlLineEdit->text());
-	}
-      else
-	{
-	  return false;
-	}
+    if (m_fromNetworkButton->isChecked()) {
+        if (m_patacrepButton->isChecked()) {
+            m_url =
+                QUrl("http://www.patacrep.com/data/documents/songbook.tar.gz");
+        } else if (m_gitButton->isChecked()) {
+            m_url = QUrl("http://git.lohrun.net/"
+                         "?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
+        } else if (m_urlButton->isChecked() &&
+                   QUrl(m_urlLineEdit->text()).isValid()) {
+            m_url = QUrl(m_urlLineEdit->text());
+        } else {
+            return false;
+        }
 
-      initDownload();
-      downloadStart();
+        initDownload();
+        downloadStart();
     }
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD
 
-  if (m_fromLocalButton->isChecked())
-    {
-      emit(songsReadyToBeImported(m_songsToBeImported));
+    if (m_fromLocalButton->isChecked()) {
+        emit(songsReadyToBeImported(m_songsToBeImported));
     }
 
-  CLibrary::instance()->setDirectory(m_libraryPath->path());
-  writeSettings();
-  accept();
-  return true;
+    Library::instance()->setDirectory(m_libraryPath->path());
+    writeSettings();
+    accept();
+    return true;
 }
 
-CProgressBar* CImportDialog::progressBar() const
+ProgressBar *ImportDialog::progressBar() const
 {
-  return parent()->progressBar();
+    return parent()->progressBar();
 }
 
-void CImportDialog::showMessage(const QString & message)
+void ImportDialog::showMessage(const QString &message)
 {
-  parent()->statusBar()->showMessage(message);
+    parent()->statusBar()->showMessage(message);
 }
 
 #ifdef ENABLE_LIBRARY_DOWNLOAD
-void CImportDialog::initDownload()
+void ImportDialog::initDownload()
 {
-  delete m_manager;
-  m_manager = new QNetworkAccessManager(this);
+    delete m_manager;
+    m_manager = new QNetworkAccessManager(this);
 
-  QSettings settings;
-  settings.beginGroup("proxy");
-  QString hostname = settings.value("hostname", QString()).toString();
-  QString port = settings.value("port", QString()).toString();
-  QString user = settings.value("user", QString()).toString();
-  QString password = settings.value("password", QString()).toString();
-  settings.endGroup();
+    QSettings settings;
+    settings.beginGroup("proxy");
+    QString hostname = settings.value("hostname", QString()).toString();
+    QString port = settings.value("port", QString()).toString();
+    QString user = settings.value("user", QString()).toString();
+    QString password = settings.value("password", QString()).toString();
+    settings.endGroup();
 
-  QNetworkProxy proxy;
-  if (hostname.isEmpty())
-    {
-      proxy.setType(QNetworkProxy::NoProxy);
+    QNetworkProxy proxy;
+    if (hostname.isEmpty()) {
+        proxy.setType(QNetworkProxy::NoProxy);
+    } else {
+        proxy.setType(QNetworkProxy::HttpProxy);
+        proxy.setHostName(hostname);
+        proxy.setPort(port.toInt());
+        proxy.setUser(user);
+        proxy.setPassword(password);
     }
-  else
-    {
-      proxy.setType(QNetworkProxy::HttpProxy);
-      proxy.setHostName(hostname);
-      proxy.setPort(port.toInt());
-      proxy.setUser(user);
-      proxy.setPassword(password);
-    }
-  QNetworkProxy::setApplicationProxy(proxy);
-  
-  connect(progressBar(), SIGNAL(canceled()),
-          this, SLOT(cancelDownload()));
+    QNetworkProxy::setApplicationProxy(proxy);
+
+    connect(progressBar(), SIGNAL(canceled()), this, SLOT(cancelDownload()));
 }
 
-bool CImportDialog::saveToDisk(const QString &filename, QIODevice *data)
+bool ImportDialog::saveToDisk(const QString &filename, QIODevice *data)
 {
-  QFile file(filename);
-  if (!file.open(QIODevice::WriteOnly))
-    {
-      showMessage(tr("Could not open %1 in write mode: %2")
-		  .arg(qPrintable(filename))
-		  .arg(qPrintable(file.errorString())));
-      return false;
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly)) {
+        showMessage(tr("Could not open %1 in write mode: %2")
+                        .arg(qPrintable(filename))
+                        .arg(qPrintable(file.errorString())));
+        return false;
     }
-  file.write(data->readAll());
-  file.close();
-  return true;
+    file.write(data->readAll());
+    file.close();
+    return true;
 }
 
-void CImportDialog::downloadStart()
+void ImportDialog::downloadStart()
 {
-  if (m_url.isValid())
-    {
-      // check if there already is a songbook directory in the specified path
-      QDir dir(CMainWindow::_cachePath);
-      QNetworkRequest request;
-      request.setUrl(m_url);
-      request.setRawHeader("User-Agent", "songbook-client a1");
-      m_reply = m_manager->get(request);
-      connect(m_reply, SIGNAL(finished()),
-              this, SLOT(downloadFinished()));
-      connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)),
-	      this, SLOT(sslErrors(QList<QSslError>)));
-      connect(m_reply, SIGNAL(downloadProgress(qint64, qint64)),
-	      this, SLOT(downloadProgress(qint64, qint64)));
-      m_downloadTime.start();
-    }
-  else
-    {
-      qWarning() << tr("CImportDialog::downloadStart the following url is invalid: ") << m_url;
+    if (m_url.isValid()) {
+        // check if there already is a songbook directory in the specified path
+        QDir dir(MainWindow::_cachePath);
+        QNetworkRequest request;
+        request.setUrl(m_url);
+        request.setRawHeader("User-Agent", "patagui a1");
+        m_reply = m_manager->get(request);
+        connect(m_reply, SIGNAL(finished()), this, SLOT(downloadFinished()));
+        connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)), this,
+                SLOT(sslErrors(QList<QSslError>)));
+        connect(m_reply, SIGNAL(downloadProgress(qint64, qint64)), this,
+                SLOT(downloadProgress(qint64, qint64)));
+        m_downloadTime.start();
+    } else {
+        qWarning()
+            << tr("ImportDialog::downloadStart the following url is invalid: ")
+            << m_url;
     }
 }
 
-void CImportDialog::downloadFinished()
+void ImportDialog::downloadFinished()
 {
-  bool abort = false;
+    bool abort = false;
 
-  if (m_reply->error())
-    {
-      showMessage(tr("Download of %1 failed: %2")
-		  .arg(m_reply->url().toEncoded().constData())
-		  .arg(qPrintable(m_reply->errorString())));
-      abort = true;
+    if (m_reply->error()) {
+        showMessage(tr("Download of %1 failed: %2")
+                        .arg(m_reply->url().toEncoded().constData())
+                        .arg(qPrintable(m_reply->errorString())));
+        abort = true;
     }
 
-  QString filename = findFileName();
+    QString filename = findFileName();
 
-  if (!abort)
-    {
-      QDir dir(CMainWindow::_cachePath);
-      QDir oldCurrent = QDir::currentPath();
-      QString filepath = dir.filePath(filename);
-      if (saveToDisk(filepath, m_reply))
-	{
-	  QDir::setCurrent(dir.absolutePath());
-	  if (decompress(filepath))
-	    {
-	      CLibrary::recursiveFindFiles(dir.absolutePath(), QStringList() << "*.sg", m_songsToBeImported);
-	      showMessage(tr("Download completed"));
-	      emit(songsReadyToBeImported(m_songsToBeImported));
-	    }
-	  QDir::setCurrent(oldCurrent.absolutePath());
-	}
-      // remove the downloaded archive after decompressing
-      dir.remove(filepath);
+    if (!abort) {
+        QDir dir(MainWindow::_cachePath);
+        QDir oldCurrent = QDir::currentPath();
+        QString filepath = dir.filePath(filename);
+        if (saveToDisk(filepath, m_reply)) {
+            QDir::setCurrent(dir.absolutePath());
+            if (decompress(filepath)) {
+                Library::recursiveFindFiles(dir.absolutePath(),
+                                             QStringList() << "*.sg",
+                                             m_songsToBeImported);
+                showMessage(tr("Download completed"));
+                emit(songsReadyToBeImported(m_songsToBeImported));
+            }
+            QDir::setCurrent(oldCurrent.absolutePath());
+        }
+        // remove the downloaded archive after decompressing
+        dir.remove(filepath);
     }
 
-  progressBar()->hide();
-  disconnect(progressBar(), SIGNAL(canceled()), this, SLOT(cancelDownload()));
-  m_reply->deleteLater();
+    progressBar()->hide();
+    disconnect(progressBar(), SIGNAL(canceled()), this, SLOT(cancelDownload()));
+    m_reply->deleteLater();
 }
 
-void CImportDialog::sslErrors(const QList<QSslError> &sslErrors)
+void ImportDialog::sslErrors(const QList<QSslError> &sslErrors)
 {
 #ifndef QT_NO_OPENSSL
-  foreach (const QSslError &error, sslErrors)
-    qWarning() << "CImportDialog::sslErrors : " << error.errorString();
+    foreach (const QSslError &error, sslErrors)
+        qWarning() << "ImportDialog::sslErrors : " << error.errorString();
 #endif
 }
 
-void CImportDialog::cancelDownload()
+void ImportDialog::cancelDownload()
 {
-  if (m_reply)
-    m_reply->abort();
-  downloadFinished();
+    if (m_reply)
+        m_reply->abort();
+    downloadFinished();
 }
 
 // Uses the code sample proposed in the libarchive documentation
 // http://code.google.com/p/libarchive/wiki/Examples#A_Complete_Extractor
-bool CImportDialog::decompress(const QString &filename)
+bool ImportDialog::decompress(const QString &filename)
 {
-  struct archive *archive;
-  struct archive *ext;
-  struct archive_entry *entry;
-  int flags;
-  int r;
+    struct archive *archive;
+    struct archive *ext;
+    struct archive_entry *entry;
+    int flags;
+    int r;
 
-  /* Select which attributes we want to restore. */
-  flags = ARCHIVE_EXTRACT_TIME;
-  flags |= ARCHIVE_EXTRACT_PERM;
-  flags |= ARCHIVE_EXTRACT_ACL;
-  flags |= ARCHIVE_EXTRACT_FFLAGS;
+    /* Select which attributes we want to restore. */
+    flags = ARCHIVE_EXTRACT_TIME;
+    flags |= ARCHIVE_EXTRACT_PERM;
+    flags |= ARCHIVE_EXTRACT_ACL;
+    flags |= ARCHIVE_EXTRACT_FFLAGS;
 
-  archive = archive_read_new();
-  archive_read_support_format_all(archive);
-  archive_read_support_filter_all(archive);
-  ext = archive_write_disk_new();
-  archive_write_disk_set_options(ext, flags);
-  archive_write_disk_set_standard_lookup(ext);
+    archive = archive_read_new();
+    archive_read_support_format_all(archive);
+    archive_read_support_filter_all(archive);
+    ext = archive_write_disk_new();
+    archive_write_disk_set_options(ext, flags);
+    archive_write_disk_set_standard_lookup(ext);
 
-  if ((r = archive_read_open_filename(archive, filename.toStdString().c_str(), 10240)))
-    {
-      showMessage(tr("Unable to open the archive: %1").arg(filename));
-      return false;
+    if ((r = archive_read_open_filename(archive, filename.toStdString().c_str(),
+                                        10240))) {
+        showMessage(tr("Unable to open the archive: %1").arg(filename));
+        return false;
     }
 
-  do
-    {
-      r = archive_read_next_header(archive, &entry);
-      if (r == ARCHIVE_EOF)
-	break;
-      if (r != ARCHIVE_OK)
-	showMessage(tr("Error: %1").arg(archive_error_string(archive)));
-      if (r < ARCHIVE_WARN)
-	return false;
+    do {
+        r = archive_read_next_header(archive, &entry);
+        if (r == ARCHIVE_EOF)
+            break;
+        if (r != ARCHIVE_OK)
+            showMessage(tr("Error: %1").arg(archive_error_string(archive)));
+        if (r < ARCHIVE_WARN)
+            return false;
 
-      r = archive_write_header(ext, entry);
-      if (r != ARCHIVE_OK)
-	showMessage(tr("Error: %1").arg(archive_error_string(ext)));
-      else if (archive_entry_size(entry) > 0)
-	{
-	  copy_data(archive, ext);
-	  if (r != ARCHIVE_OK)
-	    showMessage(tr("Error: %1").arg(archive_error_string(ext)));
-	  if (r < ARCHIVE_WARN)
-	    return false;
-	}
+        r = archive_write_header(ext, entry);
+        if (r != ARCHIVE_OK)
+            showMessage(tr("Error: %1").arg(archive_error_string(ext)));
+        else if (archive_entry_size(entry) > 0) {
+            copy_data(archive, ext);
+            if (r != ARCHIVE_OK)
+                showMessage(tr("Error: %1").arg(archive_error_string(ext)));
+            if (r < ARCHIVE_WARN)
+                return false;
+        }
 
-      r = archive_write_finish_entry(ext);
-      if (r != ARCHIVE_OK)
-	{
-	  showMessage(tr("Error: %1").arg(archive_error_string(ext)));
-	}
-      if (r < ARCHIVE_WARN)
-	return false;
-    }
-  while (true);
+        r = archive_write_finish_entry(ext);
+        if (r != ARCHIVE_OK) {
+            showMessage(tr("Error: %1").arg(archive_error_string(ext)));
+        }
+        if (r < ARCHIVE_WARN)
+            return false;
+    } while (true);
 
-  archive_read_close(archive);
-  archive_read_free(archive);
-  archive_write_close(ext);
-  archive_write_free(ext);
-  return true;
+    archive_read_close(archive);
+    archive_read_free(archive);
+    archive_write_close(ext);
+    archive_write_free(ext);
+    return true;
 }
 
-int CImportDialog::copy_data(struct archive *ar, struct archive *aw)
+int ImportDialog::copy_data(struct archive *ar, struct archive *aw)
 {
-  const void *buff;
-  size_t size;
-  off_t offset;
+    const void *buff;
+    size_t size;
+    int64_t offset;
 
-  do
-    {
-      int r = archive_read_data_block(ar, &buff, &size, &offset);
-      if (r == ARCHIVE_EOF)
-	return (ARCHIVE_OK);
-      if (r != ARCHIVE_OK)
-	return (r);
+    do {
+        int r = archive_read_data_block(ar, &buff, &size, &offset);
+        if (r == ARCHIVE_EOF)
+            return (ARCHIVE_OK);
+        if (r != ARCHIVE_OK)
+            return (r);
 
-      r = archive_write_data_block(aw, buff, size, offset);
-      if (r != ARCHIVE_OK)
-	{
-	  showMessage(tr("Error: %1").arg(archive_error_string(aw)));
-	  return (r);
-	}
-    }
-  while (true);
+        r = archive_write_data_block(aw, buff, size, offset);
+        if (r != ARCHIVE_OK) {
+            showMessage(tr("Error: %1").arg(archive_error_string(aw)));
+            return (r);
+        }
+    } while (true);
 }
 
-QString CImportDialog::findFileName()
+QString ImportDialog::findFileName()
 {
-  if (!m_reply)
-    {
-      qWarning() << tr("CImportDialog::findFileName : invalid network reply");
-      return QString();
+    if (!m_reply) {
+        qWarning() << tr("ImportDialog::findFileName : invalid network reply");
+        return QString();
     }
 
-  QString filename = QFileInfo(m_reply->url().path()).fileName();
-  if (filename.isEmpty())
-    {
-      // try to find a filename in the reply header
-      QByteArray raw = m_reply->rawHeader(QByteArray("Content-Disposition"));
-      QString rawHeader(raw);
-      QRegExp re("filename=\"(.*)\"");
-      re.indexIn(rawHeader);
-      filename = re.cap(1);
+    QString filename = QFileInfo(m_reply->url().path()).fileName();
+    if (filename.isEmpty()) {
+        // try to find a filename in the reply header
+        QByteArray raw = m_reply->rawHeader(QByteArray("Content-Disposition"));
+        QString rawHeader(raw);
+        QRegExp re("filename=\"(.*)\"");
+        re.indexIn(rawHeader);
+        filename = re.cap(1);
 
-      // fallback
-      if (filename.isEmpty())
-	filename = "songbook.tar.gz";
+        // fallback
+        if (filename.isEmpty())
+            filename = "songbook.tar.gz";
     }
 
-  return filename;
+    return filename;
 }
 
-QString CImportDialog::bytesToString(double value)
+QString ImportDialog::bytesToString(double value)
 {
-  QString unit;
-  if (value < 1024)
-    {
-      unit = tr("bytes");
+    QString unit;
+    if (value < 1024) {
+        unit = tr("bytes");
+    } else if (value < 1024 * 1024) {
+        value /= 1024;
+        unit = tr("kB");
+    } else {
+        value /= 1024 * 1024;
+        unit = tr("MB");
     }
-  else if (value < 1024*1024)
-    {
-      value /= 1024;
-      unit = tr("kB");
-    }
-  else
-    {
-      value /= 1024*1024;
-      unit = tr("MB");
-    }
-  return tr("%1 %2").arg(value, 2, 'f', 1).arg(unit);
+    return tr("%1 %2").arg(value, 2, 'f', 1).arg(unit);
 }
 
-void CImportDialog::downloadProgress(qint64 bytesRead, qint64 totalBytes)
+void ImportDialog::downloadProgress(qint64 bytesRead, qint64 totalBytes)
 {
-  QString message = tr("Downloading %1").arg(findFileName());
-  // download transfer
-  message.append(tr(" - %1").arg(bytesToString(bytesRead)));
+    QString message = tr("Downloading %1").arg(findFileName());
+    // download transfer
+    message.append(tr(" - %1").arg(bytesToString(bytesRead)));
 
-  if (totalBytes > -1)
-    {
-      // download size
-      message.append(tr(" of %1").arg(bytesToString(totalBytes)));
+    if (totalBytes > -1) {
+        // download size
+        message.append(tr(" of %1").arg(bytesToString(totalBytes)));
 
-      //update the progress bar
-      progressBar()->setRange(0, totalBytes);
-      progressBar()->setValue(bytesRead);
+        // update the progress bar
+        progressBar()->setRange(0, totalBytes);
+        progressBar()->setValue(bytesRead);
     }
 
-  // download speed
-  message.append(tr(" (%2/s)").arg(bytesToString(bytesRead * 1000.0 / m_downloadTime.elapsed())));
+    // download speed
+    message.append(tr(" (%2/s)").arg(
+        bytesToString(bytesRead * 1000.0 / m_downloadTime.elapsed())));
 
-  showMessage(message);
-  progressBar()->show();
+    showMessage(message);
+    progressBar()->show();
 }
-#endif //ENABLE_LIBRARY_DOWNLOAD
+#endif // ENABLE_LIBRARY_DOWNLOAD

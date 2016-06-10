@@ -59,6 +59,7 @@
 
  */
 
+ #include <ctime>
 
 /**-
 * The data structure representing a diff is a Linked list of Diff objects:

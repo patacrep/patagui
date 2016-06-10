@@ -26,13 +26,12 @@
 #include <QBrush>
 #include <QRegExp>
 
-
 class QPainter;
 
 /*!
   \file chord.hh
-  \class CChord
-  \brief CChord is an object representing a guitar/ukulele chord
+  \class Chord
+  \brief Chord is an object representing a guitar/ukulele chord
 
   A chord has a text and a graphical representation.
 
@@ -53,194 +52,195 @@ class QPainter;
   \image html chord.png
 
 */
-class CChord : public QObject
+class Chord : public QObject
 {
-  Q_OBJECT
-  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-  Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
-  Q_PROPERTY(QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
+    Q_OBJECT
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString fret READ fret WRITE setFret NOTIFY fretChanged)
+    Q_PROPERTY(
+        QString strings READ strings WRITE setStrings NOTIFY stringsChanged)
 
-    public:
-  /*!
+public:
+    /*!
     \enum StringCount
     This enum type indicates the number of strings of an instrumuent.
   */
     enum StringCount {
-    GuitarStringCount=6, /*!< guitar: 6 */
-    UkuleleStringCount=4 /*!< ukulele: 4 */
-  };
+        GuitarStringCount = 6, /*!< guitar: 6 */
+        UkuleleStringCount = 4 /*!< ukulele: 4 */
+    };
 
-  /*!
+    /*!
     \enum Instrument
     This enum type lists supported instruments.
   */
-  enum Instrument {
-    Guitar, /*!< guitar. */
-    Ukulele /*!< ukulele. */
-  };
+    enum Instrument {
+        Guitar, /*!< guitar. */
+        Ukulele /*!< ukulele. */
+    };
 
-  /// Constructor.
-  CChord(const QString & chord = "\\gtab{}{0:}", QObject *parent = 0);
+    /// Constructor.
+    Chord(const QString &chord = "\\gtab{}{0:}", QObject *parent = 0);
 
-  /// Destructor.
-  ~CChord();
+    /// Destructor.
+    ~Chord();
 
-  /*!
+    /*!
     Returns true if the chord is valid; false otherwise. A valid
     chord has a non-empty chord name and a number of strings that
     matches its instrument.
   */
-  bool isValid() const;
+    bool isValid() const;
 
-  /*!
+    /*!
     Returns the string representation of the chord.
     \sa fromString
   */
-  QString toString();
+    QString toString();
 
-  /*!
+    /*!
     Builds a chord from a string.
     \sa toString
   */
-  void fromString(const QString & gtab);
+    void fromString(const QString &gtab);
 
-  /*!
+    /*!
     Returns the graphical representation (diagram) of the chord.
     \sa toString
   */
-  QPixmap* toPixmap();
+    QPixmap *toPixmap();
 
-  /*!
+    /*!
     Returns the chord name.
     For example, given a E-flat minor chord
     \code \\gtab{E&m}{5:X02210} \endcode returns E&m.
     \sa setChord
   */
-  QString name() const;
-  /*!
+    QString name() const;
+    /*!
     Returns the fret number.
     For example, given a E-flat minor chord
     \code \gtab{E&m}{5:X02210} \endcode returns 5.
     \sa setFret
   */
-  QString fret() const;
+    QString fret() const;
 
-  /*!
+    /*!
     Returns the chord strings.
     For example, given a E-flat minor chord
     \code \gtab{E&m}{5:X02210} \endcode returns X02210.
     \sa setStrings
   */
-  QString strings() const;
+    QString strings() const;
 
-  /*!
+    /*!
     Returns the instrument of the chord.
     For example, given a E-flat minor chord
     \code \gtab{E&m}{5:X02210} \endcode returns Instrument::Guitar.
     \sa setType
   */
-  Instrument instrument() const;
+    Instrument instrument() const;
 
-  /*!
+    /*!
     Returns true if the chord is important; false otherwise. Non
     important chords are well-known fingering for usual chords such as
     \code \gtab{C}{X32010} \endcode
     \sa setImportant
   */
-  bool isImportant() const;
+    bool isImportant() const;
 
-  /*!
+    /*!
     Returns the chord color.
     The color is based on the instrument (guitar: blue; ukulele: purple)
     and whether or not it is important (yes: dark; no: light).
     \sa setType, setImportant
   */
-  QColor color();
+    QColor color();
 
-  /*!
+    /*!
     Draws a rounded path around the whole diagram if \a value is true.
     Default is false. The rounded path takes the color of the chord.
     \sa color
   */
-  void setDrawBorder(bool value);
+    void setDrawBorder(bool value);
 
 public slots:
-  /*!
+    /*!
     Sets the chord name \a name.
     \sa chord
   */
-  void setName(const QString & name);
+    void setName(const QString &name);
 
-  /*!
+    /*!
     Sets the strings \a strings.
     \sa strings
   */
-  void setStrings(const QString & strings);
+    void setStrings(const QString &strings);
 
-  /*!
+    /*!
     Sets the fret number \a fret.
     \sa fret
   */
-  void setFret(const QString & fret);
+    void setFret(const QString &fret);
 
-  /*!
+    /*!
     Sets the instrument \a instrument.
     \sa type
   */
-  void setInstrument(const Instrument & instrument);
+    void setInstrument(const Instrument &instrument);
 
-  /*!
+    /*!
     Toggle instrument between Guitar and Ukulele if \a value is true.
     \sa instrumet, setInstrument
   */
-  void switchInstrument(bool value);
+    void switchInstrument(bool value);
 
-  /*!
+    /*!
     Marks a chord as important; default is false.
     \sa isImportant
   */
-  void setImportant(bool value);
+    void setImportant(bool value);
 
 signals:
-  /*!
+    /*!
     This signal is emitted when the chord name changes
   */
-  void nameChanged();
+    void nameChanged();
 
-  /*!
+    /*!
     This signal is emitted when the chord frets changes
   */
-  void fretChanged();
+    void fretChanged();
 
-  /*!
+    /*!
     This signal is emitted when the chord strings changes
   */
-  void stringsChanged();
+    void stringsChanged();
 
-  /*!
+    /*!
     This signal is emitted when the chord instrument changes
   */
-  void instrumentChanged();
+    void instrumentChanged();
 
 private:
-  void fillEllipse(QPainter* painter, const QRect & rect, const QBrush & brush);
+    void fillEllipse(QPainter *painter, const QRect &rect, const QBrush &brush);
 
-  Instrument m_instrument;
-  QString m_name;
-  QString m_fret;
-  QString m_strings;
-  bool m_important;
-  bool m_isValid;
-  bool m_drawBorder;
-  QPixmap *m_pixmap;
+    Instrument m_instrument;
+    QString m_name;
+    QString m_fret;
+    QString m_strings;
+    bool m_important;
+    bool m_isValid;
+    bool m_drawBorder;
+    QPixmap *m_pixmap;
 
-  const static QRegExp reChordWithFret;
-  const static QRegExp reChordWithoutFret;
+    const static QRegExp reChordWithFret;
+    const static QRegExp reChordWithoutFret;
 
-  const static QColor _guitarChordColor;
-  const static QColor _importantGuitarChordColor;
-  const static QColor _ukuleleChordColor;
-  const static QColor _importantUkuleleChordColor;
+    const static QColor _guitarChordColor;
+    const static QColor _importantGuitarChordColor;
+    const static QColor _ukuleleChordColor;
+    const static QColor _importantUkuleleChordColor;
 };
 
 #endif // __CHORD_HH__

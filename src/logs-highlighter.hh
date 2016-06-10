@@ -28,38 +28,37 @@ class QTextDocument;
 
 /**
  * \file logs-highlighter.hh
- * \class CLogsHighlighter
- * \brief CLogsHighlighter provides colors and highlights for the logs widget.
+ * \class LogsHighlighter
+ * \brief LogsHighlighter provides colors and highlights for the logs widget.
  *
  * Highlights include filenames and errors/warnings that are output during
  * the LaTeX compilation of a songbook.
  *
  */
-class CLogsHighlighter : public QSyntaxHighlighter
+class LogsHighlighter : public QSyntaxHighlighter
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /// Constructor
-  CLogsHighlighter(QTextDocument *parent = 0);
-  /// Destructor
-  ~CLogsHighlighter();
+    /// Constructor
+    LogsHighlighter(QTextDocument *parent = 0);
+    /// Destructor
+    ~LogsHighlighter();
 
 protected:
-  /// Apply highlighting rules for LaTeX logs compilation output
-  void highlightBlock(const QString &text);
+    /// Apply highlighting rules for LaTeX logs compilation output
+    void highlightBlock(const QString &text);
 
 private:
-  struct HighlightingRule
-  {
-    QRegExp pattern;
-    QTextCharFormat format;
-  };
-  QVector<HighlightingRule> highlightingRules;
+    struct HighlightingRule {
+        QRegExp pattern;
+        QTextCharFormat format;
+    };
+    QVector<HighlightingRule> highlightingRules;
 
-  QTextCharFormat m_latexFileFormat;
-  QTextCharFormat m_latexErrorFormat;
-  QTextCharFormat m_latexWarningFormat;
+    QTextCharFormat m_latexFileFormat;
+    QTextCharFormat m_latexErrorFormat;
+    QTextCharFormat m_latexWarningFormat;
 };
 
 #endif // __LOGS_HIGHLIGHTER_HH__

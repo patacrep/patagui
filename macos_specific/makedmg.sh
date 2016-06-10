@@ -1,8 +1,8 @@
 #! /bin/bash
-# this script need 
+# this script need
 # https://github.com/Carreau/yoursway-create-dmg
 # to correctly create a .dmg
-if [ -z "$1" ]; then dmg_name="Songbook-CLient v0.X.x.dmg" ; else dmg_name="$1"; fi
+if [ -z "$1" ]; then dmg_name="Patagui v0.X.x.dmg" ; else dmg_name="$1"; fi
 rm -rf .tmp
 test -f $dmg_name && rm $dmg_name
 echo "using "$dmg_name" as image disk name"
@@ -12,7 +12,7 @@ echo "using "$dmg_name" as image disk name"
 	--window-pos 413 295  \
 	--window-size 770 367  \
 	--icon Applications 527 187 \
-	--volname "Songbook Client v0.5.1"   \
-	--icon "Songbook-Client.app" 201 187  \
+	--volname "Patagui v0.5.1"   \
+	--icon "Patagui.app" 201 187  \
 	--background ./macos_specific/image_disque_backgroud.png  \
-	$dmg_name ~/songbook-client/build/Songbook-Client.app
+	$dmg_name ~/patagui/build/Patagui.app

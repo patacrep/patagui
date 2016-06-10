@@ -33,25 +33,25 @@ template <typename T>
 class Singleton
 {
 protected:
-  /// Constructor
-  Singleton(){}
+    /// Constructor
+    Singleton(){}
 
-  /// Destructor
-  ~Singleton(){}
+    /// Destructor
+    ~Singleton(){}
 
 public:
-  /*!
+    /*!
     Returns the only instance of this class
   */
-  static T *instance()
-  {
-    if (!_singleton)
-      _singleton = new T;
-    return static_cast<T*>(_singleton);
-  }
+    static T *instance()
+    {
+        if (!_singleton)
+            _singleton = new T;
+        return static_cast<T*>(_singleton);
+    }
 
 private:
-  static T *_singleton;
+    static T *_singleton;
 };
 
 template <typename T>

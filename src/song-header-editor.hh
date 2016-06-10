@@ -27,8 +27,8 @@
 #include <QLabel>
 #include <QPixmap>
 
-class CCoverDropArea;
-class CDiagramArea;
+class CoverDropArea;
+class DiagramArea;
 class LineEdit;
 
 class QSpinBox;
@@ -39,7 +39,7 @@ class QStackedLayout;
 /*!
   \file song-header-editor.hh
   \class CSongHeaderEditor
-  \brief CSongHeaderEditor is a widget that manages a Song metadata in a CSongEditor
+  \brief CSongHeaderEditor is a widget that manages a Song metadata in a SongEditor
 
   A Song is composed of a header (metadata) and a body (lyrics).
   The CSongHeaderEditor hides the plain text of the song's header to present them
@@ -55,109 +55,109 @@ class QStackedLayout;
 */
 class CSongHeaderEditor : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /*!
+    /*!
     \enum ViewMode
     This enum describes available view modes for CSongHeaderEditor objects.
   */
-  enum ViewMode {
-    FullViewMode, /*!< full view: displays cover, song options and chords (editable). */
-    MiniViewMode  /*!< mini view: displays mini cover, artist and title (read-only). */
-  };
+    enum ViewMode {
+        FullViewMode, /*!< full view: displays cover, song options and chords (editable). */
+        MiniViewMode  /*!< mini view: displays mini cover, artist and title (read-only). */
+    };
 
-  /// Constructor.
-  CSongHeaderEditor(QWidget *parent = 0);
-  /// Destructor.
-  virtual ~CSongHeaderEditor();
+    /// Constructor.
+    CSongHeaderEditor(QWidget *parent = 0);
+    /// Destructor.
+    virtual ~CSongHeaderEditor();
 
-  /// Getter on the song whose metadata is used
-  /// to build this instance of CSongHeaderEditor.
-  /// @return the Song
-  Song & song();
+    /// Getter on the song whose metadata is used
+    /// to build this instance of CSongHeaderEditor.
+    /// @return the Song
+    Song & song();
 
-  /// Setter on the song
-  /// @param song the song
-  void setSong(const Song &song);
+    /// Setter on the song
+    /// @param song the song
+    void setSong(const Song &song);
 
-  /// Getter on the song's cover
-  /// @return the cover
-  const QImage & cover();
+    /// Getter on the song's cover
+    /// @return the cover
+    const QImage & cover();
 
-  /*!
+    /*!
     Returns the title line edit widget.
   */
-  LineEdit* titleLineEdit() const;
+    LineEdit* titleLineEdit() const;
 
-  /*!
+    /*!
     Returns the artist line edit widget.
   */
-  LineEdit* artistLineEdit() const;
+    LineEdit* artistLineEdit() const;
 
-  /*!
+    /*!
     Returns the preferred size of the widget.
   */
-  QSize sizeHint() const;
+    QSize sizeHint() const;
 
 private slots:
-  void onIndexChanged(const QString &text);
-  void onTextEdited(const QString &text);
-  void onValueChanged(int value);
-  void onDiagramsChanged();
-  void onCoverChanged();
+    void onIndexChanged(const QString &text);
+    void onTextEdited(const QString &text);
+    void onValueChanged(int value);
+    void onDiagramsChanged();
+    void onCoverChanged();
 
 private:
-  /*!
+    /*!
     Updates the elements of the header from the song contents.
   */
-  void update();
+    void update();
 
 public slots:
 
-  /*!
+    /*!
     Toggles between full-view mode and mini-view mode.
   */
-  void toggleView();
+    void toggleView();
 
 signals:
-  /*!
+    /*!
     This signal is emitted when any of the contents in the header is changed.
   */
-  void contentsChanged();
+    void contentsChanged();
 
-  /*!
+    /*!
     This signal is emitted when the language of the song is changed.
   */
-  void languageChanged(const QLocale &);
+    void languageChanged(const QLocale &);
 
-  void newCover(bool);
+    void newCover(bool);
 
 private:
 
-  /*!
+    /*!
     Sets the artist and album completers from the library.
     Those completers are set on album and artist line edits.
   */
-  void setLibraryCompleters();
+    void setLibraryCompleters();
 
-  Song m_song;
+    Song m_song;
 
-  LineEdit *m_titleLineEdit;
-  LineEdit *m_artistLineEdit;
-  LineEdit *m_albumLineEdit;
-  LineEdit *m_originalSongLineEdit;
-  LineEdit *m_urlLineEdit;
-  QComboBox *m_languageComboBox;
-  QSpinBox *m_columnCountSpinBox;
-  QSpinBox *m_capoSpinBox;
-  QSpinBox *m_transposeSpinBox;
-  CCoverDropArea *m_coverLabel;
+    LineEdit *m_titleLineEdit;
+    LineEdit *m_artistLineEdit;
+    LineEdit *m_albumLineEdit;
+    LineEdit *m_originalSongLineEdit;
+    LineEdit *m_urlLineEdit;
+    QComboBox *m_languageComboBox;
+    QSpinBox *m_columnCountSpinBox;
+    QSpinBox *m_capoSpinBox;
+    QSpinBox *m_transposeSpinBox;
+    CoverDropArea *m_coverLabel;
 
-  CDiagramArea *m_diagramArea;
+    DiagramArea *m_diagramArea;
 
-  ViewMode m_viewMode;
-  QStackedLayout *m_stackedLayout;
+    ViewMode m_viewMode;
+    QStackedLayout *m_stackedLayout;
 };
 
 
@@ -169,8 +169,8 @@ class QDragDropEvent;
 
 /*!
   \file song-header-editor.hh
-  \class CCoverDropArea
-  \brief CCoverDropArea displays the cover of a song.
+  \class CoverDropArea
+  \brief CoverDropArea displays the cover of a song.
 
   The cover area displays the cover of a song within a raised box. If
   there is no cover to display, it displays a generic image-missing
@@ -182,97 +182,97 @@ class QDragDropEvent;
   \image html cover-drop-area2.png
 
 */
-class CCoverDropArea : public QLabel
+class CoverDropArea : public QLabel
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
-  /// Constructor.
-  CCoverDropArea(CSongHeaderEditor *parent);
+public:
+    /// Constructor.
+    CoverDropArea(CSongHeaderEditor *parent);
 
-  /*!
+    /*!
     Returns the Song object associated with this cover.
   */
-  Song & song();
+    Song & song();
 
-  /*!
+    /*!
     Returns the cover of the song.
     \sa setCover
   */
-  const QImage & cover();
+    const QImage & cover();
 
-  /*!
+    /*!
     Sets \a cover as the cover of the song.
     \sa cover
   */
-  void setCover(const QImage &cover);
+    void setCover(const QImage &cover);
 
-  /*!
+    /*!
     Sets the file at (absolute) path \a filename as the cover of the song.
     A .jpg file is expected.
     \sa cover
   */
-  void setCover(const QString &filename);
+    void setCover(const QString &filename);
 
-  /*!
+    /*!
     Returns the parent widget.
     \sa setParent
   */
-  CSongHeaderEditor * parent() const;
+    CSongHeaderEditor * parent() const;
 
-  /*!
+    /*!
     Sets \a p as the parent object.
     \sa parent
   */
-  void setParent(CSongHeaderEditor *p);
+    void setParent(CSongHeaderEditor *p);
 
 private slots:
-  void selectCover();
-  void clearCover();
+    void selectCover();
+    void clearCover();
 
 public slots:
-  /*!
+    /*!
     Resets the background of the cover area.
   */
-  void clear();
+    void clear();
 
-  /*!
+    /*!
     Updates the cover-related fields of the song according to current image.
   */
-  void update();
+    void update();
 
 signals:
-  /*!
+    /*!
     This signal is emitted whenever new data is dragged within the cover area.
     \sa coverChanged, miniCoverChanged
   */
-  void changed(const QMimeData *mimeData = 0);
+    void changed(const QMimeData *mimeData = 0);
 
-  /*!
+    /*!
     This signal is emitted whenever a new cover image is displayed.
     \sa coverChanged, miniCoverChanged
   */
-  void coverChanged();
+    void coverChanged();
 
-  /*!
+    /*!
     This signal is emitted whenever a new cover image is displayed.
     \sa coverChanged, miniCoverChanged
   */
-  void miniCoverChanged(const QPixmap & thumbnail);
+    void miniCoverChanged(const QPixmap & thumbnail);
 
 protected:
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dragMoveEvent(QDragMoveEvent *event);
-  void dragLeaveEvent(QDragLeaveEvent *event);
-  void dropEvent(QDropEvent *event);
-  virtual void mousePressEvent(QMouseEvent *event);
-  virtual void mouseReleaseEvent(QMouseEvent *event);
-  virtual void contextMenuEvent(QContextMenuEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dropEvent(QDropEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
+    virtual void contextMenuEvent(QContextMenuEvent *event);
 
 private:
-  QString m_filename;
-  QImage m_cover;
-  CSongHeaderEditor * m_parent;
+    QString m_filename;
+    QImage m_cover;
+    CSongHeaderEditor * m_parent;
 };
 
 #endif // __SONG_HEADER_EDITOR_HH__

@@ -67,61 +67,63 @@ class LineNumberArea;
  */
 class CodeEditor : public QPlainTextEdit
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
-  CodeEditor(QWidget *parent = 0);
-  virtual ~CodeEditor();
+public:
+    CodeEditor(QWidget *parent = 0);
+    virtual ~CodeEditor();
 
-  void lineNumberAreaPaintEvent(QPaintEvent *event);
-  int lineNumberAreaWidth();
+    void lineNumberAreaPaintEvent(QPaintEvent *event);
+    int lineNumberAreaWidth();
 
-  bool highlightMode() const;
-  void setHighlightMode(bool);
+    bool highlightMode() const;
+    void setHighlightMode(bool);
 
-  bool lineNumberMode() const;
-  void setLineNumberMode(bool);
+    bool lineNumberMode() const;
+    void setLineNumberMode(bool);
 
-  QTextEdit::ExtraSelection currentLineSelection();
+    QTextEdit::ExtraSelection currentLineSelection();
 
 protected:
-  void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private slots:
-  void updateLineNumberAreaWidth(int newBlockCount);
-  void updateLineNumberArea(const QRect &, int);
+    void updateLineNumberAreaWidth(int newBlockCount);
+    void updateLineNumberArea(const QRect &, int);
 
 private:
-  QWidget *lineNumberArea;
-  bool m_highlightMode;
-  bool m_lineNumberMode;
+    QWidget *lineNumberArea;
+    bool m_highlightMode;
+    bool m_lineNumberMode;
 };
-
 
 /**
  * \file code-editor.hh
  * \class LineNumberArea
- * \brief LineNumberArea is the part of a CodeEditor that displays the lines numbers
+ * \brief LineNumberArea is the part of a CodeEditor that displays the lines
+ * numbers
  */
 class LineNumberArea : public QWidget
 {
 public:
-  LineNumberArea(CodeEditor *editor) : QWidget(editor) {
-    codeEditor = editor;
-  }
+    LineNumberArea(CodeEditor *editor) : QWidget(editor)
+    {
+        codeEditor = editor;
+    }
 
-  QSize sizeHint() const {
-    return QSize(codeEditor->lineNumberAreaWidth(), 0);
-  }
+    QSize sizeHint() const
+    {
+        return QSize(codeEditor->lineNumberAreaWidth(), 0);
+    }
 
 protected:
-  void paintEvent(QPaintEvent *event) {
-    codeEditor->lineNumberAreaPaintEvent(event);
-  }
+    void paintEvent(QPaintEvent *event)
+    {
+        codeEditor->lineNumberAreaPaintEvent(event);
+    }
 
 private:
-  CodeEditor *codeEditor;
+    CodeEditor *codeEditor;
 };
-
 
 #endif

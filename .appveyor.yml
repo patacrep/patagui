@@ -1,0 +1,32 @@
+clone_depth: 10
+shallow_clone: true
+
+environment:
+    BOOST_ROOT: C:\Libraries\boost_1_59_0
+    matrix:
+    - PLATFORM: x86
+      QT5: C:\Qt\5.5\msvc2013
+      PYTHON_PATH: C:\Python34
+      PYTHON_VERSION: 34
+      PYTHON_ARCH: 32
+    - PLATFORM: x86_amd64
+      QT5: C:\Qt\5.5\msvc2013_64
+      PYTHON_PATH: C:\Python34-x64
+      PYTHON_VERSION: 34
+      PYTHON_ARCH: 64
+
+install:
+    - call "%ProgramFiles(x86)%\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" %PLATFORM%
+
+before_build:
+    - set PYTHON_LIB=%PYTHON_PATH%\libs
+    - set Path=%QT5%\bin;%Path%
+    - set Path=%PYTHON_PATH%;%PYTHON_PATH%\Scripts;%PYTHON_PATH%\libs;%Path%
+    - mkdir build
+
+build_script:
+    - cmake -G "NMake Makefiles" -H. -Bbuild -DCMAKE_PREFIX_PATH=%QT5%
+    - cmake --build build
+
+on_failure:
+    - cmd: type C:/projects/patagui/build/pythonqt/src/PythonQt-External-stamp/PythonQt-External-configure-*.log
