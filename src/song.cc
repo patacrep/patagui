@@ -80,7 +80,7 @@ Song Song::fromString(const QString &text, const QString &path)
 
     // options
     reArtist.indexIn(options);
-    song.artist = latexToUtf8(reArtist.cap(1));
+    song.artist = latexToUtf8(reArtist.cap(1)).replace("\\ ", " ");;
 
     reAlbum.indexIn(options);
     song.album = latexToUtf8(reAlbum.cap(1));
