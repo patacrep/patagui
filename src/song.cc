@@ -31,7 +31,7 @@ const QRegExp Song::reArtist("by=\\{?([^,\\{\\}]+)");
 const QRegExp Song::reAlbum("album=\\{?([^,\\{\\}]+)");
 const QRegExp Song::reOriginalSong("original=\\{?([^,\\{\\}]+)");
 const QRegExp Song::reUrl("url=\\{?([^,\\{\\}]+)");
-const QRegExp Song::reCoverName("cov=\\{?([^,\\{\\}]+)");
+const QRegExp Song::reCoverName("cover=\\{?([^,\\{\\}]+)");
 const QRegExp Song::reLilypond("\\\\lilypond");
 const QRegExp Song::reLanguage("\\\\selectlanguage\\{([^\\}]+)");
 const QRegExp Song::reColumnCount("\\\\songcolumns\\{([^\\}]+)");
