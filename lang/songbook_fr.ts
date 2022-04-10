@@ -411,9 +411,9 @@ Attention, l&apos;opération supprimera tous les fichiers présents dans &quot;%
     </message>
     <message>
         <source>Unable to find &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt; application. 
-Please install or use manual download from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;.</source>
+Please install or use manual download from &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;.</source>
         <translation type="obsolete">Impossible de trouver l&apos;application &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt;. 
-Veuillez l&apos;installer ou télécharger manuellement le recueil sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;.</translation>
+Veuillez l&apos;installer ou télécharger manuellement le recueil sur &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>Target directory</source>
@@ -484,9 +484,9 @@ Veuillez l&apos;installer ou télécharger manuellement le recueil sur &lt;a hre
     </message>
     <message>
         <source>Unable to find &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt; application. 
- Please install or use manual download from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;.</source>
+ Please install or use manual download from &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;.</source>
         <translation type="obsolete">Impossible de trouver l&apos;application &lt;a href=&quot;http://git-scm.com&quot;&gt;Git&lt;/a&gt;.
-Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;.</translation>
+Veuillez l&apos;installer ou effectuer le téléchargement depuis &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>Downloading from %1</source>
@@ -999,8 +999,8 @@ Do you want to proceed anyway?</source>
         <translation>À propos du Songbook Client Patacrep!</translation>
     </message>
     <message>
-        <source>This program allows to build customized songbooks from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</source>
-        <translation type="obsolete">Cette application permet de construire des recueils personnalisés pour les chansons disponibles sur : &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</translation>
+        <source>This program allows to build customized songbooks from &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;</source>
+        <translation type="obsolete">Cette application permet de construire des recueils personnalisés pour les chansons disponibles sur : &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="566"/>
@@ -1138,8 +1138,8 @@ Are you sure?</source>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="558"/>
-        <source>This program allows one to build customized songbooks from &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</source>
-        <translation>Cette application permet de construire des recueils de chansons personnalisés d&apos;après les tablatures disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt;</translation>
+        <source>This program allows one to build customized songbooks from &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;</source>
+        <translation>Cette application permet de construire des recueils de chansons personnalisés d&apos;après les tablatures disponibles sur &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="680"/>
@@ -1400,16 +1400,16 @@ Are you sure?</source>
         <translation type="obsolete">0.4 (Novembre 2010)</translation>
     </message>
     <message>
-        <source>&lt;br&gt;This program is a client for building and customizing the songbooks available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; %1 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation type="obsolete">&lt;br&gt;Cette application permet de générer et de personnaliser les recueils de chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; %1 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+        <source>&lt;br&gt;This program is a client for building and customizing the songbooks available on &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; %1 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
+        <translation type="obsolete">&lt;br&gt;Cette application permet de générer et de personnaliser les recueils de chansons disponibles sur &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; %1 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
-        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3.2 October 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation type="obsolete">&lt;br&gt;Cette application permet de générer et de personnaliser les recueils de chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.4 November 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3.2 October 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
+        <translation type="obsolete">&lt;br&gt;Cette application permet de générer et de personnaliser les recueils de chansons disponibles sur &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.4 November 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
-        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 July 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation type="obsolete">&lt;br&gt;Ce programme est une interface pour la création de recueils pdf générés avec LaTeX. &lt;/br&gt; &lt;br&gt;Les recueils peuvent contenir les paroles, accords de guitare ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Vous pouvez dupliquer le dépôt du recueil à l&apos;adresse &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 Juillet 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 July 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
+        <translation type="obsolete">&lt;br&gt;Ce programme est une interface pour la création de recueils pdf générés avec LaTeX. &lt;/br&gt; &lt;br&gt;Les recueils peuvent contenir les paroles, accords de guitare ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Vous pouvez dupliquer le dépôt du recueil à l&apos;adresse &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.3 Juillet 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
         <source>The songbook is not in the working directory. Build aborted.</source>
@@ -1474,8 +1474,8 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Quitter</translation>
     </message>
     <message>
-        <source>&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;The directory &lt;b&gt;%1&lt;/b&gt; does not contain any song file (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; You may :&lt;ul&gt;&lt;li&gt;select a valid directory in the menu &lt;i&gt;Edit/Preferences&lt;/i&gt;&lt;/li&gt;&lt;li&gt;use the menu &lt;i&gt;Library/Download&lt;/i&gt; to get the latest git snapshot&lt;/li&gt;&lt;li&gt;manually download the latest tarball on &lt;a href=&quot;http://www.patacrep.com/static1/downloads&quot;&gt;patacrep.com&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
-        <translation type="obsolete">&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;Le répertoire &lt;b&gt;%1&lt;/b&gt; ne contient aucune chanson (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; Vous pouvez :&lt;ul&gt;&lt;li&gt;sélectionner un répertoire valide dans le menu &lt;i&gt;Édition/Préférences&lt;/i&gt; ;&lt;/li&gt;&lt;li&gt;utiliser le menu &lt;i&gt;Bibliothèque/Télécharger&lt;/i&gt; pour récupérer la dernière version du dépôt git ;&lt;/li&gt;&lt;li&gt;télécharger manuellement l&apos;archive &quot;.tar.gz&quot; disponible sur &lt;a href=&quot;http://www.patacrep.com/static1/downloads&quot;&gt;patacrep.com&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
+        <source>&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;The directory &lt;b&gt;%1&lt;/b&gt; does not contain any song file (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; You may :&lt;ul&gt;&lt;li&gt;select a valid directory in the menu &lt;i&gt;Edit/Preferences&lt;/i&gt;&lt;/li&gt;&lt;li&gt;use the menu &lt;i&gt;Library/Download&lt;/i&gt; to get the latest git snapshot&lt;/li&gt;&lt;li&gt;manually download the latest tarball on &lt;a href=&quot;http://www.patacrep.fr/static1/downloads&quot;&gt;patacrep.fr&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
+        <translation type="obsolete">&lt;table&gt;&lt;tr&gt;&lt;td valign=middle&gt;  &lt;img src=&quot;:/icons/attention.png&quot; /&gt;  &lt;/td&gt;&lt;td&gt;&lt;p&gt;Le répertoire &lt;b&gt;%1&lt;/b&gt; ne contient aucune chanson (&quot;.sg&quot;).&lt;br/&gt;&lt;br/&gt; Vous pouvez :&lt;ul&gt;&lt;li&gt;sélectionner un répertoire valide dans le menu &lt;i&gt;Édition/Préférences&lt;/i&gt; ;&lt;/li&gt;&lt;li&gt;utiliser le menu &lt;i&gt;Bibliothèque/Télécharger&lt;/i&gt; pour récupérer la dernière version du dépôt git ;&lt;/li&gt;&lt;li&gt;télécharger manuellement l&apos;archive &quot;.tar.gz&quot; disponible sur &lt;a href=&quot;http://www.patacrep.fr/static1/downloads&quot;&gt;patacrep.fr&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
     </message>
     <message>
         <source>english</source>
@@ -1665,8 +1665,8 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">Supprimer</translation>
     </message>
     <message>
-        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 June 4th, 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation type="obsolete">&lt;br&gt;Cette application permet de créer des recueils de chansons en LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil peut afficher les paroles, tablatures ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 du 4 Juin 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 June 4th, 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
+        <translation type="obsolete">&lt;br&gt;Cette application permet de créer des recueils de chansons en LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil peut afficher les paroles, tablatures ou les partitions des chansons disponibles sur &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.2 du 4 Juin 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="765"/>
@@ -1841,8 +1841,8 @@ Voulez-vous reconstruire la bibliothèque ?</translation>
         <translation type="obsolete">À propos du Songbook Client Patacrep</translation>
     </message>
     <message>
-        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 April 25th, 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
-        <translation type="obsolete">&lt;br&gt;Cette application est une interface pour construire des recueils de chansons pdf avec LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil de chansons peut intégrer les paroles, accords de guitare et/ou des partitionspour les chansons disponibles sur&lt;a href=&quot;http::www.patacrep.com&quot;&gt;www.patacrep.com&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Pour récupérer ces chansons, il faut dupliquer le dépôt git disponible sur &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 25 avril 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
+        <source>&lt;br&gt;This program is a client for building pdf songbooks with LaTeX. &lt;/br&gt; &lt;br&gt;Songbooks may represent lyrics, guitar chords or sheets for the songs available on &lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;You may clone the &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;songbook repository&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 April 25th, 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Authors:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</source>
+        <translation type="obsolete">&lt;br&gt;Cette application est une interface pour construire des recueils de chansons pdf avec LaTeX. &lt;/br&gt; &lt;br&gt;Un recueil de chansons peut intégrer les paroles, accords de guitare et/ou des partitionspour les chansons disponibles sur&lt;a href=&quot;http::www.patacrep.fr&quot;&gt;www.patacrep.fr&lt;/a&gt; &lt;/br&gt;&lt;br&gt;Pour récupérer ces chansons, il faut dupliquer le dépôt git disponible sur &lt;a href=&quot;git://git.lohrun.net/songbook.git&quot;&gt;&lt;/a&gt; &lt;/br&gt;&lt;br&gt;&lt;b&gt;Version:&lt;/b&gt; 0.1 25 avril 2010 &lt;/br&gt;&lt;br&gt;&lt;b&gt;Auteurs:&lt;/b&gt; Crep (R.Goffe), Lohrun (A.Dupas) &lt;/br&gt;</translation>
     </message>
     <message>
         <source>You did not select any song. 
@@ -2851,9 +2851,9 @@ du recueil</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="86"/>
-        <source>&lt;p&gt;The following program cannot be found: &lt;i&gt;pdflatex&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;A &lt;a href=&quot;www.latex-project.org/&quot;&gt;LaTeX&lt;/a&gt; distribution supporting &lt;i&gt;pdflatex&lt;/i&gt; is required to produce the PDF document. Such a distribution is either not installed or misconfigured.&lt;/p&gt;%1You can find more information in the &lt;a href=&quot;http://www.patacrep.com/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
+        <source>&lt;p&gt;The following program cannot be found: &lt;i&gt;pdflatex&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;A &lt;a href=&quot;www.latex-project.org/&quot;&gt;LaTeX&lt;/a&gt; distribution supporting &lt;i&gt;pdflatex&lt;/i&gt; is required to produce the PDF document. Such a distribution is either not installed or misconfigured.&lt;/p&gt;%1You can find more information in the &lt;a href=&quot;http://www.patacrep.fr/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
 </source>
-        <translation>&lt;p&gt;Le programme suivant n&apos;a pas été trouvé : &lt;i&gt;pdflatex&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;Une distribution &lt;a href=&quot;www.latex-project.org/&quot;&gt;LaTeX&lt;/a&gt; comprenant &lt;i&gt;pdflatex&lt;/i&gt; est nécessaire pour générer le document PDF. Une telle distribution n&apos;a pas été installée ou n&apos;est pas correctement configurée.&lt;/p&gt;%1Vous pouvez trouver de plus amples informations dans la &lt;a href=&quot;http://www.patacrep.com/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
+        <translation>&lt;p&gt;Le programme suivant n&apos;a pas été trouvé : &lt;i&gt;pdflatex&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;Une distribution &lt;a href=&quot;www.latex-project.org/&quot;&gt;LaTeX&lt;/a&gt; comprenant &lt;i&gt;pdflatex&lt;/i&gt; est nécessaire pour générer le document PDF. Une telle distribution n&apos;a pas été installée ou n&apos;est pas correctement configurée.&lt;/p&gt;%1Vous pouvez trouver de plus amples informations dans la &lt;a href=&quot;http://www.patacrep.fr/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
 </translation>
     </message>
     <message>
@@ -2879,9 +2879,9 @@ du recueil</translation>
     </message>
     <message>
         <location filename="../src/main-window.cc" line="119"/>
-        <source>&lt;p&gt;The following program cannot be found: &lt;i&gt;python&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;A version of &lt;a href=&quot;www.python.org/&quot;&gt;Python 2&lt;/a&gt; is required to produce the PDF document.&lt;/p&gt;%1You can find more information in the &lt;a href=&quot;http://www.patacrep.com/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
+        <source>&lt;p&gt;The following program cannot be found: &lt;i&gt;python&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;A version of &lt;a href=&quot;www.python.org/&quot;&gt;Python 2&lt;/a&gt; is required to produce the PDF document.&lt;/p&gt;%1You can find more information in the &lt;a href=&quot;http://www.patacrep.fr/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
 </source>
-        <translation>&lt;p&gt;Le programme suivant n&apos;a pas été trouvé : &lt;i&gt;python&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;Une version de &lt;a href=&quot;www.python.org/&quot;&gt;Python 2&lt;/a&gt; est nécessaire pour générer le document PDF.&lt;/p&gt;%1Vous pouvez trouver de plus amples informations dans la &lt;a href=&quot;http://www.patacrep.com/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
+        <translation>&lt;p&gt;Le programme suivant n&apos;a pas été trouvé : &lt;i&gt;python&lt;/i&gt;.&lt;/p&gt;&lt;p&gt;Une version de &lt;a href=&quot;www.python.org/&quot;&gt;Python 2&lt;/a&gt; est nécessaire pour générer le document PDF.&lt;/p&gt;%1Vous pouvez trouver de plus amples informations dans la &lt;a href=&quot;http://www.patacrep.fr/data/documents/doc_%2.pdf&quot;&gt;documentation&lt;/a&gt;.
 </translation>
     </message>
     <message>

@@ -15,7 +15,7 @@
 This is a Qt5/C++/Python client that allows to pick up songs from the patacrep songbook database to build personalized songbooks.
 
 # Screenshot
-![SbClient](http://www.patacrep.com/data/images/sbc.png)
+![SbClient](http://www.patacrep.fr/data/images/sbc.png)
 
 # Patagui
 * required packages: cmake, libqt5-dev, libarchive-dev, libhunspell-dev, python3
@@ -28,11 +28,11 @@ This is a Qt5/C++/Python client that allows to pick up songs from the patacrep s
 >     Patagui
 
 # Documentation
-* User manual: http://www.patacrep.com/data/documents/doc_en.pdf
+* User manual: http://www.patacrep.fr/data/documents/doc_en.pdf
   Sources: http://github.com/patacrep/patacrep-doc.git
-* Developer manual: http://www.patacrep.com/data/songbook-client/doc/
+* Developer manual: http://www.patacrep.fr/data/songbook-client/doc/
 >     doxygen Doxyfile
 
 # Contact & Forums
-* http://www.patacrep.com
+* http://www.patacrep.fr
 * crep@team-on-fire.com

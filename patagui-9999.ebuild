@@ -9,7 +9,7 @@ DESCRIPTION="Client for patacrep songbooks
 Patagui is an interface to build customized
 PDF songbooks with lyrics, guitar chords and
 lilypond sheets from patacrep songbook."
-HOMEPAGE="http://www.patacrep.com"
+HOMEPAGE="http://www.patacrep.fr"
 EGIT_REPO_URI="http://github.com/patacrep/patagui.git"
 
 inherit git autotools eutils
