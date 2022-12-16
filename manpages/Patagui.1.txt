@@ -38,4 +38,4 @@ Alexandre Dupas <alexandre.dupas@gmail.com>, and others.
 
 WWW
 ---
-http://www.patacrep.com
+http://www.patacrep.fr

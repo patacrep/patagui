@@ -104,7 +104,7 @@ bool checkPdfLaTeX()
                 "not installed or misconfigured.</p>"
                 "%1"
                 "You can find more information in the "
-                "<a href=\"http://www.patacrep.com/data/documents/doc_%2.pdf\">"
+                "<a href=\"http://www.patacrep.fr/data/documents/doc_%2.pdf\">"
                 "documentation</a>.\n")
                 .arg(platformSpecificMessage)
                 .arg((QLocale::system().language() == QLocale::French) ? "fr"
@@ -147,7 +147,7 @@ bool checkPython()
                 "to produce the PDF document.</p>"
                 "%1"
                 "You can find more information in the "
-                "<a href=\"http://www.patacrep.com/data/documents/doc_%2.pdf\">"
+                "<a href=\"http://www.patacrep.fr/data/documents/doc_%2.pdf\">"
                 "documentation</a>.\n")
                 .arg(platformSpecificMessage)
                 .arg((QLocale::system().language() == QLocale::French) ? "fr"
@@ -619,10 +619,10 @@ void MainWindow::documentation()
 {
     if (QLocale::system().language() == QLocale::French)
         QDesktopServices::openUrl(
-            QUrl("http://www.patacrep.com/data/documents/doc_fr.pdf"));
+            QUrl("http://www.patacrep.fr/data/documents/doc_fr.pdf"));
     else
         QDesktopServices::openUrl(
-            QUrl("http://www.patacrep.com/data/documents/doc_en.pdf"));
+            QUrl("http://www.patacrep.fr/data/documents/doc_en.pdf"));
 }
 
 void MainWindow::reportBug()
@@ -638,7 +638,7 @@ void MainWindow::about()
 
     QString description(
         tr("This program allows one to build customized songbooks from "
-           "<a href=\"http::www.patacrep.com\">www.patacrep.com</a>"));
+           "<a href=\"http::www.patacrep.fr\">www.patacrep.fr</a>"));
 
     QStringList authorsList = QStringList() << "Crep (R. Goffe)"
                                             << "Lohrun (A. Dupas)"

@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
 
     QApplication::setOrganizationName("Patacrep");
-    QApplication::setOrganizationDomain("patacrep.com");
+    QApplication::setOrganizationDomain("patacrep.fr");
     QApplication::setApplicationName(PATAGUI_APPLICATION_NAME);
     QApplication::setApplicationVersion(PATAGUI_VERSION);
 

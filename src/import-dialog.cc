@@ -346,7 +346,7 @@ bool ImportDialog::acceptDialog()
     if (m_fromNetworkButton->isChecked()) {
         if (m_patacrepButton->isChecked()) {
             m_url =
-                QUrl("http://www.patacrep.com/data/documents/songbook.tar.gz");
+                QUrl("http://www.patacrep.fr/data/documents/songbook.tar.gz");
         } else if (m_gitButton->isChecked()) {
             m_url = QUrl("http://git.lohrun.net/"
                          "?p=songbook.git;a=snapshot;h=HEAD;sf=tgz");
